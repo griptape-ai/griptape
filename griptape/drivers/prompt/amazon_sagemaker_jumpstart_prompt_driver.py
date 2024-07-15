@@ -23,7 +23,8 @@ if TYPE_CHECKING:
 class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     sagemaker_client: Any = field(
-        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True), kw_only=True
+        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True),
+        kw_only=True,
     )
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
@@ -32,7 +33,8 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
-            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens), takes_self=True
+            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
+            takes_self=True,
         ),
         kw_only=True,
     )

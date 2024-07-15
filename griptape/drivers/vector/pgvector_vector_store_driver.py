@@ -61,7 +61,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             self.engine = cast(Engine, create_engine(self.connection_string, **self.create_engine_params))
 
     def setup(
-        self, create_schema: bool = True, install_uuid_extension: bool = True, install_vector_extension: bool = True
+        self,
+        create_schema: bool = True,
+        install_uuid_extension: bool = True,
+        install_vector_extension: bool = True,
     ) -> None:
         """Provides a mechanism to initialize the database schema and extensions."""
         if install_uuid_extension:
@@ -113,7 +116,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             return [
                 BaseVectorStoreDriver.Entry(
-                    id=str(result.id), vector=result.vector, namespace=result.namespace, meta=result.meta
+                    id=str(result.id),
+                    vector=result.vector,
+                    namespace=result.namespace,
+                    meta=result.meta,
                 )
                 for result in results
             ]

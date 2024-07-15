@@ -35,7 +35,8 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(
-                model=self.model, token=self.api_token
+                model=self.model,
+                token=self.api_token,
             ),
             takes_self=True,
         ),
@@ -43,7 +44,8 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     )
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
-            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens), takes_self=True
+            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
+            takes_self=True,
         ),
         kw_only=True,
     )
@@ -52,7 +54,10 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self.params
+            prompt,
+            return_full_text=False,
+            max_new_tokens=self.max_tokens,
+            **self.params,
         )
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
         output_tokens = len(self.tokenizer.tokenizer.encode(response))
@@ -67,7 +72,11 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_tokens, stream=True, **self.params
+            prompt,
+            return_full_text=False,
+            max_new_tokens=self.max_tokens,
+            stream=True,
+            **self.params,
         )
 
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))

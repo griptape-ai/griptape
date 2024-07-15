@@ -13,7 +13,9 @@ from griptape.drivers import BaseTextToSpeechDriver
 class OpenAiTextToSpeechDriver(BaseTextToSpeechDriver):
     model: str = field(default="tts-1", kw_only=True, metadata={"serializable": True})
     voice: Literal["alloy", "echo", "fable", "onyx", "nova", "shimmer"] = field(
-        default="alloy", kw_only=True, metadata={"serializable": True}
+        default="alloy",
+        kw_only=True,
+        metadata={"serializable": True},
     )
     format: Literal["mp3", "opus", "aac", "flac"] = field(default="mp3", kw_only=True, metadata={"serializable": True})
     api_type: str = field(default=openai.api_type, kw_only=True)
@@ -25,12 +27,15 @@ class OpenAiTextToSpeechDriver(BaseTextToSpeechDriver):
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
-        )
+        ),
     )
 
     def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
         response = self.client.audio.speech.create(
-            input=". ".join(prompts), voice=self.voice, model=self.model, response_format=self.format
+            input=". ".join(prompts),
+            voice=self.voice,
+            model=self.model,
+            response_format=self.format,
         )
 
         return AudioArtifact(value=response.content, format=self.format)

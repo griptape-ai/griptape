@@ -37,10 +37,14 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     client: Redis = field(
         default=Factory(
             lambda self: import_optional_dependency("redis").Redis(
-                host=self.host, port=self.port, db=self.db, password=self.password, decode_responses=False
+                host=self.host,
+                port=self.port,
+                db=self.db,
+                password=self.password,
+                decode_responses=False,
             ),
             takes_self=True,
-        )
+        ),
     )
 
     def upsert_vector(
@@ -149,7 +153,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
                     score=float(document.score),
                     meta=metadata,
                     namespace=namespace,
-                )
+                ),
             )
         return query_results
 

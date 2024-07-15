@@ -20,7 +20,7 @@ class CohereRerankDriver(BaseRerankDriver):
 
     api_key: str = field(metadata={"serializable": True})
     client: Client = field(
-        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True)
+        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True),
     )
 
     def run(self, query: str, artifacts: list[TextArtifact]) -> list[TextArtifact]:

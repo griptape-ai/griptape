@@ -29,7 +29,9 @@ class BaseStructureConfig(BaseConfig, ABC):
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})
     vector_store_driver: BaseVectorStoreDriver = field(kw_only=True, metadata={"serializable": True})
     conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
-        default=None, kw_only=True, metadata={"serializable": True}
+        default=None,
+        kw_only=True,
+        metadata={"serializable": True},
     )
     text_to_speech_driver: BaseTextToSpeechDriver = field(kw_only=True, metadata={"serializable": True})
     audio_transcription_driver: BaseAudioTranscriptionDriver = field(kw_only=True, metadata={"serializable": True})

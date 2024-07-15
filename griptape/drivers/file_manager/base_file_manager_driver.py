@@ -35,7 +35,7 @@ class BaseFileManagerDriver(ABC):
                 "gif": loaders.ImageLoader(),
                 "bmp": loaders.ImageLoader(),
                 "tiff": loaders.ImageLoader(),
-            }
+            },
         ),
         kw_only=True,
     )

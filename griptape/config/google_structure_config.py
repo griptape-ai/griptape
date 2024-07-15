@@ -25,7 +25,7 @@ class GoogleStructureConfig(StructureConfig):
     )
     vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(
-            lambda: LocalVectorStoreDriver(embedding_driver=GoogleEmbeddingDriver(model="models/embedding-001"))
+            lambda: LocalVectorStoreDriver(embedding_driver=GoogleEmbeddingDriver(model="models/embedding-001")),
         ),
         kw_only=True,
         metadata={"serializable": True},

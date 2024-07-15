@@ -48,7 +48,7 @@ class RetrievalRagStage(BaseRagStage):
 
         logging.info(
             f"RetrievalStage: deduplicated {chunks_before_dedup - chunks_after_dedup} "
-            f"chunks ({chunks_before_dedup} - {chunks_after_dedup})"
+            f"chunks ({chunks_before_dedup} - {chunks_after_dedup})",
         )
 
         context.text_chunks = [a for a in results if isinstance(a, TextArtifact)]

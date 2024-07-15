@@ -43,7 +43,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 connection_class=import_optional_dependency("opensearchpy").RequestsHttpConnection,
             ),
             takes_self=True,
-        )
+        ),
     )
 
     def upsert_vector(
@@ -144,8 +144,11 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         if namespace:
             query_body["query"] = {
                 "bool": {
-                    "must": [{"match": {"namespace": namespace}}, {"knn": {field_name: {"vector": vector, "k": count}}}]
-                }
+                    "must": [
+                        {"match": {"namespace": namespace}},
+                        {"knn": {field_name: {"vector": vector, "k": count}}},
+                    ],
+                },
             }
 
         response = self.client.search(index=self.index_name, body=query_body)

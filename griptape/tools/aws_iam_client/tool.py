@@ -27,14 +27,15 @@ class AwsIamClient(BaseAwsClient):
                         "policy_name",
                         description="PolicyName of the AWS IAM Policy embedded in the specified IAM user.",
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
     def get_user_policy(self, params: dict) -> TextArtifact | ErrorArtifact:
         try:
             policy = self.iam_client.get_user_policy(
-                UserName=params["values"]["user_name"], PolicyName=params["values"]["policy_name"]
+                UserName=params["values"]["user_name"],
+                PolicyName=params["values"]["policy_name"],
             )
             return TextArtifact(policy["PolicyDocument"])
         except Exception as e:
@@ -52,9 +53,9 @@ class AwsIamClient(BaseAwsClient):
         config={
             "description": "Can be used to list policies for a given IAM user.",
             "schema": Schema(
-                {Literal("user_name", description="Username of the AWS IAM user for which to list policies."): str}
+                {Literal("user_name", description="Username of the AWS IAM user for which to list policies."): str},
             ),
-        }
+        },
     )
     def list_user_policies(self, params: dict) -> ListArtifact | ErrorArtifact:
         try:

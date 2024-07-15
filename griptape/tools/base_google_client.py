@@ -21,7 +21,8 @@ class BaseGoogleClient(BaseTool, ABC):
         from googleapiclient.discovery import build
 
         credentials = service_account.Credentials.from_service_account_info(
-            self.service_account_credentials, scopes=scopes
+            self.service_account_credentials,
+            scopes=scopes,
         )
 
         return build(serviceName=service_name, version=version, credentials=credentials.with_subject(owner_email))

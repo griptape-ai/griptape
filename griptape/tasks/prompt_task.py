@@ -19,7 +19,8 @@ if TYPE_CHECKING:
 class PromptTask(RuleMixin, BaseTask):
     _prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True, alias="prompt_driver")
     generate_system_template: Callable[[PromptTask], str] = field(
-        default=Factory(lambda self: self.default_system_template_generator, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
+        kw_only=True,
     )
     _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
@@ -74,7 +75,7 @@ class PromptTask(RuleMixin, BaseTask):
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         return J2("tasks/prompt_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets)
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
         )
 
     def before_run(self) -> None:
@@ -93,7 +94,8 @@ class PromptTask(RuleMixin, BaseTask):
         return message.to_artifact()
 
     def _process_task_input(
-        self, task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact]
+        self,
+        task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact],
     ) -> BaseArtifact:
         if isinstance(task_input, TextArtifact):
             task_input.value = J2().render_from_string(task_input.value, **self.full_context)
