@@ -60,10 +60,10 @@ class TextArtifactStorage(BaseArtifactStorage):
                         "query_params": {
                             "namespace": namespace,
                             "metadata": None if metadata is None else str(metadata),
-                        }
-                    }
+                        },
+                    },
                 },
-            )
+            ),
         ).output
 
         if result is None:

@@ -42,14 +42,20 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
-        )
+        ),
     )
     style: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     quality: Union[Literal["standard"], Literal["hd"]] = field(
-        default="standard", kw_only=True, metadata={"serializable": True}
+        default="standard",
+        kw_only=True,
+        metadata={"serializable": True},
     )
     image_size: Union[
-        Literal["256x256"], Literal["512x512"], Literal["1024x1024"], Literal["1024x1792"], Literal["1792x1024"]
+        Literal["256x256"],
+        Literal["512x512"],
+        Literal["1024x1024"],
+        Literal["1024x1792"],
+        Literal["1792x1024"],
     ] = field(default="1024x1024", kw_only=True, metadata={"serializable": True})
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True, metadata={"serializable": True})
 
@@ -76,12 +82,18 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         return self._parse_image_response(response, prompt)
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         image_size = self._dall_e_2_filter_image_size("variation")
 
         response = self.client.images.create_variation(
-            image=image.value, n=1, response_format=self.response_format, size=image_size
+            image=image.value,
+            n=1,
+            response_format=self.response_format,
+            size=image_size,
         )
 
         return self._parse_image_response(response, "")
@@ -97,7 +109,11 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
 
         prompt = ", ".join(prompts)
         response = self.client.images.edit(
-            prompt=prompt, image=image.value, mask=mask.value, response_format=self.response_format, size=image_size
+            prompt=prompt,
+            image=image.value,
+            mask=mask.value,
+            response_format=self.response_format,
+            size=image_size,
         )
 
         return self._parse_image_response(response, prompt)

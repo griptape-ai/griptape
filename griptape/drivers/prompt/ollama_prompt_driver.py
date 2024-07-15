@@ -41,7 +41,9 @@ class OllamaPromptDriver(BasePromptDriver):
     tokenizer: BaseTokenizer = field(
         default=Factory(
             lambda self: SimpleTokenizer(
-                characters_per_token=4, max_input_tokens=2000, max_output_tokens=self.max_tokens
+                characters_per_token=4,
+                max_input_tokens=2000,
+                max_output_tokens=self.max_tokens,
             ),
             takes_self=True,
         ),
@@ -95,7 +97,7 @@ class OllamaPromptDriver(BasePromptDriver):
                             content.artifact.base64
                             for content in message.content
                             if isinstance(content, ImageMessageContent)
-                        ]
+                        ],
                     }
                     if any(isinstance(content, ImageMessageContent) for content in message.content)
                     else {}

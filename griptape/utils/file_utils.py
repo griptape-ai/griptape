@@ -34,5 +34,5 @@ def load_files(paths: list[str], futures_executor: Optional[futures.ThreadPoolEx
 
     with futures_executor as executor:
         return utils.execute_futures_dict(
-            {utils.str_to_hash(str(path)): executor.submit(load_file, path) for path in paths}
+            {utils.str_to_hash(str(path)): executor.submit(load_file, path) for path in paths},
         )

@@ -21,7 +21,7 @@ class BaseImageQueryDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def before_run(self, query: str, images: list[ImageArtifact]) -> None:
         if self.structure:
             self.structure.publish_event(
-                StartImageQueryEvent(query=query, images_info=[image.to_text() for image in images])
+                StartImageQueryEvent(query=query, images_info=[image.to_text() for image in images]),
             )
 
     def after_run(self, result: str) -> None:

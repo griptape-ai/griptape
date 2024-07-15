@@ -18,7 +18,8 @@ class GoogleTokenizer(BaseTokenizer):
 
     api_key: str = field(kw_only=True, metadata={"serializable": True})
     model_client: GenerativeModel = field(
-        default=Factory(lambda self: self._default_model_client(), takes_self=True), kw_only=True
+        default=Factory(lambda self: self._default_model_client(), takes_self=True),
+        kw_only=True,
     )
 
     def count_tokens(self, text: str) -> int:

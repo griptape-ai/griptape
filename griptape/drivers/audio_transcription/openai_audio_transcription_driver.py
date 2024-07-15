@@ -21,7 +21,7 @@ class OpenAiAudioTranscriptionDriver(BaseAudioTranscriptionDriver):
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
-        )
+        ),
     )
 
     def try_run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:

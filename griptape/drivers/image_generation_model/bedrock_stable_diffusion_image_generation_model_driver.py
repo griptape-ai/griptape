@@ -46,7 +46,11 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         seed: Optional[int] = None,
     ) -> dict:
         return self._request_parameters(
-            prompts, width=image_width, height=image_height, negative_prompts=negative_prompts, seed=seed
+            prompts,
+            width=image_width,
+            height=image_height,
+            negative_prompts=negative_prompts,
+            seed=seed,
         )
 
     def image_variation_request_parameters(

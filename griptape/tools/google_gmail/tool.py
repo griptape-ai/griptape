@@ -26,16 +26,19 @@ class GoogleGmailClient(BaseGoogleClient):
                     Literal("to", description="email address which to send to"): str,
                     Literal("subject", description="subject of the email"): str,
                     Literal("body", description="body of the email"): str,
-                }
+                },
             ),
-        }
+        },
     )
     def create_draft_email(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
 
         try:
             service = self._build_client(
-                scopes=self.CREATE_DRAFT_EMAIL_SCOPES, service_name="gmail", version="v1", owner_email=self.owner_email
+                scopes=self.CREATE_DRAFT_EMAIL_SCOPES,
+                service_name="gmail",
+                version="v1",
+                owner_email=self.owner_email,
             )
 
             message = EmailMessage()

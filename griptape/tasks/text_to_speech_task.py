@@ -39,7 +39,7 @@ class TextToSpeechTask(BaseAudioGenerationTask):
         if self._text_to_speech_engine is None:
             if self.structure is not None:
                 self._text_to_speech_engine = TextToSpeechEngine(
-                    text_to_speech_driver=self.structure.config.text_to_speech_driver
+                    text_to_speech_driver=self.structure.config.text_to_speech_driver,
                 )
             else:
                 raise ValueError("Audio Generation Engine is not set.")

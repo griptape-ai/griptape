@@ -23,10 +23,10 @@ class DuckDuckGoWebSearchDriver(BaseWebSearchDriver):
             return ListArtifact(
                 [
                     TextArtifact(
-                        json.dumps({"title": result["title"], "url": result["href"], "description": result["body"]})
+                        json.dumps({"title": result["title"], "url": result["href"], "description": result["body"]}),
                     )
                     for result in results
-                ]
+                ],
             )
         except Exception as e:
             raise Exception(f"Error searching '{query}' with DuckDuckGo: {e}") from e

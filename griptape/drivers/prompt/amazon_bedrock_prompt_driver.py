@@ -44,11 +44,13 @@ if TYPE_CHECKING:
 class AmazonBedrockPromptDriver(BasePromptDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     bedrock_client: Any = field(
-        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True), kw_only=True
+        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True),
+        kw_only=True,
     )
     additional_model_request_fields: dict = field(default=Factory(dict), kw_only=True)
     tokenizer: BaseTokenizer = field(
-        default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
+        default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True),
+        kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
@@ -76,7 +78,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 elif "metadata" in event:
                     usage = event["metadata"]["usage"]
                     yield DeltaMessage(
-                        usage=DeltaMessage.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"])
+                        usage=DeltaMessage.Usage(
+                            input_tokens=usage["inputTokens"],
+                            output_tokens=usage["outputTokens"],
+                        ),
                     )
         else:
             raise Exception("model response is empty")
@@ -122,10 +127,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     "description": tool.activity_description(activity),
                     "inputSchema": {
                         "json": (tool.activity_schema(activity) or Schema({})).json_schema(
-                            "http://json-schema.org/draft-07/schema#"
-                        )
+                            "http://json-schema.org/draft-07/schema#",
+                        ),
                     },
-                }
+                },
             }
             for tool in tools
             for activity in tool.activities()
@@ -146,7 +151,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     "toolUseId": action_call.tag,
                     "name": f"{action_call.name}_{action_call.path}",
                     "input": action_call.input,
-                }
+                },
             }
         elif isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
@@ -161,7 +166,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     "toolUseId": content.action.tag,
                     "content": message_content,
                     "status": "error" if isinstance(artifact, ErrorArtifact) else "success",
-                }
+                },
             }
         else:
             raise ValueError(f"Unsupported content type: {type(content)}")
@@ -182,9 +187,12 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             return ActionCallMessageContent(
                 artifact=ActionArtifact(
                     value=ToolAction(
-                        tag=content["toolUse"]["toolUseId"], name=name, path=path, input=content["toolUse"]["input"]
-                    )
-                )
+                        tag=content["toolUse"]["toolUseId"],
+                        name=name,
+                        path=path,
+                        input=content["toolUse"]["input"],
+                    ),
+                ),
             )
         else:
             raise ValueError(f"Unsupported message content type: {content}")
@@ -204,7 +212,8 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 )
             elif "text" in content_block:
                 return TextDeltaMessageContent(
-                    content_block["text"], index=event["contentBlockStart"]["contentBlockIndex"]
+                    content_block["text"],
+                    index=event["contentBlockStart"]["contentBlockIndex"],
                 )
             else:
                 raise ValueError(f"Unsupported message content type: {event}")
@@ -213,7 +222,8 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
             if "text" in content_block_delta["delta"]:
                 return TextDeltaMessageContent(
-                    content_block_delta["delta"]["text"], index=content_block_delta["contentBlockIndex"]
+                    content_block_delta["delta"]["text"],
+                    index=content_block_delta["contentBlockIndex"],
                 )
             elif "toolUse" in content_block_delta["delta"]:
                 return ActionCallDeltaMessageContent(

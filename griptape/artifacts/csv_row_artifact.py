@@ -19,7 +19,10 @@ class CsvRowArtifact(TextArtifact):
     def to_text(self) -> str:
         with io.StringIO() as csvfile:
             writer = csv.DictWriter(
-                csvfile, fieldnames=self.value.keys(), quoting=csv.QUOTE_MINIMAL, delimiter=self.delimiter
+                csvfile,
+                fieldnames=self.value.keys(),
+                quoting=csv.QUOTE_MINIMAL,
+                delimiter=self.delimiter,
             )
 
             writer.writerow(self.value)

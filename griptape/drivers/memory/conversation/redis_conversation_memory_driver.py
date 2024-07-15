@@ -40,10 +40,14 @@ class RedisConversationMemoryDriver(BaseConversationMemoryDriver):
     client: Redis = field(
         default=Factory(
             lambda self: import_optional_dependency("redis").Redis(
-                host=self.host, port=self.port, db=self.db, password=self.password, decode_responses=False
+                host=self.host,
+                port=self.port,
+                db=self.db,
+                password=self.password,
+                decode_responses=False,
             ),
             takes_self=True,
-        )
+        ),
     )
 
     def store(self, memory: BaseConversationMemory) -> None:

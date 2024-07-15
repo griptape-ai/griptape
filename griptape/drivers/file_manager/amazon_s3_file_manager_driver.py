@@ -94,7 +94,10 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
 
         paginator = self.s3_client.get_paginator("list_objects_v2")
         pages = paginator.paginate(
-            Bucket=self.bucket, Prefix=full_key, Delimiter="/", PaginationConfig=pagination_config
+            Bucket=self.bucket,
+            Prefix=full_key,
+            Delimiter="/",
+            PaginationConfig=pagination_config,
         )
         files_and_dirs = []
         for page in pages:

@@ -21,7 +21,8 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
     database_credentials_secret_arn: Optional[str] = field(default=None, kw_only=True)
     wait_for_query_completion_sec: float = field(default=0.3, kw_only=True)
     client: Any = field(
-        default=Factory(lambda self: self.session.client("redshift-data"), takes_self=True), kw_only=True
+        default=Factory(lambda self: self.session.client("redshift-data"), takes_self=True),
+        kw_only=True,
     )
 
     @workgroup_name.validator  # pyright: ignore[reportAttributeAccessIssue]
@@ -82,7 +83,8 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
 
             while "NextToken" in statement_result:
                 statement_result = self.client.get_statement_result(
-                    Id=response_id, NextToken=statement_result["NextToken"]
+                    Id=response_id,
+                    NextToken=statement_result["NextToken"],
                 )
                 results = results + response.get("Records", [])
 
