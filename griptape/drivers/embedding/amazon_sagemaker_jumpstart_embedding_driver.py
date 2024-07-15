@@ -16,7 +16,8 @@ if TYPE_CHECKING:
 class AmazonSageMakerJumpstartEmbeddingDriver(BaseEmbeddingDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     sagemaker_client: Any = field(
-        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True), kw_only=True
+        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True),
+        kw_only=True,
     )
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})

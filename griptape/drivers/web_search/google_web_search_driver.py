@@ -39,5 +39,5 @@ class GoogleWebSearchDriver(BaseWebSearchDriver):
         else:
             raise Exception(
                 f"Google Search API returned an error with status code "
-                f"{response.status_code} and reason '{response.reason}'"
+                f"{response.status_code} and reason '{response.reason}'",
             )

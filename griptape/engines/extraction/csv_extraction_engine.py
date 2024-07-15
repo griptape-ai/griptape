@@ -71,7 +71,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 self.text_to_csv_rows(
                     self.prompt_driver.run(PromptStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value,
                     column_names,
-                )
+                ),
             )
 
             return rows
@@ -87,7 +87,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 self.text_to_csv_rows(
                     self.prompt_driver.run(PromptStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value,
                     column_names,
-                )
+                ),
             )
 
             return self._extract_rec(chunks[1:], column_names, rows, rulesets=rulesets)

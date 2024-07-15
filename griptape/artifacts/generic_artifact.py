@@ -1,8 +1,11 @@
 from __future__ import annotations
-from griptape.artifacts import BaseArtifact
-from typing import Any
+
 import json
+from typing import Any
+
 from attrs import define, field
+
+from griptape.artifacts import BaseArtifact
 
 
 @define

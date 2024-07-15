@@ -21,7 +21,11 @@ class PdfLoader(BaseTextLoader):
     encoding: None = field(default=None, kw_only=True)
 
     def load(
-        self, source: bytes, password: Optional[str] = None, *args, **kwargs
+        self,
+        source: bytes,
+        password: Optional[str] = None,
+        *args,
+        **kwargs,
     ) -> ErrorArtifact | list[TextArtifact]:
         PdfReader = import_optional_dependency("pypdf").PdfReader
         reader = PdfReader(BytesIO(source), strict=True, password=password)
@@ -29,5 +33,6 @@ class PdfLoader(BaseTextLoader):
 
     def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:
         return cast(
-            dict[str, Union[ErrorArtifact, list[TextArtifact]]], super().load_collection(sources, *args, **kwargs)
+            dict[str, Union[ErrorArtifact, list[TextArtifact]]],
+            super().load_collection(sources, *args, **kwargs),
         )

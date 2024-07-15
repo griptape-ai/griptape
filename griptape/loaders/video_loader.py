@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import cast, TYPE_CHECKING, Optional, Callable
-
-from attrs import define, field, Factory
-
 from concurrent import futures
+from typing import TYPE_CHECKING, Callable, Optional, cast
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import ImageArtifact
 from griptape.loaders import BaseLoader, ImageLoader
 from griptape.utils import import_optional_dependency

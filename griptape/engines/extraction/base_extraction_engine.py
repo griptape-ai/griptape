@@ -41,10 +41,14 @@ class BaseExtractionEngine(ABC):
     def min_response_tokens(self) -> int:
         return round(
             self.prompt_driver.tokenizer.max_input_tokens
-            - self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier
+            - self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier,
         )
 
     @abstractmethod
     def extract(
-        self, text: str | ListArtifact, *, rulesets: Optional[list[Ruleset]] = None, **kwargs
+        self,
+        text: str | ListArtifact,
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
+        **kwargs,
     ) -> ListArtifact | ErrorArtifact: ...

@@ -58,15 +58,18 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
-        )
+        ),
     )
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(
-        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
+        kw_only=True,
     )
     user: str = field(default="", kw_only=True, metadata={"serializable": True})
     response_format: Optional[Literal["json_object"]] = field(
-        default=None, kw_only=True, metadata={"serializable": True}
+        default=None,
+        kw_only=True,
+        metadata={"serializable": True},
     )
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
@@ -80,7 +83,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 openai.NotFoundError,
                 openai.ConflictError,
                 openai.UnprocessableEntityError,
-            )
+            ),
         ),
         kw_only=True,
     )
@@ -95,7 +98,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 content=self.__to_prompt_stack_message_content(message),
                 role=Message.ASSISTANT_ROLE,
                 usage=Message.Usage(
-                    input_tokens=result.usage.prompt_tokens, output_tokens=result.usage.completion_tokens
+                    input_tokens=result.usage.prompt_tokens,
+                    output_tokens=result.usage.completion_tokens,
                 ),
             )
         else:
@@ -108,8 +112,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             if chunk.usage is not None:
                 yield DeltaMessage(
                     usage=DeltaMessage.Usage(
-                        input_tokens=chunk.usage.prompt_tokens, output_tokens=chunk.usage.completion_tokens
-                    )
+                        input_tokens=chunk.usage.prompt_tokens,
+                        output_tokens=chunk.usage.completion_tokens,
+                    ),
                 )
             elif chunk.choices is not None:
                 if len(chunk.choices) == 1:
@@ -163,7 +168,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                             "tool_call_id": action_result.action.tag,
                         }
                         for action_result in message.get_content_type(ActionResultMessageContent)
-                    ]
+                    ],
                 )
             else:
                 # ToolAction calls are attached to the assistant message that originally generated them.
@@ -186,12 +191,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                             {
                                 "tool_calls": [
                                     self.__to_openai_message_content(action_call) for action_call in action_call_content
-                                ]
+                                ],
                             }
                             if action_call_content
                             else {}
                         ),
-                    }
+                    },
                 )
 
         return openai_messages
@@ -260,11 +265,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                                 name=ToolAction.from_native_tool_name(tool_call.function.name)[0],
                                 path=ToolAction.from_native_tool_name(tool_call.function.name)[1],
                                 input=json.loads(tool_call.function.arguments),
-                            )
-                        )
+                            ),
+                        ),
                     )
                     for tool_call in response.tool_calls
-                ]
+                ],
             )
 
         return content

@@ -16,7 +16,8 @@ logger = Logger(__name__)
 @define
 class BaseEventListenerDriver(ABC):
     futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
+        kw_only=True,
     )
     batched: bool = field(default=True, kw_only=True)
     batch_size: int = field(default=10, kw_only=True)

@@ -48,7 +48,7 @@ class ImageQueryTask(BaseTask):
         else:
             raise ValueError(
                 "Input must be a tuple of a TextArtifact and a list of ImageArtifacts or a callable that "
-                "returns a tuple of a TextArtifact and a list of ImageArtifacts."
+                "returns a tuple of a TextArtifact and a list of ImageArtifacts.",
             )
 
     @input.setter

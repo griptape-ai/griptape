@@ -46,9 +46,9 @@ class VariationImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                         "image_file",
                         description="The path to an image file to be used as a base to generate variations from.",
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
     def image_variation_from_file(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
@@ -77,9 +77,9 @@ class VariationImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                     "memory_name": str,
                     "artifact_namespace": str,
                     "artifact_name": str,
-                }
+                },
             ),
-        }
+        },
     )
     def image_variation_from_memory(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]

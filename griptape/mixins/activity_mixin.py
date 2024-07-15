@@ -82,7 +82,7 @@ class ActivityMixin:
             raise Exception("This method is not an activity.")
         elif getattr(activity, "config")["schema"]:
             full_schema = {
-                "values": getattr(activity, "config")["schema"].schema if getattr(activity, "config")["schema"] else {}
+                "values": getattr(activity, "config")["schema"].schema if getattr(activity, "config")["schema"] else {},
             }
 
             return Schema(full_schema)

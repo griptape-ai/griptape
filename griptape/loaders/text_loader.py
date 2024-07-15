@@ -19,7 +19,8 @@ class TextLoader(BaseTextLoader):
     MAX_TOKEN_RATIO = 0.5
 
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)), kw_only=True
+        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
+        kw_only=True,
     )
     max_tokens: int = field(
         default=Factory(lambda self: round(self.tokenizer.max_input_tokens * self.MAX_TOKEN_RATIO), takes_self=True),
@@ -27,7 +28,8 @@ class TextLoader(BaseTextLoader):
     )
     chunker: TextChunker = field(
         default=Factory(
-            lambda self: TextChunker(tokenizer=self.tokenizer, max_tokens=self.max_tokens), takes_self=True
+            lambda self: TextChunker(tokenizer=self.tokenizer, max_tokens=self.max_tokens),
+            takes_self=True,
         ),
         kw_only=True,
     )
@@ -46,8 +48,12 @@ class TextLoader(BaseTextLoader):
         return self._text_to_artifacts(source)
 
     def load_collection(
-        self, sources: list[bytes | str], *args, **kwargs
+        self,
+        sources: list[bytes | str],
+        *args,
+        **kwargs,
     ) -> dict[str, ErrorArtifact | list[TextArtifact]]:
         return cast(
-            dict[str, Union[ErrorArtifact, list[TextArtifact]]], super().load_collection(sources, *args, **kwargs)
+            dict[str, Union[ErrorArtifact, list[TextArtifact]]],
+            super().load_collection(sources, *args, **kwargs),
         )

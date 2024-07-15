@@ -14,7 +14,9 @@ if TYPE_CHECKING:
 @define
 class AudioTranscriptionTask(BaseAudioInputTask):
     _audio_transcription_engine: AudioTranscriptionEngine = field(
-        default=None, kw_only=True, alias="audio_transcription_engine"
+        default=None,
+        kw_only=True,
+        alias="audio_transcription_engine",
     )
 
     @property
@@ -22,7 +24,7 @@ class AudioTranscriptionTask(BaseAudioInputTask):
         if self._audio_transcription_engine is None:
             if self.structure is not None:
                 self._audio_transcription_engine = AudioTranscriptionEngine(
-                    audio_transcription_driver=self.structure.config.audio_transcription_driver
+                    audio_transcription_driver=self.structure.config.audio_transcription_driver,
                 )
             else:
                 raise ValueError("Audio Generation Engine is not set.")

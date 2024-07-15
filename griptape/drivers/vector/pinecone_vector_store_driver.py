@@ -21,7 +21,9 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
     def __attrs_post_init__(self) -> None:
         pinecone = import_optional_dependency("pinecone").Pinecone(
-            api_key=self.api_key, environment=self.environment, project_name=self.project_name
+            api_key=self.api_key,
+            environment=self.environment,
+            project_name=self.project_name,
         )
 
         self.index = pinecone.Index(self.index_name)
@@ -50,7 +52,10 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             vector = vectors[0]
 
             return BaseVectorStoreDriver.Entry(
-                id=vector["id"], meta=vector["metadata"], vector=vector["values"], namespace=result["namespace"]
+                id=vector["id"],
+                meta=vector["metadata"],
+                vector=vector["values"],
+                namespace=result["namespace"],
             )
         else:
             return None
@@ -61,12 +66,18 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         # https://community.pinecone.io/t/is-there-a-way-to-query-all-the-vectors-and-or-metadata-from-a-namespace/797/5
 
         results = self.index.query(
-            vector=self.embedding_driver.embed_string(""), top_k=10000, include_metadata=True, namespace=namespace
+            vector=self.embedding_driver.embed_string(""),
+            top_k=10000,
+            include_metadata=True,
+            namespace=namespace,
         )
 
         return [
             BaseVectorStoreDriver.Entry(
-                id=r["id"], vector=r["values"], meta=r["metadata"], namespace=results["namespace"]
+                id=r["id"],
+                vector=r["values"],
+                meta=r["metadata"],
+                namespace=results["namespace"],
             )
             for r in results["matches"]
         ]
@@ -94,7 +105,11 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
         return [
             BaseVectorStoreDriver.Entry(
-                id=r["id"], vector=r["values"], score=r["score"], meta=r["metadata"], namespace=results["namespace"]
+                id=r["id"],
+                vector=r["values"],
+                score=r["score"],
+                meta=r["metadata"],
+                namespace=results["namespace"],
             )
             for r in results["matches"]
         ]

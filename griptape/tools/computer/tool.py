@@ -36,7 +36,8 @@ class Computer(BaseTool):
         kw_only=True,
     )
     docker_client: DockerClient = field(
-        default=Factory(lambda self: self.default_docker_client(), takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_docker_client(), takes_self=True),
+        kw_only=True,
     )
 
     _tempdir: Optional[tempfile.TemporaryDirectory] = field(default=None, kw_only=True)
@@ -71,11 +72,12 @@ class Computer(BaseTool):
                 {
                     Literal("code", description="Python code to execute"): str,
                     Literal(
-                        "filename", description="name of the file to put the Python code in before executing it"
+                        "filename",
+                        description="name of the file to put the Python code in before executing it",
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
     def execute_code(self, params: dict) -> BaseArtifact:
         code = params["values"]["code"]
@@ -87,7 +89,7 @@ class Computer(BaseTool):
         config={
             "description": "Can be used to execute shell commands in Linux",
             "schema": Schema({Literal("command", description="shell command to execute"): str}),
-        }
+        },
     )
     def execute_command(self, params: dict) -> BaseArtifact:
         command = params["values"]["command"]

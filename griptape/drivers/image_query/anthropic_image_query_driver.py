@@ -23,7 +23,8 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
     model: str = field(kw_only=True, metadata={"serializable": True})
     client: Any = field(
         default=Factory(
-            lambda self: import_optional_dependency("anthropic").Anthropic(api_key=self.api_key), takes_self=True
+            lambda self: import_optional_dependency("anthropic").Anthropic(api_key=self.api_key),
+            takes_self=True,
         ),
         kw_only=True,
     )

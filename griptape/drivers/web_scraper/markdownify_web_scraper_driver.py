@@ -31,7 +31,8 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
 
     include_links: bool = field(default=True, kw_only=True)
     exclude_tags: list[str] = field(
-        default=Factory(lambda self: self.DEFAULT_EXCLUDE_TAGS, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.DEFAULT_EXCLUDE_TAGS, takes_self=True),
+        kw_only=True,
     )
     exclude_classes: list[str] = field(default=Factory(list), kw_only=True)
     exclude_ids: list[str] = field(default=Factory(list), kw_only=True)
@@ -78,7 +79,7 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
 
             # Remove unwanted elements
             exclude_selector = ",".join(
-                self.exclude_tags + [f".{c}" for c in self.exclude_classes] + [f"#{i}" for i in self.exclude_ids]
+                self.exclude_tags + [f".{c}" for c in self.exclude_classes] + [f"#{i}" for i in self.exclude_ids],
             )
             if exclude_selector:
                 for s in soup.select(exclude_selector):

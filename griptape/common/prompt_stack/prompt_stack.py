@@ -4,15 +4,15 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.artifacts import ActionArtifact, BaseArtifact, ImageArtifact, ListArtifact, TextArtifact, GenericArtifact
+from griptape.artifacts import ActionArtifact, BaseArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.common import (
     ActionCallMessageContent,
     ActionResultMessageContent,
     BaseMessageContent,
+    GenericMessageContent,
     ImageMessageContent,
     Message,
     TextMessageContent,
-    GenericMessageContent,
 )
 from griptape.mixins import SerializableMixin
 

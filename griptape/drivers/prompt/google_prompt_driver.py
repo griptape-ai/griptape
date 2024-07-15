@@ -51,7 +51,8 @@ class GooglePromptDriver(BasePromptDriver):
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
     model_client: GenerativeModel = field(
-        default=Factory(lambda self: self._default_model_client(), takes_self=True), kw_only=True
+        default=Factory(lambda self: self._default_model_client(), takes_self=True),
+        kw_only=True,
     )
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: GoogleTokenizer(api_key=self.api_key, model=self.model), takes_self=True),
@@ -65,7 +66,8 @@ class GooglePromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self.__to_google_messages(prompt_stack)
         response: GenerateContentResponse = self.model_client.generate_content(
-            messages, **self._base_params(prompt_stack)
+            messages,
+            **self._base_params(prompt_stack),
         )
 
         usage_metadata = response.usage_metadata
@@ -74,14 +76,17 @@ class GooglePromptDriver(BasePromptDriver):
             content=[self.__to_prompt_stack_message_content(part) for part in response.parts],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(
-                input_tokens=usage_metadata.prompt_token_count, output_tokens=usage_metadata.candidates_token_count
+                input_tokens=usage_metadata.prompt_token_count,
+                output_tokens=usage_metadata.candidates_token_count,
             ),
         )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         messages = self.__to_google_messages(prompt_stack)
         response: GenerateContentResponse = self.model_client.generate_content(
-            messages, **self._base_params(prompt_stack), stream=True
+            messages,
+            **self._base_params(prompt_stack),
+            stream=True,
         )
 
         prompt_token_count = None
@@ -101,7 +106,8 @@ class GooglePromptDriver(BasePromptDriver):
                 )
             else:
                 yield DeltaMessage(
-                    content=content, usage=DeltaMessage.Usage(output_tokens=usage_metadata.candidates_token_count)
+                    content=content,
+                    usage=DeltaMessage.Usage(output_tokens=usage_metadata.candidates_token_count),
                 )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
@@ -112,7 +118,8 @@ class GooglePromptDriver(BasePromptDriver):
         system_messages = prompt_stack.system_messages
         if system_messages:
             self.model_client._system_instruction = ContentDict(
-                role="system", parts=[Part(text=system_message.to_text()) for system_message in system_messages]
+                role="system",
+                parts=[Part(text=system_message.to_text()) for system_message in system_messages],
             )
 
         return {
@@ -125,7 +132,7 @@ class GooglePromptDriver(BasePromptDriver):
                     "temperature": self.temperature,
                     "top_p": self.top_p,
                     "top_k": self.top_k,
-                }
+                },
             ),
             **(
                 {
@@ -151,7 +158,7 @@ class GooglePromptDriver(BasePromptDriver):
                 {
                     "role": self.__to_google_role(message),
                     "parts": [self.__to_google_message_content(content) for content in message.content],
-                }
+                },
             )
             for message in prompt_stack.messages
             if not message.is_system()
@@ -208,8 +215,9 @@ class GooglePromptDriver(BasePromptDriver):
 
             return protos.Part(
                 function_response=protos.FunctionResponse(
-                    name=content.action.to_native_tool_name(), response=artifact.to_dict()
-                )
+                    name=content.action.to_native_tool_name(),
+                    response=artifact.to_dict(),
+                ),
             )
         elif isinstance(content, GenericMessageContent):
             return content.artifact.value
@@ -226,7 +234,7 @@ class GooglePromptDriver(BasePromptDriver):
 
             args = {k: v for k, v in function_call.args.items()}
             return ActionCallMessageContent(
-                artifact=ActionArtifact(value=ToolAction(tag=function_call.name, name=name, path=path, input=args))
+                artifact=ActionArtifact(value=ToolAction(tag=function_call.name, name=name, path=path, input=args)),
             )
         else:
             raise ValueError(f"Unsupported message content type {content}")
@@ -241,7 +249,10 @@ class GooglePromptDriver(BasePromptDriver):
 
             args = {k: v for k, v in function_call.args.items()}
             return ActionCallDeltaMessageContent(
-                tag=function_call.name, name=name, path=path, partial_input=json.dumps(args)
+                tag=function_call.name,
+                name=name,
+                path=path,
+                partial_input=json.dumps(args),
             )
         else:
             raise ValueError(f"Unsupported message content type {content}")

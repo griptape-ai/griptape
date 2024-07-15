@@ -28,5 +28,8 @@ class OutpaintingImageGenerationEngine(BaseImageGenerationEngine):
         negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)
 
         return self.image_generation_driver.run_image_outpainting(
-            prompts, image=image, mask=mask, negative_prompts=negative_prompts
+            prompts,
+            image=image,
+            mask=mask,
+            negative_prompts=negative_prompts,
         )

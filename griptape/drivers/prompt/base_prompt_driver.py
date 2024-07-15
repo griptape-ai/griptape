@@ -62,7 +62,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                     result=result.value,
                     input_token_count=result.usage.input_tokens,
                     output_token_count=result.usage.output_tokens,
-                )
+                ),
             )
 
     def run(self, prompt_stack: PromptStack) -> Message:

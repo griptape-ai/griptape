@@ -6,11 +6,11 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
-from griptape.drivers import BasePromptDriver
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.artifacts import ImageArtifact, TextArtifact
+    from griptape.artifacts import ImageArtifact
+    from griptape.drivers import BasePromptDriver
 
 
 @define

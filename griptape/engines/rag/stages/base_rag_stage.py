@@ -12,7 +12,7 @@ from griptape.engines.rag.modules import BaseRagModule
 @define(kw_only=True)
 class BaseRagStage(ABC):
     futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor())
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
     )
 
     @abstractmethod

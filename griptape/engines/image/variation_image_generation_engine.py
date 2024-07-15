@@ -27,5 +27,7 @@ class VariationImageGenerationEngine(BaseImageGenerationEngine):
         negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)
 
         return self.image_generation_driver.run_image_variation(
-            prompts=prompts, image=image, negative_prompts=negative_prompts
+            prompts=prompts,
+            image=image,
+            negative_prompts=negative_prompts,
         )

@@ -42,7 +42,9 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     init_strength: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     control_net: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     control_net_type: Optional[Literal["POSE", "CANNY", "DEPTH"]] = field(
-        default=None, kw_only=True, metadata={"serializable": True}
+        default=None,
+        kw_only=True,
+        metadata={"serializable": True},
     )
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
@@ -63,14 +65,19 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         )
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         if negative_prompts is None:
             negative_prompts = []
 
         init_image_id = self._upload_init_image(image)
         generation_id = self._create_generation(
-            prompts=prompts, negative_prompts=negative_prompts, init_image_id=init_image_id
+            prompts=prompts,
+            negative_prompts=negative_prompts,
+            init_image_id=init_image_id,
         )
         image_url = self._get_image_url(generation_id=generation_id)
         image_data = self._download_image(url=image_url)
@@ -121,7 +128,10 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         return init_image_id
 
     def _create_generation(
-        self, prompts: list[str], negative_prompts: list[str], init_image_id: Optional[str] = None
+        self,
+        prompts: list[str],
+        negative_prompts: list[str],
+        init_image_id: Optional[str] = None,
     ) -> str:
         prompt = ", ".join(prompts)
         negative_prompt = ", ".join(negative_prompts)
@@ -169,7 +179,8 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     def _get_image_url(self, generation_id: str) -> str:
         for attempt in range(self.max_attempts):
             response = self.requests_session.get(
-                url=f"{self.api_base}/generations/{generation_id}", headers={"Authorization": f"Bearer {self.api_key}"}
+                url=f"{self.api_base}/generations/{generation_id}",
+                headers={"Authorization": f"Bearer {self.api_key}"},
             ).json()
 
             if response["generations_by_pk"]["status"] == "PENDING":

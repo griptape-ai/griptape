@@ -30,24 +30,32 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
-            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens), takes_self=True
+            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
+            takes_self=True,
         ),
         kw_only=True,
     )
     pipe: TextGenerationPipeline = field(
         default=Factory(
             lambda self: import_optional_dependency("transformers").pipeline(
-                "text-generation", model=self.model, max_new_tokens=self.max_tokens, tokenizer=self.tokenizer.tokenizer
+                "text-generation",
+                model=self.model,
+                max_new_tokens=self.max_tokens,
+                tokenizer=self.tokenizer.tokenizer,
             ),
             takes_self=True,
-        )
+        ),
     )
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
         result = self.pipe(
-            messages, max_new_tokens=self.max_tokens, temperature=self.temperature, do_sample=True, **self.params
+            messages,
+            max_new_tokens=self.max_tokens,
+            temperature=self.temperature,
+            do_sample=True,
+            **self.params,
         )
 
         if isinstance(result, list):

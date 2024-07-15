@@ -16,12 +16,12 @@ if TYPE_CHECKING:
 class BaseRagModule(ABC):
     name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor())
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
     )
 
     def generate_query_prompt_stack(self, system_prompt: str, query: str) -> PromptStack:
         return PromptStack(
-            messages=[Message(system_prompt, role=Message.SYSTEM_ROLE), Message(query, role=Message.USER_ROLE)]
+            messages=[Message(system_prompt, role=Message.SYSTEM_ROLE), Message(query, role=Message.USER_ROLE)],
         )
 
     def get_context_param(self, context: RagContext, key: str) -> Optional[Any]:

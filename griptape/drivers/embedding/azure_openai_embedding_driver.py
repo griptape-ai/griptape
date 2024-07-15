@@ -24,16 +24,21 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
     """
 
     azure_deployment: str = field(
-        kw_only=True, default=Factory(lambda self: self.model, takes_self=True), metadata={"serializable": True}
+        kw_only=True,
+        default=Factory(lambda self: self.model, takes_self=True),
+        metadata={"serializable": True},
     )
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
     azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     azure_ad_token_provider: Optional[Callable[[], str]] = field(
-        kw_only=True, default=None, metadata={"serializable": False}
+        kw_only=True,
+        default=None,
+        metadata={"serializable": False},
     )
     api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
+        kw_only=True,
     )
     client: openai.AzureOpenAI = field(
         default=Factory(
@@ -47,5 +52,5 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
                 azure_ad_token_provider=self.azure_ad_token_provider,
             ),
             takes_self=True,
-        )
+        ),
     )

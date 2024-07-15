@@ -43,8 +43,12 @@ class CsvLoader(BaseLoader):
         return artifacts
 
     def load_collection(
-        self, sources: list[bytes | str], *args, **kwargs
+        self,
+        sources: list[bytes | str],
+        *args,
+        **kwargs,
     ) -> dict[str, ErrorArtifact | list[CsvRowArtifact]]:
         return cast(
-            dict[str, Union[ErrorArtifact, list[CsvRowArtifact]]], super().load_collection(sources, *args, **kwargs)
+            dict[str, Union[ErrorArtifact, list[CsvRowArtifact]]],
+            super().load_collection(sources, *args, **kwargs),
         )

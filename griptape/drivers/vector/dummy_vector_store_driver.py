@@ -11,7 +11,9 @@ from griptape.exceptions import DummyException
 @define()
 class DummyVectorStoreDriver(BaseVectorStoreDriver):
     embedding_driver: BaseEmbeddingDriver = field(
-        kw_only=True, default=Factory(lambda: DummyEmbeddingDriver()), metadata={"serializable": True}
+        kw_only=True,
+        default=Factory(lambda: DummyEmbeddingDriver()),
+        metadata={"serializable": True},
     )
 
     def delete_vector(self, vector_id: str) -> None:
