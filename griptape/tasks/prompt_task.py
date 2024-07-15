@@ -68,8 +68,9 @@ class PromptTask(RuleMixin, BaseTask):
 
     def preprocess(self, structure: Structure) -> PromptTask:
         super().preprocess(structure)
+
         if self.prompt_driver is not None:
-            self.prompt_driver.structure = structure
+            self.prompt_driver.add_event_listeners(self.structure.event_listeners)
 
         return self
 

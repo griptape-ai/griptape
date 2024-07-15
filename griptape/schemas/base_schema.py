@@ -113,8 +113,6 @@ class BaseSchema(Schema):
             Reference,
             ToolAction,
         )
-
-        # These modules are required to avoid `NameError`s when resolving types.
         from griptape.drivers import (
             BaseAudioTranscriptionDriver,
             BaseConversationMemoryDriver,
@@ -125,11 +123,12 @@ class BaseSchema(Schema):
             BaseTextToSpeechDriver,
             BaseVectorStoreDriver,
         )
+        from griptape.events import EventListener
         from griptape.memory.structure import Run
         from griptape.structures import Structure
-        from griptape.tokenizers.base_tokenizer import BaseTokenizer
+        from griptape.tokenizers import BaseTokenizer
         from griptape.tools import BaseTool
-        from griptape.utils.import_utils import import_optional_dependency, is_dependency_installed
+        from griptape.utils import import_optional_dependency, is_dependency_installed
 
         attrs.resolve_types(
             attrs_cls,
@@ -145,6 +144,7 @@ class BaseSchema(Schema):
                 "BaseImageGenerationDriver": BaseImageGenerationDriver,
                 "BaseArtifact": BaseArtifact,
                 "PromptStack": PromptStack,
+                "EventListener": EventListener,
                 "BaseMessageContent": BaseMessageContent,
                 "BaseDeltaMessageContent": BaseDeltaMessageContent,
                 "BaseTool": BaseTool,

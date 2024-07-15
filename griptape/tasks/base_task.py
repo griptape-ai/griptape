@@ -106,7 +106,7 @@ class BaseTask(ABC):
         return self.state == BaseTask.State.EXECUTING
 
     def before_run(self) -> None:
-        if self.structure:
+        if self.structure is not None:
             self.structure.publish_event(
                 StartTaskEvent(
                     task_id=self.id,
@@ -118,7 +118,7 @@ class BaseTask(ABC):
             )
 
     def after_run(self) -> None:
-        if self.structure:
+        if self.structure is not None:
             self.structure.publish_event(
                 FinishTaskEvent(
                     task_id=self.id,

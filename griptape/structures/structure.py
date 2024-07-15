@@ -29,17 +29,17 @@ from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
+from griptape.mixins import EventsMixin
 from griptape.utils import deprecation_warn
 
 if TYPE_CHECKING:
-    from griptape.events import BaseEvent, EventListener
     from griptape.memory.structure import BaseConversationMemory
     from griptape.rules import Rule, Ruleset
     from griptape.tasks import BaseTask
 
 
 @define
-class Structure(ABC):
+class Structure(ABC, EventsMixin):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
@@ -55,7 +55,6 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_listeners: list[EventListener] = field(factory=list, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(
             lambda self: ConversationMemory(driver=self.config.conversation_memory_driver),
@@ -216,22 +215,6 @@ class Structure(ABC):
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
-
-    def add_event_listener(self, event_listener: EventListener) -> EventListener:
-        if event_listener not in self.event_listeners:
-            self.event_listeners.append(event_listener)
-
-        return event_listener
-
-    def remove_event_listener(self, event_listener: EventListener) -> None:
-        if event_listener in self.event_listeners:
-            self.event_listeners.remove(event_listener)
-        else:
-            raise ValueError("Event Listener not found.")
-
-    def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
-        for event_listener in self.event_listeners:
-            event_listener.publish_event(event, flush=True)
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}

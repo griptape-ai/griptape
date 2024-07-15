@@ -10,14 +10,14 @@ from attrs import Factory, define, field
 
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
-from griptape.mixins import SerializableMixin
+from griptape.mixins import EventsMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseEmbeddingDriver
 
 
 @define
-class BaseVectorStoreDriver(SerializableMixin, ABC):
+class BaseVectorStoreDriver(EventsMixin, SerializableMixin, ABC):
     DEFAULT_QUERY_COUNT = 5
 
     @dataclass
