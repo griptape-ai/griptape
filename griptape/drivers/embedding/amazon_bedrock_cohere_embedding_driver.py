@@ -35,17 +35,22 @@ class AmazonBedrockCohereEmbeddingDriver(BaseEmbeddingDriver):
     input_type: str = field(default="search_query", kw_only=True)
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     tokenizer: BaseTokenizer = field(
-        default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True), kw_only=True
+        default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True),
+        kw_only=True,
     )
     bedrock_client: Any = field(
-        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True), kw_only=True
+        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True),
+        kw_only=True,
     )
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         payload = {"input_type": self.input_type, "texts": [chunk]}
 
         response = self.bedrock_client.invoke_model(
-            body=json.dumps(payload), modelId=self.model, accept="*/*", contentType="application/json"
+            body=json.dumps(payload),
+            modelId=self.model,
+            accept="*/*",
+            contentType="application/json",
         )
         response_body = json.loads(response.get("body").read())
 

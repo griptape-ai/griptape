@@ -22,7 +22,11 @@ class PusherEventListenerDriver(BaseEventListenerDriver):
     pusher_client: Pusher = field(
         default=Factory(
             lambda self: import_optional_dependency("pusher").Pusher(
-                app_id=self.app_id, key=self.key, secret=self.secret, cluster=self.cluster, ssl=True
+                app_id=self.app_id,
+                key=self.key,
+                secret=self.secret,
+                cluster=self.cluster,
+                ssl=True,
             ),
             takes_self=True,
         ),

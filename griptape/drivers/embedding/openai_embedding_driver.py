@@ -37,10 +37,11 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
-        )
+        ),
     )
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
+        kw_only=True,
     )
 
     def try_embed_chunk(self, chunk: str) -> list[float]:

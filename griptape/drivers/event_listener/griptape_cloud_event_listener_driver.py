@@ -21,11 +21,13 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     """
 
     base_url: str = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")), kw_only=True
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
+        kw_only=True,
     )
     api_key: str = field(kw_only=True)
     headers: dict = field(
-        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
+        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
+        kw_only=True,
     )
     structure_run_id: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
 
@@ -33,7 +35,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     def validate_run_id(self, _, structure_run_id: str):
         if structure_run_id is None:
             raise ValueError(
-                "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."
+                "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID).",
             )
 
     def try_publish_event_payload(self, event_payload: dict) -> None:

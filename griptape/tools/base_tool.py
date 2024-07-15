@@ -99,9 +99,9 @@ class BaseTool(ActivityMixin, ABC):
                     Literal("name"): self.name,
                     Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
                     **self.activity_to_input(
-                        activity
+                        activity,
                     ),  # Unpack the dictionary in order to only add the key-values if there are any
-                }
+                },
             )
             for activity in self.activities()
         ]
@@ -122,7 +122,11 @@ class BaseTool(ActivityMixin, ABC):
         return action.input
 
     def run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ToolAction, value: Optional[dict]
+        self,
+        activity: Callable,
+        subtask: ActionsSubtask,
+        action: ToolAction,
+        value: Optional[dict],
     ) -> BaseArtifact:
         activity_result = activity(value)
 
@@ -136,7 +140,11 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ToolAction, value: BaseArtifact
+        self,
+        activity: Callable,
+        subtask: ActionsSubtask,
+        action: ToolAction,
+        value: BaseArtifact,
     ) -> BaseArtifact:
         if value:
             if self.output_memory:

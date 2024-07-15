@@ -16,7 +16,8 @@ class BaseMultiTextInputTask(RuleMixin, BaseTask, ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     _input: tuple[str, ...] | tuple[TextArtifact, ...] | tuple[Callable[[BaseTask], TextArtifact], ...] = field(
-        default=Factory(lambda self: (self.DEFAULT_INPUT_TEMPLATE,), takes_self=True), alias="input"
+        default=Factory(lambda self: (self.DEFAULT_INPUT_TEMPLATE,), takes_self=True),
+        alias="input",
     )
 
     @property
@@ -31,12 +32,13 @@ class BaseMultiTextInputTask(RuleMixin, BaseTask, ABC):
                     TextArtifact(J2().render_from_string(input_template, **self.full_context))
                     for input_template in self._input
                     if isinstance(input_template, str)
-                ]
+                ],
             )
 
     @input.setter
     def input(
-        self, value: tuple[str, ...] | tuple[TextArtifact, ...] | tuple[Callable[[BaseTask], TextArtifact], ...]
+        self,
+        value: tuple[str, ...] | tuple[TextArtifact, ...] | tuple[Callable[[BaseTask], TextArtifact], ...],
     ) -> None:
         self._input = value
 

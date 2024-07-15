@@ -89,7 +89,7 @@ class ActionsSubtask(BaseTask):
                 subtask_parent_task_id=self.parent_task_id,
                 subtask_thought=self.thought,
                 subtask_actions=self.actions_to_dicts(),
-            )
+            ),
         )
 
         parts = [
@@ -155,7 +155,7 @@ class ActionsSubtask(BaseTask):
                 subtask_parent_task_id=self.parent_task_id,
                 subtask_thought=self.thought,
                 subtask_actions=self.actions_to_dicts(),
-            )
+            ),
         )
         self.structure.logger.info(f"Subtask {self.id}\nResponse: {response}")
 
@@ -185,7 +185,8 @@ class ActionsSubtask(BaseTask):
         return json.dumps(self.actions_to_dicts(), indent=2)
 
     def _process_task_input(
-        self, task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact]
+        self,
+        task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact],
     ) -> TextArtifact | ListArtifact:
         if isinstance(task_input, (TextArtifact, ListArtifact)):
             return task_input

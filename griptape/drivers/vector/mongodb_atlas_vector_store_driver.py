@@ -33,12 +33,15 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     index_name: str = field(kw_only=True, metadata={"serializable": True})
     vector_path: str = field(kw_only=True, metadata={"serializable": True})
     num_candidates_multiplier: int = field(
-        default=10, kw_only=True, metadata={"serializable": True}
+        default=10,
+        kw_only=True,
+        metadata={"serializable": True},
     )  # https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-stage/#fields
     client: MongoClient = field(
         default=Factory(
-            lambda self: import_optional_dependency("pymongo").MongoClient(self.connection_string), takes_self=True
-        )
+            lambda self: import_optional_dependency("pymongo").MongoClient(self.connection_string),
+            takes_self=True,
+        ),
     )
 
     def get_collection(self) -> Collection:
@@ -64,7 +67,9 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             vector_id = str(result.inserted_id)
         else:
             collection.replace_one(
-                {"_id": vector_id}, {self.vector_path: vector, "namespace": namespace, "meta": meta}, upsert=True
+                {"_id": vector_id},
+                {self.vector_path: vector, "namespace": namespace, "meta": meta},
+                upsert=True,
             )
         return vector_id
 
@@ -84,7 +89,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             return doc
         else:
             return BaseVectorStoreDriver.Entry(
-                id=str(doc["_id"]), vector=doc[self.vector_path], namespace=doc["namespace"], meta=doc["meta"]
+                id=str(doc["_id"]),
+                vector=doc[self.vector_path],
+                namespace=doc["namespace"],
+                meta=doc["meta"],
             )
 
     def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
@@ -97,7 +105,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         return [
             BaseVectorStoreDriver.Entry(
-                id=str(doc["_id"]), vector=doc[self.vector_path], namespace=doc["namespace"], meta=doc["meta"]
+                id=str(doc["_id"]),
+                vector=doc[self.vector_path],
+                namespace=doc["namespace"],
+                meta=doc["meta"],
             )
             for doc in cursor
         ]
@@ -131,7 +142,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                     "queryVector": vector,
                     "numCandidates": min(count * self.num_candidates_multiplier, self.MAX_NUM_CANDIDATES),
                     "limit": count,
-                }
+                },
             },
             {
                 "$project": {
@@ -140,7 +151,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                     "namespace": 1,
                     "meta": 1,
                     "score": {"$meta": "vectorSearchScore"},
-                }
+                },
             },
         ]
 

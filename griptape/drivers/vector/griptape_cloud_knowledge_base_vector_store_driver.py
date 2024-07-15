@@ -27,10 +27,14 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     knowledge_base_id: str = field(kw_only=True, metadata={"serializable": True})
     base_url: str = field(default="https://cloud.griptape.ai", kw_only=True)
     headers: dict = field(
-        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
+        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
+        kw_only=True,
     )
     embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: DummyEmbeddingDriver()), metadata={"serializable": True}, kw_only=True, init=False
+        default=Factory(lambda: DummyEmbeddingDriver()),
+        metadata={"serializable": True},
+        kw_only=True,
+        init=False,
     )
 
     def upsert_vector(

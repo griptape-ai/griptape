@@ -18,7 +18,7 @@ class PromptResponseRagModule(BaseResponseRagModule):
     answer_token_offset: int = field(default=400)
     prompt_driver: BasePromptDriver = field()
     generate_system_template: Callable[[RagContext, list[TextArtifact]], str] = field(
-        default=Factory(lambda self: self.default_system_template_generator, takes_self=True)
+        default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
     )
 
     def run(self, context: RagContext) -> RagContext:
@@ -32,7 +32,7 @@ class PromptResponseRagModule(BaseResponseRagModule):
 
             system_prompt = self.generate_system_template(context, included_chunks)
             message_token_count = self.prompt_driver.tokenizer.count_tokens(
-                self.prompt_driver.prompt_stack_to_string(self.generate_query_prompt_stack(system_prompt, query))
+                self.prompt_driver.prompt_stack_to_string(self.generate_query_prompt_stack(system_prompt, query)),
             )
 
             if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:

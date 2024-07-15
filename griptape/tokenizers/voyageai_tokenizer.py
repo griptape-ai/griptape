@@ -24,7 +24,8 @@ class VoyageAiTokenizer(BaseTokenizer):
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     client: Client = field(
         default=Factory(
-            lambda self: import_optional_dependency("voyageai").Client(api_key=self.api_key), takes_self=True
+            lambda self: import_optional_dependency("voyageai").Client(api_key=self.api_key),
+            takes_self=True,
         ),
         kw_only=True,
     )

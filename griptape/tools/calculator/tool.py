@@ -15,10 +15,10 @@ class Calculator(BaseTool):
                         "expression",
                         description="Arithmetic expression parsable in pure Python. Single line only. "
                         "Don't use variables. Don't use any imports or external libraries",
-                    ): str
-                }
+                    ): str,
+                },
             ),
-        }
+        },
     )
     def calculate(self, params: dict) -> BaseArtifact:
         import numexpr

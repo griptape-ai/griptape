@@ -17,7 +17,7 @@ class WebScraper(BaseTool):
         config={
             "description": "Can be used to browse a web page and load its content",
             "schema": Schema({Literal("url", description="Valid HTTP URL"): str}),
-        }
+        },
     )
     def get_content(self, params: dict) -> ListArtifact | ErrorArtifact:
         url = params["values"]["url"]

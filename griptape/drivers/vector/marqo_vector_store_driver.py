@@ -29,7 +29,8 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     url: str = field(kw_only=True, metadata={"serializable": True})
     mq: Optional[marqo.Client] = field(
         default=Factory(
-            lambda self: import_optional_dependency("marqo").Client(self.url, api_key=self.api_key), takes_self=True
+            lambda self: import_optional_dependency("marqo").Client(self.url, api_key=self.api_key),
+            takes_self=True,
         ),
         kw_only=True,
     )
@@ -158,7 +159,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
                         vector=doc["_tensor_facets"][0]["_embedding"],
                         meta={k: v for k, v in doc.items() if k not in ["_id", "_tensor_facets", "_found"]},
                         namespace=doc.get("namespace"),
-                    )
+                    ),
                 )
 
         return entries

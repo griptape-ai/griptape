@@ -42,7 +42,7 @@ class Message(BaseMessage):
 
     def to_text(self) -> str:
         return "".join(
-            [content.artifact.to_text() for content in self.content if isinstance(content, TextMessageContent)]
+            [content.artifact.to_text() for content in self.content if isinstance(content, TextMessageContent)],
         )
 
     def to_artifact(self) -> BaseArtifact:

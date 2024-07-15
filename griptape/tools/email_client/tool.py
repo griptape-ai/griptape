@@ -66,15 +66,15 @@ class EmailClient(BaseTool):
                 {
                     Literal("label", description="Label to retrieve emails from such as 'INBOX' or 'SENT'"): str,
                     schema.Optional(
-                        Literal("key", description="Optional key for filtering such as 'FROM' or 'SUBJECT'")
+                        Literal("key", description="Optional key for filtering such as 'FROM' or 'SUBJECT'"),
                     ): str,
                     schema.Optional(
-                        Literal("search_criteria", description="Optional search criteria to filter emails by key")
+                        Literal("search_criteria", description="Optional search criteria to filter emails by key"),
                     ): str,
                     schema.Optional(Literal("max_count", description="Optional max email count")): int,
-                }
+                },
             ),
-        }
+        },
     )
     def retrieve(self, params: dict) -> ListArtifact | ErrorArtifact:
         if self.mailboxes is None:
@@ -89,7 +89,7 @@ class EmailClient(BaseTool):
                 key=values.get("key"),
                 search_criteria=values.get("search_criteria"),
                 max_count=max_count,
-            )
+            ),
         )
 
     @activity(
@@ -100,9 +100,9 @@ class EmailClient(BaseTool):
                     Literal("to", description="Recipient's email address"): str,
                     Literal("subject", description="Email subject"): str,
                     Literal("body", description="Email body"): str,
-                }
+                },
             ),
-        }
+        },
     )
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]

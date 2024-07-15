@@ -49,10 +49,10 @@ class RestApiClient(BaseTool):
                 This rest api has the following description: {{ _self.description }}
                 {% if _self.request_body_schema %}The request body must follow this JSON schema: {{ _self.request_body_schema }}{% endif %}
                 {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
-                """
+                """,
             ),
             "schema": Schema({Literal("body", description="The request body."): dict}),
-        }
+        },
     )
     def put(self, params: dict) -> BaseArtifact:
         from requests import exceptions, put
@@ -79,15 +79,15 @@ class RestApiClient(BaseTool):
                 {% if _self.request_path_parameters %}The request path parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
                 {% if _self.request_body_schema %}The request body must follow this JSON schema: {{ _self.request_body_schema }}{% endif %}
                 {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
-                """
+                """,
             ),
             "schema": Schema(
                 {
                     Literal("path_params", description="The request path parameters."): list[str],
                     Literal("body", description="The request body."): dict,
-                }
+                },
             ),
-        }
+        },
     )
     def patch(self, params: dict) -> BaseArtifact:
         from requests import exceptions, patch
@@ -113,10 +113,10 @@ class RestApiClient(BaseTool):
                 This rest api has the following description: {{ _self.description }}
                 {% if _self.request_body_schema %}The request body must follow this JSON schema: {{ _self.request_body_schema }}{% endif %}
                 {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
-                """
+                """,
             ),
             "schema": Schema({Literal("body", description="The request body."): dict}),
-        }
+        },
     )
     def post(self, params: dict) -> BaseArtifact:
         from requests import exceptions, post
@@ -142,17 +142,17 @@ class RestApiClient(BaseTool):
                 {% if _self.request_path_parameters %}The request path parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
                 {% if _self.request_query_parameters %}The request query parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
                 {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
-                """
+                """,
             ),
             "schema": schema.Optional(
                 Schema(
                     {
                         schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
                         schema.Optional(Literal("path_params", description="The request path parameters.")): list[str],
-                    }
-                )
+                    },
+                ),
             ),
-        }
+        },
     )
     def get(self, params: dict) -> BaseArtifact:
         from requests import exceptions, get
@@ -182,15 +182,15 @@ class RestApiClient(BaseTool):
                 This rest api has the following description: {{ _self.description }}
                 {% if _self.request_path_parameters %}The request path parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
                 {% if _self.request_query_parameters %}The request query parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
-                """
+                """,
             ),
             "schema": Schema(
                 {
                     schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
                     schema.Optional(Literal("path_params", description="The request path parameters.")): list[str],
-                }
+                },
             ),
-        }
+        },
     )
     def delete(self, params: dict) -> BaseArtifact:
         from requests import delete, exceptions

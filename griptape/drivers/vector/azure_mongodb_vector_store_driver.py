@@ -43,8 +43,8 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
                         "k": min(count * self.num_candidates_multiplier, self.MAX_NUM_CANDIDATES),
                     },
                     "returnStoredSource": True,
-                }
-            }
+                },
+            },
         )
 
         if namespace:

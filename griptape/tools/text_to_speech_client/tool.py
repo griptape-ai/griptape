@@ -30,7 +30,7 @@ class TextToSpeechClient(BlobArtifactFileOutputMixin, BaseTool):
         config={
             "description": "Can be used to generate speech from the provided input text.",
             "schema": Schema({Literal("text", description="The literal text to be converted to speech."): str}),
-        }
+        },
     )
     def text_to_speech(self, params: dict[str, Any]) -> AudioArtifact | ErrorArtifact:
         text = params["values"]["text"]

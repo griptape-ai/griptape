@@ -34,10 +34,10 @@ class PromptImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                     Literal(
                         "prompts",
                         description="A detailed list of features and descriptions to include in the generated image.",
-                    ): list[str]
-                }
+                    ): list[str],
+                },
             ),
-        }
+        },
     )
     def generate_image(self, params: dict[str, dict[str, list[str]]]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]

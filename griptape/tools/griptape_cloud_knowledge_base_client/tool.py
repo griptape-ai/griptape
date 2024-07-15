@@ -27,9 +27,14 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
         config={
             "description": "Can be used to search a knowledge base with the following description: {{ _self._get_knowledge_base_description() }}",
             "schema": Schema(
-                {Literal("query", description="A natural language search query to run against the knowledge base"): str}
+                {
+                    Literal(
+                        "query",
+                        description="A natural language search query to run against the knowledge base",
+                    ): str,
+                },
             ),
-        }
+        },
     )
     def query(self, params: dict) -> TextArtifact | ErrorArtifact:
         from requests import exceptions, post
@@ -59,7 +64,7 @@ class GriptapeCloudKnowledgeBaseClient(BaseGriptapeCloudClient):
                     return response_body["description"]
                 else:
                     raise ValueError(
-                        f"No description found for Knowledge Base {self.knowledge_base_id}. Please set a description, or manually set the `GriptapeCloudKnowledgeBaseClient.description` attribute."
+                        f"No description found for Knowledge Base {self.knowledge_base_id}. Please set a description, or manually set the `GriptapeCloudKnowledgeBaseClient.description` attribute.",
                     )
             else:
                 raise ValueError(f"Error accessing Knowledge Base {self.knowledge_base_id}.")

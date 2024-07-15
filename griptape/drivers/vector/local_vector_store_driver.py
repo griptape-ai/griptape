@@ -61,7 +61,10 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
 
         with self.thread_lock:
             self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.Entry(
-                id=vector_id, vector=vector, meta=meta, namespace=namespace
+                id=vector_id,
+                vector=vector,
+                meta=meta,
+                namespace=namespace,
             )
 
         if self.persist_file is not None:

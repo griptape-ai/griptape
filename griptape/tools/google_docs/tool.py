@@ -29,9 +29,9 @@ class GoogleDocsClient(BaseGoogleClient):
                         "For example, 'foo/bar/baz.txt'",
                     ): str,
                     Literal("text", description="Text to be appended to the Google Doc."): str,
-                }
+                },
             ),
-        }
+        },
     )
     def append_text_to_google_doc(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
@@ -40,10 +40,16 @@ class GoogleDocsClient(BaseGoogleClient):
 
         try:
             docs_service = self._build_client(
-                scopes=self.DOCS_SCOPES, service_name="docs", version="v1", owner_email=self.owner_email
+                scopes=self.DOCS_SCOPES,
+                service_name="docs",
+                version="v1",
+                owner_email=self.owner_email,
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_FILE_SCOPES, service_name="drive", version="v3", owner_email=self.owner_email
+                scopes=self.DRIVE_FILE_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email,
             )
 
             document_id = self._convert_path_to_file_id(drive_service, file_path)
@@ -77,9 +83,9 @@ class GoogleDocsClient(BaseGoogleClient):
                         "For example, 'foo/bar/baz.txt'",
                     ): str,
                     Literal("text", description="Text to be prepended to the Google Doc."): str,
-                }
+                },
             ),
-        }
+        },
     )
     def prepend_text_to_google_doc(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
@@ -88,10 +94,16 @@ class GoogleDocsClient(BaseGoogleClient):
 
         try:
             docs_service = self._build_client(
-                scopes=self.DOCS_SCOPES, service_name="docs", version="v1", owner_email=self.owner_email
+                scopes=self.DOCS_SCOPES,
+                service_name="docs",
+                version="v1",
+                owner_email=self.owner_email,
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_FILE_SCOPES, service_name="drive", version="v3", owner_email=self.owner_email
+                scopes=self.DRIVE_FILE_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email,
             )
 
             document_id = self._convert_path_to_file_id(drive_service, file_path)
@@ -128,9 +140,9 @@ class GoogleDocsClient(BaseGoogleClient):
                         default=DEFAULT_FOLDER_PATH,
                         description="Path of the folder where the Google doc will be created.",
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
     def save_content_to_google_doc(self, params: dict) -> ErrorArtifact | InfoArtifact:
         values = params["values"]
@@ -140,10 +152,16 @@ class GoogleDocsClient(BaseGoogleClient):
 
         try:
             docs_service = self._build_client(
-                scopes=self.DOCS_SCOPES, service_name="docs", version="v1", owner_email=self.owner_email
+                scopes=self.DOCS_SCOPES,
+                service_name="docs",
+                version="v1",
+                owner_email=self.owner_email,
             )
             drive_service = self._build_client(
-                scopes=self.DRIVE_FILE_SCOPES, service_name="drive", version="v3", owner_email=self.owner_email
+                scopes=self.DRIVE_FILE_SCOPES,
+                service_name="drive",
+                version="v3",
+                owner_email=self.owner_email,
             )
 
             body = {"title": file_path}
@@ -183,9 +201,9 @@ class GoogleDocsClient(BaseGoogleClient):
                         description="Path of the folder where the Google Doc should be saved.",
                         default=DEFAULT_FOLDER_PATH,
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
     def save_memory_artifacts_to_google_docs(self, params: dict) -> ErrorArtifact | InfoArtifact:
         values = params["values"]
@@ -217,7 +235,10 @@ class GoogleDocsClient(BaseGoogleClient):
 
     def _save_to_doc(self, params: dict) -> str:
         service = self._build_client(
-            scopes=self.DOCS_SCOPES, service_name="docs", version="v1", owner_email=self.owner_email
+            scopes=self.DOCS_SCOPES,
+            service_name="docs",
+            version="v1",
+            owner_email=self.owner_email,
         )
 
         requests = [{"insertText": {"location": {"index": 1}, "text": params["content"]}}]

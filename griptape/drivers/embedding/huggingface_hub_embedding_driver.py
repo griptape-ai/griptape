@@ -25,7 +25,8 @@ class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(
-                model=self.model, token=self.api_token
+                model=self.model,
+                token=self.api_token,
             ),
             takes_self=True,
         ),
