@@ -228,7 +228,7 @@ ignore = [
     "D105", # undocumented-magic-method
     "D106", # undocumented-public-nested-class
     "D107", # undocumented-public-init
-    "COM812" # missing-trailing-comma -- disabled for compatability with formatter.
+    "COM812" # missing-trailing-comma -- See https://github.com/astral-sh/ruff/issues/9216 
 ]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
