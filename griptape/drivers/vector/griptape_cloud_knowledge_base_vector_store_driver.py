@@ -1,11 +1,15 @@
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Optional
 from urllib.parse import urljoin
 
 import requests
 from attrs import Factory, define, field
 
-from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ListArtifact, TextArtifact
 
 
 @define

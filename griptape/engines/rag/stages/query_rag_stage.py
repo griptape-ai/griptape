@@ -1,12 +1,18 @@
+from __future__ import annotations
+
 import logging
-from collections.abc import Sequence
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
 from griptape import utils
-from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseQueryRagModule, BaseRagModule
 from griptape.engines.rag.stages import BaseRagStage
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from griptape.engines.rag import RagContext
+    from griptape.engines.rag.modules import BaseQueryRagModule, BaseRagModule
 
 
 @define(kw_only=True)

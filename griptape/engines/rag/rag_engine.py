@@ -1,9 +1,13 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
 from griptape.engines.rag import RagContext
-from griptape.engines.rag.stages import QueryRagStage, ResponseRagStage, RetrievalRagStage
+
+if TYPE_CHECKING:
+    from griptape.engines.rag.stages import QueryRagStage, ResponseRagStage, RetrievalRagStage
 
 
 @define(kw_only=True)

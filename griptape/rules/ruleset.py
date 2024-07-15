@@ -1,6 +1,11 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from attrs import define, field
 
-from griptape.rules import Rule
+if TYPE_CHECKING:
+    from griptape.rules import Rule
 
 
 @define

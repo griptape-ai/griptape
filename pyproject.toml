@@ -213,7 +213,8 @@ select = [
     "TCH", # flake8-type-checking
     "D", # pydocstyle
     "PGH", # pygrep-hooks
-    "I" # isort
+    "I", # isort
+    "FA" # flake8-future-annotations
 ]
 ignore = [
     "UP007", # non-pep604-annotation
