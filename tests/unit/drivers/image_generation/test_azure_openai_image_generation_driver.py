@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import Mock
+
+import pytest
+
 from griptape.drivers import AzureOpenAiImageGenerationDriver
 
 
@@ -27,7 +29,7 @@ class TestAzureOpenAiImageGenerationDriver:
         with pytest.raises(TypeError):
             AzureOpenAiImageGenerationDriver(
                 model="dall-e-3", client=Mock(), azure_deployment="dalle-deployment", image_size="512x512"
-            )  # pyright: ignore
+            )  # pyright: ignore[reportCallIssues]
 
     def test_try_text_to_image(self, driver):
         driver.client.images.generate.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])

@@ -1,8 +1,9 @@
-from pytest import fixture
-from moto import mock_sqs
 import boto3
-from tests.mocks.mock_event import MockEvent
+from moto import mock_sqs
+from pytest import fixture
+
 from griptape.drivers.event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
+from tests.mocks.mock_event import MockEvent
 from tests.utils.aws import mock_aws_credentials
 
 

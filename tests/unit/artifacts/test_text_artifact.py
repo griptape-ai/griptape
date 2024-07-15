@@ -1,6 +1,8 @@
 import json
+
 import pytest
-from griptape.artifacts import TextArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.tokenizers import OpenAiTokenizer
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 

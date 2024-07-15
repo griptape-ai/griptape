@@ -1,10 +1,10 @@
-from griptape.artifacts.list_artifact import ListArtifact
-from griptape.engines import OutpaintingImageGenerationEngine
 from unittest.mock import Mock
 
 import pytest
 
 from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.artifacts.list_artifact import ListArtifact
+from griptape.engines import OutpaintingImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, OutpaintingImageGenerationTask
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
@@ -60,4 +60,4 @@ class TestOutpaintingImageGenerationTask:
         task = OutpaintingImageGenerationTask((text_artifact, image_artifact, image_artifact))
 
         with pytest.raises(ValueError):
-            task.image_generation_engine
+            task.image_generation_engine  # noqa: B018

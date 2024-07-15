@@ -1,5 +1,7 @@
-from typing import Iterator
+from collections.abc import Iterator
+
 import pytest
+
 from griptape.structures import Agent
 from griptape.utils import Stream
 from tests.mocks.mock_prompt_driver import MockPromptDriver

@@ -1,6 +1,7 @@
 import pytest
 from requests import exceptions
-from griptape.artifacts import TextArtifact, ErrorArtifact
+
+from griptape.artifacts import ErrorArtifact, TextArtifact
 
 
 class TestGriptapeCloudKnowledgeBaseClient:
@@ -75,10 +76,10 @@ class TestGriptapeCloudKnowledgeBaseClient:
 
     def test_get_knowledge_base_description_error(self, client_no_description):
         exception_match_text = f"No description found for Knowledge Base {client_no_description.knowledge_base_id}. Please set a description, or manually set the `GriptapeCloudKnowledgeBaseClient.description` attribute."
-        with pytest.raises(ValueError, match=exception_match_text) as e:
+        with pytest.raises(ValueError, match=exception_match_text):
             client_no_description._get_knowledge_base_description()
 
     def test_get_knowledge_base_kb_error(self, client_kb_not_found):
         exception_match_text = f"Error accessing Knowledge Base {client_kb_not_found.knowledge_base_id}."
-        with pytest.raises(ValueError, match=exception_match_text) as e:
+        with pytest.raises(ValueError, match=exception_match_text):
             client_kb_not_found._get_knowledge_base_description()

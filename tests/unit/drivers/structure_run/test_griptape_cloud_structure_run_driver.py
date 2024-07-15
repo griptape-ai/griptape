@@ -1,5 +1,6 @@
 import pytest
-from griptape.artifacts import TextArtifact, InfoArtifact
+
+from griptape.artifacts import InfoArtifact, TextArtifact
 
 
 class TestGriptapeCloudStructureRunDriver:

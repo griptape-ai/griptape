@@ -1,9 +1,11 @@
 import os
 import tempfile
+
 import boto3
 import pytest
 from moto import mock_s3
-from griptape.artifacts import ErrorArtifact, ListArtifact, InfoArtifact, TextArtifact
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers import AmazonS3FileManagerDriver
 from griptape.loaders import TextLoader
 from tests.utils.aws import mock_aws_credentials
@@ -30,16 +32,16 @@ class TestAmazonS3FileManagerDriver:
         bucket = "test-bucket"
         s3_client.create_bucket(Bucket=bucket)
 
-        def write_file(path: str, content: bytes):
+        def write_file(path: str, content: bytes) -> None:
             s3_client.put_object(Bucket=bucket, Key=path, Body=content)
 
-        def mkdir(path: str):
+        def mkdir(path: str) -> None:
             # S3-style empty directories, such as is created via the `Create Folder` button
             # in the AWS S3 console (essentially, an empty file with a trailing slash).
             s3_dir_key = path.rstrip("/") + "/"
             s3_client.put_object(Bucket=bucket, Key=s3_dir_key)
 
-        def copy_test_resource(resource_path: str):
+        def copy_test_resource(resource_path: str) -> None:
             file_dir = os.path.dirname(__file__)
             full_path = os.path.join(file_dir, "../../../resources", resource_path)
             full_path = os.path.normpath(full_path)
@@ -250,8 +252,8 @@ class TestAmazonS3FileManagerDriver:
 
         # loop over the files in the bucket and print them
         response = s3_client.list_objects_v2(Bucket=bucket)
-        for obj in response.get("Contents", []):
-            print(obj.get("Key"))
+        for _obj in response.get("Contents", []):
+            pass
 
         assert isinstance(artifact, ErrorArtifact)
         assert artifact.value == expected

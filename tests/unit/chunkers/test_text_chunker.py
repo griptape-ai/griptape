@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import TextChunker
 from tests.unit.chunkers.utils import gen_paragraph

@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.common import Reference
 from griptape.engines.rag import RagContext

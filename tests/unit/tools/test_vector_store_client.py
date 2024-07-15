@@ -1,5 +1,6 @@
 import pytest
-from griptape.artifacts import TextArtifact, ListArtifact
+
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.tools import VectorStoreClient
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -16,7 +17,7 @@ class TestVectorStoreClient:
 
         driver.upsert_text_artifacts({"test": [TextArtifact("foo"), TextArtifact("bar")]})
 
-        assert set([a.value for a in tool.search({"values": {"query": "test"}})]) == {"foo", "bar"}
+        assert {a.value for a in tool.search({"values": {"query": "test"}})} == {"foo", "bar"}
 
     def test_search_with_namespace(self):
         driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())

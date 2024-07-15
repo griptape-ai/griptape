@@ -1,5 +1,6 @@
-from tests.utils.structure_tester import StructureTester
 import pytest
+
+from tests.utils.structure_tester import StructureTester
 
 
 class TestFileManager:

@@ -1,5 +1,6 @@
-from griptape.tokenizers import AmazonBedrockTokenizer
 import pytest
+
+from griptape.tokenizers import AmazonBedrockTokenizer
 
 
 class TestAmazonBedrockTokenizer:

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import email
 from email import message
+from typing import Optional
+
+import pytest
+
 from griptape.artifacts import ErrorArtifact, ListArtifact
 from griptape.loaders import EmailLoader
-from typing import Optional
-import email
-import pytest
 
 
 class TestEmailLoader:

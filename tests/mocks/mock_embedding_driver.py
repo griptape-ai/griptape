@@ -1,4 +1,7 @@
-from attrs import field, define
+from __future__ import annotations
+
+from attrs import define, field
+
 from griptape.drivers import BaseEmbeddingDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
 

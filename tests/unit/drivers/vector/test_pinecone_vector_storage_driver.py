@@ -1,17 +1,11 @@
 import pytest
 
-from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.drivers import PineconeVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestPineconeVectorStorageDriver:
-    """
-    This should really be under `unit` but the Pinecone client results
-    in tests hanging on GitHub.
-    """
-
     @pytest.fixture(autouse=True)
     def mock_pinecone(self, mocker):
         # Create a fake response

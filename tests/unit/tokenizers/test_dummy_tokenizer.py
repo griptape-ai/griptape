@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.exceptions import DummyException
 from griptape.tokenizers import DummyTokenizer
 

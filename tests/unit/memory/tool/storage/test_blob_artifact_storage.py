@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts import BlobArtifact, TextArtifact
 from griptape.memory.task.storage import BlobArtifactStorage
 

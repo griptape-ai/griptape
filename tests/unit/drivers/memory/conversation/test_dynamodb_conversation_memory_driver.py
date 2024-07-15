@@ -1,12 +1,13 @@
+import boto3
 import pytest
 from moto import mock_dynamodb
-import boto3
+
+from griptape.drivers import AmazonDynamoDbConversationMemoryDriver
+from griptape.memory.structure import ConversationMemory
+from griptape.structures import Pipeline
+from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils.aws import mock_aws_credentials
-from griptape.memory.structure import ConversationMemory
-from griptape.tasks import PromptTask
-from griptape.structures import Pipeline
-from griptape.drivers import AmazonDynamoDbConversationMemoryDriver
 
 
 class TestDynamoDbConversationMemoryDriver:

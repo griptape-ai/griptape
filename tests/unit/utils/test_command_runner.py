@@ -1,4 +1,3 @@
-from griptape.artifacts import TextArtifact
 from griptape.utils import CommandRunner
 
 

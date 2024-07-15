@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.csv_row_artifact import CsvRowArtifact
 

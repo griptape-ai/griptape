@@ -1,7 +1,9 @@
 from collections import namedtuple
+
 import pytest
-from griptape.drivers import MarqoVectorStoreDriver
+
 from griptape.artifacts import TextArtifact
+from griptape.drivers import MarqoVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 

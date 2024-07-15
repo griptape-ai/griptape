@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import PromptResponseRagModule

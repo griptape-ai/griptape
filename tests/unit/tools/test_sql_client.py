@@ -1,8 +1,10 @@
+import sqlite3
+
 import pytest
+
 from griptape.drivers import SqlDriver
 from griptape.loaders import SqlLoader
 from griptape.tools import SqlClient
-import sqlite3
 
 
 class TestSqlClient:

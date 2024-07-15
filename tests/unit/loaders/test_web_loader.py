@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.loaders import WebLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver

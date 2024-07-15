@@ -1,7 +1,7 @@
 import pytest
 
-from griptape.drivers import ProxyWebScraperDriver
 from griptape.artifacts import TextArtifact
+from griptape.drivers import ProxyWebScraperDriver
 
 
 class TestProxyWebScraperDriver:
@@ -26,7 +26,7 @@ class TestProxyWebScraperDriver:
         output = web_scraper.scrape_url("https://example.com/")
         mock_client.assert_called_with("https://example.com/", proxies=web_scraper.proxies, test_param="test_param")
         assert isinstance(output, TextArtifact)
-        assert "test_scrape" == output.value
+        assert output.value == "test_scrape"
 
     def test_scrape_url_error(self, web_scraper, mock_client_error):
         with pytest.raises(Exception, match="test_error"):

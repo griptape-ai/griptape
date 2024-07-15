@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.common import ImageMessageContent
 

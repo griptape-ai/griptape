@@ -1,5 +1,6 @@
 import pytest
-from griptape.memory.meta import MetaMemory, ActionSubtaskMetaEntry
+
+from griptape.memory.meta import ActionSubtaskMetaEntry, MetaMemory
 
 
 class TestMetaMemory:

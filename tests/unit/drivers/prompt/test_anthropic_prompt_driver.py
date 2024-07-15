@@ -1,10 +1,11 @@
-from griptape.artifacts.error_artifact import ErrorArtifact
-from griptape.drivers import AnthropicPromptDriver
-from griptape.common import PromptStack, TextDeltaMessageContent, ActionCallDeltaMessageContent, ToolAction
-from griptape.artifacts import TextArtifact, ActionArtifact, ImageArtifact, ListArtifact
 from unittest.mock import Mock
+
 import pytest
 
+from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts.error_artifact import ErrorArtifact
+from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.drivers import AnthropicPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 

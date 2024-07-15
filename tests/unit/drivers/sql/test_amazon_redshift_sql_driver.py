@@ -1,7 +1,8 @@
-import pytest
 import boto3
+import pytest
 from botocore.stub import Stubber
-from griptape.drivers import BaseSqlDriver, AmazonRedshiftSqlDriver
+
+from griptape.drivers import AmazonRedshiftSqlDriver, BaseSqlDriver
 
 
 class TestAmazonRedshiftSqlDriver:

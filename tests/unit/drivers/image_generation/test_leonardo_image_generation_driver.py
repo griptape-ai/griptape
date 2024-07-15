@@ -1,6 +1,8 @@
 import uuid
-from unittest.mock import Mock, PropertyMock, MagicMock
+from unittest.mock import Mock
+
 import pytest
+
 from griptape.drivers import LeonardoImageGenerationDriver
 
 

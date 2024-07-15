@@ -118,5 +118,5 @@ class TestBedrockStableDiffusionImageGenerationModelDriver:
 
         response = {"artifacts": [{"finishReason": "ERROR", "base64": base64.b64encode(image_bytes).decode("utf-8")}]}
 
-        with pytest.raises(Exception):
+        with pytest.raises(Exception, match="Image generation failed:"):
             model_driver.get_generated_image(response)

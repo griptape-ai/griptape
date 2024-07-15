@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.drivers import DummyVectorStoreDriver
 from griptape.exceptions import DummyException
 

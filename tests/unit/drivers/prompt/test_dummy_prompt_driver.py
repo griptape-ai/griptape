@@ -1,6 +1,6 @@
-from griptape.drivers import DummyPromptDriver
 import pytest
 
+from griptape.drivers import DummyPromptDriver
 from griptape.exceptions import DummyException
 
 

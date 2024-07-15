@@ -1,12 +1,13 @@
-from griptape.artifacts import ImageArtifact, ListArtifact
-from griptape.artifacts import TextArtifact, ActionArtifact
-from griptape.drivers import OpenAiChatPromptDriver
-from griptape.common import PromptStack, TextDeltaMessageContent, ActionCallDeltaMessageContent, ToolAction
-from griptape.tokenizers import OpenAiTokenizer
 from unittest.mock import Mock
+
+import pytest
+
+from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.drivers import OpenAiChatPromptDriver
+from griptape.tokenizers import OpenAiTokenizer
 from tests.mocks.mock_tokenizer import MockTokenizer
 from tests.mocks.mock_tool.tool import MockTool
-import pytest
 
 
 class TestOpenAiChatPromptDriverFixtureMixin:
@@ -283,7 +284,7 @@ class OpenAiApiResponseWithHeaders:
         remaining_tokens=234,
         limit_requests=345,
         limit_tokens=456,
-    ):
+    ) -> None:
         self.reset_requests_in = reset_requests_in
         self.reset_requests_in_unit = reset_requests_in_unit
         self.reset_tokens_in = reset_tokens_in

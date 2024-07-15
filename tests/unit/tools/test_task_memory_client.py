@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.tools import TaskMemoryClient
 from tests.utils import defaults

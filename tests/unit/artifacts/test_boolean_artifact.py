@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts import BooleanArtifact
 
 
@@ -31,5 +32,5 @@ class TestBooleanArtifact:
         assert BooleanArtifact("false").value is True
         assert BooleanArtifact([1]).value is True
         assert BooleanArtifact([]).value is False
-        assert BooleanArtifact(False) == False
-        assert BooleanArtifact(True) == True
+        assert BooleanArtifact(False).value is False
+        assert BooleanArtifact(True).value is True

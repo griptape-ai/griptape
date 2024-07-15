@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.artifacts import TextArtifact, ErrorArtifact, ImageArtifact
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.utils import load_artifact_from_memory
 
 
@@ -21,7 +21,7 @@ class TestLoadImageArtifactFromMemory:
 
     def test_no_memory(self):
         with pytest.raises(ValueError):
-            load_artifact_from_memory(None, "", "", TextArtifact)  # pyright: ignore
+            load_artifact_from_memory(None, "", "", TextArtifact)  # pyright: ignore[reportArgumentType]
 
     def test_no_artifacts_in_memory(self, memory):
         memory.load_artifacts.return_value = []

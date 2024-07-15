@@ -1,5 +1,6 @@
 import cohere
 import pytest
+
 from griptape.tokenizers import CohereTokenizer
 
 

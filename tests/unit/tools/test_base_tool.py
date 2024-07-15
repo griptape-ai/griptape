@@ -1,10 +1,12 @@
 import inspect
 import os
+
 import pytest
 import yaml
-from schema import SchemaMissingKeyError, Schema, Or
-from griptape.tasks import ActionsSubtask, ToolkitTask
+from schema import Or, Schema, SchemaMissingKeyError
+
 from griptape.common import ToolAction
+from griptape.tasks import ActionsSubtask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -195,9 +197,9 @@ class TestBaseTool:
 
     def test_invalid_config(self):
         try:
-            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool  # noqa
+            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool  # noqa: F401
 
-            assert False
+            raise AssertionError()
         except SchemaMissingKeyError:
             assert True
 

@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.events import StartTaskEvent
 from griptape.structures import Agent
 from griptape.tasks import PromptTask

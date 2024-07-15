@@ -1,4 +1,5 @@
 from pytest import fixture
+
 from griptape.config import AzureOpenAiStructureConfig
 
 

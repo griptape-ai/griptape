@@ -1,7 +1,9 @@
-from pytest import fixture
-from tests.mocks.mock_event import MockEvent
-from griptape.drivers import PusherEventListenerDriver
 from unittest.mock import Mock
+
+from pytest import fixture
+
+from griptape.drivers import PusherEventListenerDriver
+from tests.mocks.mock_event import MockEvent
 
 
 class TestPusherEventListenerDriver:

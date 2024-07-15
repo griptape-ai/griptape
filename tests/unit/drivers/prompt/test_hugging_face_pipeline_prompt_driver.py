@@ -1,6 +1,7 @@
-from griptape.drivers import HuggingFacePipelinePromptDriver
-from griptape.common import PromptStack
 import pytest
+
+from griptape.common import PromptStack
+from griptape.drivers import HuggingFacePipelinePromptDriver
 
 
 class TestHuggingFacePipelinePromptDriver:

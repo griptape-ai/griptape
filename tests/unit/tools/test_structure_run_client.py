@@ -1,7 +1,8 @@
 import pytest
+
 from griptape.drivers.structure_run.local_structure_run_driver import LocalStructureRunDriver
-from griptape.tools import StructureRunClient
 from griptape.structures import Agent
+from griptape.tools import StructureRunClient
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 

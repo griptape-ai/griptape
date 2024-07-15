@@ -1,5 +1,6 @@
 from attrs import define, field
-from schema import Schema, Literal
+from schema import Literal, Schema
+
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 

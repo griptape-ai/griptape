@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.chunkers import MarkdownChunker
 from tests.unit.chunkers.test_text_chunker import gen_paragraph
 

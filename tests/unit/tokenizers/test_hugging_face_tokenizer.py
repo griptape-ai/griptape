@@ -3,6 +3,7 @@ from os import environ
 environ["TRANSFORMERS_VERBOSITY"] = "error"
 
 import pytest  # noqa: E402
+
 from griptape.tokenizers import HuggingFaceTokenizer  # noqa: E402
 
 

@@ -1,5 +1,6 @@
 import pytest
-from schema import Schema, Literal, Optional
+from schema import Literal, Optional, Schema
+
 from tests.mocks.mock_tool.tool import MockTool
 
 

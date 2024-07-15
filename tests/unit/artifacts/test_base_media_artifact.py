@@ -1,5 +1,4 @@
 import pytest
-
 from attrs import define
 
 from griptape.artifacts import MediaArtifact

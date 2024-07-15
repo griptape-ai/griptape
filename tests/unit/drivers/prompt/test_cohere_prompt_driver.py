@@ -5,9 +5,8 @@ import pytest
 from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.common import PromptStack, ToolAction
+from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers import CoherePromptDriver
-from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent
 from tests.mocks.mock_tool.tool import MockTool
 
 

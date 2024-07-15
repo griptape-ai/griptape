@@ -1,7 +1,8 @@
+import pytest
+
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils.defaults import rag_engine
 from tests.utils.structure_tester import StructureTester
-import pytest
 
 
 class TestRagTask:
@@ -11,10 +12,10 @@ class TestRagTask:
         ids=StructureTester.prompt_driver_id_fn,
     )
     def structure_tester(self, request):
+        from griptape.artifacts import TextArtifact
+        from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
         from griptape.structures import Agent
         from griptape.tasks import RagTask
-        from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
-        from griptape.artifacts import TextArtifact
 
         vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
         artifact = TextArtifact("John Doe works as as software engineer at Griptape.")

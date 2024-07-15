@@ -1,6 +1,7 @@
 import pytest
-from griptape.events import StartPromptEvent
+
 from griptape.common import PromptStack
+from griptape.events import StartPromptEvent
 
 
 class TestStartPromptEvent:

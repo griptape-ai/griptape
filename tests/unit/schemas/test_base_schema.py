@@ -1,13 +1,16 @@
 from __future__ import annotations
+
 from datetime import datetime
+from typing import Literal, Optional, Union
+
 import pytest
-from typing import Union, Optional, Literal
 from marshmallow import fields
+
 from griptape.artifacts import BaseArtifact, TextArtifact
-from griptape.schemas import PolymorphicSchema
-from griptape.schemas.bytes_field import Bytes
-from griptape.schemas.base_schema import BaseSchema
 from griptape.loaders import TextLoader
+from griptape.schemas import PolymorphicSchema
+from griptape.schemas.base_schema import BaseSchema
+from griptape.schemas.bytes_field import Bytes
 from tests.mocks.mock_serializable import MockSerializable
 
 
@@ -62,8 +65,8 @@ class TestBaseSchema:
 
         assert BaseSchema._get_field_type_info(list) == (list, (), False)
 
-        assert BaseSchema._get_field_type_info(Literal["foo"]) == (str, (), False)  # pyright: ignore
-        assert BaseSchema._get_field_type_info(Literal[5]) == (int, (), False)  # pyright: ignore
+        assert BaseSchema._get_field_type_info(Literal["foo"]) == (str, (), False)  # pyright: ignore[reportArgumentType]
+        assert BaseSchema._get_field_type_info(Literal[5]) == (int, (), False)  # pyright: ignore[reportArgumentType]
 
     def test_is_list_sequence(self):
         assert BaseSchema.is_list_sequence(list)

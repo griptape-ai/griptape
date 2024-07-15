@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import ActionResultMessageContent, ToolAction
 

@@ -1,8 +1,9 @@
 import pytest
+
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines.rag import RagEngine, RagContext
-from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
+from griptape.engines.rag import RagContext, RagEngine
+from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRetrievalRagModule
+from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 

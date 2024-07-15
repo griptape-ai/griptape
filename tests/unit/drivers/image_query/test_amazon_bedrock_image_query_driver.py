@@ -1,8 +1,10 @@
-import pytest
 import io
 from unittest.mock import Mock
-from griptape.drivers import AmazonBedrockImageQueryDriver
+
+import pytest
+
 from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.drivers import AmazonBedrockImageQueryDriver
 
 
 class TestAmazonBedrockImageQueryDriver:

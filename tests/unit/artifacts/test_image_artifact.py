@@ -1,5 +1,6 @@
 import pytest
-from griptape.artifacts import ImageArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, ImageArtifact
 
 
 class TestImageArtifact:

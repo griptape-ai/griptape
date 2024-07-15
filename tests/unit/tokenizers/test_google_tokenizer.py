@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import Mock
+
+import pytest
+
 from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.tokenizers import GoogleTokenizer

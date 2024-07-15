@@ -1,5 +1,7 @@
-import pytest
 from unittest import mock
+
+import pytest
+
 from griptape.drivers import AmazonSageMakerJumpstartEmbeddingDriver
 from griptape.tokenizers.openai_tokenizer import OpenAiTokenizer
 

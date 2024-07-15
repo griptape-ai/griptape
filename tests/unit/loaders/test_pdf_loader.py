@@ -1,8 +1,5 @@
-import os
-from pathlib import Path
-from typing import IO
 import pytest
-from griptape import utils
+
 from griptape.loaders import PdfLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 

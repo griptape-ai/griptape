@@ -1,7 +1,9 @@
 from unittest.mock import Mock
+
 from pytest import fixture
-from tests.mocks.mock_event import MockEvent
+
 from griptape.drivers.event_listener.webhook_event_listener_driver import WebhookEventListenerDriver
+from tests.mocks.mock_event import MockEvent
 
 
 class TestWebhookEventListenerDriver:

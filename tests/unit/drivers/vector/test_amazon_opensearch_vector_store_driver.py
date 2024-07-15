@@ -1,8 +1,10 @@
-import pytest
-from unittest.mock import patch, Mock, create_autospec
-from griptape.drivers import AmazonOpenSearchVectorStoreDriver
-import numpy as np
+from unittest.mock import Mock, create_autospec, patch
+
 import boto3
+import numpy as np
+import pytest
+
+from griptape.drivers import AmazonOpenSearchVectorStoreDriver
 
 
 class TestAmazonOpenSearchVectorStoreDriver:

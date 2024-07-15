@@ -1,8 +1,9 @@
-from pytest import fixture
-from moto import mock_iotdata
 import boto3
-from tests.mocks.mock_event import MockEvent
+from moto import mock_iotdata
+from pytest import fixture
+
 from griptape.drivers.event_listener.aws_iot_core_event_listener_driver import AwsIotCoreEventListenerDriver
+from tests.mocks.mock_event import MockEvent
 from tests.utils.aws import mock_aws_credentials
 
 

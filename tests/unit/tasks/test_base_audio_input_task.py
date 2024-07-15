@@ -1,7 +1,7 @@
 import pytest
 
-from tests.mocks.mock_audio_input_task import MockAudioInputTask
 from griptape.artifacts import AudioArtifact, TextArtifact
+from tests.mocks.mock_audio_input_task import MockAudioInputTask
 from tests.mocks.mock_text_input_task import MockTextInputTask
 
 

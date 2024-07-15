@@ -1,5 +1,6 @@
-from tests.utils.structure_tester import StructureTester
 import pytest
+
+from tests.utils.structure_tester import StructureTester
 
 
 class TestCsvExtractionTask:
@@ -9,9 +10,9 @@ class TestCsvExtractionTask:
         ids=StructureTester.prompt_driver_id_fn,
     )
     def structure_tester(self, request):
-        from griptape.tasks import ExtractionTask
-        from griptape.structures import Agent
         from griptape.engines import CsvExtractionEngine
+        from griptape.structures import Agent
+        from griptape.tasks import ExtractionTask
 
         columns = ["Name", "Age", "Address"]
 

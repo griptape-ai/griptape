@@ -1,10 +1,11 @@
-from griptape.engines import JsonExtractionEngine
 import pytest
 from schema import Schema
+
+from griptape.engines import JsonExtractionEngine
 from griptape.structures import Agent
 from griptape.tasks import JsonExtractionTask
-from tests.mocks.mock_structure_config import MockStructureConfig
 from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestJsonExtractionTask:
@@ -34,4 +35,4 @@ class TestJsonExtractionTask:
 
     def test_missing_extraction_engine(self, task):
         with pytest.raises(ValueError):
-            task.extraction_engine
+            task.extraction_engine  # noqa: B018

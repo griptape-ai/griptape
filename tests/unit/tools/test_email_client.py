@@ -1,8 +1,8 @@
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
-from griptape.loaders.email_loader import EmailLoader
-from griptape.artifacts import TextArtifact
-from griptape.tools import EmailClient
 import pytest
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
+from griptape.loaders.email_loader import EmailLoader
+from griptape.tools import EmailClient
 
 
 class TestEmailClient:

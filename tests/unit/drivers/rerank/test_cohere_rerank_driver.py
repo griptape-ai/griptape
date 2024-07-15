@@ -1,5 +1,6 @@
 import pytest
-from cohere import RerankResponseResultsItemDocument, RerankResponseResultsItem
+from cohere import RerankResponseResultsItem, RerankResponseResultsItemDocument
+
 from griptape.artifacts import TextArtifact
 from griptape.drivers import CohereRerankDriver
 

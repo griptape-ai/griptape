@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.utils import import_optional_dependency, is_dependency_installed
 
 

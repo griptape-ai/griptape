@@ -1,7 +1,9 @@
-import pytest
 import json
-from griptape.drivers import DuckDuckGoWebSearchDriver
+
+import pytest
+
 from griptape.artifacts import ListArtifact
+from griptape.drivers import DuckDuckGoWebSearchDriver
 
 
 class TestDuckDuckGoWebSearchDriver:

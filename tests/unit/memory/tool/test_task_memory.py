@@ -1,6 +1,6 @@
 import pytest
-from griptape.artifacts import CsvRowArtifact, BlobArtifact, ErrorArtifact, InfoArtifact
-from griptape.artifacts import TextArtifact, ListArtifact
+
+from griptape.artifacts import BlobArtifact, CsvRowArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.structures import Agent

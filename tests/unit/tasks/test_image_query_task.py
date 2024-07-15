@@ -70,7 +70,7 @@ class TestImageQueryTask:
         task = ImageQueryTask((text_artifact, [image_artifact, image_artifact]))
 
         with pytest.raises(ValueError, match="Image Query Engine"):
-            task.image_query_engine
+            task.image_query_engine  # noqa: B018
 
     def test_run(self, image_query_engine, text_artifact, image_artifact):
         task = ImageQueryTask((text_artifact, [image_artifact, image_artifact]), image_query_engine=image_query_engine)

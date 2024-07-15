@@ -1,8 +1,10 @@
 import os
-from pathlib import Path
 import tempfile
+from pathlib import Path
+
 import pytest
-from griptape.artifacts import ErrorArtifact, ListArtifact, InfoArtifact, TextArtifact
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers import LocalFileManagerDriver
 from griptape.loaders.text_loader import TextLoader
 
@@ -12,17 +14,17 @@ class TestLocalFileManagerDriver:
     def temp_dir(self):
         with tempfile.TemporaryDirectory() as temp_dir:
 
-            def write_file(path: str, content: bytes):
+            def write_file(path: str, content: bytes) -> None:
                 full_path = os.path.join(temp_dir, path)
                 os.makedirs(os.path.dirname(full_path), exist_ok=True)
                 with open(full_path, "wb") as f:
                     f.write(content)
 
-            def mkdir(path: str):
+            def mkdir(path: str) -> None:
                 full_path = os.path.join(temp_dir, path)
                 os.makedirs(full_path, exist_ok=True)
 
-            def copy_test_resources(resource_path: str):
+            def copy_test_resources(resource_path: str) -> None:
                 file_dir = os.path.dirname(__file__)
                 full_path = os.path.join(file_dir, "../../../resources", resource_path)
                 full_path = os.path.normpath(full_path)

@@ -1,9 +1,10 @@
-from pytest import fixture
-import pytest
-from griptape.drivers import GoogleWebSearchDriver
-from griptape.artifacts import ErrorArtifact
 import json
+
+import pytest
+from pytest import fixture
 from pytest_mock import MockerFixture
+
+from griptape.drivers import GoogleWebSearchDriver
 
 
 class TestGoogleWebSearchDriver:

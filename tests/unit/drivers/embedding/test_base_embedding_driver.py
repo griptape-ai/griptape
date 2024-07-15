@@ -1,7 +1,9 @@
+from unittest.mock import patch
+
 import pytest
+
 from griptape.artifacts import TextArtifact
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from unittest.mock import patch
 
 
 class TestBaseEmbeddingDriver:

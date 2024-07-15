@@ -1,5 +1,7 @@
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from griptape.artifacts import ErrorArtifact
 from griptape.tools import OpenWeatherClient
 
@@ -10,7 +12,7 @@ def client():
 
 
 class MockResponse:
-    def __init__(self, json_data, status_code):
+    def __init__(self, json_data, status_code) -> None:
         self.json_data = json_data
         self.status_code = status_code
 

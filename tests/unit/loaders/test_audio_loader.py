@@ -32,8 +32,8 @@ class TestAudioLoader:
 
         assert len(collection) == len(resource_paths)
 
-        keys = {loader.to_key(source) for source in sources}
-        for key in collection.keys():
+        {loader.to_key(source) for source in sources}
+        for key in collection:
             artifact = collection[key]
             assert isinstance(artifact, AudioArtifact)
             assert artifact.name.endswith(".wav")

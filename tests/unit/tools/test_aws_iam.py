@@ -1,7 +1,8 @@
+import boto3
 from pytest import fixture
+
 from griptape.tools import AwsIamClient
 from tests.utils.aws import mock_aws_credentials
-import boto3
 
 
 class TestAwsIamClient:

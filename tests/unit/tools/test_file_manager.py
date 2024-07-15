@@ -1,9 +1,11 @@
-import os.path
 import os
+import os.path
 import tempfile
 from pathlib import Path
+
 import pytest
-from griptape.artifacts import TextArtifact, ListArtifact
+
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers.file_manager.local_file_manager_driver import LocalFileManagerDriver
 from griptape.loaders.text_loader import TextLoader

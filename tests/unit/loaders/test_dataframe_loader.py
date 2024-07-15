@@ -1,7 +1,8 @@
 import os
+
 import pandas as pd
 import pytest
-from griptape import utils
+
 from griptape.loaders.dataframe_loader import DataFrameLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 

@@ -30,4 +30,4 @@ class TestCsvExtractionTask:
 
     def test_missing_extraction_engine(self, task):
         with pytest.raises(ValueError):
-            task.extraction_engine
+            task.extraction_engine  # noqa: B018

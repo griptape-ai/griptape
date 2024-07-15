@@ -1,6 +1,7 @@
 import pytest
-from griptape.structures import Agent
+
 from griptape.events import FinishTaskEvent
+from griptape.structures import Agent
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 

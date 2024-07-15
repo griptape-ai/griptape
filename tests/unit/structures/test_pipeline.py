@@ -1,14 +1,15 @@
-import pytest
 import time
 
-from griptape.artifacts import TextArtifact, ErrorArtifact
+import pytest
+
+from griptape.artifacts import ErrorArtifact, TextArtifact
+from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
-from griptape.tokenizers import OpenAiTokenizer
-from griptape.tasks import PromptTask, BaseTask, ToolkitTask, CodeExecutionTask
-from griptape.memory.structure import ConversationMemory
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
+from griptape.tasks import BaseTask, CodeExecutionTask, PromptTask, ToolkitTask
+from griptape.tokenizers import OpenAiTokenizer
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 from tests.unit.structures.test_agent import MockEmbeddingDriver
 

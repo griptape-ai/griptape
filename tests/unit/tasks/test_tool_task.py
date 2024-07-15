@@ -1,8 +1,10 @@
 import json
+
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.structures import Agent
-from griptape.tasks import ToolTask, ActionsSubtask
+from griptape.tasks import ActionsSubtask, ToolTask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool

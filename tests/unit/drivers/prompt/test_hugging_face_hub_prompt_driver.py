@@ -1,6 +1,7 @@
-from griptape.drivers import HuggingFaceHubPromptDriver
-from griptape.common import PromptStack, TextDeltaMessageContent
 import pytest
+
+from griptape.common import PromptStack, TextDeltaMessageContent
+from griptape.drivers import HuggingFaceHubPromptDriver
 
 
 class TestHuggingFaceHubPromptDriver:

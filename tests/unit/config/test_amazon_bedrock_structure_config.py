@@ -1,5 +1,6 @@
 import boto3
 from pytest import fixture
+
 from griptape.config import AmazonBedrockStructureConfig
 from tests.utils.aws import mock_aws_credentials
 

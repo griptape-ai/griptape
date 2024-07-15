@@ -1,9 +1,8 @@
-import pytest
 import mongomock
-from unittest.mock import patch
-from pymongo.errors import OperationFailure
+import pytest
+
 from griptape.artifacts import TextArtifact
-from griptape.drivers import MongoDbAtlasVectorStoreDriver, BaseVectorStoreDriver
+from griptape.drivers import BaseVectorStoreDriver, MongoDbAtlasVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
