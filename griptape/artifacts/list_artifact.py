@@ -1,9 +1,13 @@
-from collections.abc import Sequence
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
 from griptape.artifacts import BaseArtifact
+
+if TYPE_CHECKING:
+    from collections.abc import Sequence
 
 
 @define

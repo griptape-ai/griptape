@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from attrs import define, field
 
 from griptape.drivers import BaseEmbeddingDriver

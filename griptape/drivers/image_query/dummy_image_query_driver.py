@@ -1,8 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from attrs import define, field
 
-from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseImageQueryDriver
 from griptape.exceptions import DummyException
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact, TextArtifact
 
 
 @define
