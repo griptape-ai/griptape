@@ -36,7 +36,7 @@ class BaseArtifact(SerializableMixin, ABC):
     def value_to_dict(cls, value: Any) -> dict:
         dict_value = value if isinstance(value, dict) else json.loads(value)
 
-        return {k: v for k, v in dict_value.items()}
+        return dict(dict_value.items())
 
     def to_text(self) -> str:
         return str(self.value)

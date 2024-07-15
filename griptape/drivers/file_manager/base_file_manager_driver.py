@@ -43,7 +43,7 @@ class BaseFileManagerDriver(ABC):
     def list_files(self, path: str) -> TextArtifact | ErrorArtifact:
         try:
             entries = self.try_list_files(path)
-            return TextArtifact("\n".join([e for e in entries]))
+            return TextArtifact("\n".join(list(entries)))
         except FileNotFoundError:
             return ErrorArtifact("Path not found")
         except NotADirectoryError:

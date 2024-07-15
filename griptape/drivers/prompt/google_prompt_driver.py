@@ -230,7 +230,7 @@ class GooglePromptDriver(BasePromptDriver):
 
             name, path = ToolAction.from_native_tool_name(function_call.name)
 
-            args = {k: v for k, v in function_call.args.items()}
+            args = dict(function_call.args.items())
             return ActionCallMessageContent(
                 artifact=ActionArtifact(value=ToolAction(tag=function_call.name, name=name, path=path, input=args)),
             )
@@ -245,7 +245,7 @@ class GooglePromptDriver(BasePromptDriver):
 
             name, path = ToolAction.from_native_tool_name(function_call.name)
 
-            args = {k: v for k, v in function_call.args.items()}
+            args = dict(function_call.args.items())
             return ActionCallDeltaMessageContent(
                 tag=function_call.name,
                 name=name,
