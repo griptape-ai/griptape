@@ -14,7 +14,7 @@ class BaseSchema(Schema):
     class Meta:
         unknown = INCLUDE
 
-    DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes}
+    DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes, Any: fields.Raw}
 
     @classmethod
     def from_attrs_cls(cls, attrs_cls: type) -> type:
@@ -134,6 +134,7 @@ class BaseSchema(Schema):
         attrs.resolve_types(
             attrs_cls,
             localns={
+                "Any": Any,
                 "BasePromptDriver": BasePromptDriver,
                 "BaseImageQueryDriver": BaseImageQueryDriver,
                 "BaseEmbeddingDriver": BaseEmbeddingDriver,

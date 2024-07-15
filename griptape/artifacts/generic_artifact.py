@@ -10,7 +10,7 @@ from griptape.artifacts import BaseArtifact
 
 @define
 class GenericArtifact(BaseArtifact):
-    value: Any = field()
+    value: Any = field(metadata={"serializable": True})
 
     @classmethod
     def value_to_bytes(cls, value: Any) -> bytes:
