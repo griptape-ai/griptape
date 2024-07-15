@@ -143,7 +143,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
         return result
 
-    def __build_message(self, delta_contents: list[list[BaseDeltaMessageContent]], usage: DeltaMessage.Usage):
+    def __build_message(
+        self, delta_contents: list[list[BaseDeltaMessageContent]], usage: DeltaMessage.Usage
+    ) -> Message:
         content = []
         for delta_content in delta_contents:
             text_deltas = [delta for delta in delta_content if isinstance(delta, TextDeltaMessageContent)]

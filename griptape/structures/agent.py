@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Optional
 
-from attrs import define, field
+from attrs import Attribute, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.memory.structure import Run
@@ -25,7 +25,7 @@ class Agent(Structure):
     fail_fast: bool = field(default=False, kw_only=True)
 
     @fail_fast.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_fail_fast(self, _, fail_fast: bool) -> None:
+    def validate_fail_fast(self, _: Attribute, fail_fast: bool) -> None:
         if fail_fast:
             raise ValueError("Agents cannot fail fast, as they can only have 1 task.")
 

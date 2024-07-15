@@ -4,7 +4,7 @@ import os
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from attrs import define, field
+from attrs import Attribute, define, field
 
 from griptape.loaders import ImageLoader
 from griptape.mixins import BlobArtifactFileOutputMixin, RuleMixin
@@ -32,7 +32,7 @@ class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, 
     negative_rules: list[Rule] = field(factory=list, kw_only=True)
 
     @negative_rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_negative_rulesets(self, _, negative_rulesets: list[Ruleset]) -> None:
+    def validate_negative_rulesets(self, _: Attribute, negative_rulesets: list[Ruleset]) -> None:
         if not negative_rulesets:
             return
 
@@ -40,7 +40,7 @@ class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, 
             raise ValueError("Can't have both negative_rulesets and negative_rules specified.")
 
     @negative_rules.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_negative_rules(self, _, negative_rules: list[Rule]) -> None:
+    def validate_negative_rules(self, _: Attribute, negative_rules: list[Rule]) -> None:
         if not negative_rules:
             return
 

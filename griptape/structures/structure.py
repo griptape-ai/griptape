@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from logging import Logger
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 from rich.logging import RichHandler
 
 from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
@@ -73,7 +73,7 @@ class Structure(ABC):
     _logger: Optional[Logger] = None
 
     @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
+    def validate_rulesets(self, _: Attribute, rulesets: list[Ruleset]) -> None:
         if not rulesets:
             return
 
@@ -81,7 +81,7 @@ class Structure(ABC):
             raise ValueError("can't have both rulesets and rules specified")
 
     @rules.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_rules(self, _, rules: list[Rule]) -> None:
+    def validate_rules(self, _: Attribute, rules: list[Rule]) -> None:
         if not rules:
             return
 
@@ -100,17 +100,17 @@ class Structure(ABC):
         return self.add_tasks(*other) if isinstance(other, list) else self + [other]
 
     @prompt_driver.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_prompt_driver(self, attribute, value):
+    def validate_prompt_driver(self, attribute: Attribute, value: BasePromptDriver) -> None:
         if value is not None:
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver` instead.")
 
     @embedding_driver.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_embedding_driver(self, attribute, value):
+    def validate_embedding_driver(self, attribute: Attribute, value: BaseEmbeddingDriver) -> None:
         if value is not None:
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.embedding_driver` instead.")
 
     @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_stream(self, attribute, value):
+    def validate_stream(self, attribute: Attribute, value: bool) -> None:
         if value is not None:
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver.stream` instead.")
 

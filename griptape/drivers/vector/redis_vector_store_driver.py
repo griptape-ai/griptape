@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, NoReturn, Optional
 
 import numpy as np
 from attrs import Factory, define, field
@@ -165,5 +165,5 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         """Get the document prefix based on the provided namespace."""
         return f"{namespace}:" if namespace else ""
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

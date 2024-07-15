@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.memory.meta import ActionSubtaskMetaEntry
@@ -21,7 +21,7 @@ class TaskMemory(ActivityMixin):
     namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True)
 
     @artifact_storages.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_artifact_storages(self, _, artifact_storage: dict[type, BaseArtifactStorage]) -> None:
+    def validate_artifact_storages(self, _: Attribute, artifact_storage: dict[type, BaseArtifactStorage]) -> None:
         seen_types = []
 
         for storage in artifact_storage.values():
@@ -31,7 +31,7 @@ class TaskMemory(ActivityMixin):
             seen_types.append(type(storage))
 
     def get_storage_for(self, artifact: BaseArtifact) -> Optional[BaseArtifactStorage]:
-        def find_storage(a):
+        def find_storage(a: BaseArtifact) -> Optional[BaseArtifactStorage]:
             return next((v for k, v in self.artifact_storages.items() if isinstance(a, k)), None)
 
         if isinstance(artifact, ListArtifact):

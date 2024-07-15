@@ -98,7 +98,9 @@ class VariationImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
 
         return self._generate_variation(prompts, negative_prompts, cast(ImageArtifact, image_artifact))
 
-    def _generate_variation(self, prompts: list[str], negative_prompts: list[str], image_artifact: ImageArtifact):
+    def _generate_variation(
+        self, prompts: list[str], negative_prompts: list[str], image_artifact: ImageArtifact
+    ) -> ImageArtifact:
         output_artifact = self.engine.run(prompts=prompts, negative_prompts=negative_prompts, image=image_artifact)
 
         if self.output_dir or self.output_file:

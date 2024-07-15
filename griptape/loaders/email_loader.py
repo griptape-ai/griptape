@@ -75,7 +75,7 @@ class EmailLoader(BaseLoader):
             logging.error(e)
             return ErrorArtifact(f"error retrieving email: {e}")
 
-    def _count_messages(self, message_numbers: bytes):
+    def _count_messages(self, message_numbers: bytes) -> int:
         return len(list(filter(None, message_numbers.decode().split(" "))))
 
     def load_collection(self, sources: list[EmailQuery], *args, **kwargs) -> dict[str, ListArtifact | ErrorArtifact]:

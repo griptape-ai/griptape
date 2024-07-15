@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import define, field
+from attrs import Attribute, define, field
 
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.engines.rag import RagContext, RagEngine
@@ -23,7 +23,7 @@ class TextArtifactStorage(BaseArtifactStorage):
     json_extraction_engine: Optional[JsonExtractionEngine] = field(default=None)
 
     @rag_engine.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_rag_engine(self, _, rag_engine: str) -> None:
+    def validate_rag_engine(self, _: Attribute, rag_engine: str) -> None:
         if rag_engine is not None and self.retrieval_rag_module_name is None:
             raise ValueError("You have to set retrieval_rag_module_name if rag_engine is provided")
 

@@ -3,9 +3,9 @@ from __future__ import annotations
 import uuid
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Any, Optional, cast
+from typing import Any, NoReturn, Optional, cast
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 from sqlalchemy import JSON, Column, String, create_engine
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine import Engine
@@ -34,7 +34,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
 
     @connection_string.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_connection_string(self, _, connection_string: Optional[str]) -> None:
+    def validate_connection_string(self, _: Attribute, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
         if self.engine is not None:
             return
@@ -47,7 +47,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("The connection string must describe a Postgres database connection")
 
     @engine.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_engine(self, _, engine: Optional[Engine]) -> None:
+    def validate_engine(self, _: Attribute, engine: Optional[Engine]) -> None:
         # If a connection string is provided, an engine does not need to be provided.
         if self.connection_string is not None:
             return
@@ -191,5 +191,5 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
         return VectorModel
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

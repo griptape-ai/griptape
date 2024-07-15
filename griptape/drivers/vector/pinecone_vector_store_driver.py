@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, NoReturn, Optional
 
 from attrs import define, field
 
@@ -89,7 +89,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         # PineconeVectorStorageDriver-specific params:
-        include_metadata=True,
+        include_metadata: bool = True,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         vector = self.embedding_driver.embed_string(query)
@@ -114,5 +114,5 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             for r in results["matches"]
         ]
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

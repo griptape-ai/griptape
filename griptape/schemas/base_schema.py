@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Sequence
-from typing import Literal, Union, get_args, get_origin
+from typing import Any, Literal, Union, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
@@ -29,7 +29,7 @@ class BaseSchema(Schema):
 
         class SubSchema(cls):
             @post_load
-            def make_obj(self, data, **kwargs):
+            def make_obj(self, data: Any, **kwargs) -> Any:
                 return attrs_cls(**data)
 
         if issubclass(attrs_cls, SerializableMixin):

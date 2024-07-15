@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, NoReturn, Optional
 
 from attrs import Factory, define, field
 
@@ -250,5 +250,5 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
         raise NotImplementedError(f"{self.__class__.__name__} does not support upserting a vector.")
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Optional
+from typing import Any, Optional
 
 from attrs import Factory, define, field
 
@@ -48,7 +48,7 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
         # Custom MarkdownConverter to optionally linked urls. If include_links is False only
         # the text of the link is returned.
         class OptionalLinksMarkdownConverter(MarkdownConverter):
-            def convert_a(self, el, text, convert_as_inline):
+            def convert_a(self, el: Any, text: str, convert_as_inline: Any) -> str:
                 if include_links:
                     return super().convert_a(el, text, convert_as_inline)
                 return text
@@ -56,7 +56,7 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
         with sync_playwright() as p, p.chromium.launch(headless=True) as browser:
             page = browser.new_page()
 
-            def skip_loading_images(route):
+            def skip_loading_images(route: Any) -> Any:
                 if route.request.resource_type == "image":
                     return route.abort()
                 route.continue_()
