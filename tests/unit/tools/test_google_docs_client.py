@@ -2,7 +2,7 @@ import pytest
 
 
 class TestGoogleDocsClient:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_docs_client(self):
         from griptape.tools import GoogleDocsClient
 

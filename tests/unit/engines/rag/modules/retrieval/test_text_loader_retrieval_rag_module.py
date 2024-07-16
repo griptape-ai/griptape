@@ -11,7 +11,7 @@ MAX_TOKENS = 50
 
 class TestTextLoaderRetrievalRagModule:
     @pytest.fixture(autouse=True)
-    def mock_trafilatura_fetch_url(self, mocker):
+    def _mock_trafilatura_fetch_url(self, mocker):
         mocker.patch("trafilatura.fetch_url", return_value="<html>foobar</html>")
 
     def test_run(self):

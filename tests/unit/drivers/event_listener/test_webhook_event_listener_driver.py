@@ -1,11 +1,13 @@
 from unittest.mock import Mock
-from pytest import fixture
-from tests.mocks.mock_event import MockEvent
+
+import pytest
+
 from griptape.drivers.event_listener.webhook_event_listener_driver import WebhookEventListenerDriver
+from tests.mocks.mock_event import MockEvent
 
 
 class TestWebhookEventListenerDriver:
-    @fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def mock_post(self, mocker):
         mock_post = mocker.patch("requests.post")
         mock_post.return_value = Mock(status_code=201)

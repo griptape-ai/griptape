@@ -1,23 +1,25 @@
-import pytest
 import io
 from unittest.mock import Mock
-from griptape.drivers import AmazonBedrockImageQueryDriver
+
+import pytest
+
 from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.drivers import AmazonBedrockImageQueryDriver
 
 
 class TestAmazonBedrockImageQueryDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def bedrock_client(self, mocker):
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def session(self, bedrock_client):
         session = Mock()
         session.client.return_value = bedrock_client
 
         return session
 
-    @pytest.fixture
+    @pytest.fixture()
     def model_driver(self):
         model_driver = Mock()
         model_driver.image_query_request_parameters.return_value = {}
@@ -25,7 +27,7 @@ class TestAmazonBedrockImageQueryDriver:
 
         return model_driver
 
-    @pytest.fixture
+    @pytest.fixture()
     def image_query_driver(self, session, model_driver):
         return AmazonBedrockImageQueryDriver(session=session, model="model", image_query_model_driver=model_driver)
 

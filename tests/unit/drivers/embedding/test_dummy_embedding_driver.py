@@ -1,11 +1,11 @@
-from griptape.drivers import DummyEmbeddingDriver
 import pytest
 
+from griptape.drivers import DummyEmbeddingDriver
 from griptape.exceptions import DummyException
 
 
 class TestDummyEmbeddingDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def embedding_driver(self):
         return DummyEmbeddingDriver()
 

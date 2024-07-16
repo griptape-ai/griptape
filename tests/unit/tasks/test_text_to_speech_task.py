@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from griptape.artifacts import TextArtifact, AudioArtifact
+from griptape.artifacts import AudioArtifact, TextArtifact
 from griptape.engines import TextToSpeechEngine
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import BaseTask, TextToSpeechTask

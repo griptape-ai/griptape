@@ -1,11 +1,11 @@
-from griptape.drivers import DummyPromptDriver
 import pytest
 
+from griptape.drivers import DummyPromptDriver
 from griptape.exceptions import DummyException
 
 
 class TestDummyPromptDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def prompt_driver(self):
         return DummyPromptDriver()
 

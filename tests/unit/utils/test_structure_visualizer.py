@@ -1,7 +1,7 @@
-from tests.mocks.mock_prompt_driver import MockPromptDriver
-from griptape.utils import StructureVisualizer
+from griptape.structures import Agent, Pipeline, Workflow
 from griptape.tasks import PromptTask
-from griptape.structures import Agent, Workflow, Pipeline
+from griptape.utils import StructureVisualizer
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestStructureVisualizer:

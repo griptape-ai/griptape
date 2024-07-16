@@ -1,11 +1,12 @@
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import TextChunksResponseRagModule
 
 
 class TestTextChunksResponseRagModule:
-    @pytest.fixture
+    @pytest.fixture()
     def module(self):
         return TextChunksResponseRagModule()
 

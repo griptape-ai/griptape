@@ -1,7 +1,8 @@
-import pytest
 import boto3
+import pytest
 from botocore.stub import Stubber
-from griptape.drivers import BaseSqlDriver, AmazonRedshiftSqlDriver
+
+from griptape.drivers import AmazonRedshiftSqlDriver, BaseSqlDriver
 
 
 class TestAmazonRedshiftSqlDriver:
@@ -41,7 +42,7 @@ class TestAmazonRedshiftSqlDriver:
         },
     ]
 
-    @pytest.fixture
+    @pytest.fixture()
     def statement_driver(self):
         session = boto3.Session(region_name="us-east-1")
         client = session.client("redshift-data")
@@ -108,7 +109,7 @@ class TestAmazonRedshiftSqlDriver:
 
         return AmazonRedshiftSqlDriver(database="dev", session=session, workgroup_name="dev", client=client)
 
-    @pytest.fixture
+    @pytest.fixture()
     def describe_table_driver(self):
         session = boto3.Session(region_name="us-east-1")
         client = session.client("redshift-data")

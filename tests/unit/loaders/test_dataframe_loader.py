@@ -1,13 +1,14 @@
 import os
+
 import pandas as pd
 import pytest
-from griptape import utils
+
 from griptape.loaders.dataframe_loader import DataFrameLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestDataFrameLoader:
-    @pytest.fixture
+    @pytest.fixture()
     def loader(self):
         return DataFrameLoader(embedding_driver=MockEmbeddingDriver())
 

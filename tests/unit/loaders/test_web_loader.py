@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.loaders import WebLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -8,10 +9,10 @@ MAX_TOKENS = 50
 
 class TestWebLoader:
     @pytest.fixture(autouse=True)
-    def mock_trafilatura_fetch_url(self, mocker):
+    def _mock_trafilatura_fetch_url(self, mocker):
         mocker.patch("trafilatura.fetch_url", return_value="<html>foobar</html>")
 
-    @pytest.fixture
+    @pytest.fixture()
     def loader(self):
         return WebLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver())
 

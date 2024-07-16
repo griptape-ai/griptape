@@ -1,11 +1,12 @@
 """Generate the code reference pages and navigation."""
 
-from textwrap import dedent
 from pathlib import Path
+from textwrap import dedent
+
 import mkdocs_gen_files
 
 
-def build_reference_docs():
+def build_reference_docs() -> None:
     nav = mkdocs_gen_files.Nav()
 
     for path in sorted(Path("griptape").rglob("*.py")):
@@ -37,8 +38,8 @@ def build_reference_docs():
         index_file.write(
             dedent(
                 """
-        # Overview 
-        This section of the documentation is dedicated to a reference API of Griptape. 
+        # Overview
+        This section of the documentation is dedicated to a reference API of Griptape.
         Here you will find every class, function, and method that is available to you when using the library.
         """
             )

@@ -1,9 +1,10 @@
 import pytest
-from tests.mocks.mock_structure_config import MockStructureConfig
+
 from griptape.engines import PromptSummaryEngine
+from griptape.structures import Agent
 from griptape.tasks import TextSummaryTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
-from griptape.structures import Agent
+from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestTextSummaryTask:
@@ -34,4 +35,4 @@ class TestTextSummaryTask:
         task = TextSummaryTask("test")
 
         with pytest.raises(ValueError):
-            task.summary_engine
+            task.summary_engine  # noqa: B018

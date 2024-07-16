@@ -1,9 +1,10 @@
-from pytest import fixture
+import pytest
+
 from griptape.config import StructureConfig
 
 
 class TestStructureConfig:
-    @fixture
+    @pytest.fixture()
     def config(self):
         return StructureConfig()
 

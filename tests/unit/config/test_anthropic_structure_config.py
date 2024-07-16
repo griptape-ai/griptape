@@ -1,14 +1,15 @@
-from pytest import fixture
+import pytest
+
 from griptape.config import AnthropicStructureConfig
 
 
 class TestAnthropicStructureConfig:
-    @fixture(autouse=True)
-    def mock_anthropic(self, mocker):
+    @pytest.fixture(autouse=True)
+    def _mock_anthropic(self, mocker):
         mocker.patch("anthropic.Anthropic")
         mocker.patch("voyageai.Client")
 
-    @fixture
+    @pytest.fixture()
     def config(self):
         return AnthropicStructureConfig()
 

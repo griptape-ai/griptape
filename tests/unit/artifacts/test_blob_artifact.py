@@ -1,6 +1,8 @@
 import base64
+
 import pytest
-from griptape.artifacts import BlobArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, BlobArtifact
 
 
 class TestBlobArtifact:

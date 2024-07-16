@@ -1,5 +1,5 @@
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.common import TextMessageContent, TextDeltaMessageContent
+from griptape.common import TextDeltaMessageContent, TextMessageContent
 
 
 class TestTextMessageContent:

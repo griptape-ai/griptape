@@ -1,10 +1,11 @@
 import pytest
-from schema import Schema, Literal, Optional
+from schema import Literal, Optional, Schema
+
 from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestActivityMixin:
-    @pytest.fixture
+    @pytest.fixture()
     def tool(self):
         return MockTool(test_field="hello", test_int=5)
 

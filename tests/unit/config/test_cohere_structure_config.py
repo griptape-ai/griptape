@@ -1,9 +1,10 @@
-from pytest import fixture
+import pytest
+
 from griptape.config import CohereStructureConfig
 
 
 class TestCohereStructureConfig:
-    @fixture
+    @pytest.fixture()
     def config(self):
         return CohereStructureConfig(api_key="api_key")
 

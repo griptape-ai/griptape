@@ -1,10 +1,11 @@
 import pytest
-from griptape.events import StartPromptEvent
+
 from griptape.common import PromptStack
+from griptape.events import StartPromptEvent
 
 
 class TestStartPromptEvent:
-    @pytest.fixture
+    @pytest.fixture()
     def start_prompt_event(self):
         prompt_stack = PromptStack()
         prompt_stack.add_user_message("foo")

@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.tokenizers import VoyageAiTokenizer
 
 
@@ -10,12 +11,12 @@ class TestVoyageAiTokenizer:
 
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def tokenizer(self, request):
         return VoyageAiTokenizer(model=request.param)
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [("voyage-large-2", 5), ("voyage-code-2", 5), ("voyage-2", 5), ("voyage-lite-02-instruct", 5)],
         indirect=["tokenizer"],
     )
@@ -23,7 +24,7 @@ class TestVoyageAiTokenizer:
         assert tokenizer.count_tokens("foo bar huzzah") == expected
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [("voyage-large-2", 15995), ("voyage-code-2", 15995), ("voyage-2", 3995), ("voyage-lite-02-instruct", 3995)],
         indirect=["tokenizer"],
     )
@@ -31,7 +32,7 @@ class TestVoyageAiTokenizer:
         assert tokenizer.count_input_tokens_left("foo bar huzzah") == expected
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [("voyage-large-2", 0), ("voyage-code-2", 0), ("voyage-2", 0), ("voyage-lite-02-instruct", 0)],
         indirect=["tokenizer"],
     )

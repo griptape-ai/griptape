@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.engines import CsvExtractionEngine
 from griptape.structures import Agent
 from griptape.tasks import ExtractionTask
@@ -6,7 +7,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestExtractionTask:
-    @pytest.fixture
+    @pytest.fixture()
     def task(self):
         return ExtractionTask(
             extraction_engine=CsvExtractionEngine(prompt_driver=MockPromptDriver()), args={"column_names": ["test1"]}

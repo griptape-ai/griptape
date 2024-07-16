@@ -1,12 +1,14 @@
-import pytest
 import base64
 from unittest.mock import Mock
-from griptape.drivers import AnthropicImageQueryDriver
+
+import pytest
+
 from griptape.artifacts import ImageArtifact
+from griptape.drivers import AnthropicImageQueryDriver
 
 
 class TestAnthropicImageQueryDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("anthropic.Anthropic")
         return_value = Mock(text="Content")
@@ -55,7 +57,7 @@ class TestAnthropicImageQueryDriver:
         assert text_artifact.value == "Content"
 
     def test_try_query_max_tokens_none(self, mock_client):
-        driver = AnthropicImageQueryDriver(model="test-model", max_tokens=None)  # pyright: ignore
+        driver = AnthropicImageQueryDriver(model="test-model", max_tokens=None)  # pyright: ignore[reportArgumentType]
         test_prompt_string = "Prompt String"
         test_binary_data = b"test-data"
         with pytest.raises(TypeError):

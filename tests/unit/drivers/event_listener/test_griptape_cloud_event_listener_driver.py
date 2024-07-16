@@ -2,14 +2,13 @@ import os
 from unittest.mock import Mock
 
 import pytest
-from pytest import fixture
 
 from griptape.drivers.event_listener.griptape_cloud_event_listener_driver import GriptapeCloudEventListenerDriver
 from tests.mocks.mock_event import MockEvent
 
 
 class TestGriptapeCloudEventListenerDriver:
-    @fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def mock_post(self, mocker):
         data = {"data": {"id": "test"}}
 
@@ -18,7 +17,7 @@ class TestGriptapeCloudEventListenerDriver:
 
         return mock_post
 
-    @fixture()
+    @pytest.fixture()
     def driver(self):
         os.environ["GT_CLOUD_BASE_URL"] = "https://cloud123.griptape.ai"
 

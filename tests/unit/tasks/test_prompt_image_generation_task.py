@@ -1,4 +1,3 @@
-from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
 from unittest.mock import Mock
 
 import pytest
@@ -7,6 +6,7 @@ from griptape.artifacts import TextArtifact
 from griptape.engines import PromptImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, PromptImageGenerationTask
+from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
 from tests.mocks.mock_structure_config import MockStructureConfig
 
 
@@ -37,4 +37,4 @@ class TestPromptImageGenerationTask:
         task = PromptImageGenerationTask("foo bar")
 
         with pytest.raises(ValueError):
-            task.image_generation_engine
+            task.image_generation_engine  # noqa: B018

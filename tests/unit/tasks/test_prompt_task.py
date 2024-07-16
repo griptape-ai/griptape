@@ -1,14 +1,15 @@
 import pytest
+
 from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.structure.run import Run
-from tests.mocks.mock_structure_config import MockStructureConfig
-from griptape.tasks import PromptTask
 from griptape.rules import Rule
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.structures import Pipeline
+from griptape.tasks import PromptTask
+from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestPromptTask:
@@ -37,7 +38,7 @@ class TestPromptTask:
         task = PromptTask("test")
 
         with pytest.raises(ValueError):
-            task.prompt_driver
+            task.prompt_driver  # noqa: B018
 
     def test_input(self):
         # Str

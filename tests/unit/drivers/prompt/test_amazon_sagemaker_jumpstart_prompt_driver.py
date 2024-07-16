@@ -1,11 +1,13 @@
-from typing import Any
-from botocore.response import StreamingBody
-from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.drivers.prompt.amazon_sagemaker_jumpstart_prompt_driver import AmazonSageMakerJumpstartPromptDriver
-from griptape.common import PromptStack
-from io import BytesIO
 import json
+from io import BytesIO
+from typing import Any
+
 import pytest
+from botocore.response import StreamingBody
+
+from griptape.common import PromptStack
+from griptape.drivers.prompt.amazon_sagemaker_jumpstart_prompt_driver import AmazonSageMakerJumpstartPromptDriver
+from griptape.tokenizers import HuggingFaceTokenizer
 
 
 def to_streaming_body(data: Any) -> StreamingBody:

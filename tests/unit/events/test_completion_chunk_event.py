@@ -1,9 +1,10 @@
 import pytest
+
 from griptape.events import CompletionChunkEvent
 
 
 class TestCompletionChunkEvent:
-    @pytest.fixture
+    @pytest.fixture()
     def completion_chunk_event(self):
         return CompletionChunkEvent(token="foo bar")
 

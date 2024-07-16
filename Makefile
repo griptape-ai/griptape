@@ -33,22 +33,22 @@ test/integration:
 
 .PHONY: lint
 lint: ## Lint project.
-	@poetry run ruff check --fix griptape/
+	@poetry run ruff check --fix
 
 .PHONY: format
 format: ## Format project.
-	@poetry run ruff format .
+	@poetry run ruff format
 
 .PHONY: check
 check: check/format check/lint check/types check/spell ## Run all checks.
 
 .PHONY: check/format
 check/format:
-	@poetry run ruff format --check griptape/
+	@poetry run ruff format --check
 
 .PHONY: check/lint
 check/lint:
-	@poetry run ruff check griptape/
+	@poetry run ruff check
 
 .PHONY: check/types
 check/types:

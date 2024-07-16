@@ -10,18 +10,18 @@ from griptape.tools import VariationImageGenerationClient
 
 
 class TestVariationImageGenerationClient:
-    @pytest.fixture
+    @pytest.fixture()
     def image_generation_engine(self) -> Mock:
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def image_loader(self) -> Mock:
         loader = Mock()
         loader.load.return_value = ImageArtifact(value=b"image_data", format="png", width=512, height=512)
 
         return loader
 
-    @pytest.fixture
+    @pytest.fixture()
     def image_generator(self, image_generation_engine, image_loader) -> VariationImageGenerationClient:
         return VariationImageGenerationClient(engine=image_generation_engine, image_loader=image_loader)
 
@@ -54,7 +54,7 @@ class TestVariationImageGenerationClient:
             engine=image_generation_engine, output_file=outfile, image_loader=image_loader
         )
 
-        image_generator.engine.run.return_value = Mock(  # pyright: ignore
+        image_generator.engine.run.return_value = Mock(  # pyright: ignore[reportFunctionMemberAccess]
             value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
         )
 

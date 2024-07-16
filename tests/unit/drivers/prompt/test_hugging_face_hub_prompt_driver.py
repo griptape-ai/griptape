@@ -1,10 +1,11 @@
-from griptape.drivers import HuggingFaceHubPromptDriver
-from griptape.common import PromptStack, TextDeltaMessageContent
 import pytest
+
+from griptape.common import PromptStack, TextDeltaMessageContent
+from griptape.drivers import HuggingFaceHubPromptDriver
 
 
 class TestHuggingFaceHubPromptDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("huggingface_hub.InferenceClient").return_value
 
@@ -20,14 +21,14 @@ class TestHuggingFaceHubPromptDriver:
 
         return tokenizer
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client_stream(self, mocker):
         mock_client = mocker.patch("huggingface_hub.InferenceClient").return_value
         mock_client.text_generation.return_value = iter(["model-output"])
 
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def prompt_stack(self):
         prompt_stack = PromptStack()
         prompt_stack.add_system_message("system-input")

@@ -1,10 +1,11 @@
 import pytest
+
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import WebSearch
 
 
 class TestWebSearch:
-    @pytest.fixture
+    @pytest.fixture()
     def websearch_tool(self, mocker):
         mock_response = TextArtifact("test_response")
         driver = mocker.Mock()
@@ -12,7 +13,7 @@ class TestWebSearch:
 
         return WebSearch(web_search_driver=driver)
 
-    @pytest.fixture
+    @pytest.fixture()
     def websearch_tool_with_error(self, mocker):
         mock_response = Exception("test_error")
         driver = mocker.Mock()

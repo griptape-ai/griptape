@@ -1,9 +1,10 @@
 import pytest
+
 from griptape.artifacts import BaseArtifact
 
 
 class TestRestApi:
-    @pytest.fixture
+    @pytest.fixture()
     def client(self):
         from griptape.tools import RestApiClient
 

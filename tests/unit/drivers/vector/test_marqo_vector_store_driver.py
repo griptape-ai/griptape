@@ -1,7 +1,9 @@
 from collections import namedtuple
+
 import pytest
-from griptape.drivers import MarqoVectorStoreDriver
+
 from griptape.artifacts import TextArtifact
+from griptape.drivers import MarqoVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
@@ -79,7 +81,7 @@ class TestMarqoVectorStorageDriver:
         # Return the mock_client for use in other fixtures
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, mock_marqo):
         return MarqoVectorStoreDriver(
             api_key="foobar",

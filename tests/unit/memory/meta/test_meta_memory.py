@@ -1,9 +1,10 @@
 import pytest
-from griptape.memory.meta import MetaMemory, ActionSubtaskMetaEntry
+
+from griptape.memory.meta import ActionSubtaskMetaEntry, MetaMemory
 
 
 class TestMetaMemory:
-    @pytest.fixture
+    @pytest.fixture()
     def memory(self):
         return MetaMemory()
 

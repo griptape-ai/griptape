@@ -1,12 +1,13 @@
+import pytest
+
+from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
+from griptape.common import PromptStack
 from griptape.common.prompt_stack.contents.text_delta_message_content import TextDeltaMessageContent
 from griptape.drivers import OllamaPromptDriver
-from griptape.common import PromptStack
-from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
-import pytest
 
 
 class TestOllamaPromptDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("ollama.Client")
 
@@ -14,7 +15,7 @@ class TestOllamaPromptDriver:
 
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_stream_client(self, mocker):
         mock_stream_client = mocker.patch("ollama.Client")
         mock_stream_client.return_value.chat.return_value = iter([{"message": {"content": "model-output"}}])

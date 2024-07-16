@@ -1,7 +1,9 @@
 from unittest.mock import MagicMock
+
 import pytest
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+
 from griptape.drivers import RedisVectorStoreDriver
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestRedisVectorStorageDriver:
@@ -9,12 +11,12 @@ class TestRedisVectorStorageDriver:
     def mock_client(self, mocker):
         return mocker.patch("redis.Redis").return_value
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_keys(self, mock_client):
         mock_client.keys.return_value = [b"some_vector_id"]
         return mock_client.keys
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_hgetall(self, mock_client):
         mock_client.hgetall.return_value = {
             b"vector": b"\x00\x00\x80?\x00\x00\x00@\x00\x00@@",
@@ -22,13 +24,13 @@ class TestRedisVectorStorageDriver:
         }
         return mock_client.hgetall
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return RedisVectorStoreDriver(
             host="localhost", port=6379, index="test_index", db=0, embedding_driver=MockEmbeddingDriver()
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_search(self, mock_client):
         mock_client.ft.return_value.search.return_value.docs = [
             MagicMock(

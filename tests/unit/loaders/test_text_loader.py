@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.loaders.text_loader import TextLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 

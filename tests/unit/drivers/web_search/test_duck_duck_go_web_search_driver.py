@@ -1,11 +1,13 @@
-import pytest
 import json
-from griptape.drivers import DuckDuckGoWebSearchDriver
+
+import pytest
+
 from griptape.artifacts import ListArtifact
+from griptape.drivers import DuckDuckGoWebSearchDriver
 
 
 class TestDuckDuckGoWebSearchDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, mocker):
         mock_response = [
             {"title": "foo", "href": "bar", "body": "baz"},
@@ -16,7 +18,7 @@ class TestDuckDuckGoWebSearchDriver:
 
         return DuckDuckGoWebSearchDriver()
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver_with_error(self, mocker):
         mocker.patch("duckduckgo_search.DDGS.text", side_effect=Exception("test_error"))
 

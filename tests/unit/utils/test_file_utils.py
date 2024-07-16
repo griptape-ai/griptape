@@ -1,7 +1,8 @@
 import os
-from griptape.loaders import TextLoader
-from griptape import utils
 from concurrent import futures
+
+from griptape import utils
+from griptape.loaders import TextLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 MAX_TOKENS = 50

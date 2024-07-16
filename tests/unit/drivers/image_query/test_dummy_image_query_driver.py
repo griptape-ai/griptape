@@ -1,12 +1,12 @@
-from griptape.drivers import DummyImageQueryDriver
-from griptape.artifacts import ImageArtifact
 import pytest
 
+from griptape.artifacts import ImageArtifact
+from griptape.drivers import DummyImageQueryDriver
 from griptape.exceptions import DummyException
 
 
 class TestDummyImageQueryDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def image_query_driver(self):
         return DummyImageQueryDriver()
 

@@ -5,9 +5,8 @@ import pytest
 from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.common import PromptStack, ToolAction
+from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers import CoherePromptDriver
-from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -42,7 +41,7 @@ class TestCoherePromptDriver:
         },
     ]
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
         mock_tool_call = Mock(parameters={"foo": "bar"})
@@ -53,7 +52,7 @@ class TestCoherePromptDriver:
 
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_stream_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
         mock_tool_call_delta_header = Mock()

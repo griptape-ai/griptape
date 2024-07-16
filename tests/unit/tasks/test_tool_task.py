@@ -1,8 +1,10 @@
 import json
+
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.structures import Agent
-from griptape.tasks import ToolTask, ActionsSubtask
+from griptape.tasks import ActionsSubtask, ToolTask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -163,7 +165,7 @@ class TestToolTask:
         "$schema": "http://json-schema.org/draft-07/schema#",
     }
 
-    @pytest.fixture
+    @pytest.fixture()
     def agent(self):
         output_dict = {"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
 

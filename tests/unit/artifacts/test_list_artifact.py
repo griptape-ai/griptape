@@ -1,5 +1,6 @@
 import pytest
-from griptape.artifacts import ListArtifact, TextArtifact, BlobArtifact, CsvRowArtifact
+
+from griptape.artifacts import BlobArtifact, CsvRowArtifact, ListArtifact, TextArtifact
 
 
 class TestListArtifact:

@@ -19,7 +19,7 @@ class TestMediaArtifactFileOutputMixin:
         artifact = ImageArtifact(name="test.png", value=b"test", height=1, width=1, format="png")
 
         class Test(BlobArtifactFileOutputMixin):
-            def run(self):
+            def run(self) -> None:
                 self._write_to_file(artifact)
 
         outfile = os.path.join(tempfile.gettempdir(), artifact.name)
@@ -34,7 +34,7 @@ class TestMediaArtifactFileOutputMixin:
         artifact = ImageArtifact(name="test.png", value=b"test", height=1, width=1, format="png")
 
         class Test(BlobArtifactFileOutputMixin):
-            def run(self):
+            def run(self) -> None:
                 self._write_to_file(artifact)
 
         outdir = tempfile.gettempdir()

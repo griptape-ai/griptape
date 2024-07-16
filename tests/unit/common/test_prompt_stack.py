@@ -1,13 +1,18 @@
 import pytest
 
-from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact, ActionArtifact
-from griptape.common import ImageMessageContent, PromptStack, TextMessageContent
-from griptape.common import ActionCallMessageContent
-from griptape.common import ActionResultMessageContent, ToolAction
+from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.common import (
+    ActionCallMessageContent,
+    ActionResultMessageContent,
+    ImageMessageContent,
+    PromptStack,
+    TextMessageContent,
+    ToolAction,
+)
 
 
 class TestPromptStack:
-    @pytest.fixture
+    @pytest.fixture()
     def prompt_stack(self):
         return PromptStack()
 

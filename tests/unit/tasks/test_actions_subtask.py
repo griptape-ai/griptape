@@ -1,10 +1,11 @@
 import json
-from griptape.artifacts import ListArtifact, TextArtifact, ActionArtifact
+
+from griptape.artifacts import ActionArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
-from tests.mocks.mock_tool.tool import MockTool
-from griptape.tasks import ToolkitTask, ActionsSubtask
-from griptape.structures import Agent
 from griptape.common import ToolAction
+from griptape.structures import Agent
+from griptape.tasks import ActionsSubtask, ToolkitTask
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestActionsSubtask:
