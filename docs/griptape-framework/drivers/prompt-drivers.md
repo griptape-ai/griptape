@@ -447,3 +447,36 @@ agent = Agent(
 
 agent.run("What is a good lasagna recipe?")
 ```
+
+### RouteLLM
+
+!!! info
+    This driver requires the `drivers-prompt-routellm` [extra](../index.md#extras).
+
+The [RouteLLMPromptDriver](../../reference/griptape/drivers/prompt/routellm_prompt_driver.md) uses [RouteLLM](https://github.com/lm-sys/RouteLLM) to route between a strong Prompt Driver and a weak Prompt Driver.
+
+```python title="PYTEST_IGNORE"
+from griptape.structures import Agent
+from griptape.drivers import (
+    RouteLlmPromptDriver,
+    OpenAiChatPromptDriver,
+    OllamaPromptDriver,
+)
+
+
+agent = Agent(
+    prompt_driver=RouteLlmPromptDriver(
+        strong_prompt_driver=OpenAiChatPromptDriver(
+            model="gpt-4o",
+        ),
+        weak_prompt_driver=OllamaPromptDriver(
+            model="llama3",
+        ),
+        threshold=0.11593
+    ),
+)
+
+
+agent.run("Hello!") # Will be routed to the weak prompt driver
+agent.run("What is the square root of 1,787,569?") # Will be routed to the strong prompt driver
+```

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Native function calling support to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AnthropicPromptDriver`, `AmazonBedrockPromptDriver`, `GooglePromptDriver`, and `CoherePromptDriver`.
 - `OllamaEmbeddingDriver` for generating embeddings with Ollama.
 - `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
+- `RouteLLMPromptDriver` for using RouteLLM to route between a strong Prompt Driver and weak Prompt Driver. 
 
 ### Changed
 
