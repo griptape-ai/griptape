@@ -32,7 +32,7 @@ requests = "^2.32.0"
 # drivers
 cohere = { version = "^5.5.4", optional = true }
 anthropic = { version = "^0.29.0", optional = true }
-transformers = { version = "^4.39.3", optional = true }
+transformers = { version = "^4.39.3", optional = true, extras=["torch"] }
 huggingface-hub = { version = ">=0.13", optional = true }
 boto3 = { version = "^1.34.119", optional = true }
 sqlalchemy-redshift = { version = "*", optional = true }
@@ -51,7 +51,6 @@ beautifulsoup4 = {version = "^4.12.3", optional = true}
 markdownify = {version = "^0.11.6", optional = true}
 voyageai = {version = "^0.2.1", optional = true}
 elevenlabs = {version = "^1.1.2", optional = true}
-torch = {version = "^2.3.0", optional = true}
 qdrant-client = { version = ">=1.9.1", optional = true }
 pusher = {version = "^3.3.2", optional = true}
 ollama = {version = "^0.2.1", optional = true} 
@@ -67,8 +66,8 @@ filetype = {version = "^1.2", optional = true}
 [tool.poetry.extras]
 drivers-prompt-cohere = ["cohere"]
 drivers-prompt-anthropic = ["anthropic"]
-drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
-drivers-prompt-huggingface-pipeline = ["huggingface-hub", "transformers", "torch"]
+drivers-prompt-huggingface = ["huggingface-hub"]
+drivers-prompt-huggingface-pipeline = ["transformers"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 drivers-prompt-google = ["google-generativeai"]
@@ -140,7 +139,6 @@ all = [
     "markdownify",
     "voyageai",
     "elevenlabs",
-    "torch",
     "pusher",
     "ollama",
     "duckduckgo-search",

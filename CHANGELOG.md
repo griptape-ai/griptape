@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseVectorStoreDriver.query` optional arguments are now keyword-only arguments.
 - **BREAKING**: `EventListener.publish_event`'s `flush` argument is now a keyword-only argument.
 - **BREAKING**: `BaseEventListenerDriver.publish_event`'s `flush` argument is now a keyword-only argument.
+- Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
+- Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
 
 ### Fixed
 - Parameter `count` for `QdrantVectorStoreDriver.query` now optional as per documentation.
