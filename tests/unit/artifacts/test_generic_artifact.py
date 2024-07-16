@@ -4,7 +4,7 @@ from griptape.artifacts import BaseArtifact, GenericArtifact
 
 
 class TestImageArtifact:
-    @pytest.fixture
+    @pytest.fixture()
     def generic_artifact(self):
         return GenericArtifact(
             value="some generic data",

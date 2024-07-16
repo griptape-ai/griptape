@@ -6,11 +6,11 @@ Note that because we are using Gemini-specific features, this will not work with
 import time
 from griptape.structures import Agent
 from griptape.tasks import PromptTask
-from griptape.artifacts import ListArtifact, GenericArtifact, TextArtifact
+from griptape.artifacts import GenericArtifact, TextArtifact
 from griptape.config import GoogleStructureConfig
 import google.generativeai as genai
 
-video_file = genai.upload_file(path="tests/resources/griptape-comfyui.mp4")
+video_file = genai.upload_file(path="assets/griptape-comfyui.mp4")
 while video_file.state.name == "PROCESSING":
     time.sleep(2)
     video_file = genai.get_file(video_file.name)
@@ -20,16 +20,10 @@ if video_file.state.name == "FAILED":
 
 agent = Agent(
     config=GoogleStructureConfig(),
-    tasks=[
-        PromptTask(
-            lambda task: ListArtifact(
-                [
-                    GenericArtifact(video_file),
-                    TextArtifact(task.full_context["args"][0]),
-                ]
-            )
-        )
-    ],
+    input=[
+        GenericArtifact(video_file),
+        TextArtifact("Answer this question regarding the video: {{ args[0] }}"),
+    ]
 )
 
 agent.run("Are there any scenes that show a character with earings?")
