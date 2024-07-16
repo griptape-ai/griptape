@@ -1,10 +1,8 @@
 import pytest
 
-from griptape.artifacts import ImageArtifact, TextArtifact, ListArtifact, ErrorArtifact, ActionArtifact
-from griptape.common import PromptStack
-from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent, ToolAction
+from griptape.artifacts import ActionArtifact, ErrorArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers import AmazonBedrockPromptDriver
-
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -159,7 +157,7 @@ class TestAmazonBedrockPromptDriver:
         },
     ]
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_converse(self, mocker):
         mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
 
@@ -177,7 +175,7 @@ class TestAmazonBedrockPromptDriver:
 
         return mock_converse
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_converse_stream(self, mocker):
         mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
 
@@ -275,7 +273,7 @@ class TestAmazonBedrockPromptDriver:
 
         return prompt_stack
 
-    @pytest.fixture
+    @pytest.fixture()
     def messages(self):
         return [
             {"role": "user", "content": [{"text": "user-input"}]},

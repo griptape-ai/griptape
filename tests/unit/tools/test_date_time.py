@@ -1,5 +1,6 @@
-from griptape.tools import DateTime
 from datetime import datetime
+
+from griptape.tools import DateTime
 
 
 class TestDateTime:

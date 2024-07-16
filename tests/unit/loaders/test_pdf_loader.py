@@ -1,8 +1,5 @@
-import os
-from pathlib import Path
-from typing import IO
 import pytest
-from griptape import utils
+
 from griptape.loaders import PdfLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
@@ -10,11 +7,11 @@ MAX_TOKENS = 50
 
 
 class TestPdfLoader:
-    @pytest.fixture
+    @pytest.fixture()
     def loader(self):
         return PdfLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver())
 
-    @pytest.fixture
+    @pytest.fixture()
     def create_source(self, bytes_from_resource_path):
         return bytes_from_resource_path
 

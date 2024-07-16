@@ -1,11 +1,13 @@
-import pytest
 from unittest.mock import Mock
-from griptape.drivers import AzureOpenAiImageQueryDriver
+
+import pytest
+
 from griptape.artifacts import ImageArtifact
+from griptape.drivers import AzureOpenAiImageQueryDriver
 
 
 class TestAzureOpenAiVisionImageQueryDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_completion_create(self, mocker):
         mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.create
         mock_choice = Mock(message=Mock(content="expected_output_text"))
@@ -52,7 +54,7 @@ class TestAzureOpenAiVisionImageQueryDriver:
             azure_endpoint="test-endpoint", azure_deployment="test-deployment", model="gpt-4"
         )
 
-        with pytest.raises(Exception):
+        with pytest.raises(Exception, match="Image query responses with more than one choice are not supported yet."):
             driver.try_query("Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100, format="png")])
 
     def _expected_messages(self, expected_prompt_string, expected_binary_data):

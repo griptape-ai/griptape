@@ -1,6 +1,7 @@
 from attrs import define, field
-from schema import Schema, Literal
-from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact, ListArtifact
+from schema import Literal, Schema
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -49,7 +50,7 @@ class MockTool(BaseTool):
 
     @activity(config={"description": "test description"})
     def test_no_schema(self, value: dict) -> str:
-        return f"no schema"
+        return "no schema"
 
     @activity(config={"description": "test description"})
     def test_list_output(self, value: dict) -> ListArtifact:

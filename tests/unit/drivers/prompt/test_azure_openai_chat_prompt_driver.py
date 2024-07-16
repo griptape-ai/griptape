@@ -1,13 +1,15 @@
-import pytest
-from griptape.artifacts import TextArtifact, ActionArtifact
 from unittest.mock import Mock
+
+import pytest
+
+from griptape.artifacts import ActionArtifact, TextArtifact
+from griptape.common import ActionCallDeltaMessageContent, TextDeltaMessageContent
 from griptape.drivers import AzureOpenAiChatPromptDriver
-from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiChatPromptDriverFixtureMixin
 
 
 class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
-    @pytest.fixture
+    @pytest.fixture()
     def mock_chat_completion_create(self, mocker):
         mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.create
         mock_function = Mock(arguments='{"foo": "bar"}', id="mock-id")
@@ -22,7 +24,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
         return mock_chat_create
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_chat_completion_stream_create(self, mocker):
         mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.create
         mock_tool_call_delta_header = Mock()

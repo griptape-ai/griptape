@@ -1,5 +1,7 @@
-import pytest
 import os
+
+import pytest
+
 from tests.utils.structure_tester import StructureTester
 
 

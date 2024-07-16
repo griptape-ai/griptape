@@ -1,15 +1,15 @@
-from google.generativeai.types import ContentDict, GenerationConfig
-from google.generativeai.protos import FunctionCall, FunctionResponse, Part
-from griptape.artifacts import TextArtifact, ImageArtifact, ActionArtifact
-from griptape.artifacts.list_artifact import ListArtifact
-from griptape.common import TextDeltaMessageContent, ActionCallDeltaMessageContent, ToolAction
-from griptape.drivers import GooglePromptDriver
-from griptape.common import PromptStack
 from unittest.mock import Mock
-from tests.mocks.mock_tool.tool import MockTool
-from google.protobuf.json_format import MessageToDict
 
 import pytest
+from google.generativeai.protos import FunctionCall, FunctionResponse, Part
+from google.generativeai.types import ContentDict, GenerationConfig
+from google.protobuf.json_format import MessageToDict
+
+from griptape.artifacts import ActionArtifact, ImageArtifact, TextArtifact
+from griptape.artifacts.list_artifact import ListArtifact
+from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.drivers import GooglePromptDriver
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestGooglePromptDriver:
@@ -43,7 +43,7 @@ class TestGooglePromptDriver:
         },
     ]
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_generative_model(self, mocker):
         mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
         mock_function_call = Mock(type="tool_use", id="MockTool_test", args={"foo": "bar"})
@@ -55,7 +55,7 @@ class TestGooglePromptDriver:
 
         return mock_generative_model
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_stream_generative_model(self, mocker):
         mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
         mock_function_call_delta = Mock(type="tool_use", id="MockTool_test", args={"foo": "bar"})
@@ -117,7 +117,7 @@ class TestGooglePromptDriver:
 
         return prompt_stack
 
-    @pytest.fixture
+    @pytest.fixture()
     def messages(self):
         return [
             {"parts": ["user-input"], "role": "user"},

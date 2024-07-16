@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.chunkers import MarkdownChunker
 from tests.unit.chunkers.test_text_chunker import gen_paragraph
 
@@ -6,7 +7,7 @@ MAX_TOKENS = 50
 
 
 class TestTextChunker:
-    @pytest.fixture
+    @pytest.fixture()
     def chunker(self):
         return MarkdownChunker(max_tokens=MAX_TOKENS)
 

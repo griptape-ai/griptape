@@ -1,28 +1,30 @@
 import os
-from pathlib import Path
 import tempfile
+from pathlib import Path
+
 import pytest
-from griptape.artifacts import ErrorArtifact, ListArtifact, InfoArtifact, TextArtifact
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers import LocalFileManagerDriver
 from griptape.loaders.text_loader import TextLoader
 
 
 class TestLocalFileManagerDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def temp_dir(self):
         with tempfile.TemporaryDirectory() as temp_dir:
 
-            def write_file(path: str, content: bytes):
+            def write_file(path: str, content: bytes) -> None:
                 full_path = os.path.join(temp_dir, path)
                 os.makedirs(os.path.dirname(full_path), exist_ok=True)
                 with open(full_path, "wb") as f:
                     f.write(content)
 
-            def mkdir(path: str):
+            def mkdir(path: str) -> None:
                 full_path = os.path.join(temp_dir, path)
                 os.makedirs(full_path, exist_ok=True)
 
-            def copy_test_resources(resource_path: str):
+            def copy_test_resources(resource_path: str) -> None:
                 file_dir = os.path.dirname(__file__)
                 full_path = os.path.join(file_dir, "../../../resources", resource_path)
                 full_path = os.path.normpath(full_path)
@@ -46,7 +48,7 @@ class TestLocalFileManagerDriver:
 
             yield temp_dir
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, temp_dir):
         return LocalFileManagerDriver(workdir=temp_dir)
 
@@ -55,7 +57,7 @@ class TestLocalFileManagerDriver:
             LocalFileManagerDriver(workdir="foo")
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # Valid non-empty directories (without trailing slash)
             ("/", "", ["foo", "foo.txt", "foo-empty", "resources"]),
@@ -104,7 +106,7 @@ class TestLocalFileManagerDriver:
         assert set(filter(None, artifact.value.split("\n"))) == set(expected)
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # non-existent paths
             ("/", "bar", "Path not found"),
@@ -133,7 +135,7 @@ class TestLocalFileManagerDriver:
         assert len(artifact.value) == 4
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # # non-existent files or directories
             ("/", "bitcoin.pdf", "Path not found"),
@@ -177,7 +179,7 @@ class TestLocalFileManagerDriver:
         assert isinstance(artifact, ErrorArtifact)
 
     @pytest.mark.parametrize(
-        "workdir,path,content",
+        ("workdir", "path", "content"),
         [
             # non-existent files
             ("/", "resources/foo.txt", "one"),
@@ -202,7 +204,7 @@ class TestLocalFileManagerDriver:
         assert Path(driver.workdir, path).read_text() == content_bytes
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # non-existent directories
             ("/", "bar/", "Path is a directory"),

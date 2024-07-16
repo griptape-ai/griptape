@@ -1,9 +1,10 @@
 import pytest
+
 from griptape.artifacts import AudioArtifact, BaseArtifact
 
 
 class TestAudioArtifact:
-    @pytest.fixture
+    @pytest.fixture()
     def audio_artifact(self):
         return AudioArtifact(value=b"some binary audio data", format="pcm", model="provider/model", prompt="two words")
 

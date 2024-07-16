@@ -1,11 +1,13 @@
 import uuid
-from unittest.mock import Mock, PropertyMock, MagicMock
+from unittest.mock import Mock
+
 import pytest
+
 from griptape.drivers import LeonardoImageGenerationDriver
 
 
 class TestLeonardoImageGenerationDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         requests_session = Mock()
 

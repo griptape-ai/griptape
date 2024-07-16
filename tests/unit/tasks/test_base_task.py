@@ -1,9 +1,8 @@
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.structures import Agent
+from griptape.structures import Agent, Workflow
 from griptape.tasks import ActionsSubtask
-from griptape.structures import Workflow
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_task import MockTask
@@ -11,7 +10,7 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestBaseTask:
-    @pytest.fixture
+    @pytest.fixture()
     def task(self):
         agent = Agent(prompt_driver=MockPromptDriver(), embedding_driver=MockEmbeddingDriver(), tools=[MockTool()])
 

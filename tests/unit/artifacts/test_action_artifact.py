@@ -1,7 +1,9 @@
 import json
+
 import pytest
-from griptape.common import ToolAction
+
 from griptape.artifacts import ActionArtifact, BaseArtifact
+from griptape.common import ToolAction
 
 
 class TestActionArtifact:
@@ -11,7 +13,7 @@ class TestActionArtifact:
 
     def test___add__(self, action):
         with pytest.raises(NotImplementedError):
-            result = ActionArtifact(action) + ActionArtifact(action)
+            ActionArtifact(action) + ActionArtifact(action)
 
     def test_to_text(self, action):
         assert ActionArtifact(action).to_text() == json.dumps(action.to_dict())

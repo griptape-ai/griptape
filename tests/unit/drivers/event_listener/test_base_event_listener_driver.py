@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock
+
 from tests.mocks.mock_event import MockEvent
 from tests.mocks.mock_event_listener_driver import MockEventListenerDriver
 

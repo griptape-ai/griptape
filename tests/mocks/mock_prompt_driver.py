@@ -1,16 +1,18 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 from attrs import define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, Message, DeltaMessage, TextMessageContent, TextDeltaMessageContent
+from griptape.common import DeltaMessage, Message, PromptStack, TextDeltaMessageContent, TextMessageContent
 from griptape.drivers import BasePromptDriver
-from griptape.tokenizers import BaseTokenizer
-
 from tests.mocks.mock_tokenizer import MockTokenizer
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from griptape.tokenizers import BaseTokenizer
 
 
 @define

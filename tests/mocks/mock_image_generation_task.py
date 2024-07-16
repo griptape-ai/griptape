@@ -13,7 +13,7 @@ class MockImageGenerationTask(BaseImageGenerationTask):
         return self._input
 
     @input.setter
-    def input(self, value: str):
+    def input(self, value: str) -> None:
         self._input = TextArtifact(value)
 
     def run(self) -> ImageArtifact:

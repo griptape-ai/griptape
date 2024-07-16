@@ -1,15 +1,15 @@
 import pytest
-from griptape.memory.structure import ConversationMemory
+
+from griptape.engines import PromptSummaryEngine
 from griptape.memory import TaskMemory
+from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
-from griptape.tasks import PromptTask, BaseTask, ToolkitTask
-from griptape.engines import PromptSummaryEngine
-
+from griptape.tasks import BaseTask, PromptTask, ToolkitTask
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestAgent:
@@ -49,8 +49,8 @@ class TestAgent:
         with pytest.raises(ValueError):
             Agent(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
 
+        agent = Agent()
         with pytest.raises(ValueError):
-            agent = Agent()
             agent.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
     def test_with_task_memory(self):
@@ -149,13 +149,13 @@ class TestAgent:
 
         try:
             agent.add_tasks(first_task, second_task)
-            assert False
+            raise AssertionError()
         except ValueError:
             assert True
 
         try:
             agent + [first_task, second_task]
-            assert False
+            raise AssertionError()
         except ValueError:
             assert True
 

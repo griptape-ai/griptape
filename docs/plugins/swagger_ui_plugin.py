@@ -1,4 +1,5 @@
 import os
+from typing import Any
 
 import markdown
 from jinja2 import Environment, FileSystemLoader, select_autoescape
@@ -11,7 +12,7 @@ config_scheme = {
 }
 
 
-def generate_page_contents(page):
+def generate_page_contents(page: Any) -> str:
     spec_url = config_scheme["spec_url"]
     tmpl_url = config_scheme["template"]
     env = Environment(loader=FileSystemLoader("docs/plugins/tmpl"), autoescape=select_autoescape(["html", "xml"]))
@@ -23,11 +24,11 @@ def generate_page_contents(page):
     return tmpl_out
 
 
-def on_config(config):
-    print("INFO     -  swagger-ui plugin ENABLED")
+def on_config(config: Any) -> None:
+    pass
 
 
-def on_page_read_source(page, config):
+def on_page_read_source(page: Any, config: Any) -> Any:
     index_path = os.path.join(config["docs_dir"], config_scheme["outfile"])
     page_path = os.path.join(config["docs_dir"], page.file.src_path)
     if index_path == page_path:

@@ -1,5 +1,4 @@
 import pytest
-
 from attrs import define
 
 from griptape.artifacts import MediaArtifact
@@ -10,7 +9,7 @@ class TestMediaArtifact:
     class ImaginaryMediaArtifact(MediaArtifact):
         media_type: str = "imagination"
 
-    @pytest.fixture
+    @pytest.fixture()
     def media_artifact(self):
         return self.ImaginaryMediaArtifact(value=b"some binary dream data", format="dream")
 

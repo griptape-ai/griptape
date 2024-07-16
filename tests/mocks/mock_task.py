@@ -1,5 +1,6 @@
 from attrs import define, field
-from griptape.artifacts import TextArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.tasks import BaseTask
 
 

@@ -1,11 +1,11 @@
+from griptape.artifacts import ErrorArtifact, TextArtifact
+from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.events import FinishPromptEvent, StartPromptEvent
-from griptape.common import PromptStack
-from tests.mocks.mock_prompt_driver import MockPromptDriver
-from tests.mocks.mock_failing_prompt_driver import MockFailingPromptDriver
-from griptape.artifacts import ErrorArtifact, TextArtifact
-from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
+from griptape.tasks import PromptTask
+from tests.mocks.mock_failing_prompt_driver import MockFailingPromptDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestBasePromptDriver:

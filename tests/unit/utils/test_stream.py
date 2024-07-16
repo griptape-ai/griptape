@@ -1,5 +1,7 @@
-from typing import Iterator
+from collections.abc import Iterator
+
 import pytest
+
 from griptape.structures import Agent
 from griptape.utils import Stream
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -20,8 +22,8 @@ class TestStream:
             chat_stream_artifact = next(chat_stream_run)
             assert chat_stream_artifact.value == "mock output"
 
+            next(chat_stream_run)
             with pytest.raises(StopIteration):
-                next(chat_stream_run)
                 next(chat_stream_run)
         else:
             with pytest.raises(ValueError):

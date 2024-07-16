@@ -1,5 +1,7 @@
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
+
 import pytest
+
 from griptape.drivers import OpenAiEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
 

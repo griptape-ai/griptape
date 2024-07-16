@@ -1,5 +1,6 @@
-from tests.utils.structure_tester import StructureTester
 import pytest
+
+from tests.utils.structure_tester import StructureTester
 
 
 class TestToolkitTask:
@@ -10,9 +11,10 @@ class TestToolkitTask:
     )
     def structure_tester(self, request):
         import os
-        from griptape.structures import Agent
-        from griptape.tools import WebScraper, WebSearch, TaskMemoryClient
+
         from griptape.drivers import GoogleWebSearchDriver
+        from griptape.structures import Agent
+        from griptape.tools import TaskMemoryClient, WebScraper, WebSearch
 
         return StructureTester(
             Agent(

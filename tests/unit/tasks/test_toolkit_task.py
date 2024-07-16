@@ -1,9 +1,9 @@
 from griptape.artifacts import ErrorArtifact, TextArtifact
-from griptape.structures import Agent
-from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
 from griptape.common import ToolAction
-from tests.mocks.mock_tool.tool import MockTool
+from griptape.structures import Agent
+from griptape.tasks import ActionsSubtask, PromptTask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
 
@@ -166,7 +166,7 @@ class TestToolkitSubtask:
 
         try:
             ToolkitTask("test", tools=[MockTool(), MockTool()])
-            assert False
+            raise AssertionError()
         except ValueError:
             assert True
 
@@ -231,7 +231,7 @@ class TestToolkitSubtask:
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
-        valid_input = """Thought: need to test\nObservation: test 
+        valid_input = """Thought: need to test\nObservation: test
         observation\nAnswer: test output"""
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 

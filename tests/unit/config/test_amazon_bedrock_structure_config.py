@@ -1,20 +1,21 @@
 import boto3
-from pytest import fixture
+import pytest
+
 from griptape.config import AmazonBedrockStructureConfig
 from tests.utils.aws import mock_aws_credentials
 
 
 class TestAmazonBedrockStructureConfig:
-    @fixture(autouse=True)
-    def run_before_and_after_tests(self):
+    @pytest.fixture(autouse=True)
+    def _run_before_and_after_tests(self):
         mock_aws_credentials()
 
-    @fixture
+    @pytest.fixture()
     def config(self):
         mock_aws_credentials()
         return AmazonBedrockStructureConfig()
 
-    @fixture
+    @pytest.fixture()
     def config_with_values(self):
         return AmazonBedrockStructureConfig(
             session=boto3.Session(

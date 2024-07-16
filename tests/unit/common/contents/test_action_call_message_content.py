@@ -1,6 +1,7 @@
 import pytest
+
 from griptape.artifacts.action_artifact import ActionArtifact
-from griptape.common import ActionCallMessageContent, ActionCallDeltaMessageContent, ToolAction
+from griptape.common import ActionCallDeltaMessageContent, ActionCallMessageContent, ToolAction
 
 
 class TestActionCallMessageContent:

@@ -1,16 +1,18 @@
-import pytest
 from unittest.mock import patch
+
+import pytest
+
 from griptape.artifacts import ErrorArtifact
 from griptape.tools import OpenWeatherClient
 
 
-@pytest.fixture
+@pytest.fixture()
 def client():
     return OpenWeatherClient(api_key="YOUR_API_KEY")
 
 
 class MockResponse:
-    def __init__(self, json_data, status_code):
+    def __init__(self, json_data, status_code) -> None:
         self.json_data = json_data
         self.status_code = status_code
 

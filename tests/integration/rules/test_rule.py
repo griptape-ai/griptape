@@ -1,5 +1,6 @@
-from tests.utils.structure_tester import StructureTester
 import pytest
+
+from tests.utils.structure_tester import StructureTester
 
 
 class TestRule:
@@ -7,8 +8,8 @@ class TestRule:
         autouse=True, params=StructureTester.RULE_CAPABLE_PROMPT_DRIVERS, ids=StructureTester.prompt_driver_id_fn
     )
     def structure_tester(self, request):
-        from griptape.structures import Agent
         from griptape.rules import Rule
+        from griptape.structures import Agent
 
         agent = Agent(prompt_driver=request.param, rules=[Rule("Your name is Tony.")])
 

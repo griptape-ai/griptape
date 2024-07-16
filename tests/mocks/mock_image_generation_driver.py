@@ -1,5 +1,9 @@
+from __future__ import annotations
+
 from typing import Optional
+
 from attrs import define
+
 from griptape.artifacts import ImageArtifact
 from griptape.drivers.image_generation.base_image_generation_driver import BaseImageGenerationDriver
 

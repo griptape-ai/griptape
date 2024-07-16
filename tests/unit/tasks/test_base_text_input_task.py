@@ -1,7 +1,7 @@
-from tests.mocks.mock_prompt_driver import MockPromptDriver
-from griptape.structures import Pipeline
 from griptape.artifacts import TextArtifact
-from griptape.rules import Ruleset, Rule
+from griptape.rules import Rule, Ruleset
+from griptape.structures import Pipeline
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_text_input_task import MockTextInputTask
 
 

@@ -1,10 +1,11 @@
-from griptape.artifacts.error_artifact import ErrorArtifact
-from griptape.drivers import AnthropicPromptDriver
-from griptape.common import PromptStack, TextDeltaMessageContent, ActionCallDeltaMessageContent, ToolAction
-from griptape.artifacts import TextArtifact, ActionArtifact, ImageArtifact, ListArtifact
 from unittest.mock import Mock
+
 import pytest
 
+from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts.error_artifact import ErrorArtifact
+from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.drivers import AnthropicPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -131,7 +132,7 @@ class TestAnthropicPromptDriver:
         },
     ]
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("anthropic.Anthropic")
         mock_tool_use = Mock(type="tool_use", id="mock-id", input={"foo": "bar"})
@@ -150,7 +151,7 @@ class TestAnthropicPromptDriver:
 
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_stream_client(self, mocker):
         mock_stream_client = mocker.patch("anthropic.Anthropic")
 
@@ -263,7 +264,7 @@ class TestAnthropicPromptDriver:
 
         return prompt_stack
 
-    @pytest.fixture
+    @pytest.fixture()
     def messages(self):
         return [
             {"role": "user", "content": "user-input"},

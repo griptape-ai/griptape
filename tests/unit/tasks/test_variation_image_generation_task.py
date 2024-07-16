@@ -1,21 +1,22 @@
-from griptape.artifacts.list_artifact import ListArtifact
-from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
-from tests.mocks.mock_structure_config import MockStructureConfig
 from unittest.mock import Mock
 
 import pytest
-from griptape.tasks import BaseTask, VariationImageGenerationTask
-from griptape.artifacts import TextArtifact, ImageArtifact
+
+from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.artifacts.list_artifact import ListArtifact
 from griptape.engines import VariationImageGenerationEngine
 from griptape.structures import Agent
+from griptape.tasks import BaseTask, VariationImageGenerationTask
+from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
+from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestVariationImageGenerationTask:
-    @pytest.fixture
+    @pytest.fixture()
     def text_artifact(self):
         return TextArtifact(value="some text")
 
-    @pytest.fixture
+    @pytest.fixture()
     def image_artifact(self):
         return ImageArtifact(value=b"some image data", format="png", width=512, height=512)
 
@@ -56,4 +57,4 @@ class TestVariationImageGenerationTask:
         task = VariationImageGenerationTask((text_artifact, image_artifact))
 
         with pytest.raises(ValueError):
-            task.image_generation_engine
+            task.image_generation_engine  # noqa: B018

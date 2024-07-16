@@ -1,17 +1,19 @@
-import pytest
-from unittest.mock import MagicMock, patch
-from griptape.drivers import QdrantVectorStoreDriver
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from griptape.utils import import_optional_dependency
 import uuid
+from unittest.mock import MagicMock, patch
+
+import pytest
+
+from griptape.drivers import QdrantVectorStoreDriver
+from griptape.utils import import_optional_dependency
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestQdrantVectorStoreDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def embedding_driver(self):
         return MockEmbeddingDriver()
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_engine(self):
         return MagicMock()
 

@@ -1,5 +1,7 @@
-import pytest
 import uuid
+
+import pytest
+
 from griptape.drivers import GriptapeCloudKnowledgeBaseVectorStoreDriver
 
 
@@ -10,7 +12,7 @@ class TestGriptapeCloudKnowledgeBaseVectorStoreDriver:
     test_metas = [{"key": "value1"}, {"key": "value2"}]
     test_scores = [0.7, 0.8]
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, mocker):
         test_entries = {
             "entries": [

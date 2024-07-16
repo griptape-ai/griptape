@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.loaders.csv_loader import CsvLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
@@ -12,7 +13,7 @@ class TestCsvLoader:
         else:
             return CsvLoader(embedding_driver=MockEmbeddingDriver(), encoding=encoding)
 
-    @pytest.fixture
+    @pytest.fixture()
     def loader_with_pipe_delimiter(self):
         return CsvLoader(embedding_driver=MockEmbeddingDriver(), delimiter="|")
 

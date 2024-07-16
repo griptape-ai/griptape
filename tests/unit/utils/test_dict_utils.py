@@ -1,5 +1,6 @@
-from griptape.utils import remove_null_values_in_dict_recursively, dict_merge, remove_key_in_dict_recursively
 import pytest
+
+from griptape.utils import dict_merge, remove_key_in_dict_recursively, remove_null_values_in_dict_recursively
 
 
 class TestDictUtils:

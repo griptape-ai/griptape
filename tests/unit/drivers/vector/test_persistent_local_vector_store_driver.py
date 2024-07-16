@@ -1,6 +1,8 @@
 import os
 import tempfile
+
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -8,12 +10,12 @@ from tests.unit.drivers.vector.test_base_local_vector_store_driver import BaseLo
 
 
 class TestPersistentLocalVectorStoreDriver(BaseLocalVectorStoreDriver):
-    @pytest.fixture
+    @pytest.fixture()
     def temp_dir(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             yield temp_dir
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, temp_dir):
         persist_file = os.path.join(temp_dir, "store.json")
 

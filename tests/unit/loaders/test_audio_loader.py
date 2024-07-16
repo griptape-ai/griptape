@@ -5,15 +5,15 @@ from griptape.loaders import AudioLoader
 
 
 class TestAudioLoader:
-    @pytest.fixture
+    @pytest.fixture()
     def loader(self):
         return AudioLoader()
 
-    @pytest.fixture
+    @pytest.fixture()
     def create_source(self, bytes_from_resource_path):
         return bytes_from_resource_path
 
-    @pytest.mark.parametrize("resource_path,suffix,mime_type", [("sentences.wav", ".wav", "audio/wav")])
+    @pytest.mark.parametrize(("resource_path", "suffix", "mime_type"), [("sentences.wav", ".wav", "audio/wav")])
     def test_load(self, resource_path, suffix, mime_type, loader, create_source):
         source = create_source(resource_path)
 
@@ -32,8 +32,7 @@ class TestAudioLoader:
 
         assert len(collection) == len(resource_paths)
 
-        keys = {loader.to_key(source) for source in sources}
-        for key in collection.keys():
+        for key in collection:
             artifact = collection[key]
             assert isinstance(artifact, AudioArtifact)
             assert artifact.name.endswith(".wav")

@@ -1,13 +1,14 @@
-from pytest import fixture
+import pytest
+
 from griptape.config import AzureOpenAiStructureConfig
 
 
 class TestAzureOpenAiStructureConfig:
-    @fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def mock_openai(self, mocker):
         return mocker.patch("openai.AzureOpenAI")
 
-    @fixture
+    @pytest.fixture()
     def config(self):
         return AzureOpenAiStructureConfig(
             azure_endpoint="http://localhost:8080",

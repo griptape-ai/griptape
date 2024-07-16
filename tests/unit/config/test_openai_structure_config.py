@@ -1,13 +1,14 @@
-from pytest import fixture
+import pytest
+
 from griptape.config import OpenAiStructureConfig
 
 
 class TestOpenAiStructureConfig:
-    @fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def mock_openai(self, mocker):
         return mocker.patch("openai.OpenAI")
 
-    @fixture
+    @pytest.fixture()
     def config(self):
         return OpenAiStructureConfig()
 

@@ -1,14 +1,15 @@
-from griptape.tokenizers import AmazonBedrockTokenizer
 import pytest
+
+from griptape.tokenizers import AmazonBedrockTokenizer
 
 
 class TestAmazonBedrockTokenizer:
-    @pytest.fixture
+    @pytest.fixture()
     def tokenizer(self, request):
         return AmazonBedrockTokenizer(model=request.param)
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [
             ("anthropic.claude-v2:1", 4),
             ("anthropic.claude-v2", 4),
@@ -21,7 +22,7 @@ class TestAmazonBedrockTokenizer:
         assert tokenizer.count_tokens("foo bar huzzah") == expected
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [
             ("anthropic.claude-v2", 99996),
             ("anthropic.claude-v2:1", 199996),
@@ -34,7 +35,7 @@ class TestAmazonBedrockTokenizer:
         assert tokenizer.count_input_tokens_left("foo bar huzzah") == expected
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [
             ("anthropic.claude-v2", 4092),
             ("anthropic.claude-v2:1", 4092),

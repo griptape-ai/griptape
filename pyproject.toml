@@ -217,6 +217,7 @@ select = [
     "C4", # flake8-comprehensions
     "ANN", # flake8-annotations
     "FBT", # flake8-boolean-trap
+    "PT", # flake8-pytest-style
 ]
 ignore = [
     "UP007", # non-pep604-annotation
@@ -238,12 +239,20 @@ ignore = [
     "ANN101", # missing-type-self
     "ANN102", # missing-type-cls
     "ANN401", # any-type
+    "PT011", # pytest-raises-too-broad
 ]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["I"]
+"__init__.py" = [
+    "I" # isort
+]
+"tests/*" = [
+    "ANN001", # missing-type-function-argument
+    "ANN201", # missing-return-type-undocumented-public-function
+    "ANN202", # missing-return-type-private-function
+]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "attr".msg = "The attr module is deprecated, use attrs instead."

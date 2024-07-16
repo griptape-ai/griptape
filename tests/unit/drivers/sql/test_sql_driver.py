@@ -1,9 +1,10 @@
 import pytest
+
 from griptape.drivers import SqlDriver
 
 
 class TestSqlDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         new_driver = SqlDriver(engine_url="sqlite:///:memory:")
 

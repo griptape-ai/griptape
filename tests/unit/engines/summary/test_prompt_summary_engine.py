@@ -1,13 +1,15 @@
-import pytest
-from griptape.artifacts import TextArtifact, ListArtifact
-from griptape.engines import PromptSummaryEngine
-from griptape.common import PromptStack
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 import os
+
+import pytest
+
+from griptape.artifacts import ListArtifact, TextArtifact
+from griptape.common import PromptStack
+from griptape.engines import PromptSummaryEngine
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestPromptSummaryEngine:
-    @pytest.fixture
+    @pytest.fixture()
     def engine(self):
         return PromptSummaryEngine(prompt_driver=MockPromptDriver())
 
