@@ -39,7 +39,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID).",
             )
 
-    def publish_event(self, event: BaseEvent | dict, flush: bool = False) -> None:
+    def publish_event(self, event: BaseEvent | dict, *, flush: bool = False) -> None:
         from griptape.observability.observability import Observability
 
         event_payload = event.to_dict() if isinstance(event, BaseEvent) else event
@@ -48,7 +48,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
         if span_id is not None:
             event_payload["span_id"] = span_id
 
-        super().publish_event(event_payload, flush)
+        super().publish_event(event_payload, flush=flush)
 
     def try_publish_event_payload(self, event_payload: dict) -> None:
         url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/events")

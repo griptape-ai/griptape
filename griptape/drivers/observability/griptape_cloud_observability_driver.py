@@ -1,23 +1,28 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Sequence
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 from urllib.parse import urljoin
 from uuid import UUID
 
 import requests
-from attrs import Factory, define, field
-from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
+from attrs import Attribute, Factory, define, field
+from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import INVALID_SPAN, get_current_span
 
 from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
 
+if TYPE_CHECKING:
+    from collections.abc import Sequence
+
+    from opentelemetry.sdk.trace import ReadableSpan, SpanProcessor
+
 
 @define
 class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
+    service_name: str = field(default="griptape-cloud", kw_only=True)
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")), kw_only=True
     )
@@ -40,6 +45,7 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
         ),
         kw_only=True,
     )
+    trace_provider: TracerProvider = field(default=Factory(lambda: TracerProvider()), kw_only=True)
 
     @staticmethod
     def format_trace_id(trace_id: int) -> str:
@@ -84,8 +90,8 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
             response = requests.post(url=url, json=payload, headers=self.headers)
             return SpanExportResult.SUCCESS if response.status_code == 200 else SpanExportResult.FAILURE
 
-    @structure_run_id.validator  # pyright: ignore
-    def validate_run_id(self, _, structure_run_id: str):
+    @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_run_id(self, _: Attribute, structure_run_id: str) -> None:
         if structure_run_id is None:
             raise ValueError(
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."

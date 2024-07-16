@@ -1,9 +1,13 @@
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define
 
-from griptape.common import Observable
 from griptape.drivers import BaseObservabilityDriver
+
+if TYPE_CHECKING:
+    from griptape.common import Observable
 
 
 @define

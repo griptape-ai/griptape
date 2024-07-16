@@ -23,7 +23,7 @@ class Observable:
         decorator_args: tuple[Any, ...] = field(default=Factory(tuple), kw_only=True)
         decorator_kwargs: dict[str, Any] = field(default=Factory(dict), kw_only=True)
 
-        def __call__(self):
+        def __call__(self) -> Any:
             # If self.func has a __self__ attribute, it is a bound method and we do not need to pass the instance.
             args = (self.instance, *self.args) if self.instance and not hasattr(self.func, "__self__") else self.args
             return self.func(*args, **self.kwargs)
@@ -32,7 +32,7 @@ class Observable:
         def tags(self) -> Optional[list[str]]:
             return self.decorator_kwargs.get("tags")
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         self._instance = None
         if len(args) == 1 and len(kwargs) == 0 and isfunction(args[0]):
             # Parameterless call. In otherwords, the `@observable` annotation
@@ -49,11 +49,11 @@ class Observable:
             self.decorator_args = args
             self.decorator_kwargs = kwargs
 
-    def __get__(self, obj, objtype=None):
+    def __get__(self, obj: Any, objtype: Any = None) -> Observable:
         self._instance = obj
         return self
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> Any:
         if self._func:
             # Parameterless call (self._func was a set in __init__)
             from griptape.observability.observability import Observability

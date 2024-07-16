@@ -1,10 +1,14 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from types import TracebackType
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define
 
-from griptape.common import Observable
+if TYPE_CHECKING:
+    from types import TracebackType
+
+    from griptape.common import Observable
 
 
 @define

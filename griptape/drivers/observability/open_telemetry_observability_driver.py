@@ -1,5 +1,6 @@
-from types import TracebackType
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 from opentelemetry.instrumentation.threading import ThreadingInstrumentor
@@ -7,8 +8,12 @@ from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import SpanProcessor, TracerProvider
 from opentelemetry.trace import INVALID_SPAN, Status, StatusCode, Tracer, format_span_id, get_current_span, get_tracer
 
-from griptape.common import Observable
 from griptape.drivers import BaseObservabilityDriver
+
+if TYPE_CHECKING:
+    from types import TracebackType
+
+    from griptape.common import Observable
 
 
 @define
@@ -25,7 +30,7 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
     _tracer: Optional[Tracer] = None
     _root_span_context_manager: Any = None
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         self.trace_provider.add_span_processor(self.span_processor)
         self._tracer = get_tracer(self.service_name, tracer_provider=self.trace_provider)
 

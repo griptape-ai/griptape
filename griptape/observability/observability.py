@@ -1,5 +1,6 @@
-from types import TracebackType
-from typing import Any, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
 
@@ -8,6 +9,11 @@ from griptape.drivers import BaseObservabilityDriver, NoOpObservabilityDriver
 
 _no_op_observability_driver = NoOpObservabilityDriver()
 _global_observability_driver: Optional[BaseObservabilityDriver] = None
+
+if TYPE_CHECKING:
+    from types import TracebackType
+
+    from griptape.common import Observable
 
 
 @define
@@ -20,7 +26,7 @@ class Observability:
         return _global_observability_driver
 
     @staticmethod
-    def set_global_driver(driver: Optional[BaseObservabilityDriver]):
+    def set_global_driver(driver: Optional[BaseObservabilityDriver]) -> None:
         global _global_observability_driver
         _global_observability_driver = driver
 
@@ -34,7 +40,7 @@ class Observability:
         driver = Observability.get_global_driver() or _no_op_observability_driver
         return driver.get_span_id()
 
-    def __enter__(self):
+    def __enter__(self) -> None:
         if Observability.get_global_driver() is not None:
             raise ValueError("Observability driver already set.")
         Observability.set_global_driver(self.observability_driver)

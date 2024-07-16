@@ -9,7 +9,7 @@ from griptape.drivers import GriptapeCloudObservabilityDriver
 from griptape.structures import Agent
 from griptape.observability import Observability
 
-observability_driver = GriptapeCloudObservabilityDriver(service_name="hot-fire")
+observability_driver = GriptapeCloudObservabilityDriver()
 
 with Observability(observability_driver=observability_driver):
     # Important! Only code within this block is subject to observability
@@ -47,7 +47,7 @@ class MyClass:
         my_function()
         time.sleep(2)
 
-observability_driver = GriptapeCloudObservabilityDriver(service_name="my-app")
+observability_driver = GriptapeCloudObservabilityDriver()
 
 # When invoking the instrumented code from within the Observability context manager, the
 # telemetry for the custom code will be sent to the destination specified by the driver.

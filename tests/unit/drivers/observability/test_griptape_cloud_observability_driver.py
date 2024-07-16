@@ -1,4 +1,3 @@
-from datetime import datetime
 import pytest
 from griptape.common import Observable
 from griptape.drivers import GriptapeCloudObservabilityDriver
@@ -11,7 +10,7 @@ class TestGriptapeCloudObservabilityDriver:
     @pytest.fixture
     def driver(self):
         return GriptapeCloudObservabilityDriver(
-            service_name="test", base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
+            base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
         )
 
     @pytest.fixture(autouse=True)
@@ -26,7 +25,7 @@ class TestGriptapeCloudObservabilityDriver:
 
     def test_init(self, mock_span_exporter_class, mock_span_exporter):
         GriptapeCloudObservabilityDriver(
-            service_name="test", base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
+            base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
         )
 
         assert mock_span_exporter_class.call_count == 1
