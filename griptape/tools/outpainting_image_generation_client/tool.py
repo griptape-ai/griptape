@@ -123,7 +123,7 @@ class OutpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
         negative_prompts: list[str],
         image_artifact: ImageArtifact,
         mask_artifact: ImageArtifact,
-    ):
+    ) -> ImageArtifact:
         output_artifact = self.engine.run(
             prompts=prompts,
             negative_prompts=negative_prompts,

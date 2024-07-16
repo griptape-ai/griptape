@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
-from attrs import define, field
+from attrs import Attribute, define, field
 
 from griptape.artifacts import BaseArtifact
 
@@ -17,7 +17,7 @@ class ListArtifact(BaseArtifact):
     validate_uniform_types: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     @value.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_value(self, _, value: list[BaseArtifact]) -> None:
+    def validate_value(self, _: Attribute, value: list[BaseArtifact]) -> None:
         if self.validate_uniform_types and len(value) > 0:
             first_type = type(value[0])
 

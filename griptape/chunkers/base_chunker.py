@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import ChunkSeparator
@@ -28,7 +28,7 @@ class BaseChunker(ABC):
     )
 
     @max_tokens.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_max_tokens(self, _, max_tokens: int) -> None:
+    def validate_max_tokens(self, _: Attribute, max_tokens: int) -> None:
         if max_tokens < 0:
             raise ValueError("max_tokens must be 0 or greater.")
 

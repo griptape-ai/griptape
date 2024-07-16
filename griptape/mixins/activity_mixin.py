@@ -4,7 +4,7 @@ import inspect
 from typing import Callable, Optional
 
 import schema
-from attrs import define, field
+from attrs import Attribute, define, field
 from jinja2 import Template
 from schema import Literal, Schema
 
@@ -15,7 +15,7 @@ class ActivityMixin:
     denylist: Optional[list[str]] = field(default=None, kw_only=True)
 
     @allowlist.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_allowlist(self, _, allowlist: Optional[list[str]]) -> None:
+    def validate_allowlist(self, _: Attribute, allowlist: Optional[list[str]]) -> None:
         if allowlist is None:
             return
 
@@ -26,7 +26,7 @@ class ActivityMixin:
             self._validate_tool_activity(activity_name)
 
     @denylist.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_denylist(self, _, denylist: Optional[list[str]]) -> None:
+    def validate_denylist(self, _: Attribute, denylist: Optional[list[str]]) -> None:
         if denylist is None:
             return
 
@@ -95,7 +95,7 @@ class ActivityMixin:
         else:
             return {schema.Optional("input"): {}}
 
-    def _validate_tool_activity(self, activity_name):
+    def _validate_tool_activity(self, activity_name: str) -> None:
         tool = self.__class__
 
         activity = getattr(tool, activity_name, None)

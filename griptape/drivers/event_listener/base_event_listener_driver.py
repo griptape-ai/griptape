@@ -28,9 +28,9 @@ class BaseEventListenerDriver(ABC):
     def batch(self) -> list[dict]:
         return self._batch
 
-    def publish_event(self, event: BaseEvent | dict, flush: bool = False) -> None:
+    def publish_event(self, event: BaseEvent | dict, *, flush: bool = False) -> None:
         with self.futures_executor_fn() as executor:
-            executor.submit(self._safe_try_publish_event, event, flush)
+            executor.submit(self._safe_try_publish_event, event, flush=flush)
 
     @abstractmethod
     def try_publish_event_payload(self, event_payload: dict) -> None: ...
@@ -38,7 +38,7 @@ class BaseEventListenerDriver(ABC):
     @abstractmethod
     def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None: ...
 
-    def _safe_try_publish_event(self, event: BaseEvent | dict, flush: bool) -> None:
+    def _safe_try_publish_event(self, event: BaseEvent | dict, *, flush: bool) -> None:
         try:
             event_payload = event if isinstance(event, dict) else event.to_dict()
 

@@ -64,7 +64,7 @@ class ActionsSubtask(BaseTask):
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
-    def attach_to(self, parent_task: BaseTask):
+    def attach_to(self, parent_task: BaseTask) -> None:
         self.parent_task_id = parent_task.id
         self.structure = parent_task.structure
 

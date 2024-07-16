@@ -51,6 +51,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
@@ -73,7 +74,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             )
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Loads a document entry from the MongoDB collection based on the vector ID.
 
         Returns:
@@ -95,7 +96,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                 meta=doc["meta"],
             )
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Loads all document entries from the MongoDB collection.
 
         Entries can optionally be filtered by namespace.
@@ -116,6 +117,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
@@ -171,7 +173,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         return results
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> None:
         """Deletes the vector from the collection."""
         collection = self.get_collection()
         collection.delete_one({"_id": vector_id})

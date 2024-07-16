@@ -3,9 +3,9 @@ from __future__ import annotations
 import uuid
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Any, Optional, cast
+from typing import Any, NoReturn, Optional, cast
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 from sqlalchemy import JSON, Column, String, create_engine
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.engine import Engine
@@ -34,7 +34,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
 
     @connection_string.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_connection_string(self, _, connection_string: Optional[str]) -> None:
+    def validate_connection_string(self, _: Attribute, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
         if self.engine is not None:
             return
@@ -47,7 +47,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("The connection string must describe a Postgres database connection")
 
     @engine.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_engine(self, _, engine: Optional[Engine]) -> None:
+    def validate_engine(self, _: Attribute, engine: Optional[Engine]) -> None:
         # If a connection string is provided, an engine does not need to be provided.
         if self.connection_string is not None:
             return
@@ -62,6 +62,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
     def setup(
         self,
+        *,
         create_schema: bool = True,
         install_uuid_extension: bool = True,
         install_vector_extension: bool = True,
@@ -79,6 +80,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
@@ -93,7 +95,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             return str(getattr(obj, "id"))
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
         with Session(self.engine) as session:
             result = session.get(self._model, vector_id)
@@ -105,7 +107,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 meta=getattr(result, "meta"),
             )
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from the collection, optionally filtering to only those that match the provided namespace."""
         with Session(self.engine) as session:
             query = session.query(self._model)
@@ -127,6 +129,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
@@ -191,5 +194,5 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
         return VectorModel
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

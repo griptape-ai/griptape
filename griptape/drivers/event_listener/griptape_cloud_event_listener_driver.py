@@ -4,7 +4,7 @@ import os
 from urllib.parse import urljoin
 
 import requests
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
 
@@ -32,7 +32,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     structure_run_id: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
 
     @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_run_id(self, _, structure_run_id: str):
+    def validate_run_id(self, _: Attribute, structure_run_id: str) -> None:
         if structure_run_id is None:
             raise ValueError(
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID).",

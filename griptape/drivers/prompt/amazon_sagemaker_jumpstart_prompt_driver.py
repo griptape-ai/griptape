@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent
@@ -40,7 +40,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     )
 
     @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_stream(self, _, stream):
+    def validate_stream(self, _: Attribute, stream: bool) -> None:  # noqa: FBT001
         if stream:
             raise ValueError("streaming is not supported")
 

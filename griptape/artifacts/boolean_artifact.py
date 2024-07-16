@@ -17,9 +17,9 @@ class BooleanArtifact(BaseArtifact):
         if value is not None:
             if isinstance(value, str):
                 if value.lower() == "true":
-                    return BooleanArtifact(True)
+                    return BooleanArtifact(True)  # noqa: FBT003
                 elif value.lower() == "false":
-                    return BooleanArtifact(False)
+                    return BooleanArtifact(False)  # noqa: FBT003
             elif isinstance(value, bool):
                 return BooleanArtifact(value)
         raise ValueError(f"Cannot convert '{value}' to BooleanArtifact")

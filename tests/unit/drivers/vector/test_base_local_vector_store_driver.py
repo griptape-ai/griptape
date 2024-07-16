@@ -41,8 +41,8 @@ class BaseLocalVectorStoreDriver(ABC):
     def test_upsert_multiple(self, driver):
         driver.upsert_text_artifacts({"foo": [TextArtifact("foo")], "bar": [TextArtifact("bar")]})
 
-        foo_entries = driver.load_entries("foo")
-        bar_entries = driver.load_entries("bar")
+        foo_entries = driver.load_entries(namespace="foo")
+        bar_entries = driver.load_entries(namespace="bar")
 
         assert len(driver.entries) == 2
         assert foo_entries[0].to_artifact().value == "foo"
@@ -70,8 +70,8 @@ class BaseLocalVectorStoreDriver(ABC):
         driver.upsert_text_artifact(TextArtifact("foobar 3"), namespace="test-namespace-2")
 
         assert len(driver.load_entries()) == 3
-        assert len(driver.load_entries("test-namespace-1")) == 2
-        assert len(driver.load_entries("test-namespace-2")) == 1
+        assert len(driver.load_entries(namespace="test-namespace-1")) == 2
+        assert len(driver.load_entries(namespace="test-namespace-2")) == 1
 
     def test_load_artifacts(self, driver):
         driver.upsert_text_artifact(TextArtifact("foobar 1"), namespace="test-namespace-1")
@@ -79,8 +79,8 @@ class BaseLocalVectorStoreDriver(ABC):
         driver.upsert_text_artifact(TextArtifact("foobar 3"), namespace="test-namespace-2")
 
         assert len(driver.load_artifacts()) == 3
-        assert len(driver.load_artifacts("test-namespace-1")) == 2
-        assert len(driver.load_artifacts("test-namespace-2")) == 1
+        assert len(driver.load_artifacts(namespace="test-namespace-1")) == 2
+        assert len(driver.load_artifacts(namespace="test-namespace-2")) == 1
 
     def test_does_entry_exist_exception(self, driver):
         with patch.object(driver, "load_entry", side_effect=Exception):

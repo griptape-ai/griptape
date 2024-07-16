@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.utils.import_utils import import_optional_dependency
 
@@ -32,7 +32,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
     s3_client: Any = field(default=Factory(lambda self: self.session.client("s3"), takes_self=True), kw_only=True)
 
     @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_workdir(self, _, workdir: str) -> None:
+    def validate_workdir(self, _: Attribute, workdir: str) -> None:
         if not Path(workdir).is_absolute():
             raise ValueError("Workdir must be an absolute path")
 
@@ -62,7 +62,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
             else:
                 raise e
 
-    def try_save_file(self, path: str, value: bytes):
+    def try_save_file(self, path: str, value: bytes) -> None:
         full_key = self._to_full_key(path)
         if self._is_a_directory(full_key):
             raise IsADirectoryError

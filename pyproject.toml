@@ -205,9 +205,9 @@ select = [
     "UP", # pyupgrade
     "B", # flake8-bugbear
     "SIM", # flake8-simplify
-    "TID251", # banned-api
-    "T201", # print
-    "C901", # complex-structure
+    "TID", # flake8-tidy-imports
+    "T20", # flake8-print
+    "C90", # mccabe
     "TCH", # flake8-type-checking
     "D", # pydocstyle
     "PGH", # pygrep-hooks
@@ -215,6 +215,8 @@ select = [
     "FA", # flake8-future-annotations
     "COM", # flake8-commas
     "C4", # flake8-comprehensions
+    "ANN", # flake8-annotations
+    "FBT", # flake8-boolean-trap
 ]
 ignore = [
     "UP007", # non-pep604-annotation
@@ -230,7 +232,12 @@ ignore = [
     "D105", # undocumented-magic-method
     "D106", # undocumented-public-nested-class
     "D107", # undocumented-public-init
-    "COM812" # missing-trailing-comma -- See https://github.com/astral-sh/ruff/issues/9216 
+    "COM812", # missing-trailing-comma -- See https://github.com/astral-sh/ruff/issues/9216 
+    "ANN002", # missing-type-args
+    "ANN003", # missing-type-kwargs
+    "ANN101", # missing-type-self
+    "ANN102", # missing-type-cls
+    "ANN401", # any-type
 ]
 [tool.ruff.lint.pydocstyle]
 convention = "google"

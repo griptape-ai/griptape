@@ -209,7 +209,7 @@ class RestApiClient(BaseTool):
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
 
-    def _build_url(self, base_url, path=None, path_params=None):
+    def _build_url(self, base_url: str, path: Optional[str] = None, path_params: Optional[list] = None) -> str:
         url = ""
 
         if path:

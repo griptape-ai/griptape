@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, NoReturn, Optional
 
 from attrs import define, field
 
@@ -44,7 +44,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         result = self.index.fetch(ids=[vector_id], namespace=namespace).to_dict()
         vectors = list(result["vectors"].values())
 
@@ -60,7 +60,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         else:
             return None
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         # This is a hacky way to query up to 10,000 values from Pinecone. Waiting on an official API for fetching
         # all values from a namespace:
         # https://community.pinecone.io/t/is-there-a-way-to-query-all-the-vectors-and-or-metadata-from-a-namespace/797/5
@@ -85,11 +85,11 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
-        # PineconeVectorStorageDriver-specific params:
-        include_metadata=True,
+        include_metadata: bool = True,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         vector = self.embedding_driver.embed_string(query)
@@ -114,5 +114,5 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             for r in results["matches"]
         ]
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

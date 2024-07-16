@@ -17,7 +17,7 @@ def remove_key_in_dict_recursively(d: dict, key: str) -> dict:
         return d
 
 
-def dict_merge(dct: Optional[dict], merge_dct: Optional[dict], add_keys: bool = True) -> dict:
+def dict_merge(dct: Optional[dict], merge_dct: Optional[dict], *, add_keys: bool = True) -> dict:
     """Recursive dict merge.
 
     Inspired by :meth:``dict.update()``, instead of
