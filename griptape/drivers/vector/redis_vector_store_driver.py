@@ -78,7 +78,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Retrieves a specific vector entry from Redis based on its identifier and optional namespace.
 
         Returns:
@@ -91,7 +91,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         return BaseVectorStoreDriver.Entry(id=vector_id, meta=meta, vector=vector, namespace=namespace)
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from Redis that match the optional namespace.
 
         Returns:
@@ -102,7 +102,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         entries = []
         for key in keys:
-            entry = self.load_entry(key.decode("utf-8"), namespace)
+            entry = self.load_entry(key.decode("utf-8"), namespace=namespace)
             if entry:
                 entries.append(entry)
 
@@ -111,6 +111,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,

@@ -49,6 +49,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
@@ -66,7 +67,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
         return response["_id"]
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Retrieves a specific vector entry from OpenSearch based on its identifier and optional namespace.
 
         Returns:
@@ -95,7 +96,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             logging.error(f"Error while loading entry: {e}")
             return None
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from OpenSearch that match the optional namespace.
 
         Returns:
@@ -122,6 +123,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,

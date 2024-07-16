@@ -39,6 +39,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_text(
         self,
         string: str,
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
@@ -73,6 +74,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_text_artifact(
         self,
         artifact: TextArtifact,
+        *,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         vector_id: Optional[str] = None,
@@ -106,7 +108,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         else:
             raise ValueError(f"Failed to upsert text: {response}")
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Load a document entry from the Marqo index.
 
         Args:
@@ -127,7 +129,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         else:
             return None
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Load all document entries from the Marqo index.
 
         Args:
@@ -167,6 +169,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
@@ -228,6 +231,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,

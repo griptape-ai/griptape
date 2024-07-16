@@ -22,7 +22,7 @@ class TestDummyVectorStoreDriver:
 
     def test_load_entries(self, vector_store_driver):
         with pytest.raises(DummyException):
-            vector_store_driver.load_entries("foo bar huzzah")
+            vector_store_driver.load_entries(namespace="foo bar huzzah")
 
     def test_query(self, vector_store_driver):
         with pytest.raises(DummyException):

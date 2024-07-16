@@ -29,15 +29,16 @@ class DummyVectorStoreDriver(BaseVectorStoreDriver):
     ) -> str:
         raise DummyException(__class__.__name__, "upsert_vector")
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         raise DummyException(__class__.__name__, "load_entry")
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         raise DummyException(__class__.__name__, "load_entries")
 
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,

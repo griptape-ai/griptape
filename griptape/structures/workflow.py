@@ -37,6 +37,7 @@ class Workflow(Structure):
         parent_tasks: BaseTask | list[BaseTask],
         tasks: BaseTask | list[BaseTask],
         child_tasks: BaseTask | list[BaseTask],
+        *,
         preserve_relationship: bool = False,
     ) -> list[BaseTask]:
         """Insert tasks between parent and child tasks in the workflow.
@@ -55,7 +56,7 @@ class Workflow(Structure):
             child_tasks = [child_tasks]
 
         for task in tasks:
-            self.insert_task(parent_tasks, task, child_tasks, preserve_relationship)
+            self.insert_task(parent_tasks, task, child_tasks, preserve_relationship=preserve_relationship)
 
         return tasks
 
@@ -64,6 +65,7 @@ class Workflow(Structure):
         parent_tasks: list[BaseTask],
         task: BaseTask,
         child_tasks: list[BaseTask],
+        *,
         preserve_relationship: bool = False,
     ) -> BaseTask:
         task.preprocess(self)

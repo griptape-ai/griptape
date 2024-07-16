@@ -216,6 +216,7 @@ select = [
     "COM", # flake8-commas
     "C4", # flake8-comprehensions
     "ANN", # flake8-annotations
+    "FBT", # flake8-boolean-trap
 ]
 ignore = [
     "UP007", # non-pep604-annotation

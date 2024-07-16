@@ -110,7 +110,7 @@ class Structure(ABC):
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.embedding_driver` instead.")
 
     @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_stream(self, attribute: Attribute, value: bool) -> None:
+    def validate_stream(self, attribute: Attribute, value: bool) -> None:  # noqa: FBT001
         if value is not None:
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver.stream` instead.")
 
@@ -228,9 +228,9 @@ class Structure(ABC):
         else:
             raise ValueError("Event Listener not found.")
 
-    def publish_event(self, event: BaseEvent, flush: bool = False) -> None:
+    def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
         for event_listener in self.event_listeners:
-            event_listener.publish_event(event, flush)
+            event_listener.publish_event(event, flush=True)
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}

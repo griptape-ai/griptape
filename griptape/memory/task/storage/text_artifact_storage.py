@@ -32,12 +32,12 @@ class TextArtifactStorage(BaseArtifactStorage):
 
     def store_artifact(self, namespace: str, artifact: BaseArtifact) -> None:
         if isinstance(artifact, TextArtifact):
-            self.vector_store_driver.upsert_text_artifact(artifact, namespace)
+            self.vector_store_driver.upsert_text_artifact(artifact, namespace=namespace)
         else:
             raise ValueError("Artifact must be of instance TextArtifact")
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
-        return self.vector_store_driver.load_artifacts(namespace)
+        return self.vector_store_driver.load_artifacts(namespace=namespace)
 
     def summarize(self, namespace: str) -> TextArtifact:
         if self.summary_engine is None:
