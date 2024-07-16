@@ -21,7 +21,7 @@ class Calculator(BaseTool):
         },
     )
     def calculate(self, params: dict) -> BaseArtifact:
-        import numexpr
+        import numexpr  # pyright: ignore[reportMissingImports]
 
         try:
             expression = params["values"]["expression"]
