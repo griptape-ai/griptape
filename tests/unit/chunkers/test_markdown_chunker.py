@@ -7,7 +7,7 @@ MAX_TOKENS = 50
 
 
 class TestTextChunker:
-    @pytest.fixture
+    @pytest.fixture()
     def chunker(self):
         return MarkdownChunker(max_tokens=MAX_TOKENS)
 

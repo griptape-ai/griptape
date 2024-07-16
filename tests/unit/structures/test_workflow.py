@@ -1,7 +1,6 @@
 import time
 
 import pytest
-from pytest import fixture
 
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.memory.structure import ConversationMemory
@@ -15,7 +14,7 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestWorkflow:
-    @fixture
+    @pytest.fixture()
     def waiting_task(self):
         def fn(task):
             time.sleep(2)
@@ -23,7 +22,7 @@ class TestWorkflow:
 
         return CodeExecutionTask(run_fn=fn)
 
-    @fixture
+    @pytest.fixture()
     def error_artifact_task(self):
         def fn(task):
             return ErrorArtifact("error")
@@ -76,8 +75,8 @@ class TestWorkflow:
         with pytest.raises(ValueError):
             Workflow(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
 
+        workflow = Workflow()
         with pytest.raises(ValueError):
-            workflow = Workflow()
             workflow.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
     def test_with_no_task_memory(self):

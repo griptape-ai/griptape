@@ -9,11 +9,11 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestQdrantVectorStoreDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def embedding_driver(self):
         return MockEmbeddingDriver()
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_engine(self):
         return MagicMock()
 

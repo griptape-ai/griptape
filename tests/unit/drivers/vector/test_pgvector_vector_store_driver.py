@@ -13,15 +13,15 @@ class TestPgVectorVectorStoreDriver:
     connection_string = "postgresql://postgres:postgres@localhost:5432/postgres"
     table_name = "griptape_vectors"
 
-    @pytest.fixture
+    @pytest.fixture()
     def embedding_driver(self):
         return MockEmbeddingDriver()
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_engine(self):
         return MagicMock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_session(self, mocker):
         session = MagicMock()
         mock_session_manager = MagicMock()

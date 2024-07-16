@@ -5,7 +5,7 @@ from griptape.events import FinishStructureRunEvent
 
 
 class TestFinishStructureRunEvent:
-    @pytest.fixture
+    @pytest.fixture()
     def finish_structure_run_event(self):
         return FinishStructureRunEvent(
             structure_id="fizz",

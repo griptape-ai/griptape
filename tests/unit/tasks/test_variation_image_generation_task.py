@@ -12,11 +12,11 @@ from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestVariationImageGenerationTask:
-    @pytest.fixture
+    @pytest.fixture()
     def text_artifact(self):
         return TextArtifact(value="some text")
 
-    @pytest.fixture
+    @pytest.fixture()
     def image_artifact(self):
         return ImageArtifact(value=b"some image data", format="png", width=512, height=512)
 

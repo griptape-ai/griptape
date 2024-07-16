@@ -8,7 +8,7 @@ from griptape.tokenizers import HuggingFaceTokenizer  # noqa: E402
 
 
 class TestHuggingFaceTokenizer:
-    @pytest.fixture
+    @pytest.fixture()
     def tokenizer(self):
         return HuggingFaceTokenizer(model="gpt2", max_output_tokens=1024)
 

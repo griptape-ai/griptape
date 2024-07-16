@@ -7,7 +7,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestPromptResponseRagModule:
-    @pytest.fixture
+    @pytest.fixture()
     def module(self):
         return PromptResponseRagModule(prompt_driver=MockPromptDriver())
 

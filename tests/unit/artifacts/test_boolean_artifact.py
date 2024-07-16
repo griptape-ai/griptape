@@ -1,3 +1,4 @@
+# ruff: noqa: FBT003
 import pytest
 
 from griptape.artifacts import BooleanArtifact
@@ -14,14 +15,14 @@ class TestBooleanArtifact:
             BooleanArtifact.parse_bool("foo")
 
         with pytest.raises(ValueError):
-            BooleanArtifact.parse_bool(None)
+            BooleanArtifact.parse_bool(None)  # pyright: ignore[reportArgumentType]
 
         assert BooleanArtifact.parse_bool(True).value is True
         assert BooleanArtifact.parse_bool(False).value is False
 
     def test_add(self):
         with pytest.raises(ValueError):
-            BooleanArtifact(True) + BooleanArtifact(True)
+            BooleanArtifact(True) + BooleanArtifact(True)  # pyright: ignore[reportUnusedExpression]
 
     def test_value_type_conversion(self):
         assert BooleanArtifact(1).value is True

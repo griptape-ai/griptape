@@ -4,7 +4,7 @@ from griptape.tokenizers import SimpleTokenizer
 
 
 class TestSimpleTokenizer:
-    @pytest.fixture
+    @pytest.fixture()
     def tokenizer(self):
         return SimpleTokenizer(max_input_tokens=1024, max_output_tokens=4096, characters_per_token=6)
 

@@ -10,7 +10,7 @@ from griptape.loaders.text_loader import TextLoader
 
 
 class TestLocalFileManagerDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def temp_dir(self):
         with tempfile.TemporaryDirectory() as temp_dir:
 
@@ -48,7 +48,7 @@ class TestLocalFileManagerDriver:
 
             yield temp_dir
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, temp_dir):
         return LocalFileManagerDriver(workdir=temp_dir)
 
@@ -57,7 +57,7 @@ class TestLocalFileManagerDriver:
             LocalFileManagerDriver(workdir="foo")
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # Valid non-empty directories (without trailing slash)
             ("/", "", ["foo", "foo.txt", "foo-empty", "resources"]),
@@ -106,7 +106,7 @@ class TestLocalFileManagerDriver:
         assert set(filter(None, artifact.value.split("\n"))) == set(expected)
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # non-existent paths
             ("/", "bar", "Path not found"),
@@ -135,7 +135,7 @@ class TestLocalFileManagerDriver:
         assert len(artifact.value) == 4
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # # non-existent files or directories
             ("/", "bitcoin.pdf", "Path not found"),
@@ -179,7 +179,7 @@ class TestLocalFileManagerDriver:
         assert isinstance(artifact, ErrorArtifact)
 
     @pytest.mark.parametrize(
-        "workdir,path,content",
+        ("workdir", "path", "content"),
         [
             # non-existent files
             ("/", "resources/foo.txt", "one"),
@@ -204,7 +204,7 @@ class TestLocalFileManagerDriver:
         assert Path(driver.workdir, path).read_text() == content_bytes
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # non-existent directories
             ("/", "bar/", "Path is a directory"),

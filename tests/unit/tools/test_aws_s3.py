@@ -1,13 +1,13 @@
 import boto3
-from pytest import fixture
+import pytest
 
 from griptape.tools import AwsS3Client
 from tests.utils.aws import mock_aws_credentials
 
 
 class TestAwsS3Client:
-    @fixture(autouse=True)
-    def run_before_and_after_tests(self):
+    @pytest.fixture(autouse=True)
+    def _run_before_and_after_tests(self):
         mock_aws_credentials()
 
     def test_get_bucket_acl(self):

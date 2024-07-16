@@ -7,7 +7,7 @@ from tests.unit.drivers.vector.test_base_local_vector_store_driver import BaseLo
 
 
 class TestLocalVectorStoreDriver(BaseLocalVectorStoreDriver):
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
 

@@ -27,7 +27,7 @@ class TestEmailClient:
         mock_smtp_ssl.__enter__.return_value = mock_smtp_ssl
         return mock_smtp_ssl
 
-    @pytest.fixture
+    @pytest.fixture()
     def client(self):
         return EmailClient(
             username="fake-username",
@@ -37,12 +37,12 @@ class TestEmailClient:
             mailboxes={"INBOX": "default mailbox for incoming email", "SENT": "default mailbox for sent email"},
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def send_params(self):
         return {"values": {"to": "fake@fake.fake", "subject": "fake-subject", "body": "fake-body"}}
 
     @pytest.mark.parametrize(
-        "values,query",
+        ("values", "query"),
         [
             ({"label": "fake-label"}, EmailLoader.EmailQuery(label="fake-label")),
             ({"label": "fake-label", "key": "fake-key"}, EmailLoader.EmailQuery(label="fake-label", key="fake-key")),

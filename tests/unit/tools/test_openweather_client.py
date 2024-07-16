@@ -6,7 +6,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.tools import OpenWeatherClient
 
 
-@pytest.fixture
+@pytest.fixture()
 def client():
     return OpenWeatherClient(api_key="YOUR_API_KEY")
 

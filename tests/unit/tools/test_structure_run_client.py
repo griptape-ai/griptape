@@ -7,7 +7,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestStructureRunClient:
-    @pytest.fixture
+    @pytest.fixture()
     def client(self):
         driver = MockPromptDriver()
         agent = Agent(prompt_driver=driver)

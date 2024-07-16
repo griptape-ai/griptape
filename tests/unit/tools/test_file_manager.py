@@ -14,14 +14,14 @@ from tests.utils import defaults
 
 
 class TestFileManager:
-    @pytest.fixture
+    @pytest.fixture()
     def file_manager(self):
         return FileManager(
             input_memory=[defaults.text_task_memory("Memory1")],
             file_manager_driver=LocalFileManagerDriver(workdir=os.path.abspath(os.path.dirname(__file__))),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def temp_dir(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             yield temp_dir

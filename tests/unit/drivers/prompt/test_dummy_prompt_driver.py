@@ -5,7 +5,7 @@ from griptape.exceptions import DummyException
 
 
 class TestDummyPromptDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def prompt_driver(self):
         return DummyPromptDriver()
 

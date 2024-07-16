@@ -7,7 +7,7 @@ from griptape.drivers import OpenAiImageQueryDriver
 
 
 class TestOpenAiVisionImageQueryDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_completion_create(self, mocker):
         mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
         mock_choice = Mock(message=Mock(content="expected_output_text"))

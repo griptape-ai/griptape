@@ -1,14 +1,13 @@
 import json
 
 import pytest
-from pytest import fixture
 from pytest_mock import MockerFixture
 
 from griptape.drivers import GoogleWebSearchDriver
 
 
 class TestGoogleWebSearchDriver:
-    @fixture
+    @pytest.fixture()
     def driver(self, mocker: MockerFixture):
         mock_response = mocker.Mock()
         mocker.patch.object(
@@ -20,7 +19,7 @@ class TestGoogleWebSearchDriver:
 
         return GoogleWebSearchDriver(api_key="test", search_id="test")
 
-    @fixture
+    @pytest.fixture()
     def driver_with_error(self, mocker: MockerFixture):
         mock_response = mocker.Mock()
         mock_response.status_code = 500

@@ -9,7 +9,7 @@ MAX_TOKENS = 50
 
 
 class TestSqlLoader:
-    @pytest.fixture
+    @pytest.fixture()
     def loader(self):
         sql_loader = SqlLoader(
             sql_driver=SqlDriver(

@@ -7,7 +7,7 @@ from griptape.drivers import AmazonBedrockCohereEmbeddingDriver
 
 class TestAmazonBedrockCohereEmbeddingDriver:
     @pytest.fixture(autouse=True)
-    def mock_session(self, mocker):
+    def _mock_session(self, mocker):
         fake_embeddings = '{"embeddings": [[0, 1, 0]] }'
 
         mock_session_class = mocker.patch("boto3.Session")

@@ -8,7 +8,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestDataFrameLoader:
-    @pytest.fixture
+    @pytest.fixture()
     def loader(self):
         return DataFrameLoader(embedding_driver=MockEmbeddingDriver())
 

@@ -5,7 +5,7 @@ from griptape.tokenizers import DummyTokenizer
 
 
 class TestDummyTokenizer:
-    @pytest.fixture
+    @pytest.fixture()
     def tokenizer(self):
         return DummyTokenizer()
 

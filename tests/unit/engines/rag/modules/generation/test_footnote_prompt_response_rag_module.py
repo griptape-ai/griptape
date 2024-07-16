@@ -8,7 +8,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestFootnotePromptResponseRagModule:
-    @pytest.fixture
+    @pytest.fixture()
     def module(self):
         return FootnotePromptResponseRagModule(prompt_driver=MockPromptDriver())
 

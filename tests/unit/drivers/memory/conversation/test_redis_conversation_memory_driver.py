@@ -14,7 +14,7 @@ PASSWORD = ""
 
 class TestRedisConversationMemoryDriver:
     @pytest.fixture(autouse=True)
-    def mock_redis(self, mocker):
+    def _mock_redis(self, mocker):
         mocker.patch.object(redis.StrictRedis, "hset", return_value=None)
         mocker.patch.object(redis.StrictRedis, "keys", return_value=[b"test"])
         mocker.patch.object(redis.StrictRedis, "hget", return_value=TEST_CONVERSATION)
@@ -26,7 +26,7 @@ class TestRedisConversationMemoryDriver:
 
         mocker.patch.object(redis.StrictRedis, "ft", return_value=fake_redisearch)
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return RedisConversationMemoryDriver(host=HOST, port=PORT, db=0, index=INDEX, conversation_id=CONVERSATION_ID)
 

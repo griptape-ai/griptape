@@ -7,7 +7,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestBaseEmbeddingDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return MockEmbeddingDriver()
 

@@ -13,7 +13,7 @@ class TestCsvLoader:
         else:
             return CsvLoader(embedding_driver=MockEmbeddingDriver(), encoding=encoding)
 
-    @pytest.fixture
+    @pytest.fixture()
     def loader_with_pipe_delimiter(self):
         return CsvLoader(embedding_driver=MockEmbeddingDriver(), delimiter="|")
 

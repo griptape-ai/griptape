@@ -8,7 +8,7 @@ from griptape.tools import SqlClient
 
 
 class TestSqlClient:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         new_driver = SqlDriver(engine_url="sqlite:///:memory:")
 

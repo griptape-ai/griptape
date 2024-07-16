@@ -9,11 +9,11 @@ from griptape.tools import PromptImageGenerationClient
 
 
 class TestPromptImageGenerationClient:
-    @pytest.fixture
+    @pytest.fixture()
     def image_generation_engine(self) -> Mock:
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def image_generator(self, image_generation_engine) -> PromptImageGenerationClient:
         return PromptImageGenerationClient(engine=image_generation_engine)
 

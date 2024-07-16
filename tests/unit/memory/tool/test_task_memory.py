@@ -11,10 +11,10 @@ from tests.utils import defaults
 
 class TestTaskMemory:
     @pytest.fixture(autouse=True)
-    def mock_griptape(self, mocker):
+    def _mock_griptape(self, mocker):
         mocker.patch("griptape.engines.CsvExtractionEngine.extract", return_value=[CsvRowArtifact({"foo": "bar"})])
 
-    @pytest.fixture
+    @pytest.fixture()
     def memory(self):
         return defaults.text_task_memory("MyMemory")
 

@@ -165,7 +165,7 @@ class TestToolTask:
         "$schema": "http://json-schema.org/draft-07/schema#",
     }
 
-    @pytest.fixture
+    @pytest.fixture()
     def agent(self):
         output_dict = {"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
 

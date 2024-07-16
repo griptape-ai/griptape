@@ -49,8 +49,8 @@ class TestAgent:
         with pytest.raises(ValueError):
             Agent(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
 
+        agent = Agent()
         with pytest.raises(ValueError):
-            agent = Agent()
             agent.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
     def test_with_task_memory(self):

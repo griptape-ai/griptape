@@ -8,7 +8,7 @@ from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestCsvExtractionTask:
-    @pytest.fixture
+    @pytest.fixture()
     def task(self):
         return CsvExtractionTask(args={"column_names": ["test1"]})
 

@@ -154,7 +154,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         },
     ]
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_chat_completion_create(self, mocker):
         mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
         mock_function = Mock(arguments='{"foo": "bar"}', id="mock-id")
@@ -169,7 +169,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
 
         return mock_chat_create
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_chat_completion_stream_create(self, mocker):
         mock_chat_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
         mock_tool_call_delta_header = Mock()
@@ -207,7 +207,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         )
         return mock_chat_create
 
-    @pytest.fixture
+    @pytest.fixture()
     def prompt_stack(self):
         prompt_stack = PromptStack()
         prompt_stack.tools = [MockTool()]
@@ -245,7 +245,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         )
         return prompt_stack
 
-    @pytest.fixture
+    @pytest.fixture()
     def messages(self):
         return [
             {"role": "system", "content": "system-input"},

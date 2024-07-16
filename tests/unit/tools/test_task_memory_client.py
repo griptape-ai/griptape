@@ -6,7 +6,7 @@ from tests.utils import defaults
 
 
 class TestTaskMemoryClient:
-    @pytest.fixture
+    @pytest.fixture()
     def tool(self):
         return TaskMemoryClient(off_prompt=True, input_memory=[defaults.text_task_memory("TestMemory")])
 

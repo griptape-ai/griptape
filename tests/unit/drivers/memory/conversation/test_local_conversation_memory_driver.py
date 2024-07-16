@@ -14,7 +14,7 @@ class TestLocalConversationMemoryDriver:
     MEMORY_FILE_PATH = "test_memory.json"
 
     @pytest.fixture(autouse=True)
-    def run_before_and_after_tests(self):
+    def _run_before_and_after_tests(self):
         self.__delete_file(self.MEMORY_FILE_PATH)
 
         yield

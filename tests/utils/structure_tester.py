@@ -296,7 +296,7 @@ class StructureTester:
 
         return result
 
-    def run(self, prompt, assert_correctness: bool = True) -> dict:
+    def run(self, prompt, *, assert_correctness: bool = True) -> dict:
         result = self.structure.run(prompt)
         if isinstance(result.output_task.output, ErrorArtifact):
             verified_result = {"correct": False, "explanation": f"ErrorArtifact: {result.output_task.output.to_text()}"}

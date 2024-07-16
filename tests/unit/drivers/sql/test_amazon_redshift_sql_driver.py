@@ -42,7 +42,7 @@ class TestAmazonRedshiftSqlDriver:
         },
     ]
 
-    @pytest.fixture
+    @pytest.fixture()
     def statement_driver(self):
         session = boto3.Session(region_name="us-east-1")
         client = session.client("redshift-data")
@@ -109,7 +109,7 @@ class TestAmazonRedshiftSqlDriver:
 
         return AmazonRedshiftSqlDriver(database="dev", session=session, workgroup_name="dev", client=client)
 
-    @pytest.fixture
+    @pytest.fixture()
     def describe_table_driver(self):
         session = boto3.Session(region_name="us-east-1")
         client = session.client("redshift-data")

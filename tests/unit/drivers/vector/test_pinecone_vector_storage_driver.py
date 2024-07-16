@@ -7,7 +7,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 class TestPineconeVectorStorageDriver:
     @pytest.fixture(autouse=True)
-    def mock_pinecone(self, mocker):
+    def _mock_pinecone(self, mocker):
         # Create a fake response
         fake_query_response = {
             "matches": [{"id": "foo", "values": [0, 1, 0], "score": 42, "metadata": {"foo": "bar"}}],
@@ -19,7 +19,7 @@ class TestPineconeVectorStorageDriver:
         mock_client().Index().query.return_value = fake_query_response
         mock_client().create_index.return_value = None
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return PineconeVectorStoreDriver(
             api_key="foobar", index_name="test", environment="test", embedding_driver=MockEmbeddingDriver()

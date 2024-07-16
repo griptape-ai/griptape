@@ -6,7 +6,7 @@ from tests.mocks.mock_text_input_task import MockTextInputTask
 
 
 class TestBaseAudioInputTask:
-    @pytest.fixture
+    @pytest.fixture()
     def audio_artifact(self):
         return AudioArtifact(b"audio content", format="mp3")
 

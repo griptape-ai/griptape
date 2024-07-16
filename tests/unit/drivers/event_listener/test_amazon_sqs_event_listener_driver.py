@@ -1,6 +1,6 @@
 import boto3
+import pytest
 from moto import mock_sqs
-from pytest import fixture
 
 from griptape.drivers.event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
 from tests.mocks.mock_event import MockEvent
@@ -8,11 +8,11 @@ from tests.utils.aws import mock_aws_credentials
 
 
 class TestAmazonSqsEventListenerDriver:
-    @fixture()
-    def run_before_and_after_tests(self):
+    @pytest.fixture()
+    def _run_before_and_after_tests(self):
         mock_aws_credentials()
 
-    @fixture()
+    @pytest.fixture()
     def driver(self):
         mock = mock_sqs()
         mock.start()

@@ -17,7 +17,7 @@ class TestEmailLoader:
         mock_imap_connection.__enter__.return_value = mock_imap_connection
         return mock_imap_connection
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_login(self, mock_imap_connection):
         return mock_imap_connection.login
 
@@ -27,7 +27,7 @@ class TestEmailLoader:
         mock_select.return_value = to_select_response("OK", 1)
         return mock_select
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_search(self, mock_imap_connection):
         return mock_imap_connection.search
 
@@ -37,7 +37,7 @@ class TestEmailLoader:
         mock_fetch.return_value = to_fetch_message("message", "text/plain")
         return mock_fetch
 
-    @pytest.fixture
+    @pytest.fixture()
     def loader(self):
         return EmailLoader(imap_url="an.email.server.hostname", username="username", password="password")
 

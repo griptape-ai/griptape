@@ -6,7 +6,7 @@ from griptape.drivers import CohereRerankDriver
 
 
 class TestCohereRerankDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
         mock_client.rerank.return_value.results = [

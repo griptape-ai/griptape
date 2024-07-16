@@ -15,7 +15,7 @@ from tests.unit.structures.test_agent import MockEmbeddingDriver
 
 
 class TestPipeline:
-    @pytest.fixture
+    @pytest.fixture()
     def waiting_task(self):
         def fn(task):
             time.sleep(2)
@@ -23,7 +23,7 @@ class TestPipeline:
 
         return CodeExecutionTask(run_fn=fn)
 
-    @pytest.fixture
+    @pytest.fixture()
     def error_artifact_task(self):
         def fn(task):
             return ErrorArtifact("error")
@@ -77,8 +77,8 @@ class TestPipeline:
         with pytest.raises(ValueError):
             Pipeline(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
 
+        pipeline = Pipeline()
         with pytest.raises(ValueError):
-            pipeline = Pipeline()
             pipeline.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
     def test_with_no_task_memory(self):

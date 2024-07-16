@@ -5,7 +5,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestCsvExtractionEngine:
-    @pytest.fixture
+    @pytest.fixture()
     def engine(self):
         return CsvExtractionEngine(prompt_driver=MockPromptDriver())
 

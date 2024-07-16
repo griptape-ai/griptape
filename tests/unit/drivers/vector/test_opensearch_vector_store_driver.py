@@ -7,7 +7,7 @@ from griptape.drivers import OpenSearchVectorStoreDriver
 
 
 class TestOpenSearchVectorStoreDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         mock_driver = create_autospec(OpenSearchVectorStoreDriver, instance=True)
         mock_driver.upsert_vector.return_value = "foo"

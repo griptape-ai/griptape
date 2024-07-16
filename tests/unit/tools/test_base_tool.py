@@ -155,7 +155,7 @@ class TestBaseTool:
         "$schema": "http://json-schema.org/draft-07/schema#",
     }
 
-    @pytest.fixture
+    @pytest.fixture()
     def tool(self):
         return MockTool(test_field="hello", test_int=5, test_dict={"foo": "bar"})
 
@@ -254,6 +254,6 @@ class TestBaseTool:
 
         assert tool.to_native_tool_name(tool.test) == "MockTool_test"
 
+        tool.name = "mock_tool"
         with pytest.raises(ValueError):
-            tool.name = "mock_tool"
             tool.to_native_tool_name(tool.foo)

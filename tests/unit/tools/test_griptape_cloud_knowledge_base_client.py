@@ -5,7 +5,7 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 
 
 class TestGriptapeCloudKnowledgeBaseClient:
-    @pytest.fixture
+    @pytest.fixture()
     def client(self, mocker):
         from griptape.tools import GriptapeCloudKnowledgeBaseClient
 
@@ -23,7 +23,7 @@ class TestGriptapeCloudKnowledgeBaseClient:
             base_url="https://api.griptape.ai", api_key="foo bar", knowledge_base_id="1"
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def client_no_description(self, mocker):
         from griptape.tools import GriptapeCloudKnowledgeBaseClient
 
@@ -36,7 +36,7 @@ class TestGriptapeCloudKnowledgeBaseClient:
             base_url="https://api.griptape.ai", api_key="foo bar", knowledge_base_id="1"
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def client_kb_not_found(self, mocker):
         from griptape.tools import GriptapeCloudKnowledgeBaseClient
 
@@ -49,7 +49,7 @@ class TestGriptapeCloudKnowledgeBaseClient:
             base_url="https://api.griptape.ai", api_key="foo bar", knowledge_base_id="1"
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def client_kb_error(self, mocker):
         from griptape.tools import GriptapeCloudKnowledgeBaseClient
 

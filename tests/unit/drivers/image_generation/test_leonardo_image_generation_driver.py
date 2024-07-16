@@ -7,7 +7,7 @@ from griptape.drivers import LeonardoImageGenerationDriver
 
 
 class TestLeonardoImageGenerationDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         requests_session = Mock()
 

@@ -11,11 +11,11 @@ from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestAudioTranscriptionTask:
-    @pytest.fixture
+    @pytest.fixture()
     def audio_artifact(self):
         return AudioArtifact(value=b"audio data", format="mp3")
 
-    @pytest.fixture
+    @pytest.fixture()
     def audio_transcription_engine(self):
         return Mock()
 

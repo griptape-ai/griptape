@@ -5,7 +5,7 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestActivityMixin:
-    @pytest.fixture
+    @pytest.fixture()
     def tool(self):
         return MockTool(test_field="hello", test_int=5)
 

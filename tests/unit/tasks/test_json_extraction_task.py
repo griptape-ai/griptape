@@ -9,7 +9,7 @@ from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestJsonExtractionTask:
-    @pytest.fixture
+    @pytest.fixture()
     def task(self):
         return JsonExtractionTask("foo", args={"template_schema": Schema({"foo": "bar"}).json_schema("TemplateSchema")})
 

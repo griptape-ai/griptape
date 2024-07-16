@@ -9,7 +9,7 @@ from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiC
 
 
 class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
-    @pytest.fixture
+    @pytest.fixture()
     def mock_chat_completion_create(self, mocker):
         mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.create
         mock_function = Mock(arguments='{"foo": "bar"}', id="mock-id")
@@ -24,7 +24,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
         return mock_chat_create
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_chat_completion_stream_create(self, mocker):
         mock_chat_create = mocker.patch("openai.AzureOpenAI").return_value.chat.completions.create
         mock_tool_call_delta_header = Mock()

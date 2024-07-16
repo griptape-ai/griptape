@@ -8,7 +8,7 @@ from griptape.artifacts.csv_row_artifact import CsvRowArtifact
 
 
 class BaseLocalVectorStoreDriver(ABC):
-    @pytest.fixture
+    @pytest.fixture()
     @abstractmethod
     def driver(self): ...
 

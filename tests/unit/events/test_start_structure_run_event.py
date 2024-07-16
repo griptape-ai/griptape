@@ -5,7 +5,7 @@ from griptape.events import StartStructureRunEvent
 
 
 class TestStartStructureRunEvent:
-    @pytest.fixture
+    @pytest.fixture()
     def start_structure_run_event(self):
         return StartStructureRunEvent(
             structure_id="fizz", input_task_input=TextArtifact("foo"), input_task_output=TextArtifact("bar")

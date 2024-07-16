@@ -4,7 +4,7 @@ from griptape.artifacts import InfoArtifact, TextArtifact
 
 
 class TestGriptapeCloudStructureRunDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, mocker):
         from griptape.drivers import GriptapeCloudStructureRunDriver
 

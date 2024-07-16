@@ -15,11 +15,11 @@ class TestPgVectorVectorStoreDriver:
     vec1 = [0.1, 0.2, 0.3]
     vec2 = [0.4, 0.5, 0.6]
 
-    @pytest.fixture
+    @pytest.fixture()
     def embedding_driver(self):
         return MockEmbeddingDriver()
 
-    @pytest.fixture
+    @pytest.fixture()
     def vector_store_driver(self, embedding_driver):
         driver = PgVectorVectorStoreDriver(
             connection_string=self.connection_string, embedding_driver=embedding_driver, table_name=self.table_name
@@ -30,8 +30,8 @@ class TestPgVectorVectorStoreDriver:
         return driver
 
     def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
+        driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, table_name=self.table_name)
         with pytest.raises(ValueError):
-            driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, table_name=self.table_name)
             driver.setup()
 
     def test_initialize_accepts_engine(self, embedding_driver):

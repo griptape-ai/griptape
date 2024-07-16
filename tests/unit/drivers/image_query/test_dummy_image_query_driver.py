@@ -6,7 +6,7 @@ from griptape.exceptions import DummyException
 
 
 class TestDummyImageQueryDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def image_query_driver(self):
         return DummyImageQueryDriver()
 

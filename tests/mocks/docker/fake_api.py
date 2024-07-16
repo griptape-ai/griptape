@@ -150,7 +150,7 @@ def post_fake_create_container():
     return status_code, response
 
 
-def get_fake_inspect_container(tty=False):
+def get_fake_inspect_container(*, tty=False):
     status_code = 200
     response = {
         "Id": FAKE_CONTAINER_ID,

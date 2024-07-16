@@ -8,7 +8,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 class TestVectorStoreClient:
     @pytest.fixture(autouse=True)
-    def mock_try_run(self, mocker):
+    def _mock_try_run(self, mocker):
         mocker.patch("griptape.drivers.OpenAiEmbeddingDriver.try_embed_chunk", return_value=[0, 1])
 
     def test_search(self):

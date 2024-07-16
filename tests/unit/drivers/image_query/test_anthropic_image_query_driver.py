@@ -8,7 +8,7 @@ from griptape.drivers import AnthropicImageQueryDriver
 
 
 class TestAnthropicImageQueryDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("anthropic.Anthropic")
         return_value = Mock(text="Content")

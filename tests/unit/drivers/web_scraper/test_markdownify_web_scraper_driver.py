@@ -16,7 +16,7 @@ class TestMarkdownifyWebScraperDriver:
         mock_content.return_value = '<html><a href="foobar.com">foobar</a></html>'
         return mock_content
 
-    @pytest.fixture
+    @pytest.fixture()
     def web_scraper(self):
         return MarkdownifyWebScraperDriver()
 

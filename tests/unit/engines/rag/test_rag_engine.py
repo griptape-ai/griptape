@@ -9,7 +9,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestRagEngine:
-    @pytest.fixture
+    @pytest.fixture()
     def engine(self):
         return RagEngine(
             retrieval_stage=RetrievalRagStage(

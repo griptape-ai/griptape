@@ -7,7 +7,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestStartTaskEvent:
-    @pytest.fixture
+    @pytest.fixture()
     def start_task_event(self):
         task = PromptTask()
         agent = Agent(prompt_driver=MockPromptDriver())

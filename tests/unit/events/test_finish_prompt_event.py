@@ -4,7 +4,7 @@ from griptape.events import FinishPromptEvent
 
 
 class TestFinishPromptEvent:
-    @pytest.fixture
+    @pytest.fixture()
     def finish_prompt_event(self):
         return FinishPromptEvent(input_token_count=321, output_token_count=123, result="foo bar", model="foo bar")
 

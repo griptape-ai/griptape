@@ -9,7 +9,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestRagTask:
-    @pytest.fixture
+    @pytest.fixture()
     def task(self):
         return RagTask(
             input="test",

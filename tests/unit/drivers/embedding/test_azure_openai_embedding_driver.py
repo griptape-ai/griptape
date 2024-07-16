@@ -19,7 +19,7 @@ class TestAzureOpenAiEmbeddingDriver:
 
         return mock_chat_create
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return AzureOpenAiEmbeddingDriver(azure_endpoint="foobar", model="gpt-4", azure_deployment="foobar")
 

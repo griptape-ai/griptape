@@ -7,11 +7,11 @@ from griptape.tools.audio_transcription_client.tool import AudioTranscriptionCli
 
 
 class TestTranscriptionClient:
-    @pytest.fixture
+    @pytest.fixture()
     def transcription_engine(self) -> Mock:
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def audio_loader(self) -> Mock:
         loader = Mock()
         loader.load.return_value = AudioArtifact(value=b"audio data", format="wav")

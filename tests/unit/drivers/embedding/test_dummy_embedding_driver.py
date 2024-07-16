@@ -5,7 +5,7 @@ from griptape.exceptions import DummyException
 
 
 class TestDummyEmbeddingDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def embedding_driver(self):
         return DummyEmbeddingDriver()
 

@@ -41,7 +41,7 @@ class TestCoherePromptDriver:
         },
     ]
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
         mock_tool_call = Mock(parameters={"foo": "bar"})
@@ -52,7 +52,7 @@ class TestCoherePromptDriver:
 
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_stream_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
         mock_tool_call_delta_header = Mock()

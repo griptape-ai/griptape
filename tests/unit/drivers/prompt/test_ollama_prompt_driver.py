@@ -7,7 +7,7 @@ from griptape.drivers import OllamaPromptDriver
 
 
 class TestOllamaPromptDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("ollama.Client")
 
@@ -15,7 +15,7 @@ class TestOllamaPromptDriver:
 
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_stream_client(self, mocker):
         mock_stream_client = mocker.patch("ollama.Client")
         mock_stream_client.return_value.chat.return_value = iter([{"message": {"content": "model-output"}}])

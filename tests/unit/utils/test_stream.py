@@ -22,8 +22,8 @@ class TestStream:
             chat_stream_artifact = next(chat_stream_run)
             assert chat_stream_artifact.value == "mock output"
 
+            next(chat_stream_run)
             with pytest.raises(StopIteration):
-                next(chat_stream_run)
                 next(chat_stream_run)
         else:
             with pytest.raises(ValueError):

@@ -26,7 +26,7 @@ class TestHuggingFacePipelinePromptDriver:
         mock_autotokenizer.encode.return_value = [1, 2, 3]
         return mock_autotokenizer
 
-    @pytest.fixture
+    @pytest.fixture()
     def prompt_stack(self):
         prompt_stack = PromptStack()
         prompt_stack.add_system_message("system-input")

@@ -11,11 +11,11 @@ class TestProxyWebScraperDriver:
         mock_response.text = "test_scrape"
         return mocker.patch("requests.get", return_value=mock_response)
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client_error(self, mocker):
         return mocker.patch("requests.get", side_effect=Exception("test_error"))
 
-    @pytest.fixture
+    @pytest.fixture()
     def web_scraper(self, mocker):
         return ProxyWebScraperDriver(
             proxies={"http": "http://localhost:8080", "https": "http://localhost:8080"},

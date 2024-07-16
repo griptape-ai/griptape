@@ -6,7 +6,7 @@ from griptape.drivers import AzureOpenAiImageGenerationDriver
 
 
 class TestAzureOpenAiImageGenerationDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return AzureOpenAiImageGenerationDriver(
             model="dall-e-3",

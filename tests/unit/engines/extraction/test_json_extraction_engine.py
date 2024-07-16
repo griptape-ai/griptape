@@ -7,7 +7,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestJsonExtractionEngine:
-    @pytest.fixture
+    @pytest.fixture()
     def engine(self):
         return JsonExtractionEngine(
             prompt_driver=MockPromptDriver(

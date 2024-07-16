@@ -4,7 +4,7 @@ from griptape.memory.meta import ActionSubtaskMetaEntry
 
 
 class TestActionSubtaskMetaEntry:
-    @pytest.fixture
+    @pytest.fixture()
     def entry(self):
         return ActionSubtaskMetaEntry(thought="foo", actions="[]", answer="baz")
 

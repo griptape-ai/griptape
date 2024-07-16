@@ -9,7 +9,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestPromptSummaryEngine:
-    @pytest.fixture
+    @pytest.fixture()
     def engine(self):
         return PromptSummaryEngine(prompt_driver=MockPromptDriver())
 

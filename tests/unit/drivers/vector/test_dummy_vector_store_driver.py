@@ -5,7 +5,7 @@ from griptape.exceptions import DummyException
 
 
 class TestDummyVectorStoreDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def vector_store_driver(self):
         return DummyVectorStoreDriver()
 

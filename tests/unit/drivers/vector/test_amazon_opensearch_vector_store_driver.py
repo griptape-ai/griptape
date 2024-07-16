@@ -8,7 +8,7 @@ from griptape.drivers import AmazonOpenSearchVectorStoreDriver
 
 
 class TestAmazonOpenSearchVectorStoreDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         mock_session = create_autospec(boto3.Session, instance=True)
         mock_driver = create_autospec(AmazonOpenSearchVectorStoreDriver, instance=True, session=mock_session)

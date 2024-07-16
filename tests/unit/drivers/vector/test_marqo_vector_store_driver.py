@@ -81,7 +81,7 @@ class TestMarqoVectorStorageDriver:
         # Return the mock_client for use in other fixtures
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, mock_marqo):
         return MarqoVectorStoreDriver(
             api_key="foobar",

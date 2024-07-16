@@ -7,11 +7,11 @@ from griptape.drivers import OpenAiAudioTranscriptionDriver
 
 
 class TestOpenAiAudioTranscriptionDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def audio_artifact(self):
         return AudioArtifact(value=b"audio data", format="mp3")
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return OpenAiAudioTranscriptionDriver(model="model", client=Mock(), api_key="key")
 

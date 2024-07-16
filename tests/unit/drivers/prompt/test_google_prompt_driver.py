@@ -43,7 +43,7 @@ class TestGooglePromptDriver:
         },
     ]
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_generative_model(self, mocker):
         mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
         mock_function_call = Mock(type="tool_use", id="MockTool_test", args={"foo": "bar"})
@@ -55,7 +55,7 @@ class TestGooglePromptDriver:
 
         return mock_generative_model
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_stream_generative_model(self, mocker):
         mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
         mock_function_call_delta = Mock(type="tool_use", id="MockTool_test", args={"foo": "bar"})
@@ -117,7 +117,7 @@ class TestGooglePromptDriver:
 
         return prompt_stack
 
-    @pytest.fixture
+    @pytest.fixture()
     def messages(self):
         return [
             {"parts": ["user-input"], "role": "user"},

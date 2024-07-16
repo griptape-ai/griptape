@@ -8,7 +8,7 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestFinishActionsSubtaskEvent:
-    @pytest.fixture
+    @pytest.fixture()
     def finish_subtask_event(self):
         valid_input = (
             "Thought: need to test\n"

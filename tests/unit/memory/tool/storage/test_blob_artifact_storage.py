@@ -5,7 +5,7 @@ from griptape.memory.task.storage import BlobArtifactStorage
 
 
 class TestBlobArtifactStorage:
-    @pytest.fixture
+    @pytest.fixture()
     def storage(self):
         return BlobArtifactStorage()
 

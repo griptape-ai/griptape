@@ -9,11 +9,11 @@ from griptape.tools.text_to_speech_client.tool import TextToSpeechClient
 
 
 class TestTextToSpeechClient:
-    @pytest.fixture
+    @pytest.fixture()
     def text_to_speech_engine(self) -> Mock:
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def text_to_speech_client(self, text_to_speech_engine) -> TextToSpeechClient:
         return TextToSpeechClient(engine=text_to_speech_engine)
 
