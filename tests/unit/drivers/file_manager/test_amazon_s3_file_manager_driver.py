@@ -223,7 +223,7 @@ class TestAmazonS3FileManagerDriver:
 
         assert isinstance(result, InfoArtifact)
         assert result.value == "Successfully saved file"
-        expected_s3_key = os.path.join(workdir, path).lstrip("/")
+        expected_s3_key = f"{workdir}/{path}".lstrip("/")
         content_str = content if isinstance(content, str) else content.decode()
         assert get_s3_value(expected_s3_key) == content_str
 
@@ -258,11 +258,11 @@ class TestAmazonS3FileManagerDriver:
         driver = AmazonS3FileManagerDriver(
             session=session, bucket=bucket, default_loader=TextLoader(encoding="utf-8"), loaders={}, workdir=workdir
         )
-        path = os.path.join("test", "foobar.txt")
+        path = "test/foobar.txt"
 
         result = driver.save_file(path, "foobar")
 
-        expected_s3_key = os.path.join(workdir, path).lstrip("/")
+        expected_s3_key = f"{workdir}/{path}".lstrip("/")
         assert get_s3_value(expected_s3_key) == "foobar"
         assert result.value == "Successfully saved file"
 
@@ -271,18 +271,18 @@ class TestAmazonS3FileManagerDriver:
         driver = AmazonS3FileManagerDriver(
             session=session, bucket=bucket, loaders={"txt": TextLoader(encoding="ascii")}, workdir=workdir
         )
-        path = os.path.join("test", "foobar.txt")
+        path = "test/foobar.txt"
 
         result = driver.save_file(path, "foobar")
 
-        expected_s3_key = os.path.join(workdir, path).lstrip("/")
+        expected_s3_key = f"{workdir}/{path}".lstrip("/")
         assert get_s3_value(expected_s3_key) == "foobar"
         assert result.value == "Successfully saved file"
 
         driver = AmazonS3FileManagerDriver(
             session=session, bucket=bucket, default_loader=TextLoader(encoding="ascii"), loaders={}, workdir=workdir
         )
-        path = os.path.join("test", "foobar.txt")
+        path = "test/foobar.txt"
 
         result = driver.load_file(path)
 

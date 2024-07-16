@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import os
-from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from attrs import Attribute, Factory, define, field
@@ -33,7 +31,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
 
     @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_workdir(self, _: Attribute, workdir: str) -> None:
-        if not Path(workdir).is_absolute():
+        if not workdir.startswith("/"):
             raise ValueError("Workdir must be an absolute path")
 
     def try_list_files(self, path: str) -> list[str]:
@@ -70,11 +68,13 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
 
     def _to_full_key(self, path: str) -> str:
         path = path.lstrip("/")
-        full_key = os.path.join(self.workdir, path)
+        full_key = f"{self.workdir}/{path}"
         # Need to keep the trailing slash if it was there,
         # because it means the path is a directory.
         ended_with_slash = path.endswith("/")
-        full_key = os.path.normpath(full_key)
+
+        full_key = self._normpath(full_key)
+
         if ended_with_slash:
             full_key += "/"
         return full_key.lstrip("/")
@@ -126,3 +126,20 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
                 raise e
 
         return False
+
+    def _normpath(self, path: str) -> str:
+        unix_path = path.replace("\\", "/")
+        parts = unix_path.split("/")
+        stack = []
+
+        for part in parts:
+            if part == "" or part == ".":
+                continue
+            if part == "..":
+                if stack:
+                    stack.pop()
+            else:
+                stack.append(part)
+
+        normalized_path = "/".join(stack)
+        return normalized_path
