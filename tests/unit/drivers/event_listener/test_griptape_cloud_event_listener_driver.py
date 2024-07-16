@@ -19,9 +19,23 @@ class TestGriptapeCloudEventListenerDriver:
 
     @pytest.fixture()
     def driver(self):
-        os.environ["GT_CLOUD_BASE_URL"] = "https://cloud123.griptape.ai"
+        environ = {
+            "GT_CLOUD_BASE_URL": "https://cloud123.griptape.ai",
+            "GT_CLOUD_API_KEY": "foo bar",
+            "GT_CLOUD_STRUCTURE_RUN_ID": "bar baz",
+        }
+        original_environ = {}
+        for key, value in environ.items():
+            original_environ[key] = os.environ.get(key)
+            os.environ[key] = value
 
-        return GriptapeCloudEventListenerDriver(api_key="foo bar", structure_run_id="bar baz")
+        yield GriptapeCloudEventListenerDriver()
+
+        for key, value in original_environ.items():
+            if value is None:
+                del os.environ[key]
+            else:
+                os.environ[key] = value
 
     def test_init(self, driver):
         assert driver
