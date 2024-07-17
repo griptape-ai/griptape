@@ -124,13 +124,13 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
-        Query = import_optional_dependency("redis.commands.search.query").Query
+        search_query = import_optional_dependency("redis.commands.search.query")
 
         vector = self.embedding_driver.embed_string(query)
 
         filter_expression = f"(@namespace:{{{namespace}}})" if namespace else "*"
         query_expression = (
-            Query(f"{filter_expression}=>[KNN {count or 10} @vector $vector as score]")
+            search_query.Query(f"{filter_expression}=>[KNN {count or 10} @vector $vector as score]")
             .sort_by("score")
             .return_fields("id", "score", "metadata", "vec_string")
             .paging(0, count or 10)

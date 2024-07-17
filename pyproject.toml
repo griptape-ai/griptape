@@ -241,6 +241,7 @@ select = [
     "ANN", # flake8-annotations
     "FBT", # flake8-boolean-trap
     "PT", # flake8-pytest-style
+    "N" # pep8-naming
 ]
 ignore = [
     "UP007", # non-pep604-annotation

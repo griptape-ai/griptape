@@ -111,7 +111,7 @@ agent = Agent(config=CohereStructureConfig(api_key=os.environ["COHERE_API_KEY"])
 ### Custom Configs
 
 You can create your own [StructureConfig](../../reference/griptape/config/structure_config.md) by overriding relevant Drivers.
-The [StructureConfig](../../reference/griptape/config/structure_config.md) class includes "Dummy" Drivers for all types, which throw a [DummyException](../../reference/griptape/exceptions/dummy_exception.md) if invoked without being overridden. 
+The [StructureConfig](../../reference/griptape/config/structure_config.md) class includes "Dummy" Drivers for all types, which throw a [DummyError](../../reference/griptape/exceptions/dummy_exception.md) if invoked without being overridden. 
 This approach ensures that you are informed through clear error messages if you attempt to use Structures without proper Driver configurations.
 
 ```python

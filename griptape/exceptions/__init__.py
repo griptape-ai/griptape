@@ -1,3 +1,3 @@
-from .dummy_exception import DummyException
+from .dummy_exception import DummyError
 
-__all__ = ["DummyException"]
+__all__ = ["DummyError"]

@@ -113,19 +113,18 @@ class GooglePromptDriver(BasePromptDriver):
                 )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        GenerationConfig = import_optional_dependency("google.generativeai.types").GenerationConfig
-        ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
-        Part = import_optional_dependency("google.generativeai.protos").Part
+        types = import_optional_dependency("google.generativeai.types")
+        protos = import_optional_dependency("google.generativeai.protos")
 
         system_messages = prompt_stack.system_messages
         if system_messages:
-            self.model_client._system_instruction = ContentDict(
+            self.model_client._system_instruction = types.ContentDict(
                 role="system",
-                parts=[Part(text=system_message.to_text()) for system_message in system_messages],
+                parts=[protos.Part(text=system_message.to_text()) for system_message in system_messages],
             )
 
         return {
-            "generation_config": GenerationConfig(
+            "generation_config": types.GenerationConfig(
                 **{
                     # For some reason, providing stop sequences when streaming breaks native functions
                     # https://github.com/google-gemini/generative-ai-python/issues/446
@@ -153,10 +152,10 @@ class GooglePromptDriver(BasePromptDriver):
         return genai.GenerativeModel(self.model)
 
     def __to_google_messages(self, prompt_stack: PromptStack) -> ContentsType:
-        ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
+        types = import_optional_dependency("google.generativeai.types")
 
         inputs = [
-            ContentDict(
+            types.ContentDict(
                 {
                     "role": self.__to_google_role(message),
                     "parts": [self.__to_google_message_content(content) for content in message.content],
@@ -175,7 +174,7 @@ class GooglePromptDriver(BasePromptDriver):
             return "user"
 
     def __to_google_tools(self, tools: list[BaseTool]) -> list[dict]:
-        FunctionDeclaration = import_optional_dependency("google.generativeai.types").FunctionDeclaration
+        types = import_optional_dependency("google.generativeai.types")
 
         tool_declarations = []
         for tool in tools:
@@ -186,7 +185,7 @@ class GooglePromptDriver(BasePromptDriver):
                     schema = schema["properties"]["values"]
 
                 schema = remove_key_in_dict_recursively(schema, "additionalProperties")
-                tool_declaration = FunctionDeclaration(
+                tool_declaration = types.FunctionDeclaration(
                     name=tool.to_native_tool_name(activity),
                     description=tool.activity_description(activity),
                     parameters={
@@ -201,13 +200,13 @@ class GooglePromptDriver(BasePromptDriver):
         return tool_declarations
 
     def __to_google_message_content(self, content: BaseMessageContent) -> ContentDict | Part | str:
-        ContentDict = import_optional_dependency("google.generativeai.types").ContentDict
+        types = import_optional_dependency("google.generativeai.types")
         protos = import_optional_dependency("google.generativeai.protos")
 
         if isinstance(content, TextMessageContent):
             return content.artifact.to_text()
         elif isinstance(content, ImageMessageContent):
-            return ContentDict(mime_type=content.artifact.mime_type, data=content.artifact.value)
+            return types.ContentDict(mime_type=content.artifact.mime_type, data=content.artifact.value)
         elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 

@@ -180,15 +180,14 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             ]
 
     def default_vector_model(self) -> Any:
-        Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
-        Base = declarative_base()
+        sqlalchemy = import_optional_dependency("pgvector.sqlalchemy")
 
         @dataclass
-        class VectorModel(Base):
+        class VectorModel(declarative_base()):
             __tablename__ = self.table_name
 
             id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-            vector = Column(Vector())
+            vector = Column(sqlalchemy.Vector())
             namespace = Column(String)
             meta = Column(JSON)
 

@@ -67,9 +67,9 @@ class BaseSchema(Schema):
             else:
                 raise ValueError(f"Missing type for list field: {field_type}")
         else:
-            FieldClass = cls.DATACLASS_TYPE_MAPPING[field_class]
+            field_class = cls.DATACLASS_TYPE_MAPPING[field_class]
 
-            return FieldClass(allow_none=optional)
+            return field_class(allow_none=optional)
 
     @classmethod
     def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:
@@ -131,14 +131,6 @@ class BaseSchema(Schema):
         from griptape.tools import BaseTool
         from griptape.utils.import_utils import import_optional_dependency, is_dependency_installed
 
-        boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
-        Client = import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any
-        GenerativeModel = (
-            import_optional_dependency("google.generativeai").GenerativeModel
-            if is_dependency_installed("google.generativeai")
-            else Any
-        )
-
         attrs.resolve_types(
             attrs_cls,
             localns={
@@ -163,9 +155,11 @@ class BaseSchema(Schema):
                 "Run": Run,
                 "Sequence": Sequence,
                 # Third party modules
-                "Client": Client,
-                "GenerativeModel": GenerativeModel,
-                "boto3": boto3,
+                "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
+                "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel
+                if is_dependency_installed("google.generativeai")
+                else Any,
+                "boto3": import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any,
             },
         )
 
