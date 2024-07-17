@@ -1,5 +1,7 @@
 from unittest.mock import Mock
 
+import pytest
+
 from griptape.events import EventListener
 from griptape.mixins import EventsMixin
 from tests.mocks.mock_event import MockEvent
@@ -39,6 +41,12 @@ class TestEventsMixin:
         mixin.remove_event_listener(listener)
 
         assert len(mixin.event_listeners) == 0
+
+    def test_remove_unknown_event_listener(self):
+        mixin = EventsMixin()
+
+        with pytest.raises(ValueError):
+            mixin.remove_event_listener(EventListener())
 
     def test_publish_event(self):
         # Given
