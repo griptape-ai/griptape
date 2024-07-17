@@ -160,7 +160,7 @@ agent.run("Artificial intelligence is a technology with great promise.")
 
 ### Cohere
 
-The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_driver.md) connects to the Cohere [Generate](https://docs.cohere.ai/reference/generate) API.
+The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_driver.md) connects to the Cohere [Chat](https://docs.cohere.com/docs/chat-api) API.
 
 !!! info
     This driver requires the `drivers-prompt-cohere` [extra](../index.md#extras).
