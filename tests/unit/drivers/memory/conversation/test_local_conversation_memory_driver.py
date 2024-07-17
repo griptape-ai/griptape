@@ -24,7 +24,7 @@ class TestLocalConversationMemoryDriver:
     def test_store(self):
         prompt_driver = MockPromptDriver()
         memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
-        memory = ConversationMemory(driver=memory_driver, autoload=False)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver, autoload=False)
         pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -43,7 +43,7 @@ class TestLocalConversationMemoryDriver:
     def test_load(self):
         prompt_driver = MockPromptDriver()
         memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
-        memory = ConversationMemory(driver=memory_driver, autoload=False, max_runs=5)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver, autoload=False, max_runs=5)
         pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -62,7 +62,7 @@ class TestLocalConversationMemoryDriver:
     def test_autoload(self):
         prompt_driver = MockPromptDriver()
         memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
-        memory = ConversationMemory(driver=memory_driver)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -70,7 +70,7 @@ class TestLocalConversationMemoryDriver:
         pipeline.run()
         pipeline.run()
 
-        autoloaded_memory = ConversationMemory(driver=memory_driver)
+        autoloaded_memory = ConversationMemory(conversation_memory_driver=memory_driver)
 
         assert autoloaded_memory.type == "ConversationMemory"
         assert len(autoloaded_memory.runs) == 2

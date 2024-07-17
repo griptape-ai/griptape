@@ -16,18 +16,27 @@ if TYPE_CHECKING:
 
 @define
 class BaseConversationMemory(SerializableMixin, ABC):
-    driver: Optional[BaseConversationMemoryDriver] = field(default=None, kw_only=True)
     runs: list[Run] = field(factory=list, kw_only=True, metadata={"serializable": True})
     structure: Structure = field(init=False)
     autoload: bool = field(default=True, kw_only=True)
     autoprune: bool = field(default=True, kw_only=True)
     max_runs: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    _conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
+        default=None, kw_only=True, alias="conversation_memory_driver"
+    )
 
     def __attrs_post_init__(self) -> None:
-        if self.driver and self.autoload:
-            memory = self.driver.load()
-            if memory is not None:
-                [self.add_run(r) for r in memory.runs]
+        if self.autoload and not hasattr(self, "structure"):
+            self.load()
+
+    @property
+    def conversation_memory_driver(self) -> Optional[BaseConversationMemoryDriver]:
+        if self._conversation_memory_driver is None:
+            if hasattr(self, "structure"):
+                return self.structure.config.conversation_memory_driver
+            else:
+                return None
+        return self._conversation_memory_driver
 
     def before_add_run(self) -> None:
         pass
@@ -40,8 +49,16 @@ class BaseConversationMemory(SerializableMixin, ABC):
         return self
 
     def after_add_run(self) -> None:
-        if self.driver:
-            self.driver.store(self)
+        if self.conversation_memory_driver is not None:
+            self.conversation_memory_driver.store(self)
+
+    def load(self) -> BaseConversationMemory:
+        if self.conversation_memory_driver is not None:
+            memory = self.conversation_memory_driver.load()
+            if memory is not None:
+                [self.add_run(r) for r in memory.runs]
+
+        return self
 
     @abstractmethod
     def try_add_run(self, run: Run) -> None: ...

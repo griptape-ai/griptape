@@ -48,7 +48,7 @@ class TestDynamoDbConversationMemoryDriver:
             value_attribute_key=self.VALUE_ATTRIBUTE_KEY,
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
-        memory = ConversationMemory(driver=memory_driver)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -75,7 +75,7 @@ class TestDynamoDbConversationMemoryDriver:
             sort_key="sortKey",
             sort_key_value="foo",
         )
-        memory = ConversationMemory(driver=memory_driver)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -97,7 +97,7 @@ class TestDynamoDbConversationMemoryDriver:
             value_attribute_key=self.VALUE_ATTRIBUTE_KEY,
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
-        memory = ConversationMemory(driver=memory_driver)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -123,7 +123,7 @@ class TestDynamoDbConversationMemoryDriver:
             sort_key="sortKey",
             sort_key_value="foo",
         )
-        memory = ConversationMemory(driver=memory_driver)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver)
         pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))

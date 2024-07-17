@@ -19,7 +19,7 @@ from griptape.drivers import LocalConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 
 local_driver = LocalConversationMemoryDriver(file_path="memory.json")
-agent = Agent(conversation_memory=ConversationMemory(driver=local_driver))
+agent = Agent(conversation_memory=ConversationMemory(conversation_memory_driver=local_driver))
 
 agent.run("Surfing is my favorite sport.")
 agent.run("What is my favorite sport?")
@@ -47,7 +47,7 @@ dynamodb_driver = AmazonDynamoDbConversationMemoryDriver(
     partition_key_value=conversation_id,
 )
 
-agent = Agent(conversation_memory=ConversationMemory(driver=dynamodb_driver))
+agent = Agent(conversation_memory=ConversationMemory(conversation_memory_driver=dynamodb_driver))
 
 agent.run("My name is Jeff.")
 agent.run("What is my name?")
@@ -78,7 +78,7 @@ redis_conversation_driver = RedisConversationMemoryDriver(
     conversation_id = conversation_id
 )
 
-agent = Agent(conversation_memory=ConversationMemory(driver=redis_conversation_driver))
+agent = Agent(conversation_memory=ConversationMemory(conversation_memory_driver=redis_conversation_driver))
 
 agent.run("My name is Jeff.")
 agent.run("What is my name?")

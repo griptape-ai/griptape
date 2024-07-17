@@ -62,7 +62,7 @@ class Structure(ABC, EventPublisherMixin):
     logger_level: int = field(default=logging.INFO, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(
-            lambda self: ConversationMemory(driver=self.config.conversation_memory_driver),
+            lambda self: ConversationMemory(conversation_memory_driver=self.config.conversation_memory_driver),
             takes_self=True,
         ),
         kw_only=True,
@@ -96,6 +96,8 @@ class Structure(ABC, EventPublisherMixin):
     def __attrs_post_init__(self) -> None:
         if self.conversation_memory is not None:
             self.conversation_memory.structure = self
+            if self.conversation_memory.autoload:
+                self.conversation_memory.load()
 
         self.config.structure = self
 
