@@ -18,6 +18,7 @@ from .prompt_stack.prompt_stack import PromptStack
 
 from .reference import Reference
 
+from .observable import observable, Observable
 
 __all__ = [
     "BaseMessage",
@@ -35,4 +36,6 @@ __all__ = [
     "Reference",
     "BaseAction",
     "ToolAction",
+    "observable",
+    "Observable",
 ]

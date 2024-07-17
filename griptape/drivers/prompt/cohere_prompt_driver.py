@@ -17,6 +17,7 @@ from griptape.common import (
     TextDeltaMessageContent,
     TextMessageContent,
     ToolAction,
+    observable,
 )
 from griptape.common.prompt_stack.contents.action_call_delta_message_content import ActionCallDeltaMessageContent
 from griptape.drivers import BasePromptDriver
@@ -53,6 +54,7 @@ class CoherePromptDriver(BasePromptDriver):
     force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         result = self.client.chat(**self._base_params(prompt_stack))
         usage = result.meta.tokens
@@ -63,6 +65,7 @@ class CoherePromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         result = self.client.chat_stream(**self._base_params(prompt_stack))
 

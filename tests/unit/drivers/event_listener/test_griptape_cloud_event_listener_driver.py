@@ -1,9 +1,10 @@
 import os
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 import pytest
 
 from griptape.drivers.event_listener.griptape_cloud_event_listener_driver import GriptapeCloudEventListenerDriver
+from griptape.observability.observability import Observability
 from tests.mocks.mock_event import MockEvent
 
 
@@ -41,6 +42,30 @@ class TestGriptapeCloudEventListenerDriver:
         assert driver
         assert driver.api_key == "foo bar"
         assert driver.structure_run_id == "bar baz"
+
+    def test_publish_event_without_span_id(self, mock_post, driver):
+        event = MockEvent()
+        driver.publish_event(event, flush=True)
+
+        mock_post.assert_called_with(
+            url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
+            json=[event.to_dict()],
+            headers={"Authorization": "Bearer foo bar"},
+        )
+
+    def test_publish_event_with_span_id(self, mock_post, driver):
+        event = MockEvent()
+        observability_driver = MagicMock()
+        observability_driver.get_span_id.return_value = "test"
+
+        with Observability(observability_driver=observability_driver):
+            driver.publish_event(event, flush=True)
+
+        mock_post.assert_called_with(
+            url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
+            json=[{**event.to_dict(), "span_id": "test"}],
+            headers={"Authorization": "Bearer foo bar"},
+        )
 
     def test_try_publish_event_payload(self, mock_post, driver):
         event = MockEvent()
