@@ -58,10 +58,8 @@ Griptape offers the following Prompt Drivers for interacting with LLMs.
 
 ### OpenAI Chat
 
-!!! info
-    This driver uses [OpenAi function calling](https://platform.openai.com/docs/guides/function-calling) when using [Tools](../tools/index.md). You can change this to use Griptape's own tool calling implementation by setting `use_native_tools` to `False`.
-
 The [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) connects to the [OpenAI Chat](https://platform.openai.com/docs/guides/chat) API.
+This driver uses [OpenAi function calling](https://platform.openai.com/docs/guides/function-calling) when using [Tools](../tools/index.md).
 
 ```python
 import os
@@ -123,10 +121,8 @@ agent.run("How do I init and update a git submodule?")
 
 ### Azure OpenAI Chat
 
-!!! info
-    This driver uses [Azure OpenAi function calling](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/function-calling) when using [Tools](../tools/index.md). You can change this to use Griptape's own tool calling implementation by setting `use_native_tools` to `False`.
-
 The [AzureOpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/azure_openai_chat_prompt_driver.md) connects to Azure OpenAI [Chat Completion](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/reference) APIs.
+This driver uses [Azure OpenAi function calling](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/function-calling) when using [Tools](../tools/index.md).
 
 ```python
 import os
@@ -158,12 +154,10 @@ agent.run("Artificial intelligence is a technology with great promise.")
 ### Cohere
 
 The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_driver.md) connects to the Cohere [Chat](https://docs.cohere.com/docs/chat-api) API.
+This driver uses [Cohere tool use](https://docs.cohere.com/docs/tools) when using [Tools](../tools/index.md).
 
 !!! info
     This driver requires the `drivers-prompt-cohere` [extra](../index.md#extras).
-
-!!! info
-    This driver uses [Cohere tool use](https://docs.cohere.com/docs/tools) when using [Tools](../tools/index.md). You can change this to use Griptape's own tool calling implementation by setting `use_native_tools` to `False`.
 
 ```python
 import os
@@ -188,10 +182,8 @@ agent.run('What is the sentiment of this review? Review: "I really enjoyed this 
 !!! info
     This driver requires the `drivers-prompt-anthropic` [extra](../index.md#extras).
 
-!!! info
-    This driver uses [Anthropic tool use](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) when using [Tools](../tools/index.md). You can change this to use Griptape's own tool calling implementation by setting `use_native_tools` to `False`.
-
 The [AnthropicPromptDriver](../../reference/griptape/drivers/prompt/anthropic_prompt_driver.md) connects to the Anthropic [Messages](https://docs.anthropic.com/claude/reference/messages_post) API.
+This driver uses [Anthropic tool use](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) when using [Tools](../tools/index.md).
 
 ```python
 import os
@@ -216,10 +208,8 @@ agent.run('Where is the best place to see cherry blossums in Japan?')
 !!! info
     This driver requires the `drivers-prompt-google` [extra](../index.md#extras).
 
-!!! info
-    This driver uses [Gemini function calling](https://ai.google.dev/gemini-api/docs/function-calling) when using [Tools](../tools/index.md). You can change this to use Griptape's own tool calling implementation by setting `use_native_tools` to `False`.
-
 The [GooglePromptDriver](../../reference/griptape/drivers/prompt/google_prompt_driver.md) connects to the [Google Generative AI](https://ai.google.dev/tutorials/python_quickstart#generate_text_from_text_inputs) API.
+This driver uses [Gemini function calling](https://ai.google.dev/gemini-api/docs/function-calling) when using [Tools](../tools/index.md).
 
 ```python
 import os
@@ -244,10 +234,8 @@ agent.run('Briefly explain how a computer works to a young child.')
 !!! info
     This driver requires the `drivers-prompt-amazon-bedrock` [extra](../index.md#extras).
 
-!!! info
-    This drivers uses [Bedrock tool use](https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html) when using [Tools](../tools/index.md). You can change this to use Griptape's own tool calling implementation by setting `use_native_tools` to `False`.
-
 The [AmazonBedrockPromptDriver](../../reference/griptape/drivers/prompt/amazon_bedrock_prompt_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/)'s [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
+This driver uses [Bedrock tool use](https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html) when using [Tools](../tools/index.md).
 
 All models supported by the Converse API are available for use with this driver.
 
@@ -312,7 +300,6 @@ agent.run("What color is the sky at different times of the day?")
     This driver requires the `drivers-prompt-huggingface` [extra](../index.md#extras).
 
 The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_hub_prompt_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api).
-
 
 !!! warning
     Not all models featured on the Hugging Face Hub are supported by this driver. Models that are not supported by
