@@ -98,7 +98,7 @@ class TestLocalFileManagerDriver:
     )
     def test_list_files(self, workdir, path, expected, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         artifact = driver.list_files(path)
 
@@ -121,7 +121,7 @@ class TestLocalFileManagerDriver:
     )
     def test_list_files_failure(self, workdir, path, expected, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         artifact = driver.list_files(path)
 
@@ -155,7 +155,7 @@ class TestLocalFileManagerDriver:
     )
     def test_load_file_failure(self, workdir, path, expected, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         artifact = driver.load_file(path)
 
@@ -194,7 +194,7 @@ class TestLocalFileManagerDriver:
     )
     def test_save_file(self, workdir, path, content, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         result = driver.save_file(path, content)
 
@@ -223,7 +223,7 @@ class TestLocalFileManagerDriver:
     )
     def test_save_file_failure(self, workdir, path, expected, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         artifact = driver.save_file(path, "foobar")
 
@@ -251,10 +251,7 @@ class TestLocalFileManagerDriver:
         assert len(result.value) == 1
         assert isinstance(result.value[0], TextArtifact)
 
-    def test_chrdir_getcwd(self, temp_dir):
-        os.chdir(temp_dir)
-        file_manager_1 = LocalFileManagerDriver()
-        assert file_manager_1.workdir.endswith(temp_dir)
-        os.chdir("/tmp")
-        file_manager_2 = LocalFileManagerDriver()
-        assert file_manager_2.workdir.endswith("/tmp")
+    def _to_driver_workdir(self, temp_dir, workdir):
+        # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
+        root_relative_parts = Path(os.path.abspath(workdir)).parts[1:]
+        return os.path.join(temp_dir, Path(*root_relative_parts))

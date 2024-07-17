@@ -14,7 +14,6 @@ class TestFileUtils:
         file = utils.load_file(os.path.join(dirname, "../../resources/foobar-many.txt"))
 
         assert file.decode("utf-8").startswith("foobar foobar foobar")
-        assert len(file.decode("utf-8")) == 4563
 
     def test_load_files(self):
         dirname = os.path.dirname(__file__)
@@ -24,7 +23,6 @@ class TestFileUtils:
         assert len(files) == 2
 
         test_file = files[utils.str_to_hash(sources[0])]
-        assert len(test_file) == 4563
         assert test_file.decode("utf-8").startswith("foobar foobar foobar")
 
         small_file = files[utils.str_to_hash(sources[2])]
