@@ -3,7 +3,7 @@ import pytest
 from griptape.artifacts import BaseArtifact, GenericArtifact
 
 
-class TestImageArtifact:
+class TestGenericArtifact:
     @pytest.fixture()
     def generic_artifact(self):
         return GenericArtifact(
