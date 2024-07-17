@@ -7,6 +7,7 @@ from attrs import Factory, define, field
 from graphlib import TopologicalSorter
 
 from griptape.artifacts import ErrorArtifact
+from griptape.common import observable
 from griptape.memory.structure import Run
 from griptape.structures import Structure
 
@@ -82,6 +83,7 @@ class Workflow(Structure):
 
         return task
 
+    @observable
     def try_run(self, *args) -> Workflow:
         exit_loop = False
 

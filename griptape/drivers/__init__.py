@@ -109,6 +109,11 @@ from .audio_transcription.base_audio_transcription_driver import BaseAudioTransc
 from .audio_transcription.dummy_audio_transcription_driver import DummyAudioTranscriptionDriver
 from .audio_transcription.openai_audio_transcription_driver import OpenAiAudioTranscriptionDriver
 
+from .observability.base_observability_driver import BaseObservabilityDriver
+from .observability.no_op_observability_driver import NoOpObservabilityDriver
+from .observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
+from .observability.griptape_cloud_observability_driver import GriptapeCloudObservabilityDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -202,4 +207,8 @@ __all__ = [
     "BaseAudioTranscriptionDriver",
     "DummyAudioTranscriptionDriver",
     "OpenAiAudioTranscriptionDriver",
+    "BaseObservabilityDriver",
+    "NoOpObservabilityDriver",
+    "OpenTelemetryObservabilityDriver",
+    "GriptapeCloudObservabilityDriver",
 ]

@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent
+from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent, observable
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -44,6 +44,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         if stream:
             raise ValueError("streaming is not supported")
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         payload = {
             "inputs": self.prompt_stack_to_string(prompt_stack),
@@ -81,6 +82,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         raise NotImplementedError("streaming is not supported")
 

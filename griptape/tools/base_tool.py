@@ -14,6 +14,7 @@ from attrs import Attribute, Factory, define, field
 from schema import Literal, Or, Schema
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
+from griptape.common import observable
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -122,6 +123,7 @@ class BaseTool(ActivityMixin, ABC):
     def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> Optional[dict]:
         return action.input
 
+    @observable(tags=["Tool.run()"])
     def run(
         self,
         activity: Callable,

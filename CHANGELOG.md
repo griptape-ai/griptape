@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OllamaEmbeddingDriver` for generating embeddings with Ollama.
 - `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
 - `GriptapeCloudEventListenerDriver.api_key` defaults to the value in the `GT_CLOUD_API_KEY` environment variable.
+- `BaseObservabilityDriver` as the base class for all Observability Drivers.
+- `DummyObservabilityDriver` as a no-op Observability Driver.
+- `OpenTelemetryObservabilityDriver` for sending observability data to an open telemetry collector or vendor.
+- `GriptapeCloudObservabilityDriver` for sending observability data to Griptape Cloud.
+- `Observability` context manager for enabling observability and configuring which Observability Driver to use.
+- `@observable` decorator for selecting which functions/methods to provide observability for.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
