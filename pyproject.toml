@@ -127,6 +127,13 @@ drivers-observability-griptape-cloud = [
     "opentelemetry-instrumentation-threading",
     "opentelemetry-exporter-otlp-proto-http",
 ]
+drivers-observability-datadog = [
+    "opentelemetry-sdk",
+    "opentelemetry-api",
+    "opentelemetry-instrumentation",
+    "opentelemetry-instrumentation-threading",
+    "opentelemetry-exporter-otlp-proto-http",
+]
 
 loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]

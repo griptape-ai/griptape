@@ -6764,6 +6764,7 @@ drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-pusher = ["pusher"]
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
 drivers-memory-conversation-redis = ["redis"]
+drivers-observability-datadog = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
 drivers-observability-griptape-cloud = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
 drivers-observability-opentelemetry = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
 drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
@@ -6798,4 +6799,4 @@ loaders-pdf = ["pypdf"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "9bd25bfc6e645b80acebb1266659832642799443b5f7314dc42487f4e67f1e42"
+content-hash = "8be603b26d3db5453976b2944648daa6526df5bc0483888950c7f5c7d4886fff"

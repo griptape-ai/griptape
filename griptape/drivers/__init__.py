@@ -113,6 +113,7 @@ from .observability.base_observability_driver import BaseObservabilityDriver
 from .observability.no_op_observability_driver import NoOpObservabilityDriver
 from .observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
 from .observability.griptape_cloud_observability_driver import GriptapeCloudObservabilityDriver
+from .observability.datadog_observability_driver import DatadogObservabilityDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -211,4 +212,5 @@ __all__ = [
     "NoOpObservabilityDriver",
     "OpenTelemetryObservabilityDriver",
     "GriptapeCloudObservabilityDriver",
+    "DatadogObservabilityDriver",
 ]
