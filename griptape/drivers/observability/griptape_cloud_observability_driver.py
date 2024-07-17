@@ -22,39 +22,6 @@ if TYPE_CHECKING:
 
 @define
 class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
-    service_name: str = field(default="griptape-cloud", kw_only=True)
-    base_url: str = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")), kw_only=True
-    )
-    api_key: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")), kw_only=True)
-    headers: dict = field(
-        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
-    )
-    structure_run_id: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
-    span_processor: SpanProcessor = field(
-        default=Factory(
-            lambda self: BatchSpanProcessor(
-                GriptapeCloudObservabilityDriver.SpanExporter(
-                    base_url=self.base_url,
-                    api_key=self.api_key,
-                    headers=self.headers,
-                    structure_run_id=self.structure_run_id,
-                )
-            ),
-            takes_self=True,
-        ),
-        kw_only=True,
-    )
-    trace_provider: TracerProvider = field(default=Factory(lambda: TracerProvider()), kw_only=True)
-
-    @staticmethod
-    def format_trace_id(trace_id: int) -> str:
-        return str(UUID(int=trace_id))
-
-    @staticmethod
-    def format_span_id(span_id: int) -> str:
-        return str(UUID(int=span_id))
-
     @define
     class SpanExporter(SpanExporter):
         base_url: str = field(kw_only=True)
@@ -90,12 +57,45 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
             response = requests.post(url=url, json=payload, headers=self.headers)
             return SpanExportResult.SUCCESS if response.status_code == 200 else SpanExportResult.FAILURE
 
+    service_name: str = field(default="griptape-cloud", kw_only=True)
+    base_url: str = field(
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")), kw_only=True
+    )
+    api_key: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")), kw_only=True)
+    headers: dict = field(
+        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
+    )
+    structure_run_id: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
+    span_processor: SpanProcessor = field(
+        default=Factory(
+            lambda self: BatchSpanProcessor(
+                GriptapeCloudObservabilityDriver.SpanExporter(
+                    base_url=self.base_url,
+                    api_key=self.api_key,
+                    headers=self.headers,
+                    structure_run_id=self.structure_run_id,
+                )
+            ),
+            takes_self=True,
+        ),
+        kw_only=True,
+    )
+    trace_provider: TracerProvider = field(default=Factory(lambda: TracerProvider()), kw_only=True)
+
     @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_run_id(self, _: Attribute, structure_run_id: str) -> None:
         if structure_run_id is None:
             raise ValueError(
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."
             )
+
+    @staticmethod
+    def format_trace_id(trace_id: int) -> str:
+        return str(UUID(int=trace_id))
+
+    @staticmethod
+    def format_span_id(span_id: int) -> str:
+        return str(UUID(int=span_id))
 
     def get_span_id(self) -> Optional[str]:
         span = get_current_span()
