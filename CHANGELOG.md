@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Parameter `count` for `QdrantVectorStoreDriver.query` now optional as per documentation.
+- Path issues on Windows with `LocalFileManagerDriver` and `AmazonS3FileManagerDriver`.
 
 ## [0.28.2] - 2024-07-12
 ### Fixed
