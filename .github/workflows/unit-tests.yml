@@ -11,12 +11,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  test-ubuntu:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         python-version: ["3.9", "3.10", "3.11", "3.12"]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+      - name: Init environment 
+        uses: ./.github/actions/init-environment 
+      - name: Run unit tests
+        run: make test/unit
+  test-windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
     steps:
       - name: Checkout actions
         uses: actions/checkout@v3
