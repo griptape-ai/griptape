@@ -27,8 +27,8 @@ class PdfLoader(BaseTextLoader):
         *args,
         **kwargs,
     ) -> ErrorArtifact | list[TextArtifact]:
-        PdfReader = import_optional_dependency("pypdf").PdfReader
-        reader = PdfReader(BytesIO(source), strict=True, password=password)
+        pypdf = import_optional_dependency("pypdf")
+        reader = pypdf.PdfReader(BytesIO(source), strict=True, password=password)
         return self._text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))
 
     def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:

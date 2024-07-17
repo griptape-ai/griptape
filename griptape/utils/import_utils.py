@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from importlib import import_module
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from types import ModuleType
@@ -14,7 +14,7 @@ INSTALL_MAPPING = {
 }
 
 
-def import_optional_dependency(name: str) -> Optional[ModuleType]:
+def import_optional_dependency(name: str) -> ModuleType:
     """Import an optional dependency.
 
     If a dependency is missing, an ImportError with a nice message will be raised.

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.drivers import BasePromptDriver
-from griptape.exceptions import DummyException
+from griptape.exceptions import DummyError
 from griptape.tokenizers import DummyTokenizer
 
 if TYPE_CHECKING:
@@ -20,7 +20,7 @@ class DummyPromptDriver(BasePromptDriver):
     tokenizer: DummyTokenizer = field(default=Factory(lambda: DummyTokenizer()), kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        raise DummyException(__class__.__name__, "try_run")
+        raise DummyError(__class__.__name__, "try_run")
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        raise DummyException(__class__.__name__, "try_stream")
+        raise DummyError(__class__.__name__, "try_stream")

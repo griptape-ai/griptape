@@ -4,7 +4,7 @@ from typing import Optional
 
 from attrs import define, field
 
-from griptape.exceptions import DummyException
+from griptape.exceptions import DummyError
 from griptape.tokenizers import BaseTokenizer
 
 
@@ -15,4 +15,4 @@ class DummyTokenizer(BaseTokenizer):
     max_output_tokens: int = field(init=False, default=0, kw_only=True)
 
     def count_tokens(self, text: str) -> int:
-        raise DummyException(__class__.__name__, "count_tokens")
+        raise DummyError(__class__.__name__, "count_tokens")
