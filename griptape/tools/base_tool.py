@@ -3,6 +3,7 @@ from __future__ import annotations
 import inspect
 import logging
 import os
+import re
 import subprocess
 import sys
 from abc import ABC
@@ -206,15 +207,23 @@ class BaseTool(ActivityMixin, ABC):
             return None
 
     def to_native_tool_name(self, activity: Callable) -> str:
-        """Converts a Tool into to a native tool name.
+        """Converts a Tool's name and an Activity into to a native tool name.
+
+        The native tool name is a combination of the Tool's name and the Activity's name.
+        The Tool's name may only contain letters and numbers, and the Activity's name may only contain letters, numbers, and underscores.
 
         Args:
-            activity: Activity to convert.
+            activity: Activity to convert
 
         Returns:
             str: Native tool name.
         """
-        if "_" in self.name:
-            raise ValueError("Tool name can't contain underscores when using native tools.")
+        tool_name = self.name
+        if re.match(r"^[a-zA-Z0-9]+$", tool_name) is None:
+            raise ValueError("Tool name can only contain letters and numbers.")
 
-        return f"{self.name}_{self.activity_name(activity)}"
+        activity_name = self.activity_name(activity)
+        if re.match(r"^[a-zA-Z0-9_]+$", activity_name) is None:
+            raise ValueError("Activity name can only contain letters, numbers, and underscores.")
+
+        return f"{tool_name}_{activity_name}"
