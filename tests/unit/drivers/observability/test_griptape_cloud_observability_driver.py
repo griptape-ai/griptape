@@ -1,3 +1,6 @@
+import os
+from uuid import UUID
+
 import pytest
 from opentelemetry.sdk.trace import Event, ReadableSpan
 from opentelemetry.trace import SpanContext, Status, StatusCode
@@ -10,9 +13,23 @@ from tests.utils.expected_spans import ExpectedSpan, ExpectedSpans
 class TestGriptapeCloudObservabilityDriver:
     @pytest.fixture()
     def driver(self):
-        return GriptapeCloudObservabilityDriver(
-            base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
-        )
+        environ = {
+            "GT_CLOUD_BASE_URL": "http://base-url:1234",
+            "GT_CLOUD_API_KEY": "api-key",
+            "GT_CLOUD_STRUCTURE_RUN_ID": "structure-run-id",
+        }
+        original_environ = {}
+        for key in environ:
+            original_environ[key] = environ.get(key)
+            os.environ[key] = environ[key]
+
+        yield GriptapeCloudObservabilityDriver()
+
+        for key, value in original_environ.items():
+            if value is None:
+                del os.environ[key]
+            else:
+                os.environ[key] = value
 
     @pytest.fixture(autouse=True)
     def mock_span_exporter_class(self, mocker):
@@ -38,6 +55,10 @@ class TestGriptapeCloudObservabilityDriver:
         )
 
         mock_span_exporter.export.assert_not_called()
+
+    def test_init_raises_when_structure_run_is_none(self):
+        with pytest.raises(ValueError, match="structure_run_id must be set"):
+            GriptapeCloudObservabilityDriver(structure_run_id=None)
 
     def test_context_manager_pass(self, driver, mock_span_exporter):
         expected_spans = ExpectedSpans(spans=[ExpectedSpan(name="main", parent=None, status_code=StatusCode.OK)])
@@ -144,6 +165,19 @@ class TestGriptapeCloudObservabilityDriver:
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
         mock_span_exporter.export.reset_mock()
+
+    def test_get_span_id(self, driver):
+        assert driver.get_span_id() is None
+        with driver:
+            # Span ID's returned from GriptapeCloudObservabilityDriver should be valid UUIDs
+            assert self._is_valid_uuid(driver.get_span_id())
+
+    def _is_valid_uuid(self, val: str) -> bool:
+        try:
+            UUID(str(val))
+            return True
+        except ValueError:
+            return False
 
 
 class TestGriptapeCloudObservabilityDriverSpanExporter:

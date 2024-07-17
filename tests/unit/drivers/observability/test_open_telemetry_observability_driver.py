@@ -188,3 +188,10 @@ class TestOpenTelemetryObservabilityDriver:
         assert mock_span_exporter.export.call_count == 1
         mock_span_exporter.export.assert_called_with(expected_spans)
         mock_span_exporter.export.reset_mock()
+
+    def test_get_span_id(self, driver):
+        assert driver.get_span_id() is None
+        with driver:
+            span_id = driver.get_span_id()
+            assert span_id is not None
+            assert isinstance(span_id, str)
