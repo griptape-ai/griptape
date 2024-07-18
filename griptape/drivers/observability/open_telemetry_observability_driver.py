@@ -28,11 +28,11 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
 
     def __attrs_post_init__(self) -> None:
         if not self.trace_provider:
-            attributes = {"service.name": self.service_name}
-            if self.service_version:
-                attributes["service.version"] = self.service_version
-            if self.deployment_env:
-                attributes["deployment.environment"] = self.deployment_env
+            attributes = {
+                "service.name": self.service_name,
+                "service.version": self.service_version if self.service_version else None,
+                "deployment.environment": self.deployment_env if self.deployment_env else None,
+            }
             self.trace_provider = TracerProvider(resource=Resource(attributes=attributes))  # pyright: ignore[reportArgumentType]
         self.trace_provider.add_span_processor(self.span_processor)
         self._tracer = get_tracer(self.service_name, tracer_provider=self.trace_provider)
