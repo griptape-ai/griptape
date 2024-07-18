@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
+from attrs import define, field
 from opentelemetry.instrumentation.threading import ThreadingInstrumentor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import SpanProcessor, TracerProvider
@@ -18,19 +18,15 @@ if TYPE_CHECKING:
 
 @define
 class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
-    service_name: str = field(kw_only=True)
+    service_name: str = field(default="griptape", kw_only=True)
     span_processor: SpanProcessor = field(kw_only=True)
-    trace_provider: TracerProvider = field(
-        default=Factory(
-            lambda self: TracerProvider(resource=Resource(attributes={"service.name": self.service_name})),
-            takes_self=True,
-        ),
-        kw_only=True,
-    )
+    trace_provider: TracerProvider = field(kw_only=True)
     _tracer: Optional[Tracer] = None
     _root_span_context_manager: Any = None
 
     def __attrs_post_init__(self) -> None:
+        if not self.trace_provider:
+            self.trace_provider = TracerProvider(resource=Resource(attributes={"service.name": self.service_name}))
         self.trace_provider.add_span_processor(self.span_processor)
         self._tracer = get_tracer(self.service_name, tracer_provider=self.trace_provider)
 
