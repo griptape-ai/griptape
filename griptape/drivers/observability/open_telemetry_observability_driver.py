@@ -34,9 +34,9 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
 
     def _trace_provider_factory(self) -> TracerProvider:
         attributes = {"service.name": self.service_name}
-        if self.service_version:
+        if self.service_version is not None:
             attributes["service.version"] = self.service_version
-        if self.deployment_env:
+        if self.deployment_env is not None:
             attributes["deployment.environment"] = self.deployment_env
         return TracerProvider(resource=Resource(attributes=attributes))  # pyright: ignore[reportArgumentType]
 

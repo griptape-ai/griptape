@@ -15,7 +15,7 @@ class DatadogObservabilityDriver(OpenTelemetryObservabilityDriver):
     )
     span_processor: SpanProcessor = field(
         default=Factory(
-            lambda self: BatchSpanProcessor(OTLPSpanExporter(endpoint=self.datadog_agent_endpoint + "/v1/traces")),
+            lambda self: BatchSpanProcessor(OTLPSpanExporter(endpoint=f"{self.datadog_agent_endpoint}/v1/traces")),
             takes_self=True,
         ),
         kw_only=True,
