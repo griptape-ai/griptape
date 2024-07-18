@@ -20,6 +20,8 @@ if TYPE_CHECKING:
 class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
     service_name: str = field(kw_only=True)
     span_processor: SpanProcessor = field(kw_only=True)
+    service_version: Optional[str] = field(default=None, kw_only=True)
+    deployment_env: Optional[str] = field(default=None, kw_only=True)
     trace_provider: TracerProvider = field(
         default=Factory(
             lambda self: self._trace_provider_factory(),
@@ -27,8 +29,6 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
         ),
         kw_only=True,
     )
-    service_version: Optional[str] = field(default=None, kw_only=True)
-    deployment_env: Optional[str] = field(default=None, kw_only=True)
     _tracer: Optional[Tracer] = None
     _root_span_context_manager: Any = None
 
