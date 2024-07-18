@@ -10,7 +10,7 @@ from griptape.artifacts import GenericArtifact, TextArtifact
 from griptape.config import GoogleStructureConfig
 import google.generativeai as genai
 
-video_file = genai.upload_file(path="assets/griptape-comfyui.mp4")
+video_file = genai.upload_file(path="tests/resources/griptape-comfyui.mp4")
 while video_file.state.name == "PROCESSING":
     time.sleep(2)
     video_file = genai.get_file(video_file.name)
