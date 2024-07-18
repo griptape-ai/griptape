@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `DummyObservabilityDriver` as a no-op Observability Driver.
 - `OpenTelemetryObservabilityDriver` for sending observability data to an open telemetry collector or vendor.
 - `GriptapeCloudObservabilityDriver` for sending observability data to Griptape Cloud.
+- `DatadogObservabilityDriver` for sending observability data to a Datadog Agent.
 - `Observability` context manager for enabling observability and configuring which Observability Driver to use.
 - `@observable` decorator for selecting which functions/methods to provide observability for.
 
