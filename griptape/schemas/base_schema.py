@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Sequence
-from typing import Any, Literal, Union, get_args, get_origin
+from typing import Any, Literal, Union, _SpecialForm, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
@@ -14,7 +14,7 @@ class BaseSchema(Schema):
     class Meta:
         unknown = INCLUDE
 
-    DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes}
+    DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes, Any: fields.Raw}
 
     @classmethod
     def from_attrs_cls(cls, attrs_cls: type) -> type:
@@ -134,6 +134,7 @@ class BaseSchema(Schema):
         attrs.resolve_types(
             attrs_cls,
             localns={
+                "Any": Any,
                 "BasePromptDriver": BasePromptDriver,
                 "BaseImageQueryDriver": BaseImageQueryDriver,
                 "BaseEmbeddingDriver": BaseEmbeddingDriver,
@@ -164,8 +165,11 @@ class BaseSchema(Schema):
         )
 
     @classmethod
-    def is_list_sequence(cls, field_type: type) -> bool:
-        if issubclass(field_type, str) or issubclass(field_type, bytes) or issubclass(field_type, tuple):
-            return False
+    def is_list_sequence(cls, field_type: type | _SpecialForm) -> bool:
+        if isinstance(field_type, type):
+            if issubclass(field_type, str) or issubclass(field_type, bytes) or issubclass(field_type, tuple):
+                return False
+            else:
+                return issubclass(field_type, Sequence)
         else:
-            return issubclass(field_type, Sequence)
+            return False

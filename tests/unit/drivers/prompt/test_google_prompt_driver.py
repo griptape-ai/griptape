@@ -5,7 +5,7 @@ from google.generativeai.protos import FunctionCall, FunctionResponse, Part
 from google.generativeai.types import ContentDict, GenerationConfig
 from google.protobuf.json_format import MessageToDict
 
-from griptape.artifacts import ActionArtifact, ImageArtifact, TextArtifact
+from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers import GooglePromptDriver
@@ -114,6 +114,7 @@ class TestGooglePromptDriver:
                 ]
             )
         )
+        prompt_stack.add_user_message(GenericArtifact("video-file"))
 
         return prompt_stack
 
@@ -139,6 +140,7 @@ class TestGooglePromptDriver:
                 ],
                 "role": "user",
             },
+            {"parts": ["video-file"], "role": "user"},
         ]
 
     def test_init(self):
