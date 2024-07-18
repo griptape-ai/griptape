@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
     service_name: str = field(default="griptape", kw_only=True)
     span_processor: SpanProcessor = field(kw_only=True)
-    trace_provider: TracerProvider = field(kw_only=True)
+    trace_provider: Optional[TracerProvider] = field(default=None, kw_only=True)
     _tracer: Optional[Tracer] = None
     _root_span_context_manager: Any = None
 
