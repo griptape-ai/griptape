@@ -11,9 +11,9 @@ from griptape.tokenizers import HuggingFaceTokenizer
 
 
 def to_streaming_body(data: Any) -> StreamingBody:
-    bytes = json.dumps(data).encode("utf-8")
+    encoded_body = json.dumps(data).encode("utf-8")
 
-    return StreamingBody(BytesIO(bytes), len(bytes))
+    return StreamingBody(BytesIO(encoded_body), len(encoded_body))
 
 
 class TestAmazonSageMakerJumpstartPromptDriver:

@@ -27,20 +27,20 @@ class TestOutpaintingImageGenerationTask:
         assert task.input.value == list(input_tuple)
 
     def test_callable_input(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
-        input = [text_artifact, image_artifact, image_artifact]
+        artifacts = [text_artifact, image_artifact, image_artifact]
 
-        def callable(task: BaseTask) -> ListArtifact:
-            return ListArtifact(input)
+        def callable_input(task: BaseTask) -> ListArtifact:
+            return ListArtifact(artifacts)
 
-        task = OutpaintingImageGenerationTask(callable, image_generation_engine=Mock())
+        task = OutpaintingImageGenerationTask(callable_input, image_generation_engine=Mock())
 
-        assert task.input.value == input
+        assert task.input.value == artifacts
 
     def test_list_input(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
-        input = [text_artifact, image_artifact]
-        task = OutpaintingImageGenerationTask(ListArtifact(input), image_generation_engine=Mock())
+        artifacts = [text_artifact, image_artifact]
+        task = OutpaintingImageGenerationTask(ListArtifact(artifacts), image_generation_engine=Mock())
 
-        assert task.input.value == input
+        assert task.input.value == artifacts
 
     def test_bad_input(self, image_artifact):
         with pytest.raises(ValueError):

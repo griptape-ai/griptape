@@ -19,10 +19,10 @@ class TestPromptImageGenerationTask:
     def test_callable_input(self):
         input_artifact = TextArtifact("some text input")
 
-        def callable(task: BaseTask) -> TextArtifact:
+        def callable_input(task: BaseTask) -> TextArtifact:
             return input_artifact
 
-        task = PromptImageGenerationTask(callable, image_generation_engine=Mock())
+        task = PromptImageGenerationTask(callable_input, image_generation_engine=Mock())
 
         assert task.input == input_artifact
 
