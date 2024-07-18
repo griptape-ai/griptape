@@ -11,11 +11,11 @@ from griptape.drivers.observability.open_telemetry_observability_driver import O
 @define
 class DatadogObservabilityDriver(OpenTelemetryObservabilityDriver):
     datadog_agent_endpoint: str = field(
-        default=Factory(lambda: os.getenv("DD_AGENT_ENDPOINT", "http://localhost:4318/v1/traces")), kw_only=True
+        default=Factory(lambda: os.getenv("DD_AGENT_ENDPOINT", "http://localhost:4318")), kw_only=True
     )
     span_processor: SpanProcessor = field(
         default=Factory(
-            lambda self: BatchSpanProcessor(OTLPSpanExporter(endpoint=self.datadog_agent_endpoint)),
+            lambda self: BatchSpanProcessor(OTLPSpanExporter(endpoint=self.datadog_agent_endpoint + "/v1/traces")),
             takes_self=True,
         ),
         kw_only=True,
