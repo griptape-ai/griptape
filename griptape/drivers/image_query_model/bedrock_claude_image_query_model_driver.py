@@ -29,9 +29,9 @@ class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
 
     def _construct_image_message(self, image_data: ImageArtifact) -> dict:
         data = image_data.base64
-        type = image_data.mime_type
+        media_type = image_data.mime_type
 
-        return {"source": {"data": data, "media_type": type, "type": "base64"}, "type": "image"}
+        return {"source": {"data": data, "media_type": media_type, "type": "base64"}, "type": "image"}
 
     def _construct_text_message(self, query: str) -> dict:
         return {"text": query, "type": "text"}

@@ -17,10 +17,10 @@ class TestTextToSpeechTask:
     def test_callable_input(self):
         input_artifact = TextArtifact("some text input")
 
-        def callable(task: BaseTask) -> TextArtifact:
+        def callable_input(task: BaseTask) -> TextArtifact:
             return input_artifact
 
-        task = TextToSpeechTask(callable, text_to_speech_engine=Mock())
+        task = TextToSpeechTask(callable_input, text_to_speech_engine=Mock())
 
         assert task.input == input_artifact
 

@@ -25,10 +25,10 @@ class TestAudioTranscriptionTask:
         assert task.input.value == audio_artifact.value
 
     def test_callable_input(self, audio_artifact, audio_transcription_engine):
-        def callable(task: BaseTask) -> AudioArtifact:
+        def callable_input(task: BaseTask) -> AudioArtifact:
             return audio_artifact
 
-        task = AudioTranscriptionTask(callable, audio_transcription_engine=audio_transcription_engine)
+        task = AudioTranscriptionTask(callable_input, audio_transcription_engine=audio_transcription_engine)
 
         assert task.input == audio_artifact
 

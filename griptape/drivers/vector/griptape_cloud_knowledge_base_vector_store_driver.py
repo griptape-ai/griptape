@@ -85,7 +85,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: Optional[bool] = None,
         distance_metric: Optional[str] = None,
         # GriptapeCloudKnowledgeBaseVectorStoreDriver-specific params:
-        filter: Optional[dict] = None,
+        filter: Optional[dict] = None,  # noqa: A002
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         """Performs a query on the Knowledge Base.
