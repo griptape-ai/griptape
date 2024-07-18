@@ -222,26 +222,26 @@ line-length = 120
 
 [tool.ruff.lint]
 select = [
+    "F", # pyflakes
     "E", # pycodestyle-errors
     "W", # pycodestyle-warnings
-    "F", # Pyflakes
-    "UP", # pyupgrade
-    "B", # flake8-bugbear
-    "SIM", # flake8-simplify
-    "TID", # flake8-tidy-imports
-    "T20", # flake8-print
     "C90", # mccabe
-    "TCH", # flake8-type-checking
-    "D", # pydocstyle
-    "PGH", # pygrep-hooks
     "I", # isort
-    "FA", # flake8-future-annotations
-    "COM", # flake8-commas
-    "C4", # flake8-comprehensions
+    "N", # pep8-naming
+    "D", # pydocstyle
+    "UP", # pyupgrade
     "ANN", # flake8-annotations
     "FBT", # flake8-boolean-trap
+    "B", # flake8-bugbear
+    "COM", # flake8-commas
+    "C4", # flake8-comprehensions
+    "FA", # flake8-future-annotations
+    "T20", # flake8-print
     "PT", # flake8-pytest-style
-    "N" # pep8-naming
+    "SIM", # flake8-simplify
+    "TID", # flake8-tidy-imports
+    "TCH", # flake8-type-checking
+    "PGH", # pygrep-hooks
 ]
 ignore = [
     "UP007", # non-pep604-annotation
