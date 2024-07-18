@@ -5,7 +5,7 @@ from typing import Optional
 from attrs import Factory, define, field
 
 from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
-from griptape.exceptions import DummyException
+from griptape.exceptions import DummyError
 
 
 @define()
@@ -17,7 +17,7 @@ class DummyVectorStoreDriver(BaseVectorStoreDriver):
     )
 
     def delete_vector(self, vector_id: str) -> None:
-        raise DummyException(__class__.__name__, "delete_vector")
+        raise DummyError(__class__.__name__, "delete_vector")
 
     def upsert_vector(
         self,
@@ -27,13 +27,13 @@ class DummyVectorStoreDriver(BaseVectorStoreDriver):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
-        raise DummyException(__class__.__name__, "upsert_vector")
+        raise DummyError(__class__.__name__, "upsert_vector")
 
     def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        raise DummyException(__class__.__name__, "load_entry")
+        raise DummyError(__class__.__name__, "load_entry")
 
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
-        raise DummyException(__class__.__name__, "load_entries")
+        raise DummyError(__class__.__name__, "load_entries")
 
     def query(
         self,
@@ -44,4 +44,4 @@ class DummyVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        raise DummyException(__class__.__name__, "query")
+        raise DummyError(__class__.__name__, "query")

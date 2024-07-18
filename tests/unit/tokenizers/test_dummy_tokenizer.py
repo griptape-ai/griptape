@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.exceptions import DummyException
+from griptape.exceptions import DummyError
 from griptape.tokenizers import DummyTokenizer
 
 
@@ -10,9 +10,9 @@ class TestDummyTokenizer:
         return DummyTokenizer()
 
     def test_token_count(self, tokenizer):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             tokenizer.count_tokens("foo bar huzzah")
 
     def test_tokens_left(self, tokenizer):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             tokenizer.count_tokens("foo bar huzzah")

@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.drivers import DummyPromptDriver
-from griptape.exceptions import DummyException
+from griptape.exceptions import DummyError
 
 
 class TestDummyPromptDriver:
@@ -13,9 +13,9 @@ class TestDummyPromptDriver:
         assert prompt_driver
 
     def test_try_run(self, prompt_driver):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             prompt_driver.try_run("prompt-stack")
 
     def test_try_stream_run(self, prompt_driver):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             prompt_driver.try_run("prompt-stack")

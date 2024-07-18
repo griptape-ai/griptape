@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Sequence
-from typing import Any, Literal, Union, get_args, get_origin
+from typing import Any, Literal, Union, _SpecialForm, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
@@ -14,7 +14,7 @@ class BaseSchema(Schema):
     class Meta:
         unknown = INCLUDE
 
-    DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes}
+    DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes, Any: fields.Raw}
 
     @classmethod
     def from_attrs_cls(cls, attrs_cls: type) -> type:
@@ -67,9 +67,9 @@ class BaseSchema(Schema):
             else:
                 raise ValueError(f"Missing type for list field: {field_type}")
         else:
-            FieldClass = cls.DATACLASS_TYPE_MAPPING[field_class]
+            field_class = cls.DATACLASS_TYPE_MAPPING[field_class]
 
-            return FieldClass(allow_none=optional)
+            return field_class(allow_none=optional)
 
     @classmethod
     def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:
@@ -131,17 +131,10 @@ class BaseSchema(Schema):
         from griptape.tools import BaseTool
         from griptape.utils.import_utils import import_optional_dependency, is_dependency_installed
 
-        boto3 = import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any
-        Client = import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any
-        GenerativeModel = (
-            import_optional_dependency("google.generativeai").GenerativeModel
-            if is_dependency_installed("google.generativeai")
-            else Any
-        )
-
         attrs.resolve_types(
             attrs_cls,
             localns={
+                "Any": Any,
                 "BasePromptDriver": BasePromptDriver,
                 "BaseImageQueryDriver": BaseImageQueryDriver,
                 "BaseEmbeddingDriver": BaseEmbeddingDriver,
@@ -163,15 +156,20 @@ class BaseSchema(Schema):
                 "Run": Run,
                 "Sequence": Sequence,
                 # Third party modules
-                "Client": Client,
-                "GenerativeModel": GenerativeModel,
-                "boto3": boto3,
+                "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
+                "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel
+                if is_dependency_installed("google.generativeai")
+                else Any,
+                "boto3": import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any,
             },
         )
 
     @classmethod
-    def is_list_sequence(cls, field_type: type) -> bool:
-        if issubclass(field_type, str) or issubclass(field_type, bytes) or issubclass(field_type, tuple):
-            return False
+    def is_list_sequence(cls, field_type: type | _SpecialForm) -> bool:
+        if isinstance(field_type, type):
+            if issubclass(field_type, str) or issubclass(field_type, bytes) or issubclass(field_type, tuple):
+                return False
+            else:
+                return issubclass(field_type, Sequence)
         else:
-            return issubclass(field_type, Sequence)
+            return False

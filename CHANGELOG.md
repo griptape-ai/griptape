@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `DatadogObservabilityDriver` for sending observability data to a Datadog Agent.
 - `Observability` context manager for enabling observability and configuring which Observability Driver to use.
 - `@observable` decorator for selecting which functions/methods to provide observability for.
+- `GenericArtifact` for storing any data.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
@@ -28,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseVectorStoreDriver.query` optional arguments are now keyword-only arguments.
 - **BREAKING**: `EventListener.publish_event`'s `flush` argument is now a keyword-only argument.
 - **BREAKING**: `BaseEventListenerDriver.publish_event`'s `flush` argument is now a keyword-only argument.
+- **BREAKING**: Renamed `DummyException` to `DummyError` for pep8 naming compliance.
 - Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
 - Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
 

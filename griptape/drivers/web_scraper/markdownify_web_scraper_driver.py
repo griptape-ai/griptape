@@ -40,14 +40,14 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
 
     def scrape_url(self, url: str) -> TextArtifact:
         sync_playwright = import_optional_dependency("playwright.sync_api").sync_playwright
-        BeautifulSoup = import_optional_dependency("bs4").BeautifulSoup
-        MarkdownConverter = import_optional_dependency("markdownify").MarkdownConverter
+        bs4 = import_optional_dependency("bs4")
+        markdownify = import_optional_dependency("markdownify")
 
         include_links = self.include_links
 
         # Custom MarkdownConverter to optionally linked urls. If include_links is False only
         # the text of the link is returned.
-        class OptionalLinksMarkdownConverter(MarkdownConverter):
+        class OptionalLinksMarkdownConverter(markdownify.MarkdownConverter):
             def convert_a(self, el: Any, text: str, convert_as_inline: Any) -> str:
                 if include_links:
                     return super().convert_a(el, text, convert_as_inline)
@@ -75,7 +75,7 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
             if not content:
                 raise Exception("can't access URL")
 
-            soup = BeautifulSoup(content, "html.parser")
+            soup = bs4.BeautifulSoup(content, "html.parser")
 
             # Remove unwanted elements
             exclude_selector = ",".join(

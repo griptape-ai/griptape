@@ -32,14 +32,14 @@ class ImageLoader(BaseLoader):
     }
 
     def load(self, source: bytes, *args, **kwargs) -> ImageArtifact:
-        Image = import_optional_dependency("PIL.Image")
-        image = Image.open(BytesIO(source))
+        pil_image = import_optional_dependency("PIL.Image")
+        image = pil_image.open(BytesIO(source))
 
         # Normalize format only if requested.
         if self.format is not None:
             byte_stream = BytesIO()
             image.save(byte_stream, format=self.format)
-            image = Image.open(byte_stream)
+            image = pil_image.open(byte_stream)
             source = byte_stream.getvalue()
 
         image_artifact = ImageArtifact(source, format=image.format.lower(), width=image.width, height=image.height)

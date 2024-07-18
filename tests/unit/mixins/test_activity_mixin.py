@@ -74,10 +74,10 @@ class TestActivityMixin:
         assert len(tool.activities()) > 0
 
     def test_activity_to_input(self, tool):
-        input = tool.activity_to_input(tool.test)
-        assert str(input) == str(
+        activity_input = tool.activity_to_input(tool.test)
+        assert str(activity_input) == str(
             {Literal("input", description=""): {"values": Schema({Literal("test"): str}, description="Test input")}}
         )
 
-        input = tool.activity_to_input(tool.test_no_schema)
-        assert input == {Optional("input"): {}}
+        activity_input = tool.activity_to_input(tool.test_no_schema)
+        assert activity_input == {Optional("input"): {}}

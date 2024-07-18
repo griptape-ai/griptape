@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.drivers import DummyVectorStoreDriver
-from griptape.exceptions import DummyException
+from griptape.exceptions import DummyError
 
 
 class TestDummyVectorStoreDriver:
@@ -10,21 +10,21 @@ class TestDummyVectorStoreDriver:
         return DummyVectorStoreDriver()
 
     def test_delete_vector(self, vector_store_driver):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             vector_store_driver.delete_vector("foo bar huzzah")
 
     def test_upsert_vector(self, vector_store_driver):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             vector_store_driver.upsert_vector("foo bar huzzah")
 
     def test_load_entry(self, vector_store_driver):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             vector_store_driver.load_entry("foo bar huzzah")
 
     def test_load_entries(self, vector_store_driver):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             vector_store_driver.load_entries(namespace="foo bar huzzah")
 
     def test_query(self, vector_store_driver):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             vector_store_driver.query("foo bar huzzah")

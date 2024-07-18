@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attrs import define, field
 
 from griptape.drivers import BaseImageQueryDriver
-from griptape.exceptions import DummyException
+from griptape.exceptions import DummyError
 
 if TYPE_CHECKING:
     from griptape.artifacts import ImageArtifact, TextArtifact
@@ -17,4 +17,4 @@ class DummyImageQueryDriver(BaseImageQueryDriver):
     max_tokens: None = field(init=False, default=None, kw_only=True)
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
-        raise DummyException(__class__.__name__, "try_query")
+        raise DummyError(__class__.__name__, "try_query")

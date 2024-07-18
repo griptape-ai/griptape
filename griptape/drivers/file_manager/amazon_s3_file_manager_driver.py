@@ -103,8 +103,8 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
         for page in pages:
             for obj in page.get("CommonPrefixes", []):
                 prefix = obj.get("Prefix")
-                dir = prefix[len(full_key) :].rstrip("/")
-                files_and_dirs.append(dir)
+                directory = prefix[len(full_key) :].rstrip("/")
+                files_and_dirs.append(directory)
 
             for obj in page.get("Contents", []):
                 key = obj.get("Key")

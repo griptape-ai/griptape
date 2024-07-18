@@ -43,21 +43,21 @@ class TestImageQueryTask:
         assert task.input.value[2] == image_artifact
 
     def test_callable_input(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
-        input = [text_artifact, image_artifact, image_artifact]
+        artifacts = [text_artifact, image_artifact, image_artifact]
 
-        def callable(task: BaseTask) -> ListArtifact:
-            return ListArtifact(value=input)
+        def callable_input(task: BaseTask) -> ListArtifact:
+            return ListArtifact(value=artifacts)
 
-        task = ImageQueryTask(callable)
+        task = ImageQueryTask(callable_input)
 
-        assert task.input.value == input
+        assert task.input.value == artifacts
 
     def test_list_input(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
-        input = [text_artifact, image_artifact, image_artifact]
+        artifacts = [text_artifact, image_artifact, image_artifact]
 
-        task = ImageQueryTask(ListArtifact(value=input))
+        task = ImageQueryTask(ListArtifact(value=artifacts))
 
-        assert task.input.value == input
+        assert task.input.value == artifacts
 
     def test_config_image_generation_engine(self, text_artifact, image_artifact):
         task = ImageQueryTask((text_artifact, [image_artifact, image_artifact]))

@@ -25,7 +25,9 @@ class BaseMultiTextInputTask(RuleMixin, BaseTask, ABC):
         if all(isinstance(elem, TextArtifact) for elem in self._input):
             return ListArtifact([artifact for artifact in self._input if isinstance(artifact, TextArtifact)])
         elif all(isinstance(elem, Callable) for elem in self._input):
-            return ListArtifact([callable(self) for callable in self._input if isinstance(callable, Callable)])
+            return ListArtifact(
+                [callable_input(self) for callable_input in self._input if isinstance(callable_input, Callable)]
+            )
         else:
             return ListArtifact(
                 [
@@ -45,7 +47,7 @@ class BaseMultiTextInputTask(RuleMixin, BaseTask, ABC):
     def before_run(self) -> None:
         super().before_run()
 
-        joined_input = "\n".join([input.to_text() for input in self.input])
+        joined_input = "\n".join([i.to_text() for i in self.input])
         self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nInput: {joined_input}")
 
     def after_run(self) -> None:
