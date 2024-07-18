@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 @define
-class EventsMixin:
+class EventPublisherMixin:
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
 
     def add_event_listeners(self, event_listeners: list[EventListener]) -> list[EventListener]:

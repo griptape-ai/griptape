@@ -3,22 +3,22 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.events import EventListener
-from griptape.mixins import EventsMixin
+from griptape.mixins import EventPublisherMixin
 from tests.mocks.mock_event import MockEvent
 
 
 class TestEventsMixin:
     def test_init(self):
-        assert EventsMixin()
+        assert EventPublisherMixin()
 
     def test_add_event_listeners(self):
-        mixin = EventsMixin()
+        mixin = EventPublisherMixin()
 
         mixin.add_event_listeners([EventListener(), EventListener()])
         assert len(mixin.event_listeners) == 2
 
     def test_remove_event_listeners(self):
-        mixin = EventsMixin()
+        mixin = EventPublisherMixin()
 
         listeners = [EventListener(), EventListener()]
         mixin.add_event_listeners(listeners)
@@ -26,7 +26,7 @@ class TestEventsMixin:
         assert len(mixin.event_listeners) == 0
 
     def test_add_event_listener(self):
-        mixin = EventsMixin()
+        mixin = EventPublisherMixin()
 
         mixin.add_event_listener(EventListener())
         mixin.add_event_listener(EventListener())
@@ -34,7 +34,7 @@ class TestEventsMixin:
         assert len(mixin.event_listeners) == 2
 
     def test_remove_event_listener(self):
-        mixin = EventsMixin()
+        mixin = EventPublisherMixin()
 
         listener = EventListener()
         mixin.add_event_listener(listener)
@@ -43,7 +43,7 @@ class TestEventsMixin:
         assert len(mixin.event_listeners) == 0
 
     def test_remove_unknown_event_listener(self):
-        mixin = EventsMixin()
+        mixin = EventPublisherMixin()
 
         with pytest.raises(ValueError):
             mixin.remove_event_listener(EventListener())
@@ -52,7 +52,7 @@ class TestEventsMixin:
         # Given
         mock_handler = Mock()
         mock_handler.return_value = None
-        mixin = EventsMixin(event_listeners=[EventListener(handler=mock_handler)])
+        mixin = EventPublisherMixin(event_listeners=[EventListener(handler=mock_handler)])
         mock_event = MockEvent()
 
         # When

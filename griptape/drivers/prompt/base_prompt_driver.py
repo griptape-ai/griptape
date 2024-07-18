@@ -17,7 +17,7 @@ from griptape.common import (
     observable,
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
-from griptape.mixins import EventsMixin, ExponentialBackoffMixin, SerializableMixin
+from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True)
-class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, EventsMixin, ABC):
+class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, EventPublisherMixin, ABC):
     """Base class for the Prompt Drivers.
 
     Attributes:

@@ -6,14 +6,14 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 from griptape.events import FinishImageGenerationEvent, StartImageGenerationEvent
-from griptape.mixins import EventsMixin, ExponentialBackoffMixin, SerializableMixin
+from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import ImageArtifact
 
 
 @define
-class BaseImageGenerationDriver(EventsMixin, SerializableMixin, ExponentialBackoffMixin, ABC):
+class BaseImageGenerationDriver(EventPublisherMixin, SerializableMixin, ExponentialBackoffMixin, ABC):
     model: str = field(kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> None:

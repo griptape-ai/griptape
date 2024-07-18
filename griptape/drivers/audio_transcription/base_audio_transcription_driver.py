@@ -6,14 +6,14 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 from griptape.events import FinishAudioTranscriptionEvent, StartAudioTranscriptionEvent
-from griptape.mixins import EventsMixin, ExponentialBackoffMixin, SerializableMixin
+from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import AudioArtifact, TextArtifact
 
 
 @define
-class BaseAudioTranscriptionDriver(EventsMixin, SerializableMixin, ExponentialBackoffMixin, ABC):
+class BaseAudioTranscriptionDriver(EventPublisherMixin, SerializableMixin, ExponentialBackoffMixin, ABC):
     model: str = field(kw_only=True, metadata={"serializable": True})
 
     def before_run(self) -> None:

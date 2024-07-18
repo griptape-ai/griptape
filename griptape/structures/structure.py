@@ -29,7 +29,7 @@ from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
-from griptape.mixins import EventsMixin
+from griptape.mixins import EventPublisherMixin
 from griptape.utils import deprecation_warn
 
 if TYPE_CHECKING:
@@ -39,7 +39,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Structure(ABC, EventsMixin):
+class Structure(ABC, EventPublisherMixin):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)

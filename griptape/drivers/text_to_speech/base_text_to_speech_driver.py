@@ -7,14 +7,14 @@ from attrs import define, field
 
 from griptape.events.finish_text_to_speech_event import FinishTextToSpeechEvent
 from griptape.events.start_text_to_speech_event import StartTextToSpeechEvent
-from griptape.mixins import EventsMixin, ExponentialBackoffMixin, SerializableMixin
+from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts.audio_artifact import AudioArtifact
 
 
 @define
-class BaseTextToSpeechDriver(SerializableMixin, ExponentialBackoffMixin, EventsMixin, ABC):
+class BaseTextToSpeechDriver(SerializableMixin, ExponentialBackoffMixin, EventPublisherMixin, ABC):
     model: str = field(kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompts: list[str]) -> None:
