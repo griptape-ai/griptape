@@ -172,7 +172,7 @@ class Computer(BaseTool):
             if isinstance(existing_container, Container):
                 existing_container.remove(force=True)
 
-                logging.info(f"Removed existing container: {name}")
+                logging.info("Removed existing container %s", name)
         except NotFound:
             pass
 
@@ -184,7 +184,7 @@ class Computer(BaseTool):
             image = self.docker_client.images.build(path=temp_dir, tag=self.image_name(tool), rm=True, forcerm=True)
 
             if isinstance(image, tuple):
-                logging.info(f"Built image: {image[0].short_id}")
+                logging.info("Built image: %s", image[0].short_id)
 
     def dependencies(self) -> list[str]:
         with open(self.requirements_txt_path) as file:

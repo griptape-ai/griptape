@@ -84,6 +84,6 @@ class SummaryConversationMemory(ConversationMemory):
             else:
                 return previous_summary
         except Exception as e:
-            logging.error(f"Error summarizing memory: {type(e).__name__}({e})")
+            logging.exception("Error summarizing memory: %s(%s)", type(e).__name__, e)
 
             return previous_summary

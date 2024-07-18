@@ -50,7 +50,9 @@ class BaseTokenizer(ABC):
 
         if tokens is None:
             logging.warning(
-                f"Model {self.model} not found in MODEL_PREFIXES_TO_MAX_INPUT_TOKENS, using default value of {self.DEFAULT_MAX_INPUT_TOKENS}.",
+                "Model %s not found in MODEL_PREFIXES_TO_MAX_INPUT_TOKENS, using default value of %s.",
+                self.model,
+                self.DEFAULT_MAX_INPUT_TOKENS,
             )
             return self.DEFAULT_MAX_INPUT_TOKENS
         else:
@@ -64,7 +66,9 @@ class BaseTokenizer(ABC):
 
         if tokens is None:
             logging.warning(
-                f"Model {self.model} not found in MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS, using default value of {self.DEFAULT_MAX_OUTPUT_TOKENS}.",
+                "Model %s not found in MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS, using default value of %s.",
+                self.model,
+                self.DEFAULT_MAX_OUTPUT_TOKENS,
             )
             return self.DEFAULT_MAX_OUTPUT_TOKENS
         else:

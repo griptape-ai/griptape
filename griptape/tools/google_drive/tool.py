@@ -205,7 +205,7 @@ class GoogleDriveClient(BaseGoogleClient):
 
                     downloaded_files.append(BlobArtifact(request.execute()))
                 else:
-                    logging.error(f"Could not find file: {path}")
+                    logging.error("Could not find file: %s", path)
 
             return ListArtifact(downloaded_files)
         except HttpError as e:
