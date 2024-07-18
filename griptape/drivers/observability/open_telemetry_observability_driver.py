@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 @define
 class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
-    service_name: str = field(kw_only=True)
+    service_name: str = field(default="griptape", kw_only=True)
     span_processor: SpanProcessor = field(kw_only=True)
     service_version: Optional[str] = field(default=None, kw_only=True)
     deployment_env: Optional[str] = field(default=None, kw_only=True)

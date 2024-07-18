@@ -23,10 +23,23 @@ class TestOpenTelemetryObservabilityDriver:
 
     @pytest.fixture()
     def driver(self, span_processor):
-        return OpenTelemetryObservabilityDriver(service_name="test", span_processor=span_processor)
+        return OpenTelemetryObservabilityDriver(span_processor=span_processor)
 
-    def test_init(self, span_processor):
-        OpenTelemetryObservabilityDriver(service_name="test", span_processor=span_processor)
+    def test_init_no_optional(self, span_processor):
+        driver = OpenTelemetryObservabilityDriver(span_processor=span_processor)
+
+        assert driver.service_name == "griptape"
+        assert driver.service_version is None
+        assert driver.deployment_env is None
+
+    def test_init_all_optional(self, span_processor):
+        driver = OpenTelemetryObservabilityDriver(
+            service_name="griptape", service_version="1.0", deployment_env="test", span_processor=span_processor
+        )
+
+        assert driver.service_name == "griptape"
+        assert driver.service_version == "1.0"
+        assert driver.deployment_env == "test"
 
     def test_context_manager_pass(self, driver, mock_span_exporter):
         expected_spans = ExpectedSpans(spans=[ExpectedSpan(name="main", parent=None, status_code=StatusCode.OK)])
