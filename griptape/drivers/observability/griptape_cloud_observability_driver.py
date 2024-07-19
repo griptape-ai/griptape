@@ -7,7 +7,6 @@ from uuid import UUID
 
 import requests
 from attrs import Attribute, Factory, define, field
-from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.util import ns_to_iso_str
 from opentelemetry.trace import INVALID_SPAN, get_current_span
@@ -57,7 +56,6 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
             response = requests.post(url=url, json=payload, headers=self.headers)
             return SpanExportResult.SUCCESS if response.status_code == 200 else SpanExportResult.FAILURE
 
-    service_name: str = field(default="griptape-cloud", kw_only=True)
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")), kw_only=True
     )
@@ -80,7 +78,6 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
         ),
         kw_only=True,
     )
-    trace_provider: TracerProvider = field(default=Factory(lambda: TracerProvider()), kw_only=True)
 
     @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_run_id(self, _: Attribute, structure_run_id: str) -> None:
