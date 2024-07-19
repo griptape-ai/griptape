@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
@@ -28,10 +28,9 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         tokenizer: Custom `HuggingFaceTokenizer`.
     """
 
-    api_token: str = field(kw_only=True, metadata={"serializable": True})
+    api_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
-    params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
-    model: str = field(kw_only=True, metadata={"serializable": True})
+    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(
@@ -55,10 +54,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt,
-            return_full_text=False,
-            max_new_tokens=self.max_tokens,
-            **self.params,
+            prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self._base_params()
         )
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
         output_tokens = len(self.tokenizer.tokenizer.encode(response))
@@ -78,7 +74,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             return_full_text=False,
             max_new_tokens=self.max_tokens,
             stream=True,
-            **self.params,
+            **self._base_params(),
         )
 
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
@@ -103,6 +99,13 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
                 raise ValueError("Invalid input content length.")
 
         return messages
+
+    def _base_params(self) -> dict:
+        return {
+            **({"temperature": self.temperature if self.temperature is not None else {}}),
+            **({"top_p": self.top_p} if self.top_p is not None else {}),
+            **self.additional_params,
+        }
 
     def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
         messages = self._prompt_stack_to_messages(prompt_stack)

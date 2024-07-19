@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
@@ -26,8 +26,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     """
 
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
-    model: str = field(kw_only=True, metadata={"serializable": True})
-    params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
+    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
@@ -53,10 +52,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
 
         result = self.pipe(
             messages,
-            max_new_tokens=self.max_tokens,
-            temperature=self.temperature,
-            do_sample=True,
-            **self.params,
+            **self._base_params(),
         )
 
         if isinstance(result, list):
@@ -90,6 +86,15 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
             messages.append({"role": message.role, "content": message.to_text()})
 
         return messages
+
+    def _base_params(self) -> dict:
+        return {
+            "max_new_tokens": self.max_tokens,
+            "do_sample": True,
+            **({"temperature": self.temperature if self.temperature is not None else {}}),
+            **({"top_p": self.top_p} if self.top_p is not None else {}),
+            **self.additional_params,
+        }
 
     def __prompt_stack_to_tokens(self, prompt_stack: PromptStack) -> list[int]:
         messages = self._prompt_stack_to_messages(prompt_stack)

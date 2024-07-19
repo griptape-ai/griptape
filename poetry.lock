@@ -351,11 +351,11 @@ files = [
 
 [package.dependencies]
 botocore-stubs = "*"
-mypy-boto3-bedrock = {version = ">=1.34.0,<1.35.0", optional = true, markers = "extra == \"bedrock\""}
+mypy-boto3-bedrock-runtime = {version = ">=1.34.0,<1.35.0", optional = true, markers = "extra == \"bedrock-runtime\""}
 mypy-boto3-iam = {version = ">=1.34.0,<1.35.0", optional = true, markers = "extra == \"iam\""}
 mypy-boto3-opensearch = {version = ">=1.34.0,<1.35.0", optional = true, markers = "extra == \"opensearch\""}
 mypy-boto3-s3 = {version = ">=1.34.0,<1.35.0", optional = true, markers = "extra == \"s3\""}
-mypy-boto3-sagemaker = {version = ">=1.34.0,<1.35.0", optional = true, markers = "extra == \"sagemaker\""}
+mypy-boto3-sagemaker-runtime = {version = ">=1.34.0,<1.35.0", optional = true, markers = "extra == \"sagemaker-runtime\""}
 types-s3transfer = "*"
 typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
 
@@ -3210,14 +3210,14 @@ files = [
 ]
 
 [[package]]
-name = "mypy-boto3-bedrock"
-version = "1.34.90"
-description = "Type annotations for boto3.Bedrock 1.34.90 service generated with mypy-boto3-builder 7.23.2"
+name = "mypy-boto3-bedrock-runtime"
+version = "1.34.143"
+description = "Type annotations for boto3.BedrockRuntime 1.34.143 service generated with mypy-boto3-builder 7.25.0"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mypy_boto3_bedrock-1.34.90-py3-none-any.whl", hash = "sha256:36fbd11b6db51284891b6aa87d16653afa1f57a58e1181cdafcd99e67079d3ca"},
-    {file = "mypy_boto3_bedrock-1.34.90.tar.gz", hash = "sha256:a8a71505c6aa268bd182259f79d26d9daa5ae3a27ff471394a424eef2afa78bb"},
+    {file = "mypy_boto3_bedrock_runtime-1.34.143-py3-none-any.whl", hash = "sha256:1932ca4778792462530248e2d137e128805f4f4da9e655836a5ba8d14dc0d7e6"},
+    {file = "mypy_boto3_bedrock_runtime-1.34.143.tar.gz", hash = "sha256:d225f54f1e4eae40e22ed97cd2811c2649cb881d972b941e06aef27f5cb79e4e"},
 ]
 
 [package.dependencies]
@@ -3266,14 +3266,14 @@ files = [
 typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
 
 [[package]]
-name = "mypy-boto3-sagemaker"
-version = "1.34.103"
-description = "Type annotations for boto3.SageMaker 1.34.103 service generated with mypy-boto3-builder 7.24.0"
+name = "mypy-boto3-sagemaker-runtime"
+version = "1.34.0"
+description = "Type annotations for boto3.SageMakerRuntime 1.34.0 service generated with mypy-boto3-builder 7.21.0"
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.7"
 files = [
-    {file = "mypy_boto3_sagemaker-1.34.103-py3-none-any.whl", hash = "sha256:f00deadbcaf89c9f1af62a23a697e5d5590453fc8211faf9ed84871499d51dad"},
-    {file = "mypy_boto3_sagemaker-1.34.103.tar.gz", hash = "sha256:7e2c9dd16866314080c8aa1cbc561301599a87e3dce4759e293090e93ed8b5ef"},
+    {file = "mypy-boto3-sagemaker-runtime-1.34.0.tar.gz", hash = "sha256:389604762e3120b519a1e3dc18170b447021c29a5ec9b34efa5d24c96ddad02a"},
+    {file = "mypy_boto3_sagemaker_runtime-1.34.0-py3-none-any.whl", hash = "sha256:644168828bb09569d6c1ba5f9b729c079ed1f923e7d78115ddf169948f56d385"},
 ]
 
 [package.dependencies]
@@ -6874,4 +6874,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "c3078839442b9b1546e2d90b6bbf5a70cdcb3ba92f6384685c17615171fd4cc0"
+content-hash = "d19ffd50c2907fd84a72f89dbebcc58a9d897be0d3d24c860e16a2541337f797"

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
@@ -43,16 +43,15 @@ class CoherePromptDriver(BasePromptDriver):
         client: Custom `cohere.Client`.
     """
 
-    api_key: str = field(metadata={"serializable": False})
-    model: str = field(metadata={"serializable": True})
+    api_key: Optional[str] = field(metadata={"serializable": False})
+    force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     client: Client = field(
         default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True),
     )
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
     )
-    force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
-    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -114,6 +113,7 @@ class CoherePromptDriver(BasePromptDriver):
                 else {}
             ),
             **({"preamble": preamble} if preamble else {}),
+            **self.additional_params,
         }
 
     def __to_cohere_messages(self, messages: list[Message]) -> list[dict]:

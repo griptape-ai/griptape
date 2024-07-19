@@ -55,17 +55,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    client: openai.OpenAI = field(
-        default=Factory(
-            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
-            takes_self=True,
-        ),
-    )
-    model: str = field(kw_only=True, metadata={"serializable": True})
-    tokenizer: BaseTokenizer = field(
-        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
-        kw_only=True,
-    )
     user: str = field(default="", kw_only=True, metadata={"serializable": True})
     response_format: Optional[Literal["json_object"]] = field(
         default=None,
@@ -73,8 +62,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         metadata={"serializable": True},
     )
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
-    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
             lambda: (
@@ -86,6 +74,18 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 openai.UnprocessableEntityError,
             ),
         ),
+        kw_only=True,
+    )
+    tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    client: openai.OpenAI = field(
+        default=Factory(
+            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
+            takes_self=True,
+        ),
+    )
+    tokenizer: BaseTokenizer = field(
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
 
@@ -134,6 +134,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "temperature": self.temperature,
             "user": self.user,
             "seed": self.seed,
+            **({"top_p": self.top_p} if self.top_p is not None else {}),
             **(
                 {"tools": self.__to_openai_tools(prompt_stack.tools), "tool_choice": self.tool_choice}
                 if prompt_stack.tools and self.use_native_tools
@@ -142,6 +143,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
+            **self.additional_params,
         }
 
         if self.response_format == "json_object":

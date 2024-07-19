@@ -22,7 +22,7 @@ class TestGoogleStructureConfig:
                 "stream": False,
                 "model": "gemini-1.5-pro",
                 "top_p": None,
-                "top_k": None,
+                "additional_params": {},
                 "tool_choice": "auto",
                 "use_native_tools": True,
             },

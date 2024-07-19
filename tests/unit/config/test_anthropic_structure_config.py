@@ -22,9 +22,9 @@ class TestAnthropicStructureConfig:
                 "max_tokens": 1000,
                 "stream": False,
                 "model": "claude-3-5-sonnet-20240620",
-                "top_p": 0.999,
-                "top_k": 250,
+                "top_p": None,
                 "use_native_tools": True,
+                "additional_params": {},
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {

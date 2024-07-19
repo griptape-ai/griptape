@@ -46,11 +46,12 @@ class GooglePromptDriver(BasePromptDriver):
         model: Google model name.
         model_client: Custom `GenerativeModel` client.
         top_p: Optional value for top_p.
-        top_k: Optional value for top_k.
     """
 
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    model: str = field(kw_only=True, metadata={"serializable": True})
+    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
+    tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     model_client: GenerativeModel = field(
         default=Factory(lambda self: self._default_model_client(), takes_self=True),
         kw_only=True,
@@ -59,10 +60,6 @@ class GooglePromptDriver(BasePromptDriver):
         default=Factory(lambda self: GoogleTokenizer(api_key=self.api_key, model=self.model), takes_self=True),
         kw_only=True,
     )
-    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
-    top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -131,9 +128,9 @@ class GooglePromptDriver(BasePromptDriver):
                     # https://github.com/google-gemini/generative-ai-python/issues/446
                     "stop_sequences": [] if self.stream and self.use_native_tools else self.tokenizer.stop_sequences,
                     "max_output_tokens": self.max_tokens,
-                    "temperature": self.temperature,
-                    "top_p": self.top_p,
-                    "top_k": self.top_k,
+                    **({"temperature": self.temperature} if self.temperature is not None else {}),
+                    **({"top_p": self.top_p} if self.top_p is not None else {}),
+                    **self.additional_params,
                 },
             ),
             **(

@@ -17,6 +17,8 @@ class TestStructureConfig:
                 "max_tokens": None,
                 "stream": False,
                 "use_native_tools": False,
+                "additional_params": {},
+                "top_p": None,
             },
             "conversation_memory_driver": None,
             "embedding_driver": {"type": "DummyEmbeddingDriver"},

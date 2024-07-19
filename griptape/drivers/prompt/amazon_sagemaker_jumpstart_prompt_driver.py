@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
 
@@ -15,22 +15,23 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     import boto3
+    from mypy_boto3_sagemaker_runtime import Client
 
     from griptape.common import PromptStack
 
 
 @define
 class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
-    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    sagemaker_client: Any = field(
-        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True),
-        kw_only=True,
-    )
+    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
     inference_component_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
-    max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
+    session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
+    sagemaker_client: Client = field(
+        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True),
+        kw_only=True,
+    )
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
@@ -91,12 +92,14 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         return {
-            "temperature": self.temperature,
+            **({"temperature": self.temperature if self.temperature is not None else {}}),
+            **({"top_p": self.top_p} if self.top_p is not None else {}),
             "max_new_tokens": self.max_tokens,
             "do_sample": True,
             "eos_token_id": self.tokenizer.tokenizer.eos_token_id,
             "stop_strings": self.tokenizer.stop_sequences,
             "return_full_text": False,
+            **self.additional_params,
         }
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
