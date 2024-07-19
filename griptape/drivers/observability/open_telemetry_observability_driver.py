@@ -18,17 +18,27 @@ if TYPE_CHECKING:
 
 @define
 class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
-    service_name: str = field(kw_only=True)
+    service_name: str = field(default="griptape", kw_only=True)
     span_processor: SpanProcessor = field(kw_only=True)
+    service_version: Optional[str] = field(default=None, kw_only=True)
+    deployment_env: Optional[str] = field(default=None, kw_only=True)
     trace_provider: TracerProvider = field(
         default=Factory(
-            lambda self: TracerProvider(resource=Resource(attributes={"service.name": self.service_name})),
+            lambda self: self._trace_provider_factory(),
             takes_self=True,
         ),
         kw_only=True,
     )
     _tracer: Optional[Tracer] = None
     _root_span_context_manager: Any = None
+
+    def _trace_provider_factory(self) -> TracerProvider:
+        attributes = {"service.name": self.service_name}
+        if self.service_version is not None:
+            attributes["service.version"] = self.service_version
+        if self.deployment_env is not None:
+            attributes["deployment.environment"] = self.deployment_env
+        return TracerProvider(resource=Resource(attributes=attributes))  # pyright: ignore[reportArgumentType]
 
     def __attrs_post_init__(self) -> None:
         self.trace_provider.add_span_processor(self.span_processor)
