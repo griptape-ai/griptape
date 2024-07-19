@@ -30,6 +30,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `EventListener.publish_event`'s `flush` argument is now a keyword-only argument.
 - **BREAKING**: `BaseEventListenerDriver.publish_event`'s `flush` argument is now a keyword-only argument.
 - **BREAKING**: Renamed `DummyException` to `DummyError` for pep8 naming compliance.
+- **BREAKING**: Migrate to `sqlalchemy` 2.0.
+- **BREAKING**: Make `sqlalchemy` an optional dependency.
+- **BREAKING**: Rename `drivers-sql-redshift` to `drivers-sql-amazon-redshift`
+- Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
 - Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
 
