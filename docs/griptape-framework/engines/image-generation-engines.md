@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 [Image Generation Engines](../../reference/griptape/engines/image/index.md) facilitate text-to-image and image-to-image generation. Each Engine provides a `run` method that accepts the necessary inputs for its particular mode and provides the request to the configured [Driver](../drivers/image-generation-drivers.md).

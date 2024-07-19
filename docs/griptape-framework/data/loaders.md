@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 Loaders are used to load textual data from different sources and chunk it into [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s.

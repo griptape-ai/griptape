@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 Event Listener Drivers are used to send Griptape [Events](../misc/events.md) to external services.

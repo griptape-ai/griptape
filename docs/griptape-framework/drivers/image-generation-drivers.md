@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 [Image Generation Drivers](../../reference/griptape/drivers/image_generation/index.md) are used by [image generation Engines](../engines/image-generation-engines.md) to build and execute API calls to image generation models.

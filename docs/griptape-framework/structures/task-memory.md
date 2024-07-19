@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 Task Memory is a powerful feature of Griptape that allows you to control where the data returned by [Tools](../tools/index.md) is stored. This is useful in the following scenarios:

@@ -1,4 +1,9 @@
-# Observability Drivers
+---
+search:
+  boost: 2 
+---
+
+## Overview
 
 Observability Drivers are used by [Observability](../structures/observability.md) to send telemetry (metrics and traces) related to the execution of an LLM application. The telemetry can be used to monitor the application and to diagnose and troubleshoot issues. All Observability Drivers implement the following methods:
 
@@ -6,7 +11,10 @@ Observability Drivers are used by [Observability](../structures/observability.md
 * `__exit__()` tears down the Driver.
 * `observe()` wraps all functions and methods marked with the `@observable` decorator. At a bare minimum, implementations call the wrapped function and return its result (a no-op). This enables the Driver to generate telemetry related to the invocation's call arguments, return values, exceptions, latency, etc.
 
-## Griptape Cloud
+
+## Image Query Drivers
+
+### Griptape Cloud
 
 !!! info
     This driver requires the `drivers-observability-griptape-cloud` [extra](../index.md#extras).
@@ -34,7 +42,7 @@ with Observability(observability_driver=observability_driver):
 ```
 
 
-## OpenTelemetry
+### OpenTelemetry
 
 !!! info
     This driver requires the `drivers-observability-opentelemetry` [extra](../index.md#extras).
@@ -188,5 +196,3 @@ Output (only relevant because of use of `ConsoleSpanExporter`):
     }
 }
 ```
-
-
