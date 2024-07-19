@@ -39,8 +39,6 @@ class TestEventListener:
 
         pipeline.event_listeners = [EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)]
 
-        # required for event listeners to be propagated to the Prompt Driver
-        pipeline.tasks[0].preprocess(pipeline)
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
         pipeline.tasks[0].subtasks[0].after_run()
@@ -72,8 +70,6 @@ class TestEventListener:
             EventListener(completion_chunk_handler, event_types=[CompletionChunkEvent]),
         ]
 
-        # required for event listeners to be propagated to the Prompt Driver
-        pipeline.tasks[0].preprocess(pipeline)
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
         pipeline.tasks[0].subtasks[0].after_run()

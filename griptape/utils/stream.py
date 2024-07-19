@@ -64,11 +64,8 @@ class Stream:
             handler=event_handler,
             event_types=[CompletionChunkEvent, FinishPromptEvent, FinishStructureRunEvent],
         )
-
         self.structure.add_event_listener(stream_event_listener)
-        self.structure.config.prompt_driver.add_event_listener(stream_event_listener)
 
         self.structure.run(*args)
 
         self.structure.remove_event_listener(stream_event_listener)
-        self.structure.config.prompt_driver.remove_event_listener(stream_event_listener)
