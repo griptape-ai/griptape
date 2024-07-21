@@ -1,6 +1,9 @@
-You must respond to requests by using the following Action Schema. Your response should be a plain JSON object that successfully validates against the schema. The schema is provided below. If you can't use the Action Schema, say "I don't know how to respond."
-Action Schema: {{ action_schema }}
+You must respond to requests by using the actions. Your response must ONLY be a plain JSON object that successfully validates against the Action Schema.
+{% if not use_native_tools %}
 
+The schema is provided below:
+Action Schema: {{ action_schema }}
+{% endif %}
 {% if meta_memory %}
 
 {{ meta_memory }}

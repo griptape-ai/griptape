@@ -4,17 +4,17 @@ import uuid
 from abc import ABC, abstractmethod
 from concurrent import futures
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
-from attrs import define, field, Factory
+from attrs import Factory, define, field
 
-from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact
+from griptape.events import FinishTaskEvent, StartTaskEvent
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
-    from griptape.structures import Structure
     from griptape.memory.meta import BaseMetaEntry
+    from griptape.structures import Structure
 
 
 @define
@@ -33,7 +33,10 @@ class BaseTask(ABC):
     output: Optional[BaseArtifact] = field(default=None, init=False)
     structure: Optional[Structure] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
-    futures_executor: futures.Executor = field(default=Factory(lambda: futures.ThreadPoolExecutor()), kw_only=True)
+    futures_executor_fn: Callable[[], futures.Executor] = field(
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
+        kw_only=True,
+    )
 
     @property
     @abstractmethod
@@ -111,7 +114,7 @@ class BaseTask(ABC):
                     task_child_ids=self.child_ids,
                     task_input=self.input,
                     task_output=self.output,
-                )
+                ),
             )
 
     def after_run(self) -> None:
@@ -123,7 +126,7 @@ class BaseTask(ABC):
                     task_child_ids=self.child_ids,
                     task_input=self.input,
                     task_output=self.output,
-                )
+                ),
             )
 
     def execute(self) -> Optional[BaseArtifact]:
@@ -142,7 +145,7 @@ class BaseTask(ABC):
         finally:
             self.state = BaseTask.State.FINISHED
 
-            return self.output
+        return self.output
 
     def can_execute(self) -> bool:
         return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)

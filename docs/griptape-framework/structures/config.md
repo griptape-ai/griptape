@@ -48,11 +48,19 @@ agent = Agent(
 The [Amazon Bedrock Structure Config](../../reference/griptape/config/amazon_bedrock_structure_config.md) provides default Drivers for Amazon Bedrock's APIs.
 
 ```python
+import os
+import boto3
 from griptape.structures import Agent
 from griptape.config import AmazonBedrockStructureConfig
 
 agent = Agent(
-    config=AmazonBedrockStructureConfig()
+    config=AmazonBedrockStructureConfig(
+        session=boto3.Session(
+            region_name=os.environ["AWS_DEFAULT_REGION"],
+            aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+            aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+        )
+    )
 )
 ```
 
@@ -87,10 +95,23 @@ agent = Agent(
 )
 ```
 
+#### Cohere
+
+The [Cohere Structure Config](../../reference/griptape/config/cohere_structure_config.md) provides default Drivers for Cohere's APIs.
+
+
+```python
+import os
+from griptape.config import CohereStructureConfig
+from griptape.structures import Agent
+
+agent = Agent(config=CohereStructureConfig(api_key=os.environ["COHERE_API_KEY"]))
+```
+
 ### Custom Configs
 
 You can create your own [StructureConfig](../../reference/griptape/config/structure_config.md) by overriding relevant Drivers.
-The [StructureConfig](../../reference/griptape/config/structure_config.md) class includes "Dummy" Drivers for all types, which throw a [DummyException](../../reference/griptape/exceptions/dummy_exception.md) if invoked without being overridden. 
+The [StructureConfig](../../reference/griptape/config/structure_config.md) class includes "Dummy" Drivers for all types, which throw a [DummyError](../../reference/griptape/exceptions/dummy_exception.md) if invoked without being overridden. 
 This approach ensures that you are informed through clear error messages if you attempt to use Structures without proper Driver configurations.
 
 ```python

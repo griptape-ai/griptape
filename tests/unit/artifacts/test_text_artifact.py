@@ -1,6 +1,8 @@
 import json
+
 import pytest
-from griptape.artifacts import TextArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.tokenizers import OpenAiTokenizer
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
@@ -61,3 +63,11 @@ class TestTextArtifact:
 
         assert artifact.name == artifact.id
         assert TextArtifact("foo", name="bar").name == "bar"
+
+    def test_meta(self):
+        artifact = TextArtifact("foo")
+
+        assert artifact.meta == {}
+
+        meta = {"foo": "bar"}
+        assert TextArtifact("foo", meta=meta).meta == meta

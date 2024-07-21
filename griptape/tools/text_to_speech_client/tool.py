@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
-from schema import Schema, Literal
+from schema import Literal, Schema
 
-from griptape.artifacts import ErrorArtifact, AudioArtifact
-from griptape.engines import TextToSpeechEngine
+from griptape.mixins import BlobArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.mixins import BlobArtifactFileOutputMixin
+
+if TYPE_CHECKING:
+    from griptape.artifacts import AudioArtifact, ErrorArtifact
+    from griptape.engines import TextToSpeechEngine
 
 
 @define
@@ -28,7 +30,7 @@ class TextToSpeechClient(BlobArtifactFileOutputMixin, BaseTool):
         config={
             "description": "Can be used to generate speech from the provided input text.",
             "schema": Schema({Literal("text", description="The literal text to be converted to speech."): str}),
-        }
+        },
     )
     def text_to_speech(self, params: dict[str, Any]) -> AudioArtifact | ErrorArtifact:
         text = params["values"]["text"]

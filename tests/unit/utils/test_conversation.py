@@ -1,8 +1,8 @@
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from griptape.memory.structure import ConversationMemory, SummaryConversationMemory
-from griptape.tasks import PromptTask
 from griptape.structures import Pipeline
+from griptape.tasks import PromptTask
 from griptape.utils import Conversation
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestConversation:

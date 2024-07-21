@@ -1,19 +1,24 @@
 from __future__ import annotations
+
+import inspect
 import logging
+import os
+import re
 import subprocess
 import sys
-from typing import TYPE_CHECKING, Callable
-from schema import Schema, Literal, Or
-import inspect
-import os
 from abc import ABC
-from typing import Optional
+from typing import TYPE_CHECKING, Callable, Optional
+
 import yaml
-from attrs import define, field, Factory
-from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
+from attrs import Attribute, Factory, define, field
+from schema import Literal, Or, Schema
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
+from griptape.common import observable
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
+    from griptape.common import ToolAction
     from griptape.memory import TaskMemory
     from griptape.tasks import ActionsSubtask
 
@@ -35,7 +40,7 @@ class BaseTool(ActivityMixin, ABC):
     MANIFEST_FILE = "manifest.yml"
     REQUIREMENTS_FILE = "requirements.txt"
 
-    name: str = field(default=Factory(lambda self: self.class_name, takes_self=True), kw_only=True)
+    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
     input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
     output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
@@ -47,8 +52,8 @@ class BaseTool(ActivityMixin, ABC):
         if self.install_dependencies_on_init:
             self.install_dependencies(os.environ.copy())
 
-    @output_memory.validator  # pyright: ignore
-    def validate_output_memory(self, _, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
+    @output_memory.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_output_memory(self, _: Attribute, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():
                 if not self.find_activity(activity_name):
@@ -60,10 +65,6 @@ class BaseTool(ActivityMixin, ABC):
 
                 if len(output_memory_names) > len(set(output_memory_names)):
                     raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
-
-    @property
-    def class_name(self):
-        return self.__class__.__name__
 
     @property
     def manifest_path(self) -> str:
@@ -79,11 +80,11 @@ class BaseTool(ActivityMixin, ABC):
             return yaml.safe_load(yaml_file)
 
     @property
-    def abs_file_path(self):
+    def abs_file_path(self) -> str:
         return os.path.abspath(inspect.getfile(self.__class__))
 
     @property
-    def abs_dir_path(self):
+    def abs_dir_path(self) -> str:
         return os.path.dirname(self.abs_file_path)
 
     # This method has to remain a method and can't be decorated with @property because
@@ -91,7 +92,7 @@ class BaseTool(ActivityMixin, ABC):
     def schema(self) -> dict:
         full_schema = Schema(Or(*self.activity_schemas()), description=f"{self.name} action schema.")
 
-        return full_schema.json_schema(f"{self.name} Action Schema")
+        return full_schema.json_schema(f"{self.name} ToolAction Schema")
 
     def activity_schemas(self) -> list[Schema]:
         return [
@@ -100,25 +101,35 @@ class BaseTool(ActivityMixin, ABC):
                     Literal("name"): self.name,
                     Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
                     **self.activity_to_input(
-                        activity
+                        activity,
                     ),  # Unpack the dictionary in order to only add the key-values if there are any
-                }
+                },
             )
             for activity in self.activities()
         ]
 
-    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> BaseArtifact:
-        preprocessed_input = self.before_run(activity, subtask, action)
-        output = self.run(activity, subtask, action, preprocessed_input)
-        postprocessed_output = self.after_run(activity, subtask, action, output)
+    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> BaseArtifact:
+        try:
+            output = self.before_run(activity, subtask, action)
 
-        return postprocessed_output
+            output = self.run(activity, subtask, action, output)
 
-    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action) -> Optional[dict]:
+            output = self.after_run(activity, subtask, action, output)
+        except Exception as e:
+            output = ErrorArtifact(str(e), exception=e)
+
+        return output
+
+    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> Optional[dict]:
         return action.input
 
+    @observable(tags=["Tool.run()"])
     def run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action, value: Optional[dict]
+        self,
+        activity: Callable,
+        subtask: ActionsSubtask,
+        action: ToolAction,
+        value: Optional[dict],
     ) -> BaseArtifact:
         activity_result = activity(value)
 
@@ -132,7 +143,11 @@ class BaseTool(ActivityMixin, ABC):
         return result
 
     def after_run(
-        self, activity: Callable, subtask: ActionsSubtask, action: ActionsSubtask.Action, value: BaseArtifact
+        self,
+        activity: Callable,
+        subtask: ActionsSubtask,
+        action: ToolAction,
+        value: BaseArtifact,
     ) -> BaseArtifact:
         if value:
             if self.output_memory:
@@ -162,7 +177,7 @@ class BaseTool(ActivityMixin, ABC):
 
         return True
 
-    def tool_dir(self):
+    def tool_dir(self) -> str:
         class_file = inspect.getfile(self.__class__)
 
         return os.path.dirname(os.path.abspath(class_file))
@@ -190,3 +205,25 @@ class BaseTool(ActivityMixin, ABC):
             return next((m for m in self.input_memory if m.name == memory_name), None)
         else:
             return None
+
+    def to_native_tool_name(self, activity: Callable) -> str:
+        """Converts a Tool's name and an Activity into to a native tool name.
+
+        The native tool name is a combination of the Tool's name and the Activity's name.
+        The Tool's name may only contain letters and numbers, and the Activity's name may only contain letters, numbers, and underscores.
+
+        Args:
+            activity: Activity to convert
+
+        Returns:
+            str: Native tool name.
+        """
+        tool_name = self.name
+        if re.match(r"^[a-zA-Z0-9]+$", tool_name) is None:
+            raise ValueError("Tool name can only contain letters and numbers.")
+
+        activity_name = self.activity_name(activity)
+        if re.match(r"^[a-zA-Z0-9_]+$", activity_name) is None:
+            raise ValueError("Activity name can only contain letters, numbers, and underscores.")
+
+        return f"{tool_name}_{activity_name}"

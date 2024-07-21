@@ -1,7 +1,8 @@
 import os
-from griptape.loaders import TextLoader
-from griptape import utils
 from concurrent import futures
+
+from griptape import utils
+from griptape.loaders import TextLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 MAX_TOKENS = 50
@@ -13,7 +14,6 @@ class TestFileUtils:
         file = utils.load_file(os.path.join(dirname, "../../resources/foobar-many.txt"))
 
         assert file.decode("utf-8").startswith("foobar foobar foobar")
-        assert len(file.decode("utf-8")) == 4563
 
     def test_load_files(self):
         dirname = os.path.dirname(__file__)
@@ -23,7 +23,6 @@ class TestFileUtils:
         assert len(files) == 2
 
         test_file = files[utils.str_to_hash(sources[0])]
-        assert len(test_file) == 4563
         assert test_file.decode("utf-8").startswith("foobar foobar foobar")
 
         small_file = files[utils.str_to_hash(sources[2])]

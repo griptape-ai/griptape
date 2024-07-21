@@ -1,17 +1,19 @@
 from __future__ import annotations
 
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from attrs import define, field
-from schema import Schema, Literal
+from schema import Literal, Schema
 
 from griptape.artifacts import ErrorArtifact, ImageArtifact
-from griptape.engines import InpaintingImageGenerationEngine
 from griptape.loaders import ImageLoader
 from griptape.mixins import BlobArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
+
+if TYPE_CHECKING:
+    from griptape.engines import InpaintingImageGenerationEngine
 
 
 @define
@@ -45,9 +47,9 @@ class InpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                         description="The path to an image file to be used as a base to generate variations from.",
                     ): str,
                     Literal("mask_file", description="The path to mask image file."): str,
-                }
+                },
             ),
-        }
+        },
     )
     def image_inpainting_from_file(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
@@ -59,7 +61,10 @@ class InpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
         mask_artifact = self.image_loader.load(mask_file)
 
         output_artifact = self.engine.run(
-            prompts=prompts, negative_prompts=negative_prompts, image=input_artifact, mask=mask_artifact
+            prompts=prompts,
+            negative_prompts=negative_prompts,
+            image=input_artifact,
+            mask=mask_artifact,
         )
 
         if self.output_dir or self.output_file:
@@ -85,9 +90,9 @@ class InpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                     "image_artifact_name": str,
                     "mask_artifact_namespace": str,
                     "mask_artifact_name": str,
-                }
+                },
             ),
-        }
+        },
     )
     def image_inpainting_from_memory(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
@@ -103,16 +108,25 @@ class InpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
 
         try:
             image_artifact = load_artifact_from_memory(
-                memory, image_artifact_namespace, image_artifact_name, ImageArtifact
+                memory,
+                image_artifact_namespace,
+                image_artifact_name,
+                ImageArtifact,
             )
             mask_artifact = load_artifact_from_memory(
-                memory, mask_artifact_namespace, mask_artifact_name, ImageArtifact
+                memory,
+                mask_artifact_namespace,
+                mask_artifact_name,
+                ImageArtifact,
             )
         except ValueError as e:
             return ErrorArtifact(str(e))
 
         return self._generate_inpainting(
-            prompts, negative_prompts, cast(ImageArtifact, image_artifact), cast(ImageArtifact, mask_artifact)
+            prompts,
+            negative_prompts,
+            cast(ImageArtifact, image_artifact),
+            cast(ImageArtifact, mask_artifact),
         )
 
     def _generate_inpainting(
@@ -123,7 +137,10 @@ class InpaintingImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
         mask_artifact: ImageArtifact,
     ) -> ImageArtifact:
         output_artifact = self.engine.run(
-            prompts=prompts, negative_prompts=negative_prompts, image=image_artifact, mask=mask_artifact
+            prompts=prompts,
+            negative_prompts=negative_prompts,
+            image=image_artifact,
+            mask=mask_artifact,
         )
 
         if self.output_dir or self.output_file:

@@ -1,10 +1,14 @@
-from typing import Optional, cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import define, field
 
 from griptape.artifacts import CsvRowArtifact
-from griptape.drivers import BaseSqlDriver, BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseEmbeddingDriver, BaseSqlDriver
 
 
 @define
@@ -16,10 +20,7 @@ class SqlLoader(BaseLoader):
         rows = self.sql_driver.execute_query(source)
         artifacts = []
 
-        if rows:
-            chunks = [CsvRowArtifact(row.cells) for row in rows]
-        else:
-            chunks = []
+        chunks = [CsvRowArtifact(row.cells) for row in rows] if rows else []
 
         if self.embedding_driver:
             for chunk in chunks:

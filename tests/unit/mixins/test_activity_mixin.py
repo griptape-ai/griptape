@@ -1,10 +1,11 @@
 import pytest
-from schema import Schema, Literal
+from schema import Literal, Optional, Schema
+
 from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestActivityMixin:
-    @pytest.fixture
+    @pytest.fixture()
     def tool(self):
         return MockTool(test_field="hello", test_int=5)
 
@@ -31,7 +32,7 @@ class TestActivityMixin:
         assert tool.find_activity("test_str_output") is None
 
     def test_activities(self, tool):
-        assert len(tool.activities()) == 6
+        assert len(tool.activities()) == 7
         assert tool.activities()[0] == tool.test
 
     def test_allowlist_and_denylist_validation(self):
@@ -46,7 +47,7 @@ class TestActivityMixin:
     def test_denylist(self):
         tool = MockTool(test_field="hello", test_int=5, denylist=["test"])
 
-        assert len(tool.activities()) == 5
+        assert len(tool.activities()) == 6
 
     def test_invalid_allowlist(self):
         with pytest.raises(ValueError):
@@ -73,10 +74,10 @@ class TestActivityMixin:
         assert len(tool.activities()) > 0
 
     def test_activity_to_input(self, tool):
-        input = tool.activity_to_input(tool.test)
-        assert str(input) == str(
+        activity_input = tool.activity_to_input(tool.test)
+        assert str(activity_input) == str(
             {Literal("input", description=""): {"values": Schema({Literal("test"): str}, description="Test input")}}
         )
 
-        input = tool.activity_to_input(tool.test_no_schema)
-        assert input == {}
+        activity_input = tool.activity_to_input(tool.test_no_schema)
+        assert activity_input == {Optional("input"): {}}

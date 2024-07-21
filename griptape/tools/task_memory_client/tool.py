@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 from attrs import define
-from schema import Schema, Literal
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact
+from schema import Literal, Schema
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -12,7 +14,7 @@ class TaskMemoryClient(BaseTool):
         config={
             "description": "Can be used to summarize memory content",
             "schema": Schema({"memory_name": str, "artifact_namespace": str}),
-        }
+        },
     )
     def summarize(self, params: dict) -> TextArtifact | InfoArtifact | ErrorArtifact:
         memory = self.find_input_memory(params["values"]["memory_name"])
@@ -35,11 +37,11 @@ class TaskMemoryClient(BaseTool):
                         description="A natural language search query in the form of a question with enough "
                         "contextual information for another person to understand what the query is about",
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
-    def query(self, params: dict) -> TextArtifact | InfoArtifact | ErrorArtifact:
+    def query(self, params: dict) -> BaseArtifact:
         memory = self.find_input_memory(params["values"]["memory_name"])
         artifact_namespace = params["values"]["artifact_namespace"]
         query = params["values"]["query"]

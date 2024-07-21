@@ -1,17 +1,19 @@
 from __future__ import annotations
 
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 from attrs import define, field
-from schema import Schema, Literal
+from schema import Literal, Schema
 
 from griptape.artifacts import ErrorArtifact, ImageArtifact
-from griptape.engines import VariationImageGenerationEngine
 from griptape.loaders import ImageLoader
+from griptape.mixins import BlobArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.mixins import BlobArtifactFileOutputMixin
 from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
+
+if TYPE_CHECKING:
+    from griptape.engines import VariationImageGenerationEngine
 
 
 @define
@@ -44,9 +46,9 @@ class VariationImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                         "image_file",
                         description="The path to an image file to be used as a base to generate variations from.",
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
     def image_variation_from_file(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
@@ -75,9 +77,9 @@ class VariationImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                     "memory_name": str,
                     "artifact_namespace": str,
                     "artifact_name": str,
-                }
+                },
             ),
-        }
+        },
     )
     def image_variation_from_memory(self, params: dict[str, Any]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
@@ -96,7 +98,9 @@ class VariationImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
 
         return self._generate_variation(prompts, negative_prompts, cast(ImageArtifact, image_artifact))
 
-    def _generate_variation(self, prompts: list[str], negative_prompts: list[str], image_artifact: ImageArtifact):
+    def _generate_variation(
+        self, prompts: list[str], negative_prompts: list[str], image_artifact: ImageArtifact
+    ) -> ImageArtifact:
         output_artifact = self.engine.run(prompts=prompts, negative_prompts=negative_prompts, image=image_artifact)
 
         if self.output_dir or self.output_file:

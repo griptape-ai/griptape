@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define
 
-from typing import Optional
 from griptape.engines import BaseImageGenerationEngine
-from griptape.artifacts import ImageArtifact
-from griptape.rules import Ruleset
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact
+    from griptape.rules import Ruleset
 
 
 @define
@@ -24,5 +27,7 @@ class VariationImageGenerationEngine(BaseImageGenerationEngine):
         negative_prompts = self._ruleset_to_prompts(negative_prompts, negative_rulesets)
 
         return self.image_generation_driver.run_image_variation(
-            prompts=prompts, image=image, negative_prompts=negative_prompts
+            prompts=prompts,
+            image=image,
+            negative_prompts=negative_prompts,
         )

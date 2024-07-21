@@ -2,14 +2,14 @@ from __future__ import annotations
 
 from typing import Literal, Optional
 
-from attrs import define, field, Factory
+import openai
+from attrs import Factory, define, field
 from openai.types.chat import (
-    ChatCompletionUserMessageParam,
+    ChatCompletionContentPartImageParam,
     ChatCompletionContentPartParam,
     ChatCompletionContentPartTextParam,
-    ChatCompletionContentPartImageParam,
+    ChatCompletionUserMessageParam,
 )
-import openai
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers.image_query.base_image_query_driver import BaseImageQueryDriver
@@ -28,12 +28,12 @@ class OpenAiImageQueryDriver(BaseImageQueryDriver):
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
-        )
+        ),
     )
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
         message_parts: list[ChatCompletionContentPartParam] = [
-            ChatCompletionContentPartTextParam(type="text", text=query)
+            ChatCompletionContentPartTextParam(type="text", text=query),
         ]
 
         for image in images:
@@ -41,7 +41,7 @@ class OpenAiImageQueryDriver(BaseImageQueryDriver):
                 ChatCompletionContentPartImageParam(
                     type="image_url",
                     image_url={"url": f"data:{image.mime_type};base64,{image.base64}", "detail": self.image_quality},
-                )
+                ),
             )
 
         messages = ChatCompletionUserMessageParam(content=message_parts, role="user")

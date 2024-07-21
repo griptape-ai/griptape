@@ -1,20 +1,24 @@
 from __future__ import annotations
-import re
+
 import json
-from typing import Optional, TYPE_CHECKING
+import re
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
-from schema import Schema
 
 from griptape import utils
-from griptape.artifacts import InfoArtifact, BaseArtifact, ErrorArtifact, ListArtifact
-from griptape.tasks import PromptTask, ActionsSubtask
-from griptape.tools import BaseTool
-from griptape.utils import J2
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.mixins import ActionsSubtaskOriginMixin
+from griptape.tasks import ActionsSubtask, PromptTask
+from griptape.utils import J2
 
 if TYPE_CHECKING:
+    from schema import Schema
+
+    from griptape.common import PromptStack
     from griptape.memory import TaskMemory
     from griptape.structures import Structure
+    from griptape.tools import BaseTool
 
 
 @define
@@ -24,6 +28,13 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     tool: BaseTool = field(kw_only=True)
     subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
+
+    @property
+    def prompt_stack(self) -> PromptStack:
+        stack = super().prompt_stack
+        stack.tools = [self.tool]
+
+        return stack
 
     def __attrs_post_init__(self) -> None:
         if self.task_memory is not None:
@@ -42,36 +53,42 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_schema=utils.minify_json(json.dumps(self.tool.schema())),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
+            use_native_tools=self.prompt_driver.use_native_tools,
         )
 
     def actions_schema(self) -> Schema:
         return self._actions_schema_for_tools([self.tool])
 
     def run(self) -> BaseArtifact:
-        prompt_output = self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()
-        action_matches = re.findall(self.ACTION_PATTERN, prompt_output, re.DOTALL)
+        result = self.prompt_driver.run(prompt_stack=self.prompt_stack)
 
-        if action_matches:
-            try:
-                data = action_matches[-1]
-                action_dict = json.loads(data)
-                action_dict["tag"] = self.tool.name
-                subtask_input = J2("tasks/tool_task/subtask.j2").render(action_json=json.dumps(action_dict))
-                subtask = self.add_subtask(ActionsSubtask(subtask_input))
-
-                subtask.before_run()
-                subtask.run()
-                subtask.after_run()
-
-                if isinstance(subtask.output, ListArtifact):
-                    self.output = subtask.output[0]
-                else:
-                    self.output = InfoArtifact("No tool output")
-            except Exception as e:
-                self.output = ErrorArtifact(f"Error processing tool input: {e}", exception=e)
-            return self.output
+        if self.prompt_driver.use_native_tools:
+            subtask_input = result.to_artifact()
         else:
-            return ErrorArtifact("No action found in prompt output.")
+            action_matches = re.findall(self.ACTION_PATTERN, result.to_text(), re.DOTALL)
+
+            if not action_matches:
+                return ErrorArtifact("No action found in prompt output.")
+            data = action_matches[-1]
+            action_dict = json.loads(data)
+
+            action_dict["tag"] = self.tool.name
+            subtask_input = J2("tasks/tool_task/subtask.j2").render(action_json=json.dumps(action_dict))
+
+        try:
+            subtask = self.add_subtask(ActionsSubtask(subtask_input))
+
+            subtask.before_run()
+            subtask.run()
+            subtask.after_run()
+
+            if isinstance(subtask.output, ListArtifact):
+                self.output = subtask.output[0]
+            else:
+                self.output = InfoArtifact("No tool output")
+        except Exception as e:
+            self.output = ErrorArtifact(f"Error processing tool input: {e}", exception=e)
+        return self.output
 
     def find_tool(self, tool_name: str) -> BaseTool:
         if self.tool.name == tool_name:

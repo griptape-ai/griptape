@@ -7,15 +7,15 @@ from griptape.drivers import BedrockStableDiffusionImageGenerationModelDriver
 
 
 class TestBedrockStableDiffusionImageGenerationModelDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def model_driver(self):
         return BedrockStableDiffusionImageGenerationModelDriver()
 
-    @pytest.fixture
+    @pytest.fixture()
     def image_artifact(self):
         return ImageArtifact(b"image", format="png", width=1024, height=1024)
 
-    @pytest.fixture
+    @pytest.fixture()
     def mask_artifact(self):
         return ImageArtifact(b"mask", format="png", width=1024, height=1024)
 
@@ -118,5 +118,5 @@ class TestBedrockStableDiffusionImageGenerationModelDriver:
 
         response = {"artifacts": [{"finishReason": "ERROR", "base64": base64.b64encode(image_bytes).decode("utf-8")}]}
 
-        with pytest.raises(Exception):
+        with pytest.raises(Exception, match="Image generation failed:"):
             model_driver.get_generated_image(response)

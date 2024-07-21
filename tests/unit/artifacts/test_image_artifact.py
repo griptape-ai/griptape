@@ -1,9 +1,10 @@
 import pytest
-from griptape.artifacts import ImageArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, ImageArtifact
 
 
 class TestImageArtifact:
-    @pytest.fixture
+    @pytest.fixture()
     def image_artifact(self):
         return ImageArtifact(
             value=b"some binary png image data",

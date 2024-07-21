@@ -171,7 +171,7 @@ pipeline.config.prompt_driver.stream = True
 pipeline.add_tasks(ToolkitTask("Based on https://griptape.ai, tell me what griptape is.", tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)]))
 
 for artifact in Stream(pipeline).run():
-    print(artifact.value, end="", flush=True),
+    print(artifact.value, end="", flush=True)
 ```
 
 
@@ -244,9 +244,9 @@ from griptape.events import BaseEvent, StartPromptEvent, EventListener
 
 def handler(event: BaseEvent):
     if isinstance(event, StartPromptEvent):
-        print("Prompt Stack Inputs:")
-        for input in event.prompt_stack.inputs:
-            print(f"{input.role}: {input.content}")
+        print("Prompt Stack Messages:")
+        for message in event.prompt_stack.messages:
+            print(f"{message.role}: {message.content}")
         print("Final Prompt String:")
         print(event.prompt)
 
@@ -259,7 +259,7 @@ agent.run("Write me a poem.")
 ```
 ```
 ...
-Prompt Stack Inputs:
+Prompt Stack Messages:
 system:
 user: Write me a poem.
 Final Prompt String:

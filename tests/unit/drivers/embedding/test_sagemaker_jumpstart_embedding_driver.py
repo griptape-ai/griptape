@@ -1,5 +1,7 @@
-import pytest
 from unittest import mock
+
+import pytest
+
 from griptape.drivers import AmazonSageMakerJumpstartEmbeddingDriver
 from griptape.tokenizers.openai_tokenizer import OpenAiTokenizer
 
@@ -41,19 +43,17 @@ class TestAmazonSageMakerJumpstartEmbeddingDriver:
         ).try_embed_chunk("foobar") == [0, 2, 0]
 
         mock_client.get().read.return_value = b'{"embedding": []}'
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(ValueError, match="model response is empty"):
             assert AmazonSageMakerJumpstartEmbeddingDriver(
                 endpoint="test-endpoint",
                 model="test-model",
                 tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
             ).try_embed_chunk("foobar") == [0, 2, 0]
-            assert str(e) == "model response is empty"
 
         mock_client.get().read.return_value = b"{}"
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(ValueError, match="invalid response from model"):
             assert AmazonSageMakerJumpstartEmbeddingDriver(
                 endpoint="test-endpoint",
                 model="test-model",
                 tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
             ).try_embed_chunk("foobar") == [0, 2, 0]
-            assert str(e) == "invalid response from model"

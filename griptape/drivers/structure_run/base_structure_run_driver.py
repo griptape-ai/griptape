@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
 
-from attrs import define, Factory, field
+from attrs import Factory, define, field
 
-from griptape.artifacts import BaseArtifact
+if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact
 
 
 @define

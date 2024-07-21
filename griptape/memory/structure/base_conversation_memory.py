@@ -1,13 +1,16 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional
-from attrs import define, field
-from griptape.memory.structure import Run
-from griptape.utils import PromptStack
-from griptape.mixins import SerializableMixin
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Optional
+
+from attrs import define, field
+
+from griptape.common import PromptStack
+from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseConversationMemoryDriver
+    from griptape.memory.structure import Run
     from griptape.structures import Structure
 
 
@@ -47,7 +50,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack: ...
 
     def add_to_prompt_stack(self, prompt_stack: PromptStack, index: Optional[int] = None) -> PromptStack:
-        """Add the Conversation Memory runs to the Prompt Stack by modifying the inputs in place.
+        """Add the Conversation Memory runs to the Prompt Stack by modifying the messages in place.
 
         If autoprune is enabled, this will fit as many Conversation Memory runs into the Prompt Stack
         as possible without exceeding the token limit.
@@ -67,17 +70,17 @@ class BaseConversationMemory(SerializableMixin, ABC):
             # Try to determine how many Conversation Memory runs we can
             # fit into the Prompt Stack without exceeding the token limit.
             while should_prune and num_runs_to_fit_in_prompt > 0:
-                temp_stack.inputs = prompt_stack.inputs.copy()
+                temp_stack.messages = prompt_stack.messages.copy()
 
                 # Add n runs from Conversation Memory.
                 # Where we insert into the Prompt Stack doesn't matter here
                 # since we only care about the total token count.
-                memory_inputs = self.to_prompt_stack(num_runs_to_fit_in_prompt).inputs
-                temp_stack.inputs.extend(memory_inputs)
+                memory_inputs = self.to_prompt_stack(num_runs_to_fit_in_prompt).messages
+                temp_stack.messages.extend(memory_inputs)
 
-                # Convert the prompt stack into tokens left.
+                # Convert the Prompt Stack into tokens left.
                 tokens_left = prompt_driver.tokenizer.count_input_tokens_left(
-                    prompt_driver.prompt_stack_to_string(temp_stack)
+                    prompt_driver.prompt_stack_to_string(temp_stack),
                 )
                 if tokens_left > 0:
                     # There are still tokens left, no need to prune.
@@ -87,10 +90,10 @@ class BaseConversationMemory(SerializableMixin, ABC):
                     num_runs_to_fit_in_prompt -= 1
 
         if num_runs_to_fit_in_prompt:
-            memory_inputs = self.to_prompt_stack(num_runs_to_fit_in_prompt).inputs
-            if index:
-                prompt_stack.inputs[index:index] = memory_inputs
+            memory_inputs = self.to_prompt_stack(num_runs_to_fit_in_prompt).messages
+            if index is None:
+                prompt_stack.messages.extend(memory_inputs)
             else:
-                prompt_stack.inputs.extend(memory_inputs)
+                prompt_stack.messages[index:index] = memory_inputs
 
         return prompt_stack

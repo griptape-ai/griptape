@@ -1,8 +1,12 @@
+from __future__ import annotations
+
 import inspect
-from typing import Optional, Callable
-from attrs import define, field
+from typing import Callable, Optional
+
+import schema
+from attrs import Attribute, define, field
 from jinja2 import Template
-from schema import Schema, Literal
+from schema import Literal, Schema
 
 
 @define(slots=False)
@@ -10,8 +14,8 @@ class ActivityMixin:
     allowlist: Optional[list[str]] = field(default=None, kw_only=True)
     denylist: Optional[list[str]] = field(default=None, kw_only=True)
 
-    @allowlist.validator  # pyright: ignore
-    def validate_allowlist(self, _, allowlist: Optional[list[str]]) -> None:
+    @allowlist.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_allowlist(self, _: Attribute, allowlist: Optional[list[str]]) -> None:
         if allowlist is None:
             return
 
@@ -21,8 +25,8 @@ class ActivityMixin:
         for activity_name in allowlist:
             self._validate_tool_activity(activity_name)
 
-    @denylist.validator  # pyright: ignore
-    def validate_denylist(self, _, denylist: Optional[list[str]]) -> None:
+    @denylist.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_denylist(self, _: Attribute, denylist: Optional[list[str]]) -> None:
         if denylist is None:
             return
 
@@ -78,7 +82,7 @@ class ActivityMixin:
             raise Exception("This method is not an activity.")
         elif getattr(activity, "config")["schema"]:
             full_schema = {
-                "values": getattr(activity, "config")["schema"].schema if getattr(activity, "config")["schema"] else {}
+                "values": getattr(activity, "config")["schema"].schema if getattr(activity, "config")["schema"] else {},
             }
 
             return Schema(full_schema)
@@ -89,9 +93,9 @@ class ActivityMixin:
         if self.activity_schema(activity):
             return {Literal("input"): {"values": getattr(activity, "config")["schema"]}}
         else:
-            return {}
+            return {schema.Optional("input"): {}}
 
-    def _validate_tool_activity(self, activity_name):
+    def _validate_tool_activity(self, activity_name: str) -> None:
         tool = self.__class__
 
         activity = getattr(tool, activity_name, None)

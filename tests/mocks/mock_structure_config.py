@@ -1,9 +1,10 @@
-from attrs import define, field, Factory
+from attrs import Factory, define, field
+
 from griptape.config import StructureConfig
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
 from tests.mocks.mock_image_query_driver import MockImageQueryDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 @define

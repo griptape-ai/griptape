@@ -1,14 +1,13 @@
-import pytest
 import mongomock
-from unittest.mock import patch
-from pymongo.errors import OperationFailure
+import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.drivers import AzureMongoDbVectorStoreDriver, BaseVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestAzureMongoDbVectorStoreDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, monkeypatch):
         embedding_driver = MockEmbeddingDriver()
         return AzureMongoDbVectorStoreDriver(
@@ -40,8 +39,8 @@ class TestAzureMongoDbVectorStoreDriver:
 
     def test_query(self, driver, monkeypatch):
         mock_query_result = [
-            BaseVectorStoreDriver.QueryResult("foo", [0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
-            BaseVectorStoreDriver.QueryResult("foo", vector=[0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
+            BaseVectorStoreDriver.Entry("foo", [0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
+            BaseVectorStoreDriver.Entry("foo", vector=[0.5, 0.5, 0.5], score=0.0, meta={}, namespace=None),
         ]
 
         monkeypatch.setattr(AzureMongoDbVectorStoreDriver, "query", lambda *args, **kwargs: mock_query_result)
@@ -52,7 +51,7 @@ class TestAzureMongoDbVectorStoreDriver:
         for result, expected in zip(results, mock_query_result):
             assert result.id == expected.id
             assert result.vector == expected.vector
-            assert isinstance(result, BaseVectorStoreDriver.QueryResult)
+            assert isinstance(result, BaseVectorStoreDriver.Entry)
 
     def test_load_entry(self, driver):
         vector_id_str = "123"
@@ -66,15 +65,18 @@ class TestAzureMongoDbVectorStoreDriver:
         vector = [0.5, 0.5, 0.5]
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
         results = list(driver.load_entries())
-        assert results is not None and len(results) > 0
+        assert results is not None
+        assert len(results) > 0
 
     def test_delete(self, driver):
         vector_id_str = "123"
         vector = [0.5, 0.5, 0.5]
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
         results = list(driver.load_entries())
-        assert results is not None and len(results) > 0
+        assert results is not None
+        assert len(results) > 0
 
         driver.delete_vector(vector_id_str)
         results = list(driver.load_entries())
-        assert results is not None and len(results) == 0
+        assert results is not None
+        assert len(results) == 0

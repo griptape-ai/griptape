@@ -1,6 +1,7 @@
 import pytest
-from griptape.drivers import BedrockClaudeImageQueryModelDriver
+
 from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.drivers import BedrockClaudeImageQueryModelDriver
 
 
 class TestBedrockClaudeImageQueryModelDriver:

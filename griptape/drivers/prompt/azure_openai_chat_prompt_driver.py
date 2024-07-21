@@ -1,13 +1,20 @@
-from attrs import define, field, Factory
-from typing import Callable, Optional
-from griptape.utils import PromptStack
-from griptape.drivers import OpenAiChatPromptDriver
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Callable, Optional
+
 import openai
+from attrs import Factory, define, field
+
+from griptape.drivers import OpenAiChatPromptDriver
+
+if TYPE_CHECKING:
+    from griptape.common import PromptStack
 
 
 @define
 class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
-    """
+    """Azure OpenAi Chat Prompt Driver.
+
     Attributes:
         azure_deployment: An optional Azure OpenAi deployment id. Defaults to the model name.
         azure_endpoint: An Azure OpenAi endpoint.
@@ -18,12 +25,16 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
     """
 
     azure_deployment: str = field(
-        kw_only=True, default=Factory(lambda self: self.model, takes_self=True), metadata={"serializable": True}
+        kw_only=True,
+        default=Factory(lambda self: self.model, takes_self=True),
+        metadata={"serializable": True},
     )
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
     azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     azure_ad_token_provider: Optional[Callable[[], str]] = field(
-        kw_only=True, default=None, metadata={"serializable": False}
+        kw_only=True,
+        default=None,
+        metadata={"serializable": False},
     )
     api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
     client: openai.AzureOpenAI = field(
@@ -38,12 +49,16 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
                 azure_ad_token_provider=self.azure_ad_token_provider,
             ),
             takes_self=True,
-        )
+        ),
     )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = super()._base_params(prompt_stack)
         # TODO: Add `seed` parameter once Azure supports it.
-        del params["seed"]
+        if "seed" in params:
+            del params["seed"]
+        # TODO: Add `stream_options` parameter once Azure supports it.
+        if "stream_options" in params:
+            del params["stream_options"]
 
         return params

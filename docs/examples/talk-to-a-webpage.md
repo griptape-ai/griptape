@@ -1,25 +1,36 @@
-This example demonstrates how to vectorize a webpage and setup a Griptape agent with rules and the [VectorStoreClient](../reference/griptape/tools/vector_store_client/tool.md) tool to use it during conversations.
+This example demonstrates how to vectorize a webpage and setup a Griptape agent with rules and the [RagClient](../reference/griptape/tools/rag_client/tool.md) tool to use it during conversations.
 
 ```python
-import os 
-from griptape.engines import VectorQueryEngine
+from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
+from griptape.engines.rag import RagEngine
+from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.loaders import WebLoader
 from griptape.rules import Ruleset, Rule
 from griptape.structures import Agent
-from griptape.tools import VectorStoreClient
+from griptape.tools import RagClient
 from griptape.utils import Chat
-from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
-
 
 namespace = "physics-wiki"
 
-engine = VectorQueryEngine(
-    prompt_driver=OpenAiChatPromptDriver(
-        model="gpt-3.5-turbo",
+vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
+
+engine = RagEngine(
+    retrieval_stage=RetrievalRagStage(
+        retrieval_modules=[
+            VectorStoreRetrievalRagModule(
+                vector_store_driver=vector_store_driver,
+                query_params={
+                    "namespace": namespace,
+                    "top_n": 20
+                    
+                }
+            )
+        ]
     ),
-    vector_store_driver=LocalVectorStoreDriver(
-        embedding_driver=OpenAiEmbeddingDriver(
-            api_key=os.environ["OPENAI_API_KEY"]
+    response_stage=ResponseRagStage(
+        response_module=PromptResponseRagModule(
+            prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
         )
     )
 )
@@ -28,16 +39,14 @@ artifacts = WebLoader().load(
     "https://en.wikipedia.org/wiki/Physics"
 )
 
-engine.vector_store_driver.upsert_text_artifacts(
+vector_store_driver.upsert_text_artifacts(
     {namespace: artifacts}
 )
 
-
-vector_store_tool = VectorStoreClient(
+vector_store_tool = RagClient(
     description="Contains information about physics. "
                 "Use it to answer any physics-related questions.",
-    query_engine=engine,
-    namespace=namespace,
+    rag_engine=engine
 )
 
 agent = Agent(

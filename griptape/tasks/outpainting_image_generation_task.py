@@ -4,19 +4,21 @@ from typing import Callable
 
 from attrs import define, field
 
+from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
 from griptape.engines import OutpaintingImageGenerationEngine
-from griptape.artifacts import ImageArtifact, TextArtifact, ListArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
 
 @define
 class OutpaintingImageGenerationTask(BaseImageGenerationTask):
-    """A task that modifies an image outside the bounds of a mask. Accepts a text prompt, image, and mask as
+    """A task that modifies an image outside the bounds of a mask.
+
+    Accepts a text prompt, image, and mask as
     input in one of the following formats:
     - tuple of (template string, ImageArtifact, ImageArtifact)
     - tuple of (TextArtifact, ImageArtifact, ImageArtifact)
-    - Callable that returns a tuple of (TextArtifact, ImageArtifact, ImageArtifact)
+    - Callable that returns a tuple of (TextArtifact, ImageArtifact, ImageArtifact).
 
     Attributes:
         image_generation_engine: The engine used to generate the image.
@@ -27,7 +29,9 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
     """
 
     _image_generation_engine: OutpaintingImageGenerationEngine = field(
-        default=None, kw_only=True, alias="image_generation_engine"
+        default=None,
+        kw_only=True,
+        alias="image_generation_engine",
     )
     _input: (
         tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact
@@ -51,7 +55,8 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
 
     @input.setter
     def input(
-        self, value: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact]
+        self,
+        value: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact],
     ) -> None:
         self._input = value
 
@@ -60,7 +65,7 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
         if self._image_generation_engine is None:
             if self.structure is not None:
                 self._image_generation_engine = OutpaintingImageGenerationEngine(
-                    image_generation_driver=self.structure.config.image_generation_driver
+                    image_generation_driver=self.structure.config.image_generation_driver,
                 )
             else:
                 raise ValueError("Image Generation Engine is not set.")

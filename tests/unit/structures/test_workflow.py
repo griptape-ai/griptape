@@ -1,28 +1,28 @@
 import time
+
 import pytest
 
-from pytest import fixture
-from griptape.memory.task.storage import TextArtifactStorage
-from tests.mocks.mock_prompt_driver import MockPromptDriver
-from griptape.rules import Rule, Ruleset
-from griptape.tasks import PromptTask, BaseTask, ToolkitTask, CodeExecutionTask
-from griptape.structures import Workflow
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.memory.structure import ConversationMemory
-from tests.mocks.mock_tool.tool import MockTool
+from griptape.memory.task.storage import TextArtifactStorage
+from griptape.rules import Rule, Ruleset
+from griptape.structures import Workflow
+from griptape.tasks import BaseTask, CodeExecutionTask, PromptTask, ToolkitTask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestWorkflow:
-    @fixture
+    @pytest.fixture()
     def waiting_task(self):
         def fn(task):
-            time.sleep(10)
+            time.sleep(2)
             return TextArtifact("done")
 
         return CodeExecutionTask(run_fn=fn)
 
-    @fixture
+    @pytest.fixture()
     def error_artifact_task(self):
         def fn(task):
             return ErrorArtifact("error")
@@ -75,8 +75,8 @@ class TestWorkflow:
         with pytest.raises(ValueError):
             Workflow(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
 
+        workflow = Workflow()
         with pytest.raises(ValueError):
-            workflow = Workflow()
             workflow.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
     def test_with_no_task_memory(self):
@@ -108,7 +108,9 @@ class TestWorkflow:
 
         storage = list(workflow.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.query_engine.vector_store_driver.embedding_driver
+        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
+            0
+        ].vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -348,6 +350,44 @@ class TestWorkflow:
         workflow.run()
 
         self._validate_topology_1(workflow)
+
+    def test_run_topology_1_missing_parent(self):
+        task1 = PromptTask("test1", id="task1")
+        task2 = PromptTask("test2", id="task2")
+        task3 = PromptTask("test3", id="task3")
+        task4 = PromptTask("test4", id="task4")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        # task1 never added to workflow
+        workflow + task4
+        with pytest.raises(ValueError):
+            workflow.insert_tasks(task1, [task2, task3], task4)
+
+    def test_run_topology_1_id_equality(self):
+        task1 = PromptTask("test1", id="task1")
+        task2 = PromptTask("test2", id="task2")
+        task3 = PromptTask("test3", id="task3")
+        task4 = PromptTask("test4", id="task4")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        # task4 never added to workflow
+        workflow + task1
+        workflow.insert_tasks(task1, [task2, task3], task4)
+
+        with pytest.raises(ValueError):
+            workflow.run()
+
+    def test_run_topology_1_object_equality(self):
+        task1 = PromptTask("test1", id="task1")
+        task2 = PromptTask("test2", id="task2")
+        task3 = PromptTask("test3", id="task3")
+        task4 = PromptTask("test4", id="task4")
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+
+        workflow + task1
+        workflow + task4
+        with pytest.raises(ValueError):
+            workflow.insert_tasks(PromptTask("test1", id="task1"), [task2, task3], task4)
 
     def test_run_topology_2_declarative_parents(self):
         workflow = Workflow(
@@ -643,7 +683,7 @@ class TestWorkflow:
         # task4 is the final task, but its defined at index 0
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task4, task1, task2, task3])
 
-        # ouput_task topologically should be task4
+        # output_task topologically should be task4
         assert task4 == workflow.output_task
 
     def test_to_graph(self):
@@ -726,8 +766,18 @@ class TestWorkflow:
 
         assert workflow.output is None
 
+    def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
+        end_task = PromptTask("end")
+        end_task.add_parents([error_artifact_task, waiting_task])
+        workflow = Workflow(
+            prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task], fail_fast=False
+        )
+        workflow.run()
+
+        assert workflow.output is not None
+
     @staticmethod
-    def _validate_topology_1(workflow):
+    def _validate_topology_1(workflow) -> None:
         assert len(workflow.tasks) == 4
         assert workflow.input_task.id == "task1"
         assert workflow.output_task.id == "task4"
@@ -755,8 +805,8 @@ class TestWorkflow:
         assert task4.child_ids == []
 
     @staticmethod
-    def _validate_topology_2(workflow):
-        """Adapted from https://en.wikipedia.org/wiki/Directed_acyclic_graph#/media/File:Tred-G.svg"""
+    def _validate_topology_2(workflow) -> None:
+        """Adapted from https://en.wikipedia.org/wiki/Directed_acyclic_graph#/media/File:Tred-G.svg."""
         assert len(workflow.tasks) == 5
         assert workflow.input_task.id == "taska"
         assert workflow.output_task.id == "taske"
@@ -789,7 +839,7 @@ class TestWorkflow:
         assert taske.child_ids == []
 
     @staticmethod
-    def _validate_topology_3(workflow):
+    def _validate_topology_3(workflow) -> None:
         assert len(workflow.tasks) == 4
         assert workflow.input_task.id == "task1"
         assert workflow.output_task.id == "task3"
@@ -817,7 +867,7 @@ class TestWorkflow:
         assert task4.child_ids == ["task2"]
 
     @staticmethod
-    def _validate_topology_4(workflow):
+    def _validate_topology_4(workflow) -> None:
         assert len(workflow.tasks) == 9
         assert workflow.input_task.id == "collect_movie_info"
         assert workflow.output_task.id == "summarize_to_slack"

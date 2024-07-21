@@ -1,13 +1,13 @@
 In this example we implement a multi-agent Workflow. We have a single "Researcher" Agent that conducts research on a topic, and then fans out to multiple "Writer" Agents to write blog posts based on the research.
 
 By splitting up our workloads across multiple Structures, we can parallelize the work and leverage the strengths of each Agent. The Researcher can focus on gathering data and insights, while the Writers can focus on crafting engaging narratives.
-Additionally, this architecture opens us up to using services such as [Griptape Cloud](https://www.griptape.ai/cloud) to have each Agent run on a separate machine, allowing us to scale our Workflow as needed 🤯. To try out how this would work, you can deploy this example as multiple structures from our [Sample Structures](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape-multi-agent-workflows) repo.
+Additionally, this architecture opens us up to using services such as [Griptape Cloud](https://www.griptape.ai/cloud) to have each Agent run completely independently, allowing us to scale our Workflow as needed 🤯. To try out how this would work, you can deploy this example as multiple structures from our [Sample Structures](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape-multi-agent-workflows) repo.
 
 
 ```python
 import os
 
-from griptape.drivers import WebhookEventListenerDriver, LocalStructureRunDriver
+from griptape.drivers import WebhookEventListenerDriver, LocalStructureRunDriver, GoogleWebSearchDriver
 from griptape.events import EventListener, FinishStructureRunEvent
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Workflow
@@ -38,8 +38,10 @@ def build_researcher():
         id="researcher",
         tools=[
             WebSearch(
-                google_api_key=os.environ["GOOGLE_API_KEY"],
-                google_api_search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+                web_search_driver=GoogleWebSearchDriver(
+                    api_key=os.environ["GOOGLE_API_KEY"],
+                    search_id=os.environ["GOOGLE_API_SEARCH_ID"],
+                ),
             ),
             WebScraper(
                 off_prompt=True,

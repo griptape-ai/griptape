@@ -1,9 +1,10 @@
 import pytest
+
 from griptape.artifacts import ListArtifact
 
 
 class TestWebScraper:
-    @pytest.fixture
+    @pytest.fixture()
     def scraper(self):
         from griptape.tools import WebScraper
 

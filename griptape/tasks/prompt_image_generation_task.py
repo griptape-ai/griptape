@@ -4,18 +4,20 @@ from typing import Callable
 
 from attrs import define, field
 
-from griptape.engines import PromptImageGenerationEngine
 from griptape.artifacts import ImageArtifact, TextArtifact
+from griptape.engines import PromptImageGenerationEngine
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
 
 @define
 class PromptImageGenerationTask(BaseImageGenerationTask):
-    """Used to generate an image from a text prompt. Accepts prompt as input in one of the following formats:
+    """Used to generate an image from a text prompt.
+
+    Accepts prompt as input in one of the following formats:
     - template string
     - TextArtifact
-    - Callable that returns a TextArtifact
+    - Callable that returns a TextArtifact.
 
     Attributes:
         image_generation_engine: The engine used to generate the image.
@@ -29,7 +31,9 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
 
     _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
     _image_generation_engine: PromptImageGenerationEngine = field(
-        default=None, kw_only=True, alias="image_generation_engine"
+        default=None,
+        kw_only=True,
+        alias="image_generation_engine",
     )
 
     @property
@@ -50,7 +54,7 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
         if self._image_generation_engine is None:
             if self.structure is not None:
                 self._image_generation_engine = PromptImageGenerationEngine(
-                    image_generation_driver=self.structure.config.image_generation_driver
+                    image_generation_driver=self.structure.config.image_generation_driver,
                 )
             else:
                 raise ValueError("Image Generation Engine is not set.")
@@ -62,7 +66,9 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
 
     def run(self) -> ImageArtifact:
         image_artifact = self.image_generation_engine.run(
-            prompts=[self.input.to_text()], rulesets=self.all_rulesets, negative_rulesets=self.negative_rulesets
+            prompts=[self.input.to_text()],
+            rulesets=self.all_rulesets,
+            negative_rulesets=self.negative_rulesets,
         )
 
         if self.output_dir or self.output_file:

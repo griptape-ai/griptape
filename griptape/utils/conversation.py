@@ -1,5 +1,7 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
+
 from attrs import define, field
 
 if TYPE_CHECKING:
@@ -22,8 +24,8 @@ class Conversation:
     def prompt_stack(self) -> list[str]:
         lines = []
 
-        for stack in self.memory.to_prompt_stack().inputs:
-            lines.append(f"{stack.role}: {stack.content}")
+        for stack in self.memory.to_prompt_stack().messages:
+            lines.append(f"{stack.role}: {stack.to_text()}")
 
         return lines
 

@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import CohereTokenizer
 from griptape.utils import import_optional_dependency
@@ -11,7 +14,8 @@ if TYPE_CHECKING:
 
 @define
 class CohereEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Cohere Embedding Driver.
+
     Attributes:
         api_key: Cohere API key.
         model: 	Cohere model name.

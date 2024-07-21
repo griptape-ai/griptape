@@ -1,13 +1,17 @@
 from __future__ import annotations
+
 from typing import Optional
+
 from attrs import define, field
+
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.utils import import_optional_dependency
 
 
 @define
 class GoogleEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Google Embedding Driver.
+
     Attributes:
         api_key: Google API key.
         model: Google model name.

@@ -1,12 +1,15 @@
 from __future__ import annotations
-from typing import Callable, Optional, TYPE_CHECKING, Any
-from griptape.utils import import_optional_dependency
+
+from typing import TYPE_CHECKING, Any, Callable, Optional
+
+from attrs import Attribute, Factory, define, field
+
 from griptape.drivers import BaseSqlDriver
-from attrs import Factory, define, field
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    from sqlalchemy.engine import Engine
     from snowflake.connector import SnowflakeConnection
+    from sqlalchemy.engine import Engine
 
 
 @define
@@ -17,15 +20,16 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             # Creator bypasses the URL param
             # https://docs.sqlalchemy.org/en/14/core/engines.html#sqlalchemy.create_engine.params.creator
             lambda self: import_optional_dependency("sqlalchemy").create_engine(
-                "snowflake://not@used/db", creator=self.connection_func
+                "snowflake://not@used/db",
+                creator=self.connection_func,
             ),
             takes_self=True,
         ),
         kw_only=True,
     )
 
-    @connection_func.validator  # pyright: ignore
-    def validate_connection_func(self, _, connection_func: Callable[[], SnowflakeConnection]) -> None:
+    @connection_func.validator  # pyright: ignore[reportFunctionMemberAccess]
+    def validate_connection_func(self, _: Attribute, connection_func: Callable[[], SnowflakeConnection]) -> None:
         snowflake_connection = connection_func()
         snowflake = import_optional_dependency("snowflake")
 
@@ -34,8 +38,8 @@ class SnowflakeSqlDriver(BaseSqlDriver):
         if not snowflake_connection.schema or not snowflake_connection.database:
             raise ValueError("Provide a schema and database for the Snowflake connection")
 
-    @engine.validator  # pyright: ignore
-    def validate_engine_url(self, _, engine: Engine) -> None:
+    @engine.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_engine_url(self, _: Attribute, engine: Engine) -> None:
         if not engine.url.render_as_string().startswith("snowflake://"):
             raise ValueError("Provide a Snowflake connection")
 
@@ -55,7 +59,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
 
             if results is not None:
                 if results.returns_rows:
-                    return [{column: value for column, value in result.items()} for result in results]
+                    return [dict(result.items()) for result in results]
                 else:
                     return None
             else:

@@ -1,5 +1,6 @@
-from tests.utils.structure_tester import StructureTester
 import pytest
+
+from tests.utils.structure_tester import StructureTester
 
 
 class TestJsonExtractionTask:
@@ -9,10 +10,11 @@ class TestJsonExtractionTask:
         ids=StructureTester.prompt_driver_id_fn,
     )
     def structure_tester(self, request):
-        from griptape.tasks import ExtractionTask
-        from griptape.structures import Agent
-        from griptape.engines import JsonExtractionEngine
         from schema import Schema
+
+        from griptape.engines import JsonExtractionEngine
+        from griptape.structures import Agent
+        from griptape.tasks import ExtractionTask
 
         # Define some JSON data
         user_schema = Schema({"users": [{"name": str, "age": int, "location": str}]}).json_schema("UserSchema")

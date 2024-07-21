@@ -1,7 +1,11 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Any
+
+from typing import TYPE_CHECKING, Any, Optional
+
 from attrs import define
+
 from griptape.artifacts import ErrorArtifact
+from griptape.common import observable
 from griptape.memory.structure import Run
 from griptape.structures import Structure
 
@@ -42,16 +46,12 @@ class Pipeline(Structure):
 
         return task
 
+    @observable
     def try_run(self, *args) -> Pipeline:
         self.__run_from_task(self.input_task)
 
         if self.conversation_memory and self.output is not None:
-            if isinstance(self.input_task.input, tuple):
-                input_text = self.input_task.input[0].to_text()
-            else:
-                input_text = self.input_task.input.to_text()
-
-            run = Run(input=input_text, output=self.output.to_text())
+            run = Run(input=self.input_task.input, output=self.output)
 
             self.conversation_memory.add_run(run)
 
@@ -65,7 +65,7 @@ class Pipeline(Structure):
                 "parent_output": task.parents[0].output.to_text() if task.parents and task.parents[0].output else None,
                 "parent": task.parents[0] if task.parents else None,
                 "child": task.children[0] if task.children else None,
-            }
+            },
         )
 
         return context
@@ -74,7 +74,7 @@ class Pipeline(Structure):
         if task is None:
             return
         else:
-            if isinstance(task.execute(), ErrorArtifact):
+            if isinstance(task.execute(), ErrorArtifact) and self.fail_fast:
                 return
             else:
                 self.__run_from_task(next(iter(task.children), None))

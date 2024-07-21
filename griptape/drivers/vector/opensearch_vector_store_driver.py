@@ -1,10 +1,13 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
-from griptape import utils
+
 import logging
-from griptape.utils import import_optional_dependency
+from typing import TYPE_CHECKING, NoReturn, Optional
+
+from attrs import Factory, define, field
+
+from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
-from attrs import define, field, Factory
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from opensearchpy import OpenSearch
@@ -40,12 +43,13 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 connection_class=import_optional_dependency("opensearchpy").RequestsHttpConnection,
             ),
             takes_self=True,
-        )
+        ),
     )
 
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
@@ -56,7 +60,6 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
         Metadata associated with the vector can also be provided.
         """
-
         vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
         doc = {"vector": vector, "namespace": namespace, "metadata": meta}
         doc.update(kwargs)
@@ -64,7 +67,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
         return response["_id"]
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Retrieves a specific vector entry from OpenSearch based on its identifier and optional namespace.
 
         Returns:
@@ -93,13 +96,12 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             logging.error(f"Error while loading entry: {e}")
             return None
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from OpenSearch that match the optional namespace.
 
         Returns:
             A list of BaseVectorStoreDriver.Entry objects.
         """
-
         query_body = {"size": 10000, "query": {"match_all": {}}}
 
         if namespace:
@@ -121,19 +123,20 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
-        include_metadata=True,
+        include_metadata: bool = True,
         field_name: str = "vector",
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.QueryResult]:
+    ) -> list[BaseVectorStoreDriver.Entry]:
         """Performs a nearest neighbor search on OpenSearch to find vectors similar to the provided query string.
 
         Results can be limited using the count parameter and optionally filtered by a namespace.
 
         Returns:
-            A list of BaseVectorStoreDriver.QueryResult objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
+            A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
         count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
         vector = self.embedding_driver.embed_string(query)
@@ -143,14 +146,17 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         if namespace:
             query_body["query"] = {
                 "bool": {
-                    "must": [{"match": {"namespace": namespace}}, {"knn": {field_name: {"vector": vector, "k": count}}}]
-                }
+                    "must": [
+                        {"match": {"namespace": namespace}},
+                        {"knn": {field_name: {"vector": vector, "k": count}}},
+                    ],
+                },
             }
 
         response = self.client.search(index=self.index_name, body=query_body)
 
         return [
-            BaseVectorStoreDriver.QueryResult(
+            BaseVectorStoreDriver.Entry(
                 id=hit["_id"],
                 namespace=hit["_source"].get("namespace") if namespace else None,
                 score=hit["_score"],
@@ -160,5 +166,5 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             for hit in response["hits"]["hits"]
         ]
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

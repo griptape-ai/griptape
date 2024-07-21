@@ -16,7 +16,8 @@ class BaseTextInputTask(RuleMixin, BaseTask, ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(
-        default=DEFAULT_INPUT_TEMPLATE, alias="input"
+        default=DEFAULT_INPUT_TEMPLATE,
+        alias="input",
     )
 
     @property

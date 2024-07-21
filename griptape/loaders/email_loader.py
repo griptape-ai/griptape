@@ -1,21 +1,21 @@
 from __future__ import annotations
 
-from typing import Optional, Union, cast
-import logging
 import imaplib
+import logging
+from typing import Optional, Union, cast
 
 from attrs import astuple, define, field
 
-from griptape.utils import import_optional_dependency
 from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
 from griptape.loaders import BaseLoader
+from griptape.utils import import_optional_dependency
 
 
 @define
 class EmailLoader(BaseLoader):
     @define(frozen=True)
     class EmailQuery:
-        """An email retrieval query
+        """An email retrieval query.
 
         Attributes:
             label: Label to retrieve emails from such as 'INBOX' or 'SENT'.
@@ -75,7 +75,7 @@ class EmailLoader(BaseLoader):
             logging.error(e)
             return ErrorArtifact(f"error retrieving email: {e}")
 
-    def _count_messages(self, message_numbers: bytes):
+    def _count_messages(self, message_numbers: bytes) -> int:
         return len(list(filter(None, message_numbers.decode().split(" "))))
 
     def load_collection(self, sources: list[EmailQuery], *args, **kwargs) -> dict[str, ListArtifact | ErrorArtifact]:

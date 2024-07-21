@@ -1,8 +1,11 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Any
+
+from typing import TYPE_CHECKING, Any, Optional
+
+from attrs import define, field
+
 from griptape.drivers import BaseSqlDriver
 from griptape.utils import import_optional_dependency
-from attrs import define, field
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Engine
@@ -30,28 +33,23 @@ class SqlDriver(BaseSqlDriver):
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, Optional[Any]]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
-        with self.engine.begin() as con:
+        with self.engine.connect() as con:
             results = con.execute(sqlalchemy.text(query))
 
             if results is not None:
                 if results.returns_rows:
-                    return [{column: value for column, value in result.items()} for result in results]
+                    return [dict(result._mapping) for result in results]
                 else:
-                    return None
+                    con.commit()
             else:
                 raise ValueError("No result found")
 
     def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
+        sqlalchemy_exc = import_optional_dependency("sqlalchemy.exc")
 
         try:
-            table = sqlalchemy.Table(
-                table_name,
-                sqlalchemy.MetaData(bind=self.engine),
-                schema=schema,
-                autoload=True,
-                autoload_with=self.engine,
-            )
+            table = sqlalchemy.Table(table_name, sqlalchemy.MetaData(), schema=schema, autoload_with=self.engine)
             return str([(c.name, c.type) for c in table.columns])
-        except sqlalchemy.exc.NoSuchTableError:
+        except sqlalchemy_exc.NoSuchTableError:
             return None

@@ -1,11 +1,9 @@
 import os
-import pytest
-from griptape.artifacts.text_artifact import TextArtifact
-from griptape.tasks import StructureRunTask
-from griptape.structures import Agent
-from tests.mocks.mock_prompt_driver import MockPromptDriver
+
 from griptape.drivers import LocalStructureRunDriver
-from griptape.structures import Pipeline
+from griptape.structures import Agent, Pipeline
+from griptape.tasks import StructureRunTask
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestLocalStructureRunDriver:
@@ -22,8 +20,8 @@ class TestLocalStructureRunDriver:
     def test_run_with_env(self):
         pipeline = Pipeline()
 
-        agent = Agent(prompt_driver=MockPromptDriver(mock_output=lambda _: os.environ["key"]))
-        driver = LocalStructureRunDriver(structure_factory_fn=lambda: agent, env={"key": "value"})
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=lambda _: os.environ["KEY"]))
+        driver = LocalStructureRunDriver(structure_factory_fn=lambda: agent, env={"KEY": "value"})
         task = StructureRunTask(driver=driver)
 
         pipeline.add_task(task)

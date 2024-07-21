@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 import csv
 import io
+
 from attrs import define, field
-from griptape.artifacts import TextArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, TextArtifact
 
 
 @define
@@ -16,7 +19,10 @@ class CsvRowArtifact(TextArtifact):
     def to_text(self) -> str:
         with io.StringIO() as csvfile:
             writer = csv.DictWriter(
-                csvfile, fieldnames=self.value.keys(), quoting=csv.QUOTE_MINIMAL, delimiter=self.delimiter
+                csvfile,
+                fieldnames=self.value.keys(),
+                quoting=csv.QUOTE_MINIMAL,
+                delimiter=self.delimiter,
             )
 
             writer.writerow(self.value)

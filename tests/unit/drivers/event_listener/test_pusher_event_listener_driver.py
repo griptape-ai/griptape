@@ -1,11 +1,13 @@
-from pytest import fixture
-from tests.mocks.mock_event import MockEvent
-from griptape.drivers import PusherEventListenerDriver
 from unittest.mock import Mock
+
+import pytest
+
+from griptape.drivers import PusherEventListenerDriver
+from tests.mocks.mock_event import MockEvent
 
 
 class TestPusherEventListenerDriver:
-    @fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def mock_post(self, mocker):
         mock_pusher_client = mocker.patch("pusher.Pusher")
         mock_pusher_client.return_value.trigger.return_value = Mock()
@@ -13,7 +15,7 @@ class TestPusherEventListenerDriver:
 
         return mock_pusher_client
 
-    @fixture()
+    @pytest.fixture()
     def driver(self):
         return PusherEventListenerDriver(
             app_id="test-app-id",

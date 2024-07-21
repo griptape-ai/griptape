@@ -1,43 +1,50 @@
 This example demonstrates how to vectorize a PDF of the [Attention Is All You Need](https://arxiv.org/pdf/1706.03762.pdf) paper and setup a Griptape agent with rules and the [VectorStoreClient](../reference/griptape/tools/vector_store_client/tool.md) tool to use it during conversations.
 
 ```python
-import os 
-import io
 import requests
-from griptape.engines import VectorQueryEngine
+from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
+from griptape.engines.rag import RagEngine
+from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
+from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.loaders import PdfLoader
 from griptape.structures import Agent
-from griptape.tools import VectorStoreClient
+from griptape.tools import RagClient
 from griptape.utils import Chat
-from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
-
 
 namespace = "attention"
-
 response = requests.get("https://arxiv.org/pdf/1706.03762.pdf")
-
-engine = VectorQueryEngine(
-    prompt_driver=OpenAiChatPromptDriver(
-        model="gpt-3.5-turbo",
+vector_store = LocalVectorStoreDriver(
+    embedding_driver=OpenAiEmbeddingDriver()
+)
+engine = RagEngine(
+    retrieval_stage=RetrievalRagStage(
+        retrieval_modules=[
+            VectorStoreRetrievalRagModule(
+                vector_store_driver=vector_store,
+                query_params={
+                    "namespace": namespace,
+                    "top_n": 20
+                    
+                }
+            )
+        ]
     ),
-    vector_store_driver=LocalVectorStoreDriver(
-        embedding_driver=OpenAiEmbeddingDriver(
-            api_key=os.environ["OPENAI_API_KEY"]
+    response_stage=ResponseRagStage(
+        response_module=PromptResponseRagModule(
+            prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
         )
     )
 )
+vector_store_tool = RagClient(
+    description="Contains information about the Attention Is All You Need paper. "
+                "Use it to answer any related questions.",
+    rag_engine=engine
+)
 
-engine.vector_store_driver.upsert_text_artifacts(
+vector_store.upsert_text_artifacts(
     {
         namespace: PdfLoader().load(response.content)
     }
-)
-
-vector_store_tool = VectorStoreClient(
-    description="Contains information about the Attention Is All You Need paper. "
-                "Use it to answer any related questions.",
-    query_engine=engine,
-    namespace=namespace,
 )
 
 agent = Agent(
@@ -45,4 +52,5 @@ agent = Agent(
 )
 
 Chat(agent).start()
+
 ```

@@ -5,6 +5,149 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+### Added
+- Native function calling support to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AnthropicPromptDriver`, `AmazonBedrockPromptDriver`, `GooglePromptDriver`, and `CoherePromptDriver`.
+- `OllamaEmbeddingDriver` for generating embeddings with Ollama.
+- `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
+- `GriptapeCloudEventListenerDriver.api_key` defaults to the value in the `GT_CLOUD_API_KEY` environment variable.
+- `BaseObservabilityDriver` as the base class for all Observability Drivers.
+- `DummyObservabilityDriver` as a no-op Observability Driver.
+- `OpenTelemetryObservabilityDriver` for sending observability data to an open telemetry collector or vendor.
+- `GriptapeCloudObservabilityDriver` for sending observability data to Griptape Cloud.
+- `DatadogObservabilityDriver` for sending observability data to a Datadog Agent.
+- `Observability` context manager for enabling observability and configuring which Observability Driver to use.
+- `@observable` decorator for selecting which functions/methods to provide observability for.
+- `GenericArtifact` for storing any data.
+
+### Changed
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.does_entry_exist` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.load_artifacts` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_vector` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.query` optional arguments are now keyword-only arguments.
+- **BREAKING**: `EventListener.publish_event`'s `flush` argument is now a keyword-only argument.
+- **BREAKING**: `BaseEventListenerDriver.publish_event`'s `flush` argument is now a keyword-only argument.
+- **BREAKING**: Renamed `DummyException` to `DummyError` for pep8 naming compliance.
+- **BREAKING**: Migrate to `sqlalchemy` 2.0.
+- **BREAKING**: Make `sqlalchemy` an optional dependency.
+- **BREAKING**: Rename `drivers-sql-redshift` to `drivers-sql-amazon-redshift`
+- Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
+- **BREAKING**: Update `marqo` dependency to `^3.7.0`.
+- Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
+- Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
+
+### Fixed
+- Parameter `count` for `QdrantVectorStoreDriver.query` now optional as per documentation.
+- Path issues on Windows with `LocalFileManagerDriver` and `AmazonS3FileManagerDriver`.
+
+## [0.28.2] - 2024-07-12
+### Fixed
+- Conversation Memory being incorrectly inserted into the `PromptTask.prompt_stack` when no system content is present.
+
+## [0.28.1] - 2024-07-10
+
+### Fixed
+- Sending empty system content in `PromptTask`.
+- Throttling issues with `DuckDuckGoWebSearchDriver`.
+
+## [0.28.0] - 2024-07-09
+### Added
+- `RagEngine` is an abstraction for implementing modular RAG pipelines.
+  - `RagContext` is a container object for passing around RAG context. 
+  - RAG stages:
+    - `QueryRagStage` for parsing and expanding queries.
+    - `RetrievalRagStage` for retrieving content.
+    - `ResponseRagStage` for augmenting and generating outputs.
+  - RAG modules:
+    - Retrieval:
+      - `VectorStoreRetrievalRagModule` for retrieving text chunks from vector stores.
+      - `TextLoaderRetrievalRagModule` for retrieving data with text loaders in real time.
+      - `TextChunksRerankRagModule` for re-ranking retrieved results.
+    - Response:
+      - `MetadataBeforeResponseRagModule` for appending metadata.
+      - `RulesetsBeforeResponseRagModule` for appending rulesets.
+      - `PromptResponseRagModule` for generating responses based on retrieved text chunks.
+      - `TextChunksResponseRagModule` for responding with retrieved text chunks.
+      - `FootnotePromptResponseRagModule` for responding with automatic footnotes from text chunk references.
+- `RagClient` tool for exposing `RagEngines` to LLM agents.
+- `RagTask` task for including `RagEngines` in any structure.
+- Rerank drivers:
+  - `CohereRerankDriver` for using the Cohere rerank API.
+- `utils.execute_futures_list()` for executing a list of futures.
+- `LocalVectorStoreDriver.persist_file` for persisting vectors and chunks in a text file.
+- `Entry.to_artifact()` for easy vector store entry conversions into Griptape artifacts.
+- `BaseVectorStoreDriver.does_entry_exist()` to check if an entry exists in the vector store.
+- `GoogleWebSearchDriver` to web search with the Google Customsearch API.
+- `DuckDuckGoWebSearchDriver` to web search with the DuckDuckGo search SDK.
+- `ProxyWebScraperDriver` to web scrape using proxies.
+- Parameter `session` on `AmazonBedrockStructureConfig`.
+- Parameter `meta` on `TextArtifact`.
+- `VectorStoreClient` improvements:
+  - `VectorStoreClient.query_params` dict for custom query params.
+  - `VectorStoreClient.process_query_output_fn` for custom query output processing logic.
+- Parameter `fail_fast` to `Structure`.
+- `BooleanArtifact` for handling boolean values.
+- `typos` to dev dependencies to catch typos in code/docs.
+- `Message` for storing messages in a `PromptStack`. Messages consist of a role, content, and usage.
+- `DeltaMessage` for storing partial messages in a `PromptStack`. Multiple `DeltaMessage` can be combined to form a `Message`.
+- `TextMessageContent` for storing textual content in a `Message`.
+- `ImageMessageContent` for storing image content in a `Message`.
+- Support for adding `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s to `PromptStack`.
+- Support for image inputs to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AmazonBedrockPromptDriver`, `AnthropicPromptDriver`, and `GooglePromptDriver`.
+- Input/output token usage metrics to all Prompt Drivers. 
+- `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
+- Support for storing Artifacts as inputs/outputs in Conversation Memory Runs.
+- `Agent.input` for passing Artifacts as input.
+- Support for `PromptTask`s to take `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s as input.
+- Parameters `sort_key` and `sort_key_value` on `AmazonDynamoDbConversationMemoryDriver` for tables with sort keys.
+- `Reference` for supporting artifact citations in loaders and RAG engine modules.
+
+### Changed
+- **BREAKING**: Moved/renamed `griptape.utils.PromptStack` to `griptape.common.PromptStack`.
+- **BREAKING**: Renamed `PromptStack.inputs` to `PromptStack.messages`.
+- **BREAKING**: Moved `PromptStack.USER_ROLE`, `PromptStack.ASSISTANT_ROLE`, and `PromptStack.SYSTEM_ROLE` to `Message`.
+- **BREAKING**: Updated return type of `PromptDriver.try_run` from `TextArtifact` to `Message`.
+- **BREAKING**: Updated return type of `PromptDriver.try_stream` from `Iterator[TextArtifact]` to `Iterator[DeltaMessage]`.
+- **BREAKING**: Removed `BasePromptEvent.token_count` in favor of `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
+- **BREAKING**: Removed `StartPromptEvent.prompt`. Use `StartPromptEvent.prompt_stack` instead.
+- **BREAKING**: Removed `Agent.input_template` in favor of `Agent.input`.
+- **BREAKING**: `BasePromptDriver.run` now returns a `Message` instead of a `TextArtifact`. For compatibility, `Message.value` contains the Message's Artifact value
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact()` and `BaseVectorStoreDriver.upsert_text()` use artifact/string values to generate `vector_id` if it wasn't implicitly passed. This change ensures that we don't generate embeddings for the same content every time.
+- **BREAKING**: Removed `VectorQueryEngine` in favor of `RagEngine`.
+- **BREAKING**: Removed `TextQueryTask` in favor of `RagTask`.
+- **BREAKING**: `TextArtifactStorage` now requires `vector_store_driver` and `rag_engine` in place of `vector_query_engine`.
+- **BREAKING**: Moved `load_artifacts()` from `BaseQueryEngine` to `BaseVectorStoreDriver`.
+- **BREAKING**: Merged `BaseVectorStoreDriver.QueryResult` into `BaseVectorStoreDriver.Entry`.
+- **BREAKING**: Replaced `query_engine` with `vector_store_driver` in `VectorStoreClient`.
+- **BREAKING**: removed parameters `google_api_lang`, `google_api_key`, `google_api_search_id`, `google_api_country` on `WebSearch` in favor of `web_search_driver`.
+- **BREAKING**: removed `VectorStoreClient.top_n` and `VectorStoreClient.namespace` in favor of `VectorStoreClient.query_params`.
+- **BREAKING**: All `futures_executor` fields renamed to `futures_executor_fn` and now accept callables instead of futures; wrapped all future `submit` calls with the `with` block to address future executor shutdown issues.
+- `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
+- Default Prompt Driver model in `GoogleStructureConfig` to `gemini-1.5-pro`.
+
+### Fixed
+- `CoherePromptDriver` to properly handle empty history.
+- `StructureVisualizer.to_url()` by wrapping task IDs in single quotes. 
+
+## [0.27.2] - 2024-06-27
+
+### Fixed
+- Avoid adding duplicate Tokenizer stop sequences in a `ToolkitTask`.
+- Fixed token count calculation in `VectorQueryEngine`.
+
+## [0.27.1] - 2024-06-20
+
+### Added
+- Support for Claude 3.5 Sonnet in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver`.
+
+### Changed
+- Base Tool schema so that `input` is optional when no Tool Activity schema is set.
+- Tool Task system prompt for better results with lower-end models. 
+- Default Prompt Driver model to Claude 3.5 Sonnet in `AnthropicStructureConfig` and `AmazonBedrockStructureConfig.`
+
+## [0.27.0] - 2024-06-19
 
 ### Added
 - `BaseTask.add_child()` to add a child task to a parent task.
@@ -23,6 +166,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTask.parents_output_text` to get a concatenated string of all parent tasks' outputs.
 - `parents_output_text` to Workflow context.
 - `OllamaPromptModelDriver` for using models with Ollama.
+- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
@@ -67,11 +211,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Streaming not working when using deprecated `Structure.stream` field.
 - Raw Tool output being lost when being executed by ActionsSubtask.
 - Re-order Workflow tasks on every task execution wave.
+- `Workflow.insert_task()` enumerates by parent id equality, opposed to object equality.
 - Web Loader to catch Exceptions and properly return an ErrorArtifact.
 - Conversation Memory entry only added if `output_task.output` is not `None` on all `Structures`
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
 - Structure run args not being set immediately.
 - Input and output logging in BaseAudioInputTasks and BaseAudioGenerationTasks
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
 ## [0.26.0] - 2024-06-04
 
@@ -83,7 +229,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiAudioTranscriptionDriver` for integration with OpenAI's speech-to-text models, including Whisper.
 - Parameter `env` to `BaseStructureRunDriver` to set environment variables for a Structure Run.
 - `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
-- Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
@@ -195,6 +340,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
 - `VoyageAiEmbeddingDriver` for use with VoyageAi's embedding models. 
 - `AnthropicStructureConfig` for providing Structures with Anthropic Prompt and VoyageAi Embedding Driver configuration.
+- `QdrantVectorStoreDriver` to integrate with Qdrant vector databases.
 
 ### Fixed
 - Improved system prompt in `ToolTask` to support more use cases.

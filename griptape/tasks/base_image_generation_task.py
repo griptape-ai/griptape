@@ -2,14 +2,17 @@ from __future__ import annotations
 
 import os
 from abc import ABC
+from typing import TYPE_CHECKING
 
-from attrs import field, define
+from attrs import Attribute, define, field
 
-from griptape.artifacts import MediaArtifact
 from griptape.loaders import ImageLoader
-from griptape.mixins import RuleMixin, BlobArtifactFileOutputMixin
-from griptape.rules import Ruleset, Rule
+from griptape.mixins import BlobArtifactFileOutputMixin, RuleMixin
+from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTask
+
+if TYPE_CHECKING:
+    from griptape.artifacts import MediaArtifact
 
 
 @define
@@ -28,16 +31,16 @@ class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, 
     negative_rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     negative_rules: list[Rule] = field(factory=list, kw_only=True)
 
-    @negative_rulesets.validator  # pyright: ignore
-    def validate_negative_rulesets(self, _, negative_rulesets: list[Ruleset]) -> None:
+    @negative_rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_negative_rulesets(self, _: Attribute, negative_rulesets: list[Ruleset]) -> None:
         if not negative_rulesets:
             return
 
         if self.negative_rules:
             raise ValueError("Can't have both negative_rulesets and negative_rules specified.")
 
-    @negative_rules.validator  # pyright: ignore
-    def validate_negative_rules(self, _, negative_rules: list[Rule]) -> None:
+    @negative_rules.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_negative_rules(self, _: Attribute, negative_rules: list[Rule]) -> None:
         if not negative_rules:
             return
 

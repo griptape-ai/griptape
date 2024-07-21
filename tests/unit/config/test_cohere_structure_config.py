@@ -1,9 +1,10 @@
-from pytest import fixture
+import pytest
+
 from griptape.config import CohereStructureConfig
 
 
 class TestCohereStructureConfig:
-    @fixture
+    @pytest.fixture()
     def config(self):
         return CohereStructureConfig(api_key="api_key")
 
@@ -21,6 +22,8 @@ class TestCohereStructureConfig:
                 "max_tokens": None,
                 "stream": False,
                 "model": "command-r",
+                "force_single_step": False,
+                "use_native_tools": True,
             },
             "embedding_driver": {
                 "type": "CohereEmbeddingDriver",

@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.utils.deprecation import deprecation_warn
 
 

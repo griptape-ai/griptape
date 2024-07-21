@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.artifacts import BlobArtifact
 from griptape.loaders import BlobLoader
 

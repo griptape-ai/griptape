@@ -1,7 +1,10 @@
 from __future__ import annotations
+
 from abc import ABC
 from typing import Optional
-from attrs import define, field, Factory
+
+from attrs import Attribute, Factory, define, field
+
 from griptape.artifacts import TextArtifact
 from griptape.chunkers import ChunkSeparator
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
@@ -12,17 +15,20 @@ class BaseChunker(ABC):
     DEFAULT_SEPARATORS = [ChunkSeparator(" ")]
 
     separators: list[ChunkSeparator] = field(
-        default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.DEFAULT_SEPARATORS, takes_self=True),
+        kw_only=True,
     )
     tokenizer: BaseTokenizer = field(
-        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)), kw_only=True
+        default=Factory(lambda: OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)),
+        kw_only=True,
     )
     max_tokens: int = field(
-        default=Factory(lambda self: self.tokenizer.max_input_tokens, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.tokenizer.max_input_tokens, takes_self=True),
+        kw_only=True,
     )
 
-    @max_tokens.validator  # pyright: ignore
-    def validate_max_tokens(self, _, max_tokens: int) -> None:
+    @max_tokens.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_max_tokens(self, _: Attribute, max_tokens: int) -> None:
         if max_tokens < 0:
             raise ValueError("max_tokens must be 0 or greater.")
 
@@ -43,10 +49,9 @@ class BaseChunker(ABC):
             half_token_count = token_count // 2
 
             # If a separator is provided, only use separators after it.
-            if current_separator:
-                separators = self.separators[self.separators.index(current_separator) :]
-            else:
-                separators = self.separators
+            separators = (
+                self.separators[self.separators.index(current_separator) :] if current_separator else self.separators
+            )
 
             # Loop through available separators to find the best split.
             for separator in separators:
@@ -58,10 +63,7 @@ class BaseChunker(ABC):
                     # Iterate through the subchunks and calculate token counts.
                     for index, subchunk in enumerate(subchunks):
                         if index < len(subchunks):
-                            if separator.is_prefix:
-                                subchunk = separator.value + subchunk
-                            else:
-                                subchunk = subchunk + separator.value
+                            subchunk = separator.value + subchunk if separator.is_prefix else subchunk + separator.value
 
                         tokens_count += self.tokenizer.count_tokens(subchunk)
 
@@ -71,14 +73,7 @@ class BaseChunker(ABC):
                             balance_diff = abs(tokens_count - half_token_count)
 
                     # Create the two subchunks based on the best separator.
-                    if separator.is_prefix:
-                        # If the separator is a prefix, append it before this subchunk.
-                        first_subchunk = separator.value + separator.value.join(subchunks[: balance_index + 1])
-                        second_subchunk = separator.value + separator.value.join(subchunks[balance_index + 1 :])
-                    else:
-                        # If the separator is not a prefix, append it after this subchunk.
-                        first_subchunk = separator.value.join(subchunks[: balance_index + 1]) + separator.value
-                        second_subchunk = separator.value.join(subchunks[balance_index + 1 :])
+                    first_subchunk, second_subchunk = self.__get_subchunks(separator, subchunks, balance_index)
 
                     # Continue recursively chunking the subchunks.
                     first_subchunk_rec = self._chunk_recursively(first_subchunk.strip(), separator)
@@ -97,3 +92,16 @@ class BaseChunker(ABC):
             # If none of the separators result in a balanced split, split the chunk in half.
             midpoint = len(chunk) // 2
             return self._chunk_recursively(chunk[:midpoint]) + self._chunk_recursively(chunk[midpoint:])
+
+    def __get_subchunks(self, separator: ChunkSeparator, subchunks: list[str], balance_index: int) -> tuple[str, str]:
+        # Create the two subchunks based on the best separator.
+        if separator.is_prefix:
+            # If the separator is a prefix, append it before this subchunk.
+            first_subchunk = separator.value + separator.value.join(subchunks[: balance_index + 1])
+            second_subchunk = separator.value + separator.value.join(subchunks[balance_index + 1 :])
+        else:
+            # If the separator is not a prefix, append it after this subchunk.
+            first_subchunk = separator.value.join(subchunks[: balance_index + 1]) + separator.value
+            second_subchunk = separator.value.join(subchunks[balance_index + 1 :])
+
+        return first_subchunk, second_subchunk

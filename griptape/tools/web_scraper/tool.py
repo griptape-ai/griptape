@@ -1,10 +1,12 @@
 from __future__ import annotations
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+from schema import Literal, Schema
+
 from griptape.artifacts import ErrorArtifact, ListArtifact
-from schema import Schema, Literal
+from griptape.loaders import WebLoader
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import WebLoader
 
 
 @define
@@ -15,7 +17,7 @@ class WebScraper(BaseTool):
         config={
             "description": "Can be used to browse a web page and load its content",
             "schema": Schema({Literal("url", description="Valid HTTP URL"): str}),
-        }
+        },
     )
     def get_content(self, params: dict) -> ListArtifact | ErrorArtifact:
         url = params["values"]["url"]

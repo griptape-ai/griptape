@@ -9,11 +9,11 @@ from griptape.tools import PromptImageGenerationClient
 
 
 class TestPromptImageGenerationClient:
-    @pytest.fixture
+    @pytest.fixture()
     def image_generation_engine(self) -> Mock:
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def image_generator(self, image_generation_engine) -> PromptImageGenerationClient:
         return PromptImageGenerationClient(engine=image_generation_engine)
 
@@ -36,7 +36,7 @@ class TestPromptImageGenerationClient:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
         image_generator = PromptImageGenerationClient(engine=image_generation_engine, output_file=outfile)
 
-        image_generator.engine.run.return_value = Mock(  # pyright: ignore
+        image_generator.engine.run.return_value = Mock(  # pyright: ignore[reportFunctionMemberAccess]
             value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
         )
 

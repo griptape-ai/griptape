@@ -1,10 +1,12 @@
-import pytest
 from unittest.mock import Mock
+
+import pytest
+
 from griptape.drivers import OpenAiImageGenerationDriver
 
 
 class TestOpenAiImageGenerationDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return OpenAiImageGenerationDriver(model="dall-e-2", client=Mock(), quality="hd", image_size="512x512")
 

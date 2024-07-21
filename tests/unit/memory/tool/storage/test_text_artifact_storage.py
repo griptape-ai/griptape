@@ -1,10 +1,11 @@
 import pytest
+
 from griptape.artifacts import BlobArtifact, TextArtifact
 from tests.utils import defaults
 
 
 class TestTextArtifactStorage:
-    @pytest.fixture
+    @pytest.fixture()
     def storage(self):
         return defaults.text_tool_artifact_storage()
 

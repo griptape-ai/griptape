@@ -1,17 +1,13 @@
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.drivers import PineconeVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestPineconeVectorStorageDriver:
-    """
-    This should really be under `unit` but the Pinecone client results
-    in tests hanging on GitHub.
-    """
-
     @pytest.fixture(autouse=True)
-    def mock_pinecone(self, mocker):
+    def _mock_pinecone(self, mocker):
         # Create a fake response
         fake_query_response = {
             "matches": [{"id": "foo", "values": [0, 1, 0], "score": 42, "metadata": {"foo": "bar"}}],
@@ -23,7 +19,7 @@ class TestPineconeVectorStorageDriver:
         mock_client().Index().query.return_value = fake_query_response
         mock_client().create_index.return_value = None
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         return PineconeVectorStoreDriver(
             api_key="foobar", index_name="test", environment="test", embedding_driver=MockEmbeddingDriver()
@@ -32,7 +28,7 @@ class TestPineconeVectorStorageDriver:
     def test_upsert_text_artifact(self, driver):
         artifact = TextArtifact("foo")
 
-        assert driver.upsert_text_artifact(artifact) == artifact.id
+        assert driver.upsert_text_artifact(artifact) == driver._get_default_vector_id("foo")
 
     def test_upsert_vector(self, driver):
         assert driver.upsert_vector([0, 1, 2], vector_id="foo") == "foo"

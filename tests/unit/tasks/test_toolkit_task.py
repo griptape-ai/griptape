@@ -1,13 +1,9 @@
-import pytest
 from griptape.artifacts import ErrorArtifact, TextArtifact
-from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import VectorQueryEngine
+from griptape.common import ToolAction
 from griptape.structures import Agent
-from griptape.tasks import ToolkitTask, ActionsSubtask, PromptTask
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
+from griptape.tasks import ActionsSubtask, PromptTask, ToolkitTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
-from tests.mocks.mock_value_prompt_driver import MockValuePromptDriver
 from tests.utils import defaults
 
 
@@ -69,8 +65,33 @@ class TestToolkitSubtask:
                     "type": "object",
                     "properties": {
                         "name": {"const": "MockTool"},
+                        "path": {"description": "test description: foo", "const": "test_exception"},
+                        "input": {
+                            "type": "object",
+                            "properties": {
+                                "values": {
+                                    "description": "Test input",
+                                    "type": "object",
+                                    "properties": {"test": {"type": "string"}},
+                                    "required": ["test"],
+                                    "additionalProperties": False,
+                                }
+                            },
+                            "required": ["values"],
+                            "additionalProperties": False,
+                        },
+                        "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                    },
+                    "required": ["name", "path", "input", "tag"],
+                    "additionalProperties": False,
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {"const": "MockTool"},
                         "path": {"description": "test description", "const": "test_list_output"},
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                        "input": {"additionalProperties": False, "properties": {}, "required": [], "type": "object"},
                     },
                     "required": ["name", "path", "tag"],
                     "additionalProperties": False,
@@ -81,6 +102,7 @@ class TestToolkitSubtask:
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description", "const": "test_no_schema"},
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                        "input": {"additionalProperties": False, "properties": {}, "required": [], "type": "object"},
                     },
                     "required": ["name", "path", "tag"],
                     "additionalProperties": False,
@@ -139,19 +161,12 @@ class TestToolkitSubtask:
         "$schema": "http://json-schema.org/draft-07/schema#",
     }
 
-    @pytest.fixture
-    def query_engine(self):
-        return VectorQueryEngine(
-            prompt_driver=MockPromptDriver(),
-            vector_store_driver=LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver()),
-        )
-
     def test_init(self):
         assert len(ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")]).tools) == 2
 
         try:
             ToolkitTask("test", tools=[MockTool(), MockTool()])
-            assert False
+            raise AssertionError()
         except ValueError:
             assert True
 
@@ -159,7 +174,7 @@ class TestToolkitSubtask:
         output = """Answer: done"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
-        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
 
         agent.add_task(task)
 
@@ -170,10 +185,10 @@ class TestToolkitSubtask:
         assert result.output_task.output.to_text() == "done"
 
     def test_run_max_subtasks(self):
-        output = """Actions: [{"name": "blah"}]"""
+        output = 'Actions: [{"tag": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]'
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
 
         agent.add_task(task)
 
@@ -186,7 +201,7 @@ class TestToolkitSubtask:
         output = """foo bar"""
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        agent = Agent(prompt_driver=MockValuePromptDriver(value=output))
+        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
 
         agent.add_task(task)
 
@@ -216,7 +231,7 @@ class TestToolkitSubtask:
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
-        valid_input = """Thought: need to test\nObservation: test 
+        valid_input = """Thought: need to test\nObservation: test
         observation\nAnswer: test output"""
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
@@ -231,10 +246,10 @@ class TestToolkitSubtask:
     def test_add_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
-            "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test1", actions=[ToolAction(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
         subtask2 = ActionsSubtask(
-            "test2", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test2", actions=[ToolAction(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
 
         Agent().add_task(task)
@@ -255,10 +270,10 @@ class TestToolkitSubtask:
     def test_find_subtask(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         subtask1 = ActionsSubtask(
-            "test1", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test1", actions=[ToolAction(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
         subtask2 = ActionsSubtask(
-            "test2", actions=[ActionsSubtask.Action(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
+            "test2", actions=[ToolAction(tag="foo", name="test", path="test", input={"values": {"f": "b"}})]
         )
 
         Agent().add_task(task)
@@ -277,7 +292,7 @@ class TestToolkitSubtask:
 
         assert task.find_tool(tool.name) == tool
 
-    def test_find_memory(self, query_engine):
+    def test_find_memory(self):
         m1 = defaults.text_task_memory("Memory1")
         m2 = defaults.text_task_memory("Memory2")
 
@@ -289,7 +304,7 @@ class TestToolkitSubtask:
         assert task.find_memory("Memory1") == m1
         assert task.find_memory("Memory2") == m2
 
-    def test_memory(self, query_engine):
+    def test_memory(self):
         tool1 = MockTool(
             name="Tool1",
             output_memory={"test": [defaults.text_task_memory("Memory1"), defaults.text_task_memory("Memory2")]},

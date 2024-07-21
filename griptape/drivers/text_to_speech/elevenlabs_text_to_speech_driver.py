@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from attrs import define, field, Factory
+from attrs import Factory, define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.drivers import BaseTextToSpeechDriver
@@ -25,7 +25,10 @@ class ElevenLabsTextToSpeechDriver(BaseTextToSpeechDriver):
 
     def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
         audio = self.client.generate(
-            text=". ".join(prompts), voice=self.voice, model=self.model, output_format=self.output_format
+            text=". ".join(prompts),
+            voice=self.voice,
+            model=self.model,
+            output_format=self.output_format,
         )
 
         content = b""

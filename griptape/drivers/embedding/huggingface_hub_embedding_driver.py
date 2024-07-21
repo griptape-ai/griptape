@@ -1,8 +1,11 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
-from griptape.utils import import_optional_dependency
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseEmbeddingDriver
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from huggingface_hub import InferenceClient
@@ -10,7 +13,8 @@ if TYPE_CHECKING:
 
 @define
 class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """Hugging Face Hub Embedding Driver.
+
     Attributes:
         api_token: Hugging Face Hub API token.
         model: Hugging Face Hub model name.
@@ -21,7 +25,8 @@ class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(
-                model=self.model, token=self.api_token
+                model=self.model,
+                token=self.api_token,
             ),
             takes_self=True,
         ),

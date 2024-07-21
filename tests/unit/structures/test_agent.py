@@ -1,15 +1,15 @@
 import pytest
-from griptape.memory.structure import ConversationMemory
+
+from griptape.engines import PromptSummaryEngine
 from griptape.memory import TaskMemory
+from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
-from griptape.tasks import PromptTask, BaseTask, ToolkitTask
-from griptape.engines import PromptSummaryEngine
-
+from griptape.tasks import BaseTask, PromptTask, ToolkitTask
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestAgent:
@@ -49,8 +49,8 @@ class TestAgent:
         with pytest.raises(ValueError):
             Agent(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
 
+        agent = Agent()
         with pytest.raises(ValueError):
-            agent = Agent()
             agent.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
     def test_with_task_memory(self):
@@ -80,9 +80,11 @@ class TestAgent:
         embedding_driver = MockEmbeddingDriver()
         agent = Agent(tools=[MockTool()], embedding_driver=embedding_driver)
 
-        artifact_storage = list(agent.task_memory.artifact_storages.values())[0]
-        assert isinstance(artifact_storage, TextArtifactStorage)
-        memory_embedding_driver = artifact_storage.query_engine.vector_store_driver.embedding_driver
+        storage = list(agent.task_memory.artifact_storages.values())[0]
+        assert isinstance(storage, TextArtifactStorage)
+        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
+            0
+        ].vector_store_driver.embedding_driver
 
         assert memory_embedding_driver == embedding_driver
 
@@ -147,49 +149,49 @@ class TestAgent:
 
         try:
             agent.add_tasks(first_task, second_task)
-            assert False
+            raise AssertionError()
         except ValueError:
             assert True
 
         try:
             agent + [first_task, second_task]
-            assert False
+            raise AssertionError()
         except ValueError:
             assert True
 
     def test_prompt_stack_without_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=None)
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=None, rules=[Rule("test")])
 
         task1 = PromptTask("test")
 
         agent.add_task(task1)
 
-        assert len(task1.prompt_stack.inputs) == 2
+        assert len(task1.prompt_stack.messages) == 2
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task1.prompt_stack.messages) == 3
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 3
+        assert len(task1.prompt_stack.messages) == 3
 
     def test_prompt_stack_with_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
+        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory(), rules=[Rule("test")])
 
         task1 = PromptTask("test")
 
         agent.add_task(task1)
 
-        assert len(task1.prompt_stack.inputs) == 2
+        assert len(task1.prompt_stack.messages) == 2
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 5
+        assert len(task1.prompt_stack.messages) == 5
 
         agent.run()
 
-        assert len(task1.prompt_stack.inputs) == 7
+        assert len(task1.prompt_stack.messages) == 7
 
     def test_run(self):
         task = PromptTask("test")
@@ -236,8 +238,11 @@ class TestAgent:
         storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
 
-        assert storage.query_engine.prompt_driver == prompt_driver
-        assert storage.query_engine.vector_store_driver.embedding_driver == embedding_driver
+        assert storage.rag_engine.response_stage.response_module.prompt_driver == prompt_driver
+        assert (
+            storage.rag_engine.retrieval_stage.retrieval_modules[0].vector_store_driver.embedding_driver
+            == embedding_driver
+        )
         assert isinstance(storage.summary_engine, PromptSummaryEngine)
         assert storage.summary_engine.prompt_driver == prompt_driver
         assert storage.csv_extraction_engine.prompt_driver == prompt_driver
@@ -262,3 +267,7 @@ class TestAgent:
         agent.run("hello")
 
         assert len(agent.finished_tasks) == 1
+
+    def test_fail_fast(self):
+        with pytest.raises(ValueError):
+            Agent(prompt_driver=MockPromptDriver(), fail_fast=True)

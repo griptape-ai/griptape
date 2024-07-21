@@ -1,13 +1,16 @@
 from __future__ import annotations
+
 import csv
 from io import StringIO
-from typing import Optional, Union, cast
+from typing import TYPE_CHECKING, Optional, Union, cast
 
 from attrs import define, field
 
 from griptape.artifacts import CsvRowArtifact, ErrorArtifact
-from griptape.drivers import BaseEmbeddingDriver
 from griptape.loaders import BaseLoader
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseEmbeddingDriver
 
 
 @define
@@ -40,8 +43,12 @@ class CsvLoader(BaseLoader):
         return artifacts
 
     def load_collection(
-        self, sources: list[bytes | str], *args, **kwargs
+        self,
+        sources: list[bytes | str],
+        *args,
+        **kwargs,
     ) -> dict[str, ErrorArtifact | list[CsvRowArtifact]]:
         return cast(
-            dict[str, Union[ErrorArtifact, list[CsvRowArtifact]]], super().load_collection(sources, *args, **kwargs)
+            dict[str, Union[ErrorArtifact, list[CsvRowArtifact]]],
+            super().load_collection(sources, *args, **kwargs),
         )

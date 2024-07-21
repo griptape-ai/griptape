@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 from typing import Optional
+
 from attrs import define
+
 from griptape.drivers import BaseVectorStoreDriver, MongoDbAtlasVectorStoreDriver
 
 
@@ -11,12 +14,13 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         offset: Optional[int] = None,
         **kwargs,
-    ) -> list[BaseVectorStoreDriver.QueryResult]:
+    ) -> list[BaseVectorStoreDriver.Entry]:
         """Queries the MongoDB collection for documents that match the provided query string.
 
         Results can be customized based on parameters like count, namespace, inclusion of vectors, offset, and index.
@@ -40,8 +44,8 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
                         "k": min(count * self.num_candidates_multiplier, self.MAX_NUM_CANDIDATES),
                     },
                     "returnStoredSource": True,
-                }
-            }
+                },
+            },
         )
 
         if namespace:
@@ -50,7 +54,7 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
         pipeline.append({"$project": {"similarityScore": {"$meta": "searchScore"}, "document": "$$ROOT"}})
 
         return [
-            BaseVectorStoreDriver.QueryResult(
+            BaseVectorStoreDriver.Entry(
                 id=str(doc["_id"]),
                 vector=doc[self.vector_path] if include_vectors else [],
                 score=doc["similarityScore"],

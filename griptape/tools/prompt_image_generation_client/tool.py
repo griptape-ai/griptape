@@ -1,13 +1,17 @@
 from __future__ import annotations
 
-from attrs import define, field
-from schema import Schema, Literal
+from typing import TYPE_CHECKING
 
-from griptape.artifacts import ErrorArtifact, ImageArtifact
-from griptape.engines import PromptImageGenerationEngine
+from attrs import define, field
+from schema import Literal, Schema
+
+from griptape.mixins import BlobArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.mixins import BlobArtifactFileOutputMixin
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ErrorArtifact, ImageArtifact
+    from griptape.engines import PromptImageGenerationEngine
 
 
 @define
@@ -31,19 +35,14 @@ class PromptImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
                         "prompts",
                         description="A detailed list of features and descriptions to include in the generated image.",
                     ): list[str],
-                    Literal(
-                        "negative_prompts",
-                        description="A detailed list of features and descriptions to avoid in the generated image.",
-                    ): list[str],
-                }
+                },
             ),
-        }
+        },
     )
     def generate_image(self, params: dict[str, dict[str, list[str]]]) -> ImageArtifact | ErrorArtifact:
         prompts = params["values"]["prompts"]
-        negative_prompts = params["values"]["negative_prompts"]
 
-        output_artifact = self.engine.run(prompts=prompts, negative_prompts=negative_prompts)
+        output_artifact = self.engine.run(prompts=prompts)
 
         if self.output_dir or self.output_file:
             self._write_to_file(output_artifact)

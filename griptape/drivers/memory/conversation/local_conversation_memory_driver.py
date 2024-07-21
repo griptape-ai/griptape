@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import os
-from attrs import define, field
 from typing import Optional
+
+from attrs import define, field
+
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.memory.structure import BaseConversationMemory
 

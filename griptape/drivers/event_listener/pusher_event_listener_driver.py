@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseEventListenerDriver
 from griptape.utils import import_optional_dependency
 
@@ -20,7 +22,11 @@ class PusherEventListenerDriver(BaseEventListenerDriver):
     pusher_client: Pusher = field(
         default=Factory(
             lambda self: import_optional_dependency("pusher").Pusher(
-                app_id=self.app_id, key=self.key, secret=self.secret, cluster=self.cluster, ssl=True
+                app_id=self.app_id,
+                key=self.key,
+                secret=self.secret,
+                cluster=self.cluster,
+                ssl=True,
             ),
             takes_self=True,
         ),

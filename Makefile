@@ -7,7 +7,7 @@ version: ## Bump version and push to release branch.
 
 .PHONY: publish
 publish: ## Push git tag and publish version to PyPI.
-	@git tag v$$(poetry version -s)
+	@git tag $$(poetry version -s)
 	@git push --tags
 	@poetry build
 	@poetry publish
@@ -16,8 +16,8 @@ publish: ## Push git tag and publish version to PyPI.
 install: ## Install all dependencies.
 	@poetry install --with dev --with test --with docs --all-extras
 
-.PHONY: test
-test: test/unit test/integration ## Run all tests.
+.PHONY: test  ## Run all tests.
+test: test/unit test/integration
 
 .PHONY: test/unit
 test/unit: ## Run unit tests.
@@ -33,26 +33,34 @@ test/integration:
 
 .PHONY: lint
 lint: ## Lint project.
-	@poetry run ruff check --fix griptape/
+	@poetry run ruff check --fix
 
 .PHONY: format
 format: ## Format project.
-	@poetry run ruff format .
+	@poetry run ruff format
 
 .PHONY: check
-check: check/format check/lint check/types ## Run all checks.
+check: check/format check/lint check/types check/spell ## Run all checks.
 
 .PHONY: check/format
 check/format:
-	@poetry run ruff format --check griptape/
+	@poetry run ruff format --check
 
 .PHONY: check/lint
 check/lint:
-	@poetry run ruff check griptape/
+	@poetry run ruff check
 
 .PHONY: check/types
 check/types:
 	@poetry run pyright griptape/
+	
+.PHONY: check/spell
+check/spell:
+	@poetry run typos 
+	
+.PHONY: docs
+docs: ## Build documentation.
+	@poetry run mkdocs build
 
 .DEFAULT_GOAL := help
 .PHONY: help

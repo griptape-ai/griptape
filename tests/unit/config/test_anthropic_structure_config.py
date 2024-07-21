@@ -1,14 +1,15 @@
-from pytest import fixture
+import pytest
+
 from griptape.config import AnthropicStructureConfig
 
 
 class TestAnthropicStructureConfig:
-    @fixture(autouse=True)
-    def mock_anthropic(self, mocker):
+    @pytest.fixture(autouse=True)
+    def _mock_anthropic(self, mocker):
         mocker.patch("anthropic.Anthropic")
         mocker.patch("voyageai.Client")
 
-    @fixture
+    @pytest.fixture()
     def config(self):
         return AnthropicStructureConfig()
 
@@ -20,14 +21,15 @@ class TestAnthropicStructureConfig:
                 "temperature": 0.1,
                 "max_tokens": 1000,
                 "stream": False,
-                "model": "claude-3-opus-20240229",
+                "model": "claude-3-5-sonnet-20240620",
                 "top_p": 0.999,
                 "top_k": 250,
+                "use_native_tools": True,
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {
                 "type": "AnthropicImageQueryDriver",
-                "model": "claude-3-opus-20240229",
+                "model": "claude-3-5-sonnet-20240620",
                 "max_tokens": 256,
             },
             "embedding_driver": {

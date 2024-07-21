@@ -14,7 +14,7 @@ agent = Agent(
     config=StructureConfig(
         prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.3),
     ),
-    input_template="You will be provided with a tweet, and your task is to classify its sentiment as positive, neutral, or negative. Tweet: {{ args[0] }}",
+    input="You will be provided with a tweet, and your task is to classify its sentiment as positive, neutral, or negative. Tweet: {{ args[0] }}",
     rules=[
         Rule(
             value="Output only the sentiment."
@@ -28,23 +28,23 @@ agent.run("I loved the new Batman movie!")
 Or use them independently:
 
 ```python
-from griptape.utils import PromptStack
+from griptape.common import PromptStack
 from griptape.drivers import OpenAiChatPromptDriver
 
 stack = PromptStack()
 
-stack.add_system_input(
+stack.add_system_message(
     "You will be provided with Python code, and your task is to calculate its time complexity."
 )
-stack.add_user_input(
-"""
-def foo(n, k):
-    accum = 0
-    for i in range(n):
-        for l in range(k):
-            accum += i
-    return accum
-"""
+stack.add_user_message(
+    """
+    def foo(n, k):
+        accum = 0
+        for i in range(n):
+            for l in range(k):
+                accum += i
+        return accum
+    """
 )
 
 result = OpenAiChatPromptDriver(model="gpt-3.5-turbo-16k", temperature=0).run(stack)
@@ -56,12 +56,10 @@ print(result.value)
 
 Griptape offers the following Prompt Drivers for interacting with LLMs.
 
-!!! warning
-    When overriding a default Prompt Driver, take care to ensure you've updated the Structure's configured Embedding Driver as well. If Task Memory isn't needed, you can avoid compatability issues by setting `task_memory=None` to disable Task Memory in your Structure.
-
 ### OpenAI Chat
 
 The [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) connects to the [OpenAI Chat](https://platform.openai.com/docs/guides/chat) API.
+This driver uses [OpenAi function calling](https://platform.openai.com/docs/guides/function-calling) when using [Tools](../tools/index.md).
 
 ```python
 import os
@@ -80,7 +78,7 @@ agent = Agent(
             seed=42,
         )
     ),
-    input_template="You will be provided with a description of a mood, and your task is to generate the CSS code for a color that matches it. Description: {{ args[0] }}",
+    input="You will be provided with a description of a mood, and your task is to generate the CSS code for a color that matches it. Description: {{ args[0] }}",
     rules=[
         Rule(
             value='Write your output in json with a single key called "css_code".'
@@ -94,9 +92,37 @@ agent.run("Blue sky at dusk.")
 !!! info
     `response_format` and `seed` are unique to the OpenAI Chat Prompt Driver and Azure OpenAi Chat Prompt Driver.
 
+### OpenAI Compatible
+
+Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) provide OpenAI-compatible APIs. You can use the [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) to interact with these services.
+Simply set the `base_url` to the service's API endpoint and the `model` to the model name. If the service requires an API key, you can set it in the `api_key` field.
+
+```python title="PYTEST_IGNORE"
+from griptape.structures import Agent
+from griptape.drivers import OpenAiChatPromptDriver
+from griptape.rules import Rule
+from griptape.config import StructureConfig
+
+agent = Agent(
+    config=StructureConfig(
+        prompt_driver=OpenAiChatPromptDriver(
+            base_url="http://127.0.0.1:1234/v1",
+            model="lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF", stream=True
+        )
+    ),
+    rules=[Rule(value="You are a helpful coding assistant.")],
+)
+
+agent.run("How do I init and update a git submodule?")
+```
+
+!!! tip
+    Make sure to include `v1` at the end of the `base_url` to match the OpenAI API endpoint.
+
 ### Azure OpenAI Chat
 
 The [AzureOpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/azure_openai_chat_prompt_driver.md) connects to Azure OpenAI [Chat Completion](https://learn.microsoft.com/en-us/azure/cognitive-services/openai/reference) APIs.
+This driver uses [Azure OpenAi function calling](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/function-calling) when using [Tools](../tools/index.md).
 
 ```python
 import os
@@ -109,8 +135,8 @@ agent = Agent(
     config=StructureConfig(
         prompt_driver=AzureOpenAiChatPromptDriver(
             api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
-            model="gpt-3.5-turbo-16k",
-            azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_16K_DEPLOYMENT_ID"],
+            model="gpt-3.5-turbo",
+            azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_DEPLOYMENT_ID"],
             azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
         )
     ),
@@ -127,7 +153,8 @@ agent.run("Artificial intelligence is a technology with great promise.")
 
 ### Cohere
 
-The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_driver.md) connects to the Cohere [Generate](https://docs.cohere.ai/reference/generate) API.
+The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_driver.md) connects to the Cohere [Chat](https://docs.cohere.com/docs/chat-api) API.
+This driver uses [Cohere tool use](https://docs.cohere.com/docs/tools) when using [Tools](../tools/index.md).
 
 !!! info
     This driver requires the `drivers-prompt-cohere` [extra](../index.md#extras).
@@ -141,7 +168,7 @@ from griptape.config import StructureConfig
 agent = Agent(
     config=StructureConfig(
         prompt_driver=CoherePromptDriver(
-            model="command",
+            model="command-r",
             api_key=os.environ['COHERE_API_KEY'],
         )
     )
@@ -156,6 +183,7 @@ agent.run('What is the sentiment of this review? Review: "I really enjoyed this 
     This driver requires the `drivers-prompt-anthropic` [extra](../index.md#extras).
 
 The [AnthropicPromptDriver](../../reference/griptape/drivers/prompt/anthropic_prompt_driver.md) connects to the Anthropic [Messages](https://docs.anthropic.com/claude/reference/messages_post) API.
+This driver uses [Anthropic tool use](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) when using [Tools](../tools/index.md).
 
 ```python
 import os
@@ -181,6 +209,7 @@ agent.run('Where is the best place to see cherry blossums in Japan?')
     This driver requires the `drivers-prompt-google` [extra](../index.md#extras).
 
 The [GooglePromptDriver](../../reference/griptape/drivers/prompt/google_prompt_driver.md) connects to the [Google Generative AI](https://ai.google.dev/tutorials/python_quickstart#generate_text_from_text_inputs) API.
+This driver uses [Gemini function calling](https://ai.google.dev/gemini-api/docs/function-calling) when using [Tools](../tools/index.md).
 
 ```python
 import os
@@ -206,6 +235,7 @@ agent.run('Briefly explain how a computer works to a young child.')
     This driver requires the `drivers-prompt-amazon-bedrock` [extra](../index.md#extras).
 
 The [AmazonBedrockPromptDriver](../../reference/griptape/drivers/prompt/amazon_bedrock_prompt_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/)'s [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
+This driver uses [Bedrock tool use](https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html) when using [Tools](../tools/index.md).
 
 All models supported by the Converse API are available for use with this driver.
 
@@ -270,7 +300,6 @@ agent.run("What color is the sky at different times of the day?")
     This driver requires the `drivers-prompt-huggingface` [extra](../index.md#extras).
 
 The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_hub_prompt_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api).
-
 
 !!! warning
     Not all models featured on the Hugging Face Hub are supported by this driver. Models that are not supported by

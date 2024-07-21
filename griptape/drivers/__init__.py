@@ -27,6 +27,7 @@ from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingD
 from .embedding.google_embedding_driver import GoogleEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
 from .embedding.cohere_embedding_driver import CohereEmbeddingDriver
+from .embedding.ollama_embedding_driver import OllamaEmbeddingDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -39,6 +40,8 @@ from .vector.amazon_opensearch_vector_store_driver import AmazonOpenSearchVector
 from .vector.pgvector_vector_store_driver import PgVectorVectorStoreDriver
 from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDriver
 from .vector.dummy_vector_store_driver import DummyVectorStoreDriver
+from .vector.qdrant_vector_store_driver import QdrantVectorStoreDriver
+from .vector.griptape_cloud_knowledge_base_vector_store_driver import GriptapeCloudKnowledgeBaseVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -73,6 +76,11 @@ from .image_query.amazon_bedrock_image_query_driver import AmazonBedrockImageQue
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
 from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
 from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDriver
+from .web_scraper.proxy_web_scraper_driver import ProxyWebScraperDriver
+
+from .web_search.base_web_search_driver import BaseWebSearchDriver
+from .web_search.google_web_search_driver import GoogleWebSearchDriver
+from .web_search.duck_duck_go_web_search_driver import DuckDuckGoWebSearchDriver
 
 from .event_listener.base_event_listener_driver import BaseEventListenerDriver
 from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
@@ -84,6 +92,9 @@ from .event_listener.pusher_event_listener_driver import PusherEventListenerDriv
 from .file_manager.base_file_manager_driver import BaseFileManagerDriver
 from .file_manager.local_file_manager_driver import LocalFileManagerDriver
 from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDriver
+
+from .rerank.base_rerank_driver import BaseRerankDriver
+from .rerank.cohere_rerank_driver import CohereRerankDriver
 
 from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
 from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
@@ -97,6 +108,12 @@ from .structure_run.local_structure_run_driver import LocalStructureRunDriver
 from .audio_transcription.base_audio_transcription_driver import BaseAudioTranscriptionDriver
 from .audio_transcription.dummy_audio_transcription_driver import DummyAudioTranscriptionDriver
 from .audio_transcription.openai_audio_transcription_driver import OpenAiAudioTranscriptionDriver
+
+from .observability.base_observability_driver import BaseObservabilityDriver
+from .observability.no_op_observability_driver import NoOpObservabilityDriver
+from .observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
+from .observability.griptape_cloud_observability_driver import GriptapeCloudObservabilityDriver
+from .observability.datadog_observability_driver import DatadogObservabilityDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -126,6 +143,7 @@ __all__ = [
     "GoogleEmbeddingDriver",
     "DummyEmbeddingDriver",
     "CohereEmbeddingDriver",
+    "OllamaEmbeddingDriver",
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
@@ -136,7 +154,9 @@ __all__ = [
     "OpenSearchVectorStoreDriver",
     "AmazonOpenSearchVectorStoreDriver",
     "PgVectorVectorStoreDriver",
+    "QdrantVectorStoreDriver",
     "DummyVectorStoreDriver",
+    "GriptapeCloudKnowledgeBaseVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
@@ -163,6 +183,10 @@ __all__ = [
     "BaseWebScraperDriver",
     "TrafilaturaWebScraperDriver",
     "MarkdownifyWebScraperDriver",
+    "ProxyWebScraperDriver",
+    "BaseWebSearchDriver",
+    "GoogleWebSearchDriver",
+    "DuckDuckGoWebSearchDriver",
     "BaseEventListenerDriver",
     "AmazonSqsEventListenerDriver",
     "WebhookEventListenerDriver",
@@ -172,6 +196,8 @@ __all__ = [
     "BaseFileManagerDriver",
     "LocalFileManagerDriver",
     "AmazonS3FileManagerDriver",
+    "BaseRerankDriver",
+    "CohereRerankDriver",
     "BaseTextToSpeechDriver",
     "DummyTextToSpeechDriver",
     "ElevenLabsTextToSpeechDriver",
@@ -182,4 +208,9 @@ __all__ = [
     "BaseAudioTranscriptionDriver",
     "DummyAudioTranscriptionDriver",
     "OpenAiAudioTranscriptionDriver",
+    "BaseObservabilityDriver",
+    "NoOpObservabilityDriver",
+    "OpenTelemetryObservabilityDriver",
+    "GriptapeCloudObservabilityDriver",
+    "DatadogObservabilityDriver",
 ]

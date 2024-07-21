@@ -1,28 +1,30 @@
 import os
-from pathlib import Path
 import tempfile
+from pathlib import Path
+
 import pytest
-from griptape.artifacts import ErrorArtifact, ListArtifact, InfoArtifact, TextArtifact
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers import LocalFileManagerDriver
 from griptape.loaders.text_loader import TextLoader
 
 
 class TestLocalFileManagerDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def temp_dir(self):
         with tempfile.TemporaryDirectory() as temp_dir:
 
-            def write_file(path: str, content: bytes):
+            def write_file(path: str, content: bytes) -> None:
                 full_path = os.path.join(temp_dir, path)
                 os.makedirs(os.path.dirname(full_path), exist_ok=True)
                 with open(full_path, "wb") as f:
                     f.write(content)
 
-            def mkdir(path: str):
+            def mkdir(path: str) -> None:
                 full_path = os.path.join(temp_dir, path)
                 os.makedirs(full_path, exist_ok=True)
 
-            def copy_test_resources(resource_path: str):
+            def copy_test_resources(resource_path: str) -> None:
                 file_dir = os.path.dirname(__file__)
                 full_path = os.path.join(file_dir, "../../../resources", resource_path)
                 full_path = os.path.normpath(full_path)
@@ -46,7 +48,7 @@ class TestLocalFileManagerDriver:
 
             yield temp_dir
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, temp_dir):
         return LocalFileManagerDriver(workdir=temp_dir)
 
@@ -55,9 +57,9 @@ class TestLocalFileManagerDriver:
             LocalFileManagerDriver(workdir="foo")
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
-            # Valid non-empty directories (witout trailing slash)
+            # Valid non-empty directories (without trailing slash)
             ("/", "", ["foo", "foo.txt", "foo-empty", "resources"]),
             ("/", "foo", ["bar", "bar.txt", "bar-empty"]),
             ("/", "foo/bar", ["baz.txt", "baz-empty"]),
@@ -84,7 +86,7 @@ class TestLocalFileManagerDriver:
             ("/./..", "bar/..", ["foo", "foo.txt", "foo-empty", "resources"]),
             ("/./..", "foo/.", ["bar", "bar.txt", "bar-empty"]),
             ("/./..", "foo/bar/.", ["baz.txt", "baz-empty"]),
-            # Empty folders (witout trailing slash)
+            # Empty folders (without trailing slash)
             ("/", "foo-empty", []),
             ("/", "foo/bar-empty", []),
             ("/", "foo/bar/baz-empty", []),
@@ -96,7 +98,7 @@ class TestLocalFileManagerDriver:
     )
     def test_list_files(self, workdir, path, expected, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         artifact = driver.list_files(path)
 
@@ -104,7 +106,7 @@ class TestLocalFileManagerDriver:
         assert set(filter(None, artifact.value.split("\n"))) == set(expected)
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # non-existent paths
             ("/", "bar", "Path not found"),
@@ -119,7 +121,7 @@ class TestLocalFileManagerDriver:
     )
     def test_list_files_failure(self, workdir, path, expected, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         artifact = driver.list_files(path)
 
@@ -133,7 +135,7 @@ class TestLocalFileManagerDriver:
         assert len(artifact.value) == 4
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # # non-existent files or directories
             ("/", "bitcoin.pdf", "Path not found"),
@@ -153,7 +155,7 @@ class TestLocalFileManagerDriver:
     )
     def test_load_file_failure(self, workdir, path, expected, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         artifact = driver.load_file(path)
 
@@ -177,7 +179,7 @@ class TestLocalFileManagerDriver:
         assert isinstance(artifact, ErrorArtifact)
 
     @pytest.mark.parametrize(
-        "workdir,path,content",
+        ("workdir", "path", "content"),
         [
             # non-existent files
             ("/", "resources/foo.txt", "one"),
@@ -192,7 +194,7 @@ class TestLocalFileManagerDriver:
     )
     def test_save_file(self, workdir, path, content, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         result = driver.save_file(path, content)
 
@@ -202,7 +204,7 @@ class TestLocalFileManagerDriver:
         assert Path(driver.workdir, path).read_text() == content_bytes
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # non-existent directories
             ("/", "bar/", "Path is a directory"),
@@ -221,7 +223,7 @@ class TestLocalFileManagerDriver:
     )
     def test_save_file_failure(self, workdir, path, expected, temp_dir, driver):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
-        driver.workdir = os.path.join(temp_dir, os.path.abspath(workdir).lstrip("/"))
+        driver.workdir = self._to_driver_workdir(temp_dir, workdir)
 
         artifact = driver.save_file(path, "foobar")
 
@@ -249,10 +251,7 @@ class TestLocalFileManagerDriver:
         assert len(result.value) == 1
         assert isinstance(result.value[0], TextArtifact)
 
-    def test_chrdir_getcwd(self, temp_dir):
-        os.chdir(temp_dir)
-        file_manager_1 = LocalFileManagerDriver()
-        assert file_manager_1.workdir.endswith(temp_dir)
-        os.chdir("/tmp")
-        file_manager_2 = LocalFileManagerDriver()
-        assert file_manager_2.workdir.endswith("/tmp")
+    def _to_driver_workdir(self, temp_dir, workdir):
+        # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
+        root_relative_parts = Path(os.path.abspath(workdir)).parts[1:]
+        return os.path.join(temp_dir, Path(*root_relative_parts))

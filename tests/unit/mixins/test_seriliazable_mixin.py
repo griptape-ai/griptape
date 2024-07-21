@@ -1,11 +1,13 @@
 import json
+
 import pytest
-from griptape.drivers import OpenAiChatPromptDriver
-from griptape.memory.structure import ConversationMemory
-from griptape.memory import TaskMemory
-from tests.mocks.mock_serializable import MockSerializable
-from griptape.schemas import BaseSchema
+
 from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.drivers import OpenAiChatPromptDriver
+from griptape.memory import TaskMemory
+from griptape.memory.structure import ConversationMemory
+from griptape.schemas import BaseSchema
+from tests.mocks.mock_serializable import MockSerializable
 
 
 class TestSerializableMixin:
@@ -23,16 +25,22 @@ class TestSerializableMixin:
 
     def test_str(self):
         assert str(MockSerializable()) == json.dumps(
-            {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None}
+            {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None, "nested": None}
         )
 
     def test_to_json(self):
         assert MockSerializable().to_json() == json.dumps(
-            {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None}
+            {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None, "nested": None}
         )
 
     def test_to_dict(self):
-        assert MockSerializable().to_dict() == {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None}
+        assert MockSerializable().to_dict() == {
+            "type": "MockSerializable",
+            "foo": "bar",
+            "bar": None,
+            "baz": None,
+            "nested": None,
+        }
 
     def test_import_class_rec(self):
         assert (
@@ -47,3 +55,8 @@ class TestSerializableMixin:
 
         with pytest.raises(ValueError):
             MockSerializable._import_cls_rec("griptape.memory.task", "ConversationMemory")
+
+    def test_nested_optional_serializable(self):
+        assert MockSerializable(nested=None).to_dict().get("nested") is None
+
+        assert MockSerializable(nested=MockSerializable.NestedMockSerializable()).to_dict()["nested"]["foo"] == "bar"

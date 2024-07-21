@@ -1,24 +1,27 @@
 from __future__ import annotations
-import base64
 
-from attrs import define, field
+import base64
+import hashlib
 from typing import TYPE_CHECKING
 
+from attrs import define, field
+
 if TYPE_CHECKING:
-    from griptape.tasks import BaseTask
     from griptape.structures import Structure
+    from griptape.tasks import BaseTask
 
 
 @define
 class StructureVisualizer:
-    """Utility class to visualize a Structure structure"""
+    """Utility class to visualize a Structure structure."""
 
     structure: Structure = field()
     header: str = field(default="graph TD;", kw_only=True)
 
     def to_url(self) -> str:
-        """Generates a url that renders the Workflow structure as a Mermaid flowchart
-        Reference: https://mermaid.js.org/ecosystem/tutorials#jupyter-integration-with-mermaid-js
+        """Generates a url that renders the Workflow structure as a Mermaid flowchart.
+
+        Reference: https://mermaid.js.org/ecosystem/tutorials#jupyter-integration-with-mermaid-js.
 
         Returns:
             str: URL to the rendered image
@@ -32,11 +35,14 @@ class StructureVisualizer:
         base64_string = base64.b64encode(graph_bytes).decode("utf-8")
 
         url = f"https://mermaid.ink/svg/{base64_string}"
-
         return url
 
     def __render_task(self, task: BaseTask) -> str:
         if task.children:
-            return f'{task.id}--> {" & ".join([child.id for child in task.children])};'
+            children = " & ".join([f"{self.__get_id(child.id)}({child.id})" for child in task.children])
+            return f"{self.__get_id(task.id)}({task.id})--> {children};"
         else:
-            return f"{task.id};"
+            return f"{self.__get_id(task.id)}({task.id});"
+
+    def __get_id(self, string: str) -> str:
+        return hashlib.md5(string.encode()).hexdigest()[:8]

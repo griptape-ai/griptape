@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.artifacts import ImageArtifact
-from griptape.events import StartImageGenerationEvent, FinishImageGenerationEvent
+from griptape.events import FinishImageGenerationEvent, StartImageGenerationEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact
     from griptape.structures import Structure
 
 
@@ -39,7 +39,10 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
             raise Exception("Failed to run text to image generation")
 
     def run_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         for attempt in self.retrying():
             with attempt:
@@ -93,7 +96,10 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
 
     @abstractmethod
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact: ...
 
     @abstractmethod

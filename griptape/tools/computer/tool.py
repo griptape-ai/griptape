@@ -1,20 +1,22 @@
 from __future__ import annotations
+
 import logging
 import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import Optional, TYPE_CHECKING
-from attrs import define, field, Factory
-from docker.models.containers import Container
-from schema import Schema, Literal
-import stringcase
+from typing import TYPE_CHECKING, Optional
+
 import docker
+import stringcase
+from attrs import Attribute, Factory, define, field
 from docker.errors import NotFound
+from docker.models.containers import Container
+from schema import Literal, Schema
+
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-
 
 if TYPE_CHECKING:
     from docker import DockerClient
@@ -34,7 +36,8 @@ class Computer(BaseTool):
         kw_only=True,
     )
     docker_client: DockerClient = field(
-        default=Factory(lambda self: self.default_docker_client(), takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_docker_client(), takes_self=True),
+        kw_only=True,
     )
 
     _tempdir: Optional[tempfile.TemporaryDirectory] = field(default=None, kw_only=True)
@@ -48,8 +51,8 @@ class Computer(BaseTool):
             self._tempdir = tempfile.TemporaryDirectory()
             self.local_workdir = self._tempdir.name
 
-    @docker_client.validator  # pyright: ignore
-    def validate_docker_client(self, _, docker_client: DockerClient) -> None:
+    @docker_client.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_docker_client(self, _: Attribute, docker_client: DockerClient) -> None:
         if not docker_client:
             raise ValueError("Docker client can't be initialized: make sure the Docker daemon is running")
 
@@ -69,11 +72,12 @@ class Computer(BaseTool):
                 {
                     Literal("code", description="Python code to execute"): str,
                     Literal(
-                        "filename", description="name of the file to put the Python code in before executing it"
+                        "filename",
+                        description="name of the file to put the Python code in before executing it",
                     ): str,
-                }
+                },
             ),
-        }
+        },
     )
     def execute_code(self, params: dict) -> BaseArtifact:
         code = params["values"]["code"]
@@ -85,7 +89,7 @@ class Computer(BaseTool):
         config={
             "description": "Can be used to execute shell commands in Linux",
             "schema": Schema({Literal("command", description="shell command to execute"): str}),
-        }
+        },
     )
     def execute_command(self, params: dict) -> BaseArtifact:
         command = params["values"]["command"]

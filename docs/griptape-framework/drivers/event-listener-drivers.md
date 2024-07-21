@@ -50,9 +50,9 @@ from griptape.drivers import GriptapeCloudEventListenerDriver
 from griptape.events import FinishStructureRunEvent
 from griptape.artifacts import TextArtifact
 
-event_driver = GriptapeCloudEventListenerDriver(
-    api_key=os.environ["GRIPTAPE_CLOUD_API_KEY"]
-)
+# By default, GriptapeCloudEventListenerDriver uses the api key provided
+# in the GT_CLOUD_API_KEY environment variable.
+event_driver = GriptapeCloudEventListenerDriver()  
 
 done_event = FinishStructureRunEvent(
     output_task_input=TextArtifact("Just started!"),
@@ -173,9 +173,9 @@ agent = Agent(
     event_listeners=[
         EventListener(
             event_types=[FinishStructureRunEvent],
-            driver=GriptapeCloudEventListenerDriver(
-                api_key=os.environ["GRIPTAPE_CLOUD_API_KEY"],
-            ),
+            # By default, GriptapeCloudEventListenerDriver uses the api key provided
+            # in the GT_CLOUD_API_KEY environment variable.
+            driver=GriptapeCloudEventListenerDriver(),
         ),
     ],
 )

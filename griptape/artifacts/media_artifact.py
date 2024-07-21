@@ -1,19 +1,19 @@
 from __future__ import annotations
 
+import base64
+import random
 import string
 import time
-import random
 from typing import Optional
 
 from attrs import define, field
+
 from griptape.artifacts import BlobArtifact
-import base64
 
 
 @define
 class MediaArtifact(BlobArtifact):
-    """MediaArtifact is a type of BlobArtifact that represents media (image, audio, video, etc.)
-    and can be extended to support a specific media type.
+    """MediaArtifact is a type of BlobArtifact that represents media (image, audio, video, etc.) and can be extended to support a specific media type.
 
     Attributes:
         value: Raw bytes representing media data.
@@ -29,7 +29,7 @@ class MediaArtifact(BlobArtifact):
     model: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     prompt: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
 
-    def __attrs_post_init__(self):
+    def __attrs_post_init__(self) -> None:
         # Generating the name string requires attributes set by child classes.
         # This waits until all attributes are available before generating a name.
         if self.name == self.id:

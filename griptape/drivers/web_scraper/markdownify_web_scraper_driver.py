@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import re
-from typing import Optional
-from attrs import define, field, Factory
+from typing import Any, Optional
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseWebScraperDriver
 from griptape.utils import import_optional_dependency
@@ -27,7 +31,8 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
 
     include_links: bool = field(default=True, kw_only=True)
     exclude_tags: list[str] = field(
-        default=Factory(lambda self: self.DEFAULT_EXCLUDE_TAGS, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.DEFAULT_EXCLUDE_TAGS, takes_self=True),
+        kw_only=True,
     )
     exclude_classes: list[str] = field(default=Factory(list), kw_only=True)
     exclude_ids: list[str] = field(default=Factory(list), kw_only=True)
@@ -35,64 +40,63 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
 
     def scrape_url(self, url: str) -> TextArtifact:
         sync_playwright = import_optional_dependency("playwright.sync_api").sync_playwright
-        BeautifulSoup = import_optional_dependency("bs4").BeautifulSoup
-        MarkdownConverter = import_optional_dependency("markdownify").MarkdownConverter
+        bs4 = import_optional_dependency("bs4")
+        markdownify = import_optional_dependency("markdownify")
 
         include_links = self.include_links
 
         # Custom MarkdownConverter to optionally linked urls. If include_links is False only
         # the text of the link is returned.
-        class OptionalLinksMarkdownConverter(MarkdownConverter):
-            def convert_a(self, el, text, convert_as_inline):
+        class OptionalLinksMarkdownConverter(markdownify.MarkdownConverter):
+            def convert_a(self, el: Any, text: str, convert_as_inline: Any) -> str:
                 if include_links:
                     return super().convert_a(el, text, convert_as_inline)
                 return text
 
-        with sync_playwright() as p:
-            with p.chromium.launch(headless=True) as browser:
-                page = browser.new_page()
+        with sync_playwright() as p, p.chromium.launch(headless=True) as browser:
+            page = browser.new_page()
 
-                def skip_loading_images(route):
-                    if route.request.resource_type == "image":
-                        return route.abort()
-                    route.continue_()
+            def skip_loading_images(route: Any) -> Any:
+                if route.request.resource_type == "image":
+                    return route.abort()
+                route.continue_()
 
-                page.route("**/*", skip_loading_images)
+            page.route("**/*", skip_loading_images)
 
-                page.goto(url)
+            page.goto(url)
 
-                # Some websites require a delay before the content is fully loaded
-                # even after the browser has emitted "load" event.
-                if self.timeout:
-                    page.wait_for_timeout(self.timeout)
+            # Some websites require a delay before the content is fully loaded
+            # even after the browser has emitted "load" event.
+            if self.timeout:
+                page.wait_for_timeout(self.timeout)
 
-                content = page.content()
+            content = page.content()
 
-                if not content:
-                    raise Exception("can't access URL")
+            if not content:
+                raise Exception("can't access URL")
 
-                soup = BeautifulSoup(content, "html.parser")
+            soup = bs4.BeautifulSoup(content, "html.parser")
 
-                # Remove unwanted elements
-                exclude_selector = ",".join(
-                    self.exclude_tags + [f".{c}" for c in self.exclude_classes] + [f"#{i}" for i in self.exclude_ids]
-                )
-                if exclude_selector:
-                    for s in soup.select(exclude_selector):
-                        s.extract()
+            # Remove unwanted elements
+            exclude_selector = ",".join(
+                self.exclude_tags + [f".{c}" for c in self.exclude_classes] + [f"#{i}" for i in self.exclude_ids],
+            )
+            if exclude_selector:
+                for s in soup.select(exclude_selector):
+                    s.extract()
 
-                text = OptionalLinksMarkdownConverter().convert_soup(soup)
+            text = OptionalLinksMarkdownConverter().convert_soup(soup)
 
-                # Remove leading and trailing whitespace from the entire text
-                text = text.strip()
+            # Remove leading and trailing whitespace from the entire text
+            text = text.strip()
 
-                # Remove trailing whitespace from each line
-                text = re.sub(r"[ \t]+$", "", text, flags=re.MULTILINE)
+            # Remove trailing whitespace from each line
+            text = re.sub(r"[ \t]+$", "", text, flags=re.MULTILINE)
 
-                # Indent using 2 spaces instead of tabs
-                text = re.sub(r"(\n?\s*?)\t", r"\1  ", text)
+            # Indent using 2 spaces instead of tabs
+            text = re.sub(r"(\n?\s*?)\t", r"\1  ", text)
 
-                # Remove triple+ newlines (keep double newlines for paragraphs)
-                text = re.sub(r"\n\n+", "\n\n", text)
+            # Remove triple+ newlines (keep double newlines for paragraphs)
+            text = re.sub(r"\n\n+", "\n\n", text)
 
-                return TextArtifact(text)
+            return TextArtifact(text)

@@ -16,7 +16,7 @@ from griptape.drivers import (
 @define
 class AnthropicStructureConfig(StructureConfig):
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: AnthropicPromptDriver(model="claude-3-opus-20240229")),
+        default=Factory(lambda: AnthropicPromptDriver(model="claude-3-5-sonnet-20240620")),
         metadata={"serializable": True},
         kw_only=True,
     )
@@ -27,13 +27,13 @@ class AnthropicStructureConfig(StructureConfig):
     )
     vector_store_driver: BaseVectorStoreDriver = field(
         default=Factory(
-            lambda: LocalVectorStoreDriver(embedding_driver=VoyageAiEmbeddingDriver(model="voyage-large-2"))
+            lambda: LocalVectorStoreDriver(embedding_driver=VoyageAiEmbeddingDriver(model="voyage-large-2")),
         ),
         kw_only=True,
         metadata={"serializable": True},
     )
     image_query_driver: BaseImageQueryDriver = field(
-        default=Factory(lambda: AnthropicImageQueryDriver(model="claude-3-opus-20240229")),
+        default=Factory(lambda: AnthropicImageQueryDriver(model="claude-3-5-sonnet-20240620")),
         kw_only=True,
         metadata={"serializable": True},
     )

@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from abc import abstractmethod, ABC
-from typing import Optional, TYPE_CHECKING
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact, ImageArtifact
-from griptape.events import StartImageQueryEvent, FinishImageQueryEvent
+from griptape.events import FinishImageQueryEvent, StartImageQueryEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact, TextArtifact
     from griptape.structures import Structure
 
 
@@ -21,7 +21,7 @@ class BaseImageQueryDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def before_run(self, query: str, images: list[ImageArtifact]) -> None:
         if self.structure:
             self.structure.publish_event(
-                StartImageQueryEvent(query=query, images_info=[image.to_text() for image in images])
+                StartImageQueryEvent(query=query, images_info=[image.to_text() for image in images]),
             )
 
     def after_run(self, result: str) -> None:
