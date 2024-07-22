@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -26,7 +26,6 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     """
 
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
-    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),

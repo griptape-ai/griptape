@@ -62,7 +62,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         metadata={"serializable": True},
     )
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
             lambda: (

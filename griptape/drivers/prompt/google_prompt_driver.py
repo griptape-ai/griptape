@@ -45,11 +45,9 @@ class GooglePromptDriver(BasePromptDriver):
         api_key: Google API key.
         model: Google model name.
         model_client: Custom `GenerativeModel` client.
-        top_p: Optional value for top_p.
     """
 
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     model_client: GenerativeModel = field(

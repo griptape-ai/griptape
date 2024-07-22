@@ -30,7 +30,6 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
     api_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
-    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(
