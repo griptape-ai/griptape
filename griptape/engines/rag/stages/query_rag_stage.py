@@ -24,7 +24,7 @@ class QueryRagStage(BaseRagStage):
         return self.query_modules
 
     def run(self, context: RagContext) -> RagContext:
-        logging.info(f"QueryStage: running {len(self.query_modules)} query generation modules in parallel")
+        logging.info("QueryStage: running %s query generation modules in parallel", len(self.query_modules))
 
         with self.futures_executor_fn() as executor:
             utils.execute_futures_list([executor.submit(r.run, context) for r in self.query_modules])

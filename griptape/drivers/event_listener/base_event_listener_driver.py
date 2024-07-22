@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import logging
 from abc import ABC, abstractmethod
 from concurrent import futures
-from logging import Logger
 from typing import TYPE_CHECKING, Callable
 
 from attrs import Factory, define, field
@@ -10,7 +10,7 @@ from attrs import Factory, define, field
 if TYPE_CHECKING:
     from griptape.events import BaseEvent
 
-logger = Logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 @define

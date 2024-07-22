@@ -139,7 +139,7 @@ class BaseTask(ABC):
 
             self.after_run()
         except Exception as e:
-            self.structure.logger.error(f"{self.__class__.__name__} {self.id}\n{e}", exc_info=True)
+            self.structure.logger.exception("%s %s\n%s", self.__class__.__name__, self.id, e)
 
             self.output = ErrorArtifact(str(e), exception=e)
         finally:

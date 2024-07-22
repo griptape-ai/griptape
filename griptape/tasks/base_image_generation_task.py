@@ -59,6 +59,6 @@ class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, 
         return task_rulesets
 
     def _read_from_file(self, path: str) -> MediaArtifact:
-        self.structure.logger.info(f"Reading image from {os.path.abspath(path)}")
+        self.structure.logger.info("Reading image from %s", os.path.abspath(path))
         with open(path, "rb") as file:
             return ImageLoader().load(file.read())

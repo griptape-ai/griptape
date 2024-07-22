@@ -84,7 +84,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             points_selector=import_optional_dependency("qdrant_client.http.models").PointIdsList(points=[vector_id]),
         )
         if deletion_response.status == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED:
-            logging.info(f"ID {vector_id} is successfully deleted")
+            logging.info("ID %s is successfully deleted", vector_id)
 
     def query(
         self,

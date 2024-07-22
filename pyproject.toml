@@ -238,14 +238,16 @@ select = [
     "D", # pydocstyle
     "UP", # pyupgrade
     "YTT", # flake8-2020
-    "ASYNC", # flake8-async
     "ANN", # flake8-annotations
+    "ASYNC", # flake8-async
     "FBT", # flake8-boolean-trap
     "A", # flake8-builtins
     "B", # flake8-bugbear
     "COM", # flake8-commas
     "C4", # flake8-comprehensions
     "FA", # flake8-future-annotations
+    "LOG", # flake8-logging
+    "G", # flake8-logging-format
     "T20", # flake8-print
     "PT", # flake8-pytest-style
     "SIM", # flake8-simplify
