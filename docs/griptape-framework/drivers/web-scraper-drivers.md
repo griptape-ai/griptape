@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 Web Scraper Drivers can be used to scrape text from the web. They are used by [WebLoader](../../reference/griptape/loaders/web_loader.md) to provide its functionality. All Web Scraper Drivers implement the following methods:
