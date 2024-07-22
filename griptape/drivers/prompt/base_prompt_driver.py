@@ -42,7 +42,8 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         use_native_tools: Whether to use LLM's native function calling capabilities. Must be supported by the model.
     """
 
-    temperature: float = field(default=0.1, metadata={"serializable": True})
+    temperature: Optional[float] = field(default=0.1, metadata={"serializable": True})
+    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     max_tokens: Optional[int] = field(default=None, metadata={"serializable": True})
     structure: Optional[Structure] = field(default=None)
     ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
@@ -50,6 +51,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    additional_params: dict = field(default=Factory(dict), metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         if self.structure:

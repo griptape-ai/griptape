@@ -348,8 +348,6 @@ class TestAnthropicPromptDriver:
             model=driver.model,
             max_tokens=1000,
             temperature=0.1,
-            top_p=0.999,
-            top_k=250,
             **{"system": "system-input"} if prompt_stack.system_messages else {},
             **{"tools": self.ANTHROPIC_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
         )
@@ -382,8 +380,6 @@ class TestAnthropicPromptDriver:
             max_tokens=1000,
             temperature=0.1,
             stream=True,
-            top_p=0.999,
-            top_k=250,
             **{"system": "system-input"} if prompt_stack.system_messages else {},
             **{"tools": self.ANTHROPIC_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
         )

@@ -23,10 +23,12 @@ class TestOpenAiStructureConfig:
                 "response_format": None,
                 "seed": None,
                 "temperature": 0.1,
+                "top_p": None,
                 "max_tokens": None,
                 "stream": False,
                 "user": "",
                 "use_native_tools": True,
+                "additional_params": {},
             },
             "conversation_memory_driver": None,
             "embedding_driver": {

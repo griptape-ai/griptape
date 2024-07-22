@@ -53,7 +53,9 @@ class AnthropicPromptDriver(BasePromptDriver):
     """
 
     api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
-    model: str = field(kw_only=True, metadata={"serializable": True})
+    tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
+    max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     client: Client = field(
         default=Factory(
             lambda self: import_optional_dependency("anthropic").Anthropic(api_key=self.api_key),
@@ -65,11 +67,6 @@ class AnthropicPromptDriver(BasePromptDriver):
         default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    top_p: float = field(default=0.999, kw_only=True, metadata={"serializable": True})
-    top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
-    tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
-    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -101,18 +98,18 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         return {
             "model": self.model,
-            "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
-            "top_p": self.top_p,
-            "top_k": self.top_k,
             "max_tokens": self.max_tokens,
             "messages": messages,
+            **({"temperature": self.temperature} if self.temperature is not None else {}),
+            **({"top_p": self.top_p} if self.top_p is not None else {}),
             **(
                 {"tools": self.__to_anthropic_tools(prompt_stack.tools), "tool_choice": self.tool_choice}
                 if prompt_stack.tools and self.use_native_tools
                 else {}
             ),
             **({"system": system_message} if system_message else {}),
+            **self.additional_params,
         }
 
     def __to_anthropic_messages(self, messages: list[Message]) -> list[dict]:

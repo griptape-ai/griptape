@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Observability` context manager for enabling observability and configuring which Observability Driver to use.
 - `@observable` decorator for selecting which functions/methods to provide observability for.
 - `GenericArtifact` for storing any data.
+- `top_p` field to all Prompt Drivers.
+- `BasePromptDriver.additional_params` to set additional request parameters such as top k.
+- Defaults for all Prompt Driver fields. Fields like `api_key` are no longer _required_.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
@@ -33,8 +36,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Migrate to `sqlalchemy` 2.0.
 - **BREAKING**: Make `sqlalchemy` an optional dependency.
 - **BREAKING**: Rename `drivers-sql-redshift` to `drivers-sql-amazon-redshift`
-- Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - **BREAKING**: Update `marqo` dependency to `^3.7.0`.
+- **BREAKING**: Removed `AmazonBedrockPromptDriver.additional_model_request_fields`, use `BasePromptDriver.additional_params` instead.
+- **BREAKING**: Removed `HuggingFaceHubPromptDriver.params`, use `BasePromptDriver.additional_params` instead.
+- **BREAKING**: Removed `HuggingFacePipelinePromptDriver.params`, use `BasePromptDriver.additional_params` instead.
+- **BREAKING**: Removed `OllamaPromptDriver.options`, use `BasePromptDriver.additional_params` instead.
+- Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
 - Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
 

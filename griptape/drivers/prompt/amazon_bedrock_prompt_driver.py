@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 from schema import Schema
@@ -36,6 +36,11 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     import boto3
+    from mypy_boto3_bedrock_runtime import Client
+    from mypy_boto3_bedrock_runtime.type_defs import (
+        ContentBlockOutputTypeDef,
+        ConverseStreamOutputTypeDef,
+    )
 
     from griptape.common import PromptStack
     from griptape.tools import BaseTool
@@ -43,25 +48,27 @@ if TYPE_CHECKING:
 
 @define
 class AmazonBedrockPromptDriver(BasePromptDriver):
+    tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    bedrock_client: Any = field(
+    bedrock_client: Client = field(
         default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True),
         kw_only=True,
     )
-    additional_model_request_fields: dict = field(default=Factory(dict), kw_only=True)
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         response = self.bedrock_client.converse(**self._base_params(prompt_stack))
 
         usage = response["usage"]
-        output_message = response["output"]["message"]
+        if "message" in response["output"]:
+            output_message = response["output"]["message"]
+        else:
+            raise Exception("model response is empty")
 
         return Message(
             content=[self.__to_prompt_stack_message_content(content) for content in output_message["content"]],
@@ -98,8 +105,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             "modelId": self.model,
             "messages": messages,
             "system": system_messages,
-            "inferenceConfig": {"temperature": self.temperature},
-            "additionalModelRequestFields": self.additional_model_request_fields,
+            "inferenceConfig": {
+                **({"temperature": self.temperature} if self.temperature is not None else {}),
+                **({"topP": self.top_p} if self.top_p is not None else {}),
+            },
+            "additionalModelRequestFields": self.additional_params,
             **(
                 {"toolConfig": {"tools": self.__to_bedrock_tools(prompt_stack.tools), "toolChoice": self.tool_choice}}
                 if prompt_stack.tools and self.use_native_tools
@@ -182,7 +192,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported artifact type: {type(artifact)}")
 
-    def __to_prompt_stack_message_content(self, content: dict) -> BaseMessageContent:
+    def __to_prompt_stack_message_content(self, content: ContentBlockOutputTypeDef) -> BaseMessageContent:
         if "text" in content:
             return TextMessageContent(TextArtifact(content["text"]))
         elif "toolUse" in content:
@@ -200,7 +210,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported message content type: {content}")
 
-    def __to_prompt_stack_delta_message_content(self, event: dict) -> BaseDeltaMessageContent:
+    def __to_prompt_stack_delta_message_content(self, event: ConverseStreamOutputTypeDef) -> BaseDeltaMessageContent:
         if "contentBlockStart" in event:
             content_block = event["contentBlockStart"]["start"]
 

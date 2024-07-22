@@ -24,6 +24,8 @@ class TestCohereStructureConfig:
                 "model": "command-r",
                 "force_single_step": False,
                 "use_native_tools": True,
+                "additional_params": {},
+                "top_p": None,
             },
             "embedding_driver": {
                 "type": "CohereEmbeddingDriver",
