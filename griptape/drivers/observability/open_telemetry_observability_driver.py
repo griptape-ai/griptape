@@ -3,15 +3,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
-from opentelemetry.instrumentation.threading import ThreadingInstrumentor
-from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace import SpanProcessor, TracerProvider
-from opentelemetry.trace import INVALID_SPAN, Status, StatusCode, Tracer, format_span_id, get_current_span, get_tracer
 
 from griptape.drivers import BaseObservabilityDriver
+from griptape.utils.import_utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from types import TracebackType
+
+    from opentelemetry.sdk.trace import SpanProcessor, TracerProvider
+    from opentelemetry.trace import Tracer
 
     from griptape.common import Observable
 
@@ -33,19 +33,26 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
     _root_span_context_manager: Any = None
 
     def _trace_provider_factory(self) -> TracerProvider:
+        opentelemetry_trace = import_optional_dependency("opentelemetry.sdk.trace")
+
         attributes = {"service.name": self.service_name}
         if self.service_version is not None:
             attributes["service.version"] = self.service_version
         if self.deployment_env is not None:
             attributes["deployment.environment"] = self.deployment_env
-        return TracerProvider(resource=Resource(attributes=attributes))  # pyright: ignore[reportArgumentType]
+        return opentelemetry_trace.TracerProvider(
+            resource=import_optional_dependency("opentelemetry.sdk.resources").Resource(attributes=attributes)
+        )  # pyright: ignore[reportArgumentType]
 
     def __attrs_post_init__(self) -> None:
+        opentelemetry_trace = import_optional_dependency("opentelemetry.trace")
         self.trace_provider.add_span_processor(self.span_processor)
-        self._tracer = get_tracer(self.service_name, tracer_provider=self.trace_provider)
+        self._tracer = opentelemetry_trace.get_tracer(self.service_name, tracer_provider=self.trace_provider)
 
     def __enter__(self) -> None:
-        ThreadingInstrumentor().instrument()
+        opentelemetry_instrumentation_threading = import_optional_dependency("opentelemetry.instrumentation.threading")
+
+        opentelemetry_instrumentation_threading.ThreadingInstrumentor().instrument()
         self._root_span_context_manager = self._tracer.start_as_current_span("main")  # pyright: ignore[reportCallIssue]
         self._root_span_context_manager.__enter__()
 
@@ -55,21 +62,24 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
         exc_value: Optional[BaseException],
         exc_traceback: Optional[TracebackType],
     ) -> bool:
-        root_span = get_current_span()
+        opentelemetry_trace = import_optional_dependency("opentelemetry.trace")
+        opentelemetry_instrumentation_threading = import_optional_dependency("opentelemetry.instrumentation.threading")
+        root_span = opentelemetry_trace.get_current_span()
         if exc_value:
-            root_span = get_current_span()
-            root_span.set_status(Status(StatusCode.ERROR))
+            root_span = opentelemetry_trace.get_current_span()
+            root_span.set_status(opentelemetry_trace.Status(opentelemetry_trace.StatusCode.ERROR))
             root_span.record_exception(exc_value)
         else:
-            root_span.set_status(Status(StatusCode.OK))
+            root_span.set_status(opentelemetry_trace.Status(opentelemetry_trace.StatusCode.OK))
         if self._root_span_context_manager:
             self._root_span_context_manager.__exit__(exc_type, exc_value, exc_traceback)
             self._root_span_context_manager = None
         self.trace_provider.force_flush()
-        ThreadingInstrumentor().uninstrument()
+        opentelemetry_instrumentation_threading.ThreadingInstrumentor().uninstrument()
         return False
 
     def observe(self, call: Observable.Call) -> Any:
+        open_telemetry_trace = import_optional_dependency("opentelemetry.trace")
         func = call.func
         instance = call.instance
         tags = call.tags
@@ -82,15 +92,16 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
 
             try:
                 result = call()
-                span.set_status(Status(StatusCode.OK))
+                span.set_status(open_telemetry_trace.Status(open_telemetry_trace.StatusCode.OK))
                 return result
             except Exception as e:
-                span.set_status(Status(StatusCode.ERROR))
+                span.set_status(open_telemetry_trace.Status(open_telemetry_trace.StatusCode.ERROR))
                 span.record_exception(e)
                 raise e
 
     def get_span_id(self) -> Optional[str]:
-        span = get_current_span()
-        if span is INVALID_SPAN:
+        opentelemetry_trace = import_optional_dependency("opentelemetry.trace")
+        span = opentelemetry_trace.get_current_span()
+        if span is opentelemetry_trace.INVALID_SPAN:
             return None
-        return format_span_id(span.get_span_context().span_id)
+        return opentelemetry_trace.format_span_id(span.get_span_context().span_id)
