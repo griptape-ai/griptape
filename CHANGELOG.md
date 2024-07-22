@@ -32,9 +32,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed `DummyException` to `DummyError` for pep8 naming compliance.
 - **BREAKING**: Migrate to `sqlalchemy` 2.0.
 - **BREAKING**: Make `sqlalchemy` an optional dependency.
-- **BREAKING**: Rename `drivers-sql-redshift` to `drivers-sql-amazon-redshift`
+- **BREAKING**: Renamed `drivers-sql-redshift` to `drivers-sql-amazon-redshift`
+- **BREAKING**: Renamed `drivers-prompt-huggingface` extra to `drivers-prompt-huggingface-hub`.
+- **BREAKING**: Renamed `drivers-vector-postgresql` extra to `drivers-vector-pgvector`.
 - **BREAKING**: Update `marqo` dependency to `^3.7.0`.
-- **BREAKING**: Renamed `drivers-prompt-huggingface` extra to `drivers-prompt-huggingface-hub` for consistency.
+- **BREAKING**: Removed `drivers-sql-postgresql` extra. Use `drivers-sql` extra and install necessary drivers (i.e. `psycopg2`) separately.
 - Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
 - Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
