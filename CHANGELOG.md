@@ -33,8 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Migrate to `sqlalchemy` 2.0.
 - **BREAKING**: Make `sqlalchemy` an optional dependency.
 - **BREAKING**: Rename `drivers-sql-redshift` to `drivers-sql-amazon-redshift`
-- Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - **BREAKING**: Update `marqo` dependency to `^3.7.0`.
+- **BREAKING**: Renamed `drivers-prompt-huggingface` extra to `drivers-prompt-huggingface-hub` for consistency.
+- Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
 - Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
 

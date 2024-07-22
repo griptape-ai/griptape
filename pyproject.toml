@@ -70,7 +70,7 @@ filetype = {version = "^1.2", optional = true}
 [tool.poetry.extras]
 drivers-prompt-cohere = ["cohere"]
 drivers-prompt-anthropic = ["anthropic"]
-drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
+drivers-prompt-huggingface-hub = ["huggingface-hub", "transformers"]
 drivers-prompt-huggingface-pipeline = ["transformers"]
 drivers-prompt-amazon-bedrock = ["boto3", "anthropic"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
