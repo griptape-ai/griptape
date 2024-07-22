@@ -61,7 +61,7 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
     @staticmethod
     def build_span_exporter(base_url: str, api_key: str, headers: dict, structure_run_id: str) -> SpanExporter:
         @define
-        class SpanExporter(import_optional_dependency("opentelemetry.sdk.trace.export").OpenTelemetrySpanExporter):
+        class SpanExporter(import_optional_dependency("opentelemetry.sdk.trace.export").SpanExporter):
             base_url: str = field(kw_only=True)
             api_key: str = field(kw_only=True)
             headers: dict = field(kw_only=True)

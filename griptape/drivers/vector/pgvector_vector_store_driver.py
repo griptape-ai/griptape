@@ -193,12 +193,13 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             ]
 
     def default_vector_model(self) -> Any:
+        pgvector_sqlalchemy = import_optional_dependency("pgvector.sqlalchemy")
         sqlalchemy = import_optional_dependency("sqlalchemy")
         sqlalchemy_dialects_postgresql = import_optional_dependency("sqlalchemy.dialects.postgresql")
-        sqlalchemy_ext_declarative = import_optional_dependency("sqlalchemy.ext.declarative")
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
 
         @dataclass
-        class VectorModel(sqlalchemy_ext_declarative.declarative_base()):
+        class VectorModel(sqlalchemy_orm.declarative_base()):
             __tablename__ = self.table_name
 
             id = sqlalchemy.Column(
@@ -208,7 +209,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 unique=True,
                 nullable=False,
             )
-            vector = sqlalchemy.Column(sqlalchemy.Vector())
+            vector = sqlalchemy.Column(pgvector_sqlalchemy.Vector())
             namespace = sqlalchemy.Column(sqlalchemy.String)
             meta = sqlalchemy.Column(sqlalchemy.JSON)
 
