@@ -12,8 +12,13 @@ from rich.logging import RichHandler
 from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
 from griptape.common import observable
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
-from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
-from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
+from griptape.drivers import (
+    BaseEmbeddingDriver,
+    BasePromptDriver,
+    LocalVectorStoreDriver,
+    OpenAiChatPromptDriver,
+    OpenAiEmbeddingDriver,
+)
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (

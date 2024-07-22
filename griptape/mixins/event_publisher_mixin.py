@@ -28,8 +28,6 @@ class EventPublisherMixin:
     def remove_event_listener(self, event_listener: EventListener) -> None:
         if event_listener in self.event_listeners:
             self.event_listeners.remove(event_listener)
-        else:
-            raise ValueError("Event Listener not found.")
 
     def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
         for event_listener in self.event_listeners:
