@@ -3,18 +3,15 @@ from __future__ import annotations
 import uuid
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Any, NoReturn, Optional, cast
+from typing import TYPE_CHECKING, Any, NoReturn, Optional
 
 from attrs import Attribute, Factory, define, field
-from sqlalchemy import JSON, Column, String, create_engine
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.engine import Engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import Session
-from sqlalchemy.sql import text
 
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
+
+if TYPE_CHECKING:
+    from sqlalchemy.engine import Engine
 
 
 @define
@@ -61,7 +58,8 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         if self.engine is None:
             if self.connection_string is None:
                 raise ValueError("An engine or connection string is required")
-            self.engine = cast(Engine, create_engine(self.connection_string, **self.create_engine_params))
+            sqlalchemy = import_optional_dependency("sqlalchemy")
+            self.engine = sqlalchemy.create_engine(self.connection_string, **self.create_engine_params)
 
     def setup(
         self,
@@ -71,13 +69,15 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         install_vector_extension: bool = True,
     ) -> None:
         """Provides a mechanism to initialize the database schema and extensions."""
+        sqlalchemy_sql = import_optional_dependency("sqlalchemy.sql")
+
         if install_uuid_extension:
             with self.engine.begin() as conn:
-                conn.execute(text('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'))
+                conn.execute(sqlalchemy_sql.text('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'))
 
         if install_vector_extension:
             with self.engine.begin() as conn:
-                conn.execute(text('CREATE EXTENSION IF NOT EXISTS "vector";'))
+                conn.execute(sqlalchemy_sql.text('CREATE EXTENSION IF NOT EXISTS "vector";'))
 
         if create_schema:
             self._model.metadata.create_all(self.engine)
@@ -92,7 +92,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         **kwargs,
     ) -> str:
         """Inserts or updates a vector in the collection."""
-        with Session(self.engine) as session:
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
+
+        with sqlalchemy_orm.Session(self.engine) as session:
             obj = self._model(id=vector_id, vector=vector, namespace=namespace, meta=meta, **kwargs)
 
             obj = session.merge(obj)
@@ -102,7 +104,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
     def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
-        with Session(self.engine) as session:
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
+
+        with sqlalchemy_orm.Session(self.engine) as session:
             result = session.get(self._model, vector_id)
 
             return BaseVectorStoreDriver.Entry(
@@ -114,7 +118,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from the collection, optionally filtering to only those that match the provided namespace."""
-        with Session(self.engine) as session:
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
+
+        with sqlalchemy_orm.Session(self.engine) as session:
             query = session.query(self._model)
             if namespace:
                 query = query.filter_by(namespace=namespace)
@@ -142,6 +148,8 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         """Performs a search on the collection to find vectors similar to the provided input vector, optionally filtering to only those that match the provided namespace."""
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
+
         distance_metrics = {
             "cosine_distance": self._model.vector.cosine_distance,
             "l2_distance": self._model.vector.l2_distance,
@@ -153,7 +161,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
         op = distance_metrics[distance_metric]
 
-        with Session(self.engine) as session:
+        with sqlalchemy_orm.Session(self.engine) as session:
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.
@@ -185,16 +193,24 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             ]
 
     def default_vector_model(self) -> Any:
-        sqlalchemy = import_optional_dependency("pgvector.sqlalchemy")
+        sqlalchemy = import_optional_dependency("sqlalchemy")
+        sqlalchemy_dialects_postgresql = import_optional_dependency("sqlalchemy.dialects.postgresql")
+        sqlalchemy_ext_declarative = import_optional_dependency("sqlalchemy.ext.declarative")
 
         @dataclass
-        class VectorModel(declarative_base()):
+        class VectorModel(sqlalchemy_ext_declarative.declarative_base()):
             __tablename__ = self.table_name
 
-            id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-            vector = Column(sqlalchemy.Vector())
-            namespace = Column(String)
-            meta = Column(JSON)
+            id = sqlalchemy.Column(
+                sqlalchemy_dialects_postgresql.UUID(as_uuid=True),
+                primary_key=True,
+                default=uuid.uuid4,
+                unique=True,
+                nullable=False,
+            )
+            vector = sqlalchemy.Column(sqlalchemy.Vector())
+            namespace = sqlalchemy.Column(sqlalchemy.String)
+            meta = sqlalchemy.Column(sqlalchemy.JSON)
 
         return VectorModel
 
