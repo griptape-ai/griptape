@@ -253,6 +253,7 @@ select = [
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
     "TCH", # flake8-type-checking
+    "ERA", # eradicate
     "PGH", # pygrep-hooks
 ]
 ignore = [
