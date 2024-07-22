@@ -1,3 +1,5 @@
+from typing import Any
+
 from attrs import define, field
 from schema import Literal, Schema
 
@@ -10,7 +12,6 @@ class InvalidMockTool(BaseTool):
     configs = {
         "test": {
             # no description should make this tool invalid
-            # "description": "test description",
             "schema": Schema({Literal("input", description="Test input"): str}),
             "foo": "bar",
         }
@@ -19,5 +20,5 @@ class InvalidMockTool(BaseTool):
     test_field: str = field(default="test", kw_only=True, metadata={"env": "TEST_FIELD"})
 
     @activity(config=configs["test"])
-    def test(self, value: any) -> str:
+    def test(self, value: Any) -> str:
         return f"ack {value}"
