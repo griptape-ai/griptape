@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- `BaseGraphStoreDriver` as the base class for all graph store drivers.
+- `FalkorDBGraphStoreDriver` to support the FalkorDB graph database in Griptape.
+- Unit tests for `BaseGraphStoreDriver` and `FalkorDBGraphStoreDriver` to ensure their functionality.
+- Documentation for `BaseGraphStoreDriver` and `FalkorDBGraphStoreDriver` including examples on how to use them.
+- `falkordb` extra and dependency for the `FalkorDBGraphStoreDriver`.
+  
+### Added
 - Native function calling support to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AnthropicPromptDriver`, `AmazonBedrockPromptDriver`, `GooglePromptDriver`, and `CoherePromptDriver`.
 - `OllamaEmbeddingDriver` for generating embeddings with Ollama.
 - `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.

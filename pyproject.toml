@@ -66,6 +66,7 @@ pypdf = {version = "^3.9", optional = true}
 pillow = {version = "^10.2.0", optional = true}
 mail-parser = {version = "^3.15.0", optional = true}
 filetype = {version = "^1.2", optional = true}
+falkordb = { version = "*", optional = true }
 
 [tool.poetry.extras]
 drivers-prompt-cohere = ["cohere"]
@@ -140,6 +141,8 @@ loaders-image = ["pillow"]
 loaders-email = ["mail-parser"]
 loaders-audio = ["filetype"]
 loaders-sql = ["sqlalchemy"]
+
+drivers-graph-falkordb = ["falkordb"]
 
 all = [
     # drivers

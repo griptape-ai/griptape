@@ -1,13 +1,17 @@
 from __future__ import annotations
+
 import uuid
 from abc import ABC, abstractmethod
 from concurrent import futures
 from dataclasses import dataclass
 from typing import Any, Callable, Optional
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape import utils
-from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact
 from griptape.mixins import SerializableMixin
+
 
 @define
 class BaseGraphStoreDriver(SerializableMixin, ABC):
@@ -31,9 +35,7 @@ class BaseGraphStoreDriver(SerializableMixin, ABC):
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
     )
 
-    def upsert_artifacts(
-        self, artifacts: dict[str, list[BaseArtifact]], meta: Optional[dict] = None, **kwargs
-    ) -> None:
+    def upsert_artifacts(self, artifacts: dict[str, list[BaseArtifact]], meta: Optional[dict] = None, **kwargs) -> None:
         with self.futures_executor_fn() as executor:
             utils.execute_futures_dict(
                 {

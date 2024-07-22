@@ -1,10 +1,15 @@
+from __future__ import annotations
+
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
+
 import redis
 from falkordb import FalkorDB
-from base_graph_store_driver import BaseGraphStoreDriver
+
+from .base_graph_store_driver import BaseGraphStoreDriver
 
 logger = logging.getLogger(__name__)
+
 
 class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
     """FalkorDB Graph Store Driver with triplet handling, schema management, and relationship mapping."""
@@ -18,7 +23,7 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
             if not self.index_exists("id"):
                 self._driver.query(f"CREATE INDEX FOR (n:`{self._node_label}`) ON (n.id)")
         except redis.exceptions.ResponseError as e:
-            if 'already indexed' in str(e):
+            if "already indexed" in str(e):
                 logger.warning("Index on 'id' already exists: %s", e)
             else:
                 raise e
@@ -40,14 +45,16 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
         result = self._driver.query(query)
         return result.result_set[0][0] > 0
 
-    def get(self, subj: str) -> List[List[str]]:
+    def get(self, subj: str) -> list[list[str]]:
         """Get triplets for a given subject."""
         result = self._driver.query(self.get_query, params={"subj": subj})
         return result.result_set
 
-    def get_rel_map(self, subjs: Optional[List[str]] = None, depth: int = 2, limit: int = 30) -> Dict[str, List[List[str]]]:
+    def get_rel_map(
+        self, subjs: Optional[list[str]] = None, depth: int = 2, limit: int = 30
+    ) -> dict[str, list[list[str]]]:
         """Get flat relationship map."""
-        rel_map: Dict[Any, List[Any]] = {}
+        rel_map: dict[Any, list[Any]] = {}
         if subjs is None or len(subjs) == 0:
             return rel_map
 
@@ -75,7 +82,7 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
                 path.append(edge.relation)
                 path.append(dest_id)
 
-            paths = rel_map[subj_id] if subj_id in rel_map else []
+            paths = rel_map.get(subj_id, [])
             paths.append(path)
             rel_map[subj_id] = paths
 
@@ -135,7 +142,7 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
         Relationships: {relationships}
         """
 
-    def get_schema(self, refresh: bool = False) -> str:
+    def get_schema(self, *, refresh: bool = False) -> str:
         """Get the schema of the FalkorDBGraph store."""
         if self.schema and not refresh:
             return self.schema
@@ -143,18 +150,18 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
         logger.debug(f"get_schema() schema:\n{self.schema}")
         return self.schema
 
-    def query(self, query: str, params: Optional[Dict[str, Any]] = None) -> Any:
+    def query(self, query: str, params: Optional[dict[str, Any]] = None) -> Any:
         """Execute a query on the database."""
         result = self._driver.query(query, params=params)
         return result.result_set
 
-    def create_connection(self, connection_params):
+    def create_connection(self, connection_params: dict) -> Optional[FalkorDB]:
         """Create a connection to FalkorDB."""
         try:
             connection = FalkorDB(**connection_params)
             return connection
         except Exception as e:
-            print(f"Error connecting to FalkorDB: {e}")
+            logger.error(f"Error connecting to FalkorDB: {e}")
             return None
 
     # Implement abstract methods
@@ -176,6 +183,8 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
         entries = [BaseGraphStoreDriver.Entry(id=node.id, properties=node.properties) for node in result]
         return entries
 
-    def upsert_node(self, node_id: Optional[str] = None, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs) -> str:
+    def upsert_node(
+        self, node_id: Optional[str] = None, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+    ) -> str:
         self.upsert_triplet(node_id, "", "")
         return node_id
