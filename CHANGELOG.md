@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Observability` context manager for enabling observability and configuring which Observability Driver to use.
 - `@observable` decorator for selecting which functions/methods to provide observability for.
 - `GenericArtifact` for storing any data.
+- `BaseTextArtifact` for text-based Artifacts to subclass.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
@@ -40,6 +41,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
 - Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
+- `CsvRowArtifact` now inherits from `BaseTextArtifact`.
+- `TextArtifact` now inherits from `BaseTextArtifact`.
 
 ### Fixed
 - Parameter `count` for `QdrantVectorStoreDriver.query` now optional as per documentation.
