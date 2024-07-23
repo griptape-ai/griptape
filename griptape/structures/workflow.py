@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import concurrent.futures as futures
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import Any, Callable, Optional
 
 from attrs import Factory, define, field
 from graphlib import TopologicalSorter
@@ -10,9 +10,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
 from griptape.memory.structure import Run
 from griptape.structures import Structure
-
-if TYPE_CHECKING:
-    from griptape.tasks import BaseTask
+from griptape.tasks import BaseTask
 
 
 @define
@@ -89,12 +87,14 @@ class Workflow(Structure):
 
         while not self.is_finished() and not exit_loop:
             futures_list = {}
-            ordered_tasks = self.order_tasks()
+            executable_tasks = [task for task in self.order_tasks() if task.can_execute()]
 
-            for task in ordered_tasks:
-                if task.can_execute():
+            for task in executable_tasks:
+                if task.should_execute():
                     future = self.futures_executor_fn().submit(task.execute)
                     futures_list[future] = task
+                else:
+                    task.state = BaseTask.State.FINISHED
 
             # Wait for all tasks to complete
             for future in futures.as_completed(futures_list):

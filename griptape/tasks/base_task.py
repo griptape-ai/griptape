@@ -147,8 +147,16 @@ class BaseTask(ABC):
 
         return self.output
 
+    def should_execute(self) -> bool:
+        from griptape.tasks import BranchTask
+
+        branch_parents = [parent for parent in self.parents if isinstance(parent, BranchTask)]
+        all_branch_parents_picked_self = all(branch_parent.output.value == self.id for branch_parent in branch_parents)
+
+        return all_branch_parents_picked_self
+
     def can_execute(self) -> bool:
-        return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)
+        return self.is_pending() and all(parent.is_finished() for parent in self.parents)
 
     def reset(self) -> BaseTask:
         self.state = BaseTask.State.PENDING

@@ -1,6 +1,7 @@
 from .base_task import BaseTask
 from .base_text_input_task import BaseTextInputTask
 from .base_multi_text_input_task import BaseMultiTextInputTask
+from .branch_task import BranchTask
 from .prompt_task import PromptTask
 from .actions_subtask import ActionsSubtask
 from .toolkit_task import ToolkitTask
@@ -46,4 +47,5 @@ __all__ = [
     "TextToSpeechTask",
     "StructureRunTask",
     "AudioTranscriptionTask",
+    "BranchTask",
 ]
