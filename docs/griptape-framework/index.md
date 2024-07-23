@@ -111,23 +111,32 @@ agent = Agent(
 agent.run(
     "what is 7^12"
 )
+print("Answer:", agent.output)
 ```
 Here is the chain of thought from the Agent. Notice where it realizes it can use the tool you just injected to do the calculation.[^1] 
 [^1]: In some cases a model might be capable of basic arithmetic. For example, gpt-3.5 returns the correct numeric answer but in an odd format.
 
 ```
-[09/08/23 09:53:42] INFO     ToolkitTask c87320c5ab1b4988acf25c107b46dffa
+[07/23/24 10:47:38] INFO     ToolkitTask 6a51060d1fb74e57840a91aa319f26dc
                              Input: what is 7^12
-[09/08/23 09:53:49] INFO     Subtask f3f41104a2234a69832c7eacb64e7324
-                             Thought: The user is asking for the value of 7 raised to the power of 12. I can use the Calculator tool to
-                             perform this calculation.
-
-                             Action: {"name": "Calculator", "path": "calculate", "input": {"values": {"expression":
-                             "7**12"}}}
-                    INFO     Subtask f3f41104a2234a69832c7eacb64e7324
+[07/23/24 10:47:39] INFO     Subtask 0c984616fd2345a7b48a0b0d692daa3c
+                             Actions: [
+                               {
+                                 "tag": "call_RTRm7JLFV0F73dCVPmoWVJqO",
+                                 "name": "Calculator",
+                                 "path": "calculate",
+                                 "input": {
+                                   "values": {
+                                     "expression": "7**12"
+                                   }
+                                 }
+                               }
+                             ]
+                    INFO     Subtask 0c984616fd2345a7b48a0b0d692daa3c
                              Response: 13841287201
-[09/08/23 09:53:51] INFO     ToolkitTask c87320c5ab1b4988acf25c107b46dffa
-                             Output: The value of 7 raised to the power of 12 is 13841287201.
+[07/23/24 10:47:40] INFO     ToolkitTask 6a51060d1fb74e57840a91aa319f26dc
+                             Output: 13,841,287,201
+Answer: 13,841,287,201
 ```
 
 ## Build a Simple Pipeline
