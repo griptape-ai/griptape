@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 SQL drivers can be used to make SQL queries and load table schemas. They are used by the [SqlLoader](../../reference/griptape/loaders/sql_loader.md) to process data. All loaders implement the following methods:
 

@@ -93,7 +93,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             else:
                 return None
         except Exception as e:
-            logging.error(f"Error while loading entry: {e}")
+            logging.exception("Error while loading entry: %s", e)
             return None
 
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:

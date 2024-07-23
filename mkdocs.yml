@@ -89,6 +89,7 @@ nav:
           - Conversation Memory: "griptape-framework/structures/conversation-memory.md"
           - Rulesets: "griptape-framework/structures/rulesets.md"
           - Config: "griptape-framework/structures/config.md"
+          - Observability: "griptape-framework/structures/observability.md"
       - Tools:
           - Overview: "griptape-framework/tools/index.md"
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
@@ -114,6 +115,8 @@ nav:
           - Audio Transcription Drivers: "griptape-framework/drivers/audio-transcription-drivers.md"
           - Web Search Drivers: "griptape-framework/drivers/web-search-drivers.md"
           - Graph Store Drivers: "griptape-framework/drivers/graph-store-drivers.md"
+          - Observability Drivers: "griptape-framework/drivers/observability-drivers.md"
+
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"

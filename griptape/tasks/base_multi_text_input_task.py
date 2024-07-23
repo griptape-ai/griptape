@@ -48,9 +48,9 @@ class BaseMultiTextInputTask(RuleMixin, BaseTask, ABC):
         super().before_run()
 
         joined_input = "\n".join([i.to_text() for i in self.input])
-        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nInput: {joined_input}")
+        self.structure.logger.info("%s %s\nInput: %s", self.__class__.__name__, self.id, joined_input)
 
     def after_run(self) -> None:
         super().after_run()
 
-        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {self.output.to_text()}")
+        self.structure.logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())

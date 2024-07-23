@@ -144,7 +144,7 @@ class TestLocalFileManagerDriver:
             # existing files with trailing slash
             ("/", "resources/bitcoin.pdf/", "Path is a directory"),
             ("/resources", "bitcoin.pdf/", "Path is a directory"),
-            # directories (not files)
+            # directories -- not files
             ("/", "", "Path is a directory"),
             ("/", "/", "Path is a directory"),
             ("/", "resources", "Path is a directory"),
