@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -36,8 +37,8 @@ class TestSnowflakeSqlDriver:
         items_mock = mocker.MagicMock(name="items")
         items_mock_2 = mocker.MagicMock(name="items2")
 
-        items_mock.items.return_value = [("first_name", "Tony"), ("last_name", "Hawk")]
-        items_mock_2.items.return_value = [("first_name", "Bob"), ("last_name", "Ross")]
+        items_mock._mapping = [("first_name", "Tony"), ("last_name", "Hawk")]
+        items_mock_2._mapping = [("first_name", "Bob"), ("last_name", "Ross")]
 
         result_mock.return_value.returns_rows = True
         result_mock.__iter__.return_value = iter([items_mock, items_mock_2])
@@ -71,7 +72,7 @@ class TestSnowflakeSqlDriver:
         return new_driver
 
     def test_connection_function_wrong_return_type(self):
-        def get_connection():
+        def get_connection() -> Any:
             return object
 
         with pytest.raises(ValueError):

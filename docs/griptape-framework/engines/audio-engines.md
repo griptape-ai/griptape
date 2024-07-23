@@ -21,7 +21,7 @@ from griptape.engines import TextToSpeechEngine
 driver = ElevenLabsTextToSpeechDriver(
     api_key=os.getenv("ELEVEN_LABS_API_KEY"),
     model="eleven_multilingual_v2",
-    voice="Rachel",
+    voice="Laura",
 )
 
 engine = TextToSpeechEngine(
