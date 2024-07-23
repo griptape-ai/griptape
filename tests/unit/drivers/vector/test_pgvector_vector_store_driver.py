@@ -26,7 +26,7 @@ class TestPgVectorVectorStoreDriver:
         session = MagicMock()
         mock_session_manager = MagicMock()
         mock_session_manager.__enter__.return_value = session
-        mocker.patch("griptape.drivers.vector.pgvector_vector_store_driver.Session", return_value=mock_session_manager)
+        mocker.patch("sqlalchemy.orm.Session", return_value=mock_session_manager)
 
         return session
 
