@@ -60,7 +60,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
         Metadata associated with the vector can also be provided.
         """
-        vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
+        vector_id = vector_id or utils.str_to_hash(str(vector))
         doc = {"vector": vector, "namespace": namespace, "metadata": meta}
         doc.update(kwargs)
         response = self.client.index(index=self.index_name, id=vector_id, body=doc)
@@ -138,7 +138,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
-        count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
+        count = count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
         vector = self.embedding_driver.embed_string(query)
         # Base k-NN query
         query_body = {"size": count, "query": {"knn": {field_name: {"vector": vector, "k": count}}}}

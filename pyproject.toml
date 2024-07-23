@@ -255,6 +255,7 @@ select = [
     "TCH", # flake8-type-checking
     "ERA", # eradicate
     "PGH", # pygrep-hooks
+    "FURB", # refurb
 ]
 ignore = [
     "UP007", # non-pep604-annotation
@@ -278,6 +279,7 @@ ignore = [
     "ANN401", # any-type
     "PT011", # pytest-raises-too-broad
 ]
+preview = true
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 

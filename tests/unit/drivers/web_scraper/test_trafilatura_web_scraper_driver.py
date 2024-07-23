@@ -11,7 +11,7 @@ class TestTrafilaturaWebScraperDriver:
         # characters to the body.
         mocker.patch(
             "trafilatura.fetch_url"
-        ).return_value = f'<!DOCTYPE html><html>{"x"*243}<a href="foobar.com">foobar</a></html>'
+        ).return_value = f'<!DOCTYPE html><html>{"x" * 243}<a href="foobar.com">foobar</a></html>'
 
     @pytest.fixture()
     def web_scraper(self):

@@ -123,7 +123,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         if result and "_tensor_facets" in result and len(result["_tensor_facets"]) > 0:
             return BaseVectorStoreDriver.Entry(
                 id=result["_id"],
-                meta={k: v for k, v in result.items() if k not in ["_id"]},
+                meta={k: v for k, v in result.items() if k != "_id"},
                 vector=result["_tensor_facets"][0]["_embedding"],
             )
         else:
@@ -190,7 +190,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             The list of query results.
         """
         params = {
-            "limit": count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+            "limit": count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
             "attributes_to_retrieve": ["*"] if include_metadata else ["_id"],
             "filter_string": f"namespace:{namespace}" if namespace else None,
         } | kwargs

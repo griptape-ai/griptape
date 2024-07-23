@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, define, field
@@ -41,5 +42,4 @@ class BlobArtifactFileOutputMixin:
         if os.path.dirname(outfile):
             os.makedirs(os.path.dirname(outfile), exist_ok=True)
 
-        with open(outfile, "wb") as f:
-            f.write(artifact.value)
+        Path(outfile).write_bytes(artifact.value)
