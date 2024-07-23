@@ -10,7 +10,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 class TestStream:
     @pytest.fixture(params=[True, False])
     def agent(self, request):
-        return Agent(prompt_driver=MockPromptDriver(stream=request.param))
+        return Agent(prompt_driver=MockPromptDriver(stream=request.param, max_attempts=0))
 
     def test_init(self, agent):
         if agent.prompt_driver.stream:

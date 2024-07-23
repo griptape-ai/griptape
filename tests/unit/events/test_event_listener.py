@@ -38,6 +38,7 @@ class TestEventListener:
         event_handler_2 = Mock()
 
         pipeline.event_listeners = [EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)]
+
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
         pipeline.tasks[0].subtasks[0].after_run()

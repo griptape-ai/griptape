@@ -12,8 +12,13 @@ from rich.logging import RichHandler
 from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
 from griptape.common import observable
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
-from griptape.drivers import BaseEmbeddingDriver, BasePromptDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
-from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
+from griptape.drivers import (
+    BaseEmbeddingDriver,
+    BasePromptDriver,
+    LocalVectorStoreDriver,
+    OpenAiChatPromptDriver,
+    OpenAiEmbeddingDriver,
+)
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
@@ -29,17 +34,17 @@ from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
+from griptape.mixins import EventPublisherMixin
 from griptape.utils import deprecation_warn
 
 if TYPE_CHECKING:
-    from griptape.events import BaseEvent, EventListener
     from griptape.memory.structure import BaseConversationMemory
     from griptape.rules import Rule, Ruleset
     from griptape.tasks import BaseTask
 
 
 @define
-class Structure(ABC):
+class Structure(ABC, EventPublisherMixin):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
@@ -55,7 +60,6 @@ class Structure(ABC):
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
-    event_listeners: list[EventListener] = field(factory=list, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(
             lambda self: ConversationMemory(driver=self.config.conversation_memory_driver),
@@ -90,8 +94,10 @@ class Structure(ABC):
             raise ValueError("can't have both rules and rulesets specified")
 
     def __attrs_post_init__(self) -> None:
-        if self.conversation_memory:
+        if self.conversation_memory is not None:
             self.conversation_memory.structure = self
+
+        self.config.structure = self
 
         tasks = self.tasks.copy()
         self.tasks.clear()
@@ -216,22 +222,6 @@ class Structure(ABC):
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
-
-    def add_event_listener(self, event_listener: EventListener) -> EventListener:
-        if event_listener not in self.event_listeners:
-            self.event_listeners.append(event_listener)
-
-        return event_listener
-
-    def remove_event_listener(self, event_listener: EventListener) -> None:
-        if event_listener in self.event_listeners:
-            self.event_listeners.remove(event_listener)
-        else:
-            raise ValueError("Event Listener not found.")
-
-    def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
-        for event_listener in self.event_listeners:
-            event_listener.publish_event(event, flush=True)
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
