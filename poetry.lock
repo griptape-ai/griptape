@@ -6709,7 +6709,7 @@ drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 drivers-prompt-anthropic = ["anthropic"]
 drivers-prompt-cohere = ["cohere"]
 drivers-prompt-google = ["google-generativeai"]
-drivers-prompt-huggingface = ["huggingface-hub"]
+drivers-prompt-huggingface = ["huggingface-hub", "transformers"]
 drivers-prompt-huggingface-pipeline = ["transformers"]
 drivers-prompt-ollama = ["ollama"]
 drivers-rerank-cohere = ["cohere"]
@@ -6737,4 +6737,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "24433fc06f7b43795a5c01487b843037b38e933d86f477761a810d88cf94ca44"
+content-hash = "2709e2b4622507351d69ed483b96910b001046759c1f02d70c24e014a617bce9"

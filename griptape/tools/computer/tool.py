@@ -98,14 +98,14 @@ class Computer(BaseTool):
 
     def execute_command_in_container(self, command: str) -> BaseArtifact:
         try:
-            binds = {self.local_workdir: {"bind": self.container_workdir, "mode": "rw"}}
+            binds = {self.local_workdir: {"bind": self.container_workdir, "mode": "rw"}} if self.local_workdir else None
 
-            container = self.docker_client.containers.run(
+            container = self.docker_client.containers.run(  # pyright: ignore[reportCallIssue]
                 self.image_name(self),
                 environment=self.env_vars,
                 command=command,
                 name=self.container_name(self),
-                volumes=binds,
+                volumes=binds,  # pyright: ignore[reportArgumentType] According to the [docs](https://docker-py.readthedocs.io/en/stable/containers.html), the type of `volumes` is dict[str, dict[str, str]].
                 stdout=True,
                 stderr=True,
                 detach=True,
