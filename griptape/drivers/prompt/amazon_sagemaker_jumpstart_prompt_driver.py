@@ -113,6 +113,6 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         tokens = self.tokenizer.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
 
         if isinstance(tokens, list):
-            return tokens
+            return tokens  # pyright: ignore[reportReturnType] According to the [docs](https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template), the return type is List[int].
         else:
             raise ValueError("Invalid output type.")
