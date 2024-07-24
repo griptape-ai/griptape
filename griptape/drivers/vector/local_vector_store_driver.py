@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import operator
 import os
 import threading
 from dataclasses import asdict
@@ -58,7 +59,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
-        vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
+        vector_id = vector_id or utils.str_to_hash(str(vector))
 
         with self.thread_lock:
             self.entries[self._namespaced_vector_id(vector_id, namespace=namespace)] = self.Entry(
@@ -101,7 +102,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         entries_and_relatednesses = [
             (entry, self.relatedness_fn(query_embedding, entry.vector)) for entry in entries.values()
         ]
-        entries_and_relatednesses.sort(key=lambda x: x[1], reverse=True)
+        entries_and_relatednesses.sort(key=operator.itemgetter(1), reverse=True)
 
         result = [
             BaseVectorStoreDriver.Entry(id=er[0].id, vector=er[0].vector, score=er[1], meta=er[0].meta)

@@ -18,6 +18,14 @@ class TestTranscriptionClient:
 
         return loader
 
+    @pytest.fixture(
+        autouse=True,
+    )
+    def mock_path(self, mocker) -> Mock:
+        mocker.patch("pathlib.Path.read_bytes", return_value=b"transcription")
+
+        return mocker
+
     def test_init_transcription_client(self, transcription_engine, audio_loader) -> None:
         assert AudioTranscriptionClient(engine=transcription_engine, audio_loader=audio_loader)
 

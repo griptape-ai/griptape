@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 import pytest
 
@@ -38,7 +39,6 @@ class TestPromptSummaryEngine:
             file_dir = os.path.dirname(__file__)
             full_path = os.path.join(file_dir, "../../../resources", resource_path)
             full_path = os.path.normpath(full_path)
-            with open(full_path) as f:
-                return f.read()
+            return Path(full_path).read_text()
 
         assert engine.summarize_text(copy_test_resource("test.txt") * 50)

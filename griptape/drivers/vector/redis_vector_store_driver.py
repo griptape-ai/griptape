@@ -60,7 +60,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
         Metadata associated with the vector can also be provided.
         """
-        vector_id = vector_id if vector_id else str_to_hash(str(vector))
+        vector_id = vector_id or str_to_hash(str(vector))
         key = self._generate_key(vector_id, namespace)
         bytes_vector = json.dumps(vector).encode("utf-8")
 

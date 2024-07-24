@@ -16,8 +16,7 @@ class Conversation:
         lines = []
 
         for run in self.memory.runs:
-            lines.append(f"Q: {run.input}")
-            lines.append(f"A: {run.output}")
+            lines.extend((f"Q: {run.input}", f"A: {run.output}"))
 
         return lines
 

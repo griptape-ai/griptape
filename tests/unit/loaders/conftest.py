@@ -15,8 +15,7 @@ def path_from_resource_path():
 @pytest.fixture()
 def bytes_from_resource_path(path_from_resource_path):
     def create_source(resource_path: str) -> bytes:
-        with open(path_from_resource_path(resource_path), "rb") as f:
-            return f.read()
+        return Path(path_from_resource_path(resource_path)).read_bytes()
 
     return create_source
 
@@ -24,7 +23,6 @@ def bytes_from_resource_path(path_from_resource_path):
 @pytest.fixture()
 def str_from_resource_path(path_from_resource_path):
     def test_csv_str(resource_path: str) -> str:
-        with open(path_from_resource_path(resource_path)) as f:
-            return f.read()
+        return Path(path_from_resource_path(resource_path)).read_text()
 
     return test_csv_str
