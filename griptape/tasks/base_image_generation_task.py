@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from abc import ABC
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from attrs import Attribute, define, field
@@ -60,5 +61,4 @@ class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, 
 
     def _read_from_file(self, path: str) -> MediaArtifact:
         self.structure.logger.info("Reading image from %s", os.path.abspath(path))
-        with open(path, "rb") as file:
-            return ImageLoader().load(file.read())
+        return ImageLoader().load(Path(path).read_bytes())

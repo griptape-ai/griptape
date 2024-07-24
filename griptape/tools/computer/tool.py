@@ -142,8 +142,7 @@ class Computer(BaseTool):
         local_file_path = os.path.join(local_workdir, filename)
 
         try:
-            with open(local_file_path, "w") as f:
-                f.write(code)
+            Path(local_file_path).write_text(code)
 
             return self.execute_command_in_container(f"python {container_file_path}")
         except Exception as e:
@@ -188,7 +187,7 @@ class Computer(BaseTool):
 
     def dependencies(self) -> list[str]:
         with open(self.requirements_txt_path) as file:
-            return [line.strip() for line in file.readlines()]
+            return [line.strip() for line in file]
 
     def __del__(self) -> None:
         if self._tempdir:

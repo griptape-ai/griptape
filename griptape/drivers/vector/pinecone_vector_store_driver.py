@@ -36,7 +36,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
-        vector_id = vector_id if vector_id else str_to_hash(str(vector))
+        vector_id = vector_id or str_to_hash(str(vector))
 
         params: dict[str, Any] = {"namespace": namespace} | kwargs
 
@@ -95,7 +95,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         vector = self.embedding_driver.embed_string(query)
 
         params = {
-            "top_k": count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+            "top_k": count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
             "namespace": namespace,
             "include_values": include_vectors,
             "include_metadata": include_metadata,

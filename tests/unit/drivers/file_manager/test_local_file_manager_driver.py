@@ -17,8 +17,7 @@ class TestLocalFileManagerDriver:
             def write_file(path: str, content: bytes) -> None:
                 full_path = os.path.join(temp_dir, path)
                 os.makedirs(os.path.dirname(full_path), exist_ok=True)
-                with open(full_path, "wb") as f:
-                    f.write(content)
+                Path(full_path).write_bytes(content)
 
             def mkdir(path: str) -> None:
                 full_path = os.path.join(temp_dir, path)
@@ -28,8 +27,7 @@ class TestLocalFileManagerDriver:
                 file_dir = os.path.dirname(__file__)
                 full_path = os.path.join(file_dir, "../../../resources", resource_path)
                 full_path = os.path.normpath(full_path)
-                with open(full_path, "rb") as source:
-                    content = source.read()
+                content = Path(full_path).read_bytes()
                 dest_path = os.path.join(temp_dir, "resources", resource_path)
                 write_file(dest_path, content)
 

@@ -87,7 +87,7 @@ class BaseVectorStoreDriver(EventPublisherMixin, SerializableMixin, ABC):
         else:
             meta["artifact"] = artifact.to_json()
 
-            vector = artifact.embedding if artifact.embedding else artifact.generate_embedding(self.embedding_driver)
+            vector = artifact.embedding or artifact.generate_embedding(self.embedding_driver)
 
             if isinstance(vector, list):
                 return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
@@ -112,7 +112,7 @@ class BaseVectorStoreDriver(EventPublisherMixin, SerializableMixin, ABC):
                 self.embedding_driver.embed_string(string),
                 vector_id=vector_id,
                 namespace=namespace,
-                meta=meta if meta else {},
+                meta=meta or {},
                 **kwargs,
             )
 

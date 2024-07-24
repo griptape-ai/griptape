@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 from attrs import Factory, define, field
@@ -40,8 +41,7 @@ class ImageQueryClient(BaseTool):
 
         image_artifacts = []
         for image_path in image_paths:
-            with open(image_path, "rb") as f:
-                image_artifacts.append(self.image_loader.load(f.read()))
+            image_artifacts.append(self.image_loader.load(Path(image_path).read_bytes()))
 
         return self.image_query_engine.run(query, image_artifacts)
 

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from pathlib import Path
 from typing import Optional
 
 from attrs import define, field
@@ -14,15 +15,13 @@ class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
     file_path: str = field(default="griptape_memory.json", kw_only=True, metadata={"serializable": True})
 
     def store(self, memory: BaseConversationMemory) -> None:
-        with open(self.file_path, "w") as file:
-            file.write(memory.to_json())
+        Path(self.file_path).write_text(memory.to_json())
 
     def load(self) -> Optional[BaseConversationMemory]:
         if not os.path.exists(self.file_path):
             return None
-        with open(self.file_path) as file:
-            memory = BaseConversationMemory.from_json(file.read())
+        memory = BaseConversationMemory.from_json(Path(self.file_path).read_text())
 
-            memory.driver = self
+        memory.driver = self
 
-            return memory
+        return memory

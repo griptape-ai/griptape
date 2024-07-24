@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
 from attrs import Factory, define, field
@@ -31,8 +32,7 @@ class AudioTranscriptionClient(BaseTool):
     def transcribe_audio_from_disk(self, params: dict) -> TextArtifact | ErrorArtifact:
         audio_path = params["values"]["path"]
 
-        with open(audio_path, "rb") as f:
-            audio_artifact = self.audio_loader.load(f.read())
+        audio_artifact = self.audio_loader.load(Path(audio_path).read_bytes())
 
         return self.engine.run(audio_artifact)
 
