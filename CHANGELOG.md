@@ -49,6 +49,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed `drivers-vector-postgresql` extra to `drivers-vector-pgvector`.
 - **BREAKING**: Update `marqo` dependency to `^3.7.0`.
 - **BREAKING**: Removed `drivers-sql-postgresql` extra. Use `drivers-sql` extra and install necessary drivers (i.e. `psycopg2`) separately.
+- **BREAKING**: Removed `ImageQueryDriver` in favor of using `PromptDriver` with `TextArtifact` and `ImageArtifact` inputs.
+- **BREAKING**: Removed `ImageQueryEngine`, in favor of using `PromptDriver` directly.
+- **BREAKING**: Removed `ImageQueryTask`, in favor of `PromptTask` with `TextArtifact` and `ImageArtifact` inputs.
+- **BREAKING**: `ImageQueryClient` now takes a `PromptDriver` instead of an `ImageQueryEngine`.
 - Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
 - Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.

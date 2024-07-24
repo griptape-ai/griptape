@@ -79,17 +79,6 @@ from .image_generation.huggingface_pipeline_image_generation_driver import (
     HuggingFacePipelineImageGenerationDriver,
 )
 
-from .image_query_model.base_image_query_model_driver import BaseImageQueryModelDriver
-from .image_query_model.bedrock_claude_image_query_model_driver import BedrockClaudeImageQueryModelDriver
-
-from .image_query.base_image_query_driver import BaseImageQueryDriver
-from .image_query.base_multi_model_image_query_driver import BaseMultiModelImageQueryDriver
-from .image_query.dummy_image_query_driver import DummyImageQueryDriver
-from .image_query.openai_image_query_driver import OpenAiImageQueryDriver
-from .image_query.anthropic_image_query_driver import AnthropicImageQueryDriver
-from .image_query.azure_openai_image_query_driver import AzureOpenAiImageQueryDriver
-from .image_query.amazon_bedrock_image_query_driver import AmazonBedrockImageQueryDriver
-
 from .web_scraper.base_web_scraper_driver import BaseWebScraperDriver
 from .web_scraper.trafilatura_web_scraper_driver import TrafilaturaWebScraperDriver
 from .web_scraper.markdownify_web_scraper_driver import MarkdownifyWebScraperDriver
@@ -194,15 +183,6 @@ __all__ = [
     "AzureOpenAiImageGenerationDriver",
     "DummyImageGenerationDriver",
     "HuggingFacePipelineImageGenerationDriver",
-    "BaseImageQueryModelDriver",
-    "BedrockClaudeImageQueryModelDriver",
-    "BaseImageQueryDriver",
-    "OpenAiImageQueryDriver",
-    "AzureOpenAiImageQueryDriver",
-    "DummyImageQueryDriver",
-    "AnthropicImageQueryDriver",
-    "BaseMultiModelImageQueryDriver",
-    "AmazonBedrockImageQueryDriver",
     "BaseWebScraperDriver",
     "TrafilaturaWebScraperDriver",
     "MarkdownifyWebScraperDriver",

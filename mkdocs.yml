@@ -95,7 +95,6 @@ nav:
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
       - Engines:
           - RAG Engines: "griptape-framework/engines/rag-engines.md"
-          - Image Query Engines: "griptape-framework/engines/image-query-engines.md"
           - Extraction Engines: "griptape-framework/engines/extraction-engines.md"
           - Summary Engines: "griptape-framework/engines/summary-engines.md"
           - Image Generation Engines: "griptape-framework/engines/image-generation-engines.md"

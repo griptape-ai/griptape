@@ -18,8 +18,6 @@ Griptape provides several abstractions for working with data.
 
 [Extraction Engines](../engines/extraction-engines.md) are used for extracting structured content.
 
-[Image Query Engines](../engines/image-query-engines.md) are used for querying images with text.
-
 [Image Generation Engines](../engines/image-generation-engines.md) are used for generating images.
 
 [Summary Engines](../engines/summary-engines.md) are used for summarizing text content.

@@ -3,7 +3,6 @@ from attrs import Factory, define, field
 from griptape.config import StructureConfig
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
-from tests.mocks.mock_image_query_driver import MockImageQueryDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
@@ -14,9 +13,6 @@ class MockStructureConfig(StructureConfig):
     )
     image_generation_driver: MockImageGenerationDriver = field(
         default=Factory(lambda: MockImageGenerationDriver(model="dall-e-2")), metadata={"serializable": True}
-    )
-    image_query_driver: MockImageQueryDriver = field(
-        default=Factory(lambda: MockImageQueryDriver(model="gpt-4-vision-preview")), metadata={"serializable": True}
     )
     embedding_driver: MockEmbeddingDriver = field(
         default=Factory(lambda: MockEmbeddingDriver(model="text-embedding-3-small")), metadata={"serializable": True}

@@ -16,7 +16,6 @@ if TYPE_CHECKING:
         BaseConversationMemoryDriver,
         BaseEmbeddingDriver,
         BaseImageGenerationDriver,
-        BaseImageQueryDriver,
         BasePromptDriver,
         BaseTextToSpeechDriver,
         BaseVectorStoreDriver,
@@ -28,7 +27,6 @@ if TYPE_CHECKING:
 class BaseStructureConfig(BaseConfig, ABC):
     prompt_driver: BasePromptDriver = field(kw_only=True, metadata={"serializable": True})
     image_generation_driver: BaseImageGenerationDriver = field(kw_only=True, metadata={"serializable": True})
-    image_query_driver: BaseImageQueryDriver = field(kw_only=True, metadata={"serializable": True})
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})
     vector_store_driver: BaseVectorStoreDriver = field(kw_only=True, metadata={"serializable": True})
     conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
@@ -47,7 +45,6 @@ class BaseStructureConfig(BaseConfig, ABC):
         return [
             self.prompt_driver,
             self.image_generation_driver,
-            self.image_query_driver,
             self.embedding_driver,
             self.vector_store_driver,
             self.conversation_memory_driver,

@@ -46,15 +46,6 @@ class TestOpenAiStructureConfig:
                 "style": None,
                 "type": "OpenAiImageGenerationDriver",
             },
-            "image_query_driver": {
-                "api_version": None,
-                "base_url": None,
-                "image_quality": "auto",
-                "max_tokens": 256,
-                "model": "gpt-4o",
-                "organization": None,
-                "type": "OpenAiImageQueryDriver",
-            },
             "vector_store_driver": {
                 "embedding_driver": {
                     "base_url": None,

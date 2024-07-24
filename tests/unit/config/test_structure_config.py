@@ -22,7 +22,6 @@ class TestStructureConfig:
             "conversation_memory_driver": None,
             "embedding_driver": {"type": "DummyEmbeddingDriver"},
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-            "image_query_driver": {"type": "DummyImageQueryDriver"},
             "vector_store_driver": {
                 "embedding_driver": {"type": "DummyEmbeddingDriver"},
                 "type": "DummyVectorStoreDriver",
@@ -66,7 +65,6 @@ class TestStructureConfig:
         assert config.drivers == [
             config.prompt_driver,
             config.image_generation_driver,
-            config.image_query_driver,
             config.embedding_driver,
             config.vector_store_driver,
             config.conversation_memory_driver,

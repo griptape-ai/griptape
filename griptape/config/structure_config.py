@@ -10,14 +10,12 @@ from griptape.drivers import (
     BaseConversationMemoryDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
-    BaseImageQueryDriver,
     BasePromptDriver,
     BaseTextToSpeechDriver,
     BaseVectorStoreDriver,
     DummyAudioTranscriptionDriver,
     DummyEmbeddingDriver,
     DummyImageGenerationDriver,
-    DummyImageQueryDriver,
     DummyPromptDriver,
     DummyTextToSpeechDriver,
     DummyVectorStoreDriver,
@@ -34,11 +32,6 @@ class StructureConfig(BaseStructureConfig):
     image_generation_driver: BaseImageGenerationDriver = field(
         kw_only=True,
         default=Factory(lambda: DummyImageGenerationDriver()),
-        metadata={"serializable": True},
-    )
-    image_query_driver: BaseImageQueryDriver = field(
-        kw_only=True,
-        default=Factory(lambda: DummyImageQueryDriver()),
         metadata={"serializable": True},
     )
     embedding_driver: BaseEmbeddingDriver = field(
