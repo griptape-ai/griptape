@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from attrs import define, field
-from schema import Literal, Schema
+from schema import Literal, Optional, Schema
 
 from griptape.artifacts import ErrorArtifact, ListArtifact
 from griptape.tools import BaseTool
@@ -15,25 +15,30 @@ if TYPE_CHECKING:
 
 @define
 class WebSearch(BaseTool):
-    web_search_driver: BaseWebSearchDriver = field(default=None, kw_only=True)
+    web_search_driver: BaseWebSearchDriver = field(kw_only=True)
 
     @activity(
         config={
-            "description": "Can be used for searching the web",
+            "description": "Can be used for searching the web via the {{ _self.web_search_driver.__class__.__name__}}.",
             "schema": Schema(
                 {
                     Literal(
                         "query",
                         description="Search engine request that returns a list of pages with titles, descriptions, and URLs",
                     ): str,
+                    Optional(
+                        "params",
+                        description="Additional params that can be passed with the request.",
+                    ): dict,
                 },
             ),
         },
     )
     def search(self, props: dict) -> ListArtifact | ErrorArtifact:
         query = props["values"]["query"]
+        params = props["values"].get("params", {})
 
         try:
-            return self.web_search_driver.search(query)
+            return self.web_search_driver.search(query, **params)
         except Exception as e:
             return ErrorArtifact(f"Error searching '{query}' with {self.web_search_driver.__class__.__name__}: {e}")
