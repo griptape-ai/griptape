@@ -8,19 +8,21 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 class TestAstraDBVectorStoreDriver:
     @pytest.fixture(autouse=True)
-    def mock_client(self, mocker):
+    def mock_collection(self, mocker):
         mock_create_collection = mocker.patch(
             "astrapy.DataAPIClient"
         ).return_value.get_database.return_value.create_collection
-        #
-        mock_insert_one_return_value = MagicMock()
-        mock_insert_one_return_value.inserted_id = "server_side_id"
-        mock_create_collection.return_value.insert_one.return_value = mock_insert_one_return_value
-        #
-        return mock_create_collection.return_value
+        return mock_create_collection
 
     @pytest.fixture()
-    def driver(self, mock_client):
+    def autoid_mock_collection(self, mock_collection):
+        mock_insert_one_return_value = MagicMock()
+        mock_insert_one_return_value.inserted_id = "server_side_id"
+        mock_collection.return_value.insert_one.return_value = mock_insert_one_return_value
+        return mock_collection
+
+    @pytest.fixture()
+    def driver(self, autoid_mock_collection):
         return AstraDBVectorStoreDriver(
             api_endpoint="ep",
             token="to",
