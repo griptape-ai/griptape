@@ -1,12 +1,15 @@
 import os
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
 from attrs import define, field
-from diffusers.models.controlnet_sd3 import SD3ControlNetModel
-from diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet import StableDiffusion3ControlNetPipeline
-from PIL.Image import Image
 
 from griptape.drivers import StableDiffusion3PipelineImageGenerationModelDriver
+from griptape.utils import import_optional_dependency
+
+if TYPE_CHECKING:
+    from diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet import \
+        StableDiffusion3ControlNetPipeline
+    from PIL.Image import Image
 
 
 @define
@@ -25,21 +28,26 @@ class StableDiffusion3ControlNetPipelineImageGenerationModelDriver(StableDiffusi
         # as a path to a local file or as a HuggingFace model repo name.
         # We use the from_single_file method if the model is a local file and the
         # from_pretrained method if the model is a local directory or hosted on HuggingFace.
+        sd3_controlnet_model = import_optional_dependency("diffusers.models.controlnet_sd3.SD3ControlNetModel")
         if os.path.isfile(self.controlnet_model):
-            pipeline_params["controlnet"] = SD3ControlNetModel.from_single_file(
+            pipeline_params["controlnet"] = sd3_controlnet_model.from_single_file(
                 self.controlnet_model, **controlnet_pipeline_params
             )
 
         else:
-            pipeline_params["controlnet"] = SD3ControlNetModel.from_pretrained(
+            pipeline_params["controlnet"] = sd3_controlnet_model.from_pretrained(
                 self.controlnet_model, **controlnet_pipeline_params
             )
 
+        sd3_controlnet_pipeline = import_optional_dependency(
+            "diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet"
+            ".StableDiffusion3ControlNetPipeline"
+        )
         if os.path.isfile(model):
-            pipeline = StableDiffusion3ControlNetPipeline.from_single_file(model, **pipeline_params)
+            pipeline = sd3_controlnet_pipeline.from_single_file(model, **pipeline_params)
 
         else:
-            pipeline = StableDiffusion3ControlNetPipeline.from_pretrained(model, **pipeline_params)
+            pipeline = sd3_controlnet_pipeline.from_pretrained(model, **pipeline_params)
 
         if not isinstance(pipeline, StableDiffusion3ControlNetPipeline):
             raise ValueError(f"Expected StableDiffusion3ControlNetPipeline, but got {type(pipeline)}.")

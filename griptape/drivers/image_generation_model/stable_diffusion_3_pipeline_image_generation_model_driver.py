@@ -1,15 +1,17 @@
 import os
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
-import torch
 from attrs import define, field
-from diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3 import StableDiffusion3Pipeline
-from PIL.Image import Image
 
 from griptape.drivers.image_generation_model.base_diffusion_pipeline_image_generation_model_driver import (
     BaseDiffusionPipelineImageGenerationModelDriver,
 )
+from griptape.utils import import_optional_dependency
 
+if TYPE_CHECKING:
+    from diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3 import StableDiffusion3Pipeline
+    from PIL.Image import Image
+    import torch
 
 @define
 class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineImageGenerationModelDriver):
@@ -27,14 +29,17 @@ class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineIm
 
         # A model can be provided either as a path to a local file
         # or as a HuggingFace model repo name.
+        sd3_pipeline = import_optional_dependency(
+            "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3.StableDiffusion3Pipeline"
+        )
         if os.path.isfile(model):
             # If the model provided is a local file (not a directory),
             # we load it using the from_single_file method.
-            pipeline = StableDiffusion3Pipeline.from_single_file(model, **pipeline_params)
+            pipeline = sd3_pipeline.from_single_file(model, **pipeline_params)
         else:
             # If the model is a local directory or hosted on HuggingFace,
             # we load it using the from_pretrained method.
-            pipeline = StableDiffusion3Pipeline.from_pretrained(model, **pipeline_params)
+            pipeline = sd3_pipeline.from_pretrained(model, **pipeline_params)
 
         if not isinstance(pipeline, StableDiffusion3Pipeline):
             raise ValueError(f"Expected StableDiffusion3Pipeline, but got {type(pipeline)}.")

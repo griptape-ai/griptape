@@ -1,12 +1,15 @@
 import io
 from abc import ABC
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 from attrs import define, field
-from PIL import Image
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseDiffusionPipelineImageGenerationModelDriver, BaseImageGenerationDriver
+from griptape.utils import import_optional_dependency
+
+if TYPE_CHECKING:
+    from PIL import Image
 
 
 @define
@@ -35,6 +38,7 @@ class HuggingFaceDiffusionPipelineImageGenerationDriver(BaseImageGenerationDrive
         pipeline = self.model_driver.prepare_pipeline(self.model, self.device)
 
         prompt = ", ".join(prompts)
+        Image = import_optional_dependency("PIL.Image")
         input_image = Image.open(io.BytesIO(image.value))
 
         # The size of the input image drives the size of the output image.

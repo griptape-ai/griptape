@@ -1,8 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Any, Optional
+from typing import Any, Optional, TYPE_CHECKING
 
 from attrs import define
-from PIL.Image import Image
+
+if TYPE_CHECKING:
+    from PIL.Image import Image
 
 
 @define
