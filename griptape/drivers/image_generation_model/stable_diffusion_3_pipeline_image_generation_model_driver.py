@@ -12,7 +12,6 @@ from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     import torch
-    from diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3 import StableDiffusion3Pipeline
     from PIL.Image import Image
 
 
@@ -33,8 +32,8 @@ class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineIm
         # A model can be provided either as a path to a local file
         # or as a HuggingFace model repo name.
         sd3_pipeline = import_optional_dependency(
-            "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3.StableDiffusion3Pipeline"
-        )
+            "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3"
+        ).StableDiffusion3Pipeline
         if os.path.isfile(model):
             # If the model provided is a local file (not a directory),
             # we load it using the from_single_file method.
@@ -44,7 +43,7 @@ class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineIm
             # we load it using the from_pretrained method.
             pipeline = sd3_pipeline.from_pretrained(model, **pipeline_params)
 
-        if not isinstance(pipeline, StableDiffusion3Pipeline):
+        if not isinstance(pipeline, sd3_pipeline):
             raise ValueError(f"Expected StableDiffusion3Pipeline, but got {type(pipeline)}.")
 
         # Move inference to particular device if requested.
@@ -68,7 +67,9 @@ class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineIm
             additional_params["height"] = self.height
 
         if self.seed is not None:
-            additional_params["generator"] = [torch.Generator(device=device).manual_seed(self.seed)]
+            additional_params["generator"] = [
+                import_optional_dependency("torch").Generator(device=device).manual_seed(self.seed)
+            ]
 
         if self.guidance_scale is not None:
             additional_params["guidance_scale"] = self.guidance_scale

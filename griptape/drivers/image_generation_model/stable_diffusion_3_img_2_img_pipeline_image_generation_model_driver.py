@@ -9,9 +9,6 @@ from griptape.drivers import StableDiffusion3PipelineImageGenerationModelDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    from diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3_img2img import (
-        StableDiffusion3Img2ImgPipeline,
-    )
     from PIL.Image import Image
 
 
@@ -27,8 +24,8 @@ class StableDiffusion3Img2ImgPipelineImageGenerationModelDriver(StableDiffusion3
         # A model can be provided either as a path to a local file
         # or as a HuggingFace model repo name.
         sd3_img2img_pipeline = import_optional_dependency(
-            "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3_img2img.StableDiffusion3Img2ImgPipeline"
-        )
+            "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3_img2img"
+        ).StableDiffusion3Img2ImgPipeline
         if os.path.isfile(model):
             # If the model provided is a local file (not a directory),
             # we load it using the from_single_file method.
@@ -41,7 +38,7 @@ class StableDiffusion3Img2ImgPipelineImageGenerationModelDriver(StableDiffusion3
             # we load it using the from_pretrained method.
             pipeline = sd3_img2img_pipeline.from_pretrained(model, **pipeline_params)
 
-        if not isinstance(pipeline, StableDiffusion3Img2ImgPipeline):
+        if not isinstance(pipeline, sd3_img2img_pipeline):
             raise ValueError(f"Expected StableDiffusion3Img2ImgPipeline, but got {type(pipeline)}.")
 
         # Move inference to particular device if requested.

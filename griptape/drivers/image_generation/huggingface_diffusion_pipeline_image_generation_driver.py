@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import io
 from abc import ABC
 from typing import Optional
@@ -35,8 +37,7 @@ class HuggingFaceDiffusionPipelineImageGenerationDriver(BaseImageGenerationDrive
         pipeline = self.model_driver.prepare_pipeline(self.model, self.device)
 
         prompt = ", ".join(prompts)
-        Image = import_optional_dependency("PIL.Image")
-        input_image = Image.open(io.BytesIO(image.value))
+        input_image = import_optional_dependency("PIL.Image").open(io.BytesIO(image.value))
 
         # The size of the input image drives the size of the output image.
         # Resize the input image to the configured dimensions.

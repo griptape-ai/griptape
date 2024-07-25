@@ -9,9 +9,6 @@ from griptape.drivers import StableDiffusion3PipelineImageGenerationModelDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    from diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet import (
-        StableDiffusion3ControlNetPipeline,
-    )
     from PIL.Image import Image
 
 
@@ -51,7 +48,7 @@ class StableDiffusion3ControlNetPipelineImageGenerationModelDriver(StableDiffusi
         else:
             pipeline = sd3_controlnet_pipeline.from_pretrained(model, **pipeline_params)
 
-        if not isinstance(pipeline, StableDiffusion3ControlNetPipeline):
+        if not isinstance(pipeline, sd3_controlnet_pipeline):
             raise ValueError(f"Expected StableDiffusion3ControlNetPipeline, but got {type(pipeline)}.")
 
         if device is not None:
