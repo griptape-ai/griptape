@@ -12,7 +12,7 @@ from griptape.utils import import_optional_dependency
 
 
 @define
-class HuggingFaceDiffusionPipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
+class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
     """Image generation driver for models hosted by Hugging Face's Diffusion Pipeline.
 
     For more information, see the HuggingFace documentation for Diffusers:
@@ -44,17 +44,17 @@ class HuggingFaceDiffusionPipelineImageGenerationDriver(BaseImageGenerationDrive
     def try_image_variation(
         self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
     ) -> ImageArtifact:
+        pil_image = import_optional_dependency("PIL.Image")
+
         pipeline = self.model_driver.prepare_pipeline(self.model, self.device)
 
         prompt = ", ".join(prompts)
-        input_image = import_optional_dependency("PIL.Image").open(io.BytesIO(image.value))
+        input_image = pil_image.open(io.BytesIO(image.value))
         # The size of the input image drives the size of the output image.
         # Resize the input image to the configured dimensions.
-        requested_dimensions = self.model_driver.get_output_image_dimensions()
-        if requested_dimensions is not None and (
-            input_image.height != requested_dimensions[0] or input_image.width != requested_dimensions[1]
-        ):
-            input_image = input_image.resize(requested_dimensions)
+        output_width, output_height = self.model_driver.output_image_dimensions
+        if input_image.height != output_height or input_image.width != output_width:
+            input_image = input_image.resize((output_width, output_height))
 
         output_image = pipeline(
             prompt,

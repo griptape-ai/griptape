@@ -26,15 +26,16 @@ class StableDiffusion3Img2ImgPipelineImageGenerationModelDriver(StableDiffusion3
     strength: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def prepare_pipeline(self, model: str, device: Optional[str]) -> Any:
+        sd3_img2img_pipeline = import_optional_dependency(
+            "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3_img2img"
+        ).StableDiffusion3Img2ImgPipeline
+
         pipeline_params = {}
         if self.torch_dtype is not None:
             pipeline_params["torch_dtype"] = self.torch_dtype
 
         # A model can be provided either as a path to a local file
         # or as a HuggingFace model repo name.
-        sd3_img2img_pipeline = import_optional_dependency(
-            "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3_img2img"
-        ).StableDiffusion3Img2ImgPipeline
         if os.path.isfile(model):
             # If the model provided is a local file (not a directory),
             # we load it using the from_single_file method.

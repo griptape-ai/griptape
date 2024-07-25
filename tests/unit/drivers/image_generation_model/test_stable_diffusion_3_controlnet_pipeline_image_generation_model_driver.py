@@ -96,6 +96,6 @@ class TestStableDiffusion3ControlNetPipelineImageGenerationModelDriver:
         model_driver.width = 512
         model_driver.height = 768
 
-        dimensions = model_driver.get_output_image_dimensions()
+        dimensions = model_driver.output_image_dimensions()
 
         assert dimensions == (512, 768)

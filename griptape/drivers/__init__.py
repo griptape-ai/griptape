@@ -73,8 +73,8 @@ from .image_generation.leonardo_image_generation_driver import LeonardoImageGene
 from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
 from .image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
 from .image_generation.dummy_image_generation_driver import DummyImageGenerationDriver
-from .image_generation.huggingface_diffusion_pipeline_image_generation_driver import (
-    HuggingFaceDiffusionPipelineImageGenerationDriver,
+from .image_generation.huggingface_pipeline_image_generation_driver import (
+    HuggingFacePipelineImageGenerationDriver,
 )
 
 from .image_query_model.base_image_query_model_driver import BaseImageQueryModelDriver
@@ -190,7 +190,7 @@ __all__ = [
     "AmazonBedrockImageGenerationDriver",
     "AzureOpenAiImageGenerationDriver",
     "DummyImageGenerationDriver",
-    "HuggingFaceDiffusionPipelineImageGenerationDriver",
+    "HuggingFacePipelineImageGenerationDriver",
     "BaseImageQueryModelDriver",
     "BedrockClaudeImageQueryModelDriver",
     "BaseImageQueryDriver",

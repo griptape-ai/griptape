@@ -7,11 +7,11 @@ from PIL import Image
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import (
     BaseDiffusionPipelineImageGenerationModelDriver,
-    HuggingFaceDiffusionPipelineImageGenerationDriver,
+    HuggingFacePipelineImageGenerationDriver,
 )
 
 
-class TestHuggingFaceDiffusionPipelineImageGenerationDriver:
+class TestHuggingFacePipelineImageGenerationDriver:
     @pytest.fixture()
     def image_artifact(self):
         buffer = io.BytesIO()
@@ -33,7 +33,7 @@ class TestHuggingFaceDiffusionPipelineImageGenerationDriver:
 
     @pytest.fixture()
     def driver(self, model_driver):
-        return HuggingFaceDiffusionPipelineImageGenerationDriver(model="repo/model", model_driver=model_driver)
+        return HuggingFacePipelineImageGenerationDriver(model="repo/model", model_driver=model_driver)
 
     def test_init(self, driver):
         assert driver

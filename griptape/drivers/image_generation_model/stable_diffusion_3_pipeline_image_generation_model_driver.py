@@ -39,15 +39,16 @@ class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineIm
     torch_dtype: Optional[torch.dtype] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def prepare_pipeline(self, model: str, device: Optional[str]) -> Any:
+        sd3_pipeline = import_optional_dependency(
+            "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3"
+        ).StableDiffusion3Pipeline
+
         pipeline_params = {}
         if self.torch_dtype is not None:
             pipeline_params["torch_dtype"] = self.torch_dtype
 
         # A model can be provided either as a path to a local file
         # or as a HuggingFace model repo name.
-        sd3_pipeline = import_optional_dependency(
-            "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3"
-        ).StableDiffusion3Pipeline
         if os.path.isfile(model):
             # If the model provided is a local file (not a directory),
             # we load it using the from_single_file method.
@@ -67,6 +68,8 @@ class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineIm
         return None
 
     def make_additional_params(self, negative_prompts: Optional[list[str]], device: Optional[str]) -> dict[str, Any]:
+        torch_generator = import_optional_dependency("torch").Generator
+
         additional_params = {}
         if negative_prompts:
             additional_params["negative_prompt"] = ", ".join(negative_prompts)
@@ -78,9 +81,7 @@ class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineIm
             additional_params["height"] = self.height
 
         if self.seed is not None:
-            additional_params["generator"] = [
-                import_optional_dependency("torch").Generator(device=device).manual_seed(self.seed)
-            ]
+            additional_params["generator"] = [torch_generator(device=device).manual_seed(self.seed)]
 
         if self.guidance_scale is not None:
             additional_params["guidance_scale"] = self.guidance_scale
@@ -90,5 +91,6 @@ class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineIm
 
         return additional_params
 
-    def get_output_image_dimensions(self) -> tuple[int, int]:
+    @property
+    def output_image_dimensions(self) -> tuple[int, int]:
         return self.width, self.height

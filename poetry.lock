@@ -6744,7 +6744,7 @@ drivers-embedding-voyageai = ["voyageai"]
 drivers-event-listener-amazon-iot = ["boto3"]
 drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-pusher = ["pusher"]
-drivers-imagegen-huggingface = ["accelerate", "diffusers", "pillow", "sentencepiece", "torch"]
+drivers-image-generation-huggingface = ["accelerate", "diffusers", "pillow", "sentencepiece", "torch"]
 drivers-memory-conversation-amazon-dynamodb = ["boto3"]
 drivers-memory-conversation-redis = ["redis"]
 drivers-observability-datadog = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
@@ -6783,4 +6783,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "2d17df9205bdee5f6cbd3044e5df3c120c6a91df5fb203b49e11612a29d6aaf0"
+content-hash = "ad6d61160569b51df46133f55dba1adb5f697642e02ef9ffa87e0c669200774a"

@@ -138,7 +138,7 @@ drivers-observability-datadog = [
     "opentelemetry-exporter-otlp-proto-http",
 ]
 
-drivers-imagegen-huggingface = [
+drivers-image-generation-huggingface = [
     "diffusers",
     "accelerate",
     "sentencepiece",

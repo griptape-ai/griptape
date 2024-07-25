@@ -10,10 +10,6 @@ from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from PIL.Image import Image
-else:
-    StableDiffusion3ControlNetPipeline = import_optional_dependency(
-        "diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet"
-    ).StableDiffusion3ControlNetPipeline
 
 
 @define
@@ -32,6 +28,11 @@ class StableDiffusion3ControlNetPipelineImageGenerationModelDriver(StableDiffusi
     controlnet_conditioning_scale: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def prepare_pipeline(self, model: str, device: Optional[str]) -> Any:
+        sd3_controlnet_model = import_optional_dependency("diffusers.models.controlnet_sd3").SD3ControlNetModel
+        sd3_controlnet_pipeline = import_optional_dependency(
+            "diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet"
+        ).StableDiffusion3ControlNetPipeline
+
         pipeline_params = {}
         controlnet_pipeline_params = {}
         if self.torch_dtype is not None:
@@ -42,23 +43,17 @@ class StableDiffusion3ControlNetPipelineImageGenerationModelDriver(StableDiffusi
         # as a path to a local file or as a HuggingFace model repo name.
         # We use the from_single_file method if the model is a local file and the
         # from_pretrained method if the model is a local directory or hosted on HuggingFace.
-        sd3_controlnet_model = import_optional_dependency("diffusers.models.controlnet_sd3").SD3ControlNetModel
         if os.path.isfile(self.controlnet_model):
             pipeline_params["controlnet"] = sd3_controlnet_model.from_single_file(
                 self.controlnet_model, **controlnet_pipeline_params
             )
-
         else:
             pipeline_params["controlnet"] = sd3_controlnet_model.from_pretrained(
                 self.controlnet_model, **controlnet_pipeline_params
             )
 
-        sd3_controlnet_pipeline = import_optional_dependency(
-            "diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet"
-        ).StableDiffusion3ControlNetPipeline
         if os.path.isfile(model):
             pipeline = sd3_controlnet_pipeline.from_single_file(model, **pipeline_params)
-
         else:
             pipeline = sd3_controlnet_pipeline.from_pretrained(model, **pipeline_params)
 
