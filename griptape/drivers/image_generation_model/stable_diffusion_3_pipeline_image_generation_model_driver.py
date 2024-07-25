@@ -17,6 +17,20 @@ if TYPE_CHECKING:
 
 @define
 class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineImageGenerationModelDriver):
+    """Image generation model driver for Stable Diffusion 3 models.
+
+    For more information, see the HuggingFace documentation for the StableDiffusion3Pipeline:
+        https://huggingface.co/docs/diffusers/main/en/api/pipelines/stable_diffusion/stable_diffusion_3
+
+    Attributes:
+        width: The width of the generated image. Defaults to 1024. Must be a multiple of 64.
+        height: The height of the generated image. Defaults to 1024. Must be a multiple of 64.
+        seed: The random seed to use for image generation. If not provided, a random seed will be used.
+        guidance_scale: The strength of the guidance loss. If not provided, the default value will be used.
+        steps: The number of inference steps to use in image generation. If not provided, the default value will be used.
+        torch_dtype: The torch data type to use for image generation. If not provided, the default value will be used.
+    """
+
     width: int = field(default=1024, kw_only=True, metadata={"serializable": True})
     height: int = field(default=1024, kw_only=True, metadata={"serializable": True})
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})

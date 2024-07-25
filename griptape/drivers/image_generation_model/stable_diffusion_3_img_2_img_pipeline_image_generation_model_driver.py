@@ -14,6 +14,15 @@ if TYPE_CHECKING:
 
 @define
 class StableDiffusion3Img2ImgPipelineImageGenerationModelDriver(StableDiffusion3PipelineImageGenerationModelDriver):
+    """Image generation model driver for Stable Diffusion 3 model image to image pipelines.
+
+    For more information, see the HuggingFace documentation for the StableDiffusion3Img2ImgPipeline:
+        https://github.com/huggingface/diffusers/blob/main/src/diffusers/pipelines/stable_diffusion_3/pipeline_stable_diffusion_3_img2img.py
+
+    Attributes:
+        strength: A value [0.0, 1.0] that determines the strength of the initial image in the output.
+    """
+
     strength: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def prepare_pipeline(self, model: str, device: Optional[str]) -> Any:

@@ -13,6 +13,16 @@ from griptape.utils import import_optional_dependency
 
 @define
 class HuggingFaceDiffusionPipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
+    """Image generation driver for models hosted by Hugging Face's Diffusion Pipeline.
+
+    For more information, see the HuggingFace documentation for Diffusers:
+            https://huggingface.co/docs/diffusers/en/index
+
+    Attributes:
+        model_driver: A pipeline image generation model driver typed for the specific pipeline required by the model.
+        device: The hardware device used for inference. For example, "cpu", "cuda", or "mps".
+    """
+
     model_driver: BaseDiffusionPipelineImageGenerationModelDriver = field(kw_only=True, metadata={"serializable": True})
     device: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
 

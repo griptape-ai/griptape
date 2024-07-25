@@ -14,6 +14,16 @@ if TYPE_CHECKING:
 
 @define
 class StableDiffusion3ControlNetPipelineImageGenerationModelDriver(StableDiffusion3PipelineImageGenerationModelDriver):
+    """Image generation model driver for Stable Diffusion 3 models with ControlNet.
+
+    For more information, see the HuggingFace documentation for the StableDiffusion3ControlNetPipeline:
+        https://huggingface.co/docs/diffusers/en/api/pipelines/controlnet_sd3
+
+    Attributes:
+        controlnet_model: The ControlNet model to use for image generation.
+        controlnet_conditioning_scale: The conditioning scale for the ControlNet model. Defaults to None.
+    """
+
     controlnet_model: str = field(kw_only=True)
     controlnet_conditioning_scale: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
 
