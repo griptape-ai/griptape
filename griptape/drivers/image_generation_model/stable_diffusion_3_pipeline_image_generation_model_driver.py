@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import os
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
 
@@ -9,9 +11,10 @@ from griptape.drivers.image_generation_model.base_diffusion_pipeline_image_gener
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
+    import torch
     from diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3 import StableDiffusion3Pipeline
     from PIL.Image import Image
-    import torch
+
 
 @define
 class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineImageGenerationModelDriver):

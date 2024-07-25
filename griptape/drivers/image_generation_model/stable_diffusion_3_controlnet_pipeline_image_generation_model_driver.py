@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 import os
-from typing import Any, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
 
@@ -7,8 +9,9 @@ from griptape.drivers import StableDiffusion3PipelineImageGenerationModelDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    from diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet import \
-        StableDiffusion3ControlNetPipeline
+    from diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet import (
+        StableDiffusion3ControlNetPipeline,
+    )
     from PIL.Image import Image
 
 
@@ -28,7 +31,7 @@ class StableDiffusion3ControlNetPipelineImageGenerationModelDriver(StableDiffusi
         # as a path to a local file or as a HuggingFace model repo name.
         # We use the from_single_file method if the model is a local file and the
         # from_pretrained method if the model is a local directory or hosted on HuggingFace.
-        sd3_controlnet_model = import_optional_dependency("diffusers.models.controlnet_sd3.SD3ControlNetModel")
+        sd3_controlnet_model = import_optional_dependency("diffusers.models.controlnet_sd3").SD3ControlNetModel
         if os.path.isfile(self.controlnet_model):
             pipeline_params["controlnet"] = sd3_controlnet_model.from_single_file(
                 self.controlnet_model, **controlnet_pipeline_params
@@ -41,8 +44,7 @@ class StableDiffusion3ControlNetPipelineImageGenerationModelDriver(StableDiffusi
 
         sd3_controlnet_pipeline = import_optional_dependency(
             "diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet"
-            ".StableDiffusion3ControlNetPipeline"
-        )
+        ).StableDiffusion3ControlNetPipeline
         if os.path.isfile(model):
             pipeline = sd3_controlnet_pipeline.from_single_file(model, **pipeline_params)
 

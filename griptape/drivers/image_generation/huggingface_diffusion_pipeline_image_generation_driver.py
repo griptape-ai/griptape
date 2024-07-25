@@ -1,15 +1,12 @@
 import io
 from abc import ABC
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 
 from attrs import define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseDiffusionPipelineImageGenerationModelDriver, BaseImageGenerationDriver
 from griptape.utils import import_optional_dependency
-
-if TYPE_CHECKING:
-    from PIL import Image
 
 
 @define

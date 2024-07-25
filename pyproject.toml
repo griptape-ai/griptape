@@ -190,11 +190,11 @@ all = [
     "accelerate",
     "sentencepiece",
     "torch",
+    "pillow",
 
     # loaders
     "pandas",
     "pypdf",
-    "pillow",
     "mail-parser",
     "filetype",
 ]
