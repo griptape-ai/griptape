@@ -11,6 +11,10 @@ from griptape.tools import InpaintingImageGenerationClient
 
 class TestInpaintingImageGenerationClient:
     @pytest.fixture()
+    def image_artifact(self) -> ImageArtifact:
+        return ImageArtifact(value=b"image_data", format="png", width=512, height=512, name="name")
+
+    @pytest.fixture()
     def image_generation_engine(self) -> Mock:
         return Mock()
 
@@ -72,3 +76,29 @@ class TestInpaintingImageGenerationClient:
 
         assert image_artifact
         assert os.path.exists(outfile)
+
+    def test_image_inpainting_from_memory(self, image_generation_engine, image_artifact):
+        image_generator = InpaintingImageGenerationClient(engine=image_generation_engine)
+        memory = Mock()
+        memory.load_artifacts = Mock(return_value=[image_artifact])
+        image_generator.find_input_memory = Mock(return_value=memory)
+
+        image_generator.engine.run.return_value = Mock(  # pyright: ignore[reportFunctionMemberAccess]
+            value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
+        )
+
+        image_artifact = image_generator.image_inpainting_from_memory(
+            params={
+                "values": {
+                    "prompt": "test prompt",
+                    "negative_prompt": "test negative prompt",
+                    "image_artifact_namespace": "namespace",
+                    "image_artifact_name": "name",
+                    "mask_artifact_namespace": "namespace",
+                    "mask_artifact_name": "name",
+                    "memory_name": "memory",
+                }
+            }
+        )
+
+        assert image_artifact
