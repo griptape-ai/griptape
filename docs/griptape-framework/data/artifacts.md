@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 **[Artifacts](../../reference/griptape/artifacts/base_artifact.md)** are used for passing different types of data between Griptape components. All tools return artifacts that are later consumed by tasks and task memory. 

@@ -109,10 +109,12 @@ class OpenWeatherClient(BaseTool):
                     return data[0]["lat"], data[0]["lon"]
             else:
                 logging.error(
-                    f"Error fetching coordinates. HTTP Status Code: {response.status_code}. Response: {response.text}",
+                    "Error fetching coordinates. HTTP Status Code: %s. Response: %s",
+                    response.status_code,
+                    response.text,
                 )
         except Exception as e:
-            logging.error(f"Error fetching coordinates: {e}")
+            logging.error("Error fetching coordinates: %s", e)
         return None
 
     @activity(
@@ -195,8 +197,12 @@ class OpenWeatherClient(BaseTool):
                 else:
                     return TextArtifact(str(data))
             else:
-                logging.error(f"Error fetching weather data. HTTP Status Code: {response.status_code}")
+                logging.error(
+                    "Error fetching weather data. HTTP Status Code: %s. Response: %s",
+                    response.status_code,
+                    response.text,
+                )
                 return ErrorArtifact("Error fetching weather data from OpenWeather API")
         except Exception as e:
-            logging.error(f"Error fetching weather data: {e}")
+            logging.error("Error fetching weather data: %s", e)
             return ErrorArtifact(f"Error fetching weather data: {e}")

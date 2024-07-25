@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 Prompt Drivers are used by Griptape Structures to make API calls to the underlying LLMs. [OpenAi Chat](#openai-chat) is the default prompt driver used in all structures.

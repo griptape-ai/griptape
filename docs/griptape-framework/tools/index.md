@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 One of the most powerful features of Griptape is the ability to use tools that can interact with the outside world.

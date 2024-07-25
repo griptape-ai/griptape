@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 An [Agent](../../reference/griptape/structures/agent.md) is the quickest way to get started with Griptape.

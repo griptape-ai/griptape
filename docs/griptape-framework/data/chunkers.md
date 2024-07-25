@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 Chunkers are used to split arbitrarily long text into chunks of certain token length. 

@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 Extraction Engines in Griptape facilitate the extraction of data from text formats such as CSV and JSON.
 These engines play a crucial role in the functionality of [Extraction Tasks](../../griptape-framework/structures/tasks.md).
