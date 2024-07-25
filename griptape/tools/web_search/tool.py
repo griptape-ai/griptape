@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from attrs import define, field
-from schema import Literal, Optional, Schema
+from schema import Literal, Schema
 
 from griptape.artifacts import ErrorArtifact, ListArtifact
 from griptape.tools import BaseTool
@@ -26,19 +26,16 @@ class WebSearch(BaseTool):
                         "query",
                         description="Search engine request that returns a list of pages with titles, descriptions, and URLs",
                     ): str,
-                    Optional(
-                        "params",
-                        description="Additional params that can be passed with the request.",
-                    ): dict,
                 },
             ),
         },
     )
     def search(self, props: dict) -> ListArtifact | ErrorArtifact:
-        query = props["values"]["query"]
-        params = props["values"].get("params", {})
+        values = props["values"]
+        query = values["query"]
+        extra_keys = {k: values[k] for k in values.keys() - {"query"}}
 
         try:
-            return self.web_search_driver.search(query, **params)
+            return self.web_search_driver.search(query, **extra_keys)
         except Exception as e:
             return ErrorArtifact(f"Error searching '{query}' with {self.web_search_driver.__class__.__name__}: {e}")

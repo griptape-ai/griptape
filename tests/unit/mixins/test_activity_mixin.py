@@ -20,7 +20,7 @@ class TestActivityMixin:
     def test_activity_schema(self, tool):
         schema = tool.activity_schema(tool.test).json_schema("InputSchema")
 
-        assert schema == Schema({"values": tool.test.config["schema"].schema}).json_schema("InputSchema")
+        assert schema == Schema({"values": getattr(tool.test, "config")["schema"]}).json_schema("InputSchema")
         assert schema["properties"].get("artifact") is None
 
     def test_activity_with_no_schema(self, tool):
@@ -73,11 +73,28 @@ class TestActivityMixin:
 
         assert len(tool.activities()) > 0
 
-    def test_activity_to_input(self, tool):
-        activity_input = tool.activity_to_input(tool.test)
-        assert str(activity_input) == str(
-            {Literal("input", description=""): {"values": Schema({Literal("test"): str}, description="Test input")}}
-        )
+    def test_extra_schema_properties(self, tool):
+        tool.extra_schema_properties = {"test": {Literal("new_property"): str, Optional("optional_property"): int}}
 
-        activity_input = tool.activity_to_input(tool.test_no_schema)
-        assert activity_input == {Optional("input"): {}}
+        schema = tool.activity_schema(tool.test).json_schema("InputSchema")
+
+        assert schema == {
+            "$id": "InputSchema",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "properties": {
+                "values": {
+                    "description": "Test input",
+                    "properties": {
+                        "test": {"type": "string"},
+                        "new_property": {"type": "string"},
+                        "optional_property": {"type": "integer"},
+                    },
+                    "required": ["test", "new_property"],
+                    "additionalProperties": False,
+                    "type": "object",
+                }
+            },
+            "required": ["values"],
+            "additionalProperties": False,
+            "type": "object",
+        }

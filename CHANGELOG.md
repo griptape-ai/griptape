@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `AstraDbVectorStoreDriver` to support DataStax Astra DB as a vector store.
+- Ability to set custom schema properties on Tool Activities via `extra_schema_properties`.
 
 ## [0.29.0] - 2024-07-30
 
