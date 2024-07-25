@@ -5,8 +5,7 @@ from typing import TYPE_CHECKING
 from attrs import define, field
 from schema import Literal, Schema
 
-from griptape.mixins import BlobArtifactFileOutputMixin
-from griptape.tools import BaseTool
+from griptape.tools import BaseImageGenerationClient
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
@@ -15,7 +14,7 @@ if TYPE_CHECKING:
 
 
 @define
-class PromptImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
+class PromptImageGenerationClient(BaseImageGenerationClient):
     """A tool that can be used to generate an image from a text prompt.
 
     Attributes:
@@ -28,21 +27,20 @@ class PromptImageGenerationClient(BlobArtifactFileOutputMixin, BaseTool):
 
     @activity(
         config={
-            "description": "Can be used to generate an image from text prompts.",
+            "description": "Generates an image from text prompts.",
             "schema": Schema(
                 {
-                    Literal(
-                        "prompts",
-                        description="A detailed list of features and descriptions to include in the generated image.",
-                    ): list[str],
-                },
+                    Literal("prompt", description=BaseImageGenerationClient.PROMPT_DESCRIPTION): str,
+                    Literal("negative_prompt", description=BaseImageGenerationClient.NEGATIVE_PROMPT_DESCRIPTION): str,
+                }
             ),
         },
     )
-    def generate_image(self, params: dict[str, dict[str, list[str]]]) -> ImageArtifact | ErrorArtifact:
-        prompts = params["values"]["prompts"]
+    def generate_image(self, params: dict[str, dict[str, str]]) -> ImageArtifact | ErrorArtifact:
+        prompt = params["values"]["prompt"]
+        negative_prompt = params["values"]["negative_prompt"]
 
-        output_artifact = self.engine.run(prompts=prompts)
+        output_artifact = self.engine.run(prompts=[prompt], negative_prompts=[negative_prompt])
 
         if self.output_dir or self.output_file:
             self._write_to_file(output_artifact)
