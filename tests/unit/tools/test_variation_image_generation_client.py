@@ -31,7 +31,7 @@ class TestVariationImageGenerationClient:
                 engine=image_generation_engine, output_dir="test", output_file="test", image_loader=image_loader
             )
 
-    def test_image_variation(self, image_generator) -> None:
+    def test_image_variation(self, image_generator, path_from_resource_path) -> None:
         image_generator.engine.run.return_value = Mock(
             value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
         )
@@ -39,16 +39,16 @@ class TestVariationImageGenerationClient:
         image_artifact = image_generator.image_variation_from_file(
             params={
                 "values": {
-                    "prompts": ["test prompt"],
-                    "negative_prompts": ["test negative prompt"],
-                    "image_file": "image.png",
+                    "prompt": "test prompt",
+                    "negative_prompt": "test negative prompt",
+                    "image_file": path_from_resource_path("small.png"),
                 }
             }
         )
 
         assert image_artifact
 
-    def test_image_variation_with_outfile(self, image_generation_engine, image_loader) -> None:
+    def test_image_variation_with_outfile(self, image_generation_engine, image_loader, path_from_resource_path) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
         image_generator = VariationImageGenerationClient(
             engine=image_generation_engine, output_file=outfile, image_loader=image_loader
@@ -61,9 +61,9 @@ class TestVariationImageGenerationClient:
         image_artifact = image_generator.image_variation_from_file(
             params={
                 "values": {
-                    "prompts": ["test prompt"],
-                    "negative_prompts": ["test negative prompt"],
-                    "image_file": "image.png",
+                    "prompt": "test prompt",
+                    "negative_prompt": "test negative prompt",
+                    "image_file": path_from_resource_path("small.png"),
                 }
             }
         )
