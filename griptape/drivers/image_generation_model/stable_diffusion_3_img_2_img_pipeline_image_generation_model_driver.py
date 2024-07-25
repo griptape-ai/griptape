@@ -31,7 +31,7 @@ class StableDiffusion3Img2ImgPipelineImageGenerationModelDriver(StableDiffusion3
             # we load it using the from_single_file method.
 
             raise NotImplementedError(
-                "StableDiffusion3Img2ImgPipeline does not " "yet support loading from a single file."
+                "StableDiffusion3Img2ImgPipeline does not yet support loading from a single file."
             )
         else:
             # If the model is a local directory or hosted on HuggingFace,
