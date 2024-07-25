@@ -45,7 +45,7 @@ class TestStableDiffusion3Img2ImgPipelineImageGenerationModelDriver:
     def test_make_image_param(self, model_driver):
         mock_image = Mock(spec=Image.Image)
         result = model_driver.make_image_param(mock_image)
-        assert result == {"input_image": mock_image}
+        assert result == {"image": mock_image}
 
     def test_make_image_param_without_image(self, model_driver):
         with pytest.raises(ValueError):

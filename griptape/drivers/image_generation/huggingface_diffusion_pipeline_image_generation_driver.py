@@ -48,7 +48,6 @@ class HuggingFaceDiffusionPipelineImageGenerationDriver(BaseImageGenerationDrive
 
         prompt = ", ".join(prompts)
         input_image = import_optional_dependency("PIL.Image").open(io.BytesIO(image.value))
-
         # The size of the input image drives the size of the output image.
         # Resize the input image to the configured dimensions.
         requested_dimensions = self.model_driver.get_output_image_dimensions()

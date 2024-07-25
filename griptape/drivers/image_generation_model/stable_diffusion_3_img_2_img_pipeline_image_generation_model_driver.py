@@ -57,7 +57,7 @@ class StableDiffusion3Img2ImgPipelineImageGenerationModelDriver(StableDiffusion3
         if image is None:
             raise ValueError("Input image is required for image to image pipelines.")
 
-        return {"input_image": image}
+        return {"image": image}
 
     def make_additional_params(self, negative_prompts: Optional[list[str]], device: Optional[str]) -> dict[str, Any]:
         additional_params = super().make_additional_params(negative_prompts, device)
