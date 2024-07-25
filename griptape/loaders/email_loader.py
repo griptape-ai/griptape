@@ -56,7 +56,7 @@ class EmailLoader(BaseLoader):
 
                 top_n = max(0, messages_count - max_count) if max_count else 0
                 for i in range(messages_count, top_n, -1):
-                    result, data = client.fetch(str(i), "(RFC822)")
+                    _result, data = client.fetch(str(i), "(RFC822)")
 
                     if data is None or not data or data[0] is None:
                         continue

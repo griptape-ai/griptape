@@ -183,7 +183,7 @@ class BaseTool(ActivityMixin, ABC):
         return os.path.dirname(os.path.abspath(class_file))
 
     def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
-        env = env if env else {}
+        env = env or {}
 
         command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
 

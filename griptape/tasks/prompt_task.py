@@ -12,7 +12,6 @@ from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
-    from griptape.structures import Structure
 
 
 @define
@@ -65,13 +64,6 @@ class PromptTask(RuleMixin, BaseTask):
             else:
                 raise ValueError("Prompt Driver is not set")
         return self._prompt_driver
-
-    def preprocess(self, structure: Structure) -> PromptTask:
-        super().preprocess(structure)
-        if self.prompt_driver is not None:
-            self.prompt_driver.structure = structure
-
-        return self
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         return J2("tasks/prompt_task/system.j2").render(

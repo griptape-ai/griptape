@@ -98,14 +98,14 @@ class Computer(BaseTool):
 
     def execute_command_in_container(self, command: str) -> BaseArtifact:
         try:
-            binds = {self.local_workdir: {"bind": self.container_workdir, "mode": "rw"}}
+            binds = {self.local_workdir: {"bind": self.container_workdir, "mode": "rw"}} if self.local_workdir else None
 
-            container = self.docker_client.containers.run(
+            container = self.docker_client.containers.run(  # pyright: ignore[reportCallIssue]
                 self.image_name(self),
                 environment=self.env_vars,
                 command=command,
                 name=self.container_name(self),
-                volumes=binds,
+                volumes=binds,  # pyright: ignore[reportArgumentType] According to the [docs](https://docker-py.readthedocs.io/en/stable/containers.html), the type of `volumes` is dict[str, dict[str, str]].
                 stdout=True,
                 stderr=True,
                 detach=True,
@@ -142,8 +142,7 @@ class Computer(BaseTool):
         local_file_path = os.path.join(local_workdir, filename)
 
         try:
-            with open(local_file_path, "w") as f:
-                f.write(code)
+            Path(local_file_path).write_text(code)
 
             return self.execute_command_in_container(f"python {container_file_path}")
         except Exception as e:
@@ -188,7 +187,7 @@ class Computer(BaseTool):
 
     def dependencies(self) -> list[str]:
         with open(self.requirements_txt_path) as file:
-            return [line.strip() for line in file.readlines()]
+            return [line.strip() for line in file]
 
     def __del__(self) -> None:
         if self._tempdir:

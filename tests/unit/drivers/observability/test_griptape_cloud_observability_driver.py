@@ -34,7 +34,7 @@ class TestGriptapeCloudObservabilityDriver:
     @pytest.fixture(autouse=True)
     def mock_span_exporter_class(self, mocker):
         return mocker.patch(
-            "griptape.drivers.observability.griptape_cloud_observability_driver.GriptapeCloudObservabilityDriver.SpanExporter"
+            "griptape.drivers.observability.griptape_cloud_observability_driver.GriptapeCloudObservabilityDriver.build_span_exporter"
         )
 
     @pytest.fixture()
@@ -186,7 +186,7 @@ class TestGriptapeCloudObservabilityDriverSpanExporter:
         return mocker.patch("requests.post")
 
     def test_span_exporter_export(self, mock_post):
-        exporter = GriptapeCloudObservabilityDriver.SpanExporter(
+        exporter = GriptapeCloudObservabilityDriver.build_span_exporter(
             base_url="http://base-url:1234",
             api_key="api-key",
             headers={"Authorization": "Bearer api-key"},

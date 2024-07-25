@@ -10,14 +10,14 @@ from attrs import Factory, define, field
 
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
-from griptape.mixins import SerializableMixin
+from griptape.mixins import EventPublisherMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseEmbeddingDriver
 
 
 @define
-class BaseVectorStoreDriver(SerializableMixin, ABC):
+class BaseVectorStoreDriver(EventPublisherMixin, SerializableMixin, ABC):
     DEFAULT_QUERY_COUNT = 5
 
     @dataclass
@@ -87,7 +87,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         else:
             meta["artifact"] = artifact.to_json()
 
-            vector = artifact.embedding if artifact.embedding else artifact.generate_embedding(self.embedding_driver)
+            vector = artifact.embedding or artifact.generate_embedding(self.embedding_driver)
 
             if isinstance(vector, list):
                 return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
@@ -112,7 +112,7 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
                 self.embedding_driver.embed_string(string),
                 vector_id=vector_id,
                 namespace=namespace,
-                meta=meta if meta else {},
+                meta=meta or {},
                 **kwargs,
             )
 

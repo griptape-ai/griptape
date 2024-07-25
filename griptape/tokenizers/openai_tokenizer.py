@@ -64,7 +64,7 @@ class OpenAiTokenizer(BaseTokenizer):
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)
         offset = 0 if self.model in self.EMBEDDING_MODELS else self.TOKEN_OFFSET
 
-        return (tokens if tokens else self.DEFAULT_MAX_TOKENS) - offset
+        return (tokens or self.DEFAULT_MAX_TOKENS) - offset
 
     def _default_max_output_tokens(self) -> int:
         tokens = next(
@@ -84,7 +84,7 @@ class OpenAiTokenizer(BaseTokenizer):
         https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb.
         """
         if isinstance(text, list):
-            model = model if model else self.model
+            model = model or self.model
 
             try:
                 encoding = tiktoken.encoding_for_model(model)

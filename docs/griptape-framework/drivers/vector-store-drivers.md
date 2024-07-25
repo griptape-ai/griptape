@@ -386,7 +386,7 @@ The body mappings for creating a vector index should look similar to the followi
 ### PGVector
 
 !!! info
-    This Driver requires the `drivers-vector-postgresql` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-pgvector` [extra](../index.md#extras).
 
 The [PGVectorVectorStoreDriver](../../reference/griptape/drivers/vector/pgvector_vector_store_driver.md) integrates with PGVector, a vector storage and search extension for Postgres. While Griptape will handle enabling the extension, PGVector must be installed and ready for use in your Postgres instance before using this Vector Store Driver.
 
