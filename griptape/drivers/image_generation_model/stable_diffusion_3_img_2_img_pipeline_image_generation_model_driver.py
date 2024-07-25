@@ -47,9 +47,6 @@ class StableDiffusion3Img2ImgPipelineImageGenerationModelDriver(StableDiffusion3
             # we load it using the from_pretrained method.
             pipeline = sd3_img2img_pipeline.from_pretrained(model, **pipeline_params)
 
-        if not isinstance(pipeline, sd3_img2img_pipeline):
-            raise ValueError(f"Expected StableDiffusion3Img2ImgPipeline, but got {type(pipeline)}.")
-
         # Move inference to particular device if requested.
         if device is not None:
             pipeline.to(device)
@@ -58,7 +55,7 @@ class StableDiffusion3Img2ImgPipelineImageGenerationModelDriver(StableDiffusion3
 
     def make_image_param(self, image: Optional[Image]) -> Optional[dict[str, Image]]:
         if image is None:
-            return None
+            raise ValueError("Input image is required for image to image pipelines.")
 
         return {"input_image": image}
 
