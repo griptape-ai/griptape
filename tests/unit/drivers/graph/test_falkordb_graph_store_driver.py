@@ -59,9 +59,9 @@ class TestFalkorDBGraphStoreDriver:
         ]
         subjs = [subj]
         rel_map = driver.get_rel_map(subjs=subjs)
-        logger.debug(f"rel_map: {rel_map}")  # Debugging line to print the rel_map
+        logger.debug("rel_map: %s", rel_map)  # Debugging line to print the rel_map
         for k, v in rel_map.items():
-            logger.debug(f"Key: {k}, Value: {v}")  # Debugging line to print keys and values in rel_map
+            logger.debug("Key: %s, Value: %s", k, v)  # Debugging line to print keys and values in rel_map
         assert subj in rel_map  # Ensure the key exists
         assert rel_map[subj] == [[rel, obj]]
         mock_client.query.assert_called()
@@ -108,3 +108,34 @@ class TestFalkorDBGraphStoreDriver:
         assert result is not None
         mock_client.query.assert_any_call(query, params=None)
         logger.info("test_query passed")
+
+    def test_load_entry(self, driver, mock_client):
+        node_id = "test_node"
+        properties = {"id": node_id, "name": "Test Node"}
+        mock_client.query.return_value.result_set = [[MagicMock(properties=properties)]]
+        entry = driver.load_entry(node_id)
+        assert entry is not None
+        assert entry.id == node_id
+        assert entry.properties == properties
+        mock_client.query.assert_called()
+        logger.info("test_load_entry passed")
+
+    def test_load_entries(self, driver, mock_client):
+        properties1 = {"id": "node1", "name": "Node 1"}
+        properties2 = {"id": "node2", "name": "Node 2"}
+        mock_client.query.return_value.result_set = [
+            MagicMock(properties=properties1),
+            MagicMock(properties=properties2),
+        ]
+        entries = driver.load_entries()
+        assert len(entries) == 2
+        assert entries[0].properties == properties1
+        assert entries[1].properties == properties2
+        mock_client.query.assert_called()
+        logger.info("test_load_entries passed")
+
+    def test_upsert_node(self, driver, mock_client):
+        node_data = {"id": "node1", "label": "Entity", "properties": {"name": "Node 1"}}
+        driver.upsert_node(node_data)
+        mock_client.query.assert_called()
+        logger.info("test_upsert_node passed")

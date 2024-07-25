@@ -184,7 +184,25 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
         return entries
 
     def upsert_node(
-        self, node_id: Optional[str] = None, namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+        self, node_data: dict[str, Any], namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
     ) -> str:
-        self.upsert_triplet(node_id, "", "")
+        node_id = node_data["id"]
+        label = node_data.get("label", "Entity")
+        properties = node_data.get("properties", {})
+
+        # Ensure all property values are of primitive types
+        for key, value in properties.items():
+            if not isinstance(value, (str, int, float, bool, list)):
+                raise ValueError(f"Property value for {key} must be a primitive type or a list of primitive types.")
+
+        # Construct the query to create or update the node
+        set_clauses = ", ".join(f"n.{key} = ${key}" for key in properties)
+        query = f"MERGE (n:{label} {{id: $id}}) SET {set_clauses}"
+
+        # Parameters for the query
+        params = {"id": node_id}
+        params.update(properties)
+
+        # Execute the query
+        self._driver.query(query, params=params)
         return node_id
