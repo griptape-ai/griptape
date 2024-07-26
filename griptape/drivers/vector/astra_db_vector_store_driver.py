@@ -86,7 +86,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
 
     def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         find_filter = {k: v for k, v in {"_id": vector_id, "namespace": namespace}.items() if v is not None}
-        match = self.collection.find_one(find_filter, projection={"*": 1})
+        match = self.collection.find_one(filter=find_filter, projection={"*": 1})
         if match:
             return BaseVectorStoreDriver.Entry(
                 id=match["_id"], vector=match.get("$vector"), meta=match.get("meta"), namespace=match.get("namespace")
