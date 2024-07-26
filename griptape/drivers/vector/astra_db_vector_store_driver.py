@@ -35,7 +35,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
         api_endpoint: the "API Endpoint" for the Astra DB instance.
         token: a Database Token ("AstraCS:...") secret to access Astra DB.
         collection_name: the name of the collection on Astra DB.
-        dimension: the number of components for embedding vectors.
+        dimension: the number of components for embedding vectors. If not provided, it will be guessed from the embedding driver.
         astra_db_namespace: optional specification of the namespace (in the Astra database) for the data.
             *Note*: not to be confused with the "namespace" mentioned elsewhere, which is a grouping within this vector store.
     """
@@ -43,13 +43,16 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
     api_endpoint: str = field(kw_only=True, metadata={"serializable": True})
     token: str = field(kw_only=True, metadata={"serializable": False})
     collection_name: str = field(kw_only=True, metadata={"serializable": False})
-    dimension: int = field(kw_only=True, metadata={"serializable": True})
+    dimension: Optional[int] = field(kw_only=True, default=None, metadata={"serializable": True})
     astra_db_namespace: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     collection: Collection = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         astrapy = import_optional_dependency("astrapy")
+        if not self.dimension:
+            # auto-compute dimension from the embedding
+            self.dimension = len(self.embedding_driver.embed_string("This is a sample text."))
         self.collection = (
             astrapy.DataAPIClient(
                 token=self.token,

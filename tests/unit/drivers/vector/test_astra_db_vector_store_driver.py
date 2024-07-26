@@ -62,9 +62,18 @@ class TestAstraDBVectorStoreDriver:
             api_endpoint="ep",
             token="to",
             collection_name="co",
-            dimension=3,
             astra_db_namespace="ns",
             embedding_driver=MockEmbeddingDriver(dimensions=3),
+        )
+
+    def test_explicit_dimension(self, mock_collection):
+        AstraDBVectorStoreDriver(
+            api_endpoint="ep",
+            token="to",
+            collection_name="co",
+            astra_db_namespace="ns",
+            dimension=123,
+            embedding_driver=MockEmbeddingDriver(),
         )
 
     def test_delete_vector(self, driver, mock_collection):

@@ -36,7 +36,6 @@ if __name__ == "__main__":
         token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
         collection_name="griptape_test_collection",
         astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
-        dimension=1536,
     )
 
     engine = RagEngine(
