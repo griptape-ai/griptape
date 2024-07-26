@@ -50,6 +50,13 @@ class TestAstraDBVectorStoreDriver:
         return base_mock_collection
 
     @pytest.fixture()
+    def mock_collection_findnothing(self, base_mock_collection):
+        """`find` and `find_one` return nothing."""
+        base_mock_collection.return_value.find_one.return_value = None
+        base_mock_collection.return_value.find.return_value = []
+        return base_mock_collection
+
+    @pytest.fixture()
     def driver(self, mock_collection):
         return AstraDBVectorStoreDriver(
             api_endpoint="ep",
@@ -78,6 +85,14 @@ class TestAstraDBVectorStoreDriver:
         entry = driver.load_entry("vector_id", namespace="some_namespace")
         assert entry == one_entry
         mock_collection.return_value.find_one.assert_called_once_with(
+            filter={"_id": "vector_id", "namespace": "some_namespace"},
+            projection={"*": 1},
+        )
+
+    def test_load_entry_empty(self, driver, mock_collection_findnothing):
+        entry = driver.load_entry("vector_id", namespace="some_namespace")
+        assert entry is None
+        mock_collection_findnothing.return_value.find_one.assert_called_once_with(
             filter={"_id": "vector_id", "namespace": "some_namespace"},
             projection={"*": 1},
         )
