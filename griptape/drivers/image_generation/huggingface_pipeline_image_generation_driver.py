@@ -21,6 +21,7 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
     Attributes:
         model_driver: A pipeline image generation model driver typed for the specific pipeline required by the model.
         device: The hardware device used for inference. For example, "cpu", "cuda", or "mps".
+        output_format: The format the generated image is returned in. Defaults to "png".
     """
 
     model_driver: BaseDiffusionPipelineImageGenerationModelDriver = field(kw_only=True, metadata={"serializable": True})
