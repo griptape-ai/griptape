@@ -25,6 +25,7 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
 
     model_driver: BaseDiffusionPipelineImageGenerationModelDriver = field(kw_only=True, metadata={"serializable": True})
     device: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    output_format: str = field(default="png", kw_only=True, metadata={"serializable": True})
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         pipeline = self.model_driver.prepare_pipeline(self.model, self.device)
@@ -35,10 +36,14 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
         ).images[0]
 
         buffer = io.BytesIO()
-        output_image.save(buffer, format="PNG")
+        output_image.save(buffer, format=self.output_format.upper())
 
         return ImageArtifact(
-            value=buffer.getvalue(), format="png", height=output_image.height, width=output_image.width, prompt=prompt
+            value=buffer.getvalue(),
+            format=self.output_format.lower(),
+            height=output_image.height,
+            width=output_image.width,
+            prompt=prompt,
         )
 
     def try_image_variation(
@@ -63,10 +68,14 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
         ).images[0]
 
         buffer = io.BytesIO()
-        output_image.save(buffer, format="PNG")
+        output_image.save(buffer, format=self.output_format.upper())
 
         return ImageArtifact(
-            value=buffer.getvalue(), format="png", height=output_image.height, width=output_image.width, prompt=prompt
+            value=buffer.getvalue(),
+            format=self.output_format.lower(),
+            height=output_image.height,
+            width=output_image.width,
+            prompt=prompt,
         )
 
     def try_image_inpainting(

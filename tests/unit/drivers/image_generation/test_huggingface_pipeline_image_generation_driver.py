@@ -61,3 +61,12 @@ class TestHuggingFacePipelineImageGenerationDriver:
     def test_try_image_outpainting(self, driver):
         with pytest.raises(NotImplementedError):
             driver.try_image_outpainting(prompts=["test prompt"], image=Mock(), mask=Mock())
+
+    def test_configurable_output_format(self, driver):
+        driver.output_format = "jpeg"
+        image_artifact = driver.try_text_to_image(prompts=["test prompt"])
+
+        assert image_artifact
+        assert image_artifact.mime_type == "image/jpeg"
+        assert image_artifact.width == 256
+        assert image_artifact.height == 256
