@@ -518,7 +518,10 @@ vector_store_driver = AstraDBVectorStoreDriver(
 artifacts = WebLoader().load("https://www.griptape.ai")
 
 # Upsert Artifacts into the Vector Store Driver
-[vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in artifacts]
+[
+    vector_store_driver.upsert_text_artifact(a, namespace="griptape")
+    for a in artifacts
+]
 
 results = vector_store_driver.query(query="What is griptape?")
 

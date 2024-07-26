@@ -85,7 +85,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> str:
         """Write a vector to the Astra DB store.
 
