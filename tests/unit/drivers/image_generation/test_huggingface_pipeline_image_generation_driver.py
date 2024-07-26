@@ -33,7 +33,7 @@ class TestHuggingFacePipelineImageGenerationDriver:
 
     @pytest.fixture()
     def driver(self, model_driver):
-        return HuggingFacePipelineImageGenerationDriver(model="repo/model", model_driver=model_driver)
+        return HuggingFacePipelineImageGenerationDriver(model="repo/model", pipeline_driver=model_driver)
 
     def test_init(self, driver):
         assert driver

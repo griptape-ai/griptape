@@ -19,21 +19,21 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
             https://huggingface.co/docs/diffusers/en/index
 
     Attributes:
-        model_driver: A pipeline image generation model driver typed for the specific pipeline required by the model.
+        pipeline_driver: A pipeline image generation model driver typed for the specific pipeline required by the model.
         device: The hardware device used for inference. For example, "cpu", "cuda", or "mps".
         output_format: The format the generated image is returned in. Defaults to "png".
     """
 
-    model_driver: BaseDiffusionImageGenerationPipelineDriver = field(kw_only=True, metadata={"serializable": True})
+    pipeline_driver: BaseDiffusionImageGenerationPipelineDriver = field(kw_only=True, metadata={"serializable": True})
     device: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     output_format: str = field(default="png", kw_only=True, metadata={"serializable": True})
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
-        pipeline = self.model_driver.prepare_pipeline(self.model, self.device)
+        pipeline = self.pipeline_driver.prepare_pipeline(self.model, self.device)
 
         prompt = ", ".join(prompts)
         output_image = pipeline(
-            prompt, **self.model_driver.make_additional_params(negative_prompts, self.device)
+            prompt, **self.pipeline_driver.make_additional_params(negative_prompts, self.device)
         ).images[0]
 
         buffer = io.BytesIO()
@@ -52,20 +52,20 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
     ) -> ImageArtifact:
         pil_image = import_optional_dependency("PIL.Image")
 
-        pipeline = self.model_driver.prepare_pipeline(self.model, self.device)
+        pipeline = self.pipeline_driver.prepare_pipeline(self.model, self.device)
 
         prompt = ", ".join(prompts)
         input_image = pil_image.open(io.BytesIO(image.value))
         # The size of the input image drives the size of the output image.
         # Resize the input image to the configured dimensions.
-        output_width, output_height = self.model_driver.output_image_dimensions
+        output_width, output_height = self.pipeline_driver.output_image_dimensions
         if input_image.height != output_height or input_image.width != output_width:
             input_image = input_image.resize((output_width, output_height))
 
         output_image = pipeline(
             prompt,
-            **self.model_driver.make_image_param(input_image),
-            **self.model_driver.make_additional_params(negative_prompts, self.device),
+            **self.pipeline_driver.make_image_param(input_image),
+            **self.pipeline_driver.make_additional_params(negative_prompts, self.device),
         ).images[0]
 
         buffer = io.BytesIO()
