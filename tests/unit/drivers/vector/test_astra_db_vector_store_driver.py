@@ -133,7 +133,7 @@ class TestAstraDBVectorStoreDriver:
         mock_collection.return_value.find.assert_called_once_with(
             filter={},
             sort={"$vector": query_vector},
-            limit=None,
+            limit=BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
             projection=None,
             include_similarity=True,
         )

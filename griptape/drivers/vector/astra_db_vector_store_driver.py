@@ -172,7 +172,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
 
         Args:
             query: the query string.
-            count: the maximum number of results to return. If omitted, server defaults will apply.
+            count: the maximum number of results to return. If omitted, defaults will apply.
             namespace: the namespace to filter results by.
             include_vectors: whether to include vector data in the results.
             kwargs: additional keyword arguments. Currently only the free-form dict `filter`
@@ -194,10 +194,11 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
         find_filter = {**(query_filter or {}), **find_filter_ns}
         find_projection: Optional[dict[str, int]] = {"*": 1} if include_vectors else None
         vector = self.embedding_driver.embed_string(query)
+        ann_limit = count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
         matches = self.collection.find(
             filter=find_filter,
             sort={"$vector": vector},
-            limit=count,
+            limit=ann_limit,
             projection=find_projection,
             include_similarity=True,
         )
