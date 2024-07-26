@@ -53,17 +53,18 @@ from .image_generation_model.bedrock_stable_diffusion_image_generation_model_dri
     BedrockStableDiffusionImageGenerationModelDriver,
 )
 from .image_generation_model.bedrock_titan_image_generation_model_driver import BedrockTitanImageGenerationModelDriver
-from .image_generation_model.stable_diffusion_3_pipeline_image_generation_model_driver import (
-    StableDiffusion3PipelineImageGenerationModelDriver,
+
+from .image_generation_pipeline.base_image_generation_pipeline_driver import (
+    BaseDiffusionImageGenerationPipelineDriver,
 )
-from .image_generation_model.base_diffusion_pipeline_image_generation_model_driver import (
-    BaseDiffusionPipelineImageGenerationModelDriver,
+from .image_generation_pipeline.stable_diffusion_3_image_generation_pipeline_driver import (
+    StableDiffusion3ImageGenerationPipelineDriver,
 )
-from .image_generation_model.stable_diffusion_3_img_2_img_pipeline_image_generation_model_driver import (
-    StableDiffusion3Img2ImgPipelineImageGenerationModelDriver,
+from .image_generation_pipeline.stable_diffusion_3_img_2_img_image_generation_pipeline_driver import (
+    StableDiffusion3Img2ImgImageGenerationPipelineDriver,
 )
-from .image_generation_model.stable_diffusion_3_controlnet_pipeline_image_generation_model_driver import (
-    StableDiffusion3ControlNetPipelineImageGenerationModelDriver,
+from .image_generation_pipeline.stable_diffusion_3_controlnet_image_generation_pipeline_driver import (
+    StableDiffusion3ControlNetImageGenerationPipelineDriver,
 )
 
 from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
@@ -179,10 +180,10 @@ __all__ = [
     "BaseImageGenerationModelDriver",
     "BedrockStableDiffusionImageGenerationModelDriver",
     "BedrockTitanImageGenerationModelDriver",
-    "BaseDiffusionPipelineImageGenerationModelDriver",
-    "StableDiffusion3PipelineImageGenerationModelDriver",
-    "StableDiffusion3Img2ImgPipelineImageGenerationModelDriver",
-    "StableDiffusion3ControlNetPipelineImageGenerationModelDriver",
+    "BaseDiffusionImageGenerationPipelineDriver",
+    "StableDiffusion3ImageGenerationPipelineDriver",
+    "StableDiffusion3Img2ImgImageGenerationPipelineDriver",
+    "StableDiffusion3ControlNetImageGenerationPipelineDriver",
     "BaseImageGenerationDriver",
     "BaseMultiModelImageGenerationDriver",
     "OpenAiImageGenerationDriver",

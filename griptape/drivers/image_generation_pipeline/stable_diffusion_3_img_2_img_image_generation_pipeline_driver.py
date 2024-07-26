@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
 
-from griptape.drivers import StableDiffusion3PipelineImageGenerationModelDriver
+from griptape.drivers import StableDiffusion3ImageGenerationPipelineDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @define
-class StableDiffusion3Img2ImgPipelineImageGenerationModelDriver(StableDiffusion3PipelineImageGenerationModelDriver):
+class StableDiffusion3Img2ImgImageGenerationPipelineDriver(StableDiffusion3ImageGenerationPipelineDriver):
     """Image generation model driver for Stable Diffusion 3 model image to image pipelines.
 
     For more information, see the HuggingFace documentation for the StableDiffusion3Img2ImgPipeline:

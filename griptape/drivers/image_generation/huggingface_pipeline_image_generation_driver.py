@@ -7,7 +7,7 @@ from typing import Optional
 from attrs import define, field
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseDiffusionPipelineImageGenerationModelDriver, BaseImageGenerationDriver
+from griptape.drivers import BaseDiffusionImageGenerationPipelineDriver, BaseImageGenerationDriver
 from griptape.utils import import_optional_dependency
 
 
@@ -24,7 +24,7 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
         output_format: The format the generated image is returned in. Defaults to "png".
     """
 
-    model_driver: BaseDiffusionPipelineImageGenerationModelDriver = field(kw_only=True, metadata={"serializable": True})
+    model_driver: BaseDiffusionImageGenerationPipelineDriver = field(kw_only=True, metadata={"serializable": True})
     device: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     output_format: str = field(default="png", kw_only=True, metadata={"serializable": True})
 

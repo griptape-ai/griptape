@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseDiffusionPipelineImageGenerationModelDriver(ABC):
+class BaseDiffusionImageGenerationPipelineDriver(ABC):
     @abstractmethod
     def prepare_pipeline(self, model: str, device: Optional[str]) -> Any: ...
 

@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
 
-from griptape.drivers.image_generation_model.base_diffusion_pipeline_image_generation_model_driver import (
-    BaseDiffusionPipelineImageGenerationModelDriver,
+from griptape.drivers.image_generation_pipeline.base_image_generation_pipeline_driver import (
+    BaseDiffusionImageGenerationPipelineDriver,
 )
 from griptape.utils import import_optional_dependency
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 @define
-class StableDiffusion3PipelineImageGenerationModelDriver(BaseDiffusionPipelineImageGenerationModelDriver):
+class StableDiffusion3ImageGenerationPipelineDriver(BaseDiffusionImageGenerationPipelineDriver):
     """Image generation model driver for Stable Diffusion 3 models.
 
     For more information, see the HuggingFace documentation for the StableDiffusion3Pipeline:

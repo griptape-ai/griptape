@@ -6,7 +6,7 @@ from PIL import Image
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import (
-    BaseDiffusionPipelineImageGenerationModelDriver,
+    BaseDiffusionImageGenerationPipelineDriver,
     HuggingFacePipelineImageGenerationDriver,
 )
 
@@ -20,7 +20,7 @@ class TestHuggingFacePipelineImageGenerationDriver:
 
     @pytest.fixture()
     def model_driver(self):
-        model_driver = Mock(spec=BaseDiffusionPipelineImageGenerationModelDriver)
+        model_driver = Mock(spec=BaseDiffusionImageGenerationPipelineDriver)
         mock_pipeline = Mock()
         mock_pipeline.return_value = Mock()
         mock_pipeline.return_value.images = [Image.new("RGB", (256, 256))]

@@ -3,21 +3,19 @@ from unittest.mock import Mock, patch
 import pytest
 from PIL import Image
 
-from griptape.drivers.image_generation_model.stable_diffusion_3_controlnet_pipeline_image_generation_model_driver import (
-    StableDiffusion3ControlNetPipelineImageGenerationModelDriver,
-)
+from griptape.drivers import StableDiffusion3ControlNetImageGenerationPipelineDriver
 
 
 class TestStableDiffusion3ControlNetPipelineImageGenerationModelDriver:
     @pytest.fixture()
     def model_driver(self):
-        return StableDiffusion3ControlNetPipelineImageGenerationModelDriver(controlnet_model="controlnet_model")
+        return StableDiffusion3ControlNetImageGenerationPipelineDriver(controlnet_model="controlnet_model")
 
     @pytest.fixture()
     def mock_import(self, monkeypatch):
         mock = Mock()
         monkeypatch.setattr(
-            "griptape.drivers.image_generation_model.stable_diffusion_3_controlnet_pipeline_image_generation_model_driver.import_optional_dependency",
+            "griptape.drivers.image_generation_pipeline.stable_diffusion_3_controlnet_image_generation_pipeline_driver.import_optional_dependency",
             mock,
         )
 
