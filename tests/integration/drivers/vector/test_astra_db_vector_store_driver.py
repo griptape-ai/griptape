@@ -11,6 +11,7 @@ from griptape.drivers import AstraDBVectorStoreDriver, BaseEmbeddingDriver, Base
 from tests.mocks.mock_tokenizer import MockTokenizer
 
 TEST_COLLECTION_NAME = "gt_int_test"
+TEST_COLLECTION_NAME_METRIC = "gt_int_test_dot"
 
 
 def astrapy_available() -> bool:
@@ -186,3 +187,42 @@ class TestAstraDBVectorStoreDriver:
                 dimension=123,
                 embedding_driver=embedding_driver,
             )
+
+    def test_explicit_metric(self, embedding_driver):
+        import astrapy
+
+        with pytest.raises(astrapy.exceptions.DataAPIResponseException):
+            AstraDBVectorStoreDriver(
+                api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
+                token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
+                collection_name=TEST_COLLECTION_NAME_METRIC,
+                astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
+                dimension=123,
+                metric="p-adic-norm",
+                embedding_driver=embedding_driver,
+            )
+
+        # seriously ...
+        dot_vector_store_driver = AstraDBVectorStoreDriver(
+            api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
+            token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
+            collection_name=TEST_COLLECTION_NAME_METRIC,
+            astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
+            dimension=2,
+            metric="dot_product",
+            embedding_driver=embedding_driver,
+        )
+        try:
+            # some vectors are off-sphere, to probe dot product as metric
+            short_v = [0.1, 0.0]
+            pi_4_v = embedding_driver.embed_string("0.125")
+            tenx_pi_4_v = [10 * comp for comp in pi_4_v]
+            dot_vector_store_driver.upsert_vector(short_v, vector_id="short_v")
+            dot_vector_store_driver.upsert_vector(pi_4_v, vector_id="pi_4_v")
+            dot_vector_store_driver.upsert_vector(tenx_pi_4_v, vector_id="tenx_pi_4_v")
+            entries = dot_vector_store_driver.query("0.0", count=2)
+            assert len(entries) == 2
+            assert entries[0].id == "tenx_pi_4_v"
+            assert entries[1].id == "pi_4_v"
+        finally:
+            dot_vector_store_driver.collection.drop()

@@ -36,6 +36,9 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
         token: a Database Token ("AstraCS:...") secret to access Astra DB.
         collection_name: the name of the collection on Astra DB.
         dimension: the number of components for embedding vectors. If not provided, it will be guessed from the embedding driver.
+        metric: the similarity metric to use, one of "dot_product", "euclidean" or "cosine".
+            If omitted, the server default ("cosine") will be used. See also values of `astrapy.constants.VectorMetric`.
+            If the vectors are normalized to unit norm, choosing "dot_product" over cosine yields up to 2x speedup in searches.
         astra_db_namespace: optional specification of the namespace (in the Astra database) for the data.
             *Note*: not to be confused with the "namespace" mentioned elsewhere, which is a grouping within this vector store.
     """
@@ -44,6 +47,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
     token: str = field(kw_only=True, metadata={"serializable": False})
     collection_name: str = field(kw_only=True, metadata={"serializable": False})
     dimension: Optional[int] = field(kw_only=True, default=None, metadata={"serializable": True})
+    metric: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     astra_db_namespace: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     collection: Collection = field(init=False)
@@ -66,6 +70,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
             .create_collection(
                 name=self.collection_name,
                 dimension=self.dimension,
+                metric=self.metric,
                 indexing=COLLECTION_INDEXING,
                 check_exists=False,
             )
