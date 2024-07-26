@@ -2,18 +2,12 @@ import time
 
 import pytest
 
-from pytest import fixture
-from griptape.memory.task.storage import TextArtifactStorage
-from tests.mocks.mock_prompt_driver import MockPromptDriver
-from griptape.rules import Rule, Ruleset
-from griptape.tasks import PromptTask, BaseTask, ToolkitTask, CodeExecutionTask, ChoiceControlFlowTask
-from griptape.structures import Workflow
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Workflow
-from griptape.tasks import BaseTask, CodeExecutionTask, PromptTask, ToolkitTask
+from griptape.tasks import BaseTask, ChoiceControlFlowTask, CodeExecutionTask, PromptTask, ToolkitTask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -48,9 +42,6 @@ class TestWorkflow:
         workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, task3, task4, control_flow_task])
         workflow.resolve_relationships()
         workflow.run()
-        from griptape.utils import StructureVisualizer
-
-        print(StructureVisualizer(workflow).to_url())
 
         assert task1.state == BaseTask.State.FINISHED
         assert task2.state == BaseTask.State.FINISHED
@@ -81,9 +72,6 @@ class TestWorkflow:
         )
         workflow.resolve_relationships()
         workflow.run()
-        from griptape.utils import StructureVisualizer
-
-        print(StructureVisualizer(workflow).to_url())
 
         assert task1.state == BaseTask.State.FINISHED
         assert task2.state == BaseTask.State.CANCELLED

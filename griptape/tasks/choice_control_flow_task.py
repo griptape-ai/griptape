@@ -1,10 +1,11 @@
 from __future__ import annotations
+
 from typing import Callable
+
 from attrs import define, field
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TaskArtifact, ListArtifact
-from griptape.tasks import BaseTask
-from griptape.tasks import BaseControlFlowTask
+from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
+from griptape.tasks import BaseControlFlowTask, BaseTask
 
 
 @define
@@ -16,18 +17,14 @@ class ChoiceControlFlowTask(BaseControlFlowTask):
     @property
     def input(self) -> BaseArtifact:
         if len(self.parents) == 1:
-            return TaskArtifact(self.parents[0])
-        return ListArtifact([TaskArtifact(parent) for parent in self.parents])
-
-    def before_run(self) -> None:
-        super().before_run()
-
-        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nInput: {self.input.to_text()}")
-
-    def after_run(self) -> None:
-        super().after_run()
-
-        self.structure.logger.info(f"{self.__class__.__name__} {self.id}\nOutput: {self.output.to_text()}")
+            return self.parents[0].output if self.parents[0].output is not None else TextArtifact("")
+        parents = filter(lambda parent: parent.output is not None, self.parents)
+        return ListArtifact(
+            [
+                parent.output
+                for parent in parents  # pyright: ignore[reportArgumentType]
+            ]
+        )
 
     def run(self) -> BaseArtifact:
         tasks = self.control_flow_fn(
@@ -54,11 +51,11 @@ class ChoiceControlFlowTask(BaseControlFlowTask):
                     [
                         parent.value.output
                         for parent in filter(lambda parent: parent.value.output is not None, self.input.value)
-                    ]  # pyright: ignore
+                    ]
                 )
                 if isinstance(self.input, ListArtifact)
                 else self.input.value.output
             )
             self._cancel_children_rec(self, task)
 
-        return self.output  # pyright: ignore
+        return self.output  # pyright: ignore[reportReturnType]

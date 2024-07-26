@@ -1,4 +1,5 @@
 from attrs import define
+
 from griptape.artifacts import BaseArtifact
 
 
