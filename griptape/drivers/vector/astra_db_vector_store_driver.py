@@ -11,6 +11,7 @@ from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from astrapy import Collection
+    from astrapy.authentication import TokenProvider
 
 GRIPTAPE_VERSION: Optional[str]
 try:
@@ -33,8 +34,10 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
     Attributes:
         embedding_driver: a `griptape.drivers.BaseEmbeddingDriver` for embedding computations within the store
         api_endpoint: the "API Endpoint" for the Astra DB instance.
-        token: a Database Token ("AstraCS:...") secret to access Astra DB.
+        token: a Database Token ("AstraCS:...") secret to access Astra DB. An instance of `astrapy.authentication.TokenProvider` is also accepted.
         collection_name: the name of the collection on Astra DB.
+        environment: the environment ("prod", "hcd", ...) hosting the target Data API.
+            It can be omitted for production Astra DB targets. See `astrapy.constants.Environment` for allowed values.
         dimension: the number of components for embedding vectors. If not provided, it will be guessed from the embedding driver.
         metric: the similarity metric to use, one of "dot_product", "euclidean" or "cosine".
             If omitted, the server default ("cosine") will be used. See also values of `astrapy.constants.VectorMetric`.
@@ -44,8 +47,9 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
     """
 
     api_endpoint: str = field(kw_only=True, metadata={"serializable": True})
-    token: str = field(kw_only=True, metadata={"serializable": False})
-    collection_name: str = field(kw_only=True, metadata={"serializable": False})
+    token: Optional[str | TokenProvider] = field(kw_only=True, default=None, metadata={"serializable": False})
+    collection_name: str = field(kw_only=True, metadata={"serializable": True})
+    environment: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     dimension: Optional[int] = field(kw_only=True, default=None, metadata={"serializable": True})
     metric: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     astra_db_namespace: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -59,12 +63,13 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
             self.dimension = len(self.embedding_driver.embed_string("This is a sample text."))
         self.collection = (
             astrapy.DataAPIClient(
-                token=self.token,
                 caller_name="griptape",
                 caller_version=GRIPTAPE_VERSION,
+                environment=self.environment,
             )
             .get_database(
                 self.api_endpoint,
+                token=self.token,
                 namespace=self.astra_db_namespace,
             )
             .create_collection(
