@@ -68,8 +68,8 @@ class TestStableDiffusion3PipelineImageGenerationModelDriver:
 
         assert result == expected
 
-    def test_get_output_image_dimensions(self, model_driver):
+    def test_output_image_dimensions(self, model_driver):
         model_driver.width = 512
         model_driver.height = 768
 
-        assert model_driver.output_image_dimensions() == (512, 768)
+        assert model_driver.output_image_dimensions == (512, 768)

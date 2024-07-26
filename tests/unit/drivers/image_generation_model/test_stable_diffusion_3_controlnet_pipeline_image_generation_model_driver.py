@@ -92,10 +92,10 @@ class TestStableDiffusion3ControlNetPipelineImageGenerationModelDriver:
         assert "height" not in result
         assert "width" not in result
 
-    def test_get_output_image_dimensions(self, model_driver):
+    def test_output_image_dimensions(self, model_driver):
         model_driver.width = 512
         model_driver.height = 768
 
-        dimensions = model_driver.output_image_dimensions()
+        dimensions = model_driver.output_image_dimensions
 
         assert dimensions == (512, 768)

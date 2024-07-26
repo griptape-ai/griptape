@@ -27,7 +27,7 @@ class TestHuggingFacePipelineImageGenerationDriver:
         model_driver.prepare_pipeline.return_value = mock_pipeline
         model_driver.make_image_param.return_value = {"image": Image.new("RGB", (256, 256))}
         model_driver.make_additional_params.return_value = {"negative_prompt": ["sample negative prompt"]}
-        model_driver.get_output_image_dimensions.return_value = (256, 256)
+        model_driver.output_image_dimensions = (256, 256)
 
         return model_driver
 
