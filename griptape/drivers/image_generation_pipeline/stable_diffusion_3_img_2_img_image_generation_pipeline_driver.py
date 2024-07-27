@@ -43,10 +43,7 @@ class StableDiffusion3Img2ImgImageGenerationPipelineDriver(StableDiffusion3Image
         if os.path.isfile(model):
             # If the model provided is a local file (not a directory),
             # we load it using the from_single_file method.
-
-            raise NotImplementedError(
-                "StableDiffusion3Img2ImgPipeline does not yet support loading from a single file."
-            )
+            pipeline = sd3_img2img_pipeline.from_single_file(model, **pipeline_params)
         else:
             # If the model is a local directory or hosted on HuggingFace,
             # we load it using the from_pretrained method.

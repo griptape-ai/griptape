@@ -25,8 +25,13 @@ class TestStableDiffusion3Img2ImgPipelineImageGenerationModelDriver:
         mock_sd3_img2img_pipeline = Mock()
         mock_import.return_value.StableDiffusion3Img2ImgPipeline = mock_sd3_img2img_pipeline
 
-        with patch("os.path.isfile", return_value=True), pytest.raises(NotImplementedError):
-            model_driver.prepare_pipeline("local_model", "cuda")
+        with patch("os.path.isfile", return_value=True):
+            result = model_driver.prepare_pipeline("local_model", "cuda")
+
+        mock_sd3_img2img_pipeline.from_single_file.assert_called_once_with("local_model")
+
+        assert result == mock_sd3_img2img_pipeline.from_single_file.return_value
+        result.to.assert_called_once_with("cuda")
 
     def test_prepare_pipeline_huggingface_model(self, model_driver, mock_import):
         mock_sd3_img2img_pipeline = Mock()
