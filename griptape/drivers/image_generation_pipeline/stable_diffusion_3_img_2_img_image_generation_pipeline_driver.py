@@ -34,6 +34,10 @@ class StableDiffusion3Img2ImgImageGenerationPipelineDriver(StableDiffusion3Image
         if self.torch_dtype is not None:
             pipeline_params["torch_dtype"] = self.torch_dtype
 
+        if self.drop_t5_encoder:
+            pipeline_params["text_encoder_3"] = None
+            pipeline_params["tokenizer_3"] = None
+
         # A model can be provided either as a path to a local file
         # or as a HuggingFace model repo name.
         if os.path.isfile(model):
@@ -47,6 +51,9 @@ class StableDiffusion3Img2ImgImageGenerationPipelineDriver(StableDiffusion3Image
             # If the model is a local directory or hosted on HuggingFace,
             # we load it using the from_pretrained method.
             pipeline = sd3_img2img_pipeline.from_pretrained(model, **pipeline_params)
+
+        if self.enable_model_cpu_offload:
+            pipeline.enable_model_cpu_offload()
 
         # Move inference to particular device if requested.
         if device is not None:

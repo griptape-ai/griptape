@@ -39,6 +39,10 @@ class StableDiffusion3ControlNetImageGenerationPipelineDriver(StableDiffusion3Im
             pipeline_params["torch_dtype"] = self.torch_dtype
             controlnet_pipeline_params["torch_dtype"] = self.torch_dtype
 
+        if self.drop_t5_encoder:
+            pipeline_params["text_encoder_3"] = None
+            pipeline_params["tokenizer_3"] = None
+
         # For both Stable Diffusion and ControlNet, models can be provided either
         # as a path to a local file or as a HuggingFace model repo name.
         # We use the from_single_file method if the model is a local file and the
@@ -56,6 +60,9 @@ class StableDiffusion3ControlNetImageGenerationPipelineDriver(StableDiffusion3Im
             pipeline = sd3_controlnet_pipeline.from_single_file(model, **pipeline_params)
         else:
             pipeline = sd3_controlnet_pipeline.from_pretrained(model, **pipeline_params)
+
+        if self.enable_model_cpu_offload:
+            pipeline.enable_model_cpu_offload()
 
         if device is not None:
             pipeline.to(device)

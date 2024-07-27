@@ -37,6 +37,8 @@ class StableDiffusion3ImageGenerationPipelineDriver(BaseDiffusionImageGeneration
     guidance_scale: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     steps: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     torch_dtype: Optional[torch.dtype] = field(default=None, kw_only=True, metadata={"serializable": True})
+    enable_model_cpu_offload: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    drop_t5_encoder: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def prepare_pipeline(self, model: str, device: Optional[str]) -> Any:
         sd3_pipeline = import_optional_dependency(
@@ -46,6 +48,10 @@ class StableDiffusion3ImageGenerationPipelineDriver(BaseDiffusionImageGeneration
         pipeline_params = {}
         if self.torch_dtype is not None:
             pipeline_params["torch_dtype"] = self.torch_dtype
+
+        if self.drop_t5_encoder:
+            pipeline_params["text_encoder_3"] = None
+            pipeline_params["tokenizer_3"] = None
 
         # A model can be provided either as a path to a local file
         # or as a HuggingFace model repo name.
@@ -57,6 +63,9 @@ class StableDiffusion3ImageGenerationPipelineDriver(BaseDiffusionImageGeneration
             # If the model is a local directory or hosted on HuggingFace,
             # we load it using the from_pretrained method.
             pipeline = sd3_pipeline.from_pretrained(model, **pipeline_params)
+
+        if self.enable_model_cpu_offload:
+            pipeline.enable_model_cpu_offload()
 
         # Move inference to particular device if requested.
         if device is not None:
