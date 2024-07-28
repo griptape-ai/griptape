@@ -1231,7 +1231,7 @@ training = ["Jinja2", "accelerate (>=0.31.0)", "datasets", "peft (>=0.6.0)", "pr
 
 [package.source]
 type = "git"
-url = "git@github.com:griptape-ai/diffusers.git"
+url = "https://github.com/griptape-ai/diffusers.git"
 reference = "main"
 resolved_reference = "90c1f182683a9bb51e370816d063b2e3aba53fc4"
 
@@ -6828,4 +6828,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b85f6ae7b88cf01730377269a58a6c6adb1e491d1a83eff2be7f71a221a9e9b0"
+content-hash = "20511683fde939102f4d9e331fd9ecd064ad6cc490a5bf2f6c3f4366b4e43447"
