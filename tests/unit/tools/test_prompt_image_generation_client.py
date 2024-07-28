@@ -27,7 +27,7 @@ class TestPromptImageGenerationClient:
         )
 
         image_artifact = image_generator.generate_image(
-            params={"values": {"prompts": ["test prompt"], "negative_prompts": ["test negative prompt"]}}
+            params={"values": {"prompt": "test prompt", "negative_prompt": "test negative prompt"}}
         )
 
         assert image_artifact
@@ -41,7 +41,7 @@ class TestPromptImageGenerationClient:
         )
 
         image_artifact = image_generator.generate_image(
-            params={"values": {"prompts": ["test prompt"], "negative_prompts": ["test negative prompt"]}}
+            params={"values": {"prompt": "test prompt", "negative_prompt": "test negative prompt"}}
         )
 
         assert image_artifact
