@@ -85,6 +85,14 @@ class TestAstraDBVectorStoreDriver:
         assert upserted_id == "some_vector_id"
         mock_collection.return_value.find_one_and_replace.assert_called_once()
 
+    def test_upsert_vector_kwargs_warning(self, driver, mock_collection):
+        with pytest.warns(UserWarning):
+            upserted_id = driver.upsert_vector(
+                [1.0, 2.0, 3.0], vector_id="some_vector_id", namespace="some_namespace", kittens=123, marzipan="yes"
+            )
+        assert upserted_id == "some_vector_id"
+        mock_collection.return_value.find_one_and_replace.assert_called_once()
+
     def test_upsert_vector_no_id(self, driver, mock_collection):
         upserted_id = driver.upsert_vector([1.0, 2.0, 3.0], namespace="some_namespace")
         assert upserted_id == "insert_one_server_side_id"
@@ -128,6 +136,19 @@ class TestAstraDBVectorStoreDriver:
 
     def test_query_minparams(self, driver, mock_collection):
         entries0 = driver.query("some query")
+        assert entries0 == [one_query_entry]
+        query_vector = driver.embedding_driver.embed_string("some query")
+        mock_collection.return_value.find.assert_called_once_with(
+            filter={},
+            sort={"$vector": query_vector},
+            limit=BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+            projection=None,
+            include_similarity=True,
+        )
+
+    def test_query_kwargs_warning(self, driver, mock_collection):
+        with pytest.warns(UserWarning):
+            entries0 = driver.query("some query", sector=987, voltage="12 V")
         assert entries0 == [one_query_entry]
         query_vector = driver.embedding_driver.embed_string("some query")
         mock_collection.return_value.find.assert_called_once_with(
