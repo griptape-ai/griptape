@@ -1,6 +1,7 @@
 from unittest.mock import Mock, patch
 
 import pytest
+import torch
 from PIL import Image
 
 from griptape.drivers import StableDiffusion3ControlNetImageGenerationPipelineDriver
@@ -58,6 +59,32 @@ class TestStableDiffusion3ControlNetPipelineImageGenerationModelDriver:
 
         assert result == mock_sd3_controlnet_pipeline.from_pretrained.return_value
         result.to.assert_called_once_with("cuda")
+
+    def test_prepare_pipeline_with_options(self, model_driver, mock_import):
+        mock_sd3_controlnet_model = Mock()
+        mock_sd3_controlnet_pipeline = Mock()
+        mock_import.side_effect = [
+            Mock(SD3ControlNetModel=mock_sd3_controlnet_model),
+            Mock(StableDiffusion3ControlNetPipeline=mock_sd3_controlnet_pipeline),
+        ]
+
+        model_driver.torch_dtype = torch.float16
+        model_driver.drop_t5_encoder = True
+        model_driver.enable_model_cpu_offload = True
+
+        result = model_driver.prepare_pipeline("huggingface/model", "cpu")
+
+        mock_sd3_controlnet_pipeline.from_pretrained.assert_called_once_with(
+            "huggingface/model",
+            controlnet=mock_sd3_controlnet_model.from_pretrained.return_value,
+            torch_dtype=torch.float16,
+            text_encoder_3=None,
+            tokenizer_3=None,
+        )
+
+        assert result == mock_sd3_controlnet_pipeline.from_pretrained.return_value
+        result.to.assert_called_once_with("cpu")
+        result.enable_model_cpu_offload.assert_called_once()
 
     def test_make_image_param(self, model_driver):
         mock_image = Mock(spec=Image.Image)
