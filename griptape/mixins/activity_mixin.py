@@ -20,7 +20,7 @@ class ActivityMixin:
 
     allowlist: Optional[list[str]] = field(default=None, kw_only=True)
     denylist: Optional[list[str]] = field(default=None, kw_only=True)
-    extra_schema_properties: dict = field(default=None, kw_only=True)
+    extra_schema_properties: dict[str, dict] = field(default=None, kw_only=True)
 
     @allowlist.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_allowlist(self, _: Attribute, allowlist: Optional[list[str]]) -> None:
