@@ -1,4 +1,5 @@
 from .base_tool import BaseTool
+from .base_image_generation_client import BaseImageGenerationClient
 from .calculator.tool import Calculator
 from .web_search.tool import WebSearch
 from .web_scraper.tool import WebScraper
@@ -32,6 +33,7 @@ from .audio_transcription_client.tool import AudioTranscriptionClient
 
 __all__ = [
     "BaseTool",
+    "BaseImageGenerationClient",
     "BaseAwsClient",
     "AwsIamClient",
     "AwsS3Client",
