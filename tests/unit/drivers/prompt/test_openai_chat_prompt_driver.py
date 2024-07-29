@@ -270,6 +270,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 ],
             },
             {"content": "tool-output", "role": "tool", "tool_call_id": "MockTool_test"},
+            {"content": "keep-going", "role": "user"},
         ]
 
 
