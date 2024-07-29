@@ -282,21 +282,24 @@ agent.run(
     This driver requires the `drivers-prompt-ollama` [extra](../index.md#extras).
 
 The [OllamaPromptDriver](../../reference/griptape/drivers/prompt/ollama_prompt_driver.md) connects to the [Ollama Chat Completion API](https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion).
+This driver uses [Ollama tool calling](https://ollama.com/blog/tool-support) when using [Tools](../tools/index.md).
 
 ```python
 from griptape.config import StructureConfig
 from griptape.drivers import OllamaPromptDriver
+from griptape.tools import Calculator
 from griptape.structures import Agent
 
 
 agent = Agent(
     config=StructureConfig(
         prompt_driver=OllamaPromptDriver(
-            model="llama3",
+            model="llama3.1",
         ),
     ),
+    tools=[Calculator()],
 )
-agent.run("What color is the sky at different times of the day?")
+agent.run("What is (192 + 12) ^ 4")
 ```
 
 ### Hugging Face Hub
