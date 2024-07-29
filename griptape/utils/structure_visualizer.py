@@ -26,9 +26,7 @@ class StructureVisualizer:
         Returns:
             str: URL to the rendered image
         """
-        self.structure.resolve_relationships()
-
-        tasks = "\n\t" + "\n\t".join([self.__render_task(task) for task in self.structure.tasks])
+        tasks = "\n\t" + "\n\t".join([self.__render_task(task) for task in self.structure.ordered_tasks])
         graph = f"{self.header}{tasks}"
 
         graph_bytes = graph.encode("utf-8")
@@ -38,9 +36,9 @@ class StructureVisualizer:
         return url
 
     def __render_task(self, task: BaseTask) -> str:
-        if task.children:
-            children = " & ".join([f"{self.__get_id(child.id)}({child.id})" for child in task.children])
-            return f"{self.__get_id(task.id)}({task.id})--> {children};"
+        if task.child_ids:
+            next_task = " & ".join([f"{self.__get_id(child_id)}({child_id})" for child_id in task.child_ids])
+            return f"{self.__get_id(task.id)}({task.id})--> {next_task};"
         else:
             return f"{self.__get_id(task.id)}({task.id});"
 

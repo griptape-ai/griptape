@@ -3,13 +3,15 @@ from __future__ import annotations
 import logging
 import uuid
 from abc import ABC, abstractmethod
+from concurrent import futures
 from logging import Logger
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from attrs import Attribute, Factory, define, field
+from graphlib import TopologicalSorter
 from rich.logging import RichHandler
 
-from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, BlobArtifact, ErrorArtifact, TextArtifact
 from griptape.common import observable
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import (
@@ -32,7 +34,7 @@ from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
-from griptape.memory.structure import ConversationMemory
+from griptape.memory.structure import ConversationMemory, Run
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.mixins import EventPublisherMixin
 from griptape.utils import deprecation_warn
@@ -57,7 +59,6 @@ class Structure(ABC, EventPublisherMixin):
     )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
-    tasks: list[BaseTask] = field(factory=list, kw_only=True)
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
@@ -74,8 +75,19 @@ class Structure(ABC, EventPublisherMixin):
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True)
+    futures_executor_fn: Callable[[], futures.Executor] = field(
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+    )
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
+
+    def __attrs_post_init__(self) -> None:
+        if self.conversation_memory is not None:
+            self.conversation_memory.structure = self
+
+        self.config.structure = self
+
+        [task.preprocess(self) for task in self.tasks]
 
     @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_rulesets(self, _: Attribute, rulesets: list[Ruleset]) -> None:
@@ -93,19 +105,6 @@ class Structure(ABC, EventPublisherMixin):
         if self.rulesets:
             raise ValueError("can't have both rules and rulesets specified")
 
-    def __attrs_post_init__(self) -> None:
-        if self.conversation_memory is not None:
-            self.conversation_memory.structure = self
-
-        self.config.structure = self
-
-        tasks = self.tasks.copy()
-        self.tasks.clear()
-        self.add_tasks(*tasks)
-
-    def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
-        return self.add_tasks(*other) if isinstance(other, list) else self + [other]
-
     @prompt_driver.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_prompt_driver(self, attribute: Attribute, value: BasePromptDriver) -> None:
         if value is not None:
@@ -120,6 +119,24 @@ class Structure(ABC, EventPublisherMixin):
     def validate_stream(self, attribute: Attribute, value: bool) -> None:  # noqa: FBT001
         if value is not None:
             deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver.stream` instead.")
+
+    @abstractmethod
+    @observable
+    def add_task(self, task: Optional[BaseTask], **kwargs) -> Structure: ...
+
+    @property
+    @abstractmethod
+    def tasks(self) -> list[BaseTask]: ...
+
+    @property
+    @abstractmethod
+    def task_graph(self) -> dict[BaseTask, set[BaseTask]]: ...
+
+    @property
+    def ordered_tasks(self) -> list[BaseTask]:
+        # TODO: find a way to cache this
+        # should only recalculate if the graph changes
+        return [self.find_task(task_id) for task_id in TopologicalSorter(self.to_graph()).static_order()]
 
     @property
     def execution_args(self) -> tuple:
@@ -141,11 +158,11 @@ class Structure(ABC, EventPublisherMixin):
 
     @property
     def input_task(self) -> Optional[BaseTask]:
-        return self.tasks[0] if self.tasks else None
+        return self.ordered_tasks[0] if self.tasks else None
 
     @property
     def output_task(self) -> Optional[BaseTask]:
-        return self.tasks[-1] if self.tasks else None
+        return self.ordered_tasks[-1] if self.tasks else None
 
     @property
     def output(self) -> Optional[BaseArtifact]:
@@ -220,37 +237,18 @@ class Structure(ABC, EventPublisherMixin):
                 return task
         raise ValueError(f"Task with id {task_id} doesn't exist.")
 
-    def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
-        return [self.add_task(s) for s in tasks]
+    def add_tasks(self, *tasks: BaseTask, **kwargs) -> Structure:
+        [self.add_task(s) for s in tasks]
+        return self
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
 
-    def resolve_relationships(self) -> None:
-        task_by_id = {task.id: task for task in self.tasks}
-
-        for task in self.tasks:
-            # Ensure parents include this task as a child
-            for parent_id in task.parent_ids:
-                if parent_id not in task_by_id:
-                    raise ValueError(f"Task with id {parent_id} doesn't exist.")
-                parent = task_by_id[parent_id]
-                if task.id not in parent.child_ids:
-                    parent.child_ids.append(task.id)
-
-            # Ensure children include this task as a parent
-            for child_id in task.child_ids:
-                if child_id not in task_by_id:
-                    raise ValueError(f"Task with id {child_id} doesn't exist.")
-                child = task_by_id[child_id]
-                if task.id not in child.parent_ids:
-                    child.parent_ids.append(task.id)
-
-    @observable
     def before_run(self, args: Any) -> None:
         self._execution_args = args
 
         [task.reset() for task in self.tasks]
+        [task.preprocess(self) for task in self.tasks]
 
         self.publish_event(
             StartStructureRunEvent(
@@ -260,7 +258,31 @@ class Structure(ABC, EventPublisherMixin):
             ),
         )
 
-        self.resolve_relationships()
+    def try_run(self, *args) -> Structure:
+        exit_loop = False
+
+        while not self.is_finished() and not exit_loop:
+            futures_list = {}
+            ordered_tasks = self.ordered_tasks
+
+            for task in ordered_tasks:
+                if task.can_execute():
+                    future = self.futures_executor_fn().submit(task.execute)
+                    futures_list[future] = task
+
+            # Wait for all tasks to complete
+            for future in futures.as_completed(futures_list):
+                if isinstance(future.result(), ErrorArtifact) and self.fail_fast:
+                    exit_loop = True
+
+                    break
+
+        if self.conversation_memory and self.output is not None:
+            run = Run(input=self.input_task.input, output=self.output)
+
+            self.conversation_memory.add_run(run)
+
+        return self
 
     @observable
     def after_run(self) -> None:
@@ -273,10 +295,6 @@ class Structure(ABC, EventPublisherMixin):
             flush=True,
         )
 
-    @abstractmethod
-    def add_task(self, task: BaseTask) -> BaseTask: ...
-
-    @observable
     def run(self, *args) -> Structure:
         self.before_run(args)
 
@@ -286,5 +304,26 @@ class Structure(ABC, EventPublisherMixin):
 
         return result
 
-    @abstractmethod
-    def try_run(self, *args) -> Structure: ...
+    def find_parents(self, task: Optional[BaseTask]) -> list[BaseTask]:
+        if task is not None:
+            for t, parents in self.task_graph.items():
+                if t.id == task.id:
+                    return list(parents)
+        return []
+
+    def find_children(self, task: Optional[BaseTask]) -> list[BaseTask]:
+        if task is not None:
+            return [n for n, p in self.task_graph.items() if task.id in {parent.id for parent in p}]
+        return []
+
+    def to_graph(self) -> dict[str, set[str]]:
+        graph: dict[str, set[str]] = {}
+
+        for task, parents in self.task_graph.items():
+            graph[task.id] = {parent.id for parent in parents}
+
+        return graph
+
+    def __add__(self, other: BaseTask | list[BaseTask]) -> Structure:
+        self.add_tasks(*other) if isinstance(other, list) else self + [other]
+        return self
