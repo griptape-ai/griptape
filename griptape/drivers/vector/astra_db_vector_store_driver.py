@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @define
-class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
+class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
     """A Vector Store Driver for Astra DB.
 
     Attributes:

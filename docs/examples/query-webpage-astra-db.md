@@ -15,7 +15,7 @@ Griptape extra to be installed as well.
 import os
 
 from griptape.drivers import (
-    AstraDBVectorStoreDriver,
+    AstraDbVectorStoreDriver,
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
 )
@@ -35,7 +35,7 @@ input_blogpost = (
     "www.datastax.com/blog/indexing-all-of-wikipedia-on-a-laptop"
 )
 
-vector_store_driver = AstraDBVectorStoreDriver(
+vector_store_driver = AstraDbVectorStoreDriver(
     embedding_driver=OpenAiEmbeddingDriver(),
     api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
     token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],

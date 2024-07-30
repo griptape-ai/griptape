@@ -6,17 +6,14 @@ import os
 
 import pytest
 
-from griptape.drivers import AstraDBVectorStoreDriver, BaseVectorStoreDriver
+from griptape.drivers import AstraDbVectorStoreDriver, BaseVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 TEST_COLLECTION_NAME = "gt_int_test"
 TEST_COLLECTION_NAME_METRIC = "gt_int_test_dot"
 
 
-class TestAstraDBVectorStoreDriver:
-    def _descore_entry(self, entry: BaseVectorStoreDriver.Entry) -> BaseVectorStoreDriver.Entry:
-        return BaseVectorStoreDriver.Entry.from_dict({k: v for k, v in entry.__dict__.items() if k != "score"})
-
+class TestAstraDbVectorStoreDriver:
     @pytest.fixture()
     def embedding_driver(self):
         def circle_fraction_string_to_vector(chunk: str) -> list[float]:
@@ -48,7 +45,7 @@ class TestAstraDBVectorStoreDriver:
 
     @pytest.fixture()
     def vector_store_driver(self, embedding_driver, vector_store_collection):
-        driver = AstraDBVectorStoreDriver(
+        driver = AstraDbVectorStoreDriver(
             api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
             token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
             collection_name=vector_store_collection.name,
@@ -147,3 +144,6 @@ class TestAstraDBVectorStoreDriver:
         ]
         d_query_all_ns = [self._descore_entry(ent) for ent in query_all_ns]
         assert d_query_all_ns == [e2]
+
+    def _descore_entry(self, entry: BaseVectorStoreDriver.Entry) -> BaseVectorStoreDriver.Entry:
+        return BaseVectorStoreDriver.Entry.from_dict({k: v for k, v in entry.__dict__.items() if k != "score"})

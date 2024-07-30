@@ -2,11 +2,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from griptape.drivers import AstraDBVectorStoreDriver, BaseVectorStoreDriver
+from griptape.drivers import AstraDbVectorStoreDriver, BaseVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
-class TestAstraDBVectorStoreDriver:
+class TestAstraDbVectorStoreDriver:
     @pytest.fixture(autouse=True)
     def base_mock_collection(self, mocker):
         mock_get_collection = mocker.patch(
@@ -37,7 +37,7 @@ class TestAstraDBVectorStoreDriver:
 
     @pytest.fixture()
     def driver(self, mock_collection):
-        return AstraDBVectorStoreDriver(
+        return AstraDbVectorStoreDriver(
             api_endpoint="ep",
             token="to",
             collection_name="co",

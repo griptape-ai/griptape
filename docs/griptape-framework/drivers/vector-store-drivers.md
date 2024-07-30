@@ -488,13 +488,13 @@ print("\n\n".join(values))
 !!! info
     This Driver requires the `drivers-vector-astra-db` [extra](../index.md#extras).
 
-The AstraDBVectorStoreDriver supports [DataStax Astra DB](https://www.datastax.com/products/datastax-astra).
+The AstraDbVectorStoreDriver supports [DataStax Astra DB](https://www.datastax.com/products/datastax-astra).
 
 The following example shows how to store vector entries and query the information using the driver:
 
 ```python
 import os
-from griptape.drivers import AstraDBVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers import AstraDbVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 
 # Astra DB secrets and connection parameters
@@ -505,7 +505,7 @@ astra_db_namespace = os.environ.get("ASTRA_DB_KEYSPACE")  # optional
 # Initialize an Embedding Driver.
 embedding_driver = OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"])
 
-vector_store_driver = AstraDBVectorStoreDriver(
+vector_store_driver = AstraDbVectorStoreDriver(
     embedding_driver=embedding_driver,
     api_endpoint=api_endpoint,
     token=token,
