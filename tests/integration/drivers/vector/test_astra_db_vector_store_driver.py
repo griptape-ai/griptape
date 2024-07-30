@@ -3,12 +3,12 @@ from __future__ import annotations
 import json
 import math
 import os
+from typing import Optional
 
 import pytest
-from attrs import define, field
 
-from griptape.drivers import AstraDBVectorStoreDriver, BaseEmbeddingDriver, BaseVectorStoreDriver
-from tests.mocks.mock_tokenizer import MockTokenizer
+from griptape.drivers import AstraDBVectorStoreDriver, BaseVectorStoreDriver
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 TEST_COLLECTION_NAME = "gt_int_test"
 TEST_COLLECTION_NAME_METRIC = "gt_int_test_dot"
@@ -23,24 +23,6 @@ def astra_db_available() -> bool:
     )
 
 
-@define
-class ParserEmbeddingDriver(BaseEmbeddingDriver):
-    model: str = field(default="foo", kw_only=True)
-    dimensions: int = field(default=2, kw_only=True)
-    max_attempts: int = field(default=1, kw_only=True)
-    tokenizer: MockTokenizer = field(factory=lambda: MockTokenizer(model="foo bar"), kw_only=True)
-
-    def try_embed_chunk(self, chunk: str) -> list[float]:
-        vector2d: list[float]
-        try:
-            fraction = float(json.loads(chunk))
-            angle = fraction * math.pi * 2
-            vector2d = [math.cos(angle), math.sin(angle)]
-        except Exception:
-            vector2d = [0.0, 0.0]
-        return (vector2d + [0] * (self.dimensions))[: self.dimensions]
-
-
 @pytest.mark.skipif(not astra_db_available(), reason="No connection info for Astra DB")
 class TestAstraDBVectorStoreDriver:
     def _descore_entry(self, entry: BaseVectorStoreDriver.Entry) -> BaseVectorStoreDriver.Entry:
@@ -48,7 +30,15 @@ class TestAstraDBVectorStoreDriver:
 
     @pytest.fixture()
     def embedding_driver(self):
-        return ParserEmbeddingDriver()
+        def circle_fraction_string_to_vector(chunk: str) -> Optional[list[float]]:
+            try:
+                fraction = float(json.loads(chunk))
+                angle = fraction * math.pi * 2
+                return [math.cos(angle), math.sin(angle)]
+            except Exception:
+                return None
+
+        return MockEmbeddingDriver(mock_output_function=circle_fraction_string_to_vector)
 
     @pytest.fixture()
     def vector_store_driver(self, embedding_driver):
