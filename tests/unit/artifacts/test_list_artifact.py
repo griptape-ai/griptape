@@ -32,7 +32,7 @@ class TestListArtifact:
 
     def test_is_type(self):
         assert ListArtifact([TextArtifact("foo")]).is_type(TextArtifact)
-        assert ListArtifact([CsvRowArtifact({"foo": "bar"})]).is_type(TextArtifact)
+        assert ListArtifact([CsvRowArtifact({"foo": "bar"})]).is_type(BaseTextArtifact)
         assert ListArtifact([CsvRowArtifact({"foo": "bar"})]).is_type(CsvRowArtifact)
 
     def test_has_items(self):

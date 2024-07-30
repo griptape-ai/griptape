@@ -1,4 +1,5 @@
 from .base_artifact import BaseArtifact
+from .base_text_artifact import BaseTextArtifact
 from .error_artifact import ErrorArtifact
 from .info_artifact import InfoArtifact
 from .text_artifact import TextArtifact
@@ -15,6 +16,7 @@ from .generic_artifact import GenericArtifact
 
 __all__ = [
     "BaseArtifact",
+    "BaseTextArtifact",
     "ErrorArtifact",
     "InfoArtifact",
     "TextArtifact",
