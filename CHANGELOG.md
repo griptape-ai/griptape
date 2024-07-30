@@ -48,6 +48,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parameter `count` for `QdrantVectorStoreDriver.query` now optional as per documentation.
 - Path issues on Windows with `LocalFileManagerDriver` and `AmazonS3FileManagerDriver`.
 
+## [0.29.0] - 2024-07-30
+
+### Added
+- Native function calling support to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AnthropicPromptDriver`, `AmazonBedrockPromptDriver`, `GooglePromptDriver`, `OllamaPromptDriver`, and `CoherePromptDriver`.
+- `OllamaEmbeddingDriver` for generating embeddings with Ollama.
+- `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
+- `GriptapeCloudEventListenerDriver.api_key` defaults to the value in the `GT_CLOUD_API_KEY` environment variable.
+- `BaseObservabilityDriver` as the base class for all Observability Drivers.
+- `DummyObservabilityDriver` as a no-op Observability Driver.
+- `OpenTelemetryObservabilityDriver` for sending observability data to an open telemetry collector or vendor.
+- `GriptapeCloudObservabilityDriver` for sending observability data to Griptape Cloud.
+- `DatadogObservabilityDriver` for sending observability data to a Datadog Agent.
+- `Observability` context manager for enabling observability and configuring which Observability Driver to use.
+- `@observable` decorator for selecting which functions/methods to provide observability for.
+- `GenericArtifact` for storing any data.
+- `BaseTextArtifact` for text-based Artifacts to subclass.
+
+### Changed
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_text` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.does_entry_exist` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.load_artifacts` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.upsert_vector` optional arguments are now keyword-only arguments.
+- **BREAKING**: `BaseVectorStoreDriver.query` optional arguments are now keyword-only arguments.
+- **BREAKING**: `EventListener.publish_event`'s `flush` argument is now a keyword-only argument.
+- **BREAKING**: `BaseEventListenerDriver.publish_event`'s `flush` argument is now a keyword-only argument.
+- **BREAKING**: Renamed `DummyException` to `DummyError` for pep8 naming compliance.
+- **BREAKING**: Migrate to `sqlalchemy` 2.0.
+- **BREAKING**: Make `sqlalchemy` an optional dependency.
+- **BREAKING**: Renamed `drivers-sql-redshift` to `drivers-sql-amazon-redshift`
+- **BREAKING**: Renamed `drivers-prompt-huggingface` extra to `drivers-prompt-huggingface-hub`.
+- **BREAKING**: Renamed `drivers-vector-postgresql` extra to `drivers-vector-pgvector`.
+- **BREAKING**: Update `marqo` dependency to `^3.7.0`.
+- **BREAKING**: Removed `drivers-sql-postgresql` extra. Use `drivers-sql` extra and install necessary drivers (i.e. `psycopg2`) separately.
+- Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
+- Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
+- Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
+- `CsvRowArtifact` now inherits from `BaseTextArtifact`.
+- `TextArtifact` now inherits from `BaseTextArtifact`.
+
+### Fixed
+- Parameter `count` for `QdrantVectorStoreDriver.query` now optional as per documentation.
+- Path issues on Windows with `LocalFileManagerDriver` and `AmazonS3FileManagerDriver`.
+
 ## [0.28.2] - 2024-07-12
 ### Fixed
 - Conversation Memory being incorrectly inserted into the `PromptTask.prompt_stack` when no system content is present.
