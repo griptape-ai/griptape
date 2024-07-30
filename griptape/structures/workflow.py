@@ -1,15 +1,12 @@
 from __future__ import annotations
 
-import concurrent.futures as futures
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
-from graphlib import TopologicalSorter
+from attrs import define, field
+from graphlib import CycleError, TopologicalSorter
 
-from griptape.artifacts import ErrorArtifact
-from griptape.common import observable
-from griptape.memory.structure import Run
 from griptape.structures import Structure
+from griptape.tasks import BaseTask
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -17,98 +14,33 @@ if TYPE_CHECKING:
 
 @define
 class Workflow(Structure):
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-        kw_only=True,
-    )
+    _task_id_graph: dict[str, set[str]] = field(factory=dict, kw_only=True, alias="task_id_graph")
+    _tasks: list[BaseTask] = field(factory=list, kw_only=True, alias="tasks")
+
+    _last_tasks: set[BaseTask | str] = field(factory=set, init=False, kw_only=True)
+    _task_graph: Optional[dict[BaseTask, set[BaseTask]]] = field(default=None, kw_only=True, alias="task_graph")
+    _tasks_set: set[BaseTask] = field(factory=set, init=False, kw_only=True)
+
+    def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
+
+        if self._tasks:
+            self._tasks_set = set(self._tasks)
+
+        if self._task_graph is not None:
+            self._from_task_graph()
 
     @property
-    def output_task(self) -> Optional[BaseTask]:
-        return self.order_tasks()[-1] if self.tasks else None
+    def tasks(self) -> list[BaseTask]:
+        return list(self._tasks_set)
 
-    def add_task(self, task: BaseTask) -> BaseTask:
-        task.preprocess(self)
+    @property
+    def task_graph(self) -> dict[BaseTask, set[BaseTask]]:
+        return self._task_graph if self._task_graph is not None else {}
 
-        self.tasks.append(task)
-
-        return task
-
-    def insert_tasks(
-        self,
-        parent_tasks: BaseTask | list[BaseTask],
-        tasks: BaseTask | list[BaseTask],
-        child_tasks: BaseTask | list[BaseTask],
-        *,
-        preserve_relationship: bool = False,
-    ) -> list[BaseTask]:
-        """Insert tasks between parent and child tasks in the workflow.
-
-        Args:
-            parent_tasks: The tasks that will be the parents of the new tasks.
-            tasks: The tasks to insert between the parent and child tasks.
-            child_tasks: The tasks that will be the children of the new tasks.
-            preserve_relationship: Whether to preserve the parent/child relationship when inserting between parent and child tasks.
-        """
-        if not isinstance(parent_tasks, list):
-            parent_tasks = [parent_tasks]
-        if not isinstance(tasks, list):
-            tasks = [tasks]
-        if not isinstance(child_tasks, list):
-            child_tasks = [child_tasks]
-
-        for task in tasks:
-            self.insert_task(parent_tasks, task, child_tasks, preserve_relationship=preserve_relationship)
-
-        return tasks
-
-    def insert_task(
-        self,
-        parent_tasks: list[BaseTask],
-        task: BaseTask,
-        child_tasks: list[BaseTask],
-        *,
-        preserve_relationship: bool = False,
-    ) -> BaseTask:
-        task.preprocess(self)
-
-        self.__link_task_to_children(task, child_tasks)
-
-        if not preserve_relationship:
-            self.__remove_old_parent_child_relationships(parent_tasks, child_tasks)
-
-        last_parent_index = self.__link_task_to_parents(task, parent_tasks)
-
-        # Insert the new task once, just after the last parent task
-        self.tasks.insert(last_parent_index + 1, task)
-
-        return task
-
-    @observable
-    def try_run(self, *args) -> Workflow:
-        exit_loop = False
-
-        while not self.is_finished() and not exit_loop:
-            futures_list = {}
-            ordered_tasks = self.order_tasks()
-
-            for task in ordered_tasks:
-                if task.can_execute():
-                    future = self.futures_executor_fn().submit(task.execute)
-                    futures_list[future] = task
-
-            # Wait for all tasks to complete
-            for future in futures.as_completed(futures_list):
-                if isinstance(future.result(), ErrorArtifact) and self.fail_fast:
-                    exit_loop = True
-
-                    break
-
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
-
-            self.conversation_memory.add_run(run)
-
-        return self
+    @property
+    def task_id_graph(self) -> dict[str, set[str]]:
+        return self._task_id_graph
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
@@ -124,57 +56,165 @@ class Workflow(Structure):
 
         return context
 
-    def to_graph(self) -> dict[str, set[str]]:
-        graph: dict[str, set[str]] = {}
+    def before_run(self, args: Any) -> None:
+        self._validate()
+        self._task_graph = self._build_task_graph()
+        super().before_run(args)
 
-        for key_task in self.tasks:
-            graph[key_task.id] = set()
+    def _from_task_graph(self) -> Workflow:
+        task_graph = self._task_graph
 
-            for value_task in self.tasks:
-                if key_task.id in value_task.child_ids:
-                    graph[key_task.id].add(value_task.id)
+        for task, parents in task_graph.items():
+            task_id = task.id
+            if self._task_id_graph.get(task_id) is None:
+                self._task_id_graph[task_id] = set()
 
-        return graph
+            for parent in parents:
+                parent_id = parent.id
+                self._task_id_graph[task_id].add(parent_id)
 
-    def order_tasks(self) -> list[BaseTask]:
-        return [self.find_task(task_id) for task_id in TopologicalSorter(self.to_graph()).static_order()]
+            self._tasks_set.add(task)
 
-    def __link_task_to_children(self, task: BaseTask, child_tasks: list[BaseTask]) -> None:
-        for child_task in child_tasks:
-            # Link the new task to the child task
-            if child_task.id not in task.child_ids:
-                task.child_ids.append(child_task.id)
-            if task.id not in child_task.parent_ids:
-                child_task.parent_ids.append(task.id)
+        self._task_graph = None
 
-    def __remove_old_parent_child_relationships(
+        return self
+
+    def add_task(
         self,
-        parent_tasks: list[BaseTask],
-        child_tasks: list[BaseTask],
-    ) -> None:
-        for parent_task in parent_tasks:
-            for child_task in child_tasks:
-                # Remove the old parent/child relationship
-                if child_task.id in parent_task.child_ids:
-                    parent_task.child_ids.remove(child_task.id)
-                if parent_task.id in child_task.parent_ids:
-                    child_task.parent_ids.remove(parent_task.id)
+        task: Optional[BaseTask | str],
+        parents: Optional[set[BaseTask | str]] = None,
+        children: Optional[set[BaseTask | str]] = None,
+        **kwargs,
+    ) -> Workflow:
+        if task is None:
+            raise ValueError("Task must be provided")
+        if parents is None:
+            parents = set()
+        if children is None:
+            children = set()
+        self._build_task(task, parents=parents, children=children)
 
-    def __link_task_to_parents(self, task: BaseTask, parent_tasks: list[BaseTask]) -> int:
-        last_parent_index = -1
-        for parent_task in parent_tasks:
-            # Link the new task to the parent task
-            if parent_task.id not in task.parent_ids:
-                task.parent_ids.append(parent_task.id)
-            if task.id not in parent_task.child_ids:
-                parent_task.child_ids.append(task.id)
+        self._last_tasks = {task}
+        return self
 
-            try:
-                parent_index = self.tasks.index(parent_task)
-            except ValueError as exc:
-                raise ValueError(f"Parent task {parent_task.id} not found in workflow.") from exc
+    def add_tasks(
+        self,
+        *tasks: BaseTask | str,
+        parents: Optional[set[BaseTask | str]] = None,
+        children: Optional[set[BaseTask | str]] = None,
+        **kwargs,
+    ) -> Workflow:
+        if not tasks:
+            raise ValueError("Tasks must be provided")
+        if parents is None:
+            parents = set()
+        if children is None:
+            children = set()
+
+        for task in tasks:
+            self._build_task(task, parents=parents, children=children)
+
+        self._last_tasks = set(tasks)  # pright: ignore[assignment]
+
+        return self
+
+    def add_child(self, child: BaseTask | str) -> Workflow:
+        if not self._last_tasks:
+            raise ValueError("No tasks to add child to")
+        for task in self._last_tasks:
+            self.add_task(task, children={child})
+        self._last_tasks = {child}
+        return self
+
+    def add_parent(self, parent: BaseTask | str) -> Workflow:
+        if not self._last_tasks:
+            raise ValueError("No tasks to add parent to")
+        for task in self._last_tasks:
+            self.add_task(task, parents={parent})
+        self._last_tasks = {parent}
+        return self
+
+    def add_parents(self, *parents: BaseTask | str) -> Workflow:
+        if not self._last_tasks:
+            raise ValueError("No tasks to add parent to")
+        for task in self._last_tasks:
+            self.add_task(task, parents=set(parents))
+        self._last_tasks = set(parents)
+        return self
+
+    def add_children(self, *children: BaseTask | str) -> Workflow:
+        if not self._last_tasks:
+            raise ValueError("No tasks to add children to")
+        for task in self._last_tasks:
+            self.add_task(task, children=set(children))
+        self._last_tasks = set(children)
+        return self
+
+    def _build_task(
+        self, task: BaseTask | str, parents: set[BaseTask | str], children: set[BaseTask | str]
+    ) -> Workflow:
+        from griptape.tasks import BaseTask
+
+        if isinstance(task, BaseTask):
+            self._tasks_set.add(task)
+            task_id = task.id
+        else:
+            task_id = task
+
+        if self._task_id_graph.get(task_id) is None:
+            self._task_id_graph[task_id] = set()
+
+        for parent in parents if parents is not None else set():
+            if isinstance(parent, BaseTask):
+                parent_id = parent.id
+                self._tasks_set.add(parent)
             else:
-                if parent_index > last_parent_index:
-                    last_parent_index = parent_index
+                parent_id = parent
+            if self._task_id_graph.get(parent_id) is None:
+                self._task_id_graph[parent_id] = set()
+            self._task_id_graph[task_id].add(parent_id)
 
-        return last_parent_index
+        for child in children if children is not None else set():
+            if isinstance(child, BaseTask):
+                child_id = child.id
+                self._tasks_set.add(child)
+            else:
+                child_id = child
+            if self._task_id_graph.get(child_id) is None:
+                self._task_id_graph[child_id] = set()
+            self._task_id_graph[child_id].add(task_id)
+        return self
+
+    def _build_task_graph(self) -> dict[BaseTask, set[BaseTask]]:
+        self._validate()
+
+        final_task_graph: dict[BaseTask, set[BaseTask]] = {}
+
+        for task_id, parents in self._task_id_graph.items():
+            task = None
+            final_parents = set()
+            for t in self._tasks_set:
+                if t.id == task_id:
+                    task = t
+                    continue
+                for parent_id in parents:
+                    if t.id == parent_id:
+                        final_parents.add(t)
+                        continue
+
+            if task is None:
+                raise ValueError(f"Task with id {task_id} not found in tasks")
+            if len(final_parents) != len(parents):
+                raise ValueError(f"Not all children found in tasks for task with id {task_id}")
+
+            if final_task_graph.get(task) is None:
+                final_task_graph[task] = set()
+
+            [final_task_graph[task].add(parent) for parent in final_parents]
+        return final_task_graph
+
+    def _validate(self) -> None:
+        try:
+            TopologicalSorter(self.task_id_graph).static_order()
+        except CycleError as e:
+            raise ValueError("Cycle detected in task graph") from e

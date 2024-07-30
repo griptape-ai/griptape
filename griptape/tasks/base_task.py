@@ -26,8 +26,6 @@ class BaseTask(ABC):
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     state: State = field(default=State.PENDING, kw_only=True)
-    parent_ids: list[str] = field(factory=list, kw_only=True)
-    child_ids: list[str] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
@@ -44,11 +42,19 @@ class BaseTask(ABC):
 
     @property
     def parents(self) -> list[BaseTask]:
-        return [self.structure.find_task(parent_id) for parent_id in self.parent_ids]
+        return self.structure.find_parents(self) if self.structure else []
 
     @property
     def children(self) -> list[BaseTask]:
-        return [self.structure.find_task(child_id) for child_id in self.child_ids]
+        return self.structure.find_children(self) if self.structure else []
+
+    @property
+    def parent_ids(self) -> list[str]:
+        return [parent.id for parent in self.parents]
+
+    @property
+    def child_ids(self) -> list[str]:
+        return [child.id for child in self.children]
 
     @property
     def parent_outputs(self) -> dict[str, str]:
@@ -69,27 +75,7 @@ class BaseTask(ABC):
             return []
 
     def __str__(self) -> str:
-        return str(self.output.value)
-
-    def add_parents(self, parents: list[str | BaseTask]) -> None:
-        for parent in parents:
-            self.add_parent(parent)
-
-    def add_parent(self, parent: str | BaseTask) -> None:
-        parent_id = parent if isinstance(parent, str) else parent.id
-
-        if parent_id not in self.parent_ids:
-            self.parent_ids.append(parent_id)
-
-    def add_children(self, children: list[str | BaseTask]) -> None:
-        for child in children:
-            self.add_child(child)
-
-    def add_child(self, child: str | BaseTask) -> None:
-        child_id = child if isinstance(child, str) else child.id
-
-        if child_id not in self.child_ids:
-            self.child_ids.append(child_id)
+        return str(self.output.value) if self.output else ""
 
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure
@@ -110,8 +96,8 @@ class BaseTask(ABC):
             self.structure.publish_event(
                 StartTaskEvent(
                     task_id=self.id,
-                    task_parent_ids=self.parent_ids,
-                    task_child_ids=self.child_ids,
+                    task_parent_ids=[parent.id for parent in self.parents],
+                    task_child_ids=[child.id for child in self.children],
                     task_input=self.input,
                     task_output=self.output,
                 ),
@@ -122,8 +108,8 @@ class BaseTask(ABC):
             self.structure.publish_event(
                 FinishTaskEvent(
                     task_id=self.id,
-                    task_parent_ids=self.parent_ids,
-                    task_child_ids=self.child_ids,
+                    task_parent_ids=[parent.id for parent in self.parents],
+                    task_child_ids=[child.id for child in self.children],
                     task_input=self.input,
                     task_output=self.output,
                 ),
@@ -169,3 +155,12 @@ class BaseTask(ABC):
             return structure_context
         else:
             return {}
+
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, BaseTask) and self.id == other.id
+
+    def __hash__(self) -> int:
+        return hash(self.id)
+
+    def __cmp__(self, other: Any) -> int:
+        return self.id == other.id

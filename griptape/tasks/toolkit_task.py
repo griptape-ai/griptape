@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from attrs import Attribute, Factory, define, field
 
@@ -200,9 +200,10 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
         subtask.attach_to(self)
 
-        if len(self.subtasks) > 0:
-            self.subtasks[-1].add_child(subtask)
-            subtask.add_parent(self.subtasks[-1])
+        # TODO: do something here
+        # if len(self.subtasks) > 0:
+        #     self.subtasks[-1].add_child(subtask)
+        #     subtask.add_parent(self.subtasks[-1])
 
         self.subtasks.append(subtask)
 
@@ -219,3 +220,9 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             if memory.name == memory_name:
                 return memory
         raise ValueError(f"Memory with name {memory_name} not found.")
+
+    def __hash__(self) -> int:
+        return PromptTask.__hash__(self)
+
+    def __eq__(self, other: Any) -> bool:
+        return PromptTask.__eq__(self, other)

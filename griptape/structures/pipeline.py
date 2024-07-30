@@ -2,11 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import define
+from attrs import define, field
 
-from griptape.artifacts import ErrorArtifact
-from griptape.common import observable
-from griptape.memory.structure import Run
 from griptape.structures import Structure
 
 if TYPE_CHECKING:
@@ -15,66 +12,73 @@ if TYPE_CHECKING:
 
 @define
 class Pipeline(Structure):
-    def add_task(self, task: BaseTask) -> BaseTask:
-        task.preprocess(self)
+    _tasks: list[BaseTask] = field(factory=list, kw_only=True, alias="tasks")
 
-        if self.output_task:
-            self.output_task.child_ids.append(task.id)
-            task.parent_ids.append(self.output_task.id)
+    def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
 
-        self.tasks.append(task)
+    @property
+    def tasks(self) -> list[BaseTask]:
+        return self._tasks
 
-        return task
-
-    def insert_task(self, parent_task: BaseTask, task: BaseTask) -> BaseTask:
-        task.preprocess(self)
-
-        if parent_task.children:
-            child_task = parent_task.children[0]
-
-            task.child_ids.append(child_task.id)
-            child_task.parent_ids.append(task.id)
-
-            child_task.parent_ids.remove(parent_task.id)
-            parent_task.child_ids.remove(child_task.id)
-
-        task.parent_ids.append(parent_task.id)
-        parent_task.child_ids.append(task.id)
-
-        parent_index = self.tasks.index(parent_task)
-        self.tasks.insert(parent_index + 1, task)
-
-        return task
-
-    @observable
-    def try_run(self, *args) -> Pipeline:
-        self.__run_from_task(self.input_task)
-
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
-
-            self.conversation_memory.add_run(run)
-
-        return self
+    @property
+    def task_graph(self) -> dict[BaseTask, set[BaseTask]]:
+        task_graph = {}
+        for i, task in enumerate(self._tasks):
+            if i == 0:
+                task_graph[task] = set()
+                continue
+            if i < len(self._tasks):
+                task_graph[task] = {self._tasks[i - 1]}
+        return task_graph
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
 
         context.update(
             {
-                "parent_output": task.parents[0].output.to_text() if task.parents and task.parents[0].output else None,
-                "parent": task.parents[0] if task.parents else None,
-                "child": task.children[0] if task.children else None,
-            },
+                "parent_output": task.parent_outputs,
+                "parent_output_text": task.parents_output_text,
+                "parent": {parent.id: parent for parent in task.parents},
+                "child": {child.id: child for child in task.children},
+            }
         )
 
         return context
 
-    def __run_from_task(self, task: Optional[BaseTask]) -> None:
+    def add_task(
+        self,
+        task: Optional[BaseTask],
+        index: int = -1,
+        parent: Optional[BaseTask | str] = None,
+        child: Optional[BaseTask | str] = None,
+        **kwargs,
+    ) -> Pipeline:
         if task is None:
-            return
-        else:
-            if isinstance(task.execute(), ErrorArtifact) and self.fail_fast:
-                return
-            else:
-                self.__run_from_task(next(iter(task.children), None))
+            raise ValueError("Task must be provided.")
+        try:
+            parent_task = self.find_task(parent) if isinstance(parent, str) else parent
+            child_task = self.find_task(child) if isinstance(child, str) else child
+
+            if (
+                parent_task is not None
+                and child_task is not None
+                and self._tasks.index(parent_task) - self._tasks.index(child_task) != -1
+            ):
+                raise ValueError("Parent and child tasks must be adjacent.")
+            if parent_task is not None:
+                self._tasks.insert(self._tasks.index(parent_task) + 1, task)
+                return self
+            elif child_task is not None:
+                self._tasks.insert(self._tasks.index(child_task), task)
+                return self
+        except ValueError as e:
+            raise ValueError("Parent or child task not found in the pipeline.") from e
+
+        if index <= -1 or index >= len(self._tasks):
+            index = len(self._tasks)
+
+        task.preprocess(self)
+        self._tasks.insert(index, task)
+
+        return self

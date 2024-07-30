@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from attrs import Factory, define, field
 
@@ -103,3 +103,9 @@ class PromptTask(RuleMixin, BaseTask):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
         else:
             return self._process_task_input(TextArtifact(task_input))
+
+    def __hash__(self) -> int:
+        return BaseTask.__hash__(self)
+
+    def __eq__(self, other: Any) -> bool:
+        return BaseTask.__eq__(self, other)
