@@ -13,16 +13,6 @@ TEST_COLLECTION_NAME = "gt_int_test"
 TEST_COLLECTION_NAME_METRIC = "gt_int_test_dot"
 
 
-def astra_db_available() -> bool:
-    return all(
-        [
-            "ASTRA_DB_APPLICATION_TOKEN" in os.environ,
-            "ASTRA_DB_API_ENDPOINT" in os.environ,
-        ]
-    )
-
-
-@pytest.mark.skipif(not astra_db_available(), reason="No connection info for Astra DB")
 class TestAstraDBVectorStoreDriver:
     def _descore_entry(self, entry: BaseVectorStoreDriver.Entry) -> BaseVectorStoreDriver.Entry:
         return BaseVectorStoreDriver.Entry.from_dict({k: v for k, v in entry.__dict__.items() if k != "score"})
@@ -40,22 +30,32 @@ class TestAstraDBVectorStoreDriver:
         return MockEmbeddingDriver(mock_output=circle_fraction_string_to_vector)
 
     @pytest.fixture()
-    def vector_store_driver(self, embedding_driver):
+    def vector_store_collection(self):
+        import astrapy
+
+        database = astrapy.DataAPIClient().get_database(
+            api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
+            token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
+            namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
+        )
+        collection = database.create_collection(
+            name=TEST_COLLECTION_NAME,
+            dimension=2,
+            metric="cosine",
+        )
+        yield collection
+        collection.drop()
+
+    @pytest.fixture()
+    def vector_store_driver(self, embedding_driver, vector_store_collection):
         driver = AstraDBVectorStoreDriver(
             api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
             token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
-            collection_name=TEST_COLLECTION_NAME,
+            collection_name=vector_store_collection.name,
             astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
-            dimension=2,
             embedding_driver=embedding_driver,
         )
-        yield driver
-        driver.collection.drop()
-
-    @pytest.fixture()
-    def vector_store_collection(self, vector_store_driver):
-        """For testing purposes, access the bare AstraPy "Collection"."""
-        return vector_store_driver.collection
+        return driver
 
     def test_vector_crud(self, vector_store_driver, vector_store_collection, embedding_driver):
         """Test basic vector CRUD, various call patterns."""
@@ -147,63 +147,3 @@ class TestAstraDBVectorStoreDriver:
         ]
         d_query_all_ns = [self._descore_entry(ent) for ent in query_all_ns]
         assert d_query_all_ns == [e2]
-
-    def test_mismatched_dimension(self, vector_store_driver, embedding_driver):
-        AstraDBVectorStoreDriver(
-            api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
-            token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
-            collection_name=TEST_COLLECTION_NAME,
-            astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
-            dimension=2,
-            embedding_driver=embedding_driver,
-        )
-        import astrapy
-
-        with pytest.raises(astrapy.exceptions.DataAPIException):
-            AstraDBVectorStoreDriver(
-                api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
-                token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
-                collection_name=TEST_COLLECTION_NAME,
-                astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
-                dimension=123,
-                embedding_driver=embedding_driver,
-            )
-
-    def test_explicit_metric(self, embedding_driver):
-        import astrapy
-
-        with pytest.raises(astrapy.exceptions.DataAPIResponseException):
-            AstraDBVectorStoreDriver(
-                api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
-                token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
-                collection_name=TEST_COLLECTION_NAME_METRIC,
-                astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
-                dimension=2,
-                metric="p-adic-norm",
-                embedding_driver=embedding_driver,
-            )
-
-        # seriously ...
-        dot_vector_store_driver = AstraDBVectorStoreDriver(
-            api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
-            token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
-            collection_name=TEST_COLLECTION_NAME_METRIC,
-            astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
-            dimension=2,
-            metric="dot_product",
-            embedding_driver=embedding_driver,
-        )
-        try:
-            # some vectors are off-sphere, to probe dot product as metric
-            short_v = [0.1, 0.0]
-            pi_4_v = embedding_driver.embed_string("0.125")
-            tenx_pi_4_v = [10 * comp for comp in pi_4_v]
-            dot_vector_store_driver.upsert_vector(short_v, vector_id="short_v")
-            dot_vector_store_driver.upsert_vector(pi_4_v, vector_id="pi_4_v")
-            dot_vector_store_driver.upsert_vector(tenx_pi_4_v, vector_id="tenx_pi_4_v")
-            entries = dot_vector_store_driver.query("0.0", count=2)
-            assert len(entries) == 2
-            assert entries[0].id == "tenx_pi_4_v"
-            assert entries[1].id == "pi_4_v"
-        finally:
-            dot_vector_store_driver.collection.drop()

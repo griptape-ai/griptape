@@ -20,13 +20,10 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
         embedding_driver: a `griptape.drivers.BaseEmbeddingDriver` for embedding computations within the store
         api_endpoint: the "API Endpoint" for the Astra DB instance.
         token: a Database Token ("AstraCS:...") secret to access Astra DB. An instance of `astrapy.authentication.TokenProvider` is also accepted.
-        collection_name: the name of the collection on Astra DB.
+        collection_name: the name of the collection on Astra DB. The collection must have been created beforehand,
+            and support vectors with a vector dimension matching the embeddings being used by this driver.
         environment: the environment ("prod", "hcd", ...) hosting the target Data API.
             It can be omitted for production Astra DB targets. See `astrapy.constants.Environment` for allowed values.
-        dimension: the number of components for embedding vectors
-        metric: the similarity metric to use, one of "dot_product", "euclidean" or "cosine".
-            If omitted, the server default ("cosine") will be used. See also values of `astrapy.constants.VectorMetric`.
-            If the vectors are normalized to unit norm, choosing "dot_product" over cosine yields up to 2x speedup in searches.
         astra_db_namespace: optional specification of the namespace (in the Astra database) for the data.
             *Note*: not to be confused with the "namespace" mentioned elsewhere, which is a grouping within this vector store.
     """
@@ -35,12 +32,9 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
     token: Optional[str | TokenProvider] = field(kw_only=True, default=None, metadata={"serializable": False})
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     environment: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
-    dimension: int = field(kw_only=True, metadata={"serializable": True})
-    metric: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     astra_db_namespace: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     collection: Collection = field(init=False)
-    COLLECTION_INDEXING = {"deny": ["meta.artifact"]}
 
     def __attrs_post_init__(self) -> None:
         astrapy = import_optional_dependency("astrapy")
@@ -54,12 +48,8 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
                 token=self.token,
                 namespace=self.astra_db_namespace,
             )
-            .create_collection(
+            .get_collection(
                 name=self.collection_name,
-                dimension=self.dimension,
-                metric=self.metric,
-                indexing=self.COLLECTION_INDEXING,
-                check_exists=False,
             )
         )
 
