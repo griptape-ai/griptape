@@ -510,7 +510,7 @@ vector_store_driver = AstraDBVectorStoreDriver(
     api_endpoint=api_endpoint,
     token=token,
     collection_name="astra_db_demo",
-    astra_db_namespace=astra_db_namespace,
+    astra_db_namespace=astra_db_namespace,  # optional
 )
 
 # Load Artifacts from the web
