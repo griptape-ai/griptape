@@ -1,15 +1,22 @@
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from attrs import define, field
-from schema import Schema, Literal
-from griptape.artifacts import ErrorArtifact, BaseArtifact
-from griptape.engines.rag import RagEngine
+from schema import Literal, Schema
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+
+if TYPE_CHECKING:
+    from griptape.engines.rag import RagEngine
 
 
 @define(kw_only=True)
 class RagClient(BaseTool):
-    """
+    """Tool for querying a RAG engine.
+
     Attributes:
         description: LLM-friendly RAG engine description.
         rag_engine: `RagEngine`.
@@ -22,7 +29,7 @@ class RagClient(BaseTool):
         config={
             "description": "{{ _self.description }}",
             "schema": Schema({Literal("query", description="A natural language search query"): str}),
-        }
+        },
     )
     def search(self, params: dict) -> BaseArtifact:
         query = params["values"]["query"]

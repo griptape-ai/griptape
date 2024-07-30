@@ -1,9 +1,8 @@
 import json
 
-
+from griptape.artifacts import TextArtifact
 from griptape.memory.structure import Run, SummaryConversationMemory
 from griptape.structures import Pipeline
-from griptape.artifacts import TextArtifact
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_structure_config import MockStructureConfig

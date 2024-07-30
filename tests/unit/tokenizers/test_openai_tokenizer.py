@@ -1,14 +1,15 @@
 import pytest
+
 from griptape.tokenizers import OpenAiTokenizer
 
 
 class TestOpenAiTokenizer:
-    @pytest.fixture
+    @pytest.fixture()
     def tokenizer(self, request):
         return OpenAiTokenizer(model=request.param)
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [
             ("gpt-4-1106", 5),
             ("gpt-4-32k", 5),
@@ -34,7 +35,7 @@ class TestOpenAiTokenizer:
         assert tokenizer.max_input_tokens == OpenAiTokenizer.DEFAULT_MAX_TOKENS - OpenAiTokenizer.TOKEN_OFFSET
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [
             ("gpt-4-1106", 19),
             ("gpt-4-32k", 19),
@@ -44,7 +45,6 @@ class TestOpenAiTokenizer:
             ("gpt-3.5-turbo-16k", 19),
             ("gpt-3.5-turbo", 19),
             ("gpt-35-turbo-16k", 19),
-            ("gpt-35-turbo", 19),
             ("gpt-35-turbo", 19),
         ],
         indirect=["tokenizer"],
@@ -57,7 +57,7 @@ class TestOpenAiTokenizer:
             == expected
         )
 
-    @pytest.mark.parametrize("tokenizer,expected", [("not-real-model", 19)], indirect=["tokenizer"])
+    @pytest.mark.parametrize(("tokenizer", "expected"), [("not-real-model", 19)], indirect=["tokenizer"])
     def test_token_count_for_messages_unknown_model(self, tokenizer, expected):
         with pytest.raises(NotImplementedError):
             tokenizer.count_tokens(
@@ -65,7 +65,7 @@ class TestOpenAiTokenizer:
             )
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [
             ("gpt-4-1106", 127987),
             ("gpt-4o", 127987),
@@ -86,7 +86,7 @@ class TestOpenAiTokenizer:
         assert tokenizer.count_input_tokens_left("foo bar huzzah") == expected
 
     @pytest.mark.parametrize(
-        "tokenizer,expected",
+        ("tokenizer", "expected"),
         [
             ("gpt-4-1106", 4091),
             ("gpt-4-32k", 4091),

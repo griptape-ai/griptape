@@ -1,13 +1,14 @@
-from pytest import fixture
+import pytest
+
 from griptape.config import GoogleStructureConfig
 
 
 class TestGoogleStructureConfig:
-    @fixture(autouse=True)
+    @pytest.fixture(autouse=True)
     def mock_openai(self, mocker):
         return mocker.patch("google.generativeai.GenerativeModel")
 
-    @fixture
+    @pytest.fixture()
     def config(self):
         return GoogleStructureConfig()
 
@@ -22,6 +23,8 @@ class TestGoogleStructureConfig:
                 "model": "gemini-1.5-pro",
                 "top_p": None,
                 "top_k": None,
+                "tool_choice": "auto",
+                "use_native_tools": True,
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {"type": "DummyImageQueryDriver"},

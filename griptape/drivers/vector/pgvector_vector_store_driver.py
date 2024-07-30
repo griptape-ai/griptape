@@ -1,15 +1,17 @@
+from __future__ import annotations
+
 import uuid
-from typing import Optional, Any, cast
-from attrs import define, field, Factory
+from collections import OrderedDict
 from dataclasses import dataclass
+from typing import TYPE_CHECKING, Any, NoReturn, Optional
+
+from attrs import Attribute, Factory, define, field
+
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
-from sqlalchemy.engine import Engine
-from sqlalchemy import create_engine, Column, String, JSON
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy.orm import Session
-from collections import OrderedDict
+
+if TYPE_CHECKING:
+    from sqlalchemy.engine import Engine
 
 
 @define
@@ -29,8 +31,8 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     table_name: str = field(kw_only=True, metadata={"serializable": True})
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
 
-    @connection_string.validator  # pyright: ignore
-    def validate_connection_string(self, _, connection_string: Optional[str]) -> None:
+    @connection_string.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_connection_string(self, _: Attribute, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
         if self.engine is not None:
             return
@@ -42,8 +44,8 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         if not connection_string.startswith("postgresql://"):
             raise ValueError("The connection string must describe a Postgres database connection")
 
-    @engine.validator  # pyright: ignore
-    def validate_engine(self, _, engine: Optional[Engine]) -> None:
+    @engine.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_engine(self, _: Attribute, engine: Optional[Engine]) -> None:
         # If a connection string is provided, an engine does not need to be provided.
         if self.connection_string is not None:
             return
@@ -53,21 +55,29 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("An engine or connection string is required")
 
     def __attrs_post_init__(self) -> None:
-        """If an engine is provided, it will be used to connect to the database.
-        If not, a connection string is used to create a new database connection here.
-        """
         if self.engine is None:
-            self.engine = cast(Engine, create_engine(self.connection_string, **self.create_engine_params))
+            if self.connection_string is None:
+                raise ValueError("An engine or connection string is required")
+            sqlalchemy = import_optional_dependency("sqlalchemy")
+            self.engine = sqlalchemy.create_engine(self.connection_string, **self.create_engine_params)
 
     def setup(
-        self, create_schema: bool = True, install_uuid_extension: bool = True, install_vector_extension: bool = True
+        self,
+        *,
+        create_schema: bool = True,
+        install_uuid_extension: bool = True,
+        install_vector_extension: bool = True,
     ) -> None:
         """Provides a mechanism to initialize the database schema and extensions."""
+        sqlalchemy_sql = import_optional_dependency("sqlalchemy.sql")
+
         if install_uuid_extension:
-            self.engine.execute('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";')
+            with self.engine.begin() as conn:
+                conn.execute(sqlalchemy_sql.text('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'))
 
         if install_vector_extension:
-            self.engine.execute('CREATE EXTENSION IF NOT EXISTS "vector";')
+            with self.engine.begin() as conn:
+                conn.execute(sqlalchemy_sql.text('CREATE EXTENSION IF NOT EXISTS "vector";'))
 
         if create_schema:
             self._model.metadata.create_all(self.engine)
@@ -75,13 +85,16 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
         """Inserts or updates a vector in the collection."""
-        with Session(self.engine) as session:
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
+
+        with sqlalchemy_orm.Session(self.engine) as session:
             obj = self._model(id=vector_id, vector=vector, namespace=namespace, meta=meta, **kwargs)
 
             obj = session.merge(obj)
@@ -89,9 +102,11 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             return str(getattr(obj, "id"))
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
-        with Session(self.engine) as session:
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
+
+        with sqlalchemy_orm.Session(self.engine) as session:
             result = session.get(self._model, vector_id)
 
             return BaseVectorStoreDriver.Entry(
@@ -101,11 +116,11 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 meta=getattr(result, "meta"),
             )
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
-        """Retrieves all vector entries from the collection, optionally filtering to only
-        those that match the provided namespace.
-        """
-        with Session(self.engine) as session:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+        """Retrieves all vector entries from the collection, optionally filtering to only those that match the provided namespace."""
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
+
+        with sqlalchemy_orm.Session(self.engine) as session:
             query = session.query(self._model)
             if namespace:
                 query = query.filter_by(namespace=namespace)
@@ -114,7 +129,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             return [
                 BaseVectorStoreDriver.Entry(
-                    id=str(result.id), vector=result.vector, namespace=result.namespace, meta=result.meta
+                    id=str(result.id),
+                    vector=result.vector,
+                    namespace=result.namespace,
+                    meta=result.meta,
                 )
                 for result in results
             ]
@@ -122,15 +140,16 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         distance_metric: str = "cosine_distance",
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        """Performs a search on the collection to find vectors similar to the provided input vector,
-        optionally filtering to only those that match the provided namespace.
-        """
+        """Performs a search on the collection to find vectors similar to the provided input vector, optionally filtering to only those that match the provided namespace."""
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
+
         distance_metrics = {
             "cosine_distance": self._model.vector.cosine_distance,
             "l2_distance": self._model.vector.l2_distance,
@@ -142,11 +161,11 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
         op = distance_metrics[distance_metric]
 
-        with Session(self.engine) as session:
+        with sqlalchemy_orm.Session(self.engine) as session:
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.
-            query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore
+            query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore[reportOptionalCall]
 
             filter_kwargs: Optional[OrderedDict] = None
 
@@ -174,19 +193,27 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             ]
 
     def default_vector_model(self) -> Any:
-        Vector = import_optional_dependency("pgvector.sqlalchemy").Vector
-        Base = declarative_base()
+        pgvector_sqlalchemy = import_optional_dependency("pgvector.sqlalchemy")
+        sqlalchemy = import_optional_dependency("sqlalchemy")
+        sqlalchemy_dialects_postgresql = import_optional_dependency("sqlalchemy.dialects.postgresql")
+        sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
 
         @dataclass
-        class VectorModel(Base):
+        class VectorModel(sqlalchemy_orm.declarative_base()):
             __tablename__ = self.table_name
 
-            id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
-            vector = Column(Vector())
-            namespace = Column(String)
-            meta = Column(JSON)
+            id = sqlalchemy.Column(
+                sqlalchemy_dialects_postgresql.UUID(as_uuid=True),
+                primary_key=True,
+                default=uuid.uuid4,
+                unique=True,
+                nullable=False,
+            )
+            vector = sqlalchemy.Column(pgvector_sqlalchemy.Vector())
+            namespace = sqlalchemy.Column(sqlalchemy.String)
+            meta = sqlalchemy.Column(sqlalchemy.JSON)
 
         return VectorModel
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

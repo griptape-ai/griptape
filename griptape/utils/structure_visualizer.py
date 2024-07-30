@@ -1,25 +1,27 @@
 from __future__ import annotations
+
 import base64
 import hashlib
-
-from attrs import define, field
 from typing import TYPE_CHECKING
 
+from attrs import define, field
+
 if TYPE_CHECKING:
-    from griptape.tasks import BaseTask
     from griptape.structures import Structure
+    from griptape.tasks import BaseTask
 
 
 @define
 class StructureVisualizer:
-    """Utility class to visualize a Structure structure"""
+    """Utility class to visualize a Structure structure."""
 
     structure: Structure = field()
     header: str = field(default="graph TD;", kw_only=True)
 
     def to_url(self) -> str:
-        """Generates a url that renders the Workflow structure as a Mermaid flowchart
-        Reference: https://mermaid.js.org/ecosystem/tutorials#jupyter-integration-with-mermaid-js
+        """Generates a url that renders the Workflow structure as a Mermaid flowchart.
+
+        Reference: https://mermaid.js.org/ecosystem/tutorials#jupyter-integration-with-mermaid-js.
 
         Returns:
             str: URL to the rendered image

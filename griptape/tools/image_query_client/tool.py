@@ -1,16 +1,19 @@
 from __future__ import annotations
 
-from typing import Any, cast
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, cast
 
-from attrs import define, field, Factory
-from schema import Schema, Literal
+from attrs import Factory, define, field
+from schema import Literal, Schema
 
-from griptape.artifacts import TextArtifact, ImageArtifact, ErrorArtifact, BlobArtifact
+from griptape.artifacts import BlobArtifact, ErrorArtifact, ImageArtifact, TextArtifact
 from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils import load_artifact_from_memory
 from griptape.utils.decorators import activity
-from griptape.engines import ImageQueryEngine
+
+if TYPE_CHECKING:
+    from griptape.engines import ImageQueryEngine
 
 
 @define
@@ -28,9 +31,9 @@ class ImageQueryClient(BaseTool):
                         description="A detailed question to be answered using the contents of the provided images.",
                     ): str,
                     Literal("image_paths", description="The paths to an image files on disk."): list[str],
-                }
+                },
             ),
-        }
+        },
     )
     def query_image_from_disk(self, params: dict) -> TextArtifact | ErrorArtifact:
         query = params["values"]["query"]
@@ -38,8 +41,7 @@ class ImageQueryClient(BaseTool):
 
         image_artifacts = []
         for image_path in image_paths:
-            with open(image_path, "rb") as f:
-                image_artifacts.append(self.image_loader.load(f.read()))
+            image_artifacts.append(self.image_loader.load(Path(image_path).read_bytes()))
 
         return self.image_query_engine.run(query, image_artifacts)
 
@@ -53,12 +55,12 @@ class ImageQueryClient(BaseTool):
                         description="A detailed question to be answered using the contents of the provided images.",
                     ): str,
                     Literal("image_artifacts", description="Image artifact memory references."): [
-                        {"image_artifact_namespace": str, "image_artifact_name": str}
+                        {"image_artifact_namespace": str, "image_artifact_name": str},
                     ],
                     "memory_name": str,
-                }
+                },
             ),
-        }
+        },
     )
     def query_images_from_memory(self, params: dict[str, Any]) -> TextArtifact | ErrorArtifact:
         query = params["values"]["query"]

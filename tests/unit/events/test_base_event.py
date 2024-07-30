@@ -1,17 +1,19 @@
 import time
+
 import pytest
+
 from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.events import (
-    StartPromptEvent,
+    BaseEvent,
+    CompletionChunkEvent,
+    FinishActionsSubtaskEvent,
     FinishPromptEvent,
-    StartTaskEvent,
+    FinishStructureRunEvent,
     FinishTaskEvent,
     StartActionsSubtaskEvent,
-    FinishActionsSubtaskEvent,
-    CompletionChunkEvent,
+    StartPromptEvent,
     StartStructureRunEvent,
-    FinishStructureRunEvent,
-    BaseEvent,
+    StartTaskEvent,
 )
 from tests.mocks.mock_event import MockEvent
 

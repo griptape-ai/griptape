@@ -1,11 +1,16 @@
 from __future__ import annotations
-from typing import Optional
+
 from abc import ABC, abstractmethod
-from attrs import define, field, Factory
-from griptape.artifacts import ListArtifact, ErrorArtifact
+from typing import TYPE_CHECKING, Optional
+
+from attrs import Attribute, Factory, define, field
+
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.drivers import BasePromptDriver
-from griptape.rules import Ruleset
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ErrorArtifact, ListArtifact
+    from griptape.drivers import BasePromptDriver
+    from griptape.rules import Ruleset
 
 
 @define
@@ -21,8 +26,8 @@ class BaseExtractionEngine(ABC):
         kw_only=True,
     )
 
-    @max_token_multiplier.validator  # pyright: ignore
-    def validate_max_token_multiplier(self, _, max_token_multiplier: int) -> None:
+    @max_token_multiplier.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_max_token_multiplier(self, _: Attribute, max_token_multiplier: int) -> None:
         if max_token_multiplier > 1:
             raise ValueError("has to be less than or equal to 1")
         elif max_token_multiplier <= 0:
@@ -36,10 +41,14 @@ class BaseExtractionEngine(ABC):
     def min_response_tokens(self) -> int:
         return round(
             self.prompt_driver.tokenizer.max_input_tokens
-            - self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier
+            - self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier,
         )
 
     @abstractmethod
     def extract(
-        self, text: str | ListArtifact, *, rulesets: Optional[list[Ruleset]] = None, **kwargs
+        self,
+        text: str | ListArtifact,
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
+        **kwargs,
     ) -> ListArtifact | ErrorArtifact: ...

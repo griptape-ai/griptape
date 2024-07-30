@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
-from attrs import define, field
+from attrs import Attribute, define, field
 
-from griptape.rules import Ruleset, Rule
+from griptape.rules import Rule, Ruleset
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
@@ -19,16 +19,16 @@ class RuleMixin:
     rules: list[Rule] = field(factory=list, kw_only=True)
     structure: Optional[Structure] = field(default=None, kw_only=True)
 
-    @rulesets.validator  # pyright: ignore
-    def validate_rulesets(self, _, rulesets: list[Ruleset]) -> None:
+    @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_rulesets(self, _: Attribute, rulesets: list[Ruleset]) -> None:
         if not rulesets:
             return
 
         if self.rules:
             raise ValueError("Can't have both rulesets and rules specified.")
 
-    @rules.validator  # pyright: ignore
-    def validate_rules(self, _, rules: list[Rule]) -> None:
+    @rules.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_rules(self, _: Attribute, rules: list[Rule]) -> None:
         if not rules:
             return
 

@@ -1,7 +1,13 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview 
 
 A [Workflow](../../reference/griptape/structures/workflow.md) is a non-sequential DAG that can be used for complex concurrent scenarios with tasks having multiple inputs.
 
+You can access the final output of the Workflow by using the [output](../../reference/griptape/structures/agent.md#griptape.structures.structure.Structure.output) attribute.
 
 ## Context
 

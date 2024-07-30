@@ -1,8 +1,14 @@
 from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING
+
 from attrs import define
-from griptape.artifacts import TextArtifact, ImageArtifact
+
 from griptape.mixins import SerializableMixin
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact, TextArtifact
 
 
 @define

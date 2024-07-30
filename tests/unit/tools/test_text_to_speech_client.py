@@ -9,11 +9,11 @@ from griptape.tools.text_to_speech_client.tool import TextToSpeechClient
 
 
 class TestTextToSpeechClient:
-    @pytest.fixture
+    @pytest.fixture()
     def text_to_speech_engine(self) -> Mock:
         return Mock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def text_to_speech_client(self, text_to_speech_engine) -> TextToSpeechClient:
         return TextToSpeechClient(engine=text_to_speech_engine)
 
@@ -32,7 +32,7 @@ class TestTextToSpeechClient:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.mp3"
         text_to_speech_client = TextToSpeechClient(engine=text_to_speech_engine, output_file=outfile)
 
-        text_to_speech_client.engine.run.return_value = Mock(value=b"audio data", format="mp3")  # pyright: ignore
+        text_to_speech_client.engine.run.return_value = Mock(value=b"audio data", format="mp3")  # pyright: ignore[reportFunctionMemberAccess]
 
         audio_artifact = text_to_speech_client.text_to_speech(params={"values": {"text": "say this!"}})
 

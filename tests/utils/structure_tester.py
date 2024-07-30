@@ -1,25 +1,26 @@
 from __future__ import annotations
-import os
-from attrs import field, define
-from schema import Schema, Literal
-import logging
-import json
-from griptape.artifacts.error_artifact import ErrorArtifact
 
-from griptape.structures import Agent
-from griptape.rules import Rule, Ruleset
-from griptape.tasks import PromptTask
-from griptape.structures import Structure
+import json
+import logging
+import os
+
+from attrs import define, field
+from schema import Literal, Schema
+
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import (
-    BasePromptDriver,
     AmazonBedrockPromptDriver,
-    AnthropicPromptDriver,
-    CoherePromptDriver,
-    OpenAiChatPromptDriver,
-    AzureOpenAiChatPromptDriver,
     AmazonSageMakerJumpstartPromptDriver,
+    AnthropicPromptDriver,
+    AzureOpenAiChatPromptDriver,
+    BasePromptDriver,
+    CoherePromptDriver,
     GooglePromptDriver,
+    OpenAiChatPromptDriver,
 )
+from griptape.rules import Rule, Ruleset
+from griptape.structures import Agent, Structure
+from griptape.tasks import PromptTask
 
 
 def get_enabled_prompt_drivers(prompt_drivers_options) -> list[BasePromptDriver]:
@@ -295,7 +296,7 @@ class StructureTester:
 
         return result
 
-    def run(self, prompt, assert_correctness: bool = True) -> dict:
+    def run(self, prompt, *, assert_correctness: bool = True) -> dict:
         result = self.structure.run(prompt)
         if isinstance(result.output_task.output, ErrorArtifact):
             verified_result = {"correct": False, "explanation": f"ErrorArtifact: {result.output_task.output.to_text()}"}

@@ -1,5 +1,10 @@
-from griptape.artifacts import TextArtifact
-from griptape.common import Reference
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griptape.artifacts import TextArtifact
+    from griptape.common import Reference
 
 
 def references_from_artifacts(artifacts: list[TextArtifact]) -> list[Reference]:

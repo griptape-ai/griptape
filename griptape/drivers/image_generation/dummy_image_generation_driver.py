@@ -1,8 +1,14 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
-from griptape.artifacts import ImageArtifact
+
 from griptape.drivers import BaseImageGenerationDriver
-from griptape.exceptions import DummyException
+from griptape.exceptions import DummyError
+
+if TYPE_CHECKING:
+    from griptape.artifacts import ImageArtifact
 
 
 @define
@@ -10,12 +16,15 @@ class DummyImageGenerationDriver(BaseImageGenerationDriver):
     model: None = field(init=False, default=None, kw_only=True)
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
-        raise DummyException(__class__.__name__, "try_text_to_image")
+        raise DummyError(__class__.__name__, "try_text_to_image")
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
-        raise DummyException(__class__.__name__, "try_image_variation")
+        raise DummyError(__class__.__name__, "try_image_variation")
 
     def try_image_inpainting(
         self,
@@ -24,7 +33,7 @@ class DummyImageGenerationDriver(BaseImageGenerationDriver):
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
-        raise DummyException(__class__.__name__, "try_image_inpainting")
+        raise DummyError(__class__.__name__, "try_image_inpainting")
 
     def try_image_outpainting(
         self,
@@ -33,4 +42,4 @@ class DummyImageGenerationDriver(BaseImageGenerationDriver):
         mask: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
-        raise DummyException(__class__.__name__, "try_image_outpainting")
+        raise DummyError(__class__.__name__, "try_image_outpainting")

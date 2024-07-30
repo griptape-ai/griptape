@@ -1,6 +1,9 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Optional
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
 
@@ -30,12 +33,15 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     index_name: str = field(kw_only=True, metadata={"serializable": True})
     vector_path: str = field(kw_only=True, metadata={"serializable": True})
     num_candidates_multiplier: int = field(
-        default=10, kw_only=True, metadata={"serializable": True}
+        default=10,
+        kw_only=True,
+        metadata={"serializable": True},
     )  # https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-stage/#fields
     client: MongoClient = field(
         default=Factory(
-            lambda self: import_optional_dependency("pymongo").MongoClient(self.connection_string), takes_self=True
-        )
+            lambda self: import_optional_dependency("pymongo").MongoClient(self.connection_string),
+            takes_self=True,
+        ),
     )
 
     def get_collection(self) -> Collection:
@@ -45,6 +51,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
@@ -61,11 +68,13 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             vector_id = str(result.inserted_id)
         else:
             collection.replace_one(
-                {"_id": vector_id}, {self.vector_path: vector, "namespace": namespace, "meta": meta}, upsert=True
+                {"_id": vector_id},
+                {self.vector_path: vector, "namespace": namespace, "meta": meta},
+                upsert=True,
             )
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Loads a document entry from the MongoDB collection based on the vector ID.
 
         Returns:
@@ -81,10 +90,13 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             return doc
         else:
             return BaseVectorStoreDriver.Entry(
-                id=str(doc["_id"]), vector=doc[self.vector_path], namespace=doc["namespace"], meta=doc["meta"]
+                id=str(doc["_id"]),
+                vector=doc[self.vector_path],
+                namespace=doc["namespace"],
+                meta=doc["meta"],
             )
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Loads all document entries from the MongoDB collection.
 
         Entries can optionally be filtered by namespace.
@@ -94,7 +106,10 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         return [
             BaseVectorStoreDriver.Entry(
-                id=str(doc["_id"]), vector=doc[self.vector_path], namespace=doc["namespace"], meta=doc["meta"]
+                id=str(doc["_id"]),
+                vector=doc[self.vector_path],
+                namespace=doc["namespace"],
+                meta=doc["meta"],
             )
             for doc in cursor
         ]
@@ -102,6 +117,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
@@ -117,8 +133,8 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         # Using the embedding driver to convert the query string into a vector
         vector = self.embedding_driver.embed_string(query)
 
-        count = count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
-        offset = offset if offset else 0
+        count = count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
+        offset = offset or 0
 
         pipeline = [
             {
@@ -128,7 +144,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                     "queryVector": vector,
                     "numCandidates": min(count * self.num_candidates_multiplier, self.MAX_NUM_CANDIDATES),
                     "limit": count,
-                }
+                },
             },
             {
                 "$project": {
@@ -137,7 +153,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
                     "namespace": 1,
                     "meta": 1,
                     "score": {"$meta": "vectorSearchScore"},
-                }
+                },
             },
         ]
 
@@ -157,7 +173,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         return results
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> None:
         """Deletes the vector from the collection."""
         collection = self.get_collection()
         collection.delete_one({"_id": vector_id})

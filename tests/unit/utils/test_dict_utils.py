@@ -1,5 +1,6 @@
-from griptape.utils import remove_null_values_in_dict_recursively, dict_merge
 import pytest
+
+from griptape.utils import dict_merge, remove_key_in_dict_recursively, remove_null_values_in_dict_recursively
 
 
 class TestDictUtils:
@@ -9,6 +10,13 @@ class TestDictUtils:
         dict_without_nones = {"bar": {"baz": {"foo": [1, 2, 3]}}}
 
         assert remove_null_values_in_dict_recursively(dict_with_nones) == dict_without_nones
+
+    def test_remove_key_in_dict_recursively(self):
+        dict_with_key = {"foo": 1, "bar": {"baz": {"quxx": [1, 2, 3], "bar": 2}}}
+
+        dict_without_key = {"foo": 1, "bar": {"baz": {"bar": 2}}}
+
+        assert remove_key_in_dict_recursively(dict_with_key, "quxx") == dict_without_key
 
     def test_dict_merge_merges_dicts(self):
         a = {"a": 1, "b": {"b1": 2, "b2": 3}}

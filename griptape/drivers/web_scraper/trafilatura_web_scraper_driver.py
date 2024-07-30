@@ -1,6 +1,8 @@
 import json
 import logging
+
 from attrs import define, field
+
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseWebScraperDriver
 from griptape.utils import import_optional_dependency
@@ -29,7 +31,10 @@ class TrafilaturaWebScraperDriver(BaseWebScraperDriver):
             raise Exception("can't access URL")
         else:
             extracted_page = trafilatura.extract(
-                page, include_links=self.include_links, output_format="json", config=config
+                page,
+                include_links=self.include_links,
+                output_format="json",
+                config=config,
             )
 
         if not extracted_page:

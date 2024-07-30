@@ -1,13 +1,16 @@
 from __future__ import annotations
+
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
-from griptape.memory.structure import Run
+
 from griptape.common import PromptStack
 from griptape.mixins import SerializableMixin
-from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseConversationMemoryDriver
+    from griptape.memory.structure import Run
     from griptape.structures import Structure
 
 
@@ -77,7 +80,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
                 # Convert the Prompt Stack into tokens left.
                 tokens_left = prompt_driver.tokenizer.count_input_tokens_left(
-                    prompt_driver.prompt_stack_to_string(temp_stack)
+                    prompt_driver.prompt_stack_to_string(temp_stack),
                 )
                 if tokens_left > 0:
                     # There are still tokens left, no need to prune.

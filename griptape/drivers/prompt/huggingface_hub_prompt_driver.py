@@ -1,22 +1,24 @@
 from __future__ import annotations
 
-from collections.abc import Iterator
 from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
+from griptape.common import DeltaMessage, Message, PromptStack, TextDeltaMessageContent, observable
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
-from griptape.common import PromptStack, Message, DeltaMessage, TextDeltaMessageContent
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from huggingface_hub import InferenceClient
 
 
 @define
 class HuggingFaceHubPromptDriver(BasePromptDriver):
-    """
+    """Hugging Face Hub Prompt Driver.
+
     Attributes:
         api_token: Hugging Face Hub API token.
         use_gpu: Use GPU during model run.
@@ -24,7 +26,6 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         model: Hugging Face Hub model name.
         client: Custom `InferenceApi`.
         tokenizer: Custom `HuggingFaceTokenizer`.
-
     """
 
     api_token: str = field(kw_only=True, metadata={"serializable": True})
@@ -34,7 +35,8 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     client: InferenceClient = field(
         default=Factory(
             lambda self: import_optional_dependency("huggingface_hub").InferenceClient(
-                model=self.model, token=self.api_token
+                model=self.model,
+                token=self.api_token,
             ),
             takes_self=True,
         ),
@@ -42,16 +44,21 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     )
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
-            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens), takes_self=True
+            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
+            takes_self=True,
         ),
         kw_only=True,
     )
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_tokens, **self.params
+            prompt,
+            return_full_text=False,
+            max_new_tokens=self.max_tokens,
+            **self.params,
         )
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
         output_tokens = len(self.tokenizer.tokenizer.encode(response))
@@ -62,11 +69,16 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
-            prompt, return_full_text=False, max_new_tokens=self.max_tokens, stream=True, **self.params
+            prompt,
+            return_full_text=False,
+            max_new_tokens=self.max_tokens,
+            stream=True,
+            **self.params,
         )
 
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
@@ -97,6 +109,6 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         tokens = self.tokenizer.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
 
         if isinstance(tokens, list):
-            return tokens
+            return tokens  # pyright: ignore[reportReturnType] According to the [docs](https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template), the return type is List[int].
         else:
             raise ValueError("Invalid output type.")

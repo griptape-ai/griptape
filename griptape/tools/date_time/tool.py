@@ -1,5 +1,7 @@
 from datetime import datetime
-from schema import Schema, Literal
+
+from schema import Literal, Schema
+
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
@@ -24,10 +26,10 @@ class DateTime(BaseTool):
                         "relative_date_string",
                         description='Relative date in English. For example, "now EST", "20 minutes ago", '
                         '"in 2 days", "3 months, 1 week and 1 day ago", or "yesterday at 2pm"',
-                    ): str
-                }
+                    ): str,
+                },
             ),
-        }
+        },
     )
     def get_relative_datetime(self, params: dict) -> BaseArtifact:
         from dateparser import parse

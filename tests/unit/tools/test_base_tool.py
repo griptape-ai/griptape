@@ -1,8 +1,11 @@
 import inspect
 import os
+
 import pytest
 import yaml
-from schema import SchemaMissingKeyError, Schema, Or
+from schema import Or, Schema, SchemaMissingKeyError
+
+from griptape.common import ToolAction
 from griptape.tasks import ActionsSubtask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
@@ -40,6 +43,29 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description: foo", "const": "test_error"},
+                    "input": {
+                        "type": "object",
+                        "properties": {
+                            "values": {
+                                "description": "Test input",
+                                "type": "object",
+                                "properties": {"test": {"type": "string"}},
+                                "required": ["test"],
+                                "additionalProperties": False,
+                            }
+                        },
+                        "required": ["values"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["name", "path", "input"],
+                "additionalProperties": False,
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"const": "MockTool"},
+                    "path": {"description": "test description: foo", "const": "test_exception"},
                     "input": {
                         "type": "object",
                         "properties": {
@@ -125,11 +151,11 @@ class TestBaseTool:
                 "additionalProperties": False,
             },
         ],
-        "$id": "MockTool Action Schema",
+        "$id": "MockTool ToolAction Schema",
         "$schema": "http://json-schema.org/draft-07/schema#",
     }
 
-    @pytest.fixture
+    @pytest.fixture()
     def tool(self):
         return MockTool(test_field="hello", test_int=5, test_dict={"foo": "bar"})
 
@@ -171,9 +197,9 @@ class TestBaseTool:
 
     def test_invalid_config(self):
         try:
-            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool  # noqa
+            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool  # noqa: F401
 
-            assert False
+            raise AssertionError()
         except SchemaMissingKeyError:
             assert True
 
@@ -206,7 +232,7 @@ class TestBaseTool:
         assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
 
     def test_execute(self, tool):
-        action = ActionsSubtask.Action(input={}, name="", tag="")
+        action = ToolAction(input={}, name="", tag="")
         assert tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_schema(self, tool):
@@ -219,6 +245,22 @@ class TestBaseTool:
 
         full_schema = Schema(Or(*tool.activity_schemas()), description=f"{tool.name} action schema.")
 
-        tool_schema = full_schema.json_schema(f"{tool.name} Action Schema")
+        tool_schema = full_schema.json_schema(f"{tool.name} ToolAction Schema")
 
         assert tool_schema == self.TARGET_TOOL_SCHEMA
+
+    def test_to_native_tool_name(self, tool, mocker):
+        tool = MockTool()
+
+        assert tool.to_native_tool_name(tool.test) == "MockTool_test"
+
+        # Bad name
+        tool.name = "mock_tool"
+        with pytest.raises(ValueError, match="Tool name"):
+            tool.to_native_tool_name(tool.foo)
+
+        # Bad activity name
+        mocker.patch.object(tool, "activity_name", return_value="foo^bar")
+        tool.name = "MockTool"
+        with pytest.raises(ValueError, match="Activity name"):
+            tool.to_native_tool_name(tool.test)

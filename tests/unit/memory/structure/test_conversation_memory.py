@@ -1,12 +1,12 @@
 import json
-from griptape.structures import Agent
+
+from griptape.artifacts import TextArtifact
 from griptape.common import PromptStack
-from griptape.memory.structure import ConversationMemory, Run, BaseConversationMemory
-from griptape.structures import Pipeline
+from griptape.memory.structure import BaseConversationMemory, ConversationMemory, Run
+from griptape.structures import Agent, Pipeline
+from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
-from griptape.tasks import PromptTask
-from griptape.artifacts import TextArtifact
 
 
 class TestConversationMemory:

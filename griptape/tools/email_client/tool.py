@@ -1,20 +1,23 @@
 from __future__ import annotations
-from attrs import Factory, define, field
+
+import logging
+import smtplib
 from email.mime.text import MIMEText
+from typing import Optional
+
+import schema
+from attrs import Factory, define, field
+from schema import Literal, Schema
+
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.loaders.email_loader import EmailLoader
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
-from typing import Optional
-import logging
-import schema
-import smtplib
 
 
 @define
 class EmailClient(BaseTool):
-    """Tool for working with email
+    """Tool for working with email.
 
     Attributes:
         username: Username/email address used to send email via the SMTP protocol and retrieve email via the IMAP protocol.
@@ -63,15 +66,15 @@ class EmailClient(BaseTool):
                 {
                     Literal("label", description="Label to retrieve emails from such as 'INBOX' or 'SENT'"): str,
                     schema.Optional(
-                        Literal("key", description="Optional key for filtering such as 'FROM' or 'SUBJECT'")
+                        Literal("key", description="Optional key for filtering such as 'FROM' or 'SUBJECT'"),
                     ): str,
                     schema.Optional(
-                        Literal("search_criteria", description="Optional search criteria to filter emails by key")
+                        Literal("search_criteria", description="Optional search criteria to filter emails by key"),
                     ): str,
                     schema.Optional(Literal("max_count", description="Optional max email count")): int,
-                }
+                },
             ),
-        }
+        },
     )
     def retrieve(self, params: dict) -> ListArtifact | ErrorArtifact:
         if self.mailboxes is None:
@@ -86,7 +89,7 @@ class EmailClient(BaseTool):
                 key=values.get("key"),
                 search_criteria=values.get("search_criteria"),
                 max_count=max_count,
-            )
+            ),
         )
 
     @activity(
@@ -97,9 +100,9 @@ class EmailClient(BaseTool):
                     Literal("to", description="Recipient's email address"): str,
                     Literal("subject", description="Email subject"): str,
                     Literal("body", description="Email body"): str,
-                }
+                },
             ),
-        }
+        },
     )
     def send(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]

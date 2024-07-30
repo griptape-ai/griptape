@@ -1,21 +1,23 @@
 from __future__ import annotations
+
 import json
 from typing import TYPE_CHECKING, Callable, Optional
-from attrs import define, field, Factory
-from schema import Schema
+
+from attrs import Attribute, Factory, define, field
 
 from griptape import utils
-from griptape.artifacts import BaseArtifact, ErrorArtifact
+from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
+from griptape.common import PromptStack, ToolAction
 from griptape.mixins import ActionsSubtaskOriginMixin
-from griptape.tasks import ActionsSubtask
-from griptape.tasks import PromptTask
+from griptape.tasks import ActionsSubtask, PromptTask
 from griptape.utils import J2
-from griptape.common import PromptStack
 
 if TYPE_CHECKING:
-    from griptape.tools import BaseTool
+    from schema import Schema
+
     from griptape.memory import TaskMemory
     from griptape.structures import Structure
+    from griptape.tools import BaseTool
 
 
 @define
@@ -30,10 +32,12 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionsSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
-        default=Factory(lambda self: self.default_assistant_subtask_template_generator, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_assistant_subtask_template_generator, takes_self=True),
+        kw_only=True,
     )
     generate_user_subtask_template: Callable[[ActionsSubtask], str] = field(
-        default=Factory(lambda self: self.default_user_subtask_template_generator, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_user_subtask_template_generator, takes_self=True),
+        kw_only=True,
     )
     response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
 
@@ -41,8 +45,8 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         if self.task_memory:
             self.set_default_tools_memory(self.task_memory)
 
-    @tools.validator  # pyright: ignore
-    def validate_tools(self, _, tools: list[BaseTool]) -> None:
+    @tools.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_tools(self, _: Attribute, tools: list[BaseTool]) -> None:
         tool_names = [t.name for t in tools]
 
         if len(tool_names) > len(set(tool_names)):
@@ -62,7 +66,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
     @property
     def prompt_stack(self) -> PromptStack:
-        stack = PromptStack()
+        stack = PromptStack(tools=self.tools)
         memory = self.structure.conversation_memory
 
         stack.add_system_message(self.generate_system_template(self))
@@ -73,8 +77,35 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stack.add_assistant_message(self.output.to_text())
         else:
             for s in self.subtasks:
-                stack.add_assistant_message(self.generate_assistant_subtask_template(s))
-                stack.add_user_message(self.generate_user_subtask_template(s))
+                if self.prompt_driver.use_native_tools:
+                    action_calls = [
+                        ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
+                        for action in s.actions
+                    ]
+                    action_results = [
+                        ToolAction(name=action.name, path=action.path, tag=action.tag, output=action.output)
+                        for action in s.actions
+                    ]
+
+                    stack.add_assistant_message(
+                        ListArtifact(
+                            [
+                                *([TextArtifact(s.thought)] if s.thought else []),
+                                *[ActionArtifact(a) for a in action_calls],
+                            ],
+                        ),
+                    )
+                    stack.add_user_message(
+                        ListArtifact(
+                            [
+                                *[ActionArtifact(a) for a in action_results],
+                                *([] if s.output else [TextArtifact("Please keep going")]),
+                            ],
+                        ),
+                    )
+                else:
+                    stack.add_assistant_message(self.generate_assistant_subtask_template(s))
+                    stack.add_user_message(self.generate_user_subtask_template(s))
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
@@ -99,17 +130,20 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
+            use_native_tools=self.prompt_driver.use_native_tools,
             stop_sequence=self.response_stop_sequence,
         )
 
     def default_assistant_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/assistant_subtask.j2").render(
-            stop_sequence=self.response_stop_sequence, subtask=subtask
+            stop_sequence=self.response_stop_sequence,
+            subtask=subtask,
         )
 
     def default_user_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
-            stop_sequence=self.response_stop_sequence, subtask=subtask
+            stop_sequence=self.response_stop_sequence,
+            subtask=subtask,
         )
 
     def actions_schema(self) -> Schema:
@@ -133,7 +167,8 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         if self.response_stop_sequence not in self.prompt_driver.tokenizer.stop_sequences:
             self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
 
-        subtask = self.add_subtask(ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text()))
+        result = self.prompt_driver.run(self.prompt_stack)
+        subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
 
         while True:
             if subtask.output is None:
@@ -147,9 +182,8 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                     subtask.run()
                     subtask.after_run()
 
-                    subtask = self.add_subtask(
-                        ActionsSubtask(self.prompt_driver.run(prompt_stack=self.prompt_stack).to_text())
-                    )
+                    result = self.prompt_driver.run(prompt_stack=self.prompt_stack)
+                    subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
             else:
                 break
 

@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview 
 
 Tokenizers are used throughout Griptape to calculate the number of [tokens](https://learn.microsoft.com/en-us/semantic-kernel/prompt-engineering/tokens) in a piece of text.

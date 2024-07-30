@@ -1,18 +1,19 @@
 from __future__ import annotations
 
 import json
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, Message, TextMessageContent, DeltaMessage
+from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent, observable
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     import boto3
 
     from griptape.common import PromptStack
@@ -22,7 +23,8 @@ if TYPE_CHECKING:
 class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     sagemaker_client: Any = field(
-        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True), kw_only=True
+        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True),
+        kw_only=True,
     )
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
@@ -31,16 +33,18 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
-            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens), takes_self=True
+            lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
+            takes_self=True,
         ),
         kw_only=True,
     )
 
-    @stream.validator  # pyright: ignore
-    def validate_stream(self, _, stream):
+    @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_stream(self, _: Attribute, stream: bool) -> None:  # noqa: FBT001
         if stream:
             raise ValueError("streaming is not supported")
 
+    @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         payload = {
             "inputs": self.prompt_stack_to_string(prompt_stack),
@@ -78,6 +82,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
+    @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         raise NotImplementedError("streaming is not supported")
 
@@ -108,6 +113,6 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         tokens = self.tokenizer.tokenizer.apply_chat_template(messages, add_generation_prompt=True, tokenize=True)
 
         if isinstance(tokens, list):
-            return tokens
+            return tokens  # pyright: ignore[reportReturnType] According to the [docs](https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template), the return type is List[int].
         else:
             raise ValueError("Invalid output type.")

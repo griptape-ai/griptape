@@ -1,14 +1,18 @@
 from __future__ import annotations
+
 from typing import Optional
-from attrs import define, field, Factory
+
+import openai
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
-import openai
 
 
 @define
 class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """OpenAI Embedding Driver.
+
     Attributes:
         model: OpenAI embedding model name. Defaults to `text-embedding-3-small`.
         base_url: API URL. Defaults to OpenAI's v1 API URL.
@@ -33,10 +37,11 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
-        )
+        ),
     )
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
+        kw_only=True,
     )
 
     def try_embed_chunk(self, chunk: str) -> list[float]:

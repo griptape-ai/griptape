@@ -1,43 +1,45 @@
-from typing import Any
 import uuid
-import pytest
+from typing import Any
 from unittest.mock import MagicMock, Mock
+
+import pytest
+from sqlalchemy import create_engine
+
 from griptape.drivers import PgVectorVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from sqlalchemy import create_engine
 
 
 class TestPgVectorVectorStoreDriver:
     connection_string = "postgresql://postgres:postgres@localhost:5432/postgres"
     table_name = "griptape_vectors"
 
-    @pytest.fixture
+    @pytest.fixture()
     def embedding_driver(self):
         return MockEmbeddingDriver()
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_engine(self):
         return MagicMock()
 
-    @pytest.fixture
+    @pytest.fixture()
     def mock_session(self, mocker):
         session = MagicMock()
         mock_session_manager = MagicMock()
         mock_session_manager.__enter__.return_value = session
-        mocker.patch("griptape.drivers.vector.pgvector_vector_store_driver.Session", return_value=mock_session_manager)
+        mocker.patch("sqlalchemy.orm.Session", return_value=mock_session_manager)
 
         return session
 
     def test_initialize_requires_engine_or_connection_string(self, embedding_driver):
         with pytest.raises(ValueError):
-            driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, table_name=self.table_name)
+            PgVectorVectorStoreDriver(embedding_driver=embedding_driver, table_name=self.table_name)
 
     def test_initialize_accepts_engine(self, embedding_driver):
         engine: Any = create_engine(self.connection_string)
-        driver = PgVectorVectorStoreDriver(embedding_driver=embedding_driver, engine=engine, table_name=self.table_name)
+        PgVectorVectorStoreDriver(embedding_driver=embedding_driver, engine=engine, table_name=self.table_name)
 
     def test_initialize_accepts_connection_string(self, embedding_driver):
-        driver = PgVectorVectorStoreDriver(
+        PgVectorVectorStoreDriver(
             embedding_driver=embedding_driver, connection_string=self.connection_string, table_name=self.table_name
         )
 

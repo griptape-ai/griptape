@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule
 from griptape.engines.rag.stages import ResponseRagStage
@@ -8,7 +9,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestRagTask:
-    @pytest.fixture
+    @pytest.fixture()
     def task(self):
         return RagTask(
             input="test",

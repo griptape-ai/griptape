@@ -15,7 +15,8 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
     base_url: str = field(default="https://cloud.griptape.ai", kw_only=True)
     api_key: str = field(kw_only=True)
     headers: dict = field(
-        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
+        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
+        kw_only=True,
     )
     structure_id: str = field(kw_only=True)
     structure_run_wait_time_interval: int = field(default=2, kw_only=True)
@@ -29,7 +30,9 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
 
         try:
             response: Response = post(
-                url, json={"args": [arg.value for arg in args], "env": self.env}, headers=self.headers
+                url,
+                json={"args": [arg.value for arg in args], "env": self.env},
+                headers=self.headers,
             )
             response.raise_for_status()
             response_json = response.json()
@@ -57,7 +60,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
 
         if wait_attempts >= self.structure_run_max_wait_time_attempts:
             return ErrorArtifact(
-                f"Failed to get Run result after {self.structure_run_max_wait_time_attempts} attempts."
+                f"Failed to get Run result after {self.structure_run_max_wait_time_attempts} attempts.",
             )
 
         if status != "SUCCEEDED":
@@ -69,7 +72,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
             return InfoArtifact("No output found in response")
 
     def _get_structure_run_result_attempt(self, structure_run_url: str) -> Any:
-        from requests import get, Response
+        from requests import Response, get
 
         response: Response = get(structure_run_url, headers=self.headers)
         response.raise_for_status()

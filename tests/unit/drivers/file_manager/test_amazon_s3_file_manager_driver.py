@@ -1,9 +1,11 @@
 import os
 import tempfile
+
 import boto3
 import pytest
 from moto import mock_s3
-from griptape.artifacts import ErrorArtifact, ListArtifact, InfoArtifact, TextArtifact
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers import AmazonS3FileManagerDriver
 from griptape.loaders import TextLoader
 from tests.utils.aws import mock_aws_credentials
@@ -11,35 +13,35 @@ from tests.utils.aws import mock_aws_credentials
 
 class TestAmazonS3FileManagerDriver:
     @pytest.fixture(autouse=True)
-    def set_aws_credentials(self):
+    def _set_aws_credentials(self):
         mock_aws_credentials()
 
-    @pytest.fixture
+    @pytest.fixture()
     def session(self):
         mock = mock_s3()
         mock.start()
         yield boto3.Session(region_name="us-east-1")
         mock.stop()
 
-    @pytest.fixture
+    @pytest.fixture()
     def s3_client(self, session):
-        yield session.client("s3")
+        return session.client("s3")
 
     @pytest.fixture(autouse=True)
     def bucket(self, s3_client):
         bucket = "test-bucket"
         s3_client.create_bucket(Bucket=bucket)
 
-        def write_file(path: str, content: bytes):
+        def write_file(path: str, content: bytes) -> None:
             s3_client.put_object(Bucket=bucket, Key=path, Body=content)
 
-        def mkdir(path: str):
+        def mkdir(path: str) -> None:
             # S3-style empty directories, such as is created via the `Create Folder` button
             # in the AWS S3 console (essentially, an empty file with a trailing slash).
             s3_dir_key = path.rstrip("/") + "/"
             s3_client.put_object(Bucket=bucket, Key=s3_dir_key)
 
-        def copy_test_resource(resource_path: str):
+        def copy_test_resource(resource_path: str) -> None:
             file_dir = os.path.dirname(__file__)
             full_path = os.path.join(file_dir, "../../../resources", resource_path)
             full_path = os.path.normpath(full_path)
@@ -58,18 +60,18 @@ class TestAmazonS3FileManagerDriver:
         mkdir("foo/bar-empty")
         mkdir("foo/bar/baz-empty")
 
-        yield bucket
+        return bucket
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, session, bucket):
         return AmazonS3FileManagerDriver(session=session, bucket=bucket)
 
-    @pytest.fixture
+    @pytest.fixture()
     def temp_dir(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             yield temp_dir
 
-    @pytest.fixture
+    @pytest.fixture()
     def get_s3_value(self, s3_client, bucket):
         def _get_s3_value(key):
             return s3_client.get_object(Bucket=bucket, Key=key)["Body"].read().decode()
@@ -82,7 +84,7 @@ class TestAmazonS3FileManagerDriver:
             AmazonS3FileManagerDriver(session=session, bucket=bucket, workdir=workdir)
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # Valid non-empty directories (without trailing slash)
             ("/", "", ["foo", "foo.txt", "foo-empty", "resources"]),
@@ -130,7 +132,7 @@ class TestAmazonS3FileManagerDriver:
         assert set(filter(None, artifact.value.split("\n"))) == set(expected)
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # non-existent paths
             ("/", "bar", "Path not found"),
@@ -158,7 +160,7 @@ class TestAmazonS3FileManagerDriver:
         assert len(artifact.value) == 4
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # non-existent files or directories
             ("/", "bitcoin.pdf", "Path not found"),
@@ -167,7 +169,7 @@ class TestAmazonS3FileManagerDriver:
             # existing files with trailing slash
             ("/", "resources/bitcoin.pdf/", "Path is a directory"),
             ("/resources", "bitcoin.pdf/", "Path is a directory"),
-            # directories (not files)
+            # directories -- not files
             ("/", "", "Path is a directory"),
             ("/", "/", "Path is a directory"),
             ("/", "resources", "Path is a directory"),
@@ -201,7 +203,7 @@ class TestAmazonS3FileManagerDriver:
         assert isinstance(artifact, ErrorArtifact)
 
     @pytest.mark.parametrize(
-        "workdir,path,content",
+        ("workdir", "path", "content"),
         [
             # non-existent files
             ("/", "resources/foo.txt", "one"),
@@ -221,12 +223,12 @@ class TestAmazonS3FileManagerDriver:
 
         assert isinstance(result, InfoArtifact)
         assert result.value == "Successfully saved file"
-        expected_s3_key = os.path.join(workdir, path).lstrip("/")
+        expected_s3_key = f"{workdir}/{path}".lstrip("/")
         content_str = content if isinstance(content, str) else content.decode()
         assert get_s3_value(expected_s3_key) == content_str
 
     @pytest.mark.parametrize(
-        "workdir,path,expected",
+        ("workdir", "path", "expected"),
         [
             # non-existent directories
             ("/", "bar/", "Path is a directory"),
@@ -248,11 +250,6 @@ class TestAmazonS3FileManagerDriver:
 
         artifact = driver.save_file(path, "foobar")
 
-        # loop over the files in the bucket and print them
-        response = s3_client.list_objects_v2(Bucket=bucket)
-        for obj in response.get("Contents", []):
-            print(obj.get("Key"))
-
         assert isinstance(artifact, ErrorArtifact)
         assert artifact.value == expected
 
@@ -261,11 +258,11 @@ class TestAmazonS3FileManagerDriver:
         driver = AmazonS3FileManagerDriver(
             session=session, bucket=bucket, default_loader=TextLoader(encoding="utf-8"), loaders={}, workdir=workdir
         )
-        path = os.path.join("test", "foobar.txt")
+        path = "test/foobar.txt"
 
         result = driver.save_file(path, "foobar")
 
-        expected_s3_key = os.path.join(workdir, path).lstrip("/")
+        expected_s3_key = f"{workdir}/{path}".lstrip("/")
         assert get_s3_value(expected_s3_key) == "foobar"
         assert result.value == "Successfully saved file"
 
@@ -274,18 +271,18 @@ class TestAmazonS3FileManagerDriver:
         driver = AmazonS3FileManagerDriver(
             session=session, bucket=bucket, loaders={"txt": TextLoader(encoding="ascii")}, workdir=workdir
         )
-        path = os.path.join("test", "foobar.txt")
+        path = "test/foobar.txt"
 
         result = driver.save_file(path, "foobar")
 
-        expected_s3_key = os.path.join(workdir, path).lstrip("/")
+        expected_s3_key = f"{workdir}/{path}".lstrip("/")
         assert get_s3_value(expected_s3_key) == "foobar"
         assert result.value == "Successfully saved file"
 
         driver = AmazonS3FileManagerDriver(
             session=session, bucket=bucket, default_loader=TextLoader(encoding="ascii"), loaders={}, workdir=workdir
         )
-        path = os.path.join("test", "foobar.txt")
+        path = "test/foobar.txt"
 
         result = driver.load_file(path)
 

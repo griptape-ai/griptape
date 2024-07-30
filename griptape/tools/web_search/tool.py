@@ -1,10 +1,16 @@
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from attrs import define, field
+from schema import Literal, Schema
+
 from griptape.artifacts import ErrorArtifact, ListArtifact
-from schema import Schema, Literal
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.drivers import BaseWebSearchDriver
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseWebSearchDriver
 
 
 @define
@@ -19,10 +25,10 @@ class WebSearch(BaseTool):
                     Literal(
                         "query",
                         description="Search engine request that returns a list of pages with titles, descriptions, and URLs",
-                    ): str
-                }
+                    ): str,
+                },
             ),
-        }
+        },
     )
     def search(self, props: dict) -> ListArtifact | ErrorArtifact:
         query = props["values"]["query"]

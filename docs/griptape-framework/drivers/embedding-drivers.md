@@ -1,3 +1,8 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 Embeddings in Griptape are multidimensional representations of text data. Embeddings carry semantic information, which makes them useful for extracting relevant chunks from large bodies of text for search and querying.
 
@@ -26,6 +31,28 @@ print(embeddings[:3])
 ```
 [0.0017853748286142945, 0.006118456833064556, -0.005811543669551611]
 ```
+
+### OpenAI Compatible
+
+Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) provide OpenAI-compatible APIs. You can use the [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md) to interact with these services.
+Simply set the `base_url` to the service's API endpoint and the `model` to the model name. If the service requires an API key, you can set it in the `api_key` field.
+
+```python title="PYTEST_IGNORE"
+from griptape.drivers import OpenAiEmbeddingDriver
+
+embedding_driver = OpenAiEmbeddingDriver(
+    base_url="http://127.0.0.1:1234/v1",
+    model="nomic-ai/nomic-embed-text-v1.5-GGUF/nomic-embed-text-v1.5.Q2_K",
+)
+
+embeddings = embedding_driver.embed_string("Hello world!")
+
+# display the first 3 embeddings
+print(embeddings[:3])
+```
+
+!!! tip
+    Make sure to include `v1` at the end of the `base_url` to match the OpenAI API endpoint.
 
 ### Azure OpenAI
 
@@ -97,8 +124,28 @@ embeddings = driver.embed_string("Hello world!")
 
 # display the first 3 embeddings
 print(embeddings[:3])
-
 ```
+
+### Ollama
+
+!!! info
+    This driver requires the `drivers-embedding-ollama` [extra](../index.md#extras).
+
+The [OllamaEmbeddingDriver](../../reference/griptape/drivers/embedding/ollama_embedding_driver.md) uses the [Ollama Embeddings API](https://ollama.com/blog/embedding-models).
+
+```python title="PYTEST_IGNORE"
+from griptape.drivers import OllamaEmbeddingDriver
+
+driver = OllamaEmbeddingDriver(
+    model="all-minilm",
+)
+
+results = driver.embed_string("Hello world!")
+
+# display the first 3 embeddings
+print(results[:3])
+```
+
 ### Amazon SageMaker Jumpstart
 
 The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_sagemaker_jumpstart_embedding_driver.md) uses the [Amazon SageMaker Endpoints](https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html) to generate embeddings on AWS.

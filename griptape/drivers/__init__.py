@@ -27,6 +27,7 @@ from .embedding.huggingface_hub_embedding_driver import HuggingFaceHubEmbeddingD
 from .embedding.google_embedding_driver import GoogleEmbeddingDriver
 from .embedding.dummy_embedding_driver import DummyEmbeddingDriver
 from .embedding.cohere_embedding_driver import CohereEmbeddingDriver
+from .embedding.ollama_embedding_driver import OllamaEmbeddingDriver
 
 from .vector.base_vector_store_driver import BaseVectorStoreDriver
 from .vector.local_vector_store_driver import LocalVectorStoreDriver
@@ -40,6 +41,7 @@ from .vector.pgvector_vector_store_driver import PgVectorVectorStoreDriver
 from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDriver
 from .vector.dummy_vector_store_driver import DummyVectorStoreDriver
 from .vector.qdrant_vector_store_driver import QdrantVectorStoreDriver
+from .vector.griptape_cloud_knowledge_base_vector_store_driver import GriptapeCloudKnowledgeBaseVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -52,6 +54,19 @@ from .image_generation_model.bedrock_stable_diffusion_image_generation_model_dri
 )
 from .image_generation_model.bedrock_titan_image_generation_model_driver import BedrockTitanImageGenerationModelDriver
 
+from .image_generation_pipeline.base_image_generation_pipeline_driver import (
+    BaseDiffusionImageGenerationPipelineDriver,
+)
+from .image_generation_pipeline.stable_diffusion_3_image_generation_pipeline_driver import (
+    StableDiffusion3ImageGenerationPipelineDriver,
+)
+from .image_generation_pipeline.stable_diffusion_3_img_2_img_image_generation_pipeline_driver import (
+    StableDiffusion3Img2ImgImageGenerationPipelineDriver,
+)
+from .image_generation_pipeline.stable_diffusion_3_controlnet_image_generation_pipeline_driver import (
+    StableDiffusion3ControlNetImageGenerationPipelineDriver,
+)
+
 from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
 from .image_generation.base_multi_model_image_generation_driver import BaseMultiModelImageGenerationDriver
 from .image_generation.openai_image_generation_driver import OpenAiImageGenerationDriver
@@ -59,6 +74,9 @@ from .image_generation.leonardo_image_generation_driver import LeonardoImageGene
 from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
 from .image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
 from .image_generation.dummy_image_generation_driver import DummyImageGenerationDriver
+from .image_generation.huggingface_pipeline_image_generation_driver import (
+    HuggingFacePipelineImageGenerationDriver,
+)
 
 from .image_query_model.base_image_query_model_driver import BaseImageQueryModelDriver
 from .image_query_model.bedrock_claude_image_query_model_driver import BedrockClaudeImageQueryModelDriver
@@ -107,6 +125,12 @@ from .audio_transcription.base_audio_transcription_driver import BaseAudioTransc
 from .audio_transcription.dummy_audio_transcription_driver import DummyAudioTranscriptionDriver
 from .audio_transcription.openai_audio_transcription_driver import OpenAiAudioTranscriptionDriver
 
+from .observability.base_observability_driver import BaseObservabilityDriver
+from .observability.no_op_observability_driver import NoOpObservabilityDriver
+from .observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
+from .observability.griptape_cloud_observability_driver import GriptapeCloudObservabilityDriver
+from .observability.datadog_observability_driver import DatadogObservabilityDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -135,6 +159,7 @@ __all__ = [
     "GoogleEmbeddingDriver",
     "DummyEmbeddingDriver",
     "CohereEmbeddingDriver",
+    "OllamaEmbeddingDriver",
     "BaseVectorStoreDriver",
     "LocalVectorStoreDriver",
     "PineconeVectorStoreDriver",
@@ -147,6 +172,7 @@ __all__ = [
     "PgVectorVectorStoreDriver",
     "QdrantVectorStoreDriver",
     "DummyVectorStoreDriver",
+    "GriptapeCloudKnowledgeBaseVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
@@ -154,6 +180,10 @@ __all__ = [
     "BaseImageGenerationModelDriver",
     "BedrockStableDiffusionImageGenerationModelDriver",
     "BedrockTitanImageGenerationModelDriver",
+    "BaseDiffusionImageGenerationPipelineDriver",
+    "StableDiffusion3ImageGenerationPipelineDriver",
+    "StableDiffusion3Img2ImgImageGenerationPipelineDriver",
+    "StableDiffusion3ControlNetImageGenerationPipelineDriver",
     "BaseImageGenerationDriver",
     "BaseMultiModelImageGenerationDriver",
     "OpenAiImageGenerationDriver",
@@ -161,6 +191,7 @@ __all__ = [
     "AmazonBedrockImageGenerationDriver",
     "AzureOpenAiImageGenerationDriver",
     "DummyImageGenerationDriver",
+    "HuggingFacePipelineImageGenerationDriver",
     "BaseImageQueryModelDriver",
     "BedrockClaudeImageQueryModelDriver",
     "BaseImageQueryDriver",
@@ -198,4 +229,9 @@ __all__ = [
     "BaseAudioTranscriptionDriver",
     "DummyAudioTranscriptionDriver",
     "OpenAiAudioTranscriptionDriver",
+    "BaseObservabilityDriver",
+    "NoOpObservabilityDriver",
+    "OpenTelemetryObservabilityDriver",
+    "GriptapeCloudObservabilityDriver",
+    "DatadogObservabilityDriver",
 ]

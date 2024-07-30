@@ -1,8 +1,14 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
-from griptape.engines.rag import RagContext
+
 from griptape.engines.rag.modules import BaseBeforeResponseRagModule
 from griptape.utils import J2
+
+if TYPE_CHECKING:
+    from griptape.engines.rag import RagContext
 
 
 @define(kw_only=True)

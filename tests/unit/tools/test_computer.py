@@ -1,10 +1,11 @@
 import pytest
-from tests.mocks.docker.fake_api_client import make_fake_client
+
 from griptape.tools import Computer
+from tests.mocks.docker.fake_api_client import make_fake_client
 
 
 class TestComputer:
-    @pytest.fixture
+    @pytest.fixture()
     def computer(self):
         return Computer(docker_client=make_fake_client(), install_dependencies_on_init=False)
 

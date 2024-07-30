@@ -1,14 +1,18 @@
 from __future__ import annotations
-from typing import Optional, Any
-from attrs import define, field, Factory
-from griptape.utils import import_optional_dependency
+
+from typing import Any, Optional
+
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import VoyageAiTokenizer
+from griptape.utils import import_optional_dependency
 
 
 @define
 class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
-    """
+    """VoyageAI Embedding Driver.
+
     Attributes:
         model: VoyageAI embedding model name. Defaults to `voyage-large-2`.
         api_key: API key to pass directly. Defaults to `VOYAGE_API_KEY` environment variable.
@@ -23,8 +27,9 @@ class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     client: Any = field(
         default=Factory(
-            lambda self: import_optional_dependency("voyageai").Client(api_key=self.api_key), takes_self=True
-        )
+            lambda self: import_optional_dependency("voyageai").Client(api_key=self.api_key),
+            takes_self=True,
+        ),
     )
     tokenizer: VoyageAiTokenizer = field(
         default=Factory(lambda self: VoyageAiTokenizer(model=self.model, api_key=self.api_key), takes_self=True),

@@ -1,5 +1,12 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview 
 A [Pipeline](../../reference/griptape/structures/pipeline.md) is very similar to an [Agent](../../reference/griptape/structures/agent.md), but allows for multiple tasks.
+
+You can access the final output of the Pipeline by using the [output](../../reference/griptape/structures/agent.md#griptape.structures.structure.Structure.output) attribute.
 
 ## Context
 

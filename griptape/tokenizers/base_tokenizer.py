@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 import logging
 from abc import ABC, abstractmethod
-from attrs import define, field, Factory
+
+from attrs import Factory, define, field
 
 
 @define()
@@ -48,7 +50,9 @@ class BaseTokenizer(ABC):
 
         if tokens is None:
             logging.warning(
-                f"Model {self.model} not found in MODEL_PREFIXES_TO_MAX_INPUT_TOKENS, using default value of {self.DEFAULT_MAX_INPUT_TOKENS}."
+                "Model %s not found in MODEL_PREFIXES_TO_MAX_INPUT_TOKENS, using default value of %s.",
+                self.model,
+                self.DEFAULT_MAX_INPUT_TOKENS,
             )
             return self.DEFAULT_MAX_INPUT_TOKENS
         else:
@@ -56,12 +60,15 @@ class BaseTokenizer(ABC):
 
     def _default_max_output_tokens(self) -> int:
         tokens = next(
-            (v for k, v in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items() if self.model.startswith(k)), None
+            (v for k, v in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items() if self.model.startswith(k)),
+            None,
         )
 
         if tokens is None:
             logging.warning(
-                f"Model {self.model} not found in MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS, using default value of {self.DEFAULT_MAX_OUTPUT_TOKENS}."
+                "Model %s not found in MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS, using default value of %s.",
+                self.model,
+                self.DEFAULT_MAX_OUTPUT_TOKENS,
             )
             return self.DEFAULT_MAX_OUTPUT_TOKENS
         else:

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
+
 from attrs import Factory, define, field
 
-
-from griptape.common import BaseMessageContent, BaseDeltaMessageContent
 from griptape.mixins import SerializableMixin
+
+if TYPE_CHECKING:
+    from griptape.common import BaseDeltaMessageContent, BaseMessageContent
 
 
 @define

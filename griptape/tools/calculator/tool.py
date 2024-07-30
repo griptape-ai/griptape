@@ -1,7 +1,8 @@
+from schema import Literal, Schema
+
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from schema import Schema, Literal
 
 
 class Calculator(BaseTool):
@@ -14,13 +15,13 @@ class Calculator(BaseTool):
                         "expression",
                         description="Arithmetic expression parsable in pure Python. Single line only. "
                         "Don't use variables. Don't use any imports or external libraries",
-                    ): str
-                }
+                    ): str,
+                },
             ),
-        }
+        },
     )
     def calculate(self, params: dict) -> BaseArtifact:
-        import numexpr  # type: ignore
+        import numexpr  # pyright: ignore[reportMissingImports]
 
         try:
             expression = params["values"]["expression"]

@@ -1,6 +1,9 @@
 import base64
+import os
+
 import pytest
-from griptape.artifacts import BlobArtifact, BaseArtifact
+
+from griptape.artifacts import BaseArtifact, BlobArtifact
 
 
 class TestBlobArtifact:
@@ -30,7 +33,9 @@ class TestBlobArtifact:
         assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").to_dict()["name"] == "foobar.txt"
 
     def test_full_path_with_path(self):
-        assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").full_path == "foo/foobar.txt"
+        assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").full_path == os.path.normpath(
+            "foo/foobar.txt"
+        )
 
     def test_full_path_without_path(self):
         assert BlobArtifact(b"foobar", name="foobar.txt").full_path == "foobar.txt"

@@ -1,27 +1,29 @@
 from unittest.mock import Mock
+
 import pytest
-from griptape.events.base_event import BaseEvent
-from griptape.structures import Pipeline
-from griptape.tasks import ToolkitTask, ActionsSubtask
+
 from griptape.events import (
-    StartTaskEvent,
-    FinishTaskEvent,
-    StartActionsSubtaskEvent,
-    FinishActionsSubtaskEvent,
-    StartPromptEvent,
-    FinishPromptEvent,
-    StartStructureRunEvent,
-    FinishStructureRunEvent,
     CompletionChunkEvent,
     EventListener,
+    FinishActionsSubtaskEvent,
+    FinishPromptEvent,
+    FinishStructureRunEvent,
+    FinishTaskEvent,
+    StartActionsSubtaskEvent,
+    StartPromptEvent,
+    StartStructureRunEvent,
+    StartTaskEvent,
 )
+from griptape.events.base_event import BaseEvent
+from griptape.structures import Pipeline
+from griptape.tasks import ActionsSubtask, ToolkitTask
+from tests.mocks.mock_event import MockEvent
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
-from tests.mocks.mock_event import MockEvent
 
 
 class TestEventListener:
-    @pytest.fixture
+    @pytest.fixture()
     def pipeline(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
@@ -36,6 +38,7 @@ class TestEventListener:
         event_handler_2 = Mock()
 
         pipeline.event_listeners = [EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)]
+
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
         pipeline.tasks[0].subtasks[0].after_run()
@@ -107,7 +110,7 @@ class TestEventListener:
         mock_event_listener_driver = Mock()
         mock_event_listener_driver.try_publish_event_payload.return_value = None
 
-        def event_handler(_: BaseEvent):
+        def event_handler(_: BaseEvent) -> None:
             return None
 
         mock_event = MockEvent()

@@ -1,9 +1,11 @@
+from unittest.mock import Mock
+
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.structures import Agent
+from griptape.events.event_listener import EventListener
+from griptape.structures import Agent, Workflow
 from griptape.tasks import ActionsSubtask
-from griptape.structures import Workflow
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_task import MockTask
@@ -11,9 +13,14 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestBaseTask:
-    @pytest.fixture
+    @pytest.fixture()
     def task(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), embedding_driver=MockEmbeddingDriver(), tools=[MockTool()])
+        agent = Agent(
+            prompt_driver=MockPromptDriver(),
+            embedding_driver=MockEmbeddingDriver(),
+            tools=[MockTool()],
+            event_listeners=[EventListener(handler=Mock())],
+        )
 
         agent.add_task(MockTask("foobar", max_meta_memory_entries=2))
 
@@ -68,3 +75,8 @@ class TestBaseTask:
         parent_2.output = None
 
         assert child.parents_output_text == "foobar1\nfoobar3"
+
+    def test_execute_publish_events(self, task):
+        task.execute()
+
+        assert task.structure.event_listeners[0].handler.call_count == 2

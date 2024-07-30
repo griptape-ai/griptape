@@ -8,7 +8,7 @@ from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestCsvExtractionTask:
-    @pytest.fixture
+    @pytest.fixture()
     def task(self):
         return CsvExtractionTask(args={"column_names": ["test1"]})
 
@@ -30,4 +30,4 @@ class TestCsvExtractionTask:
 
     def test_missing_extraction_engine(self, task):
         with pytest.raises(ValueError):
-            task.extraction_engine
+            task.extraction_engine  # noqa: B018

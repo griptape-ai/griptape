@@ -1,5 +1,6 @@
 import pytest
 from cohere import RerankResponseResultsItem, RerankResponseResultsItemDocument
+
 from griptape.artifacts import TextArtifact
 from griptape.drivers import CohereRerankDriver
 from griptape.engines.rag import RagContext
@@ -7,7 +8,7 @@ from griptape.engines.rag.modules import TextChunksRerankRagModule
 
 
 class TestTextChunksRerankRagModule:
-    @pytest.fixture
+    @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
         mock_client.rerank.return_value.results = [

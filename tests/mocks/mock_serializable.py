@@ -1,5 +1,9 @@
-from attrs import define, field
+from __future__ import annotations
+
 from typing import Optional
+
+from attrs import define, field
+
 from griptape.mixins import SerializableMixin
 
 
@@ -13,4 +17,6 @@ class MockSerializable(SerializableMixin):
     bar: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     baz: Optional[list[int]] = field(default=None, kw_only=True, metadata={"serializable": True})
     secret: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    nested: Optional[NestedMockSerializable] = field(default=None, kw_only=True, metadata={"serializable": True})
+    nested: Optional[MockSerializable.NestedMockSerializable] = field(
+        default=None, kw_only=True, metadata={"serializable": True}
+    )

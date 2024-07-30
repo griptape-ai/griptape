@@ -1,4 +1,4 @@
-from griptape.artifacts import BaseArtifact, TextArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.structures import Pipeline
 from griptape.tasks import CodeExecutionTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver

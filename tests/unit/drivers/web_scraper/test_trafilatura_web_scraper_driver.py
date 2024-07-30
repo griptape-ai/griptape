@@ -5,15 +5,15 @@ from griptape.drivers.web_scraper.trafilatura_web_scraper_driver import Trafilat
 
 class TestTrafilaturaWebScraperDriver:
     @pytest.fixture(autouse=True)
-    def mock_fetch_url(self, mocker):
+    def _mock_fetch_url(self, mocker):
         # Through trial and error, I've found that include_links in trafilatura's extract does not work
         # if the body of the page is not long enough, which is why I'm adding an arbitrary number of
         # characters to the body.
         mocker.patch(
             "trafilatura.fetch_url"
-        ).return_value = f'<!DOCTYPE html><html>{"x"*243}<a href="foobar.com">foobar</a></html>'
+        ).return_value = f'<!DOCTYPE html><html>{"x" * 243}<a href="foobar.com">foobar</a></html>'
 
-    @pytest.fixture
+    @pytest.fixture()
     def web_scraper(self):
         return TrafilaturaWebScraperDriver(include_links=True)
 

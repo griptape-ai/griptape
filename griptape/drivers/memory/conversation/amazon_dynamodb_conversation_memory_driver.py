@@ -1,9 +1,12 @@
 from __future__ import annotations
-from attrs import define, field, Factory
-from typing import Optional, TYPE_CHECKING, Any
-from griptape.utils import import_optional_dependency
+
+from typing import TYPE_CHECKING, Any, Optional
+
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.memory.structure import BaseConversationMemory
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     import boto3

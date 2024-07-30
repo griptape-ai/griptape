@@ -1,6 +1,6 @@
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import RulesetsBeforeResponseRagModule
-from griptape.rules import Ruleset, Rule
+from griptape.rules import Rule, Ruleset
 
 
 class TestRulesetsBeforeResponseRagModule:

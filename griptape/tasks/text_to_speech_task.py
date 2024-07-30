@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import TYPE_CHECKING, Callable
 
 from attrs import define, field
 
-from griptape.artifacts.audio_artifact import AudioArtifact
-from griptape.engines import TextToSpeechEngine
 from griptape.artifacts import TextArtifact
-from griptape.tasks import BaseTask
+from griptape.engines import TextToSpeechEngine
 from griptape.tasks.base_audio_generation_task import BaseAudioGenerationTask
 from griptape.utils import J2
+
+if TYPE_CHECKING:
+    from griptape.artifacts.audio_artifact import AudioArtifact
+    from griptape.tasks import BaseTask
 
 
 @define
@@ -37,7 +39,7 @@ class TextToSpeechTask(BaseAudioGenerationTask):
         if self._text_to_speech_engine is None:
             if self.structure is not None:
                 self._text_to_speech_engine = TextToSpeechEngine(
-                    text_to_speech_driver=self.structure.config.text_to_speech_driver
+                    text_to_speech_driver=self.structure.config.text_to_speech_driver,
                 )
             else:
                 raise ValueError("Audio Generation Engine is not set.")

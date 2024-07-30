@@ -1,10 +1,13 @@
 from __future__ import annotations
+
+import logging
+import uuid
 from typing import Optional
+
 from attrs import define, field
+
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
-import uuid
-import logging
 
 DEFAULT_DISTANCE = "Cosine"
 CONTENT_PAYLOAD_KEY = "data"
@@ -12,7 +15,8 @@ CONTENT_PAYLOAD_KEY = "data"
 
 @define
 class QdrantVectorStoreDriver(BaseVectorStoreDriver):
-    """
+    """Vector Store Driver for Qdrant.
+
     Attributes:
         location: An optional location for the Qdrant client. If set to ':memory:', an in-memory client is used.
         url: An optional Qdrant API URL.
@@ -43,7 +47,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     https: bool = field(default=None, kw_only=True, metadata={"serializable": True})
     prefix: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     force_disable_check_same_thread: Optional[bool] = field(
-        default=False, kw_only=True, metadata={"serializable": True}
+        default=False,
+        kw_only=True,
+        metadata={"serializable": True},
     )
     timeout: Optional[int] = field(default=5, kw_only=True, metadata={"serializable": True})
     distance: str = field(default=DEFAULT_DISTANCE, kw_only=True, metadata={"serializable": True})
@@ -68,8 +74,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         )
 
     def delete_vector(self, vector_id: str) -> None:
-        """
-        Delete a vector from the Qdrant collection based on its ID.
+        """Delete a vector from the Qdrant collection based on its ID.
 
         Parameters:
             vector_id (str | id): ID of the vector to delete.
@@ -79,18 +84,18 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             points_selector=import_optional_dependency("qdrant_client.http.models").PointIdsList(points=[vector_id]),
         )
         if deletion_response.status == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED:
-            logging.info(f"ID {vector_id} is successfully deleted")
+            logging.info("ID %s is successfully deleted", vector_id)
 
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        """
-        Query the Qdrant collection based on a query vector.
+        """Query the Qdrant collection based on a query vector.
 
         Parameters:
             query (str): Query string.
@@ -104,7 +109,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         query_vector = self.embedding_driver.embed_string(query)
 
         # Create a search request
-        results = self.client.search(collection_name=self.collection_name, query_vector=query_vector, limit=count)
+        request = {"collection_name": self.collection_name, "query_vector": query_vector, "limit": count}
+        request = {k: v for k, v in request.items() if v is not None}
+        results = self.client.search(**request)
 
         # Convert results to QueryResult objects
         query_results = [
@@ -121,14 +128,14 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         content: Optional[str] = None,
         **kwargs,
     ) -> str:
-        """
-        Upsert vectors into the Qdrant collection.
+        """Upsert vectors into the Qdrant collection.
 
         Parameters:
             vector (list[float]): The vector to be upserted.
@@ -140,7 +147,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             str: The ID of the upserted vector.
         """
-
         if vector_id is None:
             vector_id = str(uuid.uuid5(uuid.NAMESPACE_DNS, str(vector)))
 
@@ -151,15 +157,16 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             meta[self.content_payload_key] = content
 
         points = import_optional_dependency("qdrant_client.http.models").Batch(
-            ids=[vector_id], vectors=[vector], payloads=[meta] if meta else None
+            ids=[vector_id],
+            vectors=[vector],
+            payloads=[meta] if meta else None,
         )
 
         self.client.upsert(collection_name=self.collection_name, points=points)
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        """
-        Load a vector entry from the Qdrant collection based on its ID.
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+        """Load a vector entry from the Qdrant collection based on its ID.
 
         Parameters:
             vector_id (str): ID of the vector to load.
@@ -179,9 +186,8 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         else:
             return None
 
-    def load_entries(self, namespace: Optional[str] = None, **kwargs) -> list[BaseVectorStoreDriver.Entry]:
-        """
-        Load vector entries from the Qdrant collection.
+    def load_entries(self, *, namespace: Optional[str] = None, **kwargs) -> list[BaseVectorStoreDriver.Entry]:
+        """Load vector entries from the Qdrant collection.
 
         Parameters:
             namespace: Optional namespace of the vectors.
@@ -189,7 +195,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             List of points.
         """
-
         results = self.client.retrieve(
             collection_name=self.collection_name,
             ids=kwargs.get("ids", []),

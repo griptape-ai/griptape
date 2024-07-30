@@ -52,27 +52,25 @@ agent.run("what is Griptape?")
 
 ```
 ```
-[07/11/24 08:47:04] INFO     ToolkitTask 4a5308b86cac447783e6abe1be0646cd       
-                             Input: what is Griptape?                           
-[07/11/24 08:47:06] INFO     Subtask e034a5d82658411694e9e19e51fa6699           
-                             Thought: I need to search for information about    
-                             Griptape using the RagClient. I will perform a     
-                             search query to gather relevant details.           
-                                                                                
-                             Actions:                                           
-                             [{"name":"RagClient","path":"search","input":{"valu
-                             es":{"query":"What is                              
-                             Griptape?"}},"tag":"search_griptape"}]             
-[07/11/24 08:47:08] INFO     Subtask e034a5d82658411694e9e19e51fa6699           
-                             Response: Griptape builds AI-powered applications  
-                             that connect securely to your enterprise data and  
-                             APIs. Griptape Agents provide incredible power and 
-                             flexibility when working with large language       
-                             models.                                            
-[07/11/24 08:47:09] INFO     ToolkitTask 4a5308b86cac447783e6abe1be0646cd       
-                             Output: Griptape builds AI-powered applications    
-                             that connect securely to your enterprise data and  
-                             APIs. Griptape Agents provide incredible power and 
-                             flexibility when working with large language       
-                             models.
+[07/11/24 13:30:43] INFO     ToolkitTask a6d057d5c71d4e9cb6863a2adb64b76c
+                             Input: what is Griptape?
+[07/11/24 13:30:44] INFO     Subtask 8fd89ed9eefe49b8892187f2fca3890a
+                             Actions: [
+                               {
+                                 "tag": "call_4MaDzOuKnWAs2gmhK3KJhtjI",
+                                 "name": "RagClient",
+                                 "path": "search",
+                                 "input": {
+                                   "values": {
+                                     "query": "What is Griptape?"
+                                   }
+                                 }
+                               }
+                             ]
+[07/11/24 13:30:49] INFO     Subtask 8fd89ed9eefe49b8892187f2fca3890a
+                             Response: Griptape builds AI-powered applications that connect securely to your enterprise data and APIs. Griptape Agents provide incredible
+                             power and flexibility when working with large language models.
+                    INFO     ToolkitTask a6d057d5c71d4e9cb6863a2adb64b76c
+                             Output: Griptape builds AI-powered applications that connect securely to your enterprise data and APIs. Griptape Agents provide incredible
+                             power and flexibility when working with large language models.
 ```

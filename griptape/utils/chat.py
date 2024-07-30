@@ -20,14 +20,15 @@ class Chat:
     prompt_prefix: str = field(default="User: ", kw_only=True)
     response_prefix: str = field(default="Assistant: ", kw_only=True)
     output_fn: Callable[[str], None] = field(
-        default=Factory(lambda self: self.default_output_fn, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.default_output_fn, takes_self=True),
+        kw_only=True,
     )
 
     def default_output_fn(self, text: str) -> None:
         if self.structure.config.prompt_driver.stream:
-            print(text, end="", flush=True)  # noqa T201
+            print(text, end="", flush=True)  # noqa: T201
         else:
-            print(text)  # noqa T201
+            print(text)  # noqa: T201
 
     def start(self) -> None:
         if self.intro_text:

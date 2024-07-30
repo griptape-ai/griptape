@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  test-ubuntu:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -24,3 +24,36 @@ jobs:
         uses: ./.github/actions/init-environment 
       - name: Run unit tests
         run: make test/unit
+  test-bare:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+      - name: Init environment 
+        uses: ./.github/actions/init-bare-environment 
+      - name: Run unit tests
+        run: poetry run pytest -n auto tests/unit/structures
+  test-windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v3
+      - name: Init environment 
+        uses: ./.github/actions/init-environment
+      - name: Run unit tests
+        # TODO: make test/unit fails with the following error:
+        # process_begin: CreateProcess(NULL, poetry run pytest -n auto tests/unit, ...) failed.
+        # make (e=2): The system cannot find the file specified.
+        # make: *** [Makefile:24: test/unit] Error 2
+        run: poetry run pytest -n auto tests/unit

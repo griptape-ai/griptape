@@ -1,7 +1,9 @@
 from collections import namedtuple
+
 import pytest
-from griptape.drivers import MarqoVectorStoreDriver
+
 from griptape.artifacts import TextArtifact
+from griptape.drivers import MarqoVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
@@ -39,7 +41,6 @@ class TestMarqoVectorStorageDriver:
         fake_get_document_response = {
             "Blurb": "Test description",
             "Title": "Test Title",
-            # '_id': 'article_152',
             "_id": "5aed93eb-3878-4f12-bc92-0fda01c7d23d",
             "_tensor_facets": [
                 {"Title": "Test Title", "_embedding": [-0.10393160581588745, 0.0465407557785511, -0.01760256476700306]},
@@ -79,7 +80,7 @@ class TestMarqoVectorStorageDriver:
         # Return the mock_client for use in other fixtures
         return mock_client
 
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, mock_marqo):
         return MarqoVectorStoreDriver(
             api_key="foobar",
@@ -120,16 +121,12 @@ class TestMarqoVectorStorageDriver:
         results = driver.query("Test query")
         mock_marqo.index().search.assert_called()
         assert len(results) == 1
-        # assert results[0]._id == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
         assert results[0].score == 0.6047464
         assert results[0].meta["Title"] == "Test Title"
         assert results[0].meta["Description"] == "Test description"
         assert results[0].id == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
 
     def test_search_with_include_vectors(self, driver, mock_marqo):
-        # mock_marqo.index().search.return_value = fake_search_response
-        # mock_marqo.index().get_document.return_value = fake_get_document_response
-
         # Act
         results = driver.query("Test query", include_vectors=True)
 

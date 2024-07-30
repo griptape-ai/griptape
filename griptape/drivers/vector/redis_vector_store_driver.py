@@ -1,10 +1,13 @@
 from __future__ import annotations
+
 import json
+from typing import TYPE_CHECKING, NoReturn, Optional
+
 import numpy as np
-from griptape.utils import import_optional_dependency, str_to_hash
-from typing import Optional, TYPE_CHECKING
-from attrs import define, field, Factory
+from attrs import Factory, define, field
+
 from griptape.drivers import BaseVectorStoreDriver
+from griptape.utils import import_optional_dependency, str_to_hash
 
 if TYPE_CHECKING:
     from redis import Redis
@@ -34,10 +37,14 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     client: Redis = field(
         default=Factory(
             lambda self: import_optional_dependency("redis").Redis(
-                host=self.host, port=self.port, db=self.db, password=self.password, decode_responses=False
+                host=self.host,
+                port=self.port,
+                db=self.db,
+                password=self.password,
+                decode_responses=False,
             ),
             takes_self=True,
-        )
+        ),
     )
 
     def upsert_vector(
@@ -53,7 +60,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         If a vector with the given vector ID already exists, it is updated; otherwise, a new vector is inserted.
         Metadata associated with the vector can also be provided.
         """
-        vector_id = vector_id if vector_id else str_to_hash(str(vector))
+        vector_id = vector_id or str_to_hash(str(vector))
         key = self._generate_key(vector_id, namespace)
         bytes_vector = json.dumps(vector).encode("utf-8")
 
@@ -71,7 +78,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Retrieves a specific vector entry from Redis based on its identifier and optional namespace.
 
         Returns:
@@ -84,7 +91,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         return BaseVectorStoreDriver.Entry(id=vector_id, meta=meta, vector=vector, namespace=namespace)
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from Redis that match the optional namespace.
 
         Returns:
@@ -95,7 +102,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         entries = []
         for key in keys:
-            entry = self.load_entry(key.decode("utf-8"), namespace)
+            entry = self.load_entry(key.decode("utf-8"), namespace=namespace)
             if entry:
                 entries.append(entry)
 
@@ -104,6 +111,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
@@ -116,13 +124,13 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
-        Query = import_optional_dependency("redis.commands.search.query").Query
+        search_query = import_optional_dependency("redis.commands.search.query")
 
         vector = self.embedding_driver.embed_string(query)
 
         filter_expression = f"(@namespace:{{{namespace}}})" if namespace else "*"
         query_expression = (
-            Query(f"{filter_expression}=>[KNN {count or 10} @vector $vector as score]")
+            search_query.Query(f"{filter_expression}=>[KNN {count or 10} @vector $vector as score]")
             .sort_by("score")
             .return_fields("id", "score", "metadata", "vec_string")
             .paging(0, count or 10)
@@ -131,7 +139,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         query_params = {"vector": np.array(vector, dtype=np.float32).tobytes()}
 
-        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore
+        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore[reportArgumentType]
 
         query_results = []
         for document in results:
@@ -146,7 +154,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
                     score=float(document.score),
                     meta=metadata,
                     namespace=namespace,
-                )
+                ),
             )
         return query_results
 
@@ -158,5 +166,5 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         """Get the document prefix based on the provided namespace."""
         return f"{namespace}:" if namespace else ""
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

@@ -1,11 +1,14 @@
 from __future__ import annotations
-import logging
+
 import datetime
-from schema import Schema, Literal, Optional
+import logging
+
 from attrs import define, field
-from griptape.artifacts import TextArtifact, ErrorArtifact, InfoArtifact, ListArtifact
-from griptape.utils.decorators import activity
+from schema import Literal, Optional, Schema
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.tools import BaseGoogleClient
+from griptape.utils.decorators import activity
 
 
 @define
@@ -23,9 +26,9 @@ class GoogleCalendarClient(BaseGoogleClient):
                 {
                     Literal("calendar_id", description="id of the google calendar such as 'primary'"): str,
                     Literal("max_events", description="maximum number of events to return"): int,
-                }
+                },
             ),
-        }
+        },
     )
     def get_upcoming_events(self, params: dict) -> ListArtifact | ErrorArtifact:
         values = params["values"]
@@ -85,19 +88,23 @@ class GoogleCalendarClient(BaseGoogleClient):
                     Literal("title", description="title of the event"): str,
                     Literal("description", description="description of the event"): str,
                     Literal(
-                        "attendees", description="list of the email addresses of attendees using 'email' as key"
-                    ): list,
+                        "attendees",
+                        description="list of the email addresses of attendees using 'email' as key",
+                    ): list[str],
                     Optional(Literal("location", description="location of the event")): str,
-                }
+                },
             ),
-        }
+        },
     )
     def create_event(self, params: dict) -> InfoArtifact | ErrorArtifact:
         values = params["values"]
 
         try:
             service = self._build_client(
-                scopes=self.CREATE_EVENT_SCOPES, service_name="calendar", version="v3", owner_email=self.owner_email
+                scopes=self.CREATE_EVENT_SCOPES,
+                service_name="calendar",
+                version="v3",
+                owner_email=self.owner_email,
             )
 
             event = {

@@ -4,7 +4,7 @@ import io
 from typing import Optional
 
 import openai
-from attrs import field, Factory, define
+from attrs import Factory, define, field
 
 from griptape.artifacts import AudioArtifact, TextArtifact
 from griptape.drivers import BaseAudioTranscriptionDriver
@@ -21,7 +21,7 @@ class OpenAiAudioTranscriptionDriver(BaseAudioTranscriptionDriver):
         default=Factory(
             lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
             takes_self=True,
-        )
+        ),
     )
 
     def try_run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:

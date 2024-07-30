@@ -5,7 +5,7 @@ from griptape.common import ImageMessageContent, PromptStack, TextMessageContent
 
 
 class TestPromptStack:
-    @pytest.fixture
+    @pytest.fixture()
     def prompt_stack(self):
         return PromptStack()
 

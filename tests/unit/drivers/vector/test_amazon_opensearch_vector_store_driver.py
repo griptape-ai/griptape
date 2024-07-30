@@ -1,12 +1,14 @@
-import pytest
-from unittest.mock import patch, Mock, create_autospec
-from griptape.drivers import AmazonOpenSearchVectorStoreDriver
-import numpy as np
+from unittest.mock import Mock, create_autospec, patch
+
 import boto3
+import numpy as np
+import pytest
+
+from griptape.drivers import AmazonOpenSearchVectorStoreDriver
 
 
 class TestAmazonOpenSearchVectorStoreDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self):
         mock_session = create_autospec(boto3.Session, instance=True)
         mock_driver = create_autospec(AmazonOpenSearchVectorStoreDriver, instance=True, session=mock_session)

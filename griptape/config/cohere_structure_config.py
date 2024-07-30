@@ -4,9 +4,9 @@ from griptape.config import StructureConfig
 from griptape.drivers import (
     BaseEmbeddingDriver,
     BasePromptDriver,
-    CoherePromptDriver,
-    CohereEmbeddingDriver,
     BaseVectorStoreDriver,
+    CohereEmbeddingDriver,
+    CoherePromptDriver,
     LocalVectorStoreDriver,
 )
 
@@ -23,7 +23,9 @@ class CohereStructureConfig(StructureConfig):
     embedding_driver: BaseEmbeddingDriver = field(
         default=Factory(
             lambda self: CohereEmbeddingDriver(
-                model="embed-english-v3.0", api_key=self.api_key, input_type="search_document"
+                model="embed-english-v3.0",
+                api_key=self.api_key,
+                input_type="search_document",
             ),
             takes_self=True,
         ),

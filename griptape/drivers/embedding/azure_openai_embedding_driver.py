@@ -1,15 +1,18 @@
 from __future__ import annotations
 
 from typing import Callable, Optional
-from attrs import define, field, Factory
+
+import openai
+from attrs import Factory, define, field
+
 from griptape.drivers import OpenAiEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
-import openai
 
 
 @define
 class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
-    """
+    """Azure OpenAi Embedding Driver.
+
     Attributes:
         azure_deployment: An optional Azure OpenAi deployment id. Defaults to the model name.
         azure_endpoint: An Azure OpenAi endpoint.
@@ -21,16 +24,21 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
     """
 
     azure_deployment: str = field(
-        kw_only=True, default=Factory(lambda self: self.model, takes_self=True), metadata={"serializable": True}
+        kw_only=True,
+        default=Factory(lambda self: self.model, takes_self=True),
+        metadata={"serializable": True},
     )
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
     azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     azure_ad_token_provider: Optional[Callable[[], str]] = field(
-        kw_only=True, default=None, metadata={"serializable": False}
+        kw_only=True,
+        default=None,
+        metadata={"serializable": False},
     )
     api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
     tokenizer: OpenAiTokenizer = field(
-        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True), kw_only=True
+        default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
+        kw_only=True,
     )
     client: openai.AzureOpenAI = field(
         default=Factory(
@@ -44,5 +52,5 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
                 azure_ad_token_provider=self.azure_ad_token_provider,
             ),
             takes_self=True,
-        )
+        ),
     )

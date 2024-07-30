@@ -1,18 +1,21 @@
+from __future__ import annotations
+
 from typing import Callable, Optional
+
 from attrs import Factory, define, field
 
 from griptape.config import StructureConfig
 from griptape.drivers import (
-    LocalVectorStoreDriver,
     AzureOpenAiChatPromptDriver,
     AzureOpenAiEmbeddingDriver,
     AzureOpenAiImageGenerationDriver,
     AzureOpenAiImageQueryDriver,
-    BasePromptDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
     BaseImageQueryDriver,
+    BasePromptDriver,
     BaseVectorStoreDriver,
+    LocalVectorStoreDriver,
 )
 
 
@@ -35,7 +38,9 @@ class AzureOpenAiStructureConfig(StructureConfig):
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
     azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     azure_ad_token_provider: Optional[Callable[[], str]] = field(
-        kw_only=True, default=None, metadata={"serializable": False}
+        kw_only=True,
+        default=None,
+        metadata={"serializable": False},
     )
     api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     prompt_driver: BasePromptDriver = field(

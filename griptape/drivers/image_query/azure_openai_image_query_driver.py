@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import Callable, Optional
 
-from attrs import define, field, Factory
 import openai
+from attrs import Factory, define, field
+
 from griptape.drivers.image_query.openai_image_query_driver import OpenAiImageQueryDriver
 
 
@@ -21,12 +22,16 @@ class AzureOpenAiImageQueryDriver(OpenAiImageQueryDriver):
     """
 
     azure_deployment: str = field(
-        kw_only=True, default=Factory(lambda self: self.model, takes_self=True), metadata={"serializable": True}
+        kw_only=True,
+        default=Factory(lambda self: self.model, takes_self=True),
+        metadata={"serializable": True},
     )
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
     azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     azure_ad_token_provider: Optional[Callable[[], str]] = field(
-        kw_only=True, default=None, metadata={"serializable": False}
+        kw_only=True,
+        default=None,
+        metadata={"serializable": False},
     )
     api_version: str = field(default="2024-02-01", kw_only=True, metadata={"serializable": True})
     client: openai.AzureOpenAI = field(
@@ -41,5 +46,5 @@ class AzureOpenAiImageQueryDriver(OpenAiImageQueryDriver):
                 azure_ad_token_provider=self.azure_ad_token_provider,
             ),
             takes_self=True,
-        )
+        ),
     )

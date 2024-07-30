@@ -1,4 +1,5 @@
 import pytest
+
 from griptape.events import FinishActionsSubtaskEvent
 from griptape.structures import Agent
 from griptape.tasks import ActionsSubtask, ToolkitTask
@@ -7,7 +8,7 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestFinishActionsSubtaskEvent:
-    @pytest.fixture
+    @pytest.fixture()
     def finish_subtask_event(self):
         valid_input = (
             "Thought: need to test\n"

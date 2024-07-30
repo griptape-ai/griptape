@@ -1,11 +1,16 @@
 from __future__ import annotations
-from typing import Optional
+
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
-from griptape.artifacts import InfoArtifact, ListArtifact, ErrorArtifact
+from schema import Schema
+
+from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.loaders import SqlLoader
-from schema import Schema
+
+if TYPE_CHECKING:
+    from griptape.loaders import SqlLoader
 
 
 @define
@@ -36,7 +41,7 @@ class SqlClient(BaseTool):
             "{{ _self.table_name }} schema: {{ _self.table_schema }}\n"
             "{% if _self.table_description %}{{ _self.table_name }} description: {{ _self.table_description }}{% endif %}",
             "schema": Schema({"sql_query": str}),
-        }
+        },
     )
     def execute_query(self, params: dict) -> ListArtifact | InfoArtifact | ErrorArtifact:
         try:

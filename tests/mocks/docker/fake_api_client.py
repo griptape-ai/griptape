@@ -1,15 +1,14 @@
 import copy
+from unittest import mock
 
 import docker
 from docker.constants import DEFAULT_DOCKER_API_VERSION
-from unittest import mock
+
 from . import fake_api
 
 
 class CopyReturnMagicMock(mock.MagicMock):
-    """
-    A MagicMock which deep copies every return value.
-    """
+    """A MagicMock which deep copies every return value."""
 
     def _mock_call(self, *args, **kwargs):
         ret = super()._mock_call(*args, **kwargs)
@@ -19,13 +18,11 @@ class CopyReturnMagicMock(mock.MagicMock):
 
 
 def make_fake_api_client(overrides=None):
-    """
-    Returns non-complete fake APIClient.
+    """Returns non-complete fake APIClient.
 
     This returns most of the default cases correctly, but most arguments that
     change behaviour will not work.
     """
-
     if overrides is None:
         overrides = {}
     api_client = docker.APIClient(version=DEFAULT_DOCKER_API_VERSION)
@@ -57,9 +54,7 @@ def make_fake_api_client(overrides=None):
 
 
 def make_fake_client(overrides=None):
-    """
-    Returns a Client with a fake APIClient.
-    """
+    """Returns a Client with a fake APIClient."""
     client = docker.DockerClient(version=DEFAULT_DOCKER_API_VERSION)
     client.api = make_fake_api_client(overrides)
     return client

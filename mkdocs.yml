@@ -89,6 +89,7 @@ nav:
           - Conversation Memory: "griptape-framework/structures/conversation-memory.md"
           - Rulesets: "griptape-framework/structures/rulesets.md"
           - Config: "griptape-framework/structures/config.md"
+          - Observability: "griptape-framework/structures/observability.md"
       - Tools:
           - Overview: "griptape-framework/tools/index.md"
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
@@ -113,6 +114,7 @@ nav:
           - Text to Speech Drivers: "griptape-framework/drivers/text-to-speech-drivers.md"
           - Audio Transcription Drivers: "griptape-framework/drivers/audio-transcription-drivers.md"
           - Web Search Drivers: "griptape-framework/drivers/web-search-drivers.md"
+          - Observability Drivers: "griptape-framework/drivers/observability-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
@@ -160,6 +162,7 @@ nav:
           - Talk to Redshift: "examples/talk-to-redshift.md"
           - Talk to a Webpage: "examples/talk-to-a-webpage.md"
           - Talk to a PDF: "examples/talk-to-a-pdf.md"
+          - Talk to a Video: "examples/talk-to-a-video.md"
           - Multi Agent Workflows: "examples/multi-agent-workflow.md"
           - Shared Memory Between Agents: "examples/multiple-agent-shared-memory.md"
           - Chat Sessions with Amazon DynamoDB: "examples/amazon-dynamodb-sessions.md"

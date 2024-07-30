@@ -1,19 +1,20 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
 
 from griptape import utils
-from griptape.common import Reference
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.artifacts import TextArtifact, BaseArtifact
+    from griptape.artifacts import BaseArtifact, TextArtifact
+    from griptape.common import Reference
 
 
 @define(kw_only=True)
 class RagContext(SerializableMixin):
-    """Used by RagEngine stages and module to pass context that individual modules are expected to update in the `run`
-    method.
+    """Used by RagEngine stages and module to pass context that individual modules are expected to update in the `run` method.
 
     Attributes:
         query: Query provided by the user.

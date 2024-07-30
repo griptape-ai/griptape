@@ -1,12 +1,13 @@
 import pytest
+
 from griptape.artifacts import (
     BaseArtifact,
-    TextArtifact,
+    BlobArtifact,
     ErrorArtifact,
+    ImageArtifact,
     InfoArtifact,
     ListArtifact,
-    BlobArtifact,
-    ImageArtifact,
+    TextArtifact,
 )
 
 

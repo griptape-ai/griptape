@@ -1,65 +1,67 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
 from griptape.common import (
+    ActionCallDeltaMessageContent,
+    ActionCallMessageContent,
     BaseDeltaMessageContent,
     DeltaMessage,
-    TextDeltaMessageContent,
-    PromptStack,
     Message,
+    PromptStack,
+    TextDeltaMessageContent,
     TextMessageContent,
+    observable,
 )
 from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
-from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
-from griptape.tokenizers import BaseTokenizer
+from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.structures import Structure
+    from collections.abc import Iterator
+
+    from griptape.tokenizers import BaseTokenizer
 
 
 @define(kw_only=True)
-class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
+class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, EventPublisherMixin, ABC):
     """Base class for the Prompt Drivers.
 
     Attributes:
         temperature: The temperature to use for the completion.
         max_tokens: The maximum number of tokens to generate. If not specified, the value will be automatically generated based by the tokenizer.
-        structure: An optional `Structure` to publish events to.
         prompt_stack_to_string: A function that converts a `PromptStack` to a string.
         ignored_exception_types: A tuple of exception types to ignore.
         model: The model name.
         tokenizer: An instance of `BaseTokenizer` to when calculating tokens.
         stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
+        use_native_tools: Whether to use LLM's native function calling capabilities. Must be supported by the model.
     """
 
     temperature: float = field(default=0.1, metadata={"serializable": True})
     max_tokens: Optional[int] = field(default=None, metadata={"serializable": True})
-    structure: Optional[Structure] = field(default=None)
     ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
-    stream: bool = field(default=False, metadata={"serializable": True})
+    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
-        if self.structure:
-            self.structure.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
+        self.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
     def after_run(self, result: Message) -> None:
-        if self.structure:
-            self.structure.publish_event(
-                FinishPromptEvent(
-                    model=self.model,
-                    result=result.value,
-                    input_token_count=result.usage.input_tokens,
-                    output_token_count=result.usage.output_tokens,
-                )
-            )
+        self.publish_event(
+            FinishPromptEvent(
+                model=self.model,
+                result=result.value,
+                input_token_count=result.usage.input_tokens,
+                output_token_count=result.usage.output_tokens,
+            ),
+        )
 
+    @observable(tags=["PromptDriver.run()"])
     def run(self, prompt_stack: PromptStack) -> Message:
         for attempt in self.retrying():
             with attempt:
@@ -75,6 +77,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         """Converts a Prompt Stack to a string for token counting or model input.
+
         This base implementation is only a rough approximation, and should be overridden by subclasses with model-specific tokens.
 
         Args:
@@ -114,25 +117,41 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         usage = DeltaMessage.Usage()
 
         # Aggregate all content deltas from the stream
-        deltas = self.try_stream(prompt_stack)
-        for delta in deltas:
-            usage += delta.usage
+        message_deltas = self.try_stream(prompt_stack)
+        for message_delta in message_deltas:
+            usage += message_delta.usage
+            content = message_delta.content
 
-            if delta.content is not None:
-                if delta.content.index in delta_contents:
-                    delta_contents[delta.content.index].append(delta.content)
+            if content is not None:
+                if content.index in delta_contents:
+                    delta_contents[content.index].append(content)
                 else:
-                    delta_contents[delta.content.index] = [delta.content]
-
-            if isinstance(delta.content, TextDeltaMessageContent):
-                self.structure.publish_event(CompletionChunkEvent(token=delta.content.text))
+                    delta_contents[content.index] = [content]
+                if isinstance(content, TextDeltaMessageContent):
+                    self.publish_event(CompletionChunkEvent(token=content.text))
+                elif isinstance(content, ActionCallDeltaMessageContent):
+                    if content.tag is not None and content.name is not None and content.path is not None:
+                        self.publish_event(CompletionChunkEvent(token=str(content)))
+                    elif content.partial_input is not None:
+                        self.publish_event(CompletionChunkEvent(token=content.partial_input))
 
         # Build a complete content from the content deltas
+        result = self.__build_message(list(delta_contents.values()), usage)
+
+        return result
+
+    def __build_message(
+        self, delta_contents: list[list[BaseDeltaMessageContent]], usage: DeltaMessage.Usage
+    ) -> Message:
         content = []
-        for deltas in delta_contents.values():
-            text_deltas = [delta for delta in deltas if isinstance(delta, TextDeltaMessageContent)]
+        for delta_content in delta_contents:
+            text_deltas = [delta for delta in delta_content if isinstance(delta, TextDeltaMessageContent)]
+            action_deltas = [delta for delta in delta_content if isinstance(delta, ActionCallDeltaMessageContent)]
+
             if text_deltas:
                 content.append(TextMessageContent.from_deltas(text_deltas))
+            if action_deltas:
+                content.append(ActionCallMessageContent.from_deltas(action_deltas))
 
         result = Message(
             content=content,

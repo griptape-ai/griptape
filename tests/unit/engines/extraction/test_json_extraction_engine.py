@@ -1,12 +1,13 @@
 import pytest
 from schema import Schema
+
 from griptape.artifacts import ErrorArtifact
 from griptape.engines import JsonExtractionEngine
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestJsonExtractionEngine:
-    @pytest.fixture
+    @pytest.fixture()
     def engine(self):
         return JsonExtractionEngine(
             prompt_driver=MockPromptDriver(

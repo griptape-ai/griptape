@@ -1,4 +1,5 @@
 import logging
+
 from tests.mocks.mock_tokenizer import MockTokenizer
 
 

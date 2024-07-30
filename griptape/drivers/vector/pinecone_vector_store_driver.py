@@ -1,8 +1,11 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Any
-from griptape.utils import str_to_hash, import_optional_dependency
-from griptape.drivers import BaseVectorStoreDriver
+
+from typing import TYPE_CHECKING, Any, NoReturn, Optional
+
 from attrs import define, field
+
+from griptape.drivers import BaseVectorStoreDriver
+from griptape.utils import import_optional_dependency, str_to_hash
 
 if TYPE_CHECKING:
     import pinecone
@@ -18,7 +21,9 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
     def __attrs_post_init__(self) -> None:
         pinecone = import_optional_dependency("pinecone").Pinecone(
-            api_key=self.api_key, environment=self.environment, project_name=self.project_name
+            api_key=self.api_key,
+            environment=self.environment,
+            project_name=self.project_name,
         )
 
         self.index = pinecone.Index(self.index_name)
@@ -31,7 +36,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
-        vector_id = vector_id if vector_id else str_to_hash(str(vector))
+        vector_id = vector_id or str_to_hash(str(vector))
 
         params: dict[str, Any] = {"namespace": namespace} | kwargs
 
@@ -39,7 +44,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         result = self.index.fetch(ids=[vector_id], namespace=namespace).to_dict()
         vectors = list(result["vectors"].values())
 
@@ -47,23 +52,32 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             vector = vectors[0]
 
             return BaseVectorStoreDriver.Entry(
-                id=vector["id"], meta=vector["metadata"], vector=vector["values"], namespace=result["namespace"]
+                id=vector["id"],
+                meta=vector["metadata"],
+                vector=vector["values"],
+                namespace=result["namespace"],
             )
         else:
             return None
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         # This is a hacky way to query up to 10,000 values from Pinecone. Waiting on an official API for fetching
         # all values from a namespace:
         # https://community.pinecone.io/t/is-there-a-way-to-query-all-the-vectors-and-or-metadata-from-a-namespace/797/5
 
         results = self.index.query(
-            vector=self.embedding_driver.embed_string(""), top_k=10000, include_metadata=True, namespace=namespace
+            vector=self.embedding_driver.embed_string(""),
+            top_k=10000,
+            include_metadata=True,
+            namespace=namespace,
         )
 
         return [
             BaseVectorStoreDriver.Entry(
-                id=r["id"], vector=r["values"], meta=r["metadata"], namespace=results["namespace"]
+                id=r["id"],
+                vector=r["values"],
+                meta=r["metadata"],
+                namespace=results["namespace"],
             )
             for r in results["matches"]
         ]
@@ -71,17 +85,17 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
-        # PineconeVectorStorageDriver-specific params:
-        include_metadata=True,
+        include_metadata: bool = True,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         vector = self.embedding_driver.embed_string(query)
 
         params = {
-            "top_k": count if count else BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+            "top_k": count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
             "namespace": namespace,
             "include_values": include_vectors,
             "include_metadata": include_metadata,
@@ -91,10 +105,14 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
         return [
             BaseVectorStoreDriver.Entry(
-                id=r["id"], vector=r["values"], score=r["score"], meta=r["metadata"], namespace=results["namespace"]
+                id=r["id"],
+                vector=r["values"],
+                score=r["score"],
+                meta=r["metadata"],
+                namespace=results["namespace"],
             )
             for r in results["matches"]
         ]
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

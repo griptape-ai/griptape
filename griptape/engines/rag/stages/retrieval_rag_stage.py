@@ -1,13 +1,18 @@
+from __future__ import annotations
+
 import itertools
 import logging
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
+
 from attrs import define, field
+
 from griptape import utils
 from griptape.artifacts import TextArtifact
-from griptape.engines.rag import RagContext
-from griptape.engines.rag.modules import BaseRerankRagModule, BaseRagModule
-from griptape.engines.rag.modules import BaseRetrievalRagModule
 from griptape.engines.rag.stages import BaseRagStage
+
+if TYPE_CHECKING:
+    from griptape.engines.rag import RagContext
+    from griptape.engines.rag.modules import BaseRagModule, BaseRerankRagModule, BaseRetrievalRagModule
 
 
 @define(kw_only=True)
@@ -28,7 +33,7 @@ class RetrievalRagStage(BaseRagStage):
         return ms
 
     def run(self, context: RagContext) -> RagContext:
-        logging.info(f"RetrievalStage: running {len(self.retrieval_modules)} retrieval modules in parallel")
+        logging.info("RetrievalStage: running %s retrieval modules in parallel", len(self.retrieval_modules))
 
         with self.futures_executor_fn() as executor:
             results = utils.execute_futures_list([executor.submit(r.run, context) for r in self.retrieval_modules])
@@ -42,14 +47,16 @@ class RetrievalRagStage(BaseRagStage):
         chunks_after_dedup = len(results)
 
         logging.info(
-            f"RetrievalStage: deduplicated {chunks_before_dedup - chunks_after_dedup} "
-            f"chunks ({chunks_before_dedup} - {chunks_after_dedup})"
+            "RetrievalStage: deduplicated %s " "chunks (%s - %s)",
+            chunks_before_dedup - chunks_after_dedup,
+            chunks_before_dedup,
+            chunks_after_dedup,
         )
 
         context.text_chunks = [a for a in results if isinstance(a, TextArtifact)]
 
         if self.rerank_module:
-            logging.info(f"RetrievalStage: running rerank module on {chunks_after_dedup} chunks")
+            logging.info("RetrievalStage: running rerank module on %s chunks", chunks_after_dedup)
 
             context.text_chunks = [a for a in self.rerank_module.run(context) if isinstance(a, TextArtifact)]
 

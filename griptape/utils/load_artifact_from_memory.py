@@ -3,7 +3,10 @@ from griptape.memory import TaskMemory
 
 
 def load_artifact_from_memory(
-    memory: TaskMemory, artifact_namespace: str, artifact_name: str, artifact_type: type
+    memory: TaskMemory,
+    artifact_namespace: str,
+    artifact_name: str,
+    artifact_type: type,
 ) -> BaseArtifact:
     if memory is None:
         raise ValueError("memory not found")

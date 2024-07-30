@@ -1,11 +1,16 @@
 from __future__ import annotations
-from collections.abc import Iterator
+
+from typing import TYPE_CHECKING
+
 from attrs import define
 
 from griptape.artifacts import TextArtifact
-from griptape.common import PromptStack, Message, TextMessageContent, DeltaMessage, TextDeltaMessageContent
+from griptape.common import DeltaMessage, Message, PromptStack, TextDeltaMessageContent, TextMessageContent
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 @define

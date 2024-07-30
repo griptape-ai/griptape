@@ -1,14 +1,16 @@
 from __future__ import annotations
+
 import os
 from pathlib import Path
-from attrs import define, field, Factory
+
+from attrs import Attribute, Factory, define, field
+
 from .base_file_manager_driver import BaseFileManagerDriver
 
 
 @define
 class LocalFileManagerDriver(BaseFileManagerDriver):
-    """
-    LocalFileManagerDriver can be used to list, load, and save files on the local file system.
+    """LocalFileManagerDriver can be used to list, load, and save files on the local file system.
 
     Attributes:
         workdir: The absolute working directory. List, load, and save operations will be performed relative to this directory.
@@ -16,8 +18,8 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
 
     workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True)
 
-    @workdir.validator  # pyright: ignore
-    def validate_workdir(self, _, workdir: str) -> None:
+    @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_workdir(self, _: Attribute, workdir: str) -> None:
         if not Path(workdir).is_absolute():
             raise ValueError("Workdir must be an absolute path")
 
@@ -29,16 +31,14 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
         full_path = self._full_path(path)
         if self._is_dir(full_path):
             raise IsADirectoryError
-        with open(full_path, "rb") as file:
-            return file.read()
+        return Path(full_path).read_bytes()
 
-    def try_save_file(self, path: str, value: bytes):
+    def try_save_file(self, path: str, value: bytes) -> None:
         full_path = self._full_path(path)
         if self._is_dir(full_path):
             raise IsADirectoryError
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
-        with open(full_path, "wb") as file:
-            file.write(value)
+        Path(full_path).write_bytes(value)
 
     def _full_path(self, path: str) -> str:
         path = path.lstrip("/")

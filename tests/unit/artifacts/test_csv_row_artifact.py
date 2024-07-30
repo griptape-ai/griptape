@@ -1,5 +1,4 @@
 from griptape.artifacts import CsvRowArtifact
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestCsvRowArtifact:
@@ -13,9 +12,6 @@ class TestCsvRowArtifact:
             "test1": "foo",
             "test2": "bar",
         }
-
-    def test_generate_embedding(self):
-        assert CsvRowArtifact({"test1": "foo"}).generate_embedding(MockEmbeddingDriver()) == [0, 1]
 
     def test_to_text(self):
         assert CsvRowArtifact({"test1": "foo|bar", "test2": 1}, delimiter="|").to_text() == '"foo|bar"|1'

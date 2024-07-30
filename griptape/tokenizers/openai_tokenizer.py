@@ -45,10 +45,12 @@ class OpenAiTokenizer(BaseTokenizer):
     ]
 
     max_input_tokens: int = field(
-        kw_only=True, default=Factory(lambda self: self._default_max_input_tokens(), takes_self=True)
+        kw_only=True,
+        default=Factory(lambda self: self._default_max_input_tokens(), takes_self=True),
     )
     max_output_tokens: int = field(
-        kw_only=True, default=Factory(lambda self: self._default_max_output_tokens(), takes_self=True)
+        kw_only=True,
+        default=Factory(lambda self: self._default_max_output_tokens(), takes_self=True),
     )
 
     @property
@@ -62,11 +64,12 @@ class OpenAiTokenizer(BaseTokenizer):
         tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)
         offset = 0 if self.model in self.EMBEDDING_MODELS else self.TOKEN_OFFSET
 
-        return (tokens if tokens else self.DEFAULT_MAX_TOKENS) - offset
+        return (tokens or self.DEFAULT_MAX_TOKENS) - offset
 
     def _default_max_output_tokens(self) -> int:
         tokens = next(
-            (v for k, v in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items() if self.model.startswith(k)), None
+            (v for k, v in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items() if self.model.startswith(k)),
+            None,
         )
 
         if tokens is None:
@@ -74,13 +77,14 @@ class OpenAiTokenizer(BaseTokenizer):
         else:
             return tokens
 
-    def count_tokens(self, text: str | list[dict], model: Optional[str] = None) -> int:
-        """
-        Handles the special case of ChatML. Implementation adopted from the official OpenAI notebook:
-        https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
+    def count_tokens(self, text: str | list[dict], model: Optional[str] = None) -> int:  # noqa: C901
+        """Handles the special case of ChatML.
+
+        Implementation adopted from the official OpenAI notebook:
+        https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb.
         """
         if isinstance(text, list):
-            model = model if model else self.model
+            model = model or self.model
 
             try:
                 encoding = tiktoken.encoding_for_model(model)
@@ -116,9 +120,9 @@ class OpenAiTokenizer(BaseTokenizer):
                 return self.count_tokens(text, model="gpt-4-0613")
             else:
                 raise NotImplementedError(
-                    f"""token_count() is not implemented for model {model}. 
-                    See https://github.com/openai/openai-python/blob/main/chatml.md for 
-                    information on how messages are converted to tokens."""
+                    f"token_count() is not implemented for model {model}. "
+                    "See https://github.com/openai/openai-python/blob/main/chatml.md for "
+                    "information on how messages are converted to tokens."
                 )
 
             num_tokens = 0

@@ -1,8 +1,10 @@
 import json
+
 import pytest
+
 from griptape.artifacts import TextArtifact
 from griptape.structures import Agent
-from griptape.tasks import ToolTask, ActionsSubtask
+from griptape.tasks import ActionsSubtask, ToolTask
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -44,6 +46,30 @@ class TestToolTask:
                     "properties": {
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description: foo", "const": "test_error"},
+                        "input": {
+                            "type": "object",
+                            "properties": {
+                                "values": {
+                                    "description": "Test input",
+                                    "type": "object",
+                                    "properties": {"test": {"type": "string"}},
+                                    "required": ["test"],
+                                    "additionalProperties": False,
+                                }
+                            },
+                            "required": ["values"],
+                            "additionalProperties": False,
+                        },
+                        "tag": {"description": "Unique tag name for action execution.", "type": "string"},
+                    },
+                    "required": ["name", "path", "input", "tag"],
+                    "additionalProperties": False,
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "name": {"const": "MockTool"},
+                        "path": {"description": "test description: foo", "const": "test_exception"},
                         "input": {
                             "type": "object",
                             "properties": {
@@ -139,7 +165,7 @@ class TestToolTask:
         "$schema": "http://json-schema.org/draft-07/schema#",
     }
 
-    @pytest.fixture
+    @pytest.fixture()
     def agent(self):
         output_dict = {"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
 

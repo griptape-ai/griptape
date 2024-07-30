@@ -150,7 +150,7 @@ def post_fake_create_container():
     return status_code, response
 
 
-def get_fake_inspect_container(tty=False):
+def get_fake_inspect_container(*, tty=False):
     status_code = 200
     response = {
         "Id": FAKE_CONTAINER_ID,
@@ -531,7 +531,6 @@ fake_responses = {
     f"{prefix}/{CURRENT_VERSION}/containers/{FAKE_CONTAINER_ID}/unpause": post_fake_unpause_container,
     f"{prefix}/{CURRENT_VERSION}/containers/{FAKE_CONTAINER_ID}/restart": post_fake_restart_container,
     f"{prefix}/{CURRENT_VERSION}/containers/{FAKE_CONTAINER_ID}": delete_fake_remove_container,
-    f"{prefix}/{CURRENT_VERSION}/images/create": post_fake_image_create,
     f"{prefix}/{CURRENT_VERSION}/images/{FAKE_IMAGE_ID}": delete_fake_remove_image,
     f"{prefix}/{CURRENT_VERSION}/images/{FAKE_IMAGE_ID}/get": get_fake_get_image,
     f"{prefix}/{CURRENT_VERSION}/images/load": post_fake_load_image,
@@ -544,20 +543,20 @@ fake_responses = {
     f"{prefix}/{CURRENT_VERSION}/events": get_fake_events,
     (f"{prefix}/{CURRENT_VERSION}/volumes", "GET"): get_fake_volume_list,
     (f"{prefix}/{CURRENT_VERSION}/volumes/create", "POST"): get_fake_volume,
-    ("{1}/{0}/volumes/{2}".format(CURRENT_VERSION, prefix, FAKE_VOLUME_NAME), "GET"): get_fake_volume,
-    ("{1}/{0}/volumes/{2}".format(CURRENT_VERSION, prefix, FAKE_VOLUME_NAME), "DELETE"): fake_remove_volume,
-    ("{1}/{0}/nodes/{2}/update?version=1".format(CURRENT_VERSION, prefix, FAKE_NODE_ID), "POST"): post_fake_update_node,
+    (f"{prefix}/{CURRENT_VERSION}/volumes/{FAKE_VOLUME_NAME}", "GET"): get_fake_volume,
+    (f"{prefix}/{CURRENT_VERSION}/volumes/{FAKE_VOLUME_NAME}", "DELETE"): fake_remove_volume,
+    (f"{prefix}/{CURRENT_VERSION}/nodes/{FAKE_NODE_ID}/update?version=1", "POST"): post_fake_update_node,
     (f"{prefix}/{CURRENT_VERSION}/swarm/join", "POST"): post_fake_join_swarm,
     (f"{prefix}/{CURRENT_VERSION}/networks", "GET"): get_fake_network_list,
     (f"{prefix}/{CURRENT_VERSION}/networks/create", "POST"): post_fake_network,
-    ("{1}/{0}/networks/{2}".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID), "GET"): get_fake_network,
-    ("{1}/{0}/networks/{2}".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID), "DELETE"): delete_fake_network,
+    (f"{prefix}/{CURRENT_VERSION}/networks/{FAKE_NETWORK_ID}", "GET"): get_fake_network,
+    (f"{prefix}/{CURRENT_VERSION}/networks/{FAKE_NETWORK_ID}", "DELETE"): delete_fake_network,
     (
-        "{1}/{0}/networks/{2}/connect".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID),
+        f"{prefix}/{CURRENT_VERSION}/networks/{FAKE_NETWORK_ID}/connect",
         "POST",
     ): post_fake_network_connect,
     (
-        "{1}/{0}/networks/{2}/disconnect".format(CURRENT_VERSION, prefix, FAKE_NETWORK_ID),
+        f"{prefix}/{CURRENT_VERSION}/networks/{FAKE_NETWORK_ID}/disconnect",
         "POST",
     ): post_fake_network_disconnect,
     f"{prefix}/{CURRENT_VERSION}/secrets/create": post_fake_secret,

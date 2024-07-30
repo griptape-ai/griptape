@@ -1,14 +1,19 @@
 from __future__ import annotations
-from typing import Optional, cast
+
 import csv
 import io
-from attrs import field, Factory, define
-from griptape.artifacts import TextArtifact, CsvRowArtifact, ListArtifact, ErrorArtifact
+from typing import TYPE_CHECKING, Optional, cast
+
+from attrs import Factory, define, field
+
+from griptape.artifacts import CsvRowArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
-from griptape.rules import Ruleset
+
+if TYPE_CHECKING:
+    from griptape.rules import Ruleset
 
 
 @define
@@ -66,7 +71,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 self.text_to_csv_rows(
                     self.prompt_driver.run(PromptStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value,
                     column_names,
-                )
+                ),
             )
 
             return rows
@@ -82,7 +87,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 self.text_to_csv_rows(
                     self.prompt_driver.run(PromptStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value,
                     column_names,
-                )
+                ),
             )
 
             return self._extract_rec(chunks[1:], column_names, rows, rulesets=rulesets)

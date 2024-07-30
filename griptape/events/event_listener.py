@@ -1,10 +1,13 @@
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING, Callable
-from attrs import define, field, Factory
-from .base_event import BaseEvent
+
+from typing import TYPE_CHECKING, Callable, Optional
+
+from attrs import Factory, define, field
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseEventListenerDriver
+
+    from .base_event import BaseEvent
 
 
 @define
@@ -13,7 +16,7 @@ class EventListener:
     event_types: Optional[list[type[BaseEvent]]] = field(default=None, kw_only=True)
     driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
 
-    def publish_event(self, event: BaseEvent, flush: bool = False) -> None:
+    def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
         event_types = self.event_types
 
         if event_types is None or type(event) in event_types:

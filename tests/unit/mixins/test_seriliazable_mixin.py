@@ -1,11 +1,13 @@
 import json
+
 import pytest
-from griptape.drivers import OpenAiChatPromptDriver
-from griptape.memory.structure import ConversationMemory
-from griptape.memory import TaskMemory
-from tests.mocks.mock_serializable import MockSerializable
-from griptape.schemas import BaseSchema
+
 from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.drivers import OpenAiChatPromptDriver
+from griptape.memory import TaskMemory
+from griptape.memory.structure import ConversationMemory
+from griptape.schemas import BaseSchema
+from tests.mocks.mock_serializable import MockSerializable
 
 
 class TestSerializableMixin:

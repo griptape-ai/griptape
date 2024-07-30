@@ -1,11 +1,16 @@
+from __future__ import annotations
+
 import json
+import operator
 import os
 import threading
 from dataclasses import asdict
-from typing import Optional, Callable, TextIO
-from attrs import define, field, Factory
+from typing import Callable, NoReturn, Optional, TextIO
+
+from attrs import Factory, define, field
 from numpy import dot
 from numpy.linalg import norm
+
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
 
@@ -48,16 +53,20 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
+        *,
         vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         **kwargs,
     ) -> str:
-        vector_id = vector_id if vector_id else utils.str_to_hash(str(vector))
+        vector_id = vector_id or utils.str_to_hash(str(vector))
 
         with self.thread_lock:
-            self.entries[self._namespaced_vector_id(vector_id, namespace)] = self.Entry(
-                id=vector_id, vector=vector, meta=meta, namespace=namespace
+            self.entries[self._namespaced_vector_id(vector_id, namespace=namespace)] = self.Entry(
+                id=vector_id,
+                vector=vector,
+                meta=meta,
+                namespace=namespace,
             )
 
         if self.persist_file is not None:
@@ -68,15 +77,16 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
 
         return vector_id
 
-    def load_entry(self, vector_id: str, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        return self.entries.get(self._namespaced_vector_id(vector_id, namespace), None)
+    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+        return self.entries.get(self._namespaced_vector_id(vector_id, namespace=namespace), None)
 
-    def load_entries(self, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         return [entry for key, entry in self.entries.items() if namespace is None or entry.namespace == namespace]
 
     def query(
         self,
         query: str,
+        *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
@@ -92,7 +102,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         entries_and_relatednesses = [
             (entry, self.relatedness_fn(query_embedding, entry.vector)) for entry in entries.values()
         ]
-        entries_and_relatednesses.sort(key=lambda x: x[1], reverse=True)
+        entries_and_relatednesses.sort(key=operator.itemgetter(1), reverse=True)
 
         result = [
             BaseVectorStoreDriver.Entry(id=er[0].id, vector=er[0].vector, score=er[1], meta=er[0].meta)
@@ -107,8 +117,8 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
                 for r in result
             ]
 
-    def delete_vector(self, vector_id: str):
+    def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")
 
-    def _namespaced_vector_id(self, vector_id: str, namespace: Optional[str]):
+    def _namespaced_vector_id(self, vector_id: str, *, namespace: Optional[str]) -> str:
         return vector_id if namespace is None else f"{namespace}-{vector_id}"

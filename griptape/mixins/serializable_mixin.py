@@ -1,14 +1,16 @@
 from __future__ import annotations
 
 import json
-from typing import TypeVar, Generic, cast, Optional
+from abc import ABC
+from importlib import import_module
+from typing import TYPE_CHECKING, Generic, Optional, TypeVar, cast
 
 from attrs import Factory, define, field
-from abc import ABC
 
-from marshmallow import Schema
 from griptape.schemas.base_schema import BaseSchema
-from importlib import import_module
+
+if TYPE_CHECKING:
+    from marshmallow import Schema
 
 T = TypeVar("T", bound="SerializableMixin")
 
@@ -62,6 +64,7 @@ class SerializableMixin(Generic[T]):
     @classmethod
     def _import_cls_rec(cls, module_name: str, class_name: str) -> type:
         """Imports a class given a module name and class name.
+
         Will recursively traverse up the module's path until it finds a
         package that it can import `class_name` from.
 

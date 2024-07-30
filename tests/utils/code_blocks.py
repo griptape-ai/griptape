@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 import pathlib
 import textwrap
@@ -6,7 +8,7 @@ import textwrap
 
 
 def check_py_string(source: str) -> None:
-    """Exec the python source given in a new module namespace
+    """Exec the python source given in a new module namespace.
 
     Does not return anything, but exceptions raised by the source
     will propagate out unmodified

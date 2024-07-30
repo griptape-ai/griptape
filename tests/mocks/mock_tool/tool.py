@@ -1,6 +1,7 @@
 from attrs import define, field
-from schema import Schema, Literal
-from griptape.artifacts import TextArtifact, ErrorArtifact, BaseArtifact, ListArtifact
+from schema import Literal, Schema
+
+from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -35,12 +36,21 @@ class MockTool(BaseTool):
             "schema": Schema({Literal("test"): str}, description="Test input"),
         }
     )
+    def test_exception(self, value: dict) -> BaseArtifact:
+        raise Exception(f"error {value['values']['test']}")
+
+    @activity(
+        config={
+            "description": "test description: {{ _self.foo() }}",
+            "schema": Schema({Literal("test"): str}, description="Test input"),
+        }
+    )
     def test_str_output(self, value: dict) -> str:
         return f"ack {value['values']['test']}"
 
     @activity(config={"description": "test description"})
     def test_no_schema(self, value: dict) -> str:
-        return f"no schema"
+        return "no schema"
 
     @activity(config={"description": "test description"})
     def test_list_output(self, value: dict) -> ListArtifact:

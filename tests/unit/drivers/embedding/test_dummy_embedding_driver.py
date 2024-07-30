@@ -1,11 +1,11 @@
-from griptape.drivers import DummyEmbeddingDriver
 import pytest
 
-from griptape.exceptions import DummyException
+from griptape.drivers import DummyEmbeddingDriver
+from griptape.exceptions import DummyError
 
 
 class TestDummyEmbeddingDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def embedding_driver(self):
         return DummyEmbeddingDriver()
 
@@ -13,5 +13,5 @@ class TestDummyEmbeddingDriver:
         assert embedding_driver
 
     def test_try_embed_chunk(self, embedding_driver):
-        with pytest.raises(DummyException):
+        with pytest.raises(DummyError):
             embedding_driver.try_embed_chunk("prompt-stack")

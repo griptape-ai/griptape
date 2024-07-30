@@ -14,7 +14,23 @@ publish: ## Push git tag and publish version to PyPI.
 
 .PHONY: install
 install: ## Install all dependencies.
+	@make install/all
+
+.PHONY: install/core
+install/core: ## Install core dependencies.
+	@poetry install
+
+.PHONY: install/all
+install/all: ## Install all dependencies.
 	@poetry install --with dev --with test --with docs --all-extras
+
+.PHONY: install/dev
+install/dev: ## Install dev dependencies.
+	@poetry install --with dev
+
+.PHONY: install/test
+install/test: ## Install test dependencies.
+	@poetry install --with test
 
 .PHONY: test  ## Run all tests.
 test: test/unit test/integration
@@ -33,22 +49,22 @@ test/integration:
 
 .PHONY: lint
 lint: ## Lint project.
-	@poetry run ruff check --fix griptape/
+	@poetry run ruff check --fix
 
 .PHONY: format
 format: ## Format project.
-	@poetry run ruff format .
+	@poetry run ruff format
 
 .PHONY: check
 check: check/format check/lint check/types check/spell ## Run all checks.
 
 .PHONY: check/format
 check/format:
-	@poetry run ruff format --check griptape/
+	@poetry run ruff format --check
 
 .PHONY: check/lint
 check/lint:
-	@poetry run ruff check griptape/
+	@poetry run ruff check
 
 .PHONY: check/types
 check/types:

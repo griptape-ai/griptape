@@ -5,20 +5,20 @@ from griptape.loaders import ImageLoader
 
 
 class TestImageLoader:
-    @pytest.fixture
+    @pytest.fixture()
     def loader(self):
         return ImageLoader()
 
-    @pytest.fixture
+    @pytest.fixture()
     def png_loader(self):
         return ImageLoader(format="png")
 
-    @pytest.fixture
+    @pytest.fixture()
     def create_source(self, bytes_from_resource_path):
         return bytes_from_resource_path
 
     @pytest.mark.parametrize(
-        "resource_path,suffix,mime_type",
+        ("resource_path", "suffix", "mime_type"),
         [
             ("small.png", ".png", "image/png"),
             ("small.jpg", ".jpeg", "image/jpeg"),

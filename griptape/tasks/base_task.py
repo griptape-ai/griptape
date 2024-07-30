@@ -4,17 +4,17 @@ import uuid
 from abc import ABC, abstractmethod
 from concurrent import futures
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional, Callable
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
-from attrs import define, field, Factory
+from attrs import Factory, define, field
 
-from griptape.events import StartTaskEvent, FinishTaskEvent
 from griptape.artifacts import ErrorArtifact
+from griptape.events import FinishTaskEvent, StartTaskEvent
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
-    from griptape.structures import Structure
     from griptape.memory.meta import BaseMetaEntry
+    from griptape.structures import Structure
 
 
 @define
@@ -34,7 +34,8 @@ class BaseTask(ABC):
     structure: Optional[Structure] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
     futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
+        kw_only=True,
     )
 
     @property
@@ -105,7 +106,7 @@ class BaseTask(ABC):
         return self.state == BaseTask.State.EXECUTING
 
     def before_run(self) -> None:
-        if self.structure:
+        if self.structure is not None:
             self.structure.publish_event(
                 StartTaskEvent(
                     task_id=self.id,
@@ -113,11 +114,11 @@ class BaseTask(ABC):
                     task_child_ids=self.child_ids,
                     task_input=self.input,
                     task_output=self.output,
-                )
+                ),
             )
 
     def after_run(self) -> None:
-        if self.structure:
+        if self.structure is not None:
             self.structure.publish_event(
                 FinishTaskEvent(
                     task_id=self.id,
@@ -125,7 +126,7 @@ class BaseTask(ABC):
                     task_child_ids=self.child_ids,
                     task_input=self.input,
                     task_output=self.output,
-                )
+                ),
             )
 
     def execute(self) -> Optional[BaseArtifact]:
@@ -138,7 +139,7 @@ class BaseTask(ABC):
 
             self.after_run()
         except Exception as e:
-            self.structure.logger.error(f"{self.__class__.__name__} {self.id}\n{e}", exc_info=True)
+            self.structure.logger.exception("%s %s\n%s", self.__class__.__name__, self.id, e)
 
             self.output = ErrorArtifact(str(e), exception=e)
         finally:

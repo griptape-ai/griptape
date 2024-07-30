@@ -1,4 +1,4 @@
-from psycopg2 import connect, OperationalError
+from psycopg2 import OperationalError, connect
 
 
 def can_connect_to_postgres(user="postgres", password="postgres", host="localhost", port="5432", database="postgres"):

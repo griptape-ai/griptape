@@ -1,6 +1,10 @@
+from __future__ import annotations
+
 import re
-from typing import Optional
-from attrs import define, field, Factory
+from typing import Any, Optional
+
+from attrs import Factory, define, field
+
 from griptape.artifacts import TextArtifact
 from griptape.drivers import BaseWebScraperDriver
 from griptape.utils import import_optional_dependency
@@ -27,7 +31,8 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
 
     include_links: bool = field(default=True, kw_only=True)
     exclude_tags: list[str] = field(
-        default=Factory(lambda self: self.DEFAULT_EXCLUDE_TAGS, takes_self=True), kw_only=True
+        default=Factory(lambda self: self.DEFAULT_EXCLUDE_TAGS, takes_self=True),
+        kw_only=True,
     )
     exclude_classes: list[str] = field(default=Factory(list), kw_only=True)
     exclude_ids: list[str] = field(default=Factory(list), kw_only=True)
@@ -35,15 +40,15 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
 
     def scrape_url(self, url: str) -> TextArtifact:
         sync_playwright = import_optional_dependency("playwright.sync_api").sync_playwright
-        BeautifulSoup = import_optional_dependency("bs4").BeautifulSoup
-        MarkdownConverter = import_optional_dependency("markdownify").MarkdownConverter
+        bs4 = import_optional_dependency("bs4")
+        markdownify = import_optional_dependency("markdownify")
 
         include_links = self.include_links
 
         # Custom MarkdownConverter to optionally linked urls. If include_links is False only
         # the text of the link is returned.
-        class OptionalLinksMarkdownConverter(MarkdownConverter):
-            def convert_a(self, el, text, convert_as_inline):
+        class OptionalLinksMarkdownConverter(markdownify.MarkdownConverter):
+            def convert_a(self, el: Any, text: str, convert_as_inline: Any) -> str:
                 if include_links:
                     return super().convert_a(el, text, convert_as_inline)
                 return text
@@ -51,7 +56,7 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
         with sync_playwright() as p, p.chromium.launch(headless=True) as browser:
             page = browser.new_page()
 
-            def skip_loading_images(route):
+            def skip_loading_images(route: Any) -> Any:
                 if route.request.resource_type == "image":
                     return route.abort()
                 route.continue_()
@@ -70,11 +75,11 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
             if not content:
                 raise Exception("can't access URL")
 
-            soup = BeautifulSoup(content, "html.parser")
+            soup = bs4.BeautifulSoup(content, "html.parser")
 
             # Remove unwanted elements
             exclude_selector = ",".join(
-                self.exclude_tags + [f".{c}" for c in self.exclude_classes] + [f"#{i}" for i in self.exclude_ids]
+                self.exclude_tags + [f".{c}" for c in self.exclude_classes] + [f"#{i}" for i in self.exclude_ids],
             )
             if exclude_selector:
                 for s in soup.select(exclude_selector):

@@ -5,26 +5,22 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.artifacts import ImageArtifact
-from griptape.events import StartImageGenerationEvent, FinishImageGenerationEvent
-from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
+from griptape.events import FinishImageGenerationEvent, StartImageGenerationEvent
+from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.structures import Structure
+    from griptape.artifacts import ImageArtifact
 
 
 @define
-class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
+class BaseImageGenerationDriver(EventPublisherMixin, SerializableMixin, ExponentialBackoffMixin, ABC):
     model: str = field(kw_only=True, metadata={"serializable": True})
-    structure: Optional[Structure] = field(default=None, kw_only=True)
 
     def before_run(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> None:
-        if self.structure:
-            self.structure.publish_event(StartImageGenerationEvent(prompts=prompts, negative_prompts=negative_prompts))
+        self.publish_event(StartImageGenerationEvent(prompts=prompts, negative_prompts=negative_prompts))
 
     def after_run(self) -> None:
-        if self.structure:
-            self.structure.publish_event(FinishImageGenerationEvent())
+        self.publish_event(FinishImageGenerationEvent())
 
     def run_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         for attempt in self.retrying():
@@ -39,7 +35,10 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
             raise Exception("Failed to run text to image generation")
 
     def run_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         for attempt in self.retrying():
             with attempt:
@@ -93,7 +92,10 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
 
     @abstractmethod
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self,
+        prompts: list[str],
+        image: ImageArtifact,
+        negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact: ...
 
     @abstractmethod

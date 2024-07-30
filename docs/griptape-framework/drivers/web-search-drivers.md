@@ -1,10 +1,17 @@
+---
+search:
+  boost: 2 
+---
+
 ## Overview
 
 Web Search Drivers can be used to search for links from a search query. They are used by [WebSearch](../../reference/griptape/tools/web_search/tool.md) to provide its functionality. All Web Search Drivers implement the following methods:
 
 * `search()` searches the web and returns a [ListArtifact](../../reference/griptape/artifacts/list_artifact.md) that contains JSON-serializable [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s with the search results.
 
-## Google
+## Vector Store Drivers
+
+### Google
 
 The [GoogleWebSearchDriver](../../reference/griptape/drivers/web_search/google_web_search_driver.md) uses the [Google Custom Search JSON API](https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list) for web searching.
 
@@ -44,7 +51,7 @@ agent = Agent(
 agent.run("Give me some websites with information about AI frameworks.")
 ```
 
-## DuckDuckGo
+### DuckDuckGo
 
 !!! info
     This driver requires the `drivers-web-search-duckduckgo` [extra](../index.md#extras).

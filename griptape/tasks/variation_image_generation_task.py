@@ -4,19 +4,21 @@ from typing import Callable
 
 from attrs import define, field
 
+from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
 from griptape.engines import VariationImageGenerationEngine
-from griptape.artifacts import ImageArtifact, TextArtifact, ListArtifact
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
 
 @define
 class VariationImageGenerationTask(BaseImageGenerationTask):
-    """A task that generates a variation of an image using a prompt. Accepts a text prompt and image as
+    """A task that generates a variation of an image using a prompt.
+
+    Accepts a text prompt and image as
     input in one of the following formats:
     - tuple of (template string, ImageArtifact)
     - tuple of (TextArtifact, ImageArtifact)
-    - Callable that returns a tuple of (TextArtifact, ImageArtifact)
+    - Callable that returns a tuple of (TextArtifact, ImageArtifact).
 
     Attributes:
         image_generation_engine: The engine used to generate the image.
@@ -27,10 +29,12 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
     """
 
     _image_generation_engine: VariationImageGenerationEngine = field(
-        default=None, kw_only=True, alias="image_generation_engine"
+        default=None,
+        kw_only=True,
+        alias="image_generation_engine",
     )
     _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact = field(
-        default=None
+        default=None,
     )
 
     @property
@@ -58,7 +62,7 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
         if self._image_generation_engine is None:
             if self.structure is not None:
                 self._image_generation_engine = VariationImageGenerationEngine(
-                    image_generation_driver=self.structure.config.image_generation_driver
+                    image_generation_driver=self.structure.config.image_generation_driver,
                 )
             else:
                 raise ValueError("Image Generation Engine is not set.")

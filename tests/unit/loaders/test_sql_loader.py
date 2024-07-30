@@ -1,5 +1,6 @@
 import pytest
 from sqlalchemy.pool import StaticPool
+
 from griptape.drivers import SqlDriver
 from griptape.loaders import SqlLoader
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -8,7 +9,7 @@ MAX_TOKENS = 50
 
 
 class TestSqlLoader:
-    @pytest.fixture
+    @pytest.fixture()
     def loader(self):
         sql_loader = SqlLoader(
             sql_driver=SqlDriver(

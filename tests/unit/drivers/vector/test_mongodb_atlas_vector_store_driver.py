@@ -1,14 +1,13 @@
-import pytest
 import mongomock
-from unittest.mock import patch
-from pymongo.errors import OperationFailure
+import pytest
+
 from griptape.artifacts import TextArtifact
-from griptape.drivers import MongoDbAtlasVectorStoreDriver, BaseVectorStoreDriver
+from griptape.drivers import BaseVectorStoreDriver, MongoDbAtlasVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestMongoDbAtlasVectorStoreDriver:
-    @pytest.fixture
+    @pytest.fixture()
     def driver(self, monkeypatch):
         embedding_driver = MockEmbeddingDriver()
         return MongoDbAtlasVectorStoreDriver(
@@ -66,15 +65,18 @@ class TestMongoDbAtlasVectorStoreDriver:
         vector = [0.5, 0.5, 0.5]
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
         results = list(driver.load_entries())
-        assert results is not None and len(results) > 0
+        assert results is not None
+        assert len(results) > 0
 
     def test_delete(self, driver):
         vector_id_str = "123"
         vector = [0.5, 0.5, 0.5]
         driver.upsert_vector(vector, vector_id=vector_id_str)  # ensure at least one entry exists
         results = list(driver.load_entries())
-        assert results is not None and len(results) > 0
+        assert results is not None
+        assert len(results) > 0
 
         driver.delete_vector(vector_id_str)
         results = list(driver.load_entries())
-        assert results is not None and len(results) == 0
+        assert results is not None
+        assert len(results) == 0
