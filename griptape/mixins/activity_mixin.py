@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import inspect
+from copy import deepcopy
 from typing import Callable, Optional
 
 from attrs import Attribute, define, field
@@ -20,7 +21,7 @@ class ActivityMixin:
 
     allowlist: Optional[list[str]] = field(default=None, kw_only=True)
     denylist: Optional[list[str]] = field(default=None, kw_only=True)
-    extra_schema_properties: dict[str, dict] = field(default=None, kw_only=True)
+    extra_schema_properties: Optional[dict[str, dict]] = field(default=None, kw_only=True)
 
     @allowlist.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_allowlist(self, _: Attribute, allowlist: Optional[list[str]]) -> None:
@@ -89,12 +90,14 @@ class ActivityMixin:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         elif getattr(activity, "config")["schema"] is not None:
-            full_schema = {"values": getattr(activity, "config")["schema"]}
+            # Need to deepcopy to avoid modifying the original schema
+            config_schema = deepcopy(getattr(activity, "config")["schema"])
             activity_name = self.activity_name(activity)
-            if self.extra_schema_properties is not None and activity_name in self.extra_schema_properties:
-                full_schema["values"].schema.update(self.extra_schema_properties[activity_name])
 
-            return Schema(full_schema)
+            if self.extra_schema_properties is not None and activity_name in self.extra_schema_properties:
+                config_schema.schema.update(self.extra_schema_properties[activity_name])
+
+            return Schema({"values": config_schema})
         else:
             return None
 

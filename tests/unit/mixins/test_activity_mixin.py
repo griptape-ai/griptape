@@ -73,9 +73,12 @@ class TestActivityMixin:
 
         assert len(tool.activities()) > 0
 
-    def test_extra_schema_properties(self, tool):
-        tool.extra_schema_properties = {"test": {Literal("new_property"): str, Optional("optional_property"): int}}
-
+    def test_extra_schema_properties(self):
+        tool = MockTool(
+            test_field="hello",
+            test_int=5,
+            extra_schema_properties={"test": {Literal("new_property"): str, Optional("optional_property"): int}},
+        )
         schema = tool.activity_schema(tool.test).json_schema("InputSchema")
 
         assert schema == {
