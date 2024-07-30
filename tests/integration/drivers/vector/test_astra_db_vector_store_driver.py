@@ -60,7 +60,7 @@ class TestAstraDBVectorStoreDriver:
             dimension=2,
             embedding_driver=embedding_driver,
         )
-        return driver
+        yield driver
         driver.collection.drop()
 
     @pytest.fixture()

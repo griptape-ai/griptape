@@ -179,3 +179,130 @@ agent = Agent(tools=[
 
 agent.run("Generate a watercolor painting of a dog riding a skateboard")
 ```
+
+### HuggingFace Pipelines
+
+!!! info
+    This driver requires the `drivers-image-generation-huggingface` [extra](../index.md#extras).
+
+The [HuggingFace Pipelines Image Generation Driver](../../reference/griptape/drivers/image_generation/huggingface_pipeline_image_generation_driver.md) enables image generation through locally-hosted models using the HuggingFace [Diffusers](https://huggingface.co/docs/diffusers/en/index) library. This Driver requires a [Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/index.md) to prepare the appropriate Pipeline.
+
+This Driver requires a `model` configuration, specifying the model to use for image generation. The value of the `model` configuration must be one of the following:
+
+ - A model name from the HuggingFace Model Hub, like `stabilityai/stable-diffusion-3-medium-diffusers`
+ - A path to the directory containing a model on the filesystem, like `./models/stable-diffusion-3/`
+ - A path to a file containing a model on the filesystem, like `./models/sd3_medium_incl_clips.safetensors`
+
+The `device` configuration specifies the hardware device used to run inference. Common values include `cuda` (supporting CUDA-enabled GPUs), `cpu` (supported by a device's CPU), and `mps` (supported by Apple silicon GPUs). For more information, see [HuggingFace's documentation](https://huggingface.co/docs/transformers/en/perf_infer_gpu_one) on GPU inference.
+
+#### Stable Diffusion 3 Image Generation Pipeline Driver
+
+!!! info
+    The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
+
+The [Stable Diffusion 3 Image Generation Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_image_generation_pipeline_driver.md) provides a Stable `Diffusion3DiffusionPipeline` for text-to-image generations via the [HuggingFace Pipelines Image Generation Driver's](../../reference/griptape/drivers/image_generation/huggingface_pipeline_image_generation_driver.md) `.try_text_to_image()` method. This Driver accepts a text prompt and configurations including Stable Diffusion 3 model, output image size, generation seed, and inference steps.
+
+Image generation consumes substantial memory. On devices with limited VRAM, it may be necessary to enable the `enable_model_cpu_offload` or `drop_t5_encoder` configurations. For more information, see [HuggingFace's documentation](https://huggingface.co/docs/diffusers/en/optimization/memory) on reduced memory usage.
+
+```python title="PYTEST_IGNORE"
+from griptape.structures import Pipeline
+from griptape.tasks import PromptImageGenerationTask
+from griptape.engines import PromptImageGenerationEngine
+from griptape.drivers import HuggingFacePipelineImageGenerationDriver, \
+    StableDiffusion3ImageGenerationPipelineDriver
+from griptape.artifacts import TextArtifact
+
+image_generation_task = PromptImageGenerationTask(
+    input=TextArtifact("landscape photograph, verdant, countryside, 8k"),
+    image_generation_engine=PromptImageGenerationEngine(
+        image_generation_driver=HuggingFacePipelineImageGenerationDriver(
+            model="stabilityai/stable-diffusion-3-medium-diffusers",
+            device="cuda",
+            pipeline_driver=StableDiffusion3ImageGenerationPipelineDriver(
+                height=512,
+                width=512,
+            )
+        )
+    )
+)
+
+output_artifact = Pipeline(tasks=[image_generation_task]).run().output
+```
+
+#### Stable Diffusion 3 Img2Img Image Generation Pipeline Driver
+
+!!! info
+    The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
+
+The [Stable Diffusion 3 Img2Img Image Generation Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_img_2_img_image_generation_pipeline_driver.md) provides a `StableDiffusion3Img2ImgPipeline` for image-to-image generations, accepting a text prompt and input image. This Driver accepts a text prompt, an input image, and configurations including Stable Diffusion 3 model, output image size, inference steps, generation seed, and strength of generation over the input image.
+
+```python title="PYTEST_IGNORE"
+from pathlib import Path
+
+from griptape.structures import Pipeline
+from griptape.tasks import VariationImageGenerationTask
+from griptape.engines import VariationImageGenerationEngine
+from griptape.drivers import HuggingFacePipelineImageGenerationDriver, \
+    StableDiffusion3Img2ImgImageGenerationPipelineDriver
+from griptape.artifacts import TextArtifact, ImageArtifact
+from griptape.loaders import ImageLoader
+
+prompt_artifact = TextArtifact("landscape photograph, verdant, countryside, 8k")
+input_image_artifact = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
+
+image_variation_task = VariationImageGenerationTask(
+    input=(prompt_artifact, input_image_artifact),
+    image_generation_engine=PromptImageGenerationEngine(
+        image_generation_driver=HuggingFacePipelineImageGenerationDriver(
+            model="stabilityai/stable-diffusion-3-medium-diffusers",
+            device="cuda",
+            pipeline_driver=StableDiffusion3Img2ImgImageGenerationPipelineDriver(
+                height=1024,
+                width=1024,
+            )
+        )
+    )
+)
+
+output_artifact = Pipeline(tasks=[image_variation_task]).run().output
+```
+
+#### StableDiffusion3ControlNetImageGenerationPipelineDriver
+
+!!! note
+    The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
+
+The [StableDiffusion3ControlNetImageGenerationPipelineDriver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_controlnet_image_generation_pipeline_driver.md) provides a `StableDiffusion3ControlNetPipeline` for image-to-image generations, accepting a text prompt and a control image. This Driver accepts a text prompt, a control image, and configurations including Stable Diffusion 3 model, ControlNet model, output image size, generation seed, inference steps, and the degree to which the model adheres to the control image.
+
+```python title="PYTEST_IGNORE"
+from pathlib import Path
+
+from griptape.structures import Pipeline
+from griptape.tasks import VariationImageGenerationTask
+from griptape.engines import VariationImageGenerationEngine
+from griptape.drivers import HuggingFacePipelineImageGenerationDriver, \
+    StableDiffusion3ControlNetImageGenerationPipelineDriver
+from griptape.artifacts import TextArtifact, ImageArtifact
+from griptape.loaders import ImageLoader
+
+prompt_artifact = TextArtifact("landscape photograph, verdant, countryside, 8k")
+control_image_artifact = ImageLoader().load(Path("canny_control_image.png").read_bytes())
+
+controlnet_task = VariationImageGenerationTask(
+    input=(prompt_artifact, control_image_artifact),
+    image_generation_engine=PromptImageGenerationEngine(
+        image_generation_driver=HuggingFacePipelineImageGenerationDriver(
+            model="stabilityai/stable-diffusion-3-medium-diffusers",
+            device="cuda",
+            pipeline_driver=StableDiffusion3ControlNetImageGenerationPipelineDriver(
+                controlnet_model="InstantX/SD3-Controlnet-Canny",
+                control_strength=0.8,
+                height=768,
+                width=1024,
+            )
+        )
+    )
+)
+
+output_artifact = Pipeline(tasks=[controlnet_task]).run().output
+```

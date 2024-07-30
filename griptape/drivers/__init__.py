@@ -55,6 +55,19 @@ from .image_generation_model.bedrock_stable_diffusion_image_generation_model_dri
 )
 from .image_generation_model.bedrock_titan_image_generation_model_driver import BedrockTitanImageGenerationModelDriver
 
+from .image_generation_pipeline.base_image_generation_pipeline_driver import (
+    BaseDiffusionImageGenerationPipelineDriver,
+)
+from .image_generation_pipeline.stable_diffusion_3_image_generation_pipeline_driver import (
+    StableDiffusion3ImageGenerationPipelineDriver,
+)
+from .image_generation_pipeline.stable_diffusion_3_img_2_img_image_generation_pipeline_driver import (
+    StableDiffusion3Img2ImgImageGenerationPipelineDriver,
+)
+from .image_generation_pipeline.stable_diffusion_3_controlnet_image_generation_pipeline_driver import (
+    StableDiffusion3ControlNetImageGenerationPipelineDriver,
+)
+
 from .image_generation.base_image_generation_driver import BaseImageGenerationDriver
 from .image_generation.base_multi_model_image_generation_driver import BaseMultiModelImageGenerationDriver
 from .image_generation.openai_image_generation_driver import OpenAiImageGenerationDriver
@@ -62,6 +75,9 @@ from .image_generation.leonardo_image_generation_driver import LeonardoImageGene
 from .image_generation.amazon_bedrock_image_generation_driver import AmazonBedrockImageGenerationDriver
 from .image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
 from .image_generation.dummy_image_generation_driver import DummyImageGenerationDriver
+from .image_generation.huggingface_pipeline_image_generation_driver import (
+    HuggingFacePipelineImageGenerationDriver,
+)
 
 from .image_query_model.base_image_query_model_driver import BaseImageQueryModelDriver
 from .image_query_model.bedrock_claude_image_query_model_driver import BedrockClaudeImageQueryModelDriver
@@ -166,6 +182,10 @@ __all__ = [
     "BaseImageGenerationModelDriver",
     "BedrockStableDiffusionImageGenerationModelDriver",
     "BedrockTitanImageGenerationModelDriver",
+    "BaseDiffusionImageGenerationPipelineDriver",
+    "StableDiffusion3ImageGenerationPipelineDriver",
+    "StableDiffusion3Img2ImgImageGenerationPipelineDriver",
+    "StableDiffusion3ControlNetImageGenerationPipelineDriver",
     "BaseImageGenerationDriver",
     "BaseMultiModelImageGenerationDriver",
     "OpenAiImageGenerationDriver",
@@ -173,6 +193,7 @@ __all__ = [
     "AmazonBedrockImageGenerationDriver",
     "AzureOpenAiImageGenerationDriver",
     "DummyImageGenerationDriver",
+    "HuggingFacePipelineImageGenerationDriver",
     "BaseImageQueryModelDriver",
     "BedrockClaudeImageQueryModelDriver",
     "BaseImageQueryDriver",
