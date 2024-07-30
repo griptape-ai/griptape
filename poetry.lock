@@ -1203,17 +1203,19 @@ dev = ["PyTest", "PyTest-Cov", "bump2version (<1)", "sphinx (<2)", "tox"]
 
 [[package]]
 name = "diffusers"
-version = "0.30.0.dev0"
+version = "0.29.2"
 description = "State-of-the-art diffusion in PyTorch and JAX."
 optional = true
 python-versions = ">=3.8.0"
-files = []
-develop = false
+files = [
+    {file = "diffusers-0.29.2-py3-none-any.whl", hash = "sha256:d5e9bb13c8097b4eed10df23d1294d2e5a418f53e3f89c7ef228b5b982970428"},
+    {file = "diffusers-0.29.2.tar.gz", hash = "sha256:b85f277668e22089cf68b40dd9b76940db7d24ba9cdac107533ed10ab8e4e9db"},
+]
 
 [package.dependencies]
 filelock = "*"
 huggingface-hub = ">=0.23.2"
-importlib_metadata = "*"
+importlib-metadata = "*"
 numpy = "*"
 Pillow = "*"
 regex = "!=2019.12.17"
@@ -1221,19 +1223,13 @@ requests = "*"
 safetensors = ">=0.3.1"
 
 [package.extras]
-dev = ["GitPython (<3.1.19)", "Jinja2", "Jinja2", "accelerate (>=0.31.0)", "accelerate (>=0.31.0)", "compel (==0.1.8)", "datasets", "datasets", "flax (>=0.4.1)", "hf-doc-builder (>=0.3.0)", "hf-doc-builder (>=0.3.0)", "invisible-watermark (>=0.2.0)", "isort (>=5.5.4)", "jax (>=0.4.1)", "jaxlib (>=0.4.1)", "k-diffusion (>=0.0.12)", "librosa", "parameterized", "peft (>=0.6.0)", "protobuf (>=3.20.3,<4)", "pytest", "pytest-timeout", "pytest-xdist", "requests-mock (==1.10.0)", "ruff (==0.1.5)", "safetensors (>=0.3.1)", "scipy", "sentencepiece (>=0.1.91,!=0.1.92)", "tensorboard", "torch (>=1.4)", "torchvision", "transformers (>=4.41.2)", "urllib3 (<=2.0.0)"]
+dev = ["GitPython (<3.1.19)", "Jinja2", "accelerate (>=0.29.3)", "compel (==0.1.8)", "datasets", "flax (>=0.4.1)", "hf-doc-builder (>=0.3.0)", "invisible-watermark (>=0.2.0)", "isort (>=5.5.4)", "jax (>=0.4.1)", "jaxlib (>=0.4.1)", "k-diffusion (>=0.0.12)", "librosa", "parameterized", "peft (>=0.6.0)", "protobuf (>=3.20.3,<4)", "pytest", "pytest-timeout", "pytest-xdist", "requests-mock (==1.10.0)", "ruff (==0.1.5)", "safetensors (>=0.3.1)", "scipy", "sentencepiece (>=0.1.91,!=0.1.92)", "tensorboard", "torch (>=1.4)", "torchvision", "transformers (>=4.25.1)", "urllib3 (<=2.0.0)"]
 docs = ["hf-doc-builder (>=0.3.0)"]
 flax = ["flax (>=0.4.1)", "jax (>=0.4.1)", "jaxlib (>=0.4.1)"]
 quality = ["hf-doc-builder (>=0.3.0)", "isort (>=5.5.4)", "ruff (==0.1.5)", "urllib3 (<=2.0.0)"]
-test = ["GitPython (<3.1.19)", "Jinja2", "compel (==0.1.8)", "datasets", "invisible-watermark (>=0.2.0)", "k-diffusion (>=0.0.12)", "librosa", "parameterized", "pytest", "pytest-timeout", "pytest-xdist", "requests-mock (==1.10.0)", "safetensors (>=0.3.1)", "scipy", "sentencepiece (>=0.1.91,!=0.1.92)", "torchvision", "transformers (>=4.41.2)"]
-torch = ["accelerate (>=0.31.0)", "torch (>=1.4)"]
-training = ["Jinja2", "accelerate (>=0.31.0)", "datasets", "peft (>=0.6.0)", "protobuf (>=3.20.3,<4)", "tensorboard"]
-
-[package.source]
-type = "git"
-url = "https://github.com/griptape-ai/diffusers.git"
-reference = "main"
-resolved_reference = "90c1f182683a9bb51e370816d063b2e3aba53fc4"
+test = ["GitPython (<3.1.19)", "Jinja2", "compel (==0.1.8)", "datasets", "invisible-watermark (>=0.2.0)", "k-diffusion (>=0.0.12)", "librosa", "parameterized", "pytest", "pytest-timeout", "pytest-xdist", "requests-mock (==1.10.0)", "safetensors (>=0.3.1)", "scipy", "sentencepiece (>=0.1.91,!=0.1.92)", "torchvision", "transformers (>=4.25.1)"]
+torch = ["accelerate (>=0.29.3)", "torch (>=1.4)"]
+training = ["Jinja2", "accelerate (>=0.29.3)", "datasets", "peft (>=0.6.0)", "protobuf (>=3.20.3,<4)", "tensorboard"]
 
 [[package]]
 name = "distlib"
@@ -6832,4 +6828,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "2b4b54981fadfbeb7fb06d2b481cdaa7b5b7c9238efd811419cda21340897ce6"
+content-hash = "0f9ce9192af9125e85a27ba269786ee49254e2f139965d37aa2599e8ae8e2dca"

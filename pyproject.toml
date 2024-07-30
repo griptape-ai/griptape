@@ -59,7 +59,7 @@ opentelemetry-api = {version = "^1.25.0", optional = true}
 opentelemetry-instrumentation = {version = "^0.46b0", optional = true}
 opentelemetry-instrumentation-threading = {version = "^0.46b0", optional = true}
 opentelemetry-exporter-otlp-proto-http = {version = "^1.25.0", optional = true}
-diffusers = {git = "https://github.com/griptape-ai/diffusers.git", branch = "main", optional = true}
+diffusers = {version = "^0.29.1", optional = true}
 accelerate = {version = "^0.32.1", optional = true}
 sentencepiece = {version = "^0.2.0", optional = true}
 torch = {version = "^2.3.1", optional = true}
