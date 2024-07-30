@@ -22,6 +22,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `@observable` decorator for selecting which functions/methods to provide observability for.
 - `GenericArtifact` for storing any data.
 - `BaseTextArtifact` for text-based Artifacts to subclass.
+- `HuggingFacePipelineImageGenerationDriver` for generating images locally with HuggingFace pipelines.
+- `BaseImageGenerationPipelineDriver` as the base class for drivers interfacing with HuggingFace image generation pipelines.
+- `StableDiffusion3ImageGenerationPipelineDriver` for local text-to-image generation using a Stable Diffusion 3 pipeline.
+- `StableDiffusion3Img2ImgImageGenerationPipelineDriver` for local image-to-image generation using a Stable Diffusion 3 pipeline.
+- `StableDiffusion3ControlNetImageGenerationPipelineDriver` for local ControlNet image generation using a Stable Diffusion 3 pipeline.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
