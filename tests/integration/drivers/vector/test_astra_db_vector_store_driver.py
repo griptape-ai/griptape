@@ -14,13 +14,6 @@ TEST_COLLECTION_NAME = "gt_int_test"
 TEST_COLLECTION_NAME_METRIC = "gt_int_test_dot"
 
 
-def astrapy_available() -> bool:
-    try:
-        return True
-    except Exception:
-        return False
-
-
 def astra_db_available() -> bool:
     return all(
         [
@@ -28,10 +21,6 @@ def astra_db_available() -> bool:
             "ASTRA_DB_API_ENDPOINT" in os.environ,
         ]
     )
-
-
-def _descore_entry(entry: BaseVectorStoreDriver.Entry) -> BaseVectorStoreDriver.Entry:
-    return BaseVectorStoreDriver.Entry.from_dict({k: v for k, v in entry.__dict__.items() if k != "score"})
 
 
 @define
@@ -52,9 +41,11 @@ class ParserEmbeddingDriver(BaseEmbeddingDriver):
         return (vector2d + [0] * (self.dimensions))[: self.dimensions]
 
 
-@pytest.mark.skipif(not astrapy_available(), reason="Package astrapy not installed")
 @pytest.mark.skipif(not astra_db_available(), reason="No connection info for Astra DB")
 class TestAstraDBVectorStoreDriver:
+    def _descore_entry(self, entry: BaseVectorStoreDriver.Entry) -> BaseVectorStoreDriver.Entry:
+        return BaseVectorStoreDriver.Entry.from_dict({k: v for k, v in entry.__dict__.items() if k != "score"})
+
     @pytest.fixture()
     def embedding_driver(self):
         return ParserEmbeddingDriver()
@@ -66,6 +57,7 @@ class TestAstraDBVectorStoreDriver:
             token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
             collection_name=TEST_COLLECTION_NAME,
             astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
+            dimension=2,
             embedding_driver=embedding_driver,
         )
         return driver
@@ -149,12 +141,12 @@ class TestAstraDBVectorStoreDriver:
         query_2_novectors = vector_store_driver.query("0.060", count=2)
         query_all_ns = vector_store_driver.query("0.060", include_vectors=True, namespace="ns")
         #
-        d_query_2 = [_descore_entry(ent) for ent in query_2]
+        d_query_2 = [self._descore_entry(ent) for ent in query_2]
         assert d_query_2 == [e3, e2]
 
-        d_query_all = [_descore_entry(ent) for ent in query_all]
+        d_query_all = [self._descore_entry(ent) for ent in query_all]
         assert d_query_all == [e3, e2, e1]
-        d_query_2_novectors = [_descore_entry(ent) for ent in query_2_novectors]
+        d_query_2_novectors = [self._descore_entry(ent) for ent in query_2_novectors]
         assert d_query_2_novectors == [
             BaseVectorStoreDriver.Entry(
                 id=id3,
@@ -164,10 +156,10 @@ class TestAstraDBVectorStoreDriver:
                 namespace="ns",
             ),
         ]
-        d_query_all_ns = [_descore_entry(ent) for ent in query_all_ns]
+        d_query_all_ns = [self._descore_entry(ent) for ent in query_all_ns]
         assert d_query_all_ns == [e2]
 
-    def test_explicit_dimension(self, vector_store_driver, embedding_driver):
+    def test_mismatched_dimension(self, vector_store_driver, embedding_driver):
         AstraDBVectorStoreDriver(
             api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
             token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
@@ -197,7 +189,7 @@ class TestAstraDBVectorStoreDriver:
                 token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
                 collection_name=TEST_COLLECTION_NAME_METRIC,
                 astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
-                dimension=123,
+                dimension=2,
                 metric="p-adic-norm",
                 embedding_driver=embedding_driver,
             )

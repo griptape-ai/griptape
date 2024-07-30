@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import logging
-import warnings
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
@@ -12,19 +10,6 @@ from griptape.utils import import_optional_dependency
 if TYPE_CHECKING:
     from astrapy import Collection
     from astrapy.authentication import TokenProvider
-
-GRIPTAPE_VERSION: Optional[str]
-try:
-    from importlib import metadata
-
-    GRIPTAPE_VERSION = metadata.version("griptape")
-except Exception:
-    GRIPTAPE_VERSION = None
-
-logging.basicConfig(level=logging.WARNING)
-
-
-COLLECTION_INDEXING = {"deny": ["meta.artifact"]}
 
 
 @define
@@ -38,7 +23,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
         collection_name: the name of the collection on Astra DB.
         environment: the environment ("prod", "hcd", ...) hosting the target Data API.
             It can be omitted for production Astra DB targets. See `astrapy.constants.Environment` for allowed values.
-        dimension: the number of components for embedding vectors. If not provided, it will be guessed from the embedding driver.
+        dimension: the number of components for embedding vectors
         metric: the similarity metric to use, one of "dot_product", "euclidean" or "cosine".
             If omitted, the server default ("cosine") will be used. See also values of `astrapy.constants.VectorMetric`.
             If the vectors are normalized to unit norm, choosing "dot_product" over cosine yields up to 2x speedup in searches.
@@ -50,21 +35,18 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
     token: Optional[str | TokenProvider] = field(kw_only=True, default=None, metadata={"serializable": False})
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     environment: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
-    dimension: Optional[int] = field(kw_only=True, default=None, metadata={"serializable": True})
+    dimension: int = field(kw_only=True, metadata={"serializable": True})
     metric: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     astra_db_namespace: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     collection: Collection = field(init=False)
+    COLLECTION_INDEXING = {"deny": ["meta.artifact"]}
 
     def __attrs_post_init__(self) -> None:
         astrapy = import_optional_dependency("astrapy")
-        if not self.dimension:
-            # auto-compute dimension from the embedding
-            self.dimension = len(self.embedding_driver.embed_string("This is a sample text."))
         self.collection = (
             astrapy.DataAPIClient(
                 caller_name="griptape",
-                caller_version=GRIPTAPE_VERSION,
                 environment=self.environment,
             )
             .get_database(
@@ -76,7 +58,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
                 name=self.collection_name,
                 dimension=self.dimension,
                 metric=self.metric,
-                indexing=COLLECTION_INDEXING,
+                indexing=self.COLLECTION_INDEXING,
                 check_exists=False,
             )
         )
@@ -115,12 +97,6 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             the ID of the written vector (str).
         """
-        if kwargs:
-            warnings.warn(
-                "Unhandled keyword argument(s) provided to AstraDBVectorStore.upsert_vector: "
-                f"'{','.join(sorted(kwargs.keys()))}'. These will be ignored.",
-                stacklevel=2,
-            )
         document = {
             k: v
             for k, v in {"$vector": vector, "_id": vector_id, "namespace": namespace, "meta": meta}.items()
@@ -145,7 +121,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
         """
         find_filter = {k: v for k, v in {"_id": vector_id, "namespace": namespace}.items() if v is not None}
         match = self.collection.find_one(filter=find_filter, projection={"*": 1})
-        if match:
+        if match is not None:
             return BaseVectorStoreDriver.Entry(
                 id=match["_id"], vector=match.get("$vector"), meta=match.get("meta"), namespace=match.get("namespace")
             )
@@ -193,13 +169,7 @@ class AstraDBVectorStoreDriver(BaseVectorStoreDriver):
             A list of vector (`BaseVectorStoreDriver.Entry`) entries,
             with their `score` attribute set to the vector similarity to the query.
         """
-        query_filter: Optional[dict[str, Any]] = kwargs.pop("filter", None)
-        if kwargs:
-            warnings.warn(
-                "Unhandled keyword argument(s) provided to AstraDBVectorStore.query: "
-                f"'{','.join(sorted(kwargs.keys()))}'. These will be ignored.",
-                stacklevel=2,
-            )
+        query_filter: Optional[dict[str, Any]] = kwargs.get("filter")
         find_filter_ns: dict[str, Any] = {} if namespace is None else {"namespace": namespace}
         find_filter = {**(query_filter or {}), **find_filter_ns}
         find_projection: Optional[dict[str, int]] = {"*": 1} if include_vectors else None
