@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import math
 import os
-from typing import Optional
 
 import pytest
 
@@ -30,15 +29,15 @@ class TestAstraDBVectorStoreDriver:
 
     @pytest.fixture()
     def embedding_driver(self):
-        def circle_fraction_string_to_vector(chunk: str) -> Optional[list[float]]:
+        def circle_fraction_string_to_vector(chunk: str) -> list[float]:
             try:
                 fraction = float(json.loads(chunk))
                 angle = fraction * math.pi * 2
                 return [math.cos(angle), math.sin(angle)]
             except Exception:
-                return None
+                return [0.0, 0.0]
 
-        return MockEmbeddingDriver(mock_output_function=circle_fraction_string_to_vector)
+        return MockEmbeddingDriver(mock_output=circle_fraction_string_to_vector)
 
     @pytest.fixture()
     def vector_store_driver(self, embedding_driver):
