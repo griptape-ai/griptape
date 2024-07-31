@@ -105,10 +105,12 @@ class BaseTool(ActivityMixin, ABC):
             }
 
             activity_schema = self.activity_schema(activity)
-            if activity_schema is not None:
-                schema_dict[Literal("input")] = activity_schema.schema
-            else:
+            # If no schema is defined, we just make `input` optional instead of omitting it.
+            # This works better with lower-end models that may accidentally pass in an empty dict.
+            if activity_schema is None:
                 schema_dict[schema.Optional("input")] = {}
+            else:
+                schema_dict[Literal("input")] = activity_schema.schema
 
             schemas.append(Schema(schema_dict))
 
