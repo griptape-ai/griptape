@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 @define
 class PromptStack(SerializableMixin):
-    messages: list[Message] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    messages: list[Message] = field(factory=list, metadata={"serializable": True})
     tools: list[BaseTool] = field(factory=list, kw_only=True)
 
     @property

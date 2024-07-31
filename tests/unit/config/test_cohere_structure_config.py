@@ -12,7 +12,6 @@ class TestCohereStructureConfig:
         assert config.to_dict() == {
             "type": "CohereStructureConfig",
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-            "image_query_driver": {"type": "DummyImageQueryDriver"},
             "conversation_memory_driver": None,
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},

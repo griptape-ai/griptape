@@ -655,48 +655,6 @@ pipeline.add_task(
 pipeline.run("An image of a mountain shrouded by clouds")
 ```
 
-## Image Query Task
-
-The [Image Query Task](../../reference/griptape/tasks/image_query_task.md) performs a natural language query on one or more input images. This Task uses an [Image Query Engine](../engines/image-query-engines.md) configured with an [Image Query Driver](../drivers/image-query-drivers.md) to perform the query. The functionality provided by this Task depend on the capabilities of the model provided by the Driver.
-
-This Task accepts two inputs: a query (represented by either a string or a [Text Artifact](../data/artifacts.md#textartifact)) and a list of [Image Artifacts](../data/artifacts.md#imageartifact) or a Callable returning these two values.
-
-```python
-from griptape.engines import ImageQueryEngine
-from griptape.drivers import OpenAiImageQueryDriver
-from griptape.tasks import ImageQueryTask
-from griptape.loaders import ImageLoader
-from griptape.structures import Pipeline
-
-# Create a driver configured to use OpenAI's GPT-4 Vision model.
-driver = OpenAiImageQueryDriver(
-    model="gpt-4o",
-    max_tokens=100,
-)
-
-# Create an engine configured to use the driver.
-engine = ImageQueryEngine(
-    image_query_driver=driver,
-)
-
-# Load the input image artifact.
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact = ImageLoader().load(f.read())
-
-# Instantiate a pipeline.
-pipeline = Pipeline()
-
-# Add an ImageQueryTask to the pipeline.
-pipeline.add_task(
-    ImageQueryTask(
-        input=("{{ args[0] }}", [image_artifact]),
-        image_query_engine=engine,
-    )
-)
-
-pipeline.run("Describe the weather in the image")
-```
-
 ## Structure Run Task
 The [Structure Run Task](../../reference/griptape/tasks/structure_run_task.md) runs another Structure with a given input.
 This Task is useful for orchestrating multiple specialized Structures in a single run. Note that the input to the Task is a tuple of arguments that will be passed to the Structure.

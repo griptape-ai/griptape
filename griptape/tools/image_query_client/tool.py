@@ -7,18 +7,19 @@ from attrs import Factory, define, field
 from schema import Literal, Schema
 
 from griptape.artifacts import BlobArtifact, ErrorArtifact, ImageArtifact, TextArtifact
+from griptape.common import ImageMessageContent, Message, PromptStack, TextMessageContent
 from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils import load_artifact_from_memory
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.engines import ImageQueryEngine
+    from griptape.drivers import BasePromptDriver
 
 
 @define
 class ImageQueryClient(BaseTool):
-    image_query_engine: ImageQueryEngine = field(kw_only=True)
+    prompt_driver: BasePromptDriver = field(kw_only=True)
     image_loader: ImageLoader = field(default=Factory(lambda: ImageLoader()), kw_only=True)
 
     @activity(
@@ -36,14 +37,31 @@ class ImageQueryClient(BaseTool):
         },
     )
     def query_image_from_disk(self, params: dict) -> TextArtifact | ErrorArtifact:
-        query = params["values"]["query"]
+        query: str = params["values"]["query"]
         image_paths = params["values"]["image_paths"]
 
-        image_artifacts = []
+        image_artifacts: list[ImageArtifact] = []
         for image_path in image_paths:
             image_artifacts.append(self.image_loader.load(Path(image_path).read_bytes()))
 
-        return self.image_query_engine.run(query, image_artifacts)
+        output = self.prompt_driver.run(
+            PromptStack(
+                [
+                    Message(
+                        content=[
+                            *[ImageMessageContent(image_artifact) for image_artifact in image_artifacts],
+                            TextMessageContent(TextArtifact(query)),
+                        ],
+                        role=Message.USER_ROLE,
+                    )
+                ]
+            )
+        ).to_artifact()
+
+        if isinstance(output, (TextArtifact, ErrorArtifact)):
+            return output
+        else:
+            raise Exception("Invalid output type")
 
     @activity(
         config={
@@ -95,4 +113,21 @@ class ImageQueryClient(BaseTool):
             except Exception as e:
                 return ErrorArtifact(str(e))
 
-        return self.image_query_engine.run(query, image_artifacts)
+        output = self.prompt_driver.run(
+            PromptStack(
+                [
+                    Message(
+                        content=[
+                            *[ImageMessageContent(image_artifact) for image_artifact in image_artifacts],
+                            TextMessageContent(TextArtifact(query)),
+                        ],
+                        role=Message.USER_ROLE,
+                    )
+                ]
+            )
+        ).to_artifact()
+
+        if isinstance(output, (TextArtifact, ErrorArtifact)):
+            return output
+        else:
+            raise Exception("Invalid output type")

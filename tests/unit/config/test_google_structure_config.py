@@ -27,7 +27,6 @@ class TestGoogleStructureConfig:
                 "use_native_tools": True,
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-            "image_query_driver": {"type": "DummyImageQueryDriver"},
             "embedding_driver": {
                 "type": "GoogleEmbeddingDriver",
                 "model": "models/embedding-001",

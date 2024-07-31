@@ -5,7 +5,6 @@ from griptape.drivers import (
     BaseAudioTranscriptionDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
-    BaseImageQueryDriver,
     BasePromptDriver,
     BaseTextToSpeechDriver,
     BaseVectorStoreDriver,
@@ -14,7 +13,6 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
     OpenAiImageGenerationDriver,
-    OpenAiImageQueryDriver,
     OpenAiTextToSpeechDriver,
 )
 
@@ -28,11 +26,6 @@ class OpenAiStructureConfig(StructureConfig):
     )
     image_generation_driver: BaseImageGenerationDriver = field(
         default=Factory(lambda: OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512")),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
-    image_query_driver: BaseImageQueryDriver = field(
-        default=Factory(lambda: OpenAiImageQueryDriver(model="gpt-4o")),
         kw_only=True,
         metadata={"serializable": True},
     )
