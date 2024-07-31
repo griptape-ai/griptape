@@ -509,7 +509,7 @@ vector_store_driver = AstraDbVectorStoreDriver(
     embedding_driver=embedding_driver,
     api_endpoint=api_endpoint,
     token=token,
-    collection_name="astra_db_demo",
+    collection_name="griptape_test_collection",
     astra_db_namespace=astra_db_namespace,  # optional
 )
 
