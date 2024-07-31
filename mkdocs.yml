@@ -170,5 +170,6 @@ nav:
           - Load and Query Pinecone: "examples/load-and-query-pinecone.md"
           - Load and Query Marqo: "examples/load-query-and-chat-marqo.md"
           - Query a Webpage: "examples/query-webpage.md"
+          - RAG with Astra DB vector store: "examples/query-webpage-astra-db.md"
   - Reference Guide: "reference/"
   - Trade School: "https://learn.griptape.ai"

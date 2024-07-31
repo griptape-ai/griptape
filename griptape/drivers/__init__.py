@@ -41,6 +41,7 @@ from .vector.pgvector_vector_store_driver import PgVectorVectorStoreDriver
 from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDriver
 from .vector.dummy_vector_store_driver import DummyVectorStoreDriver
 from .vector.qdrant_vector_store_driver import QdrantVectorStoreDriver
+from .vector.astradb_vector_store_driver import AstraDbVectorStoreDriver
 from .vector.griptape_cloud_knowledge_base_vector_store_driver import GriptapeCloudKnowledgeBaseVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
@@ -171,6 +172,7 @@ __all__ = [
     "AmazonOpenSearchVectorStoreDriver",
     "PgVectorVectorStoreDriver",
     "QdrantVectorStoreDriver",
+    "AstraDbVectorStoreDriver",
     "DummyVectorStoreDriver",
     "GriptapeCloudKnowledgeBaseVectorStoreDriver",
     "BaseSqlDriver",
