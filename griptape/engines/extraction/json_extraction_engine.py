@@ -61,10 +61,10 @@ class JsonExtractionEngine(BaseExtractionEngine):
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
-        if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
+        if self.prompt_engine.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
             extractions.extend(
                 self.json_to_text_artifacts(
-                    self.prompt_driver.run(PromptStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value,
+                    self.prompt_engine.run(PromptStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value,
                 ),
             )
 
@@ -79,7 +79,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
 
             extractions.extend(
                 self.json_to_text_artifacts(
-                    self.prompt_driver.run(PromptStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value,
+                    self.prompt_engine.run(PromptStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value,
                 ),
             )
 

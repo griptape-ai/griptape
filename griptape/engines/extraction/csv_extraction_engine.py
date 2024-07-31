@@ -66,10 +66,10 @@ class CsvExtractionEngine(BaseExtractionEngine):
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
-        if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
+        if self.prompt_engine.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
             rows.extend(
                 self.text_to_csv_rows(
-                    self.prompt_driver.run(PromptStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value,
+                    self.prompt_engine.run(PromptStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value,
                     column_names,
                 ),
             )
@@ -85,7 +85,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
 
             rows.extend(
                 self.text_to_csv_rows(
-                    self.prompt_driver.run(PromptStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value,
+                    self.prompt_engine.run(PromptStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value,
                     column_names,
                 ),
             )

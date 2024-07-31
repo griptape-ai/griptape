@@ -9,21 +9,21 @@ from griptape.engines.rag.modules import BaseResponseRagModule
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers import BasePromptDriver
+    from griptape.engines import PromptEngine
     from griptape.engines.rag import RagContext
 
 
 @define(kw_only=True)
 class PromptResponseRagModule(BaseResponseRagModule):
     answer_token_offset: int = field(default=400)
-    prompt_driver: BasePromptDriver = field()
+    prompt_engine: PromptEngine = field()
     generate_system_template: Callable[[RagContext, list[TextArtifact]], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
     )
 
     def run(self, context: RagContext) -> RagContext:
         query = context.query
-        tokenizer = self.prompt_driver.tokenizer
+        tokenizer = self.prompt_engine.tokenizer
         included_chunks = []
         system_prompt = self.generate_system_template(context, included_chunks)
 
@@ -31,8 +31,10 @@ class PromptResponseRagModule(BaseResponseRagModule):
             included_chunks.append(artifact)
 
             system_prompt = self.generate_system_template(context, included_chunks)
-            message_token_count = self.prompt_driver.tokenizer.count_tokens(
-                self.prompt_driver.prompt_stack_to_string(self.generate_query_prompt_stack(system_prompt, query)),
+            message_token_count = self.prompt_engine.tokenizer.count_tokens(
+                self.prompt_engine.prompt_driver.prompt_stack_to_string(
+                    self.generate_query_prompt_stack(system_prompt, query)
+                ),
             )
 
             if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:
@@ -42,7 +44,7 @@ class PromptResponseRagModule(BaseResponseRagModule):
 
                 break
 
-        output = self.prompt_driver.run(self.generate_query_prompt_stack(system_prompt, query)).to_artifact()
+        output = self.prompt_engine.run(self.generate_query_prompt_stack(system_prompt, query)).to_artifact()
 
         if isinstance(output, TextArtifact):
             context.output = output

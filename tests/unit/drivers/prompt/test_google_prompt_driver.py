@@ -148,14 +148,14 @@ class TestGooglePromptDriver:
         assert driver
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_generative_model, prompt_stack, messages, use_native_tools):
+    def test_run(self, mock_generative_model, prompt_stack, messages, use_native_tools):
         # Given
         driver = GooglePromptDriver(
             model="gemini-pro", api_key="api-key", top_p=0.5, top_k=50, use_native_tools=use_native_tools
         )
 
         # When
-        message = driver.try_run(prompt_stack)
+        message = driver.run(prompt_stack)
 
         # Then
         if prompt_stack.system_messages:
@@ -185,14 +185,14 @@ class TestGooglePromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream(self, mock_stream_generative_model, prompt_stack, messages, use_native_tools):
+    def test_stream(self, mock_stream_generative_model, prompt_stack, messages, use_native_tools):
         # Given
         driver = GooglePromptDriver(
-            model="gemini-pro", api_key="api-key", stream=True, top_p=0.5, top_k=50, use_native_tools=use_native_tools
+            model="gemini-pro", api_key="api-key", top_p=0.5, top_k=50, use_native_tools=use_native_tools
         )
 
         # When
-        stream = driver.try_stream(prompt_stack)
+        stream = driver.stream(prompt_stack)
 
         # Then
         event = next(stream)

@@ -68,9 +68,9 @@ class OllamaPromptDriver(BasePromptDriver):
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
 
-    @observable
-    def try_run(self, prompt_stack: PromptStack) -> Message:
-        response = self.client.chat(**self._base_params(prompt_stack))
+    @observable(tags=["PromptDriver.run()"])
+    def run(self, prompt_stack: PromptStack) -> Message:
+        response = self.client.chat(**self._base_params(prompt_stack, stream=False))
 
         if isinstance(response, dict):
             return Message(
@@ -80,9 +80,9 @@ class OllamaPromptDriver(BasePromptDriver):
         else:
             raise Exception("invalid model response")
 
-    @observable
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        stream = self.client.chat(**self._base_params(prompt_stack), stream=True)
+    @observable(tags=["PromptDriver.stream()"])
+    def stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+        stream = self.client.chat(**self._base_params(prompt_stack, stream=True))
 
         if isinstance(stream, Iterator):
             for chunk in stream:
@@ -90,7 +90,7 @@ class OllamaPromptDriver(BasePromptDriver):
         else:
             raise Exception("invalid model response")
 
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
+    def _base_params(self, prompt_stack: PromptStack, *, stream: bool) -> dict:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
         return {
@@ -101,9 +101,10 @@ class OllamaPromptDriver(BasePromptDriver):
                 {"tools": self.__to_ollama_tools(prompt_stack.tools)}
                 if prompt_stack.tools
                 and self.use_native_tools
-                and not self.stream  # Tool calling is only supported when not streaming
+                and not stream  # Tool calling is only supported when not streaming
                 else {}
             ),
+            **({"stream": True} if stream else {}),
         }
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:

@@ -67,7 +67,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert AzureOpenAiChatPromptDriver(azure_endpoint="foobar", model="gpt-4").azure_deployment == "gpt-4"
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_chat_completion_create, prompt_stack, messages, use_native_tools):
+    def test_run(self, mock_chat_completion_create, prompt_stack, messages, use_native_tools):
         # Given
         driver = AzureOpenAiChatPromptDriver(
             azure_endpoint="endpoint",
@@ -77,7 +77,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
 
         # When
-        message = driver.try_run(prompt_stack)
+        message = driver.run(prompt_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
@@ -96,18 +96,17 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert message.value[1].value.input == {"foo": "bar"}
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages, use_native_tools):
+    def test_stream(self, mock_chat_completion_stream_create, prompt_stack, messages, use_native_tools):
         # Given
         driver = AzureOpenAiChatPromptDriver(
             azure_endpoint="endpoint",
             azure_deployment="deployment-id",
             model="gpt-4",
-            stream=True,
             use_native_tools=use_native_tools,
         )
 
         # When
-        stream = driver.try_stream(prompt_stack)
+        stream = driver.stream(prompt_stack)
         event = next(stream)
 
         # Then

@@ -234,19 +234,25 @@ class TestAgent:
         prompt_driver = MockPromptDriver()
         embedding_driver = MockEmbeddingDriver()
         agent = Agent(prompt_driver=prompt_driver, embedding_driver=embedding_driver)
+        assert agent.prompt_engine.prompt_driver == prompt_driver
 
         storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
 
-        assert storage.rag_engine.response_stage.response_module.prompt_driver == prompt_driver
+        assert storage.rag_engine.response_stage.response_module.prompt_engine.prompt_driver == prompt_driver
         assert (
             storage.rag_engine.retrieval_stage.retrieval_modules[0].vector_store_driver.embedding_driver
             == embedding_driver
         )
         assert isinstance(storage.summary_engine, PromptSummaryEngine)
-        assert storage.summary_engine.prompt_driver == prompt_driver
-        assert storage.csv_extraction_engine.prompt_driver == prompt_driver
-        assert storage.json_extraction_engine.prompt_driver == prompt_driver
+        assert storage.summary_engine.prompt_engine == agent.prompt_engine
+        assert storage.summary_engine.prompt_engine.prompt_driver == prompt_driver
+
+        assert storage.csv_extraction_engine.prompt_engine == agent.prompt_engine
+        assert storage.csv_extraction_engine.prompt_engine.prompt_driver == prompt_driver
+
+        assert storage.json_extraction_engine.prompt_engine == agent.prompt_engine
+        assert storage.json_extraction_engine.prompt_engine.prompt_driver == prompt_driver
 
     def test_deprecation(self):
         with pytest.deprecated_call():

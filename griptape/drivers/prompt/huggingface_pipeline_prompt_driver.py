@@ -47,8 +47,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         ),
     )
 
-    @observable
-    def try_run(self, prompt_stack: PromptStack) -> Message:
+    @observable(tags=["PromptDriver.run()"])
+    def run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
         result = self.pipe(
@@ -76,8 +76,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         else:
             raise Exception("invalid output format")
 
-    @observable
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+    @observable(tags=["PromptDriver.stream()"])
+    def stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         raise NotImplementedError("streaming is not supported")
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:

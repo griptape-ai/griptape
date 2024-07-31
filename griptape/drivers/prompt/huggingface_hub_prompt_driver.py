@@ -50,8 +50,8 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    @observable
-    def try_run(self, prompt_stack: PromptStack) -> Message:
+    @observable(tags=["PromptDriver.run()"])
+    def run(self, prompt_stack: PromptStack) -> Message:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(
@@ -69,8 +69,8 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
-    @observable
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+    @observable(tags=["PromptDriver.stream()"])
+    def stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
 
         response = self.client.text_generation(

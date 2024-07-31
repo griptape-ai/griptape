@@ -37,49 +37,49 @@ class TestHuggingFacePipelinePromptDriver:
     def test_init(self):
         assert HuggingFacePipelinePromptDriver(model="gpt2", max_tokens=42)
 
-    def test_try_run(self, prompt_stack):
+    def test_run(self, prompt_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
 
         # When
-        message = driver.try_run(prompt_stack)
+        message = driver.run(prompt_stack)
 
         # Then
         assert message.value == "model-output"
         assert message.usage.input_tokens == 3
         assert message.usage.output_tokens == 3
 
-    def test_try_stream(self, prompt_stack):
+    def test_stream(self, prompt_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_stream(prompt_stack)
+            driver.stream(prompt_stack)
 
         assert e.value.args[0] == "streaming is not supported"
 
     @pytest.mark.parametrize("choices", [[], [1, 2]])
-    def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_generator, prompt_stack):
+    def test_run_throws_when_multiple_choices_returned(self, choices, mock_generator, prompt_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
         mock_generator.return_value = choices
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_run(prompt_stack)
+            driver.run(prompt_stack)
 
         # Then
         assert e.value.args[0] == "completion with more than one choice is not supported yet"
 
-    def test_try_run_throws_when_non_list(self, mock_generator, prompt_stack):
+    def test_run_throws_when_non_list(self, mock_generator, prompt_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
         mock_generator.return_value = {}
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_run(prompt_stack)
+            driver.run(prompt_stack)
 
         # Then
         assert e.value.args[0] == "invalid output format"

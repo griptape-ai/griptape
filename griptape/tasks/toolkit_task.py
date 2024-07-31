@@ -77,7 +77,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stack.add_assistant_message(self.output.to_text())
         else:
             for s in self.subtasks:
-                if self.prompt_driver.use_native_tools:
+                if self.prompt_engine.prompt_driver.use_native_tools:
                     action_calls = [
                         ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
                         for action in s.actions
@@ -130,7 +130,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
-            use_native_tools=self.prompt_driver.use_native_tools,
+            use_native_tools=self.prompt_engine.prompt_driver.use_native_tools,
             stop_sequence=self.response_stop_sequence,
         )
 
@@ -164,10 +164,10 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         self.subtasks.clear()
 
-        if self.response_stop_sequence not in self.prompt_driver.tokenizer.stop_sequences:
-            self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
+        if self.response_stop_sequence not in self.prompt_engine.tokenizer.stop_sequences:
+            self.prompt_engine.tokenizer.stop_sequences.extend([self.response_stop_sequence])
 
-        result = self.prompt_driver.run(self.prompt_stack)
+        result = self.prompt_engine.run(self.prompt_stack)
         subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
 
         while True:
@@ -182,7 +182,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                     subtask.run()
                     subtask.after_run()
 
-                    result = self.prompt_driver.run(prompt_stack=self.prompt_stack)
+                    result = self.prompt_engine.run(prompt_stack=self.prompt_stack)
                     subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
             else:
                 break

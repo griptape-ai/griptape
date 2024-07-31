@@ -32,7 +32,7 @@ class MockPromptDriver(BasePromptDriver):
     mock_input: str | Callable[[], str] = field(default="mock input", kw_only=True)
     mock_output: str | Callable[[PromptStack], str] = field(default="mock output", kw_only=True)
 
-    def try_run(self, prompt_stack: PromptStack) -> Message:
+    def run(self, prompt_stack: PromptStack) -> Message:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
         if self.use_native_tools and prompt_stack.tools:
             # Hack to simulate CoT. If there are any action messages in the prompt stack, give the answer.
@@ -69,7 +69,7 @@ class MockPromptDriver(BasePromptDriver):
                 usage=Message.Usage(input_tokens=100, output_tokens=100),
             )
 
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+    def stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
         if self.use_native_tools and prompt_stack.tools:

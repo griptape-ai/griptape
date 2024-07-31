@@ -64,12 +64,12 @@ class GooglePromptDriver(BasePromptDriver):
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
 
-    @observable
-    def try_run(self, prompt_stack: PromptStack) -> Message:
+    @observable(tags=["PromptDriver.run()"])
+    def run(self, prompt_stack: PromptStack) -> Message:
         messages = self.__to_google_messages(prompt_stack)
         response: GenerateContentResponse = self.model_client.generate_content(
             messages,
-            **self._base_params(prompt_stack),
+            **self._base_params(prompt_stack, stream=False),
         )
 
         usage_metadata = response.usage_metadata
@@ -83,12 +83,12 @@ class GooglePromptDriver(BasePromptDriver):
             ),
         )
 
-    @observable
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+    @observable(tags=["PromptDriver.stream()"])
+    def stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         messages = self.__to_google_messages(prompt_stack)
         response: GenerateContentResponse = self.model_client.generate_content(
             messages,
-            **self._base_params(prompt_stack),
+            **self._base_params(prompt_stack, stream=True),
             stream=True,
         )
 
@@ -113,7 +113,7 @@ class GooglePromptDriver(BasePromptDriver):
                     usage=DeltaMessage.Usage(output_tokens=usage_metadata.candidates_token_count),
                 )
 
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
+    def _base_params(self, prompt_stack: PromptStack, *, stream: bool) -> dict:
         types = import_optional_dependency("google.generativeai.types")
         protos = import_optional_dependency("google.generativeai.protos")
 
@@ -129,7 +129,7 @@ class GooglePromptDriver(BasePromptDriver):
                 **{
                     # For some reason, providing stop sequences when streaming breaks native functions
                     # https://github.com/google-gemini/generative-ai-python/issues/446
-                    "stop_sequences": [] if self.stream and self.use_native_tools else self.tokenizer.stop_sequences,
+                    "stop_sequences": [] if stream and self.use_native_tools else self.tokenizer.stop_sequences,
                     "max_output_tokens": self.max_tokens,
                     "temperature": self.temperature,
                     "top_p": self.top_p,

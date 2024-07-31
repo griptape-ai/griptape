@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Attribute, Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent, observable
@@ -29,7 +29,6 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
     inference_component_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
@@ -39,13 +38,8 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_stream(self, _: Attribute, stream: bool) -> None:  # noqa: FBT001
-        if stream:
-            raise ValueError("streaming is not supported")
-
-    @observable
-    def try_run(self, prompt_stack: PromptStack) -> Message:
+    @observable(tags=["PromptDriver.run()"])
+    def run(self, prompt_stack: PromptStack) -> Message:
         payload = {
             "inputs": self.prompt_stack_to_string(prompt_stack),
             "parameters": {**self._base_params(prompt_stack)},
@@ -82,8 +76,8 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
         )
 
-    @observable
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+    @observable(tags=["PromptDriver.stream()"])
+    def stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         raise NotImplementedError("streaming is not supported")
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:

@@ -19,7 +19,7 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
 )
-from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
+from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
     MetadataBeforeResponseRagModule,
@@ -28,6 +28,7 @@ from griptape.engines.rag.modules import (
     VectorStoreRetrievalRagModule,
 )
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
+from griptape.events.event_listener import EventListener
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory import TaskMemory
@@ -67,6 +68,9 @@ class Structure(ABC, EventPublisherMixin):
         ),
         kw_only=True,
     )
+    prompt_engine: PromptEngine = field(
+        default=Factory(lambda self: self.default_prompt_engine, takes_self=True), kw_only=True
+    )
     rag_engine: RagEngine = field(default=Factory(lambda self: self.default_rag_engine, takes_self=True), kw_only=True)
     task_memory: TaskMemory = field(
         default=Factory(lambda self: self.default_task_memory, takes_self=True),
@@ -96,8 +100,6 @@ class Structure(ABC, EventPublisherMixin):
     def __attrs_post_init__(self) -> None:
         if self.conversation_memory is not None:
             self.conversation_memory.structure = self
-
-        self.config.structure = self
 
         tasks = self.tasks.copy()
         self.tasks.clear()
@@ -157,15 +159,12 @@ class Structure(ABC, EventPublisherMixin):
 
     @property
     def default_config(self) -> BaseStructureConfig:
-        if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
+        if self.prompt_driver is not None or self.embedding_driver is not None:
             config = StructureConfig()
 
             prompt_driver = OpenAiChatPromptDriver(model="gpt-4o") if self.prompt_driver is None else self.prompt_driver
 
             embedding_driver = OpenAiEmbeddingDriver() if self.embedding_driver is None else self.embedding_driver
-
-            if self.stream is not None:
-                prompt_driver.stream = self.stream
 
             vector_store_driver = LocalVectorStoreDriver(embedding_driver=embedding_driver)
 
@@ -178,6 +177,14 @@ class Structure(ABC, EventPublisherMixin):
         return config
 
     @property
+    def default_prompt_engine(self) -> PromptEngine:
+        return PromptEngine(
+            prompt_driver=self.config.prompt_driver,
+            event_listeners=[EventListener(self.publish_event)],
+            stream=self.stream or False,
+        )
+
+    @property
     def default_rag_engine(self) -> RagEngine:
         return RagEngine(
             retrieval_stage=RetrievalRagStage(
@@ -188,7 +195,7 @@ class Structure(ABC, EventPublisherMixin):
                     RulesetsBeforeResponseRagModule(rulesets=self.rulesets),
                     MetadataBeforeResponseRagModule(),
                 ],
-                response_module=PromptResponseRagModule(prompt_driver=self.config.prompt_driver),
+                response_module=PromptResponseRagModule(prompt_engine=self.prompt_engine),
             ),
         )
 
@@ -200,9 +207,9 @@ class Structure(ABC, EventPublisherMixin):
                     rag_engine=self.rag_engine,
                     retrieval_rag_module_name="VectorStoreRetrievalRagModule",
                     vector_store_driver=self.config.vector_store_driver,
-                    summary_engine=PromptSummaryEngine(prompt_driver=self.config.prompt_driver),
-                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.config.prompt_driver),
-                    json_extraction_engine=JsonExtractionEngine(prompt_driver=self.config.prompt_driver),
+                    summary_engine=PromptSummaryEngine(prompt_engine=self.prompt_engine),
+                    csv_extraction_engine=CsvExtractionEngine(prompt_engine=self.prompt_engine),
+                    json_extraction_engine=JsonExtractionEngine(prompt_engine=self.prompt_engine),
                 ),
                 BlobArtifact: BlobArtifactStorage(),
             },

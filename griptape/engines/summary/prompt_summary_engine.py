@@ -12,7 +12,7 @@ from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers import BasePromptDriver
+    from griptape.engines import PromptEngine
     from griptape.rules import Ruleset
 
 
@@ -22,10 +22,10 @@ class PromptSummaryEngine(BaseSummaryEngine):
     max_token_multiplier: float = field(default=0.5, kw_only=True)
     system_template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/system.j2")), kw_only=True)
     user_template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/user.j2")), kw_only=True)
-    prompt_driver: BasePromptDriver = field(kw_only=True)
+    prompt_engine: PromptEngine = field(kw_only=True)
     chunker: BaseChunker = field(
         default=Factory(
-            lambda self: TextChunker(tokenizer=self.prompt_driver.tokenizer, max_tokens=self.max_chunker_tokens),
+            lambda self: TextChunker(tokenizer=self.prompt_engine.tokenizer, max_tokens=self.max_chunker_tokens),
             takes_self=True,
         ),
         kw_only=True,
@@ -40,13 +40,13 @@ class PromptSummaryEngine(BaseSummaryEngine):
 
     @property
     def max_chunker_tokens(self) -> int:
-        return round(self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier)
+        return round(self.prompt_engine.tokenizer.max_input_tokens * self.max_token_multiplier)
 
     @property
     def min_response_tokens(self) -> int:
         return round(
-            self.prompt_driver.tokenizer.max_input_tokens
-            - self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier,
+            self.prompt_engine.tokenizer.max_input_tokens
+            - self.prompt_engine.tokenizer.max_input_tokens * self.max_token_multiplier,
         )
 
     def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
@@ -68,10 +68,10 @@ class PromptSummaryEngine(BaseSummaryEngine):
         user_prompt = self.user_template_generator.render(text=artifacts_text)
 
         if (
-            self.prompt_driver.tokenizer.count_input_tokens_left(user_prompt + system_prompt)
+            self.prompt_engine.tokenizer.count_input_tokens_left(user_prompt + system_prompt)
             >= self.min_response_tokens
         ):
-            result = self.prompt_driver.run(
+            result = self.prompt_engine.run(
                 PromptStack(
                     messages=[
                         Message(system_prompt, role=Message.SYSTEM_ROLE),
@@ -91,7 +91,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
 
             return self.summarize_artifacts_rec(
                 chunks[1:],
-                self.prompt_driver.run(
+                self.prompt_engine.run(
                     PromptStack(
                         messages=[
                             Message(system_prompt, role=Message.SYSTEM_ROLE),

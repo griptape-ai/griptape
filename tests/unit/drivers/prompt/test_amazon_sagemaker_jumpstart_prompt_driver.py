@@ -35,7 +35,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
     def test_init(self):
         assert AmazonSageMakerJumpstartPromptDriver(endpoint="foo", model="bar")
 
-    def test_try_run(self, mock_client):
+    def test_run(self, mock_client):
         # Given
         driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
         prompt_stack = PromptStack()
@@ -44,7 +44,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         # When
         response_body = [{"generated_text": "foobar"}]
         mock_client.invoke_endpoint.return_value = {"Body": to_streaming_body(response_body)}
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = driver.run(prompt_stack)
         assert isinstance(driver.tokenizer, HuggingFaceTokenizer)
 
         # Then
@@ -74,7 +74,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
         # When
         response_body = {"generated_text": "foobar"}
         mock_client.invoke_endpoint.return_value = {"Body": to_streaming_body(response_body)}
-        text_artifact = driver.try_run(prompt_stack)
+        text_artifact = driver.run(prompt_stack)
         assert isinstance(driver.tokenizer, HuggingFaceTokenizer)
 
         # Then
@@ -99,7 +99,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
 
         assert text_artifact.value == "foobar"
 
-    def test_try_stream(self, mock_client):
+    def test_stream(self, mock_client):
         # Given
         driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
         prompt_stack = PromptStack()
@@ -107,23 +107,12 @@ class TestAmazonSageMakerJumpstartPromptDriver:
 
         # When
         with pytest.raises(NotImplementedError) as e:
-            driver.try_stream(prompt_stack)
+            driver.stream(prompt_stack)
 
         # Then
         assert e.value.args[0] == "streaming is not supported"
 
-    def test_stream_init(self):
-        # Given
-        driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
-
-        # When
-        with pytest.raises(ValueError) as e:
-            driver.stream = True
-
-        # Then
-        assert e.value.args[0] == "streaming is not supported"
-
-    def test_try_run_throws_on_empty_response(self, mock_client):
+    def test_run_throws_on_empty_response(self, mock_client):
         # Given
         driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
         mock_client.invoke_endpoint.return_value = {"Body": to_streaming_body([])}
@@ -132,7 +121,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_run(prompt_stack)
+            driver.run(prompt_stack)
 
         # Then
         assert e.value.args[0] == "model response is empty"

@@ -53,16 +53,16 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
             action_schema=utils.minify_json(json.dumps(self.tool.schema())),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
-            use_native_tools=self.prompt_driver.use_native_tools,
+            use_native_tools=self.prompt_engine.prompt_driver.use_native_tools,
         )
 
     def actions_schema(self) -> Schema:
         return self._actions_schema_for_tools([self.tool])
 
     def run(self) -> BaseArtifact:
-        result = self.prompt_driver.run(prompt_stack=self.prompt_stack)
+        result = self.prompt_engine.run(prompt_stack=self.prompt_stack)
 
-        if self.prompt_driver.use_native_tools:
+        if self.prompt_engine.prompt_driver.use_native_tools:
             subtask_input = result.to_artifact()
         else:
             action_matches = re.findall(self.ACTION_PATTERN, result.to_text(), re.DOTALL)

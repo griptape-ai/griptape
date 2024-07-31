@@ -184,12 +184,12 @@ class TestOllamaPromptDriver:
         assert OllamaPromptDriver(model="llama")
 
     @pytest.mark.parametrize("use_native_tools", [True])
-    def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools):
+    def test_run(self, mock_client, prompt_stack, messages, use_native_tools):
         # Given
         driver = OllamaPromptDriver(model="llama")
 
         # When
-        message = driver.try_run(prompt_stack)
+        message = driver.run(prompt_stack)
 
         # Then
         mock_client.return_value.chat.assert_called_once_with(
@@ -210,7 +210,7 @@ class TestOllamaPromptDriver:
         assert message.value[1].value.path == "test"
         assert message.value[1].value.input == {"foo": "bar"}
 
-    def test_try_run_bad_response(self, mock_client):
+    def test_run_bad_response(self, mock_client):
         # Given
         prompt_stack = PromptStack()
         driver = OllamaPromptDriver(model="llama")
@@ -218,9 +218,9 @@ class TestOllamaPromptDriver:
 
         # When/Then
         with pytest.raises(Exception, match="invalid model response"):
-            driver.try_run(prompt_stack)
+            driver.run(prompt_stack)
 
-    def test_try_stream_run(self, mock_stream_client):
+    def test_stream(self, mock_stream_client):
         # Given
         prompt_stack = PromptStack()
         prompt_stack.add_system_message("system-input")
@@ -237,10 +237,10 @@ class TestOllamaPromptDriver:
             {"role": "user", "content": "user-input", "images": ["aW1hZ2UtZGF0YQ=="]},
             {"role": "assistant", "content": "assistant-input"},
         ]
-        driver = OllamaPromptDriver(model="llama", stream=True)
+        driver = OllamaPromptDriver(model="llama")
 
         # When
-        text_artifact = next(driver.try_stream(prompt_stack))
+        text_artifact = next(driver.stream(prompt_stack))
 
         # Then
         mock_stream_client.return_value.chat.assert_called_once_with(
@@ -252,12 +252,12 @@ class TestOllamaPromptDriver:
         if isinstance(text_artifact, TextDeltaMessageContent):
             assert text_artifact.text == "model-output"
 
-    def test_try_stream_bad_response(self, mock_stream_client):
+    def test_stream_bad_response(self, mock_stream_client):
         # Given
         prompt_stack = PromptStack()
-        driver = OllamaPromptDriver(model="llama", stream=True)
+        driver = OllamaPromptDriver(model="llama")
         mock_stream_client.return_value.chat.return_value = "bad-response"
 
         # When/Then
         with pytest.raises(Exception, match="invalid model response"):
-            next(driver.try_stream(prompt_stack))
+            next(driver.stream(prompt_stack))

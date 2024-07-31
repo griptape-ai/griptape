@@ -11,14 +11,14 @@ from griptape.memory.structure import ConversationMemory
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers import BasePromptDriver
+    from griptape.engines import PromptEngine
     from griptape.memory.structure import Run
 
 
 @define
 class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
-    _prompt_driver: BasePromptDriver = field(kw_only=True, default=None, alias="prompt_driver")
+    _prompt_engine: PromptEngine = field(kw_only=True, default=None, alias="prompt_engine")
     summary: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     summary_index: int = field(default=0, kw_only=True, metadata={"serializable": True})
     summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
@@ -28,17 +28,17 @@ class SummaryConversationMemory(ConversationMemory):
     )
 
     @property
-    def prompt_driver(self) -> BasePromptDriver:
-        if self._prompt_driver is None:
+    def prompt_engine(self) -> PromptEngine:
+        if self._prompt_engine is None:
             if self.structure is not None:
-                self._prompt_driver = self.structure.config.prompt_driver
+                self._prompt_engine = self.structure.prompt_engine
             else:
-                raise ValueError("Prompt Driver is not set.")
-        return self._prompt_driver
+                raise ValueError("Prompt Engine is not set.")
+        return self._prompt_engine
 
-    @prompt_driver.setter
-    def prompt_driver(self, value: BasePromptDriver) -> None:
-        self._prompt_driver = value
+    @prompt_engine.setter
+    def prompt_engine(self, value: PromptEngine) -> None:
+        self._prompt_engine = value
 
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()
@@ -78,7 +78,7 @@ class SummaryConversationMemory(ConversationMemory):
         try:
             if len(runs) > 0:
                 summary = self.summarize_conversation_template_generator.render(summary=previous_summary, runs=runs)
-                return self.prompt_driver.run(
+                return self.prompt_engine.run(
                     prompt_stack=PromptStack(messages=[Message(summary, role=Message.USER_ROLE)]),
                 ).to_text()
             else:

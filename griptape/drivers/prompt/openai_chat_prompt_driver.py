@@ -89,9 +89,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         kw_only=True,
     )
 
-    @observable
-    def try_run(self, prompt_stack: PromptStack) -> Message:
-        result = self.client.chat.completions.create(**self._base_params(prompt_stack))
+    @observable(tags=["PromptDriver.run()"])
+    def run(self, prompt_stack: PromptStack) -> Message:
+        result = self.client.chat.completions.create(**self._base_params(prompt_stack, stream=False))
 
         if len(result.choices) == 1:
             message = result.choices[0].message
@@ -107,9 +107,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         else:
             raise Exception("Completion with more than one choice is not supported yet.")
 
-    @observable
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
+    @observable(tags=["PromptDriver.stream()"])
+    def stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+        result = self.client.chat.completions.create(**self._base_params(prompt_stack, stream=True))
 
         for chunk in result:
             if chunk.usage is not None:
@@ -128,7 +128,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 else:
                     raise Exception("Completion with more than one choice is not supported yet.")
 
-    def _base_params(self, prompt_stack: PromptStack) -> dict:
+    def _base_params(self, prompt_stack: PromptStack, *, stream: bool) -> dict:
         params = {
             "model": self.model,
             "temperature": self.temperature,
@@ -141,7 +141,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             ),
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
-            **({"stream_options": {"include_usage": True}} if self.stream else {}),
+            **({"stream_options": {"include_usage": True}, "stream": True} if stream else {}),
         }
 
         if self.response_format == "json_object":

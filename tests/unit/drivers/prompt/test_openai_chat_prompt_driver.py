@@ -312,14 +312,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL)
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_chat_completion_create, prompt_stack, messages, use_native_tools):
+    def test_run(self, mock_chat_completion_create, prompt_stack, messages, use_native_tools):
         # Given
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, use_native_tools=use_native_tools
         )
 
         # When
-        message = driver.try_run(prompt_stack)
+        message = driver.run(prompt_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
@@ -338,14 +338,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert message.value[1].value.path == "test"
         assert message.value[1].value.input == {"foo": "bar"}
 
-    def test_try_run_response_format(self, mock_chat_completion_create, prompt_stack, messages):
+    def test_run_response_format(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, response_format="json_object", use_native_tools=False
         )
 
         # When
-        message = driver.try_run(prompt_stack)
+        message = driver.run(prompt_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
@@ -361,14 +361,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages, use_native_tools):
+    def test_stream(self, mock_chat_completion_stream_create, prompt_stack, messages, use_native_tools):
         # Given
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True, use_native_tools=use_native_tools
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, use_native_tools=use_native_tools
         )
 
         # When
-        stream = driver.try_stream(prompt_stack)
+        stream = driver.stream(prompt_stack)
         event = next(stream)
 
         # Then
@@ -403,14 +403,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == ""
 
-    def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
+    def test_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, max_tokens=1, use_native_tools=False
         )
 
         # When
-        event = driver.try_run(prompt_stack)
+        event = driver.run(prompt_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(
@@ -423,14 +423,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
         assert event.value[0].value == "model-output"
 
-    def test_try_run_throws_when_multiple_choices_returned(self, mock_chat_completion_create, prompt_stack):
+    def test_run_throws_when_multiple_choices_returned(self, mock_chat_completion_create, prompt_stack):
         # Given
         driver = OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, api_key="api-key")
         mock_chat_completion_create.return_value.choices = [Mock(message=Mock(content="model-output"))] * 10
 
         # When
         with pytest.raises(Exception) as e:
-            driver.try_run(prompt_stack)
+            driver.run(prompt_stack)
 
         # Then
         assert e.value.args[0] == "Completion with more than one choice is not supported yet."
@@ -444,7 +444,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
 
         # When
-        event = driver.try_run(prompt_stack)
+        event = driver.run(prompt_stack)
 
         # Then
         mock_chat_completion_create.assert_called_once_with(

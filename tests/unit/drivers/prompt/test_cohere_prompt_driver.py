@@ -129,12 +129,12 @@ class TestCoherePromptDriver:
         assert CoherePromptDriver(model="command", api_key="foobar")
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_client, prompt_stack, use_native_tools):
+    def test_run(self, mock_client, prompt_stack, use_native_tools):
         # Given
         driver = CoherePromptDriver(model="command", api_key="api-key", use_native_tools=use_native_tools)
 
         # When
-        message = driver.try_run(prompt_stack)
+        message = driver.run(prompt_stack)
 
         # Then
         mock_client.chat.assert_called_once_with(
@@ -180,12 +180,12 @@ class TestCoherePromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_stream_client, prompt_stack, use_native_tools):
+    def test_stream(self, mock_stream_client, prompt_stack, use_native_tools):
         # Given
-        driver = CoherePromptDriver(model="command", api_key="api-key", stream=True, use_native_tools=use_native_tools)
+        driver = CoherePromptDriver(model="command", api_key="api-key", use_native_tools=use_native_tools)
 
         # When
-        stream = driver.try_stream(prompt_stack)
+        stream = driver.stream(prompt_stack)
         event = next(stream)
 
         # Then

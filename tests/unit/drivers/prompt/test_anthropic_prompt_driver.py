@@ -334,12 +334,12 @@ class TestAnthropicPromptDriver:
         assert AnthropicPromptDriver(model="claude-3-haiku", api_key="1234")
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools):
+    def test_run(self, mock_client, prompt_stack, messages, use_native_tools):
         # Given
         driver = AnthropicPromptDriver(model="claude-3-haiku", api_key="api-key", use_native_tools=use_native_tools)
 
         # When
-        message = driver.try_run(prompt_stack)
+        message = driver.run(prompt_stack)
 
         # Then
         mock_client.return_value.messages.create.assert_called_once_with(
@@ -364,14 +364,12 @@ class TestAnthropicPromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_stream_client, prompt_stack, messages, use_native_tools):
+    def test_stream(self, mock_stream_client, prompt_stack, messages, use_native_tools):
         # Given
-        driver = AnthropicPromptDriver(
-            model="claude-3-haiku", api_key="api-key", stream=True, use_native_tools=use_native_tools
-        )
+        driver = AnthropicPromptDriver(model="claude-3-haiku", api_key="api-key", use_native_tools=use_native_tools)
 
         # When
-        stream = driver.try_stream(prompt_stack)
+        stream = driver.stream(prompt_stack)
         event = next(stream)
 
         # Then
