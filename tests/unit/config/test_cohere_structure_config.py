@@ -20,7 +20,6 @@ class TestCohereStructureConfig:
                 "type": "CoherePromptDriver",
                 "temperature": 0.1,
                 "max_tokens": None,
-                "stream": False,
                 "model": "command-r",
                 "force_single_step": False,
                 "use_native_tools": True,

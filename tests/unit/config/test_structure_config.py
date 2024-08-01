@@ -51,7 +51,7 @@ class TestStructureConfig:
 
     def test_changed_merge_config(self, config):
         config = config.merge_config(
-            {"prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False}}
+            {"prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None}}
         )
 
         assert config.prompt_driver.temperature == 0.1

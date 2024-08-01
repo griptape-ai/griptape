@@ -49,7 +49,6 @@ class TestAmazonBedrockStructureConfig:
             "prompt_driver": {
                 "max_tokens": None,
                 "model": "anthropic.claude-3-5-sonnet-20240620-v1:0",
-                "stream": False,
                 "temperature": 0.1,
                 "type": "AmazonBedrockPromptDriver",
                 "tool_choice": {"auto": {}},
@@ -102,7 +101,6 @@ class TestAmazonBedrockStructureConfig:
             "prompt_driver": {
                 "max_tokens": None,
                 "model": "anthropic.claude-3-5-sonnet-20240620-v1:0",
-                "stream": False,
                 "temperature": 0.1,
                 "type": "AmazonBedrockPromptDriver",
                 "tool_choice": {"auto": {}},

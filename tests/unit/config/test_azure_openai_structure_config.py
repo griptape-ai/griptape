@@ -32,7 +32,6 @@ class TestAzureOpenAiStructureConfig:
                 "seed": None,
                 "temperature": 0.1,
                 "max_tokens": None,
-                "stream": False,
                 "user": "",
                 "use_native_tools": True,
             },
