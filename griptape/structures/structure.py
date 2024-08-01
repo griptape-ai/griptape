@@ -101,6 +101,8 @@ class Structure(ABC, EventPublisherMixin):
         if self.conversation_memory is not None:
             self.conversation_memory.structure = self
 
+        self.config.structure = self
+
         tasks = self.tasks.copy()
         self.tasks.clear()
         self.add_tasks(*tasks)
