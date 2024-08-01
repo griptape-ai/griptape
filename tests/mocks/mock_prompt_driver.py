@@ -15,6 +15,7 @@ from griptape.common import (
     TextDeltaMessageContent,
     TextMessageContent,
     ToolAction,
+    observable,
 )
 from griptape.drivers import BasePromptDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
@@ -32,6 +33,7 @@ class MockPromptDriver(BasePromptDriver):
     mock_input: str | Callable[[], str] = field(default="mock input", kw_only=True)
     mock_output: str | Callable[[PromptStack], str] = field(default="mock output", kw_only=True)
 
+    @observable(tags=["PromptDriver.run()"])
     def run(self, prompt_stack: PromptStack) -> Message:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
         if self.use_native_tools and prompt_stack.tools:
@@ -69,6 +71,7 @@ class MockPromptDriver(BasePromptDriver):
                 usage=Message.Usage(input_tokens=100, output_tokens=100),
             )
 
+    @observable(tags=["PromptDriver.stream()"])
     def stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 

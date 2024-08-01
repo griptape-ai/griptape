@@ -26,9 +26,9 @@ class ExpectedSpans:
 
     def __eq__(self, other_spans: Sequence[ReadableSpan]) -> bool:  # noqa: C901
         # Has expected spans
-        span_names = [span.name for span in self.spans]
-        other_span_names = [span.name for span in other_spans]
-        if sorted(other_span_names) != sorted(span_names):
+        span_names = sorted([span.name for span in self.spans])
+        other_span_names = sorted([span.name for span in other_spans])
+        if other_span_names != span_names:
             raise Exception(f"Expected spans {other_span_names} not found. Found: {span_names}")
 
         # Has valid trace id
