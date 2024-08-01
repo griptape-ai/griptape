@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Conversation Memory not using `StructureConfig.conversation_memory_driver` when autoloading.
 
+### Added
+- `AstraDbVectorStoreDriver` to support DataStax Astra DB as a vector store.
+
 ## [0.29.0] - 2024-07-30
 
 ### Added
