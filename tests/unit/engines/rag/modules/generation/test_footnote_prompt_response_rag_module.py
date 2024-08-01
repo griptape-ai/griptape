@@ -2,6 +2,7 @@ import pytest
 
 from griptape.artifacts import TextArtifact
 from griptape.common import Reference
+from griptape.engines import PromptEngine
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import FootnotePromptResponseRagModule
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -10,7 +11,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 class TestFootnotePromptResponseRagModule:
     @pytest.fixture()
     def module(self):
-        return FootnotePromptResponseRagModule(prompt_driver=MockPromptDriver())
+        return FootnotePromptResponseRagModule(prompt_engine=PromptEngine(prompt_driver=MockPromptDriver()))
 
     def test_run(self, module):
         assert module.run(RagContext(query="test")).output.value == "mock output"

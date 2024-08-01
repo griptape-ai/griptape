@@ -2,7 +2,7 @@ import pytest
 from schema import Schema
 
 from griptape.artifacts import ErrorArtifact
-from griptape.engines import JsonExtractionEngine
+from griptape.engines import JsonExtractionEngine, PromptEngine
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
@@ -10,8 +10,10 @@ class TestJsonExtractionEngine:
     @pytest.fixture()
     def engine(self):
         return JsonExtractionEngine(
-            prompt_driver=MockPromptDriver(
-                mock_output='[{"test_key_1": "test_value_1"}, {"test_key_2": "test_value_2"}]'
+            prompt_engine=PromptEngine(
+                prompt_driver=MockPromptDriver(
+                    mock_output='[{"test_key_1": "test_value_1"}, {"test_key_2": "test_value_2"}]'
+                )
             )
         )
 

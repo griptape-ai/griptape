@@ -1,6 +1,7 @@
 import pytest
 
 from griptape.drivers import LocalVectorStoreDriver
+from griptape.engines import PromptEngine
 from griptape.engines.rag import RagContext, RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRetrievalRagModule
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
@@ -19,7 +20,9 @@ class TestRagEngine:
                     )
                 ]
             ),
-            response_stage=ResponseRagStage(response_module=PromptResponseRagModule(prompt_driver=MockPromptDriver())),
+            response_stage=ResponseRagStage(
+                response_module=PromptResponseRagModule(prompt_engine=PromptEngine(prompt_driver=MockPromptDriver()))
+            ),
         )
 
     def test_module_name_uniqueness(self):

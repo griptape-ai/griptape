@@ -20,7 +20,7 @@ class TestCsvExtractionTask:
         agent = Agent(prompt_driver=request.param)
         agent.add_task(
             ExtractionTask(
-                extraction_engine=CsvExtractionEngine(prompt_driver=request.param), args={"column_names": columns}
+                extraction_engine=CsvExtractionEngine(prompt_engine=agent.prompt_engine), args={"column_names": columns}
             )
         )
 
