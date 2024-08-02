@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.29.1] - 2024-08-02
+
+### Changed
+- Remove `BaseTextArtifact`, revert `CsvRowArtifact` to subclass `TextArtifact`.
+
 ## [0.29.0] - 2024-07-30
 
 ### Added
