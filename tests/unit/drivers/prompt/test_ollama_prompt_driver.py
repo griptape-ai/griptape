@@ -14,6 +14,7 @@ class TestOllamaPromptDriver:
                 "name": "MockTool_test",
                 "parameters": {
                     "additionalProperties": False,
+                    "description": "Test input",
                     "properties": {"test": {"type": "string"}},
                     "required": ["test"],
                     "type": "object",
@@ -27,6 +28,7 @@ class TestOllamaPromptDriver:
                 "name": "MockTool_test_error",
                 "parameters": {
                     "additionalProperties": False,
+                    "description": "Test input",
                     "properties": {"test": {"type": "string"}},
                     "required": ["test"],
                     "type": "object",
@@ -40,6 +42,7 @@ class TestOllamaPromptDriver:
                 "name": "MockTool_test_exception",
                 "parameters": {
                     "additionalProperties": False,
+                    "description": "Test input",
                     "properties": {"test": {"type": "string"}},
                     "required": ["test"],
                     "type": "object",
@@ -67,6 +70,7 @@ class TestOllamaPromptDriver:
                 "name": "MockTool_test_str_output",
                 "parameters": {
                     "additionalProperties": False,
+                    "description": "Test input",
                     "properties": {"test": {"type": "string"}},
                     "required": ["test"],
                     "type": "object",
@@ -80,6 +84,7 @@ class TestOllamaPromptDriver:
                 "name": "MockTool_test_without_default_memory",
                 "parameters": {
                     "additionalProperties": False,
+                    "description": "Test input",
                     "properties": {"test": {"type": "string"}},
                     "required": ["test"],
                     "type": "object",
