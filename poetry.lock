@@ -6807,6 +6807,7 @@ drivers-rerank-cohere = ["cohere"]
 drivers-sql = ["sqlalchemy"]
 drivers-sql-amazon-redshift = ["boto3"]
 drivers-sql-snowflake = ["snowflake-sqlalchemy", "sqlalchemy"]
+drivers-text-to-speech-elevenlabs = ["elevenlabs"]
 drivers-vector-amazon-opensearch = ["boto3", "opensearch-py"]
 drivers-vector-marqo = ["marqo"]
 drivers-vector-mongodb = ["pymongo"]
@@ -6828,4 +6829,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "0f9ce9192af9125e85a27ba269786ee49254e2f139965d37aa2599e8ae8e2dca"
+content-hash = "7c5e3b0815882872c8476708275f77205cba2f6f468be65465edbfbf99d8671d"

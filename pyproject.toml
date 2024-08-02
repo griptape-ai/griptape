@@ -114,6 +114,8 @@ drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
 drivers-event-listener-pusher = ["pusher"]
 
+drivers-text-to-speech-elevenlabs = ["elevenlabs"]
+
 drivers-rerank-cohere = ["cohere"]
 
 drivers-observability-opentelemetry = [
