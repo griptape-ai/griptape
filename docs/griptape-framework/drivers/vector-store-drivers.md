@@ -127,7 +127,6 @@ from griptape.loaders import WebLoader
 
 # Initialize an Embedding Driver
 embedding_driver = OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"])
-prompt_driver = OpenAiChatPromptDriver(model="gpt-3.5-turbo")
 
 # Define the namespace
 namespace = 'griptape-ai'

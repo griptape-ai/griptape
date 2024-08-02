@@ -171,8 +171,7 @@ from griptape.structures import Pipeline
 from griptape.tools import WebScraper, TaskMemoryClient
 
 
-pipeline = Pipeline()
-pipeline.config.prompt_driver.stream = True
+pipeline = Pipeline(stream=True)
 pipeline.add_tasks(ToolkitTask("Based on https://griptape.ai, tell me what griptape is.", tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)]))
 
 for artifact in Stream(pipeline).run():

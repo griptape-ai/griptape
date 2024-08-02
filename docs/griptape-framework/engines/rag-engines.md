@@ -40,6 +40,7 @@ No modules implemented yet.
 ```python
 from griptape.artifacts import TextArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
+from griptape.engines import PromptEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
 from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage

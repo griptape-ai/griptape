@@ -212,6 +212,7 @@ from griptape.drivers import (
     LocalVectorStoreDriver,
     OpenAiChatPromptDriver, OpenAiEmbeddingDriver,
 )
+from griptape.engines import PromptEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
 from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
