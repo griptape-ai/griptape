@@ -7,8 +7,9 @@ import re
 import subprocess
 import sys
 from abc import ABC
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
+import schema
 import yaml
 from attrs import Attribute, Factory, define, field
 from schema import Literal, Or, Schema
@@ -95,18 +96,25 @@ class BaseTool(ActivityMixin, ABC):
         return full_schema.json_schema(f"{self.name} ToolAction Schema")
 
     def activity_schemas(self) -> list[Schema]:
-        return [
-            Schema(
-                {
-                    Literal("name"): self.name,
-                    Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
-                    **self.activity_to_input(
-                        activity,
-                    ),  # Unpack the dictionary in order to only add the key-values if there are any
-                },
-            )
-            for activity in self.activities()
-        ]
+        schemas = []
+
+        for activity in self.activities():
+            schema_dict: dict[Literal | schema.Optional, Any] = {
+                Literal("name"): self.name,
+                Literal("path", description=self.activity_description(activity)): self.activity_name(activity),
+            }
+
+            activity_schema = self.activity_schema(activity)
+            # If no schema is defined, we just make `input` optional instead of omitting it.
+            # This works better with lower-end models that may accidentally pass in an empty dict.
+            if activity_schema is None:
+                schema_dict[schema.Optional("input")] = {}
+            else:
+                schema_dict[Literal("input")] = activity_schema.schema
+
+            schemas.append(Schema(schema_dict))
+
+        return schemas
 
     def execute(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> BaseArtifact:
         try:
