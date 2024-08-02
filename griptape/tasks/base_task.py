@@ -23,6 +23,7 @@ class BaseTask(ABC):
         PENDING = 1
         EXECUTING = 2
         FINISHED = 3
+        CANCELLED = 4
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     state: State = field(default=State.PENDING, kw_only=True)
@@ -102,8 +103,14 @@ class BaseTask(ABC):
     def is_finished(self) -> bool:
         return self.state == BaseTask.State.FINISHED
 
+    def is_cancelled(self) -> bool:
+        return self.state == BaseTask.State.CANCELLED
+
     def is_executing(self) -> bool:
         return self.state == BaseTask.State.EXECUTING
+
+    def is_complete(self) -> bool:
+        return self.is_finished() or self.is_cancelled()
 
     def before_run(self) -> None:
         if self.structure is not None:
@@ -148,7 +155,13 @@ class BaseTask(ABC):
         return self.output
 
     def can_execute(self) -> bool:
-        return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)
+        return self.is_pending() and (
+            (
+                all(parent.is_complete() for parent in self.parents)
+                and any(parent.is_finished() for parent in self.parents)
+            )
+            or len(self.parents) == 0
+        )
 
     def reset(self) -> BaseTask:
         self.state = BaseTask.State.PENDING

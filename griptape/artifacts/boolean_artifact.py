@@ -4,7 +4,7 @@ from typing import Union
 
 from attrs import define, field
 
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact
 
 
 @define
@@ -12,9 +12,11 @@ class BooleanArtifact(BaseArtifact):
     value: bool = field(converter=bool, metadata={"serializable": True})
 
     @classmethod
-    def parse_bool(cls, value: Union[str, bool]) -> BooleanArtifact:  # noqa: FBT001
-        """Convert a string literal or bool to a BooleanArtifact. The string must be either "true" or "false" with any casing."""
+    def parse_bool(cls, value: Union[str, bool, TextArtifact]) -> BooleanArtifact:  # noqa: FBT001
+        """Convert a string literal, TextArtifact or bool to a BooleanArtifact. The string must be either "true" or "false" with any casing."""
         if value is not None:
+            if isinstance(value, TextArtifact):
+                value = str(value)
             if isinstance(value, str):
                 if value.lower() == "true":
                     return BooleanArtifact(True)  # noqa: FBT003
