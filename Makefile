@@ -78,6 +78,10 @@ check/spell:
 docs: ## Build documentation.
 	@poetry run mkdocs build
 
+.PHONY: clean
+clean:
+	@poetry env remove --all
+
 .DEFAULT_GOAL := help
 .PHONY: help
 help: ## Print Makefile help text.
