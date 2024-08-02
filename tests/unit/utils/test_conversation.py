@@ -1,3 +1,4 @@
+from griptape.engines import PromptEngine
 from griptape.memory.structure import ConversationMemory, SummaryConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
@@ -37,7 +38,9 @@ class TestConversation:
     def test_prompt_stack_summary_conversation_memory(self):
         pipeline = Pipeline(
             prompt_driver=MockPromptDriver(),
-            conversation_memory=SummaryConversationMemory(summary="foobar", prompt_driver=MockPromptDriver()),
+            conversation_memory=SummaryConversationMemory(
+                summary="foobar", prompt_engine=PromptEngine(prompt_driver=MockPromptDriver())
+            ),
         )
 
         pipeline.add_tasks(PromptTask("question 1"))
