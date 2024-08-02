@@ -11,24 +11,24 @@ from griptape.drivers import BaseWebSearchDriver
 
 @define
 class GoogleWebSearchDriver(BaseWebSearchDriver):
-    api_key: str = field(default=None, kw_only=True)
-    search_id: str = field(default=None, kw_only=True)
+    api_key: str = field(kw_only=True)
+    search_id: str = field(kw_only=True)
 
     def search(self, query: str, **kwargs) -> ListArtifact:
         return ListArtifact([TextArtifact(json.dumps(result)) for result in self._search_google(query, **kwargs)])
 
     def _search_google(self, query: str, **kwargs) -> list[dict]:
-        url = (
-            f"https://www.googleapis.com/customsearch/v1?"
-            f"key={self.api_key}&"
-            f"cx={self.search_id}&"
-            f"q={query}&"
-            f"start=0&"
-            f"lr=lang_{self.language}&"
-            f"num={self.results_count}&"
-            f"gl={self.country}"
-        )
-        response = requests.get(url)
+        query_params = {
+            "key": self.api_key,
+            "cx": self.search_id,
+            "q": query,
+            "start": 0,
+            "lr": f"lang_{self.language}",
+            "num": self.results_count,
+            "gl": self.country,
+            **kwargs,
+        }
+        response = requests.get("https://www.googleapis.com/customsearch/v1", params=query_params)
 
         if response.status_code == 200:
             data = response.json()

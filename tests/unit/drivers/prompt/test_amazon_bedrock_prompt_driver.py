@@ -19,6 +19,7 @@ class TestAmazonBedrockPromptDriver:
                         "properties": {
                             "values": {
                                 "additionalProperties": False,
+                                "description": "Test input",
                                 "properties": {"test": {"type": "string"}},
                                 "required": ["test"],
                                 "type": "object",
@@ -42,6 +43,7 @@ class TestAmazonBedrockPromptDriver:
                         "properties": {
                             "values": {
                                 "additionalProperties": False,
+                                "description": "Test input",
                                 "properties": {"test": {"type": "string"}},
                                 "required": ["test"],
                                 "type": "object",
@@ -65,6 +67,7 @@ class TestAmazonBedrockPromptDriver:
                         "properties": {
                             "values": {
                                 "additionalProperties": False,
+                                "description": "Test input",
                                 "properties": {"test": {"type": "string"}},
                                 "required": ["test"],
                                 "type": "object",
@@ -120,6 +123,7 @@ class TestAmazonBedrockPromptDriver:
                         "properties": {
                             "values": {
                                 "additionalProperties": False,
+                                "description": "Test input",
                                 "properties": {"test": {"type": "string"}},
                                 "required": ["test"],
                                 "type": "object",
@@ -143,6 +147,7 @@ class TestAmazonBedrockPromptDriver:
                         "properties": {
                             "values": {
                                 "additionalProperties": False,
+                                "description": "Test input",
                                 "properties": {"test": {"type": "string"}},
                                 "required": ["test"],
                                 "type": "object",

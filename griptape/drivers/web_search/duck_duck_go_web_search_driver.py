@@ -19,7 +19,9 @@ class DuckDuckGoWebSearchDriver(BaseWebSearchDriver):
 
     def search(self, query: str, **kwargs) -> ListArtifact:
         try:
-            results = self.client.text(query, region=f"{self.language}-{self.country}", max_results=self.results_count)
+            results = self.client.text(
+                query, region=f"{self.language}-{self.country}", max_results=self.results_count, **kwargs
+            )
             return ListArtifact(
                 [
                     TextArtifact(

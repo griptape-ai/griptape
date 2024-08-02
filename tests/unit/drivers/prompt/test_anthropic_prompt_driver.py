@@ -20,6 +20,7 @@ class TestAnthropicPromptDriver:
                 "properties": {
                     "values": {
                         "additionalProperties": False,
+                        "description": "Test input",
                         "properties": {"test": {"type": "string"}},
                         "required": ["test"],
                         "type": "object",
@@ -39,6 +40,7 @@ class TestAnthropicPromptDriver:
                 "properties": {
                     "values": {
                         "additionalProperties": False,
+                        "description": "Test input",
                         "properties": {"test": {"type": "string"}},
                         "required": ["test"],
                         "type": "object",
@@ -58,6 +60,7 @@ class TestAnthropicPromptDriver:
                 "properties": {
                     "values": {
                         "additionalProperties": False,
+                        "description": "Test input",
                         "properties": {"test": {"type": "string"}},
                         "required": ["test"],
                         "type": "object",
@@ -101,6 +104,7 @@ class TestAnthropicPromptDriver:
                 "properties": {
                     "values": {
                         "additionalProperties": False,
+                        "description": "Test input",
                         "properties": {"test": {"type": "string"}},
                         "required": ["test"],
                         "type": "object",
@@ -120,6 +124,7 @@ class TestAnthropicPromptDriver:
                 "properties": {
                     "values": {
                         "additionalProperties": False,
+                        "description": "Test input",
                         "properties": {"test": {"type": "string"}},
                         "required": ["test"],
                         "type": "object",

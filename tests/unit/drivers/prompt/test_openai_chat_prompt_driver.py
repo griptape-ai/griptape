@@ -23,6 +23,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "properties": {
                         "values": {
                             "additionalProperties": False,
+                            "description": "Test input",
                             "properties": {"test": {"type": "string"}},
                             "required": ["test"],
                             "type": "object",
@@ -45,6 +46,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "properties": {
                         "values": {
                             "additionalProperties": False,
+                            "description": "Test input",
                             "properties": {"test": {"type": "string"}},
                             "required": ["test"],
                             "type": "object",
@@ -67,6 +69,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "properties": {
                         "values": {
                             "additionalProperties": False,
+                            "description": "Test input",
                             "properties": {"test": {"type": "string"}},
                             "required": ["test"],
                             "type": "object",
@@ -119,6 +122,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "properties": {
                         "values": {
                             "additionalProperties": False,
+                            "description": "Test input",
                             "properties": {"test": {"type": "string"}},
                             "required": ["test"],
                             "type": "object",
@@ -141,6 +145,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "properties": {
                         "values": {
                             "additionalProperties": False,
+                            "description": "Test input",
                             "properties": {"test": {"type": "string"}},
                             "required": ["test"],
                             "type": "object",
