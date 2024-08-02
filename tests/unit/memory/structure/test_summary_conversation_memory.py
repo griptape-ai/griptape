@@ -1,6 +1,7 @@
 import json
 
 from griptape.artifacts import TextArtifact
+from griptape.engines.prompt.prompt_engine import PromptEngine
 from griptape.memory.structure import Run, SummaryConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
@@ -10,9 +11,9 @@ from tests.mocks.mock_structure_config import MockStructureConfig
 
 class TestSummaryConversationMemory:
     def test_unsummarized_subtasks(self):
-        memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
+        memory = SummaryConversationMemory(offset=1, prompt_engine=PromptEngine(prompt_driver=MockPromptDriver()))
 
-        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory, prompt_engine=PromptEngine(prompt_driver=MockPromptDriver()))
 
         pipeline.add_tasks(PromptTask("test"))
 
@@ -24,7 +25,7 @@ class TestSummaryConversationMemory:
         assert len(memory.unsummarized_runs()) == 1
 
     def test_after_run(self):
-        memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
+        memory = SummaryConversationMemory(offset=1, prompt_engine=PromptEngine(prompt_driver=MockPromptDriver()))
 
         pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
 
@@ -89,4 +90,4 @@ class TestSummaryConversationMemory:
 
         pipeline.add_tasks(PromptTask("test"))
 
-        assert isinstance(memory.prompt_driver, MockPromptDriver)
+        assert isinstance(memory.prompt_engine.prompt_driver, MockPromptDriver)

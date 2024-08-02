@@ -22,7 +22,7 @@ class TestJsonExtractionTask:
         agent = Agent(prompt_driver=request.param)
         agent.add_task(
             ExtractionTask(
-                extraction_engine=JsonExtractionEngine(prompt_engine=agent.prompt_engine),
+                extraction_engine=JsonExtractionEngine(),
                 args={"template_schema": user_schema},
             )
         )

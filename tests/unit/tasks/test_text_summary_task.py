@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.engines import PromptSummaryEngine
+from griptape.engines import PromptEngine, PromptSummaryEngine
 from griptape.structures import Agent
 from griptape.tasks import TextSummaryTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -9,7 +9,9 @@ from tests.mocks.mock_structure_config import MockStructureConfig
 
 class TestTextSummaryTask:
     def test_run(self):
-        task = TextSummaryTask("test", summary_engine=PromptSummaryEngine(prompt_driver=MockPromptDriver()))
+        task = TextSummaryTask(
+            "test", summary_engine=PromptSummaryEngine(prompt_engine=PromptEngine(prompt_driver=MockPromptDriver()))
+        )
         agent = Agent()
 
         agent.add_task(task)
@@ -29,7 +31,7 @@ class TestTextSummaryTask:
         Agent(config=MockStructureConfig()).add_task(task)
 
         assert isinstance(task.summary_engine, PromptSummaryEngine)
-        assert isinstance(task.summary_engine.prompt_driver, MockPromptDriver)
+        assert isinstance(task.summary_engine.prompt_engine.prompt_driver, MockPromptDriver)
 
     def test_missing_summary_engine(self):
         task = TextSummaryTask("test")

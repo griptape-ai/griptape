@@ -32,13 +32,13 @@ class TestPromptTask:
         task = PromptTask("test")
         Pipeline(config=MockStructureConfig()).add_task(task)
 
-        assert isinstance(task.prompt_driver, MockPromptDriver)
+        assert isinstance(task.prompt_engine.prompt_driver, MockPromptDriver)
 
-    def test_missing_prompt_driver(self):
+    def test_missing_prompt_engine(self):
         task = PromptTask("test")
 
         with pytest.raises(ValueError):
-            task.prompt_driver  # noqa: B018
+            task.prompt_engine  # noqa: B018
 
     def test_input(self):
         # Str

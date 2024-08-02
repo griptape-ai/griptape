@@ -226,11 +226,13 @@ This Task takes an [Extraction Engine](../../griptape-framework/engines/extracti
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.tasks import ExtractionTask
 from griptape.structures import Agent
-from griptape.engines import CsvExtractionEngine
+from griptape.engines import CsvExtractionEngine, PromptEngine
 
 # Instantiate the CSV extraction engine
 csv_extraction_engine = CsvExtractionEngine(
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo")
+    prompt_engine=PromptEngine(
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo")
+    )
 )
 
 # Define some unstructured data and columns
@@ -277,11 +279,13 @@ from schema import Schema
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.tasks import ExtractionTask
 from griptape.structures import Agent
-from griptape.engines import JsonExtractionEngine
+from griptape.engines import JsonExtractionEngine, PromptEngine
 
 # Instantiate the json extraction engine
 json_extraction_engine = JsonExtractionEngine(
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"),
+    prompt_engine=PromptEngine(
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"),
+    )
 )
 
 # Define some unstructured data and a schema
@@ -422,7 +426,9 @@ agent.add_task(
             ),
             response_stage=ResponseRagStage(
                 response_module=PromptResponseRagModule(
-                    prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
+                    prompt_engine=PromptEngine(
+                        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
+                    )
                 )
             )
         ),

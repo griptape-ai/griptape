@@ -1,12 +1,13 @@
 from griptape.artifacts import TextArtifact
 from griptape.common import Reference
+from griptape.engines import PromptEngine
 from griptape.engines.rag.modules import PromptResponseRagModule
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestReferenceUtils:
     def test_references_from_artifacts(self):
-        module = PromptResponseRagModule(prompt_driver=MockPromptDriver())
+        module = PromptResponseRagModule(prompt_engine=PromptEngine(prompt_driver=MockPromptDriver()))
         reference1 = Reference(title="foo")
         reference2 = Reference(title="bar")
         artifacts = [

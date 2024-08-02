@@ -1,5 +1,6 @@
 import pytest
 
+from griptape.engines import PromptEngine
 from tests.utils.structure_tester import StructureTester
 
 
@@ -15,7 +16,9 @@ class TestTextSummaryTask:
         from griptape.tasks import TextSummaryTask
 
         agent = Agent(conversation_memory=None, prompt_driver=request.param)
-        agent.add_task(TextSummaryTask(summary_engine=PromptSummaryEngine(prompt_driver=request.param)))
+        agent.add_task(
+            TextSummaryTask(summary_engine=PromptSummaryEngine(prompt_engine=PromptEngine(prompt_driver=request.param)))
+        )
 
         return StructureTester(agent)
 

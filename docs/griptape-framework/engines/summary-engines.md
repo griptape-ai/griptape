@@ -18,12 +18,14 @@ import io
 import requests
 
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.engines import PromptSummaryEngine
+from griptape.engines import PromptEngine, PromptSummaryEngine
 from griptape.loaders import PdfLoader
 
 response = requests.get("https://arxiv.org/pdf/1706.03762.pdf")
 engine = PromptSummaryEngine(
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"),
+    prompt_engine=PromptEngine(
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"),
+    )
 )
 
 artifacts = PdfLoader().load(response.content)

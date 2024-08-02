@@ -27,7 +27,7 @@ class TestEventListener:
     def pipeline(self):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
         pipeline.add_task(task)
 
         task.add_subtask(ActionsSubtask("foo"))

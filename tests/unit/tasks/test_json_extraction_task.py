@@ -31,7 +31,7 @@ class TestJsonExtractionTask:
         Agent(config=MockStructureConfig()).add_task(task)
 
         assert isinstance(task.extraction_engine, JsonExtractionEngine)
-        assert isinstance(task.extraction_engine.prompt_driver, MockPromptDriver)
+        assert isinstance(task.extraction_engine.prompt_engine.prompt_driver, MockPromptDriver)
 
     def test_missing_extraction_engine(self, task):
         with pytest.raises(ValueError):

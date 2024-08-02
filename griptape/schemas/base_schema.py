@@ -123,6 +123,7 @@ class BaseSchema(Schema):
             BaseTextToSpeechDriver,
             BaseVectorStoreDriver,
         )
+        from griptape.engines import PromptEngine
         from griptape.events import EventListener
         from griptape.memory.structure import Run
         from griptape.structures import Structure
@@ -155,6 +156,7 @@ class BaseSchema(Schema):
                 "Reference": Reference,
                 "Run": Run,
                 "Sequence": Sequence,
+                "PromptEngine": PromptEngine,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel
