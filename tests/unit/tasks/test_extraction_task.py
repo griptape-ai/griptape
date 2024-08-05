@@ -8,7 +8,9 @@ from griptape.tasks import ExtractionTask
 class TestExtractionTask:
     @pytest.fixture()
     def task(self):
-        return ExtractionTask(extraction_engine=CsvExtractionEngine(), args={"column_names": ["test1"]})
+        return ExtractionTask(
+            extraction_engine=CsvExtractionEngine(prompt_driver=MockPromptDriver(), column_names=["test1"])
+        )
 
     def test_run(self, task):
         agent = Agent()

@@ -19,14 +19,6 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
 )
-from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import (
-    MetadataBeforeResponseRagModule,
-    PromptResponseRagModule,
-    RulesetsBeforeResponseRagModule,
-    VectorStoreRetrievalRagModule,
-)
-from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
 from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory import TaskMemory
@@ -54,7 +46,6 @@ class Structure(ABC):
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
     )
-    rag_engine: RagEngine = field(default=Factory(lambda self: self.default_rag_engine, takes_self=True), kw_only=True)
     task_memory: TaskMemory = field(
         default=Factory(lambda self: self.default_task_memory, takes_self=True),
         kw_only=True,
@@ -126,19 +117,26 @@ class Structure(ABC):
         return [s for s in self.tasks if s.is_finished()]
 
     @property
-    def default_rag_engine(self) -> RagEngine:
-        return RagEngine(
-            retrieval_stage=RetrievalRagStage(
-                retrieval_modules=[VectorStoreRetrievalRagModule()],
-            ),
-            response_stage=ResponseRagStage(
-                before_response_modules=[
-                    RulesetsBeforeResponseRagModule(rulesets=self.rulesets),
-                    MetadataBeforeResponseRagModule(),
-                ],
-                response_module=PromptResponseRagModule(),
-            ),
-        )
+    def default_config(self) -> BaseStructureConfig:
+        if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
+            config = StructureConfig()
+
+            prompt_driver = OpenAiChatPromptDriver(model="gpt-4o") if self.prompt_driver is None else self.prompt_driver
+
+            embedding_driver = OpenAiEmbeddingDriver() if self.embedding_driver is None else self.embedding_driver
+
+            if self.stream is not None:
+                prompt_driver.stream = self.stream
+
+            vector_store_driver = LocalVectorStoreDriver(embedding_driver=embedding_driver)
+
+            config.prompt_driver = prompt_driver
+            config.vector_store_driver = vector_store_driver
+            config.embedding_driver = embedding_driver
+        else:
+            config = OpenAiStructureConfig()
+
+        return config
 
     @property
     def default_task_memory(self) -> TaskMemory:

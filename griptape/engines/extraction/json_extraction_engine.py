@@ -14,7 +14,7 @@ from griptape.utils import J2
 
 @define
 class JsonExtractionEngine(BaseExtractionEngine):
-    template_schema: list[dict] = field(default=Factory(list), kw_only=True)
+    template_schema: dict = field(default=Factory(dict), kw_only=True)
     template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/json_extraction.j2")), kw_only=True)
 
     def extract(

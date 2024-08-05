@@ -19,9 +19,7 @@ class TestCsvExtractionTask:
         # Create an agent and add the ExtractionTask to it
         agent = Agent(prompt_driver=request.param)
         agent.add_task(
-            ExtractionTask(
-                extraction_engine=CsvExtractionEngine(prompt_driver=request.param), args={"column_names": columns}
-            )
+            ExtractionTask(extraction_engine=CsvExtractionEngine(prompt_driver=request.param, column_names=columns))
         )
 
         return StructureTester(agent)

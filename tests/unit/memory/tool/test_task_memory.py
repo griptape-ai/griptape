@@ -96,13 +96,3 @@ class TestTaskMemory:
         )
 
         assert len(memory.load_artifacts("test")) == 2
-
-    def test_summarize_namespace(self, memory):
-        memory.store_artifact("foo", TextArtifact("test"))
-
-        assert memory.summarize_namespace("foo").value == "mock output"
-
-    def test_query_namespace(self, memory):
-        memory.store_artifact("foo", TextArtifact("test"))
-
-        assert memory.query_namespace("foo", "query").value == "mock output"

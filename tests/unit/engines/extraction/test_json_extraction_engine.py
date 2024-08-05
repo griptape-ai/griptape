@@ -24,7 +24,8 @@ class TestJsonExtractionEngine:
         assert result.value[1].value == '{"test_key_2": "test_value_2"}'
 
     def test_extract_error(self, engine):
-        assert isinstance(engine.extract("foo", template_schema=lambda: "non serializable"), ErrorArtifact)
+        engine.template_schema = lambda: "non serializable"
+        assert isinstance(engine.extract("foo"), ErrorArtifact)
 
     def test_json_to_text_artifacts(self, engine):
         assert [
