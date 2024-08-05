@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from attrs import Factory, define, field
 
-from griptape.engines import JsonExtractionEngine
 from griptape.tasks import ExtractionTask
+
+if TYPE_CHECKING:
+    from griptape.engines import JsonExtractionEngine
 
 
 @define

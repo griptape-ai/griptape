@@ -11,8 +11,14 @@ from rich.logging import RichHandler
 
 from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
 from griptape.common import observable
-from griptape.config import Config
-from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
+from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
+from griptape.drivers import (
+    BaseEmbeddingDriver,
+    BasePromptDriver,
+    LocalVectorStoreDriver,
+    OpenAiChatPromptDriver,
+    OpenAiEmbeddingDriver,
+)
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
     MetadataBeforeResponseRagModule,
@@ -139,12 +145,7 @@ class Structure(ABC):
         return TaskMemory(
             artifact_storages={
                 TextArtifact: TextArtifactStorage(
-                    rag_engine=self.rag_engine,
-                    retrieval_rag_module_name="VectorStoreRetrievalRagModule",
-                    vector_store_driver=Config.drivers.vector_store,
-                    summary_engine=PromptSummaryEngine(prompt_driver=Config.drivers.prompt),
-                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=Config.drivers.prompt),
-                    json_extraction_engine=JsonExtractionEngine(prompt_driver=Config.drivers.prompt),
+                    vector_store_driver=self.config.vector_store_driver,
                 ),
                 BlobArtifact: BlobArtifactStorage(),
             },

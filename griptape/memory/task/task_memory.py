@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from attrs import Attribute, Factory, define, field
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact
 from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.mixins import ActivityMixin
 
@@ -123,19 +123,3 @@ class TaskMemory(ActivityMixin):
             return self
         else:
             return None
-
-    def summarize_namespace(self, namespace: str) -> TextArtifact | InfoArtifact:
-        storage = self.namespace_storage.get(namespace)
-
-        if storage:
-            return storage.summarize(namespace)
-        else:
-            return InfoArtifact("Can't find memory content")
-
-    def query_namespace(self, namespace: str, query: str) -> BaseArtifact:
-        storage = self.namespace_storage.get(namespace)
-
-        if storage:
-            return storage.query(namespace=namespace, query=query, metadata=self.namespace_metadata.get(namespace))
-        else:
-            return InfoArtifact("Can't find memory content")

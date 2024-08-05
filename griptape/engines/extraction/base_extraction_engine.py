@@ -26,6 +26,7 @@ class BaseExtractionEngine(ABC):
         ),
         kw_only=True,
     )
+    rulesets: Optional[list[Ruleset]] = field(kw_only=True, default=None)
 
     @max_token_multiplier.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_max_token_multiplier(self, _: Attribute, max_token_multiplier: int) -> None:
@@ -49,7 +50,5 @@ class BaseExtractionEngine(ABC):
     def extract(
         self,
         text: str | ListArtifact,
-        *,
-        rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
     ) -> ListArtifact | ErrorArtifact: ...
