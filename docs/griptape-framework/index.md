@@ -147,7 +147,7 @@ Agents are great for getting started, but they are intentionally limited to a si
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask, PromptTask
-from griptape.tools import WebScraper, FileManager, TaskMemoryClient
+from griptape.tools import WebScraper, FileManager, PromptSummaryClient
 
 
 # Pipelines represent sequences of tasks.
@@ -160,7 +160,7 @@ pipeline.add_tasks(
     ToolkitTask(
         "{{ args[0] }}",
         # Add tools for web scraping, and file management
-        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True), TaskMemoryClient(off_prompt=False)]
+        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True), PromptSummaryClient(off_prompt=False)]
     ),
     # Augment `input` from the previous task.
     PromptTask(
@@ -190,7 +190,7 @@ pipeline.run(
 [09/08/23 10:02:53] INFO     Subtask 8023e3d257274df29065b22e736faca8
                              Thought: Now that the webpage content is stored in memory, I can use the TaskMemory tool's summarize activity
                              to summarize the content.
-                             Action: {"name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "39ca67bbe26b4e1584193b87ed82170d"}}}
+                             Action: {"name": "PromptSummaryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "39ca67bbe26b4e1584193b87ed82170d"}}}
 [09/08/23 10:02:57] INFO     Subtask 8023e3d257274df29065b22e736faca8
                              Response: Griptape is an open source framework that allows developers to build and deploy AI applications
                              using large language models (LLMs). It provides the ability to create conversational and event-driven apps that

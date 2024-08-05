@@ -53,7 +53,7 @@ agent.run("SELECT * FROM people;")
                              Thought: The output of the SQL query has been      
                              stored in memory. I can retrieve this data using   
                              the TaskMemory's 'summarize' activity.
-                             Action: {"name": "TaskMemoryClient", "path":   
+                             Action: {"name": "PromptSummaryClient", "path":   
                              "summarize", "input": {"values": {"memory_name":   
                              "TaskMemory", "artifact_namespace":                
                              "217715ba3e444e4985bee223df5716a8"}}}                  

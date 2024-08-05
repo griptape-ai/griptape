@@ -38,7 +38,7 @@ agent.run("List all my IAM users")
                              stored in memory. I can retrieve this information  
                              using the TaskMemory tool with the summarize   
                              activity.
-                             Action: {"name": "TaskMemoryClient", "path":   
+                             Action: {"name": "PromptSummaryClient", "path":   
                              "summarize", "input": {"values": {"memory_name":   
                              "TaskMemory", "artifact_namespace":                
                              "51d22a018a434904a5da3bb8d4f763f7"}}}                                                 

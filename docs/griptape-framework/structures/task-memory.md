@@ -85,26 +85,23 @@ agent.run("What is 10 raised to the power of 5?")
 ```
 
 When we set `off_prompt` to `True`, the Agent does not function as expected, even generating an error. This is because the Calculator output is being stored in Task Memory but the Agent has no way to access it. 
-To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `TaskMemoryClient`.
+To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `PromptSummaryClient`.
 This is an example of [not providing a Task Memory compatible Tool](#not-providing-a-task-memory-compatible-tool).
 
-## Task Memory Client
+## Prompt Summary Client
 
-The [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md) is a Tool that allows an Agent to interact with Task Memory. It has the following methods:
+The [PromptSummaryClient](../../griptape-tools/official-tools/task-memory-client.md) is a Tool that allows an Agent to summarize Artifacts in Task Memory. It has the following methods:
 
-- `query`: Retrieve the content of an Artifact stored in Task Memory.
-- `summarize`: Summarize the content of an Artifact stored in Task Memory.
-
-Let's add `TaskMemoryClient` to the Agent and run the same task.
-Note that on the `TaskMemoryClient` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. 
+Let's add `PromptSummaryClient` to the Agent and run the same task.
+Note that on the `PromptSummaryClient` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. 
 If we had kept it as `True`, the results would have been stored back Task Memory which would've put us back to square one. See [Task Memory Looping](#task-memory-looping) for more information on this scenario.
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import Calculator, TaskMemoryClient
+from griptape.tools import Calculator, PromptSummaryClient
 
 # Create an agent with the Calculator tool
-agent = Agent(tools=[Calculator(off_prompt=True), TaskMemoryClient(off_prompt=False)])
+agent = Agent(tools=[Calculator(off_prompt=True), PromptSummaryClient(off_prompt=False)])
 
 agent.run("What is the square root of 12345?")
 ```
@@ -119,9 +116,9 @@ agent.run("What is the square root of 12345?")
                              Response: Output of "Calculator.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "7554b69e1d414a469b8882e2266dcea1"
 [04/26/24 13:13:15] INFO     Subtask 32b9163a15644212be60b8fba07bd23b
-                             Thought: The square root of 12345 has been calculated and stored in memory. I can retrieve this value using the TaskMemoryClient action with
+                             Thought: The square root of 12345 has been calculated and stored in memory. I can retrieve this value using the PromptSummaryClient action with
                              the query path, providing the memory_name and artifact_namespace as input.
-                             Actions: [{"tag": "retrieve_sqrt", "name": "TaskMemoryClient", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
+                             Actions: [{"tag": "retrieve_sqrt", "name": "PromptSummaryClient", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
                              "artifact_namespace": "7554b69e1d414a469b8882e2266dcea1", "query": "What is the result of the calculation?"}}}]
 [04/26/24 13:13:16] INFO     Subtask 32b9163a15644212be60b8fba07bd23b
                              Response: The result of the calculation is 111.1080555135405.
@@ -155,17 +152,17 @@ When running this example, we get the following error:
                              Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
 ```
 
-This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `TaskMemoryClient`.
-Note that we're setting `off_prompt` to `False` on the `TaskMemoryClient` so that the _queried_ content can be returned directly to the LLM.
+This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `PromptSummaryClient`.
+Note that we're setting `off_prompt` to `False` on the `PromptSummaryClient` so that the _queried_ content can be returned directly to the LLM.
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, TaskMemoryClient
+from griptape.tools import WebScraper, PromptSummaryClient
 
 agent = Agent(
     tools=[
         WebScraper(off_prompt=True),
-        TaskMemoryClient(off_prompt=False),
+        PromptSummaryClient(off_prompt=False),
     ]
 )
 
@@ -188,7 +185,7 @@ And now we get the expected output:
 [04/26/24 13:52:11] INFO     Subtask f12eb3d3b4924e4085808236b460b43d
                              Thought: Now that the webpage content is stored in memory, I need to query this memory to find the information about how many copies of Elden
                              Ring have been sold.
-                             Actions: [{"tag": "query_sales", "name": "TaskMemoryClient", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
+                             Actions: [{"tag": "query_sales", "name": "PromptSummaryClient", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
                              "artifact_namespace": "2d4ebc7211074bb7be26613eb25d8fc1", "query": "How many copies of Elden Ring have been sold?"}}}]
 [04/26/24 13:52:14] INFO     Subtask f12eb3d3b4924e4085808236b460b43d
                              Response: Elden Ring sold 23 million copies by February 2024.
@@ -218,7 +215,7 @@ from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
-from griptape.tools import FileManager, TaskMemoryClient, WebScraper
+from griptape.tools import FileManager, PromptSummaryClient, WebScraper
 
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 
@@ -255,7 +252,7 @@ agent = Agent(
     ),
     tools=[
         WebScraper(off_prompt=True),
-        TaskMemoryClient(off_prompt=True, allowlist=["query"]),
+        PromptSummaryClient(off_prompt=True, allowlist=["query"]),
         FileManager(off_prompt=True),
     ],
 )
@@ -292,13 +289,13 @@ agent.run(
                              information about how many copies of Elden Ring    
                              have been sold.                                    
                              Actions: [{"tag": "query_sales", "name":           
-                             "TaskMemoryClient", "path": "query", "input":      
+                             "PromptSummaryClient", "path": "query", "input":      
                              {"values": {"memory_name": "TaskMemory",           
                              "artifact_namespace":                              
                              "7e48bcff0da94ad3b06aa4e173f8f37b", "query": "How  
                              many copies of Elden Ring have been sold?"}}}]     
 [06/21/24 16:00:19] INFO     Subtask 56102d42475d413299ce52a0230506b7           
-                             Response: Output of "TaskMemoryClient.query" was   
+                             Response: Output of "PromptSummaryClient.query" was   
                              stored in memory with memory_name "TaskMemory" and 
                              artifact_namespace                                 
                              "9ecf4d7b7d0c46149dfc46ba236f178e"                 
@@ -329,7 +326,7 @@ As seen in the previous example, certain Tools are designed to read directly fro
 
 Today, these include:
 
-- [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md)
+- [PromptSummaryClient](../../griptape-tools/official-tools/task-memory-client.md)
 - [FileManager](../../griptape-tools/official-tools/file-manager.md)
 - [AwsS3Client](../../griptape-tools/official-tools/aws-s3-client.md)
 - [GoogleDriveClient](../../griptape-tools/official-tools/google-drive-client.md)
@@ -366,12 +363,12 @@ This can create a loop where the same data is stored and queried over and over a
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, TaskMemoryClient
+from griptape.tools import WebScraper, PromptSummaryClient
 
 agent = Agent(
     tools=[
         WebScraper(off_prompt=True), # This tool will store the data in Task Memory
-        TaskMemoryClient(off_prompt=True) # This tool will store the data back in Task Memory with no way to get it out
+        PromptSummaryClient(off_prompt=True) # This tool will store the data back in Task Memory with no way to get it out
     ]
 )
 agent.run("According to this page https://en.wikipedia.org/wiki/Dark_forest_hypothesis, what is the Dark Forest Hypothesis?")

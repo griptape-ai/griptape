@@ -84,7 +84,7 @@ Example of using `MarkdownifyWebScraperDriver` with an agent:
 ```python
 from griptape.drivers import MarkdownifyWebScraperDriver
 from griptape.loaders import WebLoader
-from griptape.tools import TaskMemoryClient, WebScraper
+from griptape.tools import PromptSummaryClient, WebScraper
 from griptape.structures import Agent
 
 agent = Agent(
@@ -95,7 +95,7 @@ agent = Agent(
             ),
             off_prompt=True,
         ),
-        TaskMemoryClient(off_prompt=False),
+        PromptSummaryClient(off_prompt=False),
     ],
 )
 agent.run("List all email addresses on griptape.ai in a flat numbered markdown list.")

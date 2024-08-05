@@ -4,10 +4,10 @@ This tool enables LLMs to scrape web pages for full text, summaries, authors, ti
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, TaskMemoryClient
+from griptape.tools import WebScraper, PromptSummaryClient
 
 agent = Agent(
-    tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)]
+    tools=[WebScraper(off_prompt=True), PromptSummaryClient(off_prompt=False)]
 )
 
 agent.run(
@@ -38,7 +38,7 @@ agent.run(
                              in memory. I can use the TaskMemory tool with  
                              the summarize activity to get a summary of the     
                              content.
-                             Action: {"name": "TaskMemoryClient", "path":   
+                             Action: {"name": "PromptSummaryClient", "path":   
                              "summarize", "input": {"values": {"memory_name":   
                              "TaskMemory", "artifact_namespace":                
                              "02da5930b8d74f7ca30aecc3760a3318"}}}                                                    

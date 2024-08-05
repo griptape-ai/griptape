@@ -126,14 +126,14 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
 ```python
 from griptape.tasks import ToolkitTask
 from griptape.structures import Agent
-from griptape.tools import WebScraper, FileManager, TaskMemoryClient
+from griptape.tools import WebScraper, FileManager, PromptSummaryClient
 
 
 agent = Agent()
 agent.add_task(
     ToolkitTask(
         "Load https://www.griptape.ai, summarize it, and store it in a file called griptape.txt", 
-        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True), TaskMemoryClient(off_prompt=True)]
+        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True), PromptSummaryClient(off_prompt=True)]
     ),
 )
 
@@ -154,7 +154,7 @@ agent.run()
 [09/08/23 11:15:11] INFO     Subtask a22a7e4ebf594b4b895fcbe8a95c1dd3
                              Thought: Now that the webpage content is stored in memory, I can use the TaskMemory tool's summarize activity
                              to summarize it.
-                             Action: {"name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "2b50373849d140f698ba8071066437ee"}}}
+                             Action: {"name": "PromptSummaryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "2b50373849d140f698ba8071066437ee"}}}
 [09/08/23 11:15:15] INFO     Subtask a22a7e4ebf594b4b895fcbe8a95c1dd3
                              Response: Griptape is an open source framework that allows developers to build and deploy AI applications
                              using large language models (LLMs). It provides the ability to create conversational and event-driven apps that
@@ -709,7 +709,7 @@ from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
 from griptape.drivers import LocalStructureRunDriver, GoogleWebSearchDriver
 from griptape.tools import (
-    TaskMemoryClient,
+    PromptSummaryClient,
     WebScraper,
     WebSearch,
 )
@@ -727,7 +727,7 @@ def build_researcher():
             WebScraper(
                 off_prompt=True,
             ),
-            TaskMemoryClient(off_prompt=False),
+            PromptSummaryClient(off_prompt=False),
         ],
         rulesets=[
             Ruleset(

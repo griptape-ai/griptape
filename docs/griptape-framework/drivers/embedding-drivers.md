@@ -215,7 +215,7 @@ Here is how you can override the Embedding Driver that is used by default in Str
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, TaskMemoryClient
+from griptape.tools import WebScraper, PromptSummaryClient
 from griptape.drivers import (
     OpenAiChatPromptDriver,
     VoyageAiEmbeddingDriver,

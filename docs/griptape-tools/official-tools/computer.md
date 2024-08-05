@@ -66,7 +66,7 @@ agent.run(f"Run this shell command for me: cat {filename}")
                              in memory. I need to retrieve this output to check 
                              if "my_new_file.txt" is listed, which would confirm
                              that the file was created successfully.
-                             Action: {"name": "TaskMemoryClient", "path":   
+                             Action: {"name": "PromptSummaryClient", "path":   
                              "query", "input": {"values": {"memory_name":   
                              "TaskMemory", "artifact_namespace":                
                              "82bc4937564e4901b7fc51fced45b643", "query": "Is   

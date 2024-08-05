@@ -4,7 +4,7 @@ Here is an example of how it can be used with a local vector store driver:
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import VectorStoreClient, TaskMemoryClient
+from griptape.tools import VectorStoreClient, PromptSummaryClient
 from griptape.loaders import WebLoader
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
 
@@ -26,7 +26,7 @@ vector_db = VectorStoreClient(
 )
 
 agent = Agent(
-    tools=[vector_db, TaskMemoryClient(off_prompt=False)]
+    tools=[vector_db, PromptSummaryClient(off_prompt=False)]
 )
 
 agent.run(

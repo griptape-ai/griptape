@@ -153,7 +153,7 @@ pipeline = Pipeline(
 pipeline.add_tasks(
     ToolkitTask(
         "Based on https://griptape.ai, tell me what griptape is.",
-        tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
+        tools=[WebScraper(off_prompt=True), PromptSummaryClient(off_prompt=False)],
     )
 )
 
@@ -167,7 +167,7 @@ You can also use the [Stream](../../reference/griptape/utils/stream.md) utility 
 from griptape.utils import Stream
 from griptape.tasks import ToolkitTask
 from griptape.structures import Pipeline
-from griptape.tools import WebScraper, TaskMemoryClient
+from griptape.tools import WebScraper, PromptSummaryClient
 
 pipeline = Pipeline()
 pipeline.config.prompt.stream = True

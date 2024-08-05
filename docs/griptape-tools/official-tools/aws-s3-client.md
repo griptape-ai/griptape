@@ -5,7 +5,7 @@ This tool enables LLMs to make AWS S3 API requests.
 ```python
 import boto3
 from griptape.structures import Agent
-from griptape.tools import AwsS3Client, TaskMemoryClient
+from griptape.tools import AwsS3Client, PromptSummaryClient
 
 # Initialize the AWS S3 client
 aws_s3_client = AwsS3Client(
@@ -15,7 +15,7 @@ aws_s3_client = AwsS3Client(
 
 # Create an agent with the AWS S3 client tool
 agent = Agent(
-    tools=[aws_s3_client, TaskMemoryClient(off_prompt=False)]
+    tools=[aws_s3_client, PromptSummaryClient(off_prompt=False)]
 )
 
 # Task to list all the AWS S3 buckets
@@ -42,7 +42,7 @@ agent.run("List all my S3 buckets.")
                              activity is stored in memory. I can retrieve this  
                              information using the "summarize" activity of the  
                              "TaskMemory" tool.
-                             Action: {"name": "TaskMemoryClient", "path":   
+                             Action: {"name": "PromptSummaryClient", "path":   
                              "summarize", "input": {"values": {"memory_name":   
                              "TaskMemory", "artifact_namespace":                
                              "f2592085fd4a430286a46770ea508cc9"}}}                                       

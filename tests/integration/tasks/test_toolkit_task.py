@@ -1,5 +1,7 @@
 import pytest
 
+from griptape.engines.summary.prompt_summary_engine import PromptSummaryEngine
+from griptape.tools.prompt_summary_client.tool import PromptSummaryClient
 from tests.utils.structure_tester import StructureTester
 
 
@@ -14,7 +16,7 @@ class TestToolkitTask:
 
         from griptape.drivers import GoogleWebSearchDriver
         from griptape.structures import Agent
-        from griptape.tools import TaskMemoryClient, WebScraper, WebSearch
+        from griptape.tools import WebScraper, WebSearch
 
         return StructureTester(
             Agent(
@@ -25,7 +27,9 @@ class TestToolkitTask:
                         )
                     ),
                     WebScraper(off_prompt=True),
-                    TaskMemoryClient(off_prompt=False),
+                    PromptSummaryClient(
+                        off_prompt=False, prompt_summary_engine=PromptSummaryEngine(prompt_driver=request.param)
+                    ),
                 ],
                 conversation_memory=None,
                 prompt_driver=request.param,
