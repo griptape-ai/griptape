@@ -84,34 +84,32 @@ class BaseTask(ABC):
             self.add_parent(parent)
 
     def add_parent(self, parent: str | BaseTask) -> None:
-        parent_task = parent if isinstance(parent, BaseTask) else None
         parent_id = parent if isinstance(parent, str) else parent.id
 
         if parent_id not in self.parent_ids:
             self.parent_ids.append(parent_id)
 
-        if parent_task is not None:
-            parent_task.add_child(self.id)
+        if isinstance(parent, BaseTask):
+            parent.add_child(self.id)
 
             if self.structure is not None:
-                self.structure.add_task(parent_task)
+                self.structure.add_task(parent)
 
     def add_children(self, children: list[str | BaseTask]) -> None:
         for child in children:
             self.add_child(child)
 
     def add_child(self, child: str | BaseTask) -> None:
-        child_task = child if isinstance(child, BaseTask) else None
         child_id = child if isinstance(child, str) else child.id
 
         if child_id not in self.child_ids:
             self.child_ids.append(child_id)
 
-        if child_task is not None:
-            child_task.add_parent(self.id)
+        if isinstance(child, BaseTask):
+            child.add_parent(self.id)
 
             if self.structure is not None:
-                self.structure.add_task(child_task)
+                self.structure.add_task(child)
 
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure
