@@ -199,6 +199,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
     def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
         subtask.attach_to(self)
+        subtask.structure = self.structure
 
         if len(self.subtasks) > 0:
             self.subtasks[-1].add_child(subtask)

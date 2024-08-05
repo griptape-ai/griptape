@@ -29,14 +29,18 @@ class BaseTask(ABC):
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
+    structure: Optional[Structure] = field(default=None, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
-    structure: Optional[Structure] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
     futures_executor_fn: Callable[[], futures.Executor] = field(
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
         kw_only=True,
     )
+
+    def __attrs_post_init__(self) -> None:
+        if self.structure is not None:
+            self.structure.add_task(self)
 
     @property
     @abstractmethod
@@ -44,11 +48,15 @@ class BaseTask(ABC):
 
     @property
     def parents(self) -> list[BaseTask]:
-        return [self.structure.find_task(parent_id) for parent_id in self.parent_ids]
+        if self.structure is not None:
+            return [self.structure.find_task(parent_id) for parent_id in self.parent_ids]
+        raise ValueError("Structure must be set to access parents")
 
     @property
     def children(self) -> list[BaseTask]:
-        return [self.structure.find_task(child_id) for child_id in self.child_ids]
+        if self.structure is not None:
+            return [self.structure.find_task(child_id) for child_id in self.child_ids]
+        raise ValueError("Structure must be set to access children")
 
     @property
     def parent_outputs(self) -> dict[str, str]:
@@ -76,20 +84,34 @@ class BaseTask(ABC):
             self.add_parent(parent)
 
     def add_parent(self, parent: str | BaseTask) -> None:
+        parent_task = parent if isinstance(parent, BaseTask) else None
         parent_id = parent if isinstance(parent, str) else parent.id
 
         if parent_id not in self.parent_ids:
             self.parent_ids.append(parent_id)
+
+        if parent_task is not None:
+            parent_task.add_child(self.id)
+
+            if self.structure is not None:
+                self.structure.add_task(parent_task)
 
     def add_children(self, children: list[str | BaseTask]) -> None:
         for child in children:
             self.add_child(child)
 
     def add_child(self, child: str | BaseTask) -> None:
+        child_task = child if isinstance(child, BaseTask) else None
         child_id = child if isinstance(child, str) else child.id
 
         if child_id not in self.child_ids:
             self.child_ids.append(child_id)
+
+        if child_task is not None:
+            child_task.add_parent(self.id)
+
+            if self.structure is not None:
+                self.structure.add_task(child_task)
 
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure

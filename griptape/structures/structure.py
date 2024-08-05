@@ -215,10 +215,15 @@ class Structure(ABC, EventPublisherMixin):
         return any(s for s in self.tasks if s.is_executing())
 
     def find_task(self, task_id: str) -> BaseTask:
+        if (task := self.try_find_task(task_id)) is not None:
+            return task
+        raise ValueError(f"Task with id {task_id} doesn't exist.")
+
+    def try_find_task(self, task_id: str) -> Optional[BaseTask]:
         for task in self.tasks:
             if task.id == task_id:
                 return task
-        raise ValueError(f"Task with id {task_id} doesn't exist.")
+        return None
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
@@ -227,7 +232,11 @@ class Structure(ABC, EventPublisherMixin):
         return {"args": self.execution_args, "structure": self}
 
     def resolve_relationships(self) -> None:
-        task_by_id = {task.id: task for task in self.tasks}
+        task_by_id = {}
+        for task in self.tasks:
+            if task.id in task_by_id:
+                raise ValueError(f"Duplicate task with id {task.id} found.")
+            task_by_id[task.id] = task
 
         for task in self.tasks:
             # Ensure parents include this task as a child
