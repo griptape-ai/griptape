@@ -9,6 +9,7 @@ from griptape.engines.rag import RagContext, RagEngine
 from griptape.memory.task.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
+    from griptape.artifacts import ErrorArtifact
     from griptape.drivers import BaseVectorStoreDriver
     from griptape.engines import BaseSummaryEngine, CsvExtractionEngine, JsonExtractionEngine
 
@@ -44,6 +45,18 @@ class TextArtifactStorage(BaseArtifactStorage):
             raise ValueError("Summary engine is not set.")
 
         return self.summary_engine.summarize_artifacts(self.load_artifacts(namespace))
+
+    def extract_csv(self, namespace: str) -> ListArtifact | ErrorArtifact:
+        if self.csv_extraction_engine is None:
+            raise ValueError("Csv extraction engine is not set.")
+
+        return self.csv_extraction_engine.extract_artifacts(self.load_artifacts(namespace))
+
+    def extract_json(self, namespace: str) -> ListArtifact | ErrorArtifact:
+        if self.json_extraction_engine is None:
+            raise ValueError("Json extraction engine is not set.")
+
+        return self.json_extraction_engine.extract_artifacts(self.load_artifacts(namespace))
 
     def query(self, namespace: str, query: str, metadata: Any = None) -> BaseArtifact:
         if self.rag_engine is None:

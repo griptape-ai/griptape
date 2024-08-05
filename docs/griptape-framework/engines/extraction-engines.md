@@ -32,7 +32,7 @@ Charlie is 40 and lives in Texas.
 """
 
 # Extract CSV rows using the engine
-result = csv_engine.extract(sample_text, column_names=["name", "age", "location"])
+result = csv_engine.extract_text(sample_text, column_names=["name", "age", "location"])
 
 for row in result.value:
     print(row.to_text())
@@ -73,7 +73,7 @@ user_schema = Schema(
 ).json_schema("UserSchema")
 
 # Extract data using the engine
-result = json_engine.extract(sample_json_text, template_schema=user_schema)
+result = json_engine.extract_text(sample_json_text, template_schema=user_schema)
 
 for artifact in result.value:
     print(artifact.value)

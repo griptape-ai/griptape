@@ -27,3 +27,21 @@ class TestTaskMemoryClient:
             ).value
             == "mock output"
         )
+
+    def test_extract_json(self, tool):
+        tool.input_memory[0].store_artifact("foo", TextArtifact("test"))
+
+        assert (
+            tool.extract_json({"values": {"memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}}).value
+            == []
+        )
+
+    def test_extract_csv(self, tool):
+        tool.input_memory[0].store_artifact("foo", TextArtifact("test"))
+
+        assert (
+            tool.extract_csv({"values": {"memory_name": tool.input_memory[0].name, "artifact_namespace": "foo"}})
+            .value[0]
+            .value
+            == {}
+        )

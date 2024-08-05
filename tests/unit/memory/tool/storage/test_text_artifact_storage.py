@@ -35,3 +35,13 @@ class TestTextArtifactStorage:
         storage.store_artifact("foo", TextArtifact("test"))
 
         assert storage.query("foo", "query").value == "mock output"
+
+    def test_json_extraction_namespace(self, storage):
+        storage.store_artifact("foo", TextArtifact("test"))
+
+        assert storage.extract_json("foo").value == []
+
+    def test_csv_extraction_namespace(self, storage):
+        storage.store_artifact("foo", TextArtifact("test"))
+
+        assert storage.extract_csv("foo").value[0].value == {}

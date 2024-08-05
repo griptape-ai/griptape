@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.artifacts import BlobArtifact, CsvRowArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import BlobArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.structures import Agent
@@ -10,10 +10,6 @@ from tests.utils import defaults
 
 
 class TestTaskMemory:
-    @pytest.fixture(autouse=True)
-    def _mock_griptape(self, mocker):
-        mocker.patch("griptape.engines.CsvExtractionEngine.extract", return_value=[CsvRowArtifact({"foo": "bar"})])
-
     @pytest.fixture()
     def memory(self):
         return defaults.text_task_memory("MyMemory")

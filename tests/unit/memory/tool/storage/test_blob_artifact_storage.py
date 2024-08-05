@@ -35,3 +35,13 @@ class TestBlobArtifactStorage:
         storage.store_artifact("foo", BlobArtifact(b"test"))
 
         assert storage.query("foo", "query").value == "can't query artifacts"
+
+    def test_json_extraction_namespace(self, storage):
+        storage.store_artifact("foo", BlobArtifact(b"test"))
+
+        assert storage.query("foo", "query").value == "can't query artifacts"
+
+    def test_csv_extraction_namespace(self, storage):
+        storage.store_artifact("foo", BlobArtifact(b"test"))
+
+        assert storage.query("foo", "query").value == "can't query artifacts"

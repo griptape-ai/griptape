@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `AstraDbVectorStoreDriver` to support DataStax Astra DB as a vector store.
 - Ability to set custom schema properties on Tool Activities via `extra_schema_properties`.
+- `extract_json` and `extract_csv` Activities to `TaskMemoryClient`.
+- `extract_json_namespace` and `extract_csv_namespace` methods to `TaskMemory`.
+
+### Changed
+- **BREAKING**: Split parameter `JsonExtractionEngine.template_generator` into `system_template_generator` and `user_template_generator`.
+- **BREAKING**: Split parameter `CsvExtractionEngine.template_generator` into `system_template_generator` and `user_template_generator`.
+- **BREAKING**: Split `JsonExtractionEngine.extract` into `extract_text` and `extract_artifacts`.
+- **BREAKING**: Split `CsvExtractionEngine.extract` into `extract_text` and `extract_artifacts`.
+- Parse json from LLM output before loading in `JsonExtractionEngine`.
+
+### Fixed
+- Missing implementations of `csv_extraction_engine` and `json_extraction_engine` in `TextArtifactStorage`.
 
 ## [0.29.0] - 2024-07-30
 

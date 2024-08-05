@@ -32,3 +32,9 @@ class BlobArtifactStorage(BaseArtifactStorage):
 
     def query(self, namespace: str, query: str, metadata: Any = None) -> BaseArtifact:
         return InfoArtifact("can't query artifacts")
+
+    def extract_csv(self, namespace: str) -> InfoArtifact:
+        return InfoArtifact("can't extract csv")
+
+    def extract_json(self, namespace: str) -> InfoArtifact:
+        return InfoArtifact("can't extract json")

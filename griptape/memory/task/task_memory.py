@@ -139,3 +139,19 @@ class TaskMemory(ActivityMixin):
             return storage.query(namespace=namespace, query=query, metadata=self.namespace_metadata.get(namespace))
         else:
             return InfoArtifact("Can't find memory content")
+
+    def extract_json_namespace(self, namespace: str) -> ListArtifact | InfoArtifact | ErrorArtifact:
+        storage = self.namespace_storage.get(namespace)
+
+        if storage:
+            return storage.extract_json(namespace)
+        else:
+            return ErrorArtifact("Can't find memory content")
+
+    def extract_csv_namespace(self, namespace: str) -> ListArtifact | InfoArtifact | ErrorArtifact:
+        storage = self.namespace_storage.get(namespace)
+
+        if storage:
+            return storage.extract_csv(namespace)
+        else:
+            return ErrorArtifact("Can't find memory content")
