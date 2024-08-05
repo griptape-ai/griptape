@@ -809,6 +809,8 @@ class TestWorkflow:
         assert len(workflow.tasks) == 4
         assert workflow.input_task.id == "task1"
         assert workflow.output_task.id == "task4"
+        assert workflow.input_task.id == workflow.order_tasks()[0].id
+        assert workflow.output_task.id == workflow.order_tasks()[-1].id
 
         task1 = workflow.find_task("task1")
         assert task1.state == BaseTask.State.FINISHED
@@ -856,6 +858,8 @@ class TestWorkflow:
         assert taskd.state == BaseTask.State.FINISHED
         assert sorted(taskd.parent_ids) == ["taska", "taskb", "taskc"]
         assert taskd.child_ids == ["taske"]
+        assert workflow.input_task.id == workflow.order_tasks()[0].id
+        assert workflow.output_task.id == workflow.order_tasks()[-1].id
 
         taske = workflow.find_task("taske")
         assert taske.state == BaseTask.State.FINISHED
@@ -876,6 +880,8 @@ class TestWorkflow:
         assert task2.state == BaseTask.State.FINISHED
         assert task2.parent_ids == ["task4"]
         assert task2.child_ids == ["task3"]
+        assert workflow.input_task.id == workflow.order_tasks()[0].id
+        assert workflow.output_task.id == workflow.order_tasks()[-1].id
 
         task3 = workflow.find_task("task3")
         assert task3.state == BaseTask.State.FINISHED
@@ -892,6 +898,8 @@ class TestWorkflow:
         assert len(workflow.tasks) == 9
         assert workflow.input_task.id == "collect_movie_info"
         assert workflow.output_task.id == "summarize_to_slack"
+        assert workflow.input_task.id == workflow.order_tasks()[0].id
+        assert workflow.output_task.id == workflow.order_tasks()[-1].id
 
         collect_movie_info = workflow.find_task("collect_movie_info")
         assert collect_movie_info.parent_ids == []
