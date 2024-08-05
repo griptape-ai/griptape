@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Any
 from attrs import define
 
 if TYPE_CHECKING:
-    from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, TextArtifact
+    from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 
 
 @define
@@ -25,3 +25,9 @@ class BaseArtifactStorage(ABC):
 
     @abstractmethod
     def query(self, namespace: str, query: str, metadata: Any = None) -> BaseArtifact: ...
+
+    @abstractmethod
+    def extract_csv(self, namespace: str) -> ListArtifact | InfoArtifact | ErrorArtifact: ...
+
+    @abstractmethod
+    def extract_json(self, namespace: str) -> ListArtifact | InfoArtifact | ErrorArtifact: ...

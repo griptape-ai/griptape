@@ -5,10 +5,11 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
 
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 
 if TYPE_CHECKING:
-    from griptape.artifacts import ErrorArtifact, ListArtifact
+    from griptape.artifacts import ErrorArtifact
     from griptape.drivers import BasePromptDriver
     from griptape.rules import Ruleset
 
@@ -45,10 +46,15 @@ class BaseExtractionEngine(ABC):
         )
 
     @abstractmethod
-    def extract(
+    def extract_artifacts(
         self,
-        text: str | ListArtifact,
+        artifacts: ListArtifact,
         *,
         rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
     ) -> ListArtifact | ErrorArtifact: ...
+
+    def extract_text(
+        self, text: str, *, rulesets: Optional[list[Ruleset]] = None, **kwargs
+    ) -> ListArtifact | ErrorArtifact:
+        return self.extract_artifacts(ListArtifact([TextArtifact(text)]), rulesets=rulesets, **kwargs)

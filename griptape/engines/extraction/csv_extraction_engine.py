@@ -18,11 +18,12 @@ if TYPE_CHECKING:
 
 @define
 class CsvExtractionEngine(BaseExtractionEngine):
-    template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv_extraction.j2")), kw_only=True)
+    system_template_generator: J2 = field(default=Factory(lambda: J2("engines/csv_extraction/system.j2")), kw_only=True)
+    user_template_generator: J2 = field(default=Factory(lambda: J2("engines/csv_extraction/user.j2")), kw_only=True)
 
-    def extract(
+    def extract_artifacts(
         self,
-        text: str | ListArtifact,
+        artifacts: ListArtifact,
         *,
         rulesets: Optional[list[Ruleset]] = None,
         column_names: Optional[list[str]] = None,
@@ -33,7 +34,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
         try:
             return ListArtifact(
                 self._extract_rec(
-                    cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                    cast(list[TextArtifact], artifacts.value),
                     column_names,
                     [],
                     rulesets=rulesets,
@@ -60,16 +61,28 @@ class CsvExtractionEngine(BaseExtractionEngine):
         rulesets: Optional[list[Ruleset]] = None,
     ) -> list[CsvRowArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
-        full_text = self.template_generator.render(
+        system_prompt = self.system_template_generator.render(
             column_names=column_names,
-            text=artifacts_text,
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
+        user_prompt = self.user_template_generator.render(
+            text=artifacts_text,
+        )
 
-        if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
+        if (
+            self.prompt_driver.tokenizer.count_input_tokens_left(system_prompt + user_prompt)
+            >= self.min_response_tokens
+        ):
             rows.extend(
                 self.text_to_csv_rows(
-                    self.prompt_driver.run(PromptStack(messages=[Message(full_text, role=Message.USER_ROLE)])).value,
+                    self.prompt_driver.run(
+                        PromptStack(
+                            messages=[
+                                Message(system_prompt, role=Message.SYSTEM_ROLE),
+                                Message(user_prompt, role=Message.USER_ROLE),
+                            ]
+                        )
+                    ).value,
                     column_names,
                 ),
             )
@@ -77,15 +90,20 @@ class CsvExtractionEngine(BaseExtractionEngine):
             return rows
         else:
             chunks = self.chunker.chunk(artifacts_text)
-            partial_text = self.template_generator.render(
-                column_names=column_names,
+            partial_text = self.user_template_generator.render(
                 text=chunks[0].value,
-                rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
             )
 
             rows.extend(
                 self.text_to_csv_rows(
-                    self.prompt_driver.run(PromptStack(messages=[Message(partial_text, role=Message.USER_ROLE)])).value,
+                    self.prompt_driver.run(
+                        PromptStack(
+                            messages=[
+                                Message(system_prompt, role=Message.SYSTEM_ROLE),
+                                Message(partial_text, role=Message.USER_ROLE),
+                            ]
+                        )
+                    ).value,
                     column_names,
                 ),
             )

@@ -21,4 +21,4 @@ class ExtractionTask(BaseTextInputTask):
         return self._extraction_engine
 
     def run(self) -> ListArtifact | ErrorArtifact:
-        return self.extraction_engine.extract(self.input.to_text(), rulesets=self.all_rulesets, **self.args)
+        return self.extraction_engine.extract_text(self.input.to_text(), rulesets=self.all_rulesets, **self.args)
