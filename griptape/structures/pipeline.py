@@ -16,6 +16,9 @@ if TYPE_CHECKING:
 @define
 class Pipeline(Structure):
     def add_task(self, task: BaseTask) -> BaseTask:
+        if (existing_task := self.try_find_task(task.id)) is not None:
+            return existing_task
+
         task.preprocess(self)
 
         if self.output_task:

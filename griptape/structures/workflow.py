@@ -23,10 +23,17 @@ class Workflow(Structure):
     )
 
     @property
+    def input_task(self) -> Optional[BaseTask]:
+        return self.order_tasks()[0] if self.tasks else None
+
+    @property
     def output_task(self) -> Optional[BaseTask]:
         return self.order_tasks()[-1] if self.tasks else None
 
     def add_task(self, task: BaseTask) -> BaseTask:
+        if (existing_task := self.try_find_task(task.id)) is not None:
+            return existing_task
+
         task.preprocess(self)
 
         self.tasks.append(task)

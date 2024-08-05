@@ -76,6 +76,44 @@ class TestBaseTask:
 
         assert child.parents_output_text == "foobar1\nfoobar3"
 
+    def test_parents_property_no_structure(self, task):
+        workflow = Workflow()
+        task1 = MockTask("foobar1", id="foobar1")
+        task2 = MockTask("foobar2", id="foobar2")
+        task3 = MockTask("foobar3", id="foobar3")
+        child = MockTask("foobar", id="foobar")
+
+        child.add_parent(task1)
+        child.add_parent(task2)
+        child.add_parent(task3)
+
+        with pytest.raises(ValueError, match="Structure must be set to access parents"):
+            child.parents  # noqa: B018
+
+        workflow.add_tasks(task1, task2, task3, child)
+        child.structure = workflow
+
+        assert len(child.parents) == 3
+
+    def test_children_property_no_structure(self, task):
+        workflow = Workflow()
+        task1 = MockTask("foobar1", id="foobar1")
+        task2 = MockTask("foobar2", id="foobar2")
+        task3 = MockTask("foobar3", id="foobar3")
+        parent = MockTask("foobar", id="foobar")
+
+        parent.add_child(task1)
+        parent.add_child(task2)
+        parent.add_child(task3)
+
+        with pytest.raises(ValueError, match="Structure must be set to access children"):
+            parent.children  # noqa: B018
+
+        workflow.add_tasks(task1, task2, task3, parent)
+        parent.structure = workflow
+
+        assert len(parent.children) == 3
+
     def test_execute_publish_events(self, task):
         task.execute()
 

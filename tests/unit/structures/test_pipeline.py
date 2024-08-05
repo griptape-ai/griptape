@@ -390,3 +390,22 @@ class TestPipeline:
         pipeline.run()
 
         assert pipeline.output is not None
+
+    def test_add_duplicate_task(self):
+        task = PromptTask("test")
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+
+        pipeline + task
+        pipeline + task
+
+        assert len(pipeline.tasks) == 1
+
+    def test_add_duplicate_task_directly(self):
+        task = PromptTask("test")
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+
+        pipeline + task
+        pipeline.tasks.append(task)
+
+        with pytest.raises(ValueError, match=f"Duplicate task with id {task.id} found."):
+            pipeline.run()
