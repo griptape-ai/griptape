@@ -80,7 +80,7 @@ class BaseGraphStoreDriver(SerializableMixin, ABC):
     @abstractmethod
     def upsert_node(
         self,
-        node_id: Optional[str] = None,
+        node_data: dict[str, Any],
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
         **kwargs,
@@ -96,10 +96,10 @@ class BaseGraphStoreDriver(SerializableMixin, ABC):
     def query(
         self,
         query: str,
-        count: Optional[int] = None,
+        params: Optional[dict[str, Any]] = None,
         namespace: Optional[str] = None,
         **kwargs,
-    ) -> list[Entry]: ...
+    ) -> Any: ...
 
     def _get_default_node_id(self, value: str) -> str:
         return str(uuid.uuid5(uuid.NAMESPACE_OID, value))

@@ -79,27 +79,28 @@ class TestFalkorDBGraphStoreDriver:
         mock_client.query.assert_called()
         logger.info("test_delete_triplet passed")
 
-    def test_refresh_schema(self, driver, mock_client):
+    def test_refresh_ontology(self, driver, mock_client):
         mock_client.query.side_effect = [
             MagicMock(result_set=[["Property1"], ["Property2"]]),
             MagicMock(result_set=[["Relationship1"], ["Relationship2"]]),
         ]
-        driver.refresh_schema()
-        assert "Properties" in driver.schema
-        assert "Relationships" in driver.schema
+        driver.refresh_ontology()
+        ontology = driver.get_ontology(refresh=False)
+        assert "Properties" in ontology
+        assert "Relationships" in ontology
         mock_client.query.assert_called()
-        logger.info("test_refresh_schema passed")
+        logger.info("test_refresh_ontology passed")
 
-    def test_get_schema(self, driver, mock_client):
+    def test_get_ontology(self, driver, mock_client):
         mock_client.query.side_effect = [
             MagicMock(result_set=[["Property1"], ["Property2"]]),
             MagicMock(result_set=[["Relationship1"], ["Relationship2"]]),
         ]
-        schema = driver.get_schema(refresh=True)
-        assert "Properties" in schema
-        assert "Relationships" in schema
+        ontology = driver.get_ontology(refresh=True)
+        assert "Properties" in ontology
+        assert "Relationships" in ontology
         mock_client.query.assert_called()
-        logger.info("test_get_schema passed")
+        logger.info("test_get_ontology passed")
 
     def test_query(self, driver, mock_client):
         query = "MATCH (n) RETURN n LIMIT 1"
