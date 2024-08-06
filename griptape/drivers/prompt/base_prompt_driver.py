@@ -113,6 +113,8 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return result
 
     def __process_stream(self, prompt_stack: PromptStack) -> Message:
+        from griptape.config import Config
+
         delta_contents: dict[int, list[BaseDeltaMessageContent]] = {}
         usage = DeltaMessage.Usage()
 

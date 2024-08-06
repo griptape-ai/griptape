@@ -32,6 +32,7 @@ class Agent(Structure):
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
+
         if len(self.tasks) == 0:
             if self.tools:
                 task = ToolkitTask(self.input, tools=self.tools, max_meta_memory_entries=self.max_meta_memory_entries)

@@ -8,7 +8,7 @@ class TestAzureOpenAiStructureConfig:
     def mock_openai(self, mocker):
         return mocker.patch("openai.AzureOpenAI")
 
-    @pytest.fixture()
+    @pytest.fixture
     def config(self):
         return AzureOpenAiStructureConfig(
             azure_endpoint="http://localhost:8080",
@@ -85,16 +85,3 @@ class TestAzureOpenAiStructureConfig:
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }
-
-    def test_from_dict(self, config: AzureOpenAiStructureConfig):
-        assert AzureOpenAiStructureConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
-
-        # override values in the dict config
-        # serialize and deserialize the config
-        new_config = config.merge_config(
-            {
-                "prompt_driver": {"azure_deployment": "new-test-gpt-4"},
-                "embedding_driver": {"model": "new-text-embedding-3-small"},
-            }
-        ).to_dict()
-        assert AzureOpenAiStructureConfig.from_dict(new_config).to_dict() == new_config

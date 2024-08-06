@@ -67,7 +67,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
         if self.autoprune and hasattr(self, "structure"):
             should_prune = True
-            prompt_driver = self.structure.config.prompt_driver
+            prompt_driver = Config.prompt_driver
             temp_stack = PromptStack()
 
             # Try to determine how many Conversation Memory runs we can

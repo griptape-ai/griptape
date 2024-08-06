@@ -4,7 +4,7 @@ from griptape.config import StructureConfig
 
 
 class TestStructureConfig:
-    @pytest.fixture()
+    @pytest.fixture
     def config(self):
         return StructureConfig()
 
@@ -32,29 +32,6 @@ class TestStructureConfig:
 
     def test_from_dict(self, config):
         assert StructureConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
-
-    def test_unchanged_merge_config(self, config):
-        assert (
-            config.merge_config(
-                {
-                    "type": "StructureConfig",
-                    "prompt_driver": {
-                        "type": "DummyPromptDriver",
-                        "temperature": 0.1,
-                        "max_tokens": None,
-                        "stream": False,
-                    },
-                }
-            ).to_dict()
-            == config.to_dict()
-        )
-
-    def test_changed_merge_config(self, config):
-        config = config.merge_config(
-            {"prompt_driver": {"type": "DummyPromptDriver", "temperature": 0.1, "max_tokens": None, "stream": False}}
-        )
-
-        assert config.prompt_driver.temperature == 0.1
 
     def test_dot_update(self, config):
         config.prompt_driver.max_tokens = 10

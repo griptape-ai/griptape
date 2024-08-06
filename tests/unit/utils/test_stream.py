@@ -2,18 +2,19 @@ from collections.abc import Iterator
 
 import pytest
 
+from griptape.config import Config
 from griptape.structures import Agent
 from griptape.utils import Stream
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestStream:
     @pytest.fixture(params=[True, False])
     def agent(self, request):
-        return Agent(prompt_driver=MockPromptDriver(stream=request.param, max_attempts=0))
+        Config.prompt_driver.stream = request.param
+        return Agent()
 
     def test_init(self, agent):
-        if agent.prompt_driver.stream:
+        if Config.prompt_driver.stream:
             chat_stream = Stream(agent)
 
             assert chat_stream.structure == agent

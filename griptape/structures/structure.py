@@ -11,14 +11,7 @@ from rich.logging import RichHandler
 
 from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
 from griptape.common import observable
-from griptape.config import BaseStructureConfig, Config
-from griptape.drivers import (
-    BaseEmbeddingDriver,
-    BasePromptDriver,
-    LocalVectorStoreDriver,
-    OpenAiChatPromptDriver,
-    OpenAiEmbeddingDriver,
-)
+from griptape.config import Config
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
@@ -33,7 +26,6 @@ from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
-from griptape.utils import deprecation_warn
 
 if TYPE_CHECKING:
     from griptape.memory.structure import BaseConversationMemory
@@ -46,13 +38,6 @@ class Structure(ABC):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    stream: Optional[bool] = field(default=None, kw_only=True)
-    prompt_driver: Optional[BasePromptDriver] = field(default=None)
-    embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
-    config: BaseStructureConfig = field(
-        default=Factory(lambda self: self.default_config, takes_self=True),
-        kw_only=True,
-    )
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
@@ -99,21 +84,6 @@ class Structure(ABC):
     def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
         return self.add_tasks(*other) if isinstance(other, list) else self + [other]
 
-    @prompt_driver.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_prompt_driver(self, attribute: Attribute, value: BasePromptDriver) -> None:
-        if value is not None:
-            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver` instead.")
-
-    @embedding_driver.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_embedding_driver(self, attribute: Attribute, value: BaseEmbeddingDriver) -> None:
-        if value is not None:
-            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.embedding_driver` instead.")
-
-    @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_stream(self, attribute: Attribute, value: bool) -> None:  # noqa: FBT001
-        if value is not None:
-            deprecation_warn(f"`{attribute.name}` is deprecated, use `config.prompt_driver.stream` instead.")
-
     @property
     def execution_args(self) -> tuple:
         return self._execution_args
@@ -147,24 +117,6 @@ class Structure(ABC):
     @property
     def finished_tasks(self) -> list[BaseTask]:
         return [s for s in self.tasks if s.is_finished()]
-
-    @property
-    def default_config(self) -> BaseStructureConfig:
-        if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
-            prompt_driver = OpenAiChatPromptDriver(model="gpt-4o") if self.prompt_driver is None else self.prompt_driver
-
-            embedding_driver = OpenAiEmbeddingDriver() if self.embedding_driver is None else self.embedding_driver
-
-            if self.stream is not None:
-                prompt_driver.stream = self.stream
-
-            vector_store_driver = LocalVectorStoreDriver(embedding_driver=embedding_driver)
-
-            Config.prompt_driver = prompt_driver
-            Config.vector_store_driver = vector_store_driver
-            Config.embedding_driver = embedding_driver
-
-        return Config
 
     @property
     def default_rag_engine(self) -> RagEngine:

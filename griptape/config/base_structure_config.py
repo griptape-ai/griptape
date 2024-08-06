@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseStructureConfig(BaseConfig, ABC):
+class BaseStructureConfig(BaseConfig, ABC, EventPublisherMixin):
     prompt_driver: BasePromptDriver = field(kw_only=True, metadata={"serializable": True})
     image_generation_driver: BaseImageGenerationDriver = field(kw_only=True, metadata={"serializable": True})
     image_query_driver: BaseImageQueryDriver = field(kw_only=True, metadata={"serializable": True})
