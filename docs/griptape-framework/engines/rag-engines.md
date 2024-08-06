@@ -12,7 +12,7 @@ search:
 
 ### RAG Stages
 
-`RagEngine`s consist of three stages: `QueryRagStage`, `RetrievalRagStage`, and `ResponseRagStage`. Stages are always executed sequentially. `RagEngine`s are not meant to replace [Workflows](../../reference/griptape/structures/workflows.md); that's why they don't implement arbitrary DAGs.
+`RagEngine`s consist of three stages: `QueryRagStage`, `RetrievalRagStage`, and `ResponseRagStage`. Stages are always executed sequentially. `RagEngine`s are not meant to replace [Workflows](./structures/workflows.md); that's why they don't implement arbitrary DAGs.
 
 - `QueryRagStage` is used for modifying user queries.
 - `RetrievalRagStage` is used for retrieving and re-ranking text chunks.
