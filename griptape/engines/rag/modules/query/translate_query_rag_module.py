@@ -1,12 +1,15 @@
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Callable
-from attrs import field, define, Factory
-from griptape.engines.rag import RagContext
+
+from attrs import Factory, define, field
+
 from griptape.engines.rag.modules import BaseQueryRagModule
 from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
+    from griptape.engines.rag import RagContext
 
 
 @define(kw_only=True)
@@ -26,7 +29,4 @@ class TranslateQueryRagModule(BaseQueryRagModule):
         return context
 
     def default_user_template_generator(self, query: str, language: str) -> str:
-        return J2("engines/rag/modules/query/translate/user.j2").render(
-            query=query,
-            language=language
-        )
+        return J2("engines/rag/modules/query/translate/user.j2").render(query=query, language=language)

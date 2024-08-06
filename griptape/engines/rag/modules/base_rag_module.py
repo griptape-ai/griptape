@@ -23,13 +23,9 @@ class BaseRagModule(ABC):
         messages = []
 
         if system_prompt is not None:
-            messages.append(
-                Message(system_prompt, role=Message.SYSTEM_ROLE)
-            )
+            messages.append(Message(system_prompt, role=Message.SYSTEM_ROLE))
 
-        messages.append(
-            Message(query, role=Message.USER_ROLE)
-        )
+        messages.append(Message(query, role=Message.USER_ROLE))
 
         return PromptStack(messages=messages)
 
