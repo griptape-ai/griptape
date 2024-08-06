@@ -1,17 +1,14 @@
-from attrs import define
+from attrs import Factory, define, field
 
-from griptape.config.base_config import BaseConfig
-from griptape.config.base_driver_config import BaseDriverConfig
-from griptape.mixins.event_publisher_mixin import EventPublisherMixin
-
+from .base_config import BaseConfig
+from .events_config import EventsConfig
 from .openai_driver_config import OpenAiDriverConfig
 
 
 @define
-class _Config(BaseConfig, EventPublisherMixin):
-    drivers: BaseDriverConfig
+class _Config(BaseConfig):
+    drivers: OpenAiDriverConfig = field(default=Factory(lambda: OpenAiDriverConfig()), kw_only=True)
+    events: EventsConfig = field(default=Factory(lambda: EventsConfig()), kw_only=True)
 
 
-Config = _Config(
-    drivers=OpenAiDriverConfig(),
-)
+Config = _Config()

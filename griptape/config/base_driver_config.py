@@ -5,6 +5,8 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
+from griptape.mixins import SerializableMixin
+
 if TYPE_CHECKING:
     from griptape.drivers import (
         BaseAudioTranscriptionDriver,
@@ -19,7 +21,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseDriverConfig(ABC):
+class BaseDriverConfig(ABC, SerializableMixin):
     prompt: BasePromptDriver = field(kw_only=True, metadata={"serializable": True})
     image_generation: BaseImageGenerationDriver = field(kw_only=True, metadata={"serializable": True})
     image_query: BaseImageQueryDriver = field(kw_only=True, metadata={"serializable": True})
