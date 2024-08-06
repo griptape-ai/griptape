@@ -123,7 +123,7 @@ from griptape.drivers import AnthropicPromptDriver
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=AnthropicPromptDriver(
+        prompt=AnthropicPromptDriver(
             model="claude-3-sonnet-20240229",
             api_key=os.environ["ANTHROPIC_API_KEY"],
         )

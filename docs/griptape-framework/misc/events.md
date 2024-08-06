@@ -140,7 +140,7 @@ from griptape.drivers import OpenAiChatPromptDriver
 
 pipeline = Pipeline(
     config=OpenAiDriverConfig(
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True)
+        prompt=OpenAiChatPromptDriver(model="gpt-4o", stream=True)
     ),
     event_listeners=[
         EventListener(
