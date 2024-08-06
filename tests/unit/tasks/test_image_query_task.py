@@ -8,7 +8,6 @@ from griptape.engines import ImageQueryEngine
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, ImageQueryTask
 from tests.mocks.mock_image_query_driver import MockImageQueryDriver
-from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestImageQueryTask:
@@ -61,16 +60,10 @@ class TestImageQueryTask:
 
     def test_config_image_generation_engine(self, text_artifact, image_artifact):
         task = ImageQueryTask((text_artifact, [image_artifact, image_artifact]))
-        Agent(config=MockStructureConfig()).add_task(task)
+        Agent().add_task(task)
 
         assert isinstance(task.image_query_engine, ImageQueryEngine)
         assert isinstance(task.image_query_engine.image_query_driver, MockImageQueryDriver)
-
-    def test_missing_image_generation_engine(self, text_artifact, image_artifact):
-        task = ImageQueryTask((text_artifact, [image_artifact, image_artifact]))
-
-        with pytest.raises(ValueError, match="Image Query Engine"):
-            task.image_query_engine  # noqa: B018
 
     def test_run(self, image_query_engine, text_artifact, image_artifact):
         task = ImageQueryTask((text_artifact, [image_artifact, image_artifact]), image_query_engine=image_query_engine)

@@ -11,7 +11,7 @@ from rich.logging import RichHandler
 
 from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
 from griptape.common import observable
-from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
+from griptape.config import BaseStructureConfig, Config
 from griptape.drivers import (
     BaseEmbeddingDriver,
     BasePromptDriver,
@@ -59,10 +59,7 @@ class Structure(ABC):
     custom_logger: Optional[Logger] = field(default=None, kw_only=True)
     logger_level: int = field(default=logging.INFO, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
-        default=Factory(
-            lambda self: ConversationMemory(driver=self.config.conversation_memory_driver),
-            takes_self=True,
-        ),
+        default=Factory(lambda: ConversationMemory()),
         kw_only=True,
     )
     rag_engine: RagEngine = field(default=Factory(lambda self: self.default_rag_engine, takes_self=True), kw_only=True)
@@ -154,8 +151,6 @@ class Structure(ABC):
     @property
     def default_config(self) -> BaseStructureConfig:
         if self.prompt_driver is not None or self.embedding_driver is not None or self.stream is not None:
-            config = StructureConfig()
-
             prompt_driver = OpenAiChatPromptDriver(model="gpt-4o") if self.prompt_driver is None else self.prompt_driver
 
             embedding_driver = OpenAiEmbeddingDriver() if self.embedding_driver is None else self.embedding_driver
@@ -165,26 +160,24 @@ class Structure(ABC):
 
             vector_store_driver = LocalVectorStoreDriver(embedding_driver=embedding_driver)
 
-            config.prompt_driver = prompt_driver
-            config.vector_store_driver = vector_store_driver
-            config.embedding_driver = embedding_driver
-        else:
-            config = OpenAiStructureConfig()
+            Config.prompt_driver = prompt_driver
+            Config.vector_store_driver = vector_store_driver
+            Config.embedding_driver = embedding_driver
 
-        return config
+        return Config
 
     @property
     def default_rag_engine(self) -> RagEngine:
         return RagEngine(
             retrieval_stage=RetrievalRagStage(
-                retrieval_modules=[VectorStoreRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)],
+                retrieval_modules=[VectorStoreRetrievalRagModule()],
             ),
             response_stage=ResponseRagStage(
                 before_response_modules=[
                     RulesetsBeforeResponseRagModule(rulesets=self.rulesets),
                     MetadataBeforeResponseRagModule(),
                 ],
-                response_module=PromptResponseRagModule(prompt_driver=self.config.prompt_driver),
+                response_module=PromptResponseRagModule(),
             ),
         )
 
@@ -195,10 +188,10 @@ class Structure(ABC):
                 TextArtifact: TextArtifactStorage(
                     rag_engine=self.rag_engine,
                     retrieval_rag_module_name="VectorStoreRetrievalRagModule",
-                    vector_store_driver=self.config.vector_store_driver,
-                    summary_engine=PromptSummaryEngine(prompt_driver=self.config.prompt_driver),
-                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=self.config.prompt_driver),
-                    json_extraction_engine=JsonExtractionEngine(prompt_driver=self.config.prompt_driver),
+                    vector_store_driver=Config.vector_store_driver,
+                    summary_engine=PromptSummaryEngine(prompt_driver=Config.prompt_driver),
+                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=Config.prompt_driver),
+                    json_extraction_engine=JsonExtractionEngine(prompt_driver=Config.prompt_driver),
                 ),
                 BlobArtifact: BlobArtifactStorage(),
             },

@@ -5,7 +5,6 @@ from griptape.memory.structure import Run, SummaryConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
-from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestSummaryConversationMemory:
@@ -85,7 +84,7 @@ class TestSummaryConversationMemory:
 
     def test_config_prompt_driver(self):
         memory = SummaryConversationMemory()
-        pipeline = Pipeline(conversation_memory=memory, config=MockStructureConfig())
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_tasks(PromptTask("test"))
 

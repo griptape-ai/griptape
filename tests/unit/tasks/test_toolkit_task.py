@@ -170,8 +170,9 @@ class TestToolkitSubtask:
         except ValueError:
             assert True
 
-    def test_run(self):
+    def test_run(self, mock_config):
         output = """Answer: done"""
+        mock_config.prompt_driver.mock_output = output
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
         agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
@@ -184,8 +185,9 @@ class TestToolkitSubtask:
         assert len(task.subtasks) == 1
         assert result.output_task.output.to_text() == "done"
 
-    def test_run_max_subtasks(self):
+    def test_run_max_subtasks(self, mock_config):
         output = 'Actions: [{"tag": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]'
+        mock_config.prompt_driver.mock_output = output
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
@@ -197,8 +199,9 @@ class TestToolkitSubtask:
         assert len(task.subtasks) == 3
         assert isinstance(task.output, ErrorArtifact)
 
-    def test_run_invalid_react_prompt(self):
+    def test_run_invalid_react_prompt(self, mock_config):
         output = """foo bar"""
+        mock_config.prompt_driver.mock_output = output
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))

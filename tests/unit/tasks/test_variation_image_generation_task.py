@@ -8,7 +8,6 @@ from griptape.engines import VariationImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, VariationImageGenerationTask
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
-from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestVariationImageGenerationTask:
@@ -48,13 +47,7 @@ class TestVariationImageGenerationTask:
 
     def test_config_image_generation_engine(self, text_artifact, image_artifact):
         task = VariationImageGenerationTask((text_artifact, image_artifact))
-        Agent(config=MockStructureConfig()).add_task(task)
+        Agent().add_task(task)
 
         assert isinstance(task.image_generation_engine, VariationImageGenerationEngine)
         assert isinstance(task.image_generation_engine.image_generation_driver, MockImageGenerationDriver)
-
-    def test_missing_summary_engine(self, text_artifact, image_artifact):
-        task = VariationImageGenerationTask((text_artifact, image_artifact))
-
-        with pytest.raises(ValueError):
-            task.image_generation_engine  # noqa: B018
