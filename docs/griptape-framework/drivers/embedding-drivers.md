@@ -211,7 +211,7 @@ print(embeddings[:3])
 ```
 
 ### Override Default Structure Embedding Driver
-Here is how you can override the Embedding Driver that is used by default in Structures. 
+Here is how you can override the Embedding Driver that is used by default in Structures.
 
 ```python
 from griptape.structures import Agent
@@ -220,11 +220,11 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     VoyageAiEmbeddingDriver,
 )
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
     tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
         embedding_driver=VoyageAiEmbeddingDriver(),
     ),

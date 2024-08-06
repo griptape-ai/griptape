@@ -206,7 +206,7 @@ In this example, GPT-4 _never_ sees the contents of the page, only that it was s
 ```python 
 from griptape.artifacts import TextArtifact
 from griptape.config import (
-    OpenAiStructureConfig,
+    OpenAiDriverConfig,
 )
 from griptape.drivers import (
     LocalVectorStoreDriver,
@@ -223,7 +223,7 @@ from griptape.tools import FileManager, TaskMemoryClient, WebScraper
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 
 agent = Agent(
-    config=OpenAiStructureConfig(
+    config=OpenAiDriverConfig(
         prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
     ),
     task_memory=TaskMemory(

@@ -8,7 +8,7 @@ from griptape.drivers import BaseAudioTranscriptionDriver
 @define
 class AudioTranscriptionEngine:
     audio_transcription_driver: BaseAudioTranscriptionDriver = field(
-        default=Factory(lambda: Config.drivers.audio_transcription_driver), kw_only=True
+        default=Factory(lambda: Config.drivers.audio_transcription), kw_only=True
     )
 
     def run(self, audio: AudioArtifact, *args, **kwargs) -> TextArtifact:

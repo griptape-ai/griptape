@@ -26,7 +26,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestEventListener:
     @pytest.fixture()
     def pipeline(self, mock_config):
-        mock_config.drivers.prompt_driver = MockPromptDriver(stream=True)
+        mock_config.drivers.prompt = MockPromptDriver(stream=True)
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
         pipeline = Pipeline()

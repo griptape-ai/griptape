@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class BaseExtractionEngine(ABC):
     max_token_multiplier: float = field(default=0.5, kw_only=True)
     chunk_joiner: str = field(default="\n\n", kw_only=True)
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: Config.drivers.prompt_driver), kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: Config.drivers.prompt), kw_only=True)
     chunker: BaseChunker = field(
         default=Factory(
             lambda self: TextChunker(tokenizer=self.prompt_driver.tokenizer, max_tokens=self.max_chunker_tokens),

@@ -36,7 +36,7 @@ class Stream:
     def validate_structure(self, _: Attribute, structure: Structure) -> None:
         from griptape.config import Config
 
-        if not Config.drivers.prompt_driver.stream:
+        if not Config.drivers.prompt.stream:
             raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")
 
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))

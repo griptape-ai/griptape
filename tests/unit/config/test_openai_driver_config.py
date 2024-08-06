@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.config import OpenAiStructureConfig
+from griptape.config import OpenAiDriverConfig
 
 
 class TestOpenAiStructureConfig:
@@ -10,12 +10,12 @@ class TestOpenAiStructureConfig:
 
     @pytest.fixture()
     def config(self):
-        return OpenAiStructureConfig()
+        return OpenAiDriverConfig()
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "OpenAiStructureConfig",
-            "prompt_driver": {
+            "type": "OpenAiDriverConfig",
+            "prompt": {
                 "type": "OpenAiChatPromptDriver",
                 "base_url": None,
                 "model": "gpt-4o",
@@ -28,14 +28,14 @@ class TestOpenAiStructureConfig:
                 "user": "",
                 "use_native_tools": True,
             },
-            "conversation_memory_driver": None,
-            "embedding_driver": {
+            "conversation_memory": None,
+            "embedding": {
                 "base_url": None,
                 "model": "text-embedding-3-small",
                 "organization": None,
                 "type": "OpenAiEmbeddingDriver",
             },
-            "image_generation_driver": {
+            "image_generation": {
                 "api_version": None,
                 "base_url": None,
                 "image_size": "512x512",
@@ -46,7 +46,7 @@ class TestOpenAiStructureConfig:
                 "style": None,
                 "type": "OpenAiImageGenerationDriver",
             },
-            "image_query_driver": {
+            "image_query": {
                 "api_version": None,
                 "base_url": None,
                 "image_quality": "auto",
@@ -55,7 +55,7 @@ class TestOpenAiStructureConfig:
                 "organization": None,
                 "type": "OpenAiImageQueryDriver",
             },
-            "vector_store_driver": {
+            "vector_store": {
                 "embedding_driver": {
                     "base_url": None,
                     "model": "text-embedding-3-small",
@@ -64,7 +64,7 @@ class TestOpenAiStructureConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "text_to_speech_driver": {
+            "text_to_speech": {
                 "type": "OpenAiTextToSpeechDriver",
                 "api_version": None,
                 "base_url": None,
@@ -73,7 +73,7 @@ class TestOpenAiStructureConfig:
                 "organization": None,
                 "voice": "alloy",
             },
-            "audio_transcription_driver": {
+            "audio_transcription": {
                 "type": "OpenAiAudioTranscriptionDriver",
                 "api_version": None,
                 "base_url": None,
@@ -83,4 +83,4 @@ class TestOpenAiStructureConfig:
         }
 
     def test_from_dict(self, config):
-        assert OpenAiStructureConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
+        assert OpenAiDriverConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()

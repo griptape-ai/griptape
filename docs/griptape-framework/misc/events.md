@@ -135,7 +135,7 @@ from griptape.events import CompletionChunkEvent, EventListener, EventBus
 from griptape.tasks import ToolkitTask
 from griptape.structures import Pipeline
 from griptape.tools import WebScraper, TaskMemoryClient
-from griptape.config import OpenAiStructureConfig
+from griptape.config import OpenAiDriverConfig
 from griptape.drivers import OpenAiChatPromptDriver
 
 
@@ -148,7 +148,7 @@ EventBus.event_listeners = [
 ]
 
 pipeline = Pipeline(
-    config=OpenAiStructureConfig(
+    config=OpenAiDriverConfig(
         prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True)
     ),
 )
@@ -172,10 +172,10 @@ from griptape.tasks import ToolkitTask
 from griptape.structures import Pipeline
 from griptape.tools import WebScraper, TaskMemoryClient
 
-
 pipeline = Pipeline()
-pipeline.config.prompt_driver.stream = True
-pipeline.add_tasks(ToolkitTask("Based on https://griptape.ai, tell me what griptape is.", tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)]))
+pipeline.config.prompt.stream = True
+pipeline.add_tasks(ToolkitTask("Based on https://griptape.ai, tell me what griptape is.",
+                               tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)]))
 
 for artifact in Stream(pipeline).run():
     print(artifact.value, end="", flush=True)

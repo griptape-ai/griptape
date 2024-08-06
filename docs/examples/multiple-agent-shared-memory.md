@@ -11,8 +11,7 @@ import os
 from griptape.tools import WebScraper, TaskMemoryClient
 from griptape.structures import Agent
 from griptape.drivers import AzureOpenAiEmbeddingDriver, AzureMongoDbVectorStoreDriver
-from griptape.config import AzureOpenAiStructureConfig
-
+from griptape.config import AzureOpenAiDriverConfig
 
 AZURE_OPENAI_ENDPOINT_1 = os.environ["AZURE_OPENAI_ENDPOINT_1"]
 AZURE_OPENAI_API_KEY_1 = os.environ["AZURE_OPENAI_API_KEY_1"]
@@ -25,7 +24,6 @@ MONGODB_COLLECTION_NAME = os.environ["MONGODB_COLLECTION_NAME"]
 MONGODB_INDEX_NAME = os.environ["MONGODB_INDEX_NAME"]
 MONGODB_VECTOR_PATH = os.environ["MONGODB_VECTOR_PATH"]
 MONGODB_CONNECTION_STRING = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}/{MONGODB_DATABASE_NAME}?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000"
-
 
 embedding_driver = AzureOpenAiEmbeddingDriver(
     model='text-embedding-ada-002',
@@ -42,7 +40,7 @@ mongo_driver = AzureMongoDbVectorStoreDriver(
     vector_path=MONGODB_VECTOR_PATH,
 )
 
-config = AzureOpenAiStructureConfig(
+config = AzureOpenAiDriverConfig(
     azure_endpoint=AZURE_OPENAI_ENDPOINT_1,
     vector_store_driver=mongo_driver,
     embedding_driver=embedding_driver,
@@ -64,6 +62,7 @@ asker = Agent(
 )
 
 if __name__ == "__main__":
-    loader.run("Load https://medium.com/enterprise-rag/a-first-intro-to-complex-rag-retrieval-augmented-generation-a8624d70090f")
+    loader.run(
+        "Load https://medium.com/enterprise-rag/a-first-intro-to-complex-rag-retrieval-augmented-generation-a8624d70090f")
     asker.run("why is retrieval augmented generation useful?")
 ```

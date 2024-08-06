@@ -10,11 +10,11 @@ from griptape.utils import Stream
 class TestStream:
     @pytest.fixture(params=[True, False])
     def agent(self, request):
-        Config.drivers.prompt_driver.stream = request.param
+        Config.drivers.prompt.stream = request.param
         return Agent()
 
     def test_init(self, agent):
-        if Config.drivers.prompt_driver.stream:
+        if Config.drivers.prompt.stream:
             chat_stream = Stream(agent)
 
             assert chat_stream.structure == agent
