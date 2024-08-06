@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to set custom schema properties on Tool Activities via `extra_schema_properties`.
 - Parameter `structure` to `BaseTask`.
 - Method `try_find_task` to `Structure`.
+- `TranslateQueryRagModule` `RagEngine` module for translating input queries.
 
 ### Changed
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.

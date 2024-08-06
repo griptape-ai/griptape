@@ -21,7 +21,7 @@ search:
 
 #### Query
 
-No modules implemented yet.
+- `TranslateQueryRagModule` is for translating the query into another langugage.
 
 #### Retrieval
 - `TextRetrievalRagModule` is for retrieving text chunks.
