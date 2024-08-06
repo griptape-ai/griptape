@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @define
 class TextToSpeechEngine:
     text_to_speech_driver: BaseTextToSpeechDriver = field(
-        default=Factory(lambda: Config.text_to_speech_driver), kw_only=True
+        default=Factory(lambda: Config.drivers.text_to_speech_driver), kw_only=True
     )
 
     def run(self, prompts: list[str], *args, **kwargs) -> AudioArtifact:

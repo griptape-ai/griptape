@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class VectorStoreRetrievalRagModule(BaseRetrievalRagModule):
-    vector_store_driver: BaseVectorStoreDriver = field(default=Factory(lambda: Config.vector_store_driver))
+    vector_store_driver: BaseVectorStoreDriver = field(default=Factory(lambda: Config.drivers.vector_store_driver))
     query_params: dict[str, Any] = field(factory=dict)
     process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], Sequence[TextArtifact]] = field(
         default=Factory(lambda: lambda es: [e.to_artifact() for e in es]),

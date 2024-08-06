@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class TextArtifactStorage(BaseArtifactStorage):
-    vector_store_driver: BaseVectorStoreDriver = field(default=Factory(lambda: Config.vector_store_driver))
+    vector_store_driver: BaseVectorStoreDriver = field(default=Factory(lambda: Config.drivers.vector_store_driver))
     rag_engine: Optional[RagEngine] = field(default=None)
     retrieval_rag_module_name: Optional[str] = field(default=None)
     summary_engine: Optional[BaseSummaryEngine] = field(default=None)

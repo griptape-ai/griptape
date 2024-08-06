@@ -171,7 +171,7 @@ class TestToolkitSubtask:
 
     def test_run(self, mock_config):
         output = """Answer: done"""
-        mock_config.prompt_driver.mock_output = output
+        mock_config.drivers.prompt_driver.mock_output = output
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
         agent = Agent()
@@ -186,7 +186,7 @@ class TestToolkitSubtask:
 
     def test_run_max_subtasks(self, mock_config):
         output = 'Actions: [{"tag": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]'
-        mock_config.prompt_driver.mock_output = output
+        mock_config.drivers.prompt_driver.mock_output = output
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent()
@@ -200,7 +200,7 @@ class TestToolkitSubtask:
 
     def test_run_invalid_react_prompt(self, mock_config):
         output = """foo bar"""
-        mock_config.prompt_driver.mock_output = output
+        mock_config.drivers.prompt_driver.mock_output = output
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
         agent = Agent()

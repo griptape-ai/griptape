@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 @define
 class PromptTask(RuleMixin, BaseTask):
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: Config.prompt_driver), kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: Config.drivers.prompt_driver), kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
         kw_only=True,

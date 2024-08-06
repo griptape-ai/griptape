@@ -168,7 +168,9 @@ class TestToolTask:
     def agent(self, mock_config):
         output_dict = {"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
 
-        mock_config.prompt_driver = MockPromptDriver(mock_output=f"```python foo bar\n{json.dumps(output_dict)}")
+        mock_config.drivers.prompt_driver = MockPromptDriver(
+            mock_output=f"```python foo bar\n{json.dumps(output_dict)}"
+        )
 
         return Agent()
 
