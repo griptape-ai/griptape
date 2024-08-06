@@ -5,7 +5,7 @@ from griptape.config import AmazonBedrockDriverConfig
 from tests.utils.aws import mock_aws_credentials
 
 
-class TestAmazonBedrockStructureConfig:
+class TestAmazonBedrockDriverConfig:
     @pytest.fixture(autouse=True)
     def _run_before_and_after_tests(self):
         mock_aws_credentials()

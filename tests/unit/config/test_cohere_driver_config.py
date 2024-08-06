@@ -3,7 +3,7 @@ import pytest
 from griptape.config import CohereDriverConfig
 
 
-class TestCohereStructureConfig:
+class TestCohereDriverConfig:
     @pytest.fixture()
     def config(self):
         return CohereDriverConfig(api_key="api_key")

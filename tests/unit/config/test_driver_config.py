@@ -3,7 +3,7 @@ import pytest
 from griptape.config import DriverConfig
 
 
-class TestStructureConfig:
+class TestDriverConfig:
     @pytest.fixture()
     def config(self):
         return DriverConfig()
