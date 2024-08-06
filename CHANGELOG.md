@@ -263,7 +263,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
 - **BREAKING**: `off_prompt` now defaults to `False` on all Tools, making Task Memory something that must be explicitly opted into.
-- **BREAKING**: Removed `StructureConfig.drivers.global_drivers`. Pass Drivers directly to the Structure Config instead. 
+- **BREAKING**: Removed `StructureConfig.global_drivers`. Pass Drivers directly to the Structure Config instead. 
 - **BREAKING**: Removed `StructureConfig.task_memory` in favor of configuring directly on the Structure.  
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
 - **BREAKING**: `off_prompt` now defaults to `False` on all Tools, making Task Memory something that must be explicitly opted into.
@@ -391,7 +391,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Deprecation warnings not displaying for `Structure.prompt_driver`, `Structure.embedding_driver`, and `Structure.stream`.
 - `DummyException` error message not fully displaying.
-- `StructureConfig.task_memory` not defaulting to using `StructureConfig.drivers.global_drivers` by default.
+- `StructureConfig.task_memory` not defaulting to using `StructureConfig.global_drivers` by default.
 
 ## [0.23.1] - 2024-03-07
 
