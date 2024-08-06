@@ -6,7 +6,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 class TestTextSummaryTask:
     def test_run(self):
-        task = TextSummaryTask("test", summary_engine=PromptSummaryEngine(prompt_driver=MockPromptDriver()))
+        task = TextSummaryTask("test", summary_engine=PromptSummaryEngine())
         agent = Agent()
 
         agent.add_task(task)

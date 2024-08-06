@@ -8,7 +8,7 @@ class TestAzureOpenAiStructureConfig:
     def mock_openai(self, mocker):
         return mocker.patch("openai.AzureOpenAI")
 
-    @pytest.fixture
+    @pytest.fixture()
     def config(self):
         return AzureOpenAiStructureConfig(
             azure_endpoint="http://localhost:8080",

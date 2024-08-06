@@ -3,13 +3,12 @@ import pytest
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import PromptResponseRagModule
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestPromptResponseRagModule:
     @pytest.fixture()
     def module(self):
-        return PromptResponseRagModule(prompt_driver=MockPromptDriver())
+        return PromptResponseRagModule()
 
     def test_run(self, module):
         assert module.run(RagContext(query="test")).output.value == "mock output"

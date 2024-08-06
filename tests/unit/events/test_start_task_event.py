@@ -3,14 +3,13 @@ import pytest
 from griptape.events import StartTaskEvent
 from griptape.structures import Agent
 from griptape.tasks import PromptTask
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestStartTaskEvent:
     @pytest.fixture()
     def start_task_event(self):
         task = PromptTask()
-        agent = Agent(prompt_driver=MockPromptDriver())
+        agent = Agent()
         agent.add_task(task)
         agent.run()
 

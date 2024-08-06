@@ -26,10 +26,10 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestEventListener:
     @pytest.fixture()
     def pipeline(self, mock_config):
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         mock_config.prompt_driver = MockPromptDriver(stream=True)
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
+        pipeline = Pipeline()
         pipeline.add_task(task)
 
         task.add_subtask(ActionsSubtask("foo"))
@@ -49,7 +49,7 @@ class TestEventListener:
         assert event_handler_1.call_count == 9
         assert event_handler_2.call_count == 9
 
-    def test_typed_listeners(self, pipeline):
+    def test_typed_listeners(self, pipeline, mock_config):
         start_prompt_event_handler = Mock()
         finish_prompt_event_handler = Mock()
         start_task_event_handler = Mock()

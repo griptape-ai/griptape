@@ -2,7 +2,6 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.common import ToolAction
 from griptape.structures import Agent
 from griptape.tasks import ActionsSubtask, PromptTask, ToolkitTask
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -175,7 +174,7 @@ class TestToolkitSubtask:
         mock_config.prompt_driver.mock_output = output
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1"), MockTool(name="Tool2")])
-        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
+        agent = Agent()
 
         agent.add_task(task)
 
@@ -190,7 +189,7 @@ class TestToolkitSubtask:
         mock_config.prompt_driver.mock_output = output
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
+        agent = Agent()
 
         agent.add_task(task)
 
@@ -204,7 +203,7 @@ class TestToolkitSubtask:
         mock_config.prompt_driver.mock_output = output
 
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")], max_subtasks=3)
-        agent = Agent(prompt_driver=MockPromptDriver(mock_output=output))
+        agent = Agent()
 
         agent.add_task(task)
 

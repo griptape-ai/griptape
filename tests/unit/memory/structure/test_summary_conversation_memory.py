@@ -9,9 +9,9 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 class TestSummaryConversationMemory:
     def test_unsummarized_subtasks(self):
-        memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
+        memory = SummaryConversationMemory(offset=1)
 
-        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_tasks(PromptTask("test"))
 
@@ -23,9 +23,9 @@ class TestSummaryConversationMemory:
         assert len(memory.unsummarized_runs()) == 1
 
     def test_after_run(self):
-        memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
+        memory = SummaryConversationMemory(offset=1)
 
-        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_tasks(PromptTask("test"))
 

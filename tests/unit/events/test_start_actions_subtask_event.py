@@ -3,7 +3,6 @@ import pytest
 from griptape.events import StartActionsSubtaskEvent
 from griptape.structures import Agent
 from griptape.tasks import ActionsSubtask, ToolkitTask
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -17,7 +16,7 @@ class TestStartActionsSubtaskEvent:
             "Answer: test output"
         )
         task = ToolkitTask(tools=[MockTool()])
-        agent = Agent(prompt_driver=MockPromptDriver())
+        agent = Agent()
         agent.add_task(task)
         subtask = ActionsSubtask(valid_input)
         task.add_subtask(subtask)

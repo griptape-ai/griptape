@@ -25,12 +25,16 @@ class Chat:
     )
 
     def default_output_fn(self, text: str) -> None:
-        if self.structure.config.prompt_driver.stream:
+        from griptape.config import Config
+
+        if Config.prompt_driver.stream:
             print(text, end="", flush=True)  # noqa: T201
         else:
             print(text)  # noqa: T201
 
     def start(self) -> None:
+        from griptape.config import Config
+
         if self.intro_text:
             self.output_fn(self.intro_text)
         while True:
@@ -40,7 +44,7 @@ class Chat:
                 self.output_fn(self.exiting_text)
                 break
 
-            if self.structure.config.prompt_driver.stream:
+            if Config.prompt_driver.stream:
                 self.output_fn(self.processing_text + "\n")
                 stream = Stream(self.structure).run(question)
                 first_chunk = next(stream)

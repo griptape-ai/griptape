@@ -1,7 +1,6 @@
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 from griptape.structures import Pipeline
 from griptape.tasks import CodeExecutionTask
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 def hello_world(task: CodeExecutionTask) -> BaseArtifact:
@@ -27,7 +26,7 @@ class TestCodeExecutionTask:
     # Using a Pipeline
     # Overriding the input because we are implementing the task not the Pipeline
     def test_noop_fn(self):
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
         task = CodeExecutionTask("No Op", run_fn=non_outputting)
         pipeline.add_task(task)
         temp = task.run()

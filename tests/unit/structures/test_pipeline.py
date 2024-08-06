@@ -4,14 +4,11 @@ import pytest
 
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.memory.structure import ConversationMemory
-from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Pipeline
 from griptape.tasks import BaseTask, CodeExecutionTask, PromptTask, ToolkitTask
 from griptape.tokenizers import OpenAiTokenizer
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
-from tests.unit.structures.test_agent import MockEmbeddingDriver
 
 
 class TestPipeline:
@@ -31,10 +28,8 @@ class TestPipeline:
         return CodeExecutionTask(run_fn=fn)
 
     def test_init(self):
-        driver = MockPromptDriver()
-        pipeline = Pipeline(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
+        pipeline = Pipeline(rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
-        assert pipeline.prompt_driver is driver
         assert pipeline.input_task is None
         assert pipeline.output_task is None
         assert pipeline.rulesets[0].name == "TestRuleset"
@@ -103,20 +98,6 @@ class TestPipeline:
         assert pipeline.tasks[0].tools[0].output_memory is not None
         assert pipeline.tasks[0].tools[0].output_memory["test"][0] == pipeline.task_memory
 
-    def test_embedding_driver(self):
-        embedding_driver = MockEmbeddingDriver()
-        pipeline = Pipeline(embedding_driver=embedding_driver)
-
-        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
-
-        storage = list(pipeline.task_memory.artifact_storages.values())[0]
-        assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
-            0
-        ].vector_store_driver.embedding_driver
-
-        assert memory_embedding_driver == embedding_driver
-
     def test_with_task_memory_and_empty_tool_output_memory(self):
         pipeline = Pipeline()
 
@@ -139,7 +120,7 @@ class TestPipeline:
         second_task = PromptTask("test2")
         third_task = PromptTask("test3")
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
+        pipeline = Pipeline(conversation_memory=ConversationMemory())
 
         pipeline + [first_task, second_task, third_task]
 
@@ -174,7 +155,7 @@ class TestPipeline:
         second_task = PromptTask("test2")
         third_task = PromptTask("test3")
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline + first_task
         pipeline + second_task
@@ -189,7 +170,7 @@ class TestPipeline:
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline + first_task
         pipeline + second_task
@@ -208,7 +189,7 @@ class TestPipeline:
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline + [first_task, second_task]
 
@@ -227,7 +208,7 @@ class TestPipeline:
         second_task = PromptTask("test2", id="test2")
         third_task = PromptTask("test3", id="test3")
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline + [first_task, second_task]
         pipeline.insert_task(first_task, third_task)
@@ -251,7 +232,7 @@ class TestPipeline:
         second_task = PromptTask("test2", id="test2")
         third_task = PromptTask("test3", id="test3")
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline + [first_task, second_task]
         pipeline.insert_task(second_task, third_task)
@@ -271,7 +252,7 @@ class TestPipeline:
         assert [child.id for child in third_task.children] == []
 
     def test_prompt_stack_without_memory(self):
-        pipeline = Pipeline(conversation_memory=None, prompt_driver=MockPromptDriver(), rules=[Rule("test")])
+        pipeline = Pipeline(conversation_memory=None, rules=[Rule("test")])
 
         task1 = PromptTask("test")
         task2 = PromptTask("test")
@@ -292,7 +273,7 @@ class TestPipeline:
         assert len(task2.prompt_stack.messages) == 3
 
     def test_prompt_stack_with_memory(self):
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(), rules=[Rule("test")])
+        pipeline = Pipeline(rules=[Rule("test")])
 
         task1 = PromptTask("test")
         task2 = PromptTask("test")
@@ -321,7 +302,7 @@ class TestPipeline:
 
     def test_run(self):
         task = PromptTask("test")
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
         pipeline + task
 
         assert task.state == BaseTask.State.PENDING
@@ -333,7 +314,7 @@ class TestPipeline:
 
     def test_run_with_args(self):
         task = PromptTask("{{ args[0] }}-{{ args[1] }}")
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
         pipeline + [task]
 
         pipeline._execution_args = ("test1", "test2")
@@ -348,7 +329,7 @@ class TestPipeline:
         parent = PromptTask("parent")
         task = PromptTask("test")
         child = PromptTask("child")
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline + [parent, task, child]
 
@@ -365,35 +346,23 @@ class TestPipeline:
         assert context["parent"] == parent
         assert context["child"] == child
 
-    def test_deprecation(self):
-        with pytest.deprecated_call():
-            Pipeline(prompt_driver=MockPromptDriver())
-
-        with pytest.deprecated_call():
-            Pipeline(embedding_driver=MockEmbeddingDriver())
-
-        with pytest.deprecated_call():
-            Pipeline(stream=True)
-
     def test_run_with_error_artifact(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task])
+        pipeline = Pipeline(tasks=[waiting_task, error_artifact_task, end_task])
         pipeline.run()
 
         assert pipeline.output is None
 
     def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
-        pipeline = Pipeline(
-            prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task], fail_fast=False
-        )
+        pipeline = Pipeline(tasks=[waiting_task, error_artifact_task, end_task], fail_fast=False)
         pipeline.run()
 
         assert pipeline.output is not None
 
     def test_add_duplicate_task(self):
         task = PromptTask("test")
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline + task
         pipeline + task
@@ -402,7 +371,7 @@ class TestPipeline:
 
     def test_add_duplicate_task_directly(self):
         task = PromptTask("test")
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline + task
         pipeline.tasks.append(task)
