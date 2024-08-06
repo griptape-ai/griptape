@@ -49,8 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseVectorStoreDriver.load_artifacts` optional arguments are now keyword-only arguments.
 - **BREAKING**: `BaseVectorStoreDriver.upsert_vector` optional arguments are now keyword-only arguments.
 - **BREAKING**: `BaseVectorStoreDriver.query` optional arguments are now keyword-only arguments.
-- **BREAKING**: `EventListener.events.publish_event`'s `flush` argument is now a keyword-only argument.
-- **BREAKING**: `BaseEventListenerDriver.events.publish_event`'s `flush` argument is now a keyword-only argument.
+- **BREAKING**: `EventListener.publish_event`'s `flush` argument is now a keyword-only argument.
+- **BREAKING**: `BaseEventListenerDriver.publish_event`'s `flush` argument is now a keyword-only argument.
 - **BREAKING**: Renamed `DummyException` to `DummyError` for pep8 naming compliance.
 - **BREAKING**: Migrate to `sqlalchemy` 2.0.
 - **BREAKING**: Make `sqlalchemy` an optional dependency.
@@ -112,7 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GoogleWebSearchDriver` to web search with the Google Customsearch API.
 - `DuckDuckGoWebSearchDriver` to web search with the DuckDuckGo search SDK.
 - `ProxyWebScraperDriver` to web scrape using proxies.
-- Parameter `session` on `AmazonBedrockDriverConfig`.
+- Parameter `session` on `AmazonBedrockStructureConfig`.
 - Parameter `meta` on `TextArtifact`.
 - `VectorStoreClient` improvements:
   - `VectorStoreClient.query_params` dict for custom query params.
@@ -155,7 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: removed `VectorStoreClient.top_n` and `VectorStoreClient.namespace` in favor of `VectorStoreClient.query_params`.
 - **BREAKING**: All `futures_executor` fields renamed to `futures_executor_fn` and now accept callables instead of futures; wrapped all future `submit` calls with the `with` block to address future executor shutdown issues.
 - `GriptapeCloudKnowledgeBaseClient` migrated to `/search` api.
-- Default Prompt Driver model in `GoogleDriverConfig` to `gemini-1.5-pro`.
+- Default Prompt Driver model in `GoogleStructureConfig` to `gemini-1.5-pro`.
 
 ### Fixed
 - `CoherePromptDriver` to properly handle empty history.
@@ -175,7 +175,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Base Tool schema so that `input` is optional when no Tool Activity schema is set.
 - Tool Task system prompt for better results with lower-end models. 
-- Default Prompt Driver model to Claude 3.5 Sonnet in `AnthropicDriverConfig` and `AmazonBedrockDriverConfig.`
+- Default Prompt Driver model to Claude 3.5 Sonnet in `AnthropicStructureConfig` and `AmazonBedrockStructureConfig.`
 
 ## [0.27.0] - 2024-06-19
 
@@ -186,7 +186,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTask.add_parents()` to add multiple parent tasks to a child task.
 - `Structure.resolve_relationships()` to resolve asymmetrically defined parent/child relationships. In other words, if a parent declares a child, but the child does not declare the parent, the parent will automatically be added as a parent of the child when running this method. The method is invoked automatically by `Structure.before_run()`.
 - `CohereEmbeddingDriver` for using Cohere's embeddings API.
-- `CohereDriverConfig` for providing Structures with quick Cohere configuration.
+- `CohereStructureConfig` for providing Structures with quick Cohere configuration.
 - `AmazonSageMakerJumpstartPromptDriver.inference_component_name` for setting the `InferenceComponentName` parameter when invoking an endpoint.
 - `AmazonSageMakerJumpstartEmbeddingDriver.inference_component_name` for setting the `InferenceComponentName` parameter when invoking an endpoint.
 - `AmazonSageMakerJumpstartEmbeddingDriver.custom_attributes` for setting custom attributes when invoking an endpoint.
@@ -252,7 +252,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.26.0] - 2024-06-04
 
 ### Added
-- `AzureOpenAiDriverConfig` for providing Structures with all Azure OpenAI Driver configuration.
+- `AzureOpenAiStructureConfig` for providing Structures with all Azure OpenAI Driver configuration.
 - `AzureOpenAiVisionImageQueryDriver` to support queries on images using Azure's OpenAI Vision models.
 - `AudioLoader` for loading audio content into an `AudioArtifact`.
 - `AudioTranscriptionTask` and `AudioTranscriptionClient` for transcribing audio content in Structures.
@@ -263,8 +263,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
 - **BREAKING**: `off_prompt` now defaults to `False` on all Tools, making Task Memory something that must be explicitly opted into.
-- **BREAKING**: Removed `DriverConfig.global_drivers`. Pass Drivers directly to the Driver Config instead. 
-- **BREAKING**: Removed `DriverConfig.task_memory` in favor of configuring directly on the Structure.  
+- **BREAKING**: Removed `StructureConfig.global_drivers`. Pass Drivers directly to the Structure Config instead. 
+- **BREAKING**: Removed `StructureConfig.task_memory` in favor of configuring directly on the Structure.  
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
 - **BREAKING**: `off_prompt` now defaults to `False` on all Tools, making Task Memory something that must be explicitly opted into.
 - **BREAKING**: `AmazonSageMakerPromptDriver.model` parameter, which gets passed to `SageMakerRuntime.Client.invoke_endpoint` as `EndpointName`, is now renamed to `AmazonSageMakerPromptDriver.endpoint`.
@@ -293,7 +293,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Default behavior of Event Listener Drivers to batch events.
-- Default behavior of OpenAiDriverConfig to utilize `gpt-4o` for prompt_driver.
+- Default behavior of OpenAiStructureConfig to utilize `gpt-4o` for prompt_driver.
 
 ## [0.25.0] - 2024-05-06
 
@@ -359,7 +359,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `text-embedding-3-small` and `text-embedding-3-large` models.
 - `GooglePromptDriver` and `GoogleTokenizer` for use with `gemini-pro`. 
 - `GoogleEmbeddingDriver` for use with `embedding-001`. 
-- `GoogleDriverConfig` for providing Structures with Google Prompt and Embedding Driver configuration.
+- `GoogleStructureConfig` for providing Structures with Google Prompt and Embedding Driver configuration.
 - Support for `claude-3-opus`, `claude-3-sonnet`, and `claude-3-haiku` in `AnthropicPromptDriver`.
 - Support for `anthropic.claude-3-sonnet-20240229-v1:0` and `anthropic.claude-3-haiku-20240307-v1:0` in `BedrockClaudePromptModelDriver`.
 - `top_k` and `top_p` parameters in `AnthropicPromptDriver`.
@@ -369,7 +369,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TrafilaturaWebScraperDriver` for scraping text from web pages using trafilatura.
 - `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
 - `VoyageAiEmbeddingDriver` for use with VoyageAi's embedding models. 
-- `AnthropicDriverConfig` for providing Structures with Anthropic Prompt and VoyageAi Embedding Driver configuration.
+- `AnthropicStructureConfig` for providing Structures with Anthropic Prompt and VoyageAi Embedding Driver configuration.
 - `QdrantVectorStoreDriver` to integrate with Qdrant vector databases.
 
 ### Fixed
@@ -380,9 +380,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `subtask_action_name`, `subtask_action_path`, and `subtask_action_input` in `BaseActionSubtaskEvent`.
 - **BREAKING**: `OpenAiVisionImageQueryDriver` field `model` no longer defaults to `gpt-4-vision-preview` and must be specified
 - Default model of `OpenAiEmbeddingDriver` to `text-embedding-3-small`.
-- Default model of `OpenAiDriverConfig` to `text-embedding-3-small`.
+- Default model of `OpenAiStructureConfig` to `text-embedding-3-small`.
 - `BaseTextLoader` to accept a `BaseChunker`.
-- Default model of `AmazonBedrockDriverConfig` to `anthropic.claude-3-sonnet-20240229-v1:0`.
+- Default model of `AmazonBedrockStructureConfig` to `anthropic.claude-3-sonnet-20240229-v1:0`.
 - `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Anthropic's Messages API.
 - `OpenAiVisionImageQueryDriver` now has a required field `max_tokens` that defaults to 256
 
@@ -391,7 +391,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Deprecation warnings not displaying for `Structure.prompt_driver`, `Structure.embedding_driver`, and `Structure.stream`.
 - `DummyException` error message not fully displaying.
-- `DriverConfig.task_memory` not defaulting to using `DriverConfig.global_drivers` by default.
+- `StructureConfig.task_memory` not defaulting to using `StructureConfig.global_drivers` by default.
 
 ## [0.23.1] - 2024-03-07
 
@@ -408,9 +408,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AzureMongoDbVectorStoreDriver` for using CosmosDB with MongoDB vCore API.
 - `vector_path` field on `MongoDbAtlasVectorStoreDriver`.
 - `LeonardoImageGenerationDriver` supports image to image generation.
-- `OpenAiDriverConfig` for providing Structures with all OpenAi Driver configuration. 
-- `AmazonBedrockDriverConfig` for providing Structures with all Amazon Bedrock Driver configuration. 
-- `DriverConfig` for building your own Structure configuration.
+- `OpenAiStructureConfig` for providing Structures with all OpenAi Driver configuration. 
+- `AmazonBedrockStructureConfig` for providing Structures with all Amazon Bedrock Driver configuration. 
+- `StructureConfig` for building your own Structure configuration.
 - `JsonExtractionTask` for convenience over using `ExtractionTask` with a `JsonExtractionEngine`.
 - `CsvExtractionTask` for convenience over using `ExtractionTask` with a `CsvExtractionEngine`.
 - `OpenAiVisionImageQueryDriver` to support queries on images using OpenAI's Vision model.
