@@ -11,7 +11,7 @@ from tests.mocks.mock_tool.tool import MockTool
 
 class TestBasePromptDriver:
     def test_run_via_pipeline_retries_success(self, mock_config):
-        mock_config.prompt_driver = MockPromptDriver(max_attempts=2)
+        mock_config.drivers.prompt_driver = MockPromptDriver(max_attempts=2)
         pipeline = Pipeline()
 
         pipeline.add_task(PromptTask("test"))
@@ -19,7 +19,7 @@ class TestBasePromptDriver:
         assert isinstance(pipeline.run().output_task.output, TextArtifact)
 
     def test_run_via_pipeline_retries_failure(self, mock_config):
-        mock_config.prompt_driver = MockFailingPromptDriver(max_failures=2, max_attempts=1)
+        mock_config.drivers.prompt_driver = MockFailingPromptDriver(max_failures=2, max_attempts=1)
         pipeline = Pipeline()
 
         pipeline.add_task(PromptTask("test"))
@@ -47,7 +47,7 @@ class TestBasePromptDriver:
         assert result.value == "mock output"
 
     def test_run_with_tools(self, mock_config):
-        mock_config.prompt_driver = MockPromptDriver(max_attempts=1, use_native_tools=True)
+        mock_config.drivers.prompt_driver = MockPromptDriver(max_attempts=1, use_native_tools=True)
         pipeline = Pipeline()
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))

@@ -13,7 +13,9 @@ class TestJsonExtractionTask:
         return JsonExtractionTask("foo", args={"template_schema": Schema({"foo": "bar"}).json_schema("TemplateSchema")})
 
     def test_run(self, task, mock_config):
-        mock_config.prompt_driver.mock_output = '[{"test_key_1": "test_value_1"}, {"test_key_2": "test_value_2"}]'
+        mock_config.drivers.prompt_driver.mock_output = (
+            '[{"test_key_1": "test_value_1"}, {"test_key_2": "test_value_2"}]'
+        )
         agent = Agent()
 
         agent.add_task(task)

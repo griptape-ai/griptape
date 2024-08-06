@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 from griptape.config import BaseConfig
-from griptape.utils import dict_merge
 
 if TYPE_CHECKING:
     from griptape.drivers import (
@@ -22,7 +21,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseStructureConfig(BaseConfig, ABC, EventPublisherMixin):
+class BaseStructureConfig(BaseConfig, ABC):
     prompt_driver: BasePromptDriver = field(kw_only=True, metadata={"serializable": True})
     image_generation_driver: BaseImageGenerationDriver = field(kw_only=True, metadata={"serializable": True})
     image_query_driver: BaseImageQueryDriver = field(kw_only=True, metadata={"serializable": True})
@@ -35,9 +34,3 @@ class BaseStructureConfig(BaseConfig, ABC, EventPublisherMixin):
     )
     text_to_speech_driver: BaseTextToSpeechDriver = field(kw_only=True, metadata={"serializable": True})
     audio_transcription_driver: BaseAudioTranscriptionDriver = field(kw_only=True, metadata={"serializable": True})
-
-    def merge_config(self, config: dict) -> BaseStructureConfig:
-        base_config = self.to_dict()
-        merged_config = dict_merge(base_config, config)
-
-        return BaseStructureConfig.from_dict(merged_config)

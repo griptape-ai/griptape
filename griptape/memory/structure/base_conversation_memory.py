@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 @define
 class BaseConversationMemory(SerializableMixin, ABC):
     driver: Optional[BaseConversationMemoryDriver] = field(
-        default=Factory(lambda: Config.conversation_memory_driver), kw_only=True
+        default=Factory(lambda: Config.drivers.conversation_memory_driver), kw_only=True
     )
     runs: list[Run] = field(factory=list, kw_only=True, metadata={"serializable": True})
     structure: Structure = field(init=False)
@@ -67,7 +67,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
         if self.autoprune and hasattr(self, "structure"):
             should_prune = True
-            prompt_driver = Config.prompt_driver
+            prompt_driver = Config.drivers.prompt_driver
             temp_stack = PromptStack()
 
             # Try to determine how many Conversation Memory runs we can
