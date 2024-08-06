@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING, Any, Callable, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
+from griptape.config import Config
 from griptape.events import FinishTaskEvent, StartTaskEvent
 
 if TYPE_CHECKING:
@@ -126,28 +127,26 @@ class BaseTask(ABC):
         return self.state == BaseTask.State.EXECUTING
 
     def before_run(self) -> None:
-        if self.structure is not None:
-            self.structure.publish_event(
-                StartTaskEvent(
-                    task_id=self.id,
-                    task_parent_ids=self.parent_ids,
-                    task_child_ids=self.child_ids,
-                    task_input=self.input,
-                    task_output=self.output,
-                ),
-            )
+        Config.publish_event(
+            StartTaskEvent(
+                task_id=self.id,
+                task_parent_ids=self.parent_ids,
+                task_child_ids=self.child_ids,
+                task_input=self.input,
+                task_output=self.output,
+            ),
+        )
 
     def after_run(self) -> None:
-        if self.structure is not None:
-            self.structure.publish_event(
-                FinishTaskEvent(
-                    task_id=self.id,
-                    task_parent_ids=self.parent_ids,
-                    task_child_ids=self.child_ids,
-                    task_input=self.input,
-                    task_output=self.output,
-                ),
-            )
+        Config.publish_event(
+            FinishTaskEvent(
+                task_id=self.id,
+                task_parent_ids=self.parent_ids,
+                task_child_ids=self.child_ids,
+                task_input=self.input,
+                task_output=self.output,
+            ),
+        )
 
     def execute(self) -> Optional[BaseArtifact]:
         try:

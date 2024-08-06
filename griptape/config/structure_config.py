@@ -1,19 +1,11 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
 from griptape.config import BaseStructureConfig
 from griptape.drivers import (
-    BaseAudioTranscriptionDriver,
-    BaseConversationMemoryDriver,
-    BaseEmbeddingDriver,
-    BaseImageGenerationDriver,
-    BaseImageQueryDriver,
-    BasePromptDriver,
-    BaseTextToSpeechDriver,
-    BaseVectorStoreDriver,
     DummyAudioTranscriptionDriver,
     DummyEmbeddingDriver,
     DummyImageGenerationDriver,
@@ -22,6 +14,18 @@ from griptape.drivers import (
     DummyTextToSpeechDriver,
     DummyVectorStoreDriver,
 )
+
+if TYPE_CHECKING:
+    from griptape.drivers import (
+        BaseAudioTranscriptionDriver,
+        BaseConversationMemoryDriver,
+        BaseEmbeddingDriver,
+        BaseImageGenerationDriver,
+        BaseImageQueryDriver,
+        BasePromptDriver,
+        BaseTextToSpeechDriver,
+        BaseVectorStoreDriver,
+    )
 
 
 @define

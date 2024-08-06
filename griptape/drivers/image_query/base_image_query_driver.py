@@ -6,23 +6,27 @@ from typing import TYPE_CHECKING
 from attrs import define, field
 
 from griptape.events import FinishImageQueryEvent, StartImageQueryEvent
-from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
+from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import ImageArtifact, TextArtifact
 
 
 @define
-class BaseImageQueryDriver(EventPublisherMixin, SerializableMixin, ExponentialBackoffMixin, ABC):
+class BaseImageQueryDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     max_tokens: int = field(default=256, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, query: str, images: list[ImageArtifact]) -> None:
-        self.publish_event(
+        from griptape.config import Config
+
+        Config.publish_event(
             StartImageQueryEvent(query=query, images_info=[image.to_text() for image in images]),
         )
 
     def after_run(self, result: str) -> None:
-        self.publish_event(FinishImageQueryEvent(result=result))
+        from griptape.config import Config
+
+        Config.publish_event(FinishImageQueryEvent(result=result))
 
     def query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
         for attempt in self.retrying():
