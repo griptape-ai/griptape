@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable
 
-from attrs import define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
 from griptape.engines import InpaintingImageGenerationEngine
@@ -28,10 +28,9 @@ class InpaintingImageGenerationTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    _image_generation_engine: InpaintingImageGenerationEngine = field(
-        default=None,
+    image_generation_engine: InpaintingImageGenerationEngine = field(
+        default=Factory(lambda: InpaintingImageGenerationEngine()),
         kw_only=True,
-        alias="image_generation_engine",
     )
     _input: (
         tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact
@@ -59,21 +58,6 @@ class InpaintingImageGenerationTask(BaseImageGenerationTask):
         value: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact],
     ) -> None:
         self._input = value
-
-    @property
-    def image_generation_engine(self) -> InpaintingImageGenerationEngine:
-        if self._image_generation_engine is None:
-            if self.structure is not None:
-                self._image_generation_engine = InpaintingImageGenerationEngine(
-                    image_generation_driver=self.structure.config.image_generation_driver,
-                )
-            else:
-                raise ValueError("Image Generation Engine is not set.")
-        return self._image_generation_engine
-
-    @image_generation_engine.setter
-    def image_generation_engine(self, value: InpaintingImageGenerationEngine) -> None:
-        self._image_generation_engine = value
 
     def run(self) -> ImageArtifact:
         prompt_artifact = self.input[0]

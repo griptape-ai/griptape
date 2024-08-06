@@ -24,8 +24,9 @@ from tests.mocks.mock_tool.tool import MockTool
 
 class TestEventListener:
     @pytest.fixture()
-    def pipeline(self):
+    def pipeline(self, mock_config):
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
+        mock_config.prompt_driver = MockPromptDriver(stream=True)
 
         pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
         pipeline.add_task(task)
@@ -33,7 +34,7 @@ class TestEventListener:
         task.add_subtask(ActionsSubtask("foo"))
         return pipeline
 
-    def test_untyped_listeners(self, pipeline):
+    def test_untyped_listeners(self, pipeline, mock_config):
         event_handler_1 = Mock()
         event_handler_2 = Mock()
 

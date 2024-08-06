@@ -7,7 +7,6 @@ from griptape.engines import AudioTranscriptionEngine
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import AudioTranscriptionTask, BaseTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
-from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestAudioTranscriptionTask:
@@ -34,7 +33,7 @@ class TestAudioTranscriptionTask:
 
     def test_config_audio_transcription_engine(self, audio_artifact):
         task = AudioTranscriptionTask(audio_artifact)
-        Agent(config=MockStructureConfig()).add_task(task)
+        Agent().add_task(task)
 
         assert isinstance(task.audio_transcription_engine, AudioTranscriptionEngine)
 

@@ -9,6 +9,7 @@ from .amazon_bedrock_structure_config import AmazonBedrockStructureConfig
 from .anthropic_structure_config import AnthropicStructureConfig
 from .google_structure_config import GoogleStructureConfig
 from .cohere_structure_config import CohereStructureConfig
+from .config import Config
 
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "AnthropicStructureConfig",
     "GoogleStructureConfig",
     "CohereStructureConfig",
+    "Config",
 ]

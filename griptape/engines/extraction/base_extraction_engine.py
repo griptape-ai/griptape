@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Attribute, Factory, define, field
 
 from griptape.chunkers import BaseChunker, TextChunker
+from griptape.config import Config
 
 if TYPE_CHECKING:
     from griptape.artifacts import ErrorArtifact, ListArtifact
@@ -17,7 +18,7 @@ if TYPE_CHECKING:
 class BaseExtractionEngine(ABC):
     max_token_multiplier: float = field(default=0.5, kw_only=True)
     chunk_joiner: str = field(default="\n\n", kw_only=True)
-    prompt_driver: BasePromptDriver = field(kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: Config.prompt_driver), kw_only=True)
     chunker: BaseChunker = field(
         default=Factory(
             lambda self: TextChunker(tokenizer=self.prompt_driver.tokenizer, max_tokens=self.max_chunker_tokens),

@@ -5,7 +5,6 @@ from griptape.engines import TextToSpeechEngine
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import BaseTask, TextToSpeechTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
-from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestTextToSpeechTask:
@@ -26,7 +25,7 @@ class TestTextToSpeechTask:
 
     def test_config_text_to_speech_engine(self):
         task = TextToSpeechTask("foo bar")
-        Agent(config=MockStructureConfig()).add_task(task)
+        Agent().add_task(task)
 
         assert isinstance(task.text_to_speech_engine, TextToSpeechEngine)
 
