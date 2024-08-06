@@ -12,7 +12,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 class TestPromptTask:
     def test_run(self):
         task = PromptTask("test")
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline.add_task(task)
 

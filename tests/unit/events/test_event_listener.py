@@ -25,10 +25,10 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestEventListener:
     @pytest.fixture()
     def pipeline(self, mock_config):
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
         mock_config.prompt_driver = MockPromptDriver(stream=True)
+        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(stream=True))
+        pipeline = Pipeline()
         pipeline.add_task(task)
 
         task.add_subtask(ActionsSubtask("foo"))
@@ -38,7 +38,7 @@ class TestEventListener:
         event_handler_1 = Mock()
         event_handler_2 = Mock()
 
-        pipeline.event_listeners = [EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)]
+        mock_config.event_listeners = [EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)]
 
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
@@ -48,7 +48,7 @@ class TestEventListener:
         assert event_handler_1.call_count == 9
         assert event_handler_2.call_count == 9
 
-    def test_typed_listeners(self, pipeline):
+    def test_typed_listeners(self, pipeline, mock_config):
         start_prompt_event_handler = Mock()
         finish_prompt_event_handler = Mock()
         start_task_event_handler = Mock()
@@ -59,7 +59,7 @@ class TestEventListener:
         finish_structure_run_event_handler = Mock()
         completion_chunk_handler = Mock()
 
-        pipeline.event_listeners = [
+        mock_config.event_listeners = [
             EventListener(start_prompt_event_handler, event_types=[StartPromptEvent]),
             EventListener(finish_prompt_event_handler, event_types=[FinishPromptEvent]),
             EventListener(start_task_event_handler, event_types=[StartTaskEvent]),
@@ -86,26 +86,26 @@ class TestEventListener:
         finish_structure_run_event_handler.assert_called_once()
         completion_chunk_handler.assert_called_once()
 
-    def test_add_remove_event_listener(self, pipeline):
-        pipeline.event_listeners = []
+    def test_add_remove_event_listener(self, pipeline, mock_config):
+        mock_config.event_listeners = []
         mock1 = Mock()
         mock2 = Mock()
         # duplicate event listeners will only get added once
-        event_listener_1 = pipeline.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
-        pipeline.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
+        event_listener_1 = mock_config.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
+        mock_config.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
 
-        event_listener_3 = pipeline.add_event_listener(EventListener(mock1, event_types=[FinishPromptEvent]))
-        event_listener_4 = pipeline.add_event_listener(EventListener(mock2, event_types=[StartPromptEvent]))
+        event_listener_3 = mock_config.add_event_listener(EventListener(mock1, event_types=[FinishPromptEvent]))
+        event_listener_4 = mock_config.add_event_listener(EventListener(mock2, event_types=[StartPromptEvent]))
 
-        event_listener_5 = pipeline.add_event_listener(EventListener(mock2))
+        event_listener_5 = mock_config.add_event_listener(EventListener(mock2))
 
-        assert len(pipeline.event_listeners) == 4
+        assert len(mock_config.event_listeners) == 4
 
-        pipeline.remove_event_listener(event_listener_1)
-        pipeline.remove_event_listener(event_listener_3)
-        pipeline.remove_event_listener(event_listener_4)
-        pipeline.remove_event_listener(event_listener_5)
-        assert len(pipeline.event_listeners) == 0
+        mock_config.remove_event_listener(event_listener_1)
+        mock_config.remove_event_listener(event_listener_3)
+        mock_config.remove_event_listener(event_listener_4)
+        mock_config.remove_event_listener(event_listener_5)
+        assert len(mock_config.event_listeners) == 0
 
     def test_publish_event(self):
         mock_event_listener_driver = Mock()

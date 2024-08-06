@@ -3,14 +3,12 @@ import pytest
 from griptape.drivers.structure_run.local_structure_run_driver import LocalStructureRunDriver
 from griptape.structures import Agent
 from griptape.tools import StructureRunClient
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestStructureRunClient:
     @pytest.fixture()
     def client(self):
-        driver = MockPromptDriver()
-        agent = Agent(prompt_driver=driver)
+        agent = Agent()
 
         return StructureRunClient(
             description="foo bar", driver=LocalStructureRunDriver(structure_factory_fn=lambda: agent)

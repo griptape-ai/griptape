@@ -1,23 +1,17 @@
 import pytest
 
-from griptape.engines import PromptSummaryEngine
 from griptape.memory import TaskMemory
 from griptape.memory.structure import ConversationMemory
-from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, PromptTask, ToolkitTask
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestAgent:
     def test_init(self):
-        driver = MockPromptDriver()
-        agent = Agent(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
+        agent = Agent(rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
-        assert agent.prompt_driver is driver
         assert isinstance(agent.task, PromptTask)
         assert isinstance(agent.task, PromptTask)
         assert agent.rulesets[0].name == "TestRuleset"
@@ -76,18 +70,6 @@ class TestAgent:
         assert agent.tools[0].input_memory[0] == agent.task_memory
         assert agent.tools[0].output_memory == {}
 
-    def test_embedding_driver(self):
-        embedding_driver = MockEmbeddingDriver()
-        agent = Agent(tools=[MockTool()], embedding_driver=embedding_driver)
-
-        storage = list(agent.task_memory.artifact_storages.values())[0]
-        assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
-            0
-        ].vector_store_driver.embedding_driver
-
-        assert memory_embedding_driver == embedding_driver
-
     def test_without_default_task_memory(self):
         agent = Agent(task_memory=None, tools=[MockTool()])
 
@@ -95,7 +77,7 @@ class TestAgent:
         assert agent.tools[0].output_memory is None
 
     def test_with_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
+        agent = Agent(conversation_memory=ConversationMemory())
 
         assert agent.conversation_memory is not None
         assert len(agent.conversation_memory.runs) == 0
@@ -117,7 +99,7 @@ class TestAgent:
         assert agent.tasks[0] == task
 
     def test_add_task(self):
-        agent = Agent(prompt_driver=MockPromptDriver())
+        agent = Agent()
 
         assert len(agent.tasks) == 1
 
@@ -145,7 +127,7 @@ class TestAgent:
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
 
-        agent = Agent(prompt_driver=MockPromptDriver())
+        agent = Agent()
 
         try:
             agent.add_tasks(first_task, second_task)
@@ -160,7 +142,7 @@ class TestAgent:
             assert True
 
     def test_prompt_stack_without_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=None, rules=[Rule("test")])
+        agent = Agent(conversation_memory=None, rules=[Rule("test")])
 
         task1 = PromptTask("test")
 
@@ -177,7 +159,7 @@ class TestAgent:
         assert len(task1.prompt_stack.messages) == 3
 
     def test_prompt_stack_with_memory(self):
-        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory(), rules=[Rule("test")])
+        agent = Agent(conversation_memory=ConversationMemory(), rules=[Rule("test")])
 
         task1 = PromptTask("test")
 
@@ -195,7 +177,7 @@ class TestAgent:
 
     def test_run(self):
         task = PromptTask("test")
-        agent = Agent(prompt_driver=MockPromptDriver())
+        agent = Agent()
         agent.add_task(task)
 
         assert task.state == BaseTask.State.PENDING
@@ -207,7 +189,7 @@ class TestAgent:
 
     def test_run_with_args(self):
         task = PromptTask("{{ args[0] }}-{{ args[1] }}")
-        agent = Agent(prompt_driver=MockPromptDriver())
+        agent = Agent()
         agent.add_task(task)
 
         agent._execution_args = ("test1", "test2")
@@ -220,7 +202,7 @@ class TestAgent:
 
     def test_context(self):
         task = PromptTask("test prompt")
-        agent = Agent(prompt_driver=MockPromptDriver())
+        agent = Agent()
 
         agent.add_task(task)
 
@@ -230,37 +212,9 @@ class TestAgent:
 
         assert context["structure"] == agent
 
-    def test_task_memory_defaults(self):
-        prompt_driver = MockPromptDriver()
-        embedding_driver = MockEmbeddingDriver()
-        agent = Agent(prompt_driver=prompt_driver, embedding_driver=embedding_driver)
-
-        storage = list(agent.task_memory.artifact_storages.values())[0]
-        assert isinstance(storage, TextArtifactStorage)
-
-        assert storage.rag_engine.response_stage.response_module.prompt_driver == prompt_driver
-        assert (
-            storage.rag_engine.retrieval_stage.retrieval_modules[0].vector_store_driver.embedding_driver
-            == embedding_driver
-        )
-        assert isinstance(storage.summary_engine, PromptSummaryEngine)
-        assert storage.summary_engine.prompt_driver == prompt_driver
-        assert storage.csv_extraction_engine.prompt_driver == prompt_driver
-        assert storage.json_extraction_engine.prompt_driver == prompt_driver
-
-    def test_deprecation(self):
-        with pytest.deprecated_call():
-            Agent(prompt_driver=MockPromptDriver())
-
-        with pytest.deprecated_call():
-            Agent(embedding_driver=MockEmbeddingDriver())
-
-        with pytest.deprecated_call():
-            Agent(stream=True)
-
     def finished_tasks(self):
         task = PromptTask("test prompt")
-        agent = Agent(prompt_driver=MockPromptDriver())
+        agent = Agent()
 
         agent.add_task(task)
 
@@ -270,4 +224,4 @@ class TestAgent:
 
     def test_fail_fast(self):
         with pytest.raises(ValueError):
-            Agent(prompt_driver=MockPromptDriver(), fail_fast=True)
+            Agent(fail_fast=True)

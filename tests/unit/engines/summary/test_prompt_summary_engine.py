@@ -12,7 +12,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 class TestPromptSummaryEngine:
     @pytest.fixture()
     def engine(self):
-        return PromptSummaryEngine(prompt_driver=MockPromptDriver())
+        return PromptSummaryEngine()
 
     def test_summarize_text(self, engine):
         assert engine.summarize_text("foobar") == "mock output"
@@ -24,10 +24,10 @@ class TestPromptSummaryEngine:
 
     def test_max_token_multiplier_invalid(self, engine):
         with pytest.raises(ValueError):
-            PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=0)
+            PromptSummaryEngine(max_token_multiplier=0)
 
         with pytest.raises(ValueError):
-            PromptSummaryEngine(prompt_driver=MockPromptDriver(), max_token_multiplier=10000)
+            PromptSummaryEngine(max_token_multiplier=10000)
 
     def test_chunked_summary(self, engine):
         def smaller_input(prompt_stack: PromptStack):

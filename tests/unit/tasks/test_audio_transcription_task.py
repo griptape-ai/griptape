@@ -6,7 +6,6 @@ from griptape.artifacts import AudioArtifact, TextArtifact
 from griptape.engines import AudioTranscriptionEngine
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import AudioTranscriptionTask, BaseTask
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestAudioTranscriptionTask:
@@ -41,7 +40,7 @@ class TestAudioTranscriptionTask:
         audio_transcription_engine.run.return_value = TextArtifact("mock transcription")
 
         task = AudioTranscriptionTask(audio_artifact, audio_transcription_engine=audio_transcription_engine)
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
         pipeline.add_task(task)
 
         assert pipeline.run().output.to_text() == "mock transcription"

@@ -5,7 +5,6 @@ import pytest
 from griptape.artifacts import TextArtifact
 from griptape.structures import Agent
 from griptape.tasks import ActionsSubtask, ToolTask
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
@@ -166,13 +165,12 @@ class TestToolTask:
     }
 
     @pytest.fixture()
-    def agent(self):
+    def agent(self, mock_config):
         output_dict = {"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "foobar"}}}
 
-        return Agent(
-            prompt_driver=MockPromptDriver(mock_output=f"```python foo bar\n{json.dumps(output_dict)}"),
-            embedding_driver=MockEmbeddingDriver(),
-        )
+        mock_config.prompt_driver = MockPromptDriver(mock_output=f"```python foo bar\n{json.dumps(output_dict)}")
+
+        return Agent()
 
     def test_run_without_memory(self, agent):
         task = ToolTask(tool=MockTool())

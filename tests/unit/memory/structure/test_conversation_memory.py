@@ -60,7 +60,7 @@ class TestConversationMemory:
     def test_buffering(self):
         memory = ConversationMemory(max_runs=2)
 
-        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_tasks(PromptTask())
 
@@ -75,7 +75,7 @@ class TestConversationMemory:
         assert pipeline.conversation_memory.runs[1].input.value == "run5"
 
     def test_add_to_prompt_stack_autopruing_disabled(self):
-        agent = Agent(prompt_driver=MockPromptDriver())
+        agent = Agent()
         memory = ConversationMemory(
             autoprune=False,
             runs=[
@@ -94,9 +94,11 @@ class TestConversationMemory:
 
         assert len(prompt_stack.messages) == 12
 
-    def test_add_to_prompt_stack_autopruning_enabled(self):
+    def test_add_to_prompt_stack_autopruning_enabled(self, mock_config):
         # All memory is pruned.
-        agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=0)))
+
+        mock_config.prompt_driver = MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=0))
+        agent = Agent()
         memory = ConversationMemory(
             autoprune=True,
             runs=[
@@ -117,7 +119,8 @@ class TestConversationMemory:
         assert len(prompt_stack.messages) == 3
 
         # No memory is pruned.
-        agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=1000)))
+        mock_config.prompt_driver = MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=1000))
+        agent = Agent()
         memory = ConversationMemory(
             autoprune=True,
             runs=[
@@ -140,7 +143,8 @@ class TestConversationMemory:
         # One memory is pruned.
         # MockTokenizer's max_input_tokens set to one below the sum of memory + system prompt tokens
         # so that a single memory is pruned.
-        agent = Agent(prompt_driver=MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=160)))
+        mock_config.prompt_driver = MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=160))
+        agent = Agent()
         memory = ConversationMemory(
             autoprune=True,
             runs=[

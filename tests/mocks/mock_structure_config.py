@@ -1,6 +1,7 @@
 from attrs import Factory, define, field
 
 from griptape.config import StructureConfig
+from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
 from tests.mocks.mock_image_query_driver import MockImageQueryDriver
@@ -20,4 +21,8 @@ class MockStructureConfig(StructureConfig):
     )
     embedding_driver: MockEmbeddingDriver = field(
         default=Factory(lambda: MockEmbeddingDriver(model="text-embedding-3-small")), metadata={"serializable": True}
+    )
+    vector_store_driver: LocalVectorStoreDriver = field(
+        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding_driver), takes_self=True),
+        metadata={"serializable": True},
     )

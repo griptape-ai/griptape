@@ -4,7 +4,7 @@ from griptape.config import StructureConfig
 
 
 class TestStructureConfig:
-    @pytest.fixture
+    @pytest.fixture()
     def config(self):
         return StructureConfig()
 
