@@ -3,7 +3,7 @@ import pytest
 from griptape.config import AnthropicDriverConfig
 
 
-class TestAnthropicStructureConfig:
+class TestAnthropicDriverConfig:
     @pytest.fixture(autouse=True)
     def _mock_anthropic(self, mocker):
         mocker.patch("anthropic.Anthropic")

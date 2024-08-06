@@ -3,7 +3,7 @@ import pytest
 from griptape.config import AzureOpenAiDriverConfig
 
 
-class TestAzureOpenAiStructureConfig:
+class TestAzureOpenAiDriverConfig:
     @pytest.fixture(autouse=True)
     def mock_openai(self, mocker):
         return mocker.patch("openai.AzureOpenAI")

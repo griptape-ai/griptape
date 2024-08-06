@@ -21,7 +21,7 @@ from griptape.drivers import (
 
 @define
 class AzureOpenAiDriverConfig(DriverConfig):
-    """Azure OpenAI Structure Configuration.
+    """Azure OpenAI Driver Configuration.
 
     Attributes:
         azure_endpoint: The endpoint for the Azure OpenAI instance.
