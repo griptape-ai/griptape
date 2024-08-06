@@ -13,10 +13,10 @@ You can instantiate drivers and pass them to structures:
 from griptape.structures import Agent
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.rules import Rule
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.3),
     ),
     input="You will be provided with a tweet, and your task is to classify its sentiment as positive, neutral, or negative. Tweet: {{ args[0] }}",
@@ -71,10 +71,10 @@ import os
 from griptape.structures import Agent
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.rules import Rule
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=OpenAiChatPromptDriver(
             api_key=os.environ["OPENAI_API_KEY"],
             temperature=0.1,
@@ -106,10 +106,10 @@ Simply set the `base_url` to the service's API endpoint and the `model` to the m
 from griptape.structures import Agent
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.rules import Rule
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=OpenAiChatPromptDriver(
             base_url="http://127.0.0.1:1234/v1",
             model="lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF", stream=True
@@ -134,10 +134,10 @@ import os
 from griptape.structures import Agent
 from griptape.rules import Rule
 from griptape.drivers import AzureOpenAiChatPromptDriver
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=AzureOpenAiChatPromptDriver(
             api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
             model="gpt-3.5-turbo",
@@ -168,10 +168,10 @@ This driver uses [Cohere tool use](https://docs.cohere.com/docs/tools) when usin
 import os
 from griptape.structures import Agent
 from griptape.drivers import CoherePromptDriver
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=CoherePromptDriver(
             model="command-r",
             api_key=os.environ['COHERE_API_KEY'],
@@ -194,10 +194,10 @@ This driver uses [Anthropic tool use](https://docs.anthropic.com/en/docs/build-w
 import os
 from griptape.structures import Agent
 from griptape.drivers import AnthropicPromptDriver
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=AnthropicPromptDriver(
             model="claude-3-opus-20240229",
             api_key=os.environ['ANTHROPIC_API_KEY'],
@@ -220,10 +220,10 @@ This driver uses [Gemini function calling](https://ai.google.dev/gemini-api/docs
 import os
 from griptape.structures import Agent
 from griptape.drivers import GooglePromptDriver
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=GooglePromptDriver(
             model="gemini-pro",
             api_key=os.environ['GOOGLE_API_KEY'],
@@ -248,10 +248,10 @@ All models supported by the Converse API are available for use with this driver.
 from griptape.structures import Agent
 from griptape.drivers import AmazonBedrockPromptDriver
 from griptape.rules import Rule
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=AmazonBedrockPromptDriver(
             model="anthropic.claude-3-sonnet-20240229-v1:0",
         )
@@ -285,14 +285,13 @@ The [OllamaPromptDriver](../../reference/griptape/drivers/prompt/ollama_prompt_d
 This driver uses [Ollama tool calling](https://ollama.com/blog/tool-support) when using [Tools](../tools/index.md).
 
 ```python
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 from griptape.drivers import OllamaPromptDriver
 from griptape.tools import Calculator
 from griptape.structures import Agent
 
-
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=OllamaPromptDriver(
             model="llama3.1",
         ),
@@ -319,11 +318,10 @@ import os
 from griptape.structures import Agent
 from griptape.drivers import HuggingFaceHubPromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.config import StructureConfig
-
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=HuggingFaceHubPromptDriver(
             model="HuggingFaceH4/zephyr-7b-beta",
             api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
@@ -335,8 +333,8 @@ agent = Agent(
             rules=[
                 Rule(
                     value="You are Girafatron, a giraffe-obsessed robot. You are talking to a human. "
-                    "Girafatron is obsessed with giraffes, the most glorious animal on the face of this Earth. "
-                    "Giraftron believes all other animals are irrelevant when compared to the glorious majesty of the giraffe."
+                          "Girafatron is obsessed with giraffes, the most glorious animal on the face of this Earth. "
+                          "Giraftron believes all other animals are irrelevant when compared to the glorious majesty of the giraffe."
                 )
             ],
         )
@@ -354,11 +352,10 @@ The [HuggingFaceHubPromptDriver](#hugging-face-hub) also supports [Text Generati
 import os
 from griptape.structures import Agent
 from griptape.drivers import HuggingFaceHubPromptDriver
-from griptape.config import StructureConfig
-
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=HuggingFaceHubPromptDriver(
             model="http://127.0.0.1:8080",
             api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
@@ -383,11 +380,10 @@ The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/hu
 from griptape.structures import Agent
 from griptape.drivers import HuggingFacePipelinePromptDriver
 from griptape.rules import Rule, Ruleset
-from griptape.config import StructureConfig
-
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=HuggingFacePipelinePromptDriver(
             model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
         )
@@ -417,7 +413,6 @@ The [AmazonSageMakerJumpstartPromptDriver](../../reference/griptape/drivers/prom
 Amazon Sagemaker Jumpstart provides a wide range of models with varying capabilities.
 This Driver has been primarily _chat-optimized_ models that have a [Huggingface Chat Template](https://huggingface.co/docs/transformers/en/chat_templating) available.
 If your model does not fit this use-case, we suggest sub-classing [AmazonSageMakerJumpstartPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_jumpstart_prompt_driver.md) and overriding the `_to_model_input` and `_to_model_params` methods.
-    
 
 ```python title="PYTEST_IGNORE"
 import os
@@ -426,10 +421,10 @@ from griptape.drivers import (
     AmazonSageMakerJumpstartPromptDriver,
     SageMakerFalconPromptModelDriver,
 )
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 agent = Agent(
-    config=StructureConfig(
+    config=DriverConfig(
         prompt_driver=AmazonSageMakerJumpstartPromptDriver(
             endpoint=os.environ["SAGEMAKER_LLAMA_3_INSTRUCT_ENDPOINT_NAME"],
             model="meta-llama/Meta-Llama-3-8B-Instruct",

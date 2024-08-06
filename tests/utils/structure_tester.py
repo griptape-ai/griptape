@@ -25,9 +25,7 @@ from griptape.tasks import PromptTask
 
 def get_enabled_prompt_drivers(prompt_drivers_options) -> list[BasePromptDriver]:
     return [
-        prompt_driver_option.prompt_driver
-        for prompt_driver_option in prompt_drivers_options
-        if prompt_driver_option.enabled
+        prompt_driver_option.prompt for prompt_driver_option in prompt_drivers_options if prompt_driver_option.enabled
     ]
 
 

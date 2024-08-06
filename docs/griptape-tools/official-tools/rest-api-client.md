@@ -6,7 +6,7 @@ The [RestApiClient](../../reference/griptape/tools/rest_api_client/tool.md) tool
 
 ### Example
 The following example is built using [https://jsonplaceholder.typicode.com/guide/](https://jsonplaceholder.typicode.com/guide/).
-  
+
 ```python
 from json import dumps
 from griptape.drivers import OpenAiChatPromptDriver
@@ -14,7 +14,7 @@ from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask
 from griptape.tools import RestApiClient
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 
 posts_client = RestApiClient(
     base_url="https://jsonplaceholder.typicode.com",
@@ -117,7 +117,7 @@ posts_client = RestApiClient(
 
 pipeline = Pipeline(
     conversation_memory=ConversationMemory(),
-    config = StructureConfig(
+    config=DriverConfig(
         prompt_driver=OpenAiChatPromptDriver(
             model="gpt-4o",
             temperature=0.1

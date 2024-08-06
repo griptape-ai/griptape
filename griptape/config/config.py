@@ -1,17 +1,17 @@
 from attrs import define
 
 from griptape.config.base_config import BaseConfig
-from griptape.config.base_structure_config import BaseStructureConfig
+from griptape.config.base_driver_config import BaseDriverConfig
 from griptape.mixins.event_publisher_mixin import EventPublisherMixin
 
-from .openai_structure_config import OpenAiStructureConfig
+from .openai_driver_config import OpenAiDriverConfig
 
 
 @define
 class _Config(BaseConfig, EventPublisherMixin):
-    drivers: BaseStructureConfig
+    drivers: BaseDriverConfig
 
 
 Config = _Config(
-    drivers=OpenAiStructureConfig(),
+    drivers=OpenAiDriverConfig(),
 )

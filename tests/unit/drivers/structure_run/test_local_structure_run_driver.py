@@ -20,7 +20,7 @@ class TestLocalStructureRunDriver:
     def test_run_with_env(self, mock_config):
         pipeline = Pipeline()
 
-        mock_config.drivers.prompt_driver = MockPromptDriver(mock_output=lambda _: os.environ["KEY"])
+        mock_config.drivers.prompt = MockPromptDriver(mock_output=lambda _: os.environ["KEY"])
         agent = Agent()
         driver = LocalStructureRunDriver(structure_factory_fn=lambda: agent, env={"KEY": "value"})
         task = StructureRunTask(driver=driver)

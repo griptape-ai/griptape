@@ -97,7 +97,7 @@ class TestConversationMemory:
     def test_add_to_prompt_stack_autopruning_enabled(self, mock_config):
         # All memory is pruned.
 
-        mock_config.drivers.prompt_driver = MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=0))
+        mock_config.drivers.prompt = MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=0))
         agent = Agent()
         memory = ConversationMemory(
             autoprune=True,
@@ -119,9 +119,7 @@ class TestConversationMemory:
         assert len(prompt_stack.messages) == 3
 
         # No memory is pruned.
-        mock_config.drivers.prompt_driver = MockPromptDriver(
-            tokenizer=MockTokenizer(model="foo", max_input_tokens=1000)
-        )
+        mock_config.drivers.prompt = MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=1000))
         agent = Agent()
         memory = ConversationMemory(
             autoprune=True,
@@ -145,7 +143,7 @@ class TestConversationMemory:
         # One memory is pruned.
         # MockTokenizer's max_input_tokens set to one below the sum of memory + system prompt tokens
         # so that a single memory is pruned.
-        mock_config.drivers.prompt_driver = MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=160))
+        mock_config.drivers.prompt = MockPromptDriver(tokenizer=MockTokenizer(model="foo", max_input_tokens=160))
         agent = Agent()
         memory = ConversationMemory(
             autoprune=True,

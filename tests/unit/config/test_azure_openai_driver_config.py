@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.config import AzureOpenAiStructureConfig
+from griptape.config import AzureOpenAiDriverConfig
 
 
 class TestAzureOpenAiStructureConfig:
@@ -10,7 +10,7 @@ class TestAzureOpenAiStructureConfig:
 
     @pytest.fixture()
     def config(self):
-        return AzureOpenAiStructureConfig(
+        return AzureOpenAiDriverConfig(
             azure_endpoint="http://localhost:8080",
             azure_ad_token="test-token",
             azure_ad_token_provider=lambda: "test-provider",
@@ -18,9 +18,9 @@ class TestAzureOpenAiStructureConfig:
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "AzureOpenAiStructureConfig",
+            "type": "AzureOpenAiDriverConfig",
             "azure_endpoint": "http://localhost:8080",
-            "prompt_driver": {
+            "prompt": {
                 "type": "AzureOpenAiChatPromptDriver",
                 "base_url": None,
                 "model": "gpt-4o",
@@ -36,8 +36,8 @@ class TestAzureOpenAiStructureConfig:
                 "user": "",
                 "use_native_tools": True,
             },
-            "conversation_memory_driver": None,
-            "embedding_driver": {
+            "conversation_memory": None,
+            "embedding": {
                 "base_url": None,
                 "model": "text-embedding-3-small",
                 "api_version": "2023-05-15",
@@ -46,7 +46,7 @@ class TestAzureOpenAiStructureConfig:
                 "organization": None,
                 "type": "AzureOpenAiEmbeddingDriver",
             },
-            "image_generation_driver": {
+            "image_generation": {
                 "api_version": "2024-02-01",
                 "base_url": None,
                 "image_size": "512x512",
@@ -59,7 +59,7 @@ class TestAzureOpenAiStructureConfig:
                 "style": None,
                 "type": "AzureOpenAiImageGenerationDriver",
             },
-            "image_query_driver": {
+            "image_query": {
                 "base_url": None,
                 "image_quality": "auto",
                 "max_tokens": 256,
@@ -70,7 +70,7 @@ class TestAzureOpenAiStructureConfig:
                 "organization": None,
                 "type": "AzureOpenAiImageQueryDriver",
             },
-            "vector_store_driver": {
+            "vector_store": {
                 "embedding_driver": {
                     "base_url": None,
                     "model": "text-embedding-3-small",
@@ -82,6 +82,6 @@ class TestAzureOpenAiStructureConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "text_to_speech": {"type": "DummyTextToSpeechDriver"},
+            "audio_transcription": {"type": "DummyAudioTranscriptionDriver"},
         }

@@ -1,6 +1,6 @@
 from attrs import Factory, define, field
 
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 from griptape.drivers import (
     BaseEmbeddingDriver,
     BasePromptDriver,
@@ -12,18 +12,18 @@ from griptape.drivers import (
 
 
 @define
-class GoogleStructureConfig(StructureConfig):
-    prompt_driver: BasePromptDriver = field(
+class GoogleDriverConfig(DriverConfig):
+    prompt: BasePromptDriver = field(
         default=Factory(lambda: GooglePromptDriver(model="gemini-1.5-pro")),
         kw_only=True,
         metadata={"serializable": True},
     )
-    embedding_driver: BaseEmbeddingDriver = field(
+    embedding: BaseEmbeddingDriver = field(
         default=Factory(lambda: GoogleEmbeddingDriver(model="models/embedding-001")),
         kw_only=True,
         metadata={"serializable": True},
     )
-    vector_store_driver: BaseVectorStoreDriver = field(
+    vector_store: BaseVectorStoreDriver = field(
         default=Factory(
             lambda: LocalVectorStoreDriver(embedding_driver=GoogleEmbeddingDriver(model="models/embedding-001")),
         ),

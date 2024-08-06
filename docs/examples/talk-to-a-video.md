@@ -7,7 +7,7 @@ import time
 from griptape.structures import Agent
 from griptape.tasks import PromptTask
 from griptape.artifacts import GenericArtifact, TextArtifact
-from griptape.config import GoogleStructureConfig
+from griptape.config import GoogleDriverConfig
 import google.generativeai as genai
 
 video_file = genai.upload_file(path="tests/resources/griptape-comfyui.mp4")
@@ -19,7 +19,7 @@ if video_file.state.name == "FAILED":
     raise ValueError(video_file.state.name)
 
 agent = Agent(
-    config=GoogleStructureConfig(),
+    config=GoogleDriverConfig(),
     input=[
         GenericArtifact(video_file),
         TextArtifact("Answer this question regarding the video: {{ args[0] }}"),

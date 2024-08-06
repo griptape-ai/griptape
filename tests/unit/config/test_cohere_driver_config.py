@@ -1,22 +1,22 @@
 import pytest
 
-from griptape.config import CohereStructureConfig
+from griptape.config import CohereDriverConfig
 
 
 class TestCohereStructureConfig:
     @pytest.fixture()
     def config(self):
-        return CohereStructureConfig(api_key="api_key")
+        return CohereDriverConfig(api_key="api_key")
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "CohereStructureConfig",
-            "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-            "image_query_driver": {"type": "DummyImageQueryDriver"},
-            "conversation_memory_driver": None,
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
-            "prompt_driver": {
+            "type": "CohereDriverConfig",
+            "image_generation": {"type": "DummyImageGenerationDriver"},
+            "image_query": {"type": "DummyImageQueryDriver"},
+            "conversation_memory": None,
+            "text_to_speech": {"type": "DummyTextToSpeechDriver"},
+            "audio_transcription": {"type": "DummyAudioTranscriptionDriver"},
+            "prompt": {
                 "type": "CoherePromptDriver",
                 "temperature": 0.1,
                 "max_tokens": None,
@@ -25,12 +25,12 @@ class TestCohereStructureConfig:
                 "force_single_step": False,
                 "use_native_tools": True,
             },
-            "embedding_driver": {
+            "embedding": {
                 "type": "CohereEmbeddingDriver",
                 "model": "embed-english-v3.0",
                 "input_type": "search_document",
             },
-            "vector_store_driver": {
+            "vector_store": {
                 "type": "LocalVectorStoreDriver",
                 "embedding_driver": {
                     "type": "CohereEmbeddingDriver",
