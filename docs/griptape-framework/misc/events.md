@@ -149,7 +149,7 @@ EventBus.event_listeners = [
 
 pipeline = Pipeline(
     config=OpenAiDriverConfig(
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True)
+        prompt=OpenAiChatPromptDriver(model="gpt-4o", stream=True)
     ),
 )
 

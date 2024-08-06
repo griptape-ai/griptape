@@ -225,8 +225,8 @@ from griptape.config import DriverConfig
 agent = Agent(
     tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
     config=DriverConfig(
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
-        embedding_driver=VoyageAiEmbeddingDriver(),
+        prompt=OpenAiChatPromptDriver(model="gpt-4o"),
+        embedding=VoyageAiEmbeddingDriver(),
     ),
 )
 

@@ -17,7 +17,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.3),
+        prompt=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.3),
     ),
     input="You will be provided with a tweet, and your task is to classify its sentiment as positive, neutral, or negative. Tweet: {{ args[0] }}",
     rules=[
@@ -75,7 +75,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=OpenAiChatPromptDriver(
+        prompt=OpenAiChatPromptDriver(
             api_key=os.environ["OPENAI_API_KEY"],
             temperature=0.1,
             model="gpt-4o",
@@ -110,7 +110,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=OpenAiChatPromptDriver(
+        prompt=OpenAiChatPromptDriver(
             base_url="http://127.0.0.1:1234/v1",
             model="lmstudio-community/Meta-Llama-3-8B-Instruct-GGUF", stream=True
         )
@@ -138,7 +138,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=AzureOpenAiChatPromptDriver(
+        prompt=AzureOpenAiChatPromptDriver(
             api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
             model="gpt-3.5-turbo",
             azure_deployment=os.environ["AZURE_OPENAI_35_TURBO_DEPLOYMENT_ID"],
@@ -172,7 +172,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=CoherePromptDriver(
+        prompt=CoherePromptDriver(
             model="command-r",
             api_key=os.environ['COHERE_API_KEY'],
         )
@@ -198,7 +198,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=AnthropicPromptDriver(
+        prompt=AnthropicPromptDriver(
             model="claude-3-opus-20240229",
             api_key=os.environ['ANTHROPIC_API_KEY'],
         )
@@ -224,7 +224,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=GooglePromptDriver(
+        prompt=GooglePromptDriver(
             model="gemini-pro",
             api_key=os.environ['GOOGLE_API_KEY'],
         )
@@ -252,7 +252,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
+        prompt=AmazonBedrockPromptDriver(
             model="anthropic.claude-3-sonnet-20240229-v1:0",
         )
     ),
@@ -292,7 +292,7 @@ from griptape.structures import Agent
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=OllamaPromptDriver(
+        prompt=OllamaPromptDriver(
             model="llama3.1",
         ),
     ),
@@ -322,7 +322,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=HuggingFaceHubPromptDriver(
+        prompt=HuggingFaceHubPromptDriver(
             model="HuggingFaceH4/zephyr-7b-beta",
             api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
         )
@@ -356,7 +356,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=HuggingFaceHubPromptDriver(
+        prompt=HuggingFaceHubPromptDriver(
             model="http://127.0.0.1:8080",
             api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
         ),
@@ -384,7 +384,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=HuggingFacePipelinePromptDriver(
+        prompt=HuggingFacePipelinePromptDriver(
             model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
         )
     ),
@@ -425,7 +425,7 @@ from griptape.config import DriverConfig
 
 agent = Agent(
     config=DriverConfig(
-        prompt_driver=AmazonSageMakerJumpstartPromptDriver(
+        prompt=AmazonSageMakerJumpstartPromptDriver(
             endpoint=os.environ["SAGEMAKER_LLAMA_3_INSTRUCT_ENDPOINT_NAME"],
             model="meta-llama/Meta-Llama-3-8B-Instruct",
         )
