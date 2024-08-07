@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from concurrent import futures
+from graphlib import TopologicalSorter
 import uuid
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
@@ -11,6 +13,14 @@ from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRun
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
+from typing import TYPE_CHECKING, Any, Callable, Optional
+from attrs import Factory, define, field
+from griptape.artifacts import BaseArtifact, ErrorArtifact
+
+from griptape.events import FinishStructureRunEvent, StartStructureRunEvent
+from griptape.memory import TaskMemory
+from griptape.memory.meta import MetaMemory
+from griptape.memory.structure import ConversationMemory, Run
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -35,6 +45,10 @@ class Structure(ABC):
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True)
+    futures_executor_fn: Callable[[], futures.Executor] = field(
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+    )
+
     _execution_args: tuple = ()
 
     @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
@@ -168,5 +182,43 @@ class Structure(ABC):
 
         return result
 
-    @abstractmethod
-    def try_run(self, *args) -> Structure: ...
+    def try_run(self, *args) -> Structure:
+        exit_loop = False
+
+        while not self.is_finished() and not exit_loop:
+            futures_list = {}
+            ordered_tasks = self.order_tasks()
+
+            for task in ordered_tasks:
+                if task.can_execute():
+                    future = self.futures_executor_fn().submit(task.execute)
+                    futures_list[future] = task
+
+            # Wait for all tasks to complete
+            for future in futures.as_completed(futures_list):
+                if isinstance(future.result(), ErrorArtifact) and self.fail_fast:
+                    exit_loop = True
+
+                    break
+
+        if self.conversation_memory and self.output is not None:
+            run = Run(input=self.input_task.input, output=self.output)
+
+            self.conversation_memory.add_run(run)
+
+        return self
+
+    def order_tasks(self) -> list[BaseTask]:
+        return [self.find_task(task_id) for task_id in TopologicalSorter(self.to_graph()).static_order()]
+
+    def to_graph(self) -> dict[str, set[str]]:
+        graph: dict[str, set[str]] = {}
+
+        for key_task in self.tasks:
+            graph[key_task.id] = set()
+
+            for value_task in self.tasks:
+                if key_task.id in value_task.child_ids:
+                    graph[key_task.id].add(value_task.id)
+
+        return graph

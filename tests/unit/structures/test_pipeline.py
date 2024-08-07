@@ -378,3 +378,33 @@ class TestPipeline:
 
         with pytest.raises(ValueError, match=f"Duplicate task with id {task.id} found."):
             pipeline.run()
+
+    def test_invalid_task_relationships(self):
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        tasks = [PromptTask("test1", id="task1"), PromptTask("test2", id="task2"), PromptTask("test3", id="task3")]
+        new_task = PromptTask("test4", id="task4")
+        tasks[1].add_child(new_task)
+        pipeline.tasks = [*tasks, new_task]
+
+        with pytest.raises(ValueError, match="Pipelines can only have one parent and one child per task."):
+            pipeline.resolve_relationships()
+
+    def test_invalid_task_relationships_first_task(self):
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        tasks = [PromptTask("test1", id="task1"), PromptTask("test2", id="task2"), PromptTask("test3", id="task3")]
+        new_task = PromptTask("test4", id="task4")
+        tasks[0].add_parent(new_task)
+        pipeline.tasks = [*tasks, new_task]
+
+        with pytest.raises(ValueError, match="The first task in a pipeline cannot have a parent."):
+            pipeline.resolve_relationships()
+
+    def test_invalid_task_relationships_last_task(self):
+        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        tasks = [PromptTask("test1", id="task1"), PromptTask("test2", id="task2"), PromptTask("test3", id="task3")]
+        new_task = PromptTask("test4", id="task4")
+        new_task.add_child("task2")
+        pipeline.tasks = [*tasks, new_task]
+
+        with pytest.raises(ValueError, match="The last task in a pipeline cannot have a child."):
+            pipeline.resolve_relationships()

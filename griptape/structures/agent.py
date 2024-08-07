@@ -5,9 +5,8 @@ from typing import TYPE_CHECKING, Callable, Optional
 from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.common import observable
 from griptape.configs import Defaults
-from griptape.memory.structure import Run
+from griptape.tools import BaseTool
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
 
@@ -73,13 +72,6 @@ class Agent(Structure):
             raise ValueError("Agents can only have one task.")
         return super().add_tasks(*tasks)
 
-    @observable
-    def try_run(self, *args) -> Agent:
-        self.task.execute()
-
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
-
-            self.conversation_memory.add_run(run)
-
-        return self
+    def resolve_relationships(self) -> None:
+        if len(self.tasks) > 1:
+            raise ValueError("Agents can only have one task.")
