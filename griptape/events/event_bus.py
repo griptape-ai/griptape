@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 
 @define
-class EventPublisherMixin:
+class _EventBus:
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
 
     def add_event_listeners(self, event_listeners: list[EventListener]) -> list[EventListener]:
@@ -32,3 +32,6 @@ class EventPublisherMixin:
     def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
         for event_listener in self.event_listeners:
             event_listener.publish_event(event, flush=flush)
+
+
+EventBus = _EventBus()
