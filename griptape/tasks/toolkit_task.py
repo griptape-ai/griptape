@@ -42,6 +42,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
         if self.task_memory:
             self.set_default_tools_memory(self.task_memory)
 
