@@ -16,8 +16,8 @@ from griptape.common import (
     TextMessageContent,
     observable,
 )
-from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent
-from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
+from griptape.events import CompletionChunkEvent, EventBus, FinishPromptEvent, StartPromptEvent
+from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -26,7 +26,7 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True)
-class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, EventPublisherMixin, ABC):
+class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """Base class for the Prompt Drivers.
 
     Attributes:
@@ -49,10 +49,10 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, EventPublishe
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
-        self.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
+        EventBus.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
     def after_run(self, result: Message) -> None:
-        self.publish_event(
+        EventBus.publish_event(
             FinishPromptEvent(
                 model=self.model,
                 result=result.value,
@@ -128,12 +128,12 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, EventPublishe
                 else:
                     delta_contents[content.index] = [content]
                 if isinstance(content, TextDeltaMessageContent):
-                    self.publish_event(CompletionChunkEvent(token=content.text))
+                    EventBus.publish_event(CompletionChunkEvent(token=content.text))
                 elif isinstance(content, ActionCallDeltaMessageContent):
                     if content.tag is not None and content.name is not None and content.path is not None:
-                        self.publish_event(CompletionChunkEvent(token=str(content)))
+                        EventBus.publish_event(CompletionChunkEvent(token=str(content)))
                     elif content.partial_input is not None:
-                        self.publish_event(CompletionChunkEvent(token=content.partial_input))
+                        EventBus.publish_event(CompletionChunkEvent(token=content.partial_input))
 
         # Build a complete content from the content deltas
         result = self.__build_message(list(delta_contents.values()), usage)
