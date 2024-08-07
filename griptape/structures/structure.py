@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-import logging
 import uuid
 from abc import ABC, abstractmethod
-from logging import Logger
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Attribute, Factory, define, field
-from rich.logging import RichHandler
 
 from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
 from griptape.common import observable
@@ -35,14 +32,10 @@ if TYPE_CHECKING:
 
 @define
 class Structure(ABC):
-    LOGGER_NAME = "griptape"
-
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
-    custom_logger: Optional[Logger] = field(default=None, kw_only=True)
-    logger_level: int = field(default=logging.INFO, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
@@ -55,7 +48,6 @@ class Structure(ABC):
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True)
     _execution_args: tuple = ()
-    _logger: Optional[Logger] = None
 
     @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_rulesets(self, _: Attribute, rulesets: list[Ruleset]) -> None:
@@ -87,20 +79,6 @@ class Structure(ABC):
     @property
     def execution_args(self) -> tuple:
         return self._execution_args
-
-    @property
-    def logger(self) -> Logger:
-        if self.custom_logger:
-            return self.custom_logger
-        else:
-            if self._logger is None:
-                self._logger = logging.getLogger(self.LOGGER_NAME)
-
-                self._logger.propagate = False
-                self._logger.level = self.logger_level
-
-                self._logger.handlers = [RichHandler(show_time=True, show_path=False)]
-            return self._logger
 
     @property
     def input_task(self) -> Optional[BaseTask]:

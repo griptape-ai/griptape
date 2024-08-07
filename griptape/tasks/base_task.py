@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import uuid
 from abc import ABC, abstractmethod
 from concurrent import futures
@@ -15,6 +16,8 @@ if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
     from griptape.memory.meta import BaseMetaEntry
     from griptape.structures import Structure
+
+logger = logging.getLogger(Config.logging.logger_name)
 
 
 @define
@@ -159,7 +162,7 @@ class BaseTask(ABC):
 
             self.after_run()
         except Exception as e:
-            self.structure.logger.exception("%s %s\n%s", self.__class__.__name__, self.id, e)
+            logger.exception("%s %s\n%s", self.__class__.__name__, self.id, e)
 
             self.output = ErrorArtifact(str(e), exception=e)
         finally:

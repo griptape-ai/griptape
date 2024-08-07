@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
@@ -13,6 +14,8 @@ from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
+
+logger = logging.getLogger(Config.logging.logger_name)
 
 
 @define
@@ -65,12 +68,12 @@ class PromptTask(RuleMixin, BaseTask):
     def before_run(self) -> None:
         super().before_run()
 
-        self.structure.logger.info("%s %s\nInput: %s", self.__class__.__name__, self.id, self.input.to_text())
+        logger.info("%s %s\nInput: %s", self.__class__.__name__, self.id, self.input.to_text())
 
     def after_run(self) -> None:
         super().after_run()
 
-        self.structure.logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
+        logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
 
     def run(self) -> BaseArtifact:
         message = self.prompt_driver.run(self.prompt_stack)
