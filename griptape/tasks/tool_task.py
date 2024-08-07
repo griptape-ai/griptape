@@ -37,6 +37,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         return stack
 
     def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
         if self.task_memory is not None:
             self.set_default_tools_memory(self.task_memory)
 
