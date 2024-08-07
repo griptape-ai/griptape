@@ -2,12 +2,13 @@ from abc import ABC
 
 from attrs import define
 
-from griptape.config.base_driver_config import BaseDriverConfig
-from griptape.config.events_config import EventsConfig
 from griptape.mixins.serializable_mixin import SerializableMixin
 
+from .base_driver_config import BaseDriverConfig
+from .logging_config import LoggingConfig
 
-@define
+
+@define(kw_only=True)
 class BaseConfig(SerializableMixin, ABC):
     drivers: BaseDriverConfig
-    events: EventsConfig
+    logging: LoggingConfig

@@ -11,6 +11,7 @@ from attrs import define, field
 from griptape import utils
 from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.common import ToolAction
+from griptape.config import Config
 from griptape.events import EventBus, FinishActionsSubtaskEvent, StartActionsSubtaskEvent
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask

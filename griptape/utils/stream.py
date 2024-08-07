@@ -56,8 +56,6 @@ class Stream:
         t.join()
 
     def _run_structure(self, *args) -> None:
-        from griptape.config import Config
-
         def event_handler(event: BaseEvent) -> None:
             self._event_queue.put(event)
 

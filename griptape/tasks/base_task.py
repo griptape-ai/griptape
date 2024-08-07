@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, Callable, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
+from griptape.config import Config
 from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
 
 if TYPE_CHECKING:

@@ -28,8 +28,7 @@ class TestBasePromptDriver:
 
     def test_run_via_pipeline_publishes_events(self, mocker):
         mock_publish_event = mocker.patch.object(_EventBus, "publish_event")
-        driver = MockPromptDriver()
-        pipeline = Pipeline(prompt_driver=driver)
+        pipeline = Pipeline()
         pipeline.add_task(PromptTask("test"))
 
         pipeline.run()
