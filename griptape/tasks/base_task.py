@@ -83,37 +83,37 @@ class BaseTask(ABC):
     def __str__(self) -> str:
         return str(self.output.value)
 
-    def add_parents(self, parents: list[str | BaseTask]) -> None:
+    def add_parents(self, parents: list[BaseTask]) -> None:
         for parent in parents:
             self.add_parent(parent)
 
-    def add_parent(self, parent: str | BaseTask) -> None:
-        parent_id = parent if isinstance(parent, str) else parent.id
+    def add_parent(self, parent: BaseTask) -> BaseTask:
+        if parent.id not in self.parent_ids:
+            self.parent_ids.append(parent.id)
 
-        if parent_id not in self.parent_ids:
-            self.parent_ids.append(parent_id)
+        if self.id not in parent.child_ids:
+            parent.child_ids.append(self.id)
 
-        if isinstance(parent, BaseTask):
-            parent.add_child(self.id)
+        if self.structure is not None:
+            self.structure.add_task(parent)
 
-            if self.structure is not None:
-                self.structure.add_task(parent)
+        return self
 
-    def add_children(self, children: list[str | BaseTask]) -> None:
+    def add_children(self, children: list[BaseTask]) -> None:
         for child in children:
             self.add_child(child)
 
-    def add_child(self, child: str | BaseTask) -> None:
-        child_id = child if isinstance(child, str) else child.id
+    def add_child(self, child: BaseTask) -> BaseTask:
+        if child.id not in self.child_ids:
+            self.child_ids.append(child.id)
 
-        if child_id not in self.child_ids:
-            self.child_ids.append(child_id)
+        if self.id not in child.parent_ids:
+            child.parent_ids.append(self.id)
 
-        if isinstance(child, BaseTask):
-            child.add_parent(self.id)
+        if self.structure is not None:
+            self.structure.add_task(child)
 
-            if self.structure is not None:
-                self.structure.add_task(child)
+        return self
 
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure

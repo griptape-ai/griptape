@@ -31,8 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Dropped `Client` from all Tool names for better naming consistency. 
 - **BREAKING**: Dropped `_client` suffix from all Tool packages. 
 - **BREAKING**: Added `Tool` suffix to all Tool names for better naming consistency. 
+- **BREAKING**: `BaseTask.add_parent/child` now take a `BaseTask` instead of `str | BaseTask`.
 - Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
+- `BaseTask.add_parent/child` returns `self` allowing for chaining.
 
 ## [0.29.1] - 2024-08-02
 
