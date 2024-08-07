@@ -271,3 +271,9 @@ class TestAgent:
     def test_fail_fast(self):
         with pytest.raises(ValueError):
             Agent(prompt_driver=MockPromptDriver(), fail_fast=True)
+
+    def test_fail_too_many_tasks(self):
+        with pytest.raises(ValueError, match="Agents can only have one task."):
+            agent = Agent()
+            agent.tasks = [PromptTask("input"), PromptTask("input")]
+            agent.run()

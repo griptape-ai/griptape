@@ -1,5 +1,6 @@
 from __future__ import annotations
-
+from concurrent import futures
+from graphlib import TopologicalSorter
 import logging
 import uuid
 from abc import ABC, abstractmethod
@@ -11,6 +12,10 @@ from rich.logging import RichHandler
 
 from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
 from griptape.common import observable
+from typing import TYPE_CHECKING, Any, Callable, Optional
+from attrs import Factory, define, field
+from rich.logging import RichHandler
+from griptape.artifacts import BlobArtifact, TextArtifact, BaseArtifact, ErrorArtifact
 from griptape.config import BaseStructureConfig, OpenAiStructureConfig, StructureConfig
 from griptape.drivers import (
     BaseEmbeddingDriver,
@@ -32,7 +37,7 @@ from griptape.events.finish_structure_run_event import FinishStructureRunEvent
 from griptape.events.start_structure_run_event import StartStructureRunEvent
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
-from griptape.memory.structure import ConversationMemory
+from griptape.memory.structure import ConversationMemory, Run
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.mixins import EventPublisherMixin
 from griptape.utils import deprecation_warn
@@ -74,6 +79,10 @@ class Structure(ABC, EventPublisherMixin):
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True)
+    futures_executor_fn: Callable[[], futures.Executor] = field(
+        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
+    )
+
     _execution_args: tuple = ()
     _logger: Optional[Logger] = None
 
@@ -295,5 +304,43 @@ class Structure(ABC, EventPublisherMixin):
 
         return result
 
-    @abstractmethod
-    def try_run(self, *args) -> Structure: ...
+    def try_run(self, *args) -> Structure:
+        exit_loop = False
+
+        while not self.is_finished() and not exit_loop:
+            futures_list = {}
+            ordered_tasks = self.order_tasks()
+
+            for task in ordered_tasks:
+                if task.can_execute():
+                    future = self.futures_executor_fn().submit(task.execute)
+                    futures_list[future] = task
+
+            # Wait for all tasks to complete
+            for future in futures.as_completed(futures_list):
+                if isinstance(future.result(), ErrorArtifact) and self.fail_fast:
+                    exit_loop = True
+
+                    break
+
+        if self.conversation_memory and self.output is not None:
+            run = Run(input=self.input_task.input, output=self.output)
+
+            self.conversation_memory.add_run(run)
+
+        return self
+
+    def order_tasks(self) -> list[BaseTask]:
+        return [self.find_task(task_id) for task_id in TopologicalSorter(self.to_graph()).static_order()]
+
+    def to_graph(self) -> dict[str, set[str]]:
+        graph: dict[str, set[str]] = {}
+
+        for key_task in self.tasks:
+            graph[key_task.id] = set()
+
+            for value_task in self.tasks:
+                if key_task.id in value_task.child_ids:
+                    graph[key_task.id].add(value_task.id)
+
+        return graph

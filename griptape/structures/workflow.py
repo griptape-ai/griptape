@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import concurrent.futures as futures
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
+from attrs import define
 from graphlib import TopologicalSorter
 
+from typing import Any, Optional
+from attrs import define
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
 from griptape.memory.structure import Run
@@ -17,11 +19,6 @@ if TYPE_CHECKING:
 
 @define
 class Workflow(Structure):
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-        kw_only=True,
-    )
-
     @property
     def input_task(self) -> Optional[BaseTask]:
         return self.order_tasks()[0] if self.tasks else None
@@ -130,58 +127,3 @@ class Workflow(Structure):
         )
 
         return context
-
-    def to_graph(self) -> dict[str, set[str]]:
-        graph: dict[str, set[str]] = {}
-
-        for key_task in self.tasks:
-            graph[key_task.id] = set()
-
-            for value_task in self.tasks:
-                if key_task.id in value_task.child_ids:
-                    graph[key_task.id].add(value_task.id)
-
-        return graph
-
-    def order_tasks(self) -> list[BaseTask]:
-        return [self.find_task(task_id) for task_id in TopologicalSorter(self.to_graph()).static_order()]
-
-    def __link_task_to_children(self, task: BaseTask, child_tasks: list[BaseTask]) -> None:
-        for child_task in child_tasks:
-            # Link the new task to the child task
-            if child_task.id not in task.child_ids:
-                task.child_ids.append(child_task.id)
-            if task.id not in child_task.parent_ids:
-                child_task.parent_ids.append(task.id)
-
-    def __remove_old_parent_child_relationships(
-        self,
-        parent_tasks: list[BaseTask],
-        child_tasks: list[BaseTask],
-    ) -> None:
-        for parent_task in parent_tasks:
-            for child_task in child_tasks:
-                # Remove the old parent/child relationship
-                if child_task.id in parent_task.child_ids:
-                    parent_task.child_ids.remove(child_task.id)
-                if parent_task.id in child_task.parent_ids:
-                    child_task.parent_ids.remove(parent_task.id)
-
-    def __link_task_to_parents(self, task: BaseTask, parent_tasks: list[BaseTask]) -> int:
-        last_parent_index = -1
-        for parent_task in parent_tasks:
-            # Link the new task to the parent task
-            if parent_task.id not in task.parent_ids:
-                task.parent_ids.append(parent_task.id)
-            if task.id not in parent_task.child_ids:
-                parent_task.child_ids.append(task.id)
-
-            try:
-                parent_index = self.tasks.index(parent_task)
-            except ValueError as exc:
-                raise ValueError(f"Parent task {parent_task.id} not found in workflow.") from exc
-            else:
-                if parent_index > last_parent_index:
-                    last_parent_index = parent_index
-
-        return last_parent_index
