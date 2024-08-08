@@ -11,7 +11,7 @@ import os
 from griptape.tools import WebScraper, TaskMemoryClient
 from griptape.structures import Agent
 from griptape.drivers import AzureOpenAiEmbeddingDriver, AzureMongoDbVectorStoreDriver
-from griptape.config import AzureOpenAiDriverConfig
+from griptape.config import AzureOpenAiDriverConfig, config
 
 AZURE_OPENAI_ENDPOINT_1 = os.environ["AZURE_OPENAI_ENDPOINT_1"]
 AZURE_OPENAI_API_KEY_1 = os.environ["AZURE_OPENAI_API_KEY_1"]
@@ -40,7 +40,7 @@ mongo_driver = AzureMongoDbVectorStoreDriver(
     vector_path=MONGODB_VECTOR_PATH,
 )
 
-config = AzureOpenAiDriverConfig(
+config.drivers = AzureOpenAiDriverConfig(
     azure_endpoint=AZURE_OPENAI_ENDPOINT_1,
     vector_store=mongo_driver,
     embedding=embedding_driver,
