@@ -80,10 +80,11 @@ def handler1(event: BaseEvent):
 def handler2(event: BaseEvent):
     print("Handler 2", event.__class__)
 
-event_bus.event_listeners=[
+event_bus.add_event_listeners([
         EventListener(handler1),
         EventListener(handler2),
     ]
+)
 
 agent = Agent()
 
