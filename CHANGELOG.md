@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Method `try_find_task` to `Structure`.
 
 ### Changed
+- **BREAKING**: `BaseTask.add_parent/child` now take a `BaseTask` instead of `str | BaseTask`.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
+- `BaseTask.add_parent/child` returns the added parent/child Task allowing for chaining.
 
 ## [0.29.0] - 2024-07-30
 
