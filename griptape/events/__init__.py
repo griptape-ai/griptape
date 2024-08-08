@@ -22,6 +22,7 @@ from .finish_text_to_speech_event import FinishTextToSpeechEvent
 from .base_audio_transcription_event import BaseAudioTranscriptionEvent
 from .start_audio_transcription_event import StartAudioTranscriptionEvent
 from .finish_audio_transcription_event import FinishAudioTranscriptionEvent
+from .event_bus import event_bus
 
 __all__ = [
     "BaseEvent",
@@ -48,4 +49,5 @@ __all__ = [
     "BaseAudioTranscriptionEvent",
     "StartAudioTranscriptionEvent",
     "FinishAudioTranscriptionEvent",
+    "event_bus",
 ]

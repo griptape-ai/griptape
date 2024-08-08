@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.events.event_listener import EventListener
+from griptape.events import EventListener, event_bus
 from tests.mocks.mock_image_query_driver import MockImageQueryDriver
 
 
@@ -13,7 +13,7 @@ class TestBaseImageQueryDriver:
 
     def test_query_publishes_events(self, driver):
         mock_handler = Mock()
-        driver.add_event_listener(EventListener(handler=mock_handler))
+        event_bus.add_event_listener(EventListener(handler=mock_handler))
 
         driver.query("foo", [])
 

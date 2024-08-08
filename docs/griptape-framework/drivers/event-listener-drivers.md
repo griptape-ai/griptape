@@ -14,26 +14,27 @@ import os
 
 from griptape.drivers import AmazonSqsEventListenerDriver
 from griptape.events import (
-    EventListener,
+    EventListener, event_bus
 )
 from griptape.rules import Rule
 from griptape.structures import Agent
+
+event_bus.add_event_listeners(
+    [
+        EventListener(
+            driver=AmazonSqsEventListenerDriver(
+                queue_url=os.environ["AMAZON_SQS_QUEUE_URL"],
+            ),
+        ),
+    ]
+)
+
 
 agent = Agent(
     rules=[
         Rule(
             value="You will be provided with a block of text, and your task is to extract a list of keywords from it."
         )
-    ],
-    event_listeners=[
-        EventListener(
-            handler=lambda event: {  # You can optionally use the handler to transform the event payload before sending it to the Driver
-                "event": event.to_dict(),
-            },
-            driver=AmazonSqsEventListenerDriver(
-                queue_url=os.environ["AMAZON_SQS_QUEUE_URL"],
-            ),
-        ),
     ],
 )
 
@@ -83,23 +84,26 @@ import os
 
 from griptape.drivers import AmazonSqsEventListenerDriver
 from griptape.events import (
-    EventListener,
+    EventListener, event_bus
 )
 from griptape.rules import Rule
 from griptape.structures import Agent
+
+event_bus.add_event_listeners(
+    [
+        EventListener(
+            driver=AmazonSqsEventListenerDriver(
+                queue_url=os.environ["AMAZON_SQS_QUEUE_URL"],
+            ),
+        ),
+    ]
+)
 
 agent = Agent(
     rules=[
         Rule(
             value="You will be provided with a block of text, and your task is to extract a list of keywords from it."
         )
-    ],
-    event_listeners=[
-        EventListener(
-            driver=AmazonSqsEventListenerDriver(
-                queue_url=os.environ["AMAZON_SQS_QUEUE_URL"],
-            ),
-        ),
     ],
 )
 
@@ -128,9 +132,22 @@ from griptape.drivers import AwsIotCoreEventListenerDriver, OpenAiChatPromptDriv
 from griptape.events import (
     EventListener,
     FinishStructureRunEvent,
+    event_bus
 )
 from griptape.rules import Rule
 from griptape.structures import Agent
+
+event_bus.add_event_listeners(
+    [
+        EventListener(
+            event_types=[FinishStructureRunEvent],
+            driver=AwsIotCoreEventListenerDriver(
+                topic=os.environ["AWS_IOT_CORE_TOPIC"],
+                iot_endpoint=os.environ["AWS_IOT_CORE_ENDPOINT"],
+            ),
+        ),
+    ]
+)
 
 agent = Agent(
     rules=[
@@ -143,15 +160,6 @@ agent = Agent(
             model="gpt-3.5-turbo", temperature=0.7
         )
     ),
-    event_listeners=[
-        EventListener(
-            event_types=[FinishStructureRunEvent],
-            driver=AwsIotCoreEventListenerDriver(
-                topic=os.environ["AWS_IOT_CORE_TOPIC"],
-                iot_endpoint=os.environ["AWS_IOT_CORE_ENDPOINT"],
-            ),
-        ),
-    ],
 )
 
 agent.run("I want to fly from Orlando to Boston")
@@ -171,18 +179,19 @@ from griptape.drivers import GriptapeCloudEventListenerDriver
 from griptape.events import (
     EventListener,
     FinishStructureRunEvent,
+    event_bus
 )
 from griptape.structures import Agent
 
-agent = Agent(
-    event_listeners=[
+event_bus.add_event_listeners(
+    [
         EventListener(
             event_types=[FinishStructureRunEvent],
             # By default, GriptapeCloudEventListenerDriver uses the api key provided
             # in the GT_CLOUD_API_KEY environment variable.
             driver=GriptapeCloudEventListenerDriver(),
         ),
-    ],
+    ]
 )
 
 agent.run(
@@ -201,19 +210,22 @@ from griptape.drivers import WebhookEventListenerDriver
 from griptape.events import (
     EventListener,
     FinishStructureRunEvent,
+    event_bus
 )
 from griptape.structures import Agent
 
-agent = Agent(
-    event_listeners=[
+event_bus.add_event_listeners(
+    [
         EventListener(
             event_types=[FinishStructureRunEvent],
             driver=WebhookEventListenerDriver(
                 webhook_url=os.environ["WEBHOOK_URL"],
             ),
         ),
-    ],
+    ]
 )
+
+agent = Agent()
 
 agent.run("Analyze the pros and cons of remote work vs. office work")
 ```
@@ -229,12 +241,13 @@ import os
 from griptape.drivers import PusherEventListenerDriver
 from griptape.events import (
     EventListener,
-    FinishStructureRunEvent
+    FinishStructureRunEvent,
+    event_bus
 )
 from griptape.structures import Agent
 
-agent = Agent(
-    event_listeners=[
+event_bus.add_event_listeners(
+    [
         EventListener(
             event_types=[FinishStructureRunEvent],
             driver=PusherEventListenerDriver(
@@ -249,6 +262,8 @@ agent = Agent(
         ),
     ],
 )
+
+agent = Agent()
 
 agent.run("Analyze the pros and cons of remote work vs. office work")
 

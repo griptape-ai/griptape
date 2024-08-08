@@ -28,13 +28,11 @@ from griptape.engines.rag.modules import (
     VectorStoreRetrievalRagModule,
 )
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
-from griptape.events.finish_structure_run_event import FinishStructureRunEvent
-from griptape.events.start_structure_run_event import StartStructureRunEvent
+from griptape.events import FinishStructureRunEvent, StartStructureRunEvent, event_bus
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
-from griptape.mixins import EventPublisherMixin
 from griptape.utils import deprecation_warn
 
 if TYPE_CHECKING:
@@ -44,7 +42,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Structure(ABC, EventPublisherMixin):
+class Structure(ABC):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
@@ -96,8 +94,6 @@ class Structure(ABC, EventPublisherMixin):
     def __attrs_post_init__(self) -> None:
         if self.conversation_memory is not None:
             self.conversation_memory.structure = self
-
-        self.config.structure = self
 
         tasks = self.tasks.copy()
         self.tasks.clear()
@@ -261,7 +257,7 @@ class Structure(ABC, EventPublisherMixin):
 
         [task.reset() for task in self.tasks]
 
-        self.publish_event(
+        event_bus.publish_event(
             StartStructureRunEvent(
                 structure_id=self.id,
                 input_task_input=self.input_task.input,
@@ -273,7 +269,7 @@ class Structure(ABC, EventPublisherMixin):
 
     @observable
     def after_run(self) -> None:
-        self.publish_event(
+        event_bus.publish_event(
             FinishStructureRunEvent(
                 structure_id=self.id,
                 output_task_input=self.output_task.input,

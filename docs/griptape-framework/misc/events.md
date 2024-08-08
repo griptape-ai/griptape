@@ -5,7 +5,7 @@ search:
 
 ## Overview
 
-You can use [EventListener](../../reference/griptape/events/event_listener.md)s to listen for events during a Structure's execution.
+You can configure the global [event_bus](../../reference/griptape/events/event_bus.md) with [EventListener](../../reference/griptape/events/event_listener.md)s to listen for various framework events.
 See [Event Listener Drivers](../drivers/event-listener-drivers.md) for examples on forwarding events to external services.
 
 ## Specific Event Types
@@ -23,15 +23,14 @@ from griptape.events import (
     StartPromptEvent,
     FinishPromptEvent,
     EventListener,
+    event_bus
 )
 
 
 def handler(event: BaseEvent):
     print(event.__class__)
 
-
-agent = Agent(
-    event_listeners=[
+event_bus.add_event_listeners([
         EventListener(
             handler,
             event_types=[
@@ -43,8 +42,9 @@ agent = Agent(
                 FinishPromptEvent,
             ],
         )
-    ]
-)
+    ])
+
+agent = Agent()
 
 agent.run("tell me about griptape")
 ```
@@ -69,7 +69,8 @@ Or listen to all events:
 
 ```python
 from griptape.structures import Agent
-from griptape.events import BaseEvent, EventListener
+from griptape.events import BaseEvent, EventListener, event_bus
+
 
 
 def handler1(event: BaseEvent):
@@ -79,13 +80,13 @@ def handler1(event: BaseEvent):
 def handler2(event: BaseEvent):
     print("Handler 2", event.__class__)
 
-
-agent = Agent(
-    event_listeners=[
+event_bus.add_event_listeners([
         EventListener(handler1),
         EventListener(handler2),
     ]
 )
+
+agent = Agent()
 
 agent.run("tell me about griptape")
 ```
@@ -131,7 +132,7 @@ Handler 2 <class 'griptape.events.finish_structure_run_event.FinishStructureRunE
 You can use the [CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md) to stream the completion results from Prompt Drivers.
 
 ```python
-from griptape.events import CompletionChunkEvent, EventListener
+from griptape.events import CompletionChunkEvent, EventListener, event_bus
 from griptape.tasks import ToolkitTask
 from griptape.structures import Pipeline
 from griptape.tools import WebScraper, TaskMemoryClient
@@ -139,16 +140,18 @@ from griptape.config import OpenAiStructureConfig
 from griptape.drivers import OpenAiChatPromptDriver
 
 
+
+event_bus.add_event_listeners([
+    EventListener(
+        lambda e: print(e.token, end="", flush=True),
+        event_types=[CompletionChunkEvent],
+    )
+])
+
 pipeline = Pipeline(
     config=OpenAiStructureConfig(
         prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True)
     ),
-    event_listeners=[
-        EventListener(
-            lambda e: print(e.token, end="", flush=True),
-            event_types=[CompletionChunkEvent],
-        )
-    ],
 )
 
 pipeline.add_tasks(
@@ -186,26 +189,25 @@ To count tokens, you can use Event Listeners and the [TokenCounter](../../refere
 
 ```python
 from griptape import utils
-from griptape.events import BaseEvent, StartPromptEvent, FinishPromptEvent, EventListener
+from griptape.events import BaseEvent, StartPromptEvent, FinishPromptEvent, EventListener, event_bus
 from griptape.structures import Agent
 
 
 token_counter = utils.TokenCounter()
 
+event_bus.add_event_listeners([
+    EventListener(
+        lambda e: token_counter.add_tokens(e.token_count),
+        event_types=[StartPromptEvent, FinishPromptEvent],
+    )
+])
 
 def count_tokens(e: BaseEvent):
     if isinstance(e, StartPromptEvent) or isinstance(e, FinishPromptEvent):
         token_counter.add_tokens(e.token_count)
 
 
-agent = Agent(
-    event_listeners=[
-        EventListener(
-            handler=lambda e: count_tokens(e),
-            event_types=[StartPromptEvent, FinishPromptEvent],
-        )
-    ]
-)
+agent = Agent()
 
 agent.run("tell me about large language models")
 
@@ -244,8 +246,10 @@ You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_
 
 ```python
 from griptape.structures import Agent
-from griptape.events import BaseEvent, StartPromptEvent, EventListener
+from griptape.events import BaseEvent, StartPromptEvent, EventListener, event_bus
 
+
+event_bus.add_event_listeners([EventListener(handler=lambda e: print(e), event_types=[StartPromptEvent])])
 
 def handler(event: BaseEvent):
     if isinstance(event, StartPromptEvent):
@@ -256,9 +260,7 @@ def handler(event: BaseEvent):
         print(event.prompt)
 
 
-agent = Agent(
-    event_listeners=[EventListener(handler=handler, event_types=[StartPromptEvent])]
-)
+agent = Agent()
 
 agent.run("Write me a poem.")
 ```
