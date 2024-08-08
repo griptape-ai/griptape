@@ -21,7 +21,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `EventPublisherMixin`.
 - **BREAKING**: Removed `Workflow.prompt_driver` and `Workflow.prompt_driver`. `Agent.prompt_driver` has not been removed.
 - **BREAKING**: Removed `Structure.embedding_driver`, set this via `griptape.config.config.drivers.embedding` instead.
+- **BREAKING**: Removed `Structure.custom_logger` and `Structure.logger_level`, set these via `griptape.config.config.logger` instead. 
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
+- All Task and Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 
 ## [0.29.0] - 2024-07-30
 
