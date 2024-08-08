@@ -123,7 +123,7 @@ The [AwsIotCoreEventListenerDriver](../../reference/griptape/drivers/event_liste
 ```python
 import os
 
-from griptape.config import DriverConfig
+from griptape.config import DriverConfig, Config
 from griptape.drivers import AwsIotCoreEventListenerDriver, OpenAiChatPromptDriver
 from griptape.events import (
     EventListener,
@@ -132,17 +132,18 @@ from griptape.events import (
 from griptape.rules import Rule
 from griptape.structures import Agent
 
+Config.drivers = DriverConfig(
+        prompt=OpenAiChatPromptDriver(
+            model="gpt-3.5-turbo", temperature=0.7
+        )
+)
+
 agent = Agent(
     rules=[
         Rule(
             value="You will be provided with a text, and your task is to extract the airport codes from it."
         )
     ],
-    config=DriverConfig(
-        prompt=OpenAiChatPromptDriver(
-            model="gpt-3.5-turbo", temperature=0.7
-        )
-    ),
     event_listeners=[
         EventListener(
             event_types=[FinishStructureRunEvent],

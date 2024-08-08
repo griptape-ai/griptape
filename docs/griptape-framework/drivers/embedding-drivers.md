@@ -220,14 +220,15 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     VoyageAiEmbeddingDriver,
 )
-from griptape.config import DriverConfig
+from griptape.config import DriverConfig, Config
+
+Config.drivers = DriverConfig(
+        prompt=OpenAiChatPromptDriver(model="gpt-4o"),
+        embedding=VoyageAiEmbeddingDriver(),
+)
 
 agent = Agent(
     tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
-    config=DriverConfig(
-        prompt=OpenAiChatPromptDriver(model="gpt-4o"),
-        embedding=VoyageAiEmbeddingDriver(),
-    ),
 )
 
 agent.run("based on https://www.griptape.ai/, tell me what Griptape is")

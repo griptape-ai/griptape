@@ -17,13 +17,11 @@ The [OpenAI Driver Config](../../reference/griptape/config/openai_driver_config.
 
 ```python
 from griptape.structures import Agent
-from griptape.config import OpenAiDriverConfig
+from griptape.config import OpenAiDriverConfig, Config
 
-agent = Agent(
-    config=OpenAiDriverConfig()
-)
+Config.drivers = OpenAiDriverConfig()
 
-agent = Agent()  # This is equivalent to the above
+agent = Agent()
 ```
 
 #### Azure OpenAI
@@ -33,18 +31,14 @@ The [Azure OpenAI Driver Config](../../reference/griptape/config/azure_openai_dr
 ```python
 import os
 from griptape.structures import Agent
-from griptape.config import AzureOpenAiDriverConfig
+from griptape.config import AzureOpenAiDriverConfig, Config
 
-agent = Agent(
-    config=AzureOpenAiDriverConfig(
-        azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"],
-        api_key=os.environ["AZURE_OPENAI_API_KEY_3"]
-    ).merge_config({
-        "image_query": {
-            "azure_deployment": "gpt-4o",
-        },
-    }),
+Config.drivers = AzureOpenAiDriverConfig(
+    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"],
+    api_key=os.environ["AZURE_OPENAI_API_KEY_3"]
 )
+
+agent = Agent()
 ```
 
 #### Amazon Bedrock
@@ -54,17 +48,17 @@ The [Amazon Bedrock Driver Config](../../reference/griptape/config/amazon_bedroc
 import os
 import boto3
 from griptape.structures import Agent
-from griptape.config import AmazonBedrockDriverConfig
+from griptape.config import AmazonBedrockDriverConfig, Config
 
-agent = Agent(
-    config=AmazonBedrockDriverConfig(
-        session=boto3.Session(
-            region_name=os.environ["AWS_DEFAULT_REGION"],
-            aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
-            aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
-        )
+Config.drivers = AmazonBedrockDriverConfig(
+    session=boto3.Session(
+        region_name=os.environ["AWS_DEFAULT_REGION"],
+        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
     )
 )
+
+agent = Agent()
 ```
 
 #### Google
@@ -72,11 +66,11 @@ The [Google Driver Config](../../reference/griptape/config/google_driver_config.
 
 ```python
 from griptape.structures import Agent
-from griptape.config import GoogleDriverConfig
+from griptape.config import GoogleDriverConfig, Config
 
-agent = Agent(
-    config=GoogleDriverConfig()
-)
+Config.drivers = GoogleDriverConfig()
+
+agent = Agent()
 ```
 
 #### Anthropic
@@ -90,11 +84,11 @@ The [Anthropic Driver Config](../../reference/griptape/config/anthropic_driver_c
 
 ```python
 from griptape.structures import Agent
-from griptape.config import AnthropicDriverConfig
+from griptape.config import AnthropicDriverConfig, Config
 
-agent = Agent(
-    config=AnthropicDriverConfig()
-)
+Config.drivers = AnthropicDriverConfig()
+
+agent = Agent()
 ```
 
 #### Cohere
@@ -103,10 +97,12 @@ The [Cohere Driver Config](../../reference/griptape/config/cohere_driver_config.
 
 ```python
 import os
-from griptape.config import CohereDriverConfig
+from griptape.config import CohereDriverConfig, Config
 from griptape.structures import Agent
 
-agent = Agent(config=CohereDriverConfig(api_key=os.environ["COHERE_API_KEY"]))
+Config.drivers = CohereDriverConfig(api_key=os.environ["COHERE_API_KEY"])
+
+agent = Agent()
 ```
 
 ### Custom Configs
@@ -118,49 +114,38 @@ This approach ensures that you are informed through clear error messages if you 
 ```python
 import os
 from griptape.structures import Agent
-from griptape.config import DriverConfig
+from griptape.config import DriverConfig, Config
 from griptape.drivers import AnthropicPromptDriver
 
-agent = Agent(
-    config=DriverConfig(
-        prompt=AnthropicPromptDriver(
-            model="claude-3-sonnet-20240229",
-            api_key=os.environ["ANTHROPIC_API_KEY"],
-        )
-    ),
+Config.drivers = DriverConfig(
+    prompt=AnthropicPromptDriver(
+        model="claude-3-sonnet-20240229",
+        api_key=os.environ["ANTHROPIC_API_KEY"],
+    )
 )
+
+
+agent = Agent()
 ```
 
 ### Loading/Saving Configs
 
-Configuration classes in Griptape offer utility methods for loading, saving, and merging configurations, streamlining the management of complex setups.
-
 ```python
 from griptape.structures import Agent
-from griptape.config import AmazonBedrockDriverConfig
-from griptape.drivers import AmazonBedrockCohereEmbeddingDriver
+from griptape.config import AmazonBedrockDriverConfig, Config
 
 custom_config = AmazonBedrockDriverConfig()
-custom_config.embedding_driver = AmazonBedrockCohereEmbeddingDriver()
-custom_config.merge_config(
-    {
-        "embedding": {
-            "base_url": None,
-            "model": "text-embedding-3-small",
-            "organization": None,
-            "type": "OpenAiEmbeddingDriver",
-        },
-    }
-)
-serialized_config = custom_config.to_json()
-deserialized_config = AmazonBedrockDriverConfig.from_json(serialized_config)
+dict_config = custom_config.to_dict()
+# Use OpenAi for embeddings
+dict_config["embedding"] = {
+    "base_url": None,
+    "model": "text-embedding-3-small",
+    "organization": None,
+    "type": "OpenAiEmbeddingDriver",
+}
+custom_config = AmazonBedrockDriverConfig.from_dict(dict_config)
 
-agent = Agent(
-    config=deserialized_config.merge_config({
-        "prompt": {
-            "model": "anthropic.claude-3-sonnet-20240229-v1:0",
-        },
-    }),
-)
+Config.drivers = custom_config
+
+agent = Agent()
 ```
-
