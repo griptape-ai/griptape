@@ -86,9 +86,11 @@ rag_engine = RagEngine(
         ]
     ),
     response_stage=ResponseRagStage(
-        response_module=PromptResponseRagModule(
-            prompt_driver=prompt_driver
-        )
+        response_modules=[
+            PromptResponseRagModule(
+                prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
+            )
+        ]
     )
 )
 
@@ -104,6 +106,6 @@ rag_context = RagContext(
 )
 
 print(
-    rag_engine.process(rag_context).output.to_text()
+    rag_engine.process(rag_context).outputs[0].to_text()
 )
 ```

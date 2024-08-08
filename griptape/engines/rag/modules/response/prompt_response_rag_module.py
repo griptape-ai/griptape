@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, Callable
 
 from attrs import Factory, define, field
 
+from griptape.artifacts import BaseArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.engines.rag.modules import BaseResponseRagModule
 from griptape.utils import J2
@@ -21,7 +22,7 @@ class PromptResponseRagModule(BaseResponseRagModule):
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
     )
 
-    def run(self, context: RagContext) -> RagContext:
+    def run(self, context: RagContext) -> BaseArtifact:
         query = context.query
         tokenizer = self.prompt_driver.tokenizer
         included_chunks = []
@@ -45,11 +46,9 @@ class PromptResponseRagModule(BaseResponseRagModule):
         output = self.prompt_driver.run(self.generate_prompt_stack(system_prompt, query)).to_artifact()
 
         if isinstance(output, TextArtifact):
-            context.output = output
+            return output
         else:
             raise ValueError("Prompt driver did not return a TextArtifact")
-
-        return context
 
     def default_system_template_generator(self, context: RagContext, artifacts: list[TextArtifact]) -> str:
         return J2("engines/rag/modules/response/prompt/system.j2").render(

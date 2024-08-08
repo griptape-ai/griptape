@@ -23,7 +23,7 @@ class QueryRagStage(BaseRagStage):
         return self.query_modules
 
     def run(self, context: RagContext) -> RagContext:
-        logging.info("QueryStage: running %s query generation modules sequentially", len(self.query_modules))
+        logging.info("QueryRagStage: running %s query generation modules sequentially", len(self.query_modules))
 
         [qm.run(context) for qm in self.query_modules]
 

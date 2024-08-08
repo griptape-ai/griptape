@@ -33,7 +33,7 @@ class RetrievalRagStage(BaseRagStage):
         return ms
 
     def run(self, context: RagContext) -> RagContext:
-        logging.info("RetrievalStage: running %s retrieval modules in parallel", len(self.retrieval_modules))
+        logging.info("RetrievalRagStage: running %s retrieval modules in parallel", len(self.retrieval_modules))
 
         with self.futures_executor_fn() as executor:
             results = utils.execute_futures_list([executor.submit(r.run, context) for r in self.retrieval_modules])
@@ -47,7 +47,7 @@ class RetrievalRagStage(BaseRagStage):
         chunks_after_dedup = len(results)
 
         logging.info(
-            "RetrievalStage: deduplicated %s " "chunks (%s - %s)",
+            "RetrievalRagStage: deduplicated %s " "chunks (%s - %s)",
             chunks_before_dedup - chunks_after_dedup,
             chunks_before_dedup,
             chunks_after_dedup,
@@ -56,7 +56,7 @@ class RetrievalRagStage(BaseRagStage):
         context.text_chunks = [a for a in results if isinstance(a, TextArtifact)]
 
         if self.rerank_module:
-            logging.info("RetrievalStage: running rerank module on %s chunks", chunks_after_dedup)
+            logging.info("RetrievalRagStage: running rerank module on %s chunks", chunks_after_dedup)
 
             context.text_chunks = [a for a in self.rerank_module.run(context) if isinstance(a, TextArtifact)]
 

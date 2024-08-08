@@ -19,7 +19,9 @@ class TestRagEngine:
                     )
                 ]
             ),
-            response_stage=ResponseRagStage(response_module=PromptResponseRagModule(prompt_driver=MockPromptDriver())),
+            response_stage=ResponseRagStage(
+                response_modules=[PromptResponseRagModule(prompt_driver=MockPromptDriver())]
+            ),
         )
 
     def test_module_name_uniqueness(self):
@@ -45,7 +47,7 @@ class TestRagEngine:
         )
 
     def test_process_query(self, engine):
-        assert engine.process_query("test").output.value == "mock output"
+        assert engine.process_query("test").outputs[0].value == "mock output"
 
     def test_process(self, engine):
-        assert engine.process(RagContext(query="test")).output.value == "mock output"
+        assert engine.process(RagContext(query="test")).outputs[0].value == "mock output"

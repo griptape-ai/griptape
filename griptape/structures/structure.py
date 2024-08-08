@@ -180,11 +180,13 @@ class Structure(ABC):
                 retrieval_modules=[VectorStoreRetrievalRagModule(vector_store_driver=self.config.vector_store_driver)],
             ),
             response_stage=ResponseRagStage(
-                before_response_modules=[
-                    RulesetsBeforeResponseRagModule(rulesets=self.rulesets),
-                    MetadataBeforeResponseRagModule(),
+                # before_response_modules=[
+                #     RulesetsBeforeResponseRagModule(rulesets=self.rulesets),
+                #     MetadataBeforeResponseRagModule(),
+                # ],
+                response_modules=[
+                    PromptResponseRagModule(prompt_driver=self.config.prompt_driver)
                 ],
-                response_module=PromptResponseRagModule(prompt_driver=self.config.prompt_driver),
             ),
         )
 

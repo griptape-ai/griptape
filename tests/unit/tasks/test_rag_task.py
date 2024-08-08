@@ -15,7 +15,9 @@ class TestRagTask:
             input="test",
             rag_engine=RagEngine(
                 response_stage=ResponseRagStage(
-                    response_module=PromptResponseRagModule(prompt_driver=MockPromptDriver())
+                    response_modules=[
+                        PromptResponseRagModule(prompt_driver=MockPromptDriver())
+                    ]
                 )
             ),
         )

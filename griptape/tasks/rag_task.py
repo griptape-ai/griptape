@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact
 from griptape.tasks import BaseTextInputTask
 
 if TYPE_CHECKING:
@@ -29,9 +29,9 @@ class RagTask(BaseTextInputTask):
         self._rag_engine = value
 
     def run(self) -> BaseArtifact:
-        result = self.rag_engine.process_query(self.input.to_text()).output
+        outputs = self.rag_engine.process_query(self.input.to_text()).outputs
 
-        if result is None:
-            return ErrorArtifact("empty output")
+        if len(outputs) > 0:
+            return ListArtifact(outputs)
         else:
-            return result
+            return ErrorArtifact("empty output")
