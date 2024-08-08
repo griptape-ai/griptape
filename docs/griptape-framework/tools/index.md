@@ -15,21 +15,7 @@ You can switch between the two strategies by setting `use_native_tools` to `True
 Here is an example of a Pipeline using Tools: 
 
 ```python
-from griptape.tasks import ToolkitTask
-from griptape.structures import Pipeline
-from griptape.tools import WebScraper, FileManager, TaskMemoryClient
-
-
-pipeline = Pipeline()
-
-pipeline.add_tasks(
-    ToolkitTask(
-        "Load https://www.griptape.ai, summarize it, and store it in a file called griptape.txt", 
-        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True), TaskMemoryClient(off_prompt=False)]
-    ),
-)
-
-pipeline.run()
+--8<-- "griptape-framework/tools/src/index_1.py"
 ```
 
 ```

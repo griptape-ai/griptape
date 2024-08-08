@@ -20,50 +20,13 @@ Image Query Drivers are used by [Image Query Engines](../engines/image-query-eng
 The [AnthropicImageQueryDriver](../../reference/griptape/drivers/image_query/anthropic_image_query_driver.md) is used to query images using Anthropic's Claude 3 multi-modal model. Here is an example of how to use it:
 
 ```python
-from griptape.drivers import AnthropicImageQueryDriver
-from griptape.engines import ImageQueryEngine
-from griptape.loaders import ImageLoader
-
-driver = AnthropicImageQueryDriver(
-    model="claude-3-sonnet-20240229",
-    max_tokens=1024,
-)
-
-engine = ImageQueryEngine(
-    image_query_driver=driver,
-)
-
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact = ImageLoader().load(f.read())
-
-engine.run("Describe the weather in the image", [image_artifact])
+--8<-- "griptape-framework/drivers/src/image_query_drivers_1.py"
 ```
 
 You can also specify multiple images with a single text prompt. This applies the same text prompt to all images specified, up to a max of 20. However, you will still receive one text response from the model currently.
 
 ```python
-from griptape.drivers import AnthropicImageQueryDriver
-from griptape.engines import ImageQueryEngine
-from griptape.loaders import ImageLoader
-
-driver = AnthropicImageQueryDriver(
-    model="claude-3-sonnet-20240229",
-    max_tokens=1024,
-)
-
-engine = ImageQueryEngine(
-    image_query_driver=driver,
-)
-
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact1 = ImageLoader().load(f.read())
-
-with open("tests/resources/cow.png", "rb") as f:
-    image_artifact2 = ImageLoader().load(f.read())
-
-result = engine.run("Describe the weather in the image", [image_artifact1, image_artifact2])
-
-print(result)
+--8<-- "griptape-framework/drivers/src/image_query_drivers_2.py"
 ```
 
 ### OpenAI
@@ -74,23 +37,7 @@ print(result)
 The [OpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/openai_image_query_driver.md) is used to query images using the OpenAI Vision API. Here is an example of how to use it:
 
 ```python
-from griptape.drivers import OpenAiImageQueryDriver
-from griptape.engines import ImageQueryEngine
-from griptape.loaders import ImageLoader
-
-driver = OpenAiImageQueryDriver(
-    model="gpt-4o",
-    max_tokens=256,
-)
-
-engine = ImageQueryEngine(
-    image_query_driver=driver,
-)
-
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact = ImageLoader().load(f.read())
-
-engine.run("Describe the weather in the image", [image_artifact])
+--8<-- "griptape-framework/drivers/src/image_query_drivers_3.py"
 ```
 
 ### Azure OpenAI
@@ -101,27 +48,7 @@ engine.run("Describe the weather in the image", [image_artifact])
 The [AzureOpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/azure_openai_image_query_driver.md) is used to query images using the Azure OpenAI Vision API. Here is an example of how to use it:
 
 ```python
-import os
-from griptape.drivers import AzureOpenAiImageQueryDriver
-from griptape.engines import ImageQueryEngine
-from griptape.loaders import ImageLoader
-
-driver = AzureOpenAiImageQueryDriver(
-    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_2"],
-    api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
-    model="gpt-4o",
-    azure_deployment="gpt-4o",
-    max_tokens=256,
-)
-
-engine = ImageQueryEngine(
-    image_query_driver=driver,
-)
-
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact = ImageLoader().load(f.read())
-
-engine.run("Describe the weather in the image", [image_artifact])
+--8<-- "griptape-framework/drivers/src/image_query_drivers_4.py"
 ```
 
 ### Amazon Bedrock
@@ -133,30 +60,5 @@ The [Amazon Bedrock Image Query Driver](../../reference/griptape/drivers/image_q
 The [BedrockClaudeImageQueryModelDriver](../../reference/griptape/drivers/image_query_model/bedrock_claude_image_query_model_driver.md) provides support for Claude models hosted by Bedrock.
 
 ```python
-from griptape.drivers import AmazonBedrockImageQueryDriver, BedrockClaudeImageQueryModelDriver
-from griptape.engines import ImageQueryEngine
-from griptape.loaders import ImageLoader
-import boto3
-
-session = boto3.Session(
-    region_name="us-west-2"
-)
-
-driver = AmazonBedrockImageQueryDriver(
-    image_query_model_driver=BedrockClaudeImageQueryModelDriver(),
-    model="anthropic.claude-3-sonnet-20240229-v1:0",
-    session=session
-)
-
-engine = ImageQueryEngine(
-    image_query_driver=driver
-)
-
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact = ImageLoader().load(f.read())
-
-
-result = engine.run("Describe the weather in the image", [image_artifact])
-
-print(result)
+--8<-- "griptape-framework/drivers/src/image_query_drivers_5.py"
 ```

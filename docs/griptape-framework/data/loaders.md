@@ -17,25 +17,7 @@ multiple documents with [load_collection()](../../reference/griptape/loaders/bas
 Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) and can be used to load PDFs from a path or from an IO stream:
 
 ```python
-from griptape.loaders import PdfLoader
-from griptape.utils import load_files, load_file
-import urllib.request
-
-urllib.request.urlretrieve("https://arxiv.org/pdf/1706.03762.pdf", "attention.pdf")
-
-# Load a single PDF file
-with open("attention.pdf", "rb") as f:
-    PdfLoader().load(f.read())
-# You can also use the load_file utility function
-PdfLoader().load(load_file("attention.pdf"))
-
-urllib.request.urlretrieve("https://arxiv.org/pdf/1706.03762.pdf", "CoT.pdf")
-
-# Load multiple PDF files
-with open("attention.pdf", "rb") as attention, open("CoT.pdf", "rb") as cot:
-    PdfLoader().load_collection([attention.read(), cot.read()])
-# You can also use the load_files utility function
-PdfLoader().load_collection(list(load_files(["attention.pdf", "CoT.pdf"]).values()))
+--8<-- "griptape-framework/data/src/loaders_1.py"
 ```
 
 ## SQL
@@ -43,20 +25,7 @@ PdfLoader().load_collection(list(load_files(["attention.pdf", "CoT.pdf"]).values
 Can be used to load data from a SQL database into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
 
 ```python
-from griptape.loaders import SqlLoader
-from griptape.drivers import SqlDriver
-
-SqlLoader(
-    sql_driver = SqlDriver(
-        engine_url="sqlite:///:memory:"
-    )
-).load("SELECT 'foo', 'bar'")
-
-SqlLoader(
-    sql_driver = SqlDriver(
-        engine_url="sqlite:///:memory:"
-    )
-).load_collection(["SELECT 'foo', 'bar';", "SELECT 'fizz', 'buzz';"])
+--8<-- "griptape-framework/data/src/loaders_2.py"
 ```
 
 ## CSV
@@ -64,20 +33,7 @@ SqlLoader(
 Can be used to load CSV files into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
 
 ```python
-from griptape.loaders import CsvLoader
-from griptape.utils import load_file, load_files
-
-# Load a single CSV file
-with open("tests/resources/cities.csv", "r") as f:
-    CsvLoader().load(f.read())
-# You can also use the load_file utility function
-CsvLoader().load(load_file("tests/resources/cities.csv"))
-
-# Load multiple CSV files
-with open("tests/resources/cities.csv", "r") as cities, open("tests/resources/addresses.csv", "r") as addresses:
-    CsvLoader().load_collection([cities.read(), addresses.read()])
-# You can also use the load_files utility function
-CsvLoader().load_collection(list(load_files(["tests/resources/cities.csv", "tests/resources/addresses.csv"]).values()))
+--8<-- "griptape-framework/data/src/loaders_3.py"
 ```
 
 
@@ -89,19 +45,7 @@ CsvLoader().load_collection(list(load_files(["tests/resources/cities.csv", "test
 Can be used to load [pandas](https://pandas.pydata.org/) [DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)s into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
 
 ```python
-import urllib
-import pandas as pd
-from griptape.loaders import DataFrameLoader
-
-urllib.request.urlretrieve("https://people.sc.fsu.edu/~jburkardt/data/csv/cities.csv", "cities.csv")
-
-DataFrameLoader().load(pd.read_csv("cities.csv"))
-
-urllib.request.urlretrieve("https://people.sc.fsu.edu/~jburkardt/data/csv/addresses.csv", "addresses.csv")
-
-DataFrameLoader().load_collection(
-    [pd.read_csv('cities.csv'), pd.read_csv('addresses.csv')]
-)
+--8<-- "griptape-framework/data/src/loaders_4.py"
 ```
 
 
@@ -110,23 +54,7 @@ DataFrameLoader().load_collection(
 Used to load arbitrary text and text files:
 
 ```python
-from pathlib import Path
-import urllib
-from griptape.loaders import TextLoader
-
-TextLoader().load(
-    "my text"
-)
-
-urllib.request.urlretrieve("https://example-files.online-convert.com/document/txt/example.txt", "example.txt")
-
-with open("example.txt", "r") as f:
-    TextLoader().load(f.read())
-
-with open("example.txt", "r") as f:
-    TextLoader().load_collection(
-        ["my text", "my other text", f.read()]
-    )
+--8<-- "griptape-framework/data/src/loaders_5.py"
 ```
 
 You can set a custom [tokenizer](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.tokenizer), [max_tokens](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.max_tokens) parameter, and [chunker](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.chunker).
@@ -139,15 +67,7 @@ You can set a custom [tokenizer](../../reference/griptape/loaders/text_loader.md
 Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) and can be used to load web pages:
 
 ```python
-from griptape.loaders import WebLoader
-
-WebLoader().load(
-    "https://www.griptape.ai"
-)
-
-WebLoader().load_collection(
-    ["https://www.griptape.ai", "https://docs.griptape.ai"]
-)
+--8<-- "griptape-framework/data/src/loaders_6.py"
 ```
 
 ## Image
@@ -158,33 +78,13 @@ WebLoader().load_collection(
 The Image Loader is used to load an image as an [ImageArtifact](./artifacts.md#imageartifact). The Loader operates on image bytes that can be sourced from files on disk, downloaded images, or images in memory.
 
 ```python
-from griptape.loaders import ImageLoader
-from griptape.utils import load_file
-
-# Load an image from disk
-with open("tests/resources/mountain.png", "rb") as f:
-    disk_image_artifact = ImageLoader().load(f.read())
-# You can also use the load_file utility function
-ImageLoader().load(load_file("tests/resources/mountain.png"))
+--8<-- "griptape-framework/data/src/loaders_7.py"
 ```
 
 By default, the Image Loader will load images in their native format, but not all models work on all formats. To normalize the format of Artifacts returned by the Loader, set the `format` field.
 
 ```python
-from griptape.loaders import ImageLoader
-from griptape.utils import load_files, load_file
-
-# Load a single image in BMP format
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact_jpeg = ImageLoader(format="bmp").load(f.read())
-# You can also use the load_file utility function
-ImageLoader(format="bmp").load(load_file("tests/resources/mountain.png"))
-
-# Load multiple images in BMP format
-with open("tests/resources/mountain.png", "rb") as mountain, open("tests/resources/cow.png", "rb") as cow:
-    ImageLoader().load_collection([mountain.read(), cow.read()])
-# You can also use the load_files utility function
-ImageLoader().load_collection(list(load_files(["tests/resources/mountain.png", "tests/resources/cow.png"]).values()))
+--8<-- "griptape-framework/data/src/loaders_8.py"
 ```
 
 
@@ -196,13 +96,7 @@ ImageLoader().load_collection(list(load_files(["tests/resources/mountain.png", "
 Can be used to load email from an imap server:
 
 ```python
-from griptape.loaders import EmailLoader
-
-loader = EmailLoader(imap_url="an.email.server.hostname", username="username", password="password")
-
-loader.load(EmailLoader.EmailQuery(label="INBOX"))
-
-loader.load_collection([EmailLoader.EmailQuery(label="INBOX"), EmailLoader.EmailQuery(label="SENT")])
+--8<-- "griptape-framework/data/src/loaders_9.py"
 ```
 
 ## Audio
@@ -215,13 +109,5 @@ The [Audio Loader](../../reference/griptape/loaders/audio_loader.md) is used to 
 The Loader will load audio in its native format and populates the resulting Artifact's `format` field by making a best-effort guess of the underlying audio format using the `filetype` package.
 
 ```python
-from griptape.loaders import AudioLoader
-from griptape.utils import load_file
-
-# Load an image from disk
-with open("tests/resources/sentences.wav", "rb") as f:
-    audio_artifact = AudioLoader().load(f.read())
-    
-# You can also use the load_file utility function
-AudioLoader().load(load_file("tests/resources/sentences.wav"))
+--8<-- "griptape-framework/data/src/loaders_10.py"
 ```

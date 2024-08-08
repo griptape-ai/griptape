@@ -21,12 +21,7 @@ The [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_em
 
 
 ```python
-from griptape.drivers import OpenAiEmbeddingDriver
-
-embeddings = OpenAiEmbeddingDriver().embed_string("Hello Griptape!")
-
-# display the first 3 embeddings
-print(embeddings[:3])
+--8<-- "griptape-framework/drivers/src/embedding_drivers_1.py"
 ```
 ```
 [0.0017853748286142945, 0.006118456833064556, -0.005811543669551611]
@@ -38,17 +33,7 @@ Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www
 Simply set the `base_url` to the service's API endpoint and the `model` to the model name. If the service requires an API key, you can set it in the `api_key` field.
 
 ```python title="PYTEST_IGNORE"
-from griptape.drivers import OpenAiEmbeddingDriver
-
-embedding_driver = OpenAiEmbeddingDriver(
-    base_url="http://127.0.0.1:1234/v1",
-    model="nomic-ai/nomic-embed-text-v1.5-GGUF/nomic-embed-text-v1.5.Q2_K",
-)
-
-embeddings = embedding_driver.embed_string("Hello world!")
-
-# display the first 3 embeddings
-print(embeddings[:3])
+--8<-- "griptape-framework/drivers/src/embedding_drivers_2.py"
 ```
 
 !!! tip
@@ -67,12 +52,7 @@ with updated defaults.
 The [AmazonBedrockTitanEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_bedrock_titan_embedding_driver.md) uses the [Amazon Bedrock Embeddings API](https://docs.aws.amazon.com/bedrock/latest/userguide/embeddings.html).
 
 ```python
-from griptape.drivers import AmazonBedrockTitanEmbeddingDriver
-
-embeddings = AmazonBedrockTitanEmbeddingDriver().embed_string("Hello world!")
-
-# display the first 3 embeddings
-print(embeddings[:3])
+--8<-- "griptape-framework/drivers/src/embedding_drivers_3.py"
 ```
 ```
 [-0.234375, -0.024902344, -0.14941406]
@@ -85,12 +65,7 @@ print(embeddings[:3])
 The [GoogleEmbeddingDriver](../../reference/griptape/drivers/embedding/google_embedding_driver.md) uses the [Google Embeddings API](https://ai.google.dev/tutorials/python_quickstart#use_embeddings).
 
 ```python
-from griptape.drivers import GoogleEmbeddingDriver
-
-embeddings = GoogleEmbeddingDriver().embed_string("Hello world!")
-
-# display the first 3 embeddings
-print(embeddings[:3])
+--8<-- "griptape-framework/drivers/src/embedding_drivers_4.py"
 ```
 ```
 [0.0588633, 0.0033929371, -0.072810836]
@@ -106,24 +81,7 @@ The [HuggingFaceHubEmbeddingDriver](../../reference/griptape/drivers/embedding/h
 - feature-extraction
 
 ```python
-import os
-from griptape.drivers import HuggingFaceHubEmbeddingDriver
-from griptape.tokenizers import HuggingFaceTokenizer
-from transformers import AutoTokenizer
-
-driver = HuggingFaceHubEmbeddingDriver(
-    api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
-    model="sentence-transformers/all-MiniLM-L6-v2",
-    tokenizer=HuggingFaceTokenizer(
-        model="sentence-transformers/all-MiniLM-L6-v2",
-        max_output_tokens=512,
-    ),
-)
-
-embeddings = driver.embed_string("Hello world!")
-
-# display the first 3 embeddings
-print(embeddings[:3])
+--8<-- "griptape-framework/drivers/src/embedding_drivers_5.py"
 ```
 
 ### Ollama
@@ -134,16 +92,7 @@ print(embeddings[:3])
 The [OllamaEmbeddingDriver](../../reference/griptape/drivers/embedding/ollama_embedding_driver.md) uses the [Ollama Embeddings API](https://ollama.com/blog/embedding-models).
 
 ```python title="PYTEST_IGNORE"
-from griptape.drivers import OllamaEmbeddingDriver
-
-driver = OllamaEmbeddingDriver(
-    model="all-minilm",
-)
-
-results = driver.embed_string("Hello world!")
-
-# display the first 3 embeddings
-print(results[:3])
+--8<-- "griptape-framework/drivers/src/embedding_drivers_6.py"
 ```
 
 ### Amazon SageMaker Jumpstart
@@ -154,17 +103,7 @@ The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/e
     This driver requires the `drivers-embedding-amazon-sagemaker` [extra](../index.md#extras).
 
 ```python title="PYTEST_IGNORE"
-import os
-from griptape.drivers import AmazonSageMakerJumpstartEmbeddingDriver, SageMakerTensorFlowHubEmbeddingModelDriver
-
-driver = AmazonSageMakerJumpstartEmbeddingDriver(
-    model=os.environ["SAGEMAKER_TENSORFLOW_HUB_MODEL"],
-)
-
-embeddings = driver.embed_string("Hello world!")
-
-# display the first 3 embeddings
-print(embeddings[:3])
+--8<-- "griptape-framework/drivers/src/embedding_drivers_7.py"
 ```
 
 ### VoyageAI
@@ -174,17 +113,7 @@ The [VoyageAiEmbeddingDriver](../../reference/griptape/drivers/embedding/voyagea
     This driver requires the `drivers-embedding-voyageai` [extra](../index.md#extras).
 
 ```python
-import os
-from griptape.drivers import VoyageAiEmbeddingDriver
-
-driver = VoyageAiEmbeddingDriver(
-    api_key=os.environ["VOYAGE_API_KEY"]
-)
-
-embeddings = driver.embed_string("Hello world!")
-
-# display the first 3 embeddings
-print(embeddings[:3])
+--8<-- "griptape-framework/drivers/src/embedding_drivers_8.py"
 ```
 
 ### Cohere
@@ -195,40 +124,12 @@ The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_em
     This driver requires the `drivers-embedding-cohere` [extra](../index.md#extras).
 
 ```python
-import os
-from griptape.drivers import CohereEmbeddingDriver
-
-embedding_driver=CohereEmbeddingDriver(
-    model="embed-english-v3.0",
-    api_key=os.environ["COHERE_API_KEY"],
-    input_type="search_document",
-)
-
-embeddings = embedding_driver.embed_string("Hello world!")
-
-# display the first 3 embeddings
-print(embeddings[:3])
+--8<-- "griptape-framework/drivers/src/embedding_drivers_9.py"
 ```
 
 ### Override Default Structure Embedding Driver
 Here is how you can override the Embedding Driver that is used by default in Structures. 
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import WebScraper, TaskMemoryClient
-from griptape.drivers import (
-    OpenAiChatPromptDriver,
-    VoyageAiEmbeddingDriver,
-)
-from griptape.config import StructureConfig
-
-agent = Agent(
-    tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
-    config=StructureConfig(
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
-        embedding_driver=VoyageAiEmbeddingDriver(),
-    ),
-)
-
-agent.run("based on https://www.griptape.ai/, tell me what Griptape is")
+--8<-- "griptape-framework/drivers/src/embedding_drivers_10.py"
 ```

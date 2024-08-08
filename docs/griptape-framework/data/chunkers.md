@@ -16,12 +16,5 @@ Different types of chunkers provide lists of separators for specific text shapes
 Here is how to use a chunker:
 
 ```python
-from griptape.chunkers import TextChunker
-from griptape.tokenizers import OpenAiTokenizer
-TextChunker(
-     # set an optional custom tokenizer
-     tokenizer=OpenAiTokenizer(model="gpt-4o"),
-     # optionally modify default number of tokens
-     max_tokens=100
-).chunk("long text")
+--8<-- "griptape-framework/data/src/chunkers_1.py"
 ```

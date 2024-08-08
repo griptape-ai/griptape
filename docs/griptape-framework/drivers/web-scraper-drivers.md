@@ -18,27 +18,7 @@ The [ProxyWebScraperDriver](../../reference/griptape/drivers/web_scraper/proxy_w
 Example using `ProxyWebScraperDriver` directly:
 
 ```python
-import os
-from griptape.drivers import ProxyWebScraperDriver
-
-query_params = [
-    "markdown_response=true",
-    "js_render=false",
-    "premium_proxy=false",
-]
-proxy_url = f'http://{os.environ["ZENROWS_API_KEY"]}:{"&".join(query_params)}@proxy.zenrows.com:8001'
-
-driver = ProxyWebScraperDriver(
-    proxies={
-        "http": proxy_url,
-        "https": proxy_url,
-    },
-    params={
-        "verify": False
-    }
-)
-
-driver.scrape_url("https://griptape.ai")
+--8<-- "griptape-framework/drivers/src/web_scraper_drivers_1.py"
 ```
 
 ### Markdownify
@@ -72,33 +52,13 @@ The [MarkdownifyWebScraperDriver](../../reference/griptape/drivers/web_scraper/m
 Example using `MarkdownifyWebScraperDriver` directly:
 
 ```python
-from griptape.drivers import MarkdownifyWebScraperDriver
-
-driver = MarkdownifyWebScraperDriver()
-
-driver.scrape_url("https://griptape.ai")
+--8<-- "griptape-framework/drivers/src/web_scraper_drivers_2.py"
 ```
 
 Example of using `MarkdownifyWebScraperDriver` with an agent:
 
 ```python
-from griptape.drivers import MarkdownifyWebScraperDriver
-from griptape.loaders import WebLoader
-from griptape.tools import TaskMemoryClient, WebScraper
-from griptape.structures import Agent
-
-agent = Agent(
-    tools=[
-        WebScraper(
-            web_loader=WebLoader(
-                web_scraper_driver=MarkdownifyWebScraperDriver(timeout=1000)
-            ),
-            off_prompt=True,
-        ),
-        TaskMemoryClient(off_prompt=False),
-    ],
-)
-agent.run("List all email addresses on griptape.ai in a flat numbered markdown list.")
+--8<-- "griptape-framework/drivers/src/web_scraper_drivers_3.py"
 ```
 
 ### Trafilatura
@@ -111,9 +71,5 @@ The [TrafilaturaWebScraperDriver](../../reference/griptape/drivers/web_scraper/t
 Example of using `TrafilaturaWebScraperDriver` directly:
 
 ```python
-from griptape.drivers import TrafilaturaWebScraperDriver
-
-driver = TrafilaturaWebScraperDriver()
-
-driver.scrape_url("https://griptape.ai")
+--8<-- "griptape-framework/drivers/src/web_scraper_drivers_4.py"
 ```

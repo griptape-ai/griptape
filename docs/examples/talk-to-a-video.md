@@ -3,31 +3,7 @@ In this example, we upload a video file using Gemini's file API, and then pass t
 Note that because we are using Gemini-specific features, this will not work with other [Prompt Drivers](../griptape-framework/drivers/prompt-drivers.md).
 
 ```python
-import time
-from griptape.structures import Agent
-from griptape.tasks import PromptTask
-from griptape.artifacts import GenericArtifact, TextArtifact
-from griptape.config import GoogleStructureConfig
-import google.generativeai as genai
-
-video_file = genai.upload_file(path="tests/resources/griptape-comfyui.mp4")
-while video_file.state.name == "PROCESSING":
-    time.sleep(2)
-    video_file = genai.get_file(video_file.name)
-
-if video_file.state.name == "FAILED":
-    raise ValueError(video_file.state.name)
-
-agent = Agent(
-    config=GoogleStructureConfig(),
-    input=[
-        GenericArtifact(video_file),
-        TextArtifact("Answer this question regarding the video: {{ args[0] }}"),
-    ]
-)
-
-agent.run("Are there any scenes that show a character with earings?")
-agent.run("What happens in the scene starting at 19 seconds?")
+--8<-- "examples/src/talk_to_a_video_1.py"
 ```
 
 ```
