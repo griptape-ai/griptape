@@ -194,6 +194,7 @@ event_bus.add_event_listeners(
     ]
 )
 
+agent = Agent()
 agent.run(
     "Create a list of 8 questions for an interview with a science fiction author."
 )
