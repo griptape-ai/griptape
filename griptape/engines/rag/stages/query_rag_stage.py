@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape import utils
 from griptape.engines.rag.stages import BaseRagStage
 
 if TYPE_CHECKING:
@@ -24,9 +23,8 @@ class QueryRagStage(BaseRagStage):
         return self.query_modules
 
     def run(self, context: RagContext) -> RagContext:
-        logging.info("QueryStage: running %s query generation modules in parallel", len(self.query_modules))
+        logging.info("QueryStage: running %s query generation modules sequentially", len(self.query_modules))
 
-        with self.futures_executor_fn() as executor:
-            utils.execute_futures_list([executor.submit(r.run, context) for r in self.query_modules])
+        [qm.run(context) for qm in self.query_modules]
 
         return context
