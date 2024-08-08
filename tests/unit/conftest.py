@@ -1,12 +1,12 @@
 import pytest
 
-from griptape.events import EventBus
+from griptape.events import event_bus
 
 
 @pytest.fixture(autouse=True)
-def event_bus():
-    EventBus.clear_event_listeners()
+def mock_event_bus():
+    event_bus.clear_event_listeners()
 
-    yield EventBus
+    yield event_bus
 
-    EventBus.clear_event_listeners()
+    event_bus.clear_event_listeners()

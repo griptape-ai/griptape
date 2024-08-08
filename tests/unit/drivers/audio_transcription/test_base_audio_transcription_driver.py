@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.artifacts import AudioArtifact
-from griptape.events import EventBus, EventListener
+from griptape.events import EventListener, event_bus
 from tests.mocks.mock_audio_transcription_driver import MockAudioTranscriptionDriver
 
 
@@ -14,7 +14,7 @@ class TestBaseAudioTranscriptionDriver:
 
     def test_run_publish_events(self, driver):
         mock_handler = Mock()
-        EventBus.add_event_listener(EventListener(handler=mock_handler))
+        event_bus.add_event_listener(EventListener(handler=mock_handler))
 
         driver.run(
             AudioArtifact(

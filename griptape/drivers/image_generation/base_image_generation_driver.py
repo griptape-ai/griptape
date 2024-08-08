@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.events import EventBus, FinishImageGenerationEvent, StartImageGenerationEvent
+from griptape.events import FinishImageGenerationEvent, StartImageGenerationEvent, event_bus
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
@@ -17,10 +17,10 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
     model: str = field(kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> None:
-        EventBus.publish_event(StartImageGenerationEvent(prompts=prompts, negative_prompts=negative_prompts))
+        event_bus.publish_event(StartImageGenerationEvent(prompts=prompts, negative_prompts=negative_prompts))
 
     def after_run(self) -> None:
-        EventBus.publish_event(FinishImageGenerationEvent())
+        event_bus.publish_event(FinishImageGenerationEvent())
 
     def run_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         for attempt in self.retrying():
