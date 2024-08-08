@@ -18,7 +18,7 @@ from griptape.engines.rag.modules import (
     VectorStoreRetrievalRagModule,
 )
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
-from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRunEvent
+from griptape.events import FinishStructureRunEvent, StartStructureRunEvent, event_bus
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
@@ -180,7 +180,7 @@ class Structure(ABC):
 
         [task.reset() for task in self.tasks]
 
-        EventBus.publish_event(
+        event_bus.publish_event(
             StartStructureRunEvent(
                 structure_id=self.id,
                 input_task_input=self.input_task.input,
@@ -192,7 +192,7 @@ class Structure(ABC):
 
     @observable
     def after_run(self) -> None:
-        EventBus.publish_event(
+        event_bus.publish_event(
             FinishStructureRunEvent(
                 structure_id=self.id,
                 output_task_input=self.output_task.input,

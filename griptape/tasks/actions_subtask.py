@@ -12,7 +12,7 @@ from griptape import utils
 from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.common import ToolAction
 from griptape.config import Config
-from griptape.events import EventBus, FinishActionsSubtaskEvent, StartActionsSubtaskEvent
+from griptape.events import FinishActionsSubtaskEvent, StartActionsSubtaskEvent, event_bus
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
 from griptape.utils import remove_null_values_in_dict_recursively
@@ -95,7 +95,7 @@ class ActionsSubtask(BaseTask):
             self.output = ErrorArtifact(f"ToolAction input parsing error: {e}", exception=e)
 
     def before_run(self) -> None:
-        EventBus.publish_event(
+        event_bus.publish_event(
             StartActionsSubtaskEvent(
                 task_id=self.id,
                 task_parent_ids=self.parent_ids,
@@ -161,7 +161,7 @@ class ActionsSubtask(BaseTask):
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
 
-        EventBus.publish_event(
+        event_bus.publish_event(
             FinishActionsSubtaskEvent(
                 task_id=self.id,
                 task_parent_ids=self.parent_ids,

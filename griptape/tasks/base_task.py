@@ -11,7 +11,7 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
 from griptape.config import Config
-from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
+from griptape.events import FinishTaskEvent, StartTaskEvent, event_bus
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -131,7 +131,7 @@ class BaseTask(ABC):
 
     def before_run(self) -> None:
         if self.structure is not None:
-            EventBus.publish_event(
+            event_bus.publish_event(
                 StartTaskEvent(
                     task_id=self.id,
                     task_parent_ids=self.parent_ids,
@@ -143,7 +143,7 @@ class BaseTask(ABC):
 
     def after_run(self) -> None:
         if self.structure is not None:
-            EventBus.publish_event(
+            event_bus.publish_event(
                 FinishTaskEvent(
                     task_id=self.id,
                     task_parent_ids=self.parent_ids,

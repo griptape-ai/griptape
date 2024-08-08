@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.events import EventBus
+from griptape.events import event_bus
 from griptape.events.finish_text_to_speech_event import FinishTextToSpeechEvent
 from griptape.events.start_text_to_speech_event import StartTextToSpeechEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
@@ -19,10 +19,10 @@ class BaseTextToSpeechDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     model: str = field(kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompts: list[str]) -> None:
-        EventBus.publish_event(StartTextToSpeechEvent(prompts=prompts))
+        event_bus.publish_event(StartTextToSpeechEvent(prompts=prompts))
 
     def after_run(self) -> None:
-        EventBus.publish_event(FinishTextToSpeechEvent())
+        event_bus.publish_event(FinishTextToSpeechEvent())
 
     def run_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
         for attempt in self.retrying():

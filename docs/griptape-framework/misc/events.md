@@ -5,7 +5,7 @@ search:
 
 ## Overview
 
-You can configure the global [EventBus](../../reference/griptape/events/event_bus.md) with [EventListener](../../reference/griptape/events/event_listener.md)s to listen for various framework events.
+You can configure the global [event_bus](../../reference/griptape/events/event_bus.md) with [EventListener](../../reference/griptape/events/event_listener.md)s to listen for various framework events.
 See [Event Listener Drivers](../drivers/event-listener-drivers.md) for examples on forwarding events to external services.
 
 ## Specific Event Types
@@ -23,14 +23,14 @@ from griptape.events import (
     StartPromptEvent,
     FinishPromptEvent,
     EventListener,
-    EventBus
+    event_bus
 )
 
 
 def handler(event: BaseEvent):
     print(event.__class__)
 
-EventBus.event_listeners=[
+event_bus.event_listeners=[
         EventListener(
             handler,
             event_types=[
@@ -69,7 +69,7 @@ Or listen to all events:
 
 ```python
 from griptape.structures import Agent
-from griptape.events import BaseEvent, EventListener, EventBus
+from griptape.events import BaseEvent, EventListener, event_bus
 
 
 
@@ -80,7 +80,7 @@ def handler1(event: BaseEvent):
 def handler2(event: BaseEvent):
     print("Handler 2", event.__class__)
 
-EventBus.event_listeners=[
+event_bus.event_listeners=[
         EventListener(handler1),
         EventListener(handler2),
     ]
@@ -131,7 +131,7 @@ Handler 2 <class 'griptape.events.finish_structure_run_event.FinishStructureRunE
 You can use the [CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md) to stream the completion results from Prompt Drivers.
 
 ```python
-from griptape.events import CompletionChunkEvent, EventListener, EventBus
+from griptape.events import CompletionChunkEvent, EventListener, event_bus
 from griptape.tasks import ToolkitTask
 from griptape.structures import Pipeline
 from griptape.tools import WebScraper, TaskMemoryClient
@@ -140,7 +140,7 @@ from griptape.drivers import OpenAiChatPromptDriver
 
 
 
-EventBus.event_listeners = [
+event_bus.event_listeners = [
     EventListener(
         lambda e: print(e.token, end="", flush=True),
         event_types=[CompletionChunkEvent],
@@ -188,13 +188,13 @@ To count tokens, you can use Event Listeners and the [TokenCounter](../../refere
 
 ```python
 from griptape import utils
-from griptape.events import BaseEvent, StartPromptEvent, FinishPromptEvent, EventListener, EventBus
+from griptape.events import BaseEvent, StartPromptEvent, FinishPromptEvent, EventListener, event_bus
 from griptape.structures import Agent
 
 
 token_counter = utils.TokenCounter()
 
-EventBus.event_listeners = [
+event_bus.event_listeners = [
     EventListener(
         lambda e: token_counter.add_tokens(e.token_count),
         event_types=[StartPromptEvent, FinishPromptEvent],
@@ -245,10 +245,10 @@ You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_
 
 ```python
 from griptape.structures import Agent
-from griptape.events import BaseEvent, StartPromptEvent, EventListener, EventBus
+from griptape.events import BaseEvent, StartPromptEvent, EventListener, event_bus
 
 
-EventBus.event_listeners = [EventListener(handler=lambda e: print(e), event_types=[StartPromptEvent])]
+event_bus.event_listeners = [EventListener(handler=lambda e: print(e), event_types=[StartPromptEvent])]
 
 def handler(event: BaseEvent):
     if isinstance(event, StartPromptEvent):

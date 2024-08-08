@@ -34,4 +34,4 @@ class _EventBus:
             event_listener.publish_event(event, flush=flush)
 
 
-EventBus = _EventBus()
+event_bus = _EventBus()
