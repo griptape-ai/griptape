@@ -3,7 +3,7 @@
 The GoogleDocsClient tool provides a way to interact with the Google Docs API. It can be used to create new documents, save content to existing documents, and more.
 
 ```python
---8<-- "griptape-tools/official-tools/src/google_docs_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/google_docs_client_1.py"
 ```
 ```
 [10/05/23 12:56:19] INFO     ToolkitTask 90721b7478a74618a63d852d35be3b18       

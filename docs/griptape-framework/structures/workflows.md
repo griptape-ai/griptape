@@ -22,7 +22,7 @@ Workflows have access to the following [context](../../reference/griptape/struct
 Let's build a simple workflow. Let's say, we want to write a story in a fantasy world with some unique characters. We could setup a workflow that generates a world based on some keywords. Then we pass the world description to any number of child tasks that create characters. Finally, the last task pulls in information from all parent tasks and writes up a short story.
 
 ```python
---8<-- "griptape-framework/structures/src/workflows_1.py"
+--8<-- "docs/griptape-framework/structures/src/workflows_1.py"
 ```
 
 Note that we use the `StructureVisualizer` to get a visual representation of the workflow. If we visit the printed url, it should look like this:
@@ -128,43 +128,43 @@ The above example showed how to create a workflow using the declarative syntax v
 Declaratively specify parents (same as above example):
 
 ```python
---8<-- "griptape-framework/structures/src/workflows_2.py"
+--8<-- "docs/griptape-framework/structures/src/workflows_2.py"
 ```
 
 Declaratively specify children:
 
 ```python
---8<-- "griptape-framework/structures/src/workflows_3.py"
+--8<-- "docs/griptape-framework/structures/src/workflows_3.py"
 ```
 
 Declaratively specifying a mix of parents and children:
 
 ```python
---8<-- "griptape-framework/structures/src/workflows_4.py"
+--8<-- "docs/griptape-framework/structures/src/workflows_4.py"
 ```
 
 Imperatively specify parents:
 
 ```python
---8<-- "griptape-framework/structures/src/workflows_5.py"
+--8<-- "docs/griptape-framework/structures/src/workflows_5.py"
 ```
 
 Imperatively specify children:
 
 ```python
---8<-- "griptape-framework/structures/src/workflows_6.py"
+--8<-- "docs/griptape-framework/structures/src/workflows_6.py"
 ```
 
 Imperatively specify a mix of parents and children:
 
 ```python
---8<-- "griptape-framework/structures/src/workflows_7.py"
+--8<-- "docs/griptape-framework/structures/src/workflows_7.py"
 ```
 
 Or even mix imperative and declarative:
 
 ```python
---8<-- "griptape-framework/structures/src/workflows_8.py"
+--8<-- "docs/griptape-framework/structures/src/workflows_8.py"
 ```
 
 ### Insert Parallel Tasks
@@ -177,7 +177,7 @@ Or even mix imperative and declarative:
 Imperatively insert parallel tasks between a parent and child:
 
 ```python
---8<-- "griptape-framework/structures/src/workflows_9.py"
+--8<-- "docs/griptape-framework/structures/src/workflows_9.py"
 ```
 
 output:

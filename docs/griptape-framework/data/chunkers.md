@@ -16,5 +16,5 @@ Different types of chunkers provide lists of separators for specific text shapes
 Here is how to use a chunker:
 
 ```python
---8<-- "griptape-framework/data/src/chunkers_1.py"
+--8<-- "docs/griptape-framework/data/src/chunkers_1.py"
 ```

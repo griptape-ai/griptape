@@ -14,7 +14,7 @@ When combined with the [Structure Run Task](../../griptape-framework/structures/
 The [LocalStructureRunDriver](../../reference/griptape/drivers/structure_run/local_structure_run_driver.md) is used to run Griptape Structures in the same runtime environment as the code that is running the Structure.
 
 ```python
---8<-- "griptape-framework/drivers/src/structure_run_drivers_1.py"
+--8<-- "docs/griptape-framework/drivers/src/structure_run_drivers_1.py"
 ```
 
 ### Griptape Cloud
@@ -23,5 +23,5 @@ The [GriptapeCloudStructureRunDriver](../../reference/griptape/drivers/structure
 
 
 ```python
---8<-- "griptape-framework/drivers/src/structure_run_drivers_2.py"
+--8<-- "docs/griptape-framework/drivers/src/structure_run_drivers_2.py"
 ```

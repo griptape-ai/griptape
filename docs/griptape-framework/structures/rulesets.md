@@ -15,7 +15,7 @@ Rulesets can be used to shape personality, format output, restrict topics, and m
 You can define a Ruleset at the Structure level if you need to have certain behaviors across all Tasks.
 
 ```python
---8<-- "griptape-framework/structures/src/rulesets_1.py"
+--8<-- "docs/griptape-framework/structures/src/rulesets_1.py"
 ```
 
 ```
@@ -42,7 +42,7 @@ You can define a Ruleset at the Structure level if you need to have certain beha
 You can pass [rules](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.rules) directly to the Structure to have a Ruleset created for you.
 
 ```python
---8<-- "griptape-framework/structures/src/rulesets_2.py"
+--8<-- "docs/griptape-framework/structures/src/rulesets_2.py"
 ```
 ```
 [09/29/23 13:31:41] INFO     PromptTask 51c0030b7a854ae5a9bef4595014915c
@@ -63,7 +63,7 @@ You can pass [rules](../../reference/griptape/structures/structure.md#griptape.s
 You can define a Ruleset at the Task level if you need to have different behaviors per Task.
 
 ```python
---8<-- "griptape-framework/structures/src/rulesets_3.py"
+--8<-- "docs/griptape-framework/structures/src/rulesets_3.py"
 ```
 
 ```
@@ -83,7 +83,7 @@ You can define a Ruleset at the Task level if you need to have different behavio
 You can pass [rules](../../reference/griptape/mixins/rule_mixin.md#griptape.mixins.rule_mixin.RuleMixin.rules) directly to the Task to have a Ruleset created for you.
 
 ```python
---8<-- "griptape-framework/structures/src/rulesets_4.py"
+--8<-- "docs/griptape-framework/structures/src/rulesets_4.py"
 ```
 ```
 [09/25/23 16:29:05] INFO     PromptTask d1cc2c0b780d4b32b6309ceab11173f4

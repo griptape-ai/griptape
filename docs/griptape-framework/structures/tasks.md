@@ -18,7 +18,7 @@ Within the [input](../../reference/griptape/tasks/base_text_input_task.md#gripta
 
 Additional [context](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.context) variables may be added based on the Structure running the task.
 ```python
---8<-- "griptape-framework/structures/src/tasks_1.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_1.py"
 ```
 
 ```
@@ -58,7 +58,7 @@ Additional [context](../../reference/griptape/structures/structure.md#griptape.s
 For general purpose prompting, use the [PromptTask](../../reference/griptape/tasks/prompt_task.md):
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_2.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_2.py"
 ```
 
 ```
@@ -74,7 +74,7 @@ For general purpose prompting, use the [PromptTask](../../reference/griptape/tas
 If the model supports it, you can also pass image inputs:
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_3.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_3.py"
 ```
 
 ```
@@ -95,7 +95,7 @@ To use [Griptape Tools](../../griptape-framework/tools/index.md), use a [Toolkit
 This Task takes in one or more Tools which the LLM will decide to use through Chain of Thought (CoT) reasoning. Because this Task uses CoT, it is recommended to only use with very capable models.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_4.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_4.py"
 ```
 
 ```
@@ -140,7 +140,7 @@ Another way to use [Griptape Tools](../../griptape-framework/tools/index.md), is
 This Task takes in a single Tool which the LLM will use without Chain of Thought (CoT) reasoning. Because this Task does not use CoT, it is better suited for less capable models.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_5.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_5.py"
 ```
 
 ```
@@ -172,7 +172,7 @@ This Task takes an [Extraction Engine](../../griptape-framework/engines/extracti
 ### CSV Extraction
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_6.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_6.py"
 ```
 ```
 [12/19/23 10:33:11] INFO     ExtractionTask e87fb457edf8423ab8a78583badd7a11
@@ -191,7 +191,7 @@ This Task takes an [Extraction Engine](../../griptape-framework/engines/extracti
 ### JSON Extraction
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_7.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_7.py"
 ```
 ```
 [12/19/23 10:37:41] INFO     ExtractionTask 3315cc77f94943a2a2dceccfe44f6a67
@@ -210,7 +210,7 @@ To summarize a text, use the [TextSummaryTask](../../reference/griptape/tasks/te
 This Task takes an [Summarization Engine](../../griptape-framework/engines/summary-engines.md), and a set of arguments to the engine.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_8.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_8.py"
 ```
 
 ```
@@ -252,7 +252,7 @@ To query text, use the [RagTask](../../reference/griptape/tasks/rag_task.md).
 This task takes a [RAG Engine](../../griptape-framework/engines/rag-engines.md), and a set of arguments specific to the engine.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_9.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_9.py"
 ```
 
 ## Code Execution Task
@@ -261,7 +261,7 @@ To execute an arbitrary Python function, use the [CodeExecutionTask](../../refer
 This task takes a python function, and authors can elect to return a custom artifact.
 
 ```python 
---8<-- "griptape-framework/structures/src/tasks_10.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_10.py"
 ```
 
 ```
@@ -287,7 +287,7 @@ All successful Image Generation Tasks will always output an [Image Artifact](../
 The [Prompt Image Generation Task](../../reference/griptape/tasks/prompt_image_generation_task.md) generates an image from a text prompt.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_11.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_11.py"
 ```
 
 ### Variation Image Generation Task
@@ -295,7 +295,7 @@ The [Prompt Image Generation Task](../../reference/griptape/tasks/prompt_image_g
 The [Variation Image Generation Task](../../reference/griptape/tasks/variation_image_generation_task.md) generates an image using an input image and a text prompt. The input image is used as a basis for generating a new image as requested by the text prompt.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_12.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_12.py"
 ```
 
 ### Inpainting Image Generation Task
@@ -303,7 +303,7 @@ The [Variation Image Generation Task](../../reference/griptape/tasks/variation_i
 The [Inpainting Image Generation Task](../../reference/griptape/tasks/inpainting_image_generation_task.md) generates an image using an input image, a mask image, and a text prompt. The input image will be modified within the bounds of the mask image as requested by the text prompt.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_13.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_13.py"
 ```
 
 ### Outpainting Image Generation Task
@@ -311,7 +311,7 @@ The [Inpainting Image Generation Task](../../reference/griptape/tasks/inpainting
 The [Outpainting Image Generation Task](../../reference/griptape/tasks/outpainting_image_generation_task.md) generates an image using an input image, a mask image, and a text prompt. The input image will be modified outside the bounds of a mask image as requested by the text prompt.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_14.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_14.py"
 ```
 
 ## Image Query Task
@@ -321,7 +321,7 @@ The [Image Query Task](../../reference/griptape/tasks/image_query_task.md) perfo
 This Task accepts two inputs: a query (represented by either a string or a [Text Artifact](../data/artifacts.md#textartifact)) and a list of [Image Artifacts](../data/artifacts.md#imageartifact) or a Callable returning these two values.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_15.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_15.py"
 ```
 
 ## Structure Run Task
@@ -329,7 +329,7 @@ The [Structure Run Task](../../reference/griptape/tasks/structure_run_task.md) r
 This Task is useful for orchestrating multiple specialized Structures in a single run. Note that the input to the Task is a tuple of arguments that will be passed to the Structure.
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_16.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_16.py"
 ```
 
 ## Text to Speech Task
@@ -337,7 +337,7 @@ This Task is useful for orchestrating multiple specialized Structures in a singl
 This Task enables Structures to synthesize speech from text using [Text to Speech Engines](../../reference/griptape/engines/audio/text_to_speech_engine.md) and [Text to Speech Drivers](../../reference/griptape/drivers/text_to_speech/index.md).
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_17.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_17.py"
 ```
 
 ## Audio Transcription Task 
@@ -345,5 +345,5 @@ This Task enables Structures to synthesize speech from text using [Text to Speec
 This Task enables Structures to transcribe speech from text using [Audio Transcription Engines](../../reference/griptape/engines/audio/audio_transcription_engine.md) and [Audio Transcription Drivers](../../reference/griptape/drivers/audio_transcription/index.md).
 
 ```python
---8<-- "griptape-framework/structures/src/tasks_18.py"
+--8<-- "docs/griptape-framework/structures/src/tasks_18.py"
 ```

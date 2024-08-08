@@ -3,7 +3,7 @@
 This tool enables LLMs to execute SQL statements via [SQLAlchemy](https://www.sqlalchemy.org/). Depending on your underlying SQL engine, [configure](https://docs.sqlalchemy.org/en/20/core/engines.html) your `engine_url` and give the LLM a hint about what engine you are using via `engine_name`, so that it can create engine-specific statements.
 
 ```python
---8<-- "griptape-tools/official-tools/src/sql_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/sql_client_1.py"
 ```
 ```
 [09/11/23 17:02:55] INFO     Task d8331f8705b64b4b9d9a88137ed73f3f              

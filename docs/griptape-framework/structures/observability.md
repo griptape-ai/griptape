@@ -10,7 +10,7 @@ The [Observability](../../reference/griptape/observability/observability.md) con
 Observability is completely optional. To opt in, wrap your application code with the [Observability](../../reference/griptape/observability/observability.md) context manager, for example:
 
 ```python title="PYTEST_IGNORE"
---8<-- "griptape-framework/structures/src/observability_1.py"
+--8<-- "docs/griptape-framework/structures/src/observability_1.py"
 ```
 
 !!! info
@@ -23,5 +23,5 @@ All functions and methods annotated with the `@observable` decorator will be tra
 For example:
 
 ```python title="PYTEST_IGNORE"
---8<-- "griptape-framework/structures/src/observability_2.py"
+--8<-- "docs/griptape-framework/structures/src/observability_2.py"
 ```

@@ -17,7 +17,7 @@ The [OpenAI Structure Config](../../reference/griptape/config/openai_structure_c
 
 
 ```python
---8<-- "griptape-framework/structures/src/config_1.py"
+--8<-- "docs/griptape-framework/structures/src/config_1.py"
 ```
 
 #### Azure OpenAI
@@ -26,21 +26,21 @@ The [Azure OpenAI Structure Config](../../reference/griptape/config/azure_openai
 
 
 ```python
---8<-- "griptape-framework/structures/src/config_2.py"
+--8<-- "docs/griptape-framework/structures/src/config_2.py"
 ```
 
 #### Amazon Bedrock
 The [Amazon Bedrock Structure Config](../../reference/griptape/config/amazon_bedrock_structure_config.md) provides default Drivers for Amazon Bedrock's APIs.
 
 ```python
---8<-- "griptape-framework/structures/src/config_3.py"
+--8<-- "docs/griptape-framework/structures/src/config_3.py"
 ```
 
 #### Google
 The [Google Structure Config](../../reference/griptape/config/google_structure_config.md) provides default Drivers for Google's Gemini APIs.
 
 ```python
---8<-- "griptape-framework/structures/src/config_4.py"
+--8<-- "docs/griptape-framework/structures/src/config_4.py"
 ```
 
 #### Anthropic
@@ -54,7 +54,7 @@ The [Anthropic Structure Config](../../reference/griptape/config/anthropic_struc
 
 
 ```python
---8<-- "griptape-framework/structures/src/config_5.py"
+--8<-- "docs/griptape-framework/structures/src/config_5.py"
 ```
 
 #### Cohere
@@ -63,7 +63,7 @@ The [Cohere Structure Config](../../reference/griptape/config/cohere_structure_c
 
 
 ```python
---8<-- "griptape-framework/structures/src/config_6.py"
+--8<-- "docs/griptape-framework/structures/src/config_6.py"
 ```
 
 ### Custom Configs
@@ -73,7 +73,7 @@ The [StructureConfig](../../reference/griptape/config/structure_config.md) class
 This approach ensures that you are informed through clear error messages if you attempt to use Structures without proper Driver configurations.
 
 ```python
---8<-- "griptape-framework/structures/src/config_7.py"
+--8<-- "docs/griptape-framework/structures/src/config_7.py"
 ```
 
 ### Loading/Saving Configs
@@ -81,6 +81,6 @@ This approach ensures that you are informed through clear error messages if you 
 Configuration classes in Griptape offer utility methods for loading, saving, and merging configurations, streamlining the management of complex setups.
 
 ```python
---8<-- "griptape-framework/structures/src/config_8.py"
+--8<-- "docs/griptape-framework/structures/src/config_8.py"
 ```
 

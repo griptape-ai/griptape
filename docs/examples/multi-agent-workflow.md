@@ -5,5 +5,5 @@ Additionally, this architecture opens us up to using services such as [Griptape 
 
 
 ```python
---8<-- "examples/src/multi_agent_workflow_1.py"
+--8<-- "docs/examples/src/multi_agent_workflow_1.py"
 ```

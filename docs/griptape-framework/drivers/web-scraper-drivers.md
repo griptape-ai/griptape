@@ -18,7 +18,7 @@ The [ProxyWebScraperDriver](../../reference/griptape/drivers/web_scraper/proxy_w
 Example using `ProxyWebScraperDriver` directly:
 
 ```python
---8<-- "griptape-framework/drivers/src/web_scraper_drivers_1.py"
+--8<-- "docs/griptape-framework/drivers/src/web_scraper_drivers_1.py"
 ```
 
 ### Markdownify
@@ -52,13 +52,13 @@ The [MarkdownifyWebScraperDriver](../../reference/griptape/drivers/web_scraper/m
 Example using `MarkdownifyWebScraperDriver` directly:
 
 ```python
---8<-- "griptape-framework/drivers/src/web_scraper_drivers_2.py"
+--8<-- "docs/griptape-framework/drivers/src/web_scraper_drivers_2.py"
 ```
 
 Example of using `MarkdownifyWebScraperDriver` with an agent:
 
 ```python
---8<-- "griptape-framework/drivers/src/web_scraper_drivers_3.py"
+--8<-- "docs/griptape-framework/drivers/src/web_scraper_drivers_3.py"
 ```
 
 ### Trafilatura
@@ -71,5 +71,5 @@ The [TrafilaturaWebScraperDriver](../../reference/griptape/drivers/web_scraper/t
 Example of using `TrafilaturaWebScraperDriver` directly:
 
 ```python
---8<-- "griptape-framework/drivers/src/web_scraper_drivers_4.py"
+--8<-- "docs/griptape-framework/drivers/src/web_scraper_drivers_4.py"
 ```

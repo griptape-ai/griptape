@@ -13,7 +13,7 @@ See [Event Listener Drivers](../drivers/event-listener-drivers.md) for examples 
 You can listen to specific event types:
 
 ```python
---8<-- "griptape-framework/misc/src/events_1.py"
+--8<-- "docs/griptape-framework/misc/src/events_1.py"
 ```
 ```
 <class 'griptape.events.start_task_event.StartTaskEvent'>
@@ -35,7 +35,7 @@ You can listen to specific event types:
 Or listen to all events:
 
 ```python
---8<-- "griptape-framework/misc/src/events_2.py"
+--8<-- "docs/griptape-framework/misc/src/events_2.py"
 ```
 
 ```
@@ -79,14 +79,14 @@ Handler 2 <class 'griptape.events.finish_structure_run_event.FinishStructureRunE
 You can use the [CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md) to stream the completion results from Prompt Drivers.
 
 ```python
---8<-- "griptape-framework/misc/src/events_3.py"
+--8<-- "docs/griptape-framework/misc/src/events_3.py"
 ```
 
 You can also use the [Stream](../../reference/griptape/utils/stream.md) utility to automatically wrap
 [CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md)s in a Python iterator.
 
 ```python
---8<-- "griptape-framework/misc/src/events_4.py"
+--8<-- "docs/griptape-framework/misc/src/events_4.py"
 ```
 
 
@@ -95,7 +95,7 @@ You can also use the [Stream](../../reference/griptape/utils/stream.md) utility 
 To count tokens, you can use Event Listeners and the [TokenCounter](../../reference/griptape/utils/token_counter.md) util:
 
 ```python
---8<-- "griptape-framework/misc/src/events_5.py"
+--8<-- "docs/griptape-framework/misc/src/events_5.py"
 ```
 
 ```
@@ -129,7 +129,7 @@ total tokens: 273
 You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_event.md) to inspect the Prompt Stack and final prompt string before it is sent to the LLM. 
 
 ```python
---8<-- "griptape-framework/misc/src/events_6.py"
+--8<-- "docs/griptape-framework/misc/src/events_6.py"
 ```
 ```
 ...

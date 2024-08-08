@@ -1,3 +1,3 @@
 ```python
---8<-- "examples/src/query_webpage_1.py"
+--8<-- "docs/examples/src/query_webpage_1.py"
 ```

@@ -3,7 +3,7 @@
 The GoogleGmailClient tool provides a way to interact with the Gmail API. It can be used to create draft emails, send emails, and more.
 
 ```python
---8<-- "griptape-tools/official-tools/src/google_gmail_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/google_gmail_client_1.py"
 ```
 ```
 [10/05/23 13:24:05] INFO     ToolkitTask 1f190f823d584053bfe9942f41b6cb2d       

@@ -7,5 +7,5 @@ The `MongoDbAtlasVectorStoreDriver` assumes that you have a vector index configu
 `asker` uses the same instance of `TaskMemory` as `loader` so that `asker` has access to the `namespace_storages` that `loader` has set.
 
 ```python
---8<-- "examples/src/multiple_agent_shared_memory_1.py"
+--8<-- "docs/examples/src/multiple_agent_shared_memory_1.py"
 ```

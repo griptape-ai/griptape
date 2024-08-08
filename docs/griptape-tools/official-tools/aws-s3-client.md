@@ -3,7 +3,7 @@
 This tool enables LLMs to make AWS S3 API requests.
 
 ```python
---8<-- "griptape-tools/official-tools/src/aws_s3_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/aws_s3_client_1.py"
 ```
 ```
 [09/11/23 16:49:35] INFO     Task 8bf7538e217a4b5a8472829f5eee75b9              

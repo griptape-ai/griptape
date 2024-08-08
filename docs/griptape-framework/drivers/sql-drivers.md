@@ -23,7 +23,7 @@ For example, to use the `psycopg2` driver for PostgreSQL, you can install it wit
 This is a basic SQL loader based on [SQLAlchemy 2.0](https://docs.sqlalchemy.org/en/20/). Here is an example of how to use it:
 
 ```python
---8<-- "griptape-framework/drivers/src/sql_drivers_1.py"
+--8<-- "docs/griptape-framework/drivers/src/sql_drivers_1.py"
 ```
 
 ### Amazon Redshift
@@ -35,7 +35,7 @@ This is a SQL driver for interacting with the [Amazon Redshift Data API](https:/
 to execute statements. Here is an example of how to use it for Redshift Serverless:
 
 ```python
---8<-- "griptape-framework/drivers/src/sql_drivers_2.py"
+--8<-- "docs/griptape-framework/drivers/src/sql_drivers_2.py"
 ```
 
 ### Snowflake
@@ -46,5 +46,5 @@ to execute statements. Here is an example of how to use it for Redshift Serverle
 This is a SQL driver based on the [Snowflake SQLAlchemy Toolkit](https://docs.snowflake.com/en/developer-guide/python-connector/sqlalchemy) which runs on top of the Snowflake Connector for Python. Here is an example of how to use it:
 
 ```python
---8<-- "griptape-framework/drivers/src/sql_drivers_3.py"
+--8<-- "docs/griptape-framework/drivers/src/sql_drivers_3.py"
 ```

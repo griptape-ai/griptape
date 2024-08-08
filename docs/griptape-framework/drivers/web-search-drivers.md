@@ -18,13 +18,13 @@ The [GoogleWebSearchDriver](../../reference/griptape/drivers/web_search/google_w
 Example using `GoogleWebSearchDriver` directly:
 
 ```python
---8<-- "griptape-framework/drivers/src/web_search_drivers_1.py"
+--8<-- "docs/griptape-framework/drivers/src/web_search_drivers_1.py"
 ```
 
 Example of using `GoogleWebSearchDriver` with an agent:
 
 ```python
---8<-- "griptape-framework/drivers/src/web_search_drivers_2.py"
+--8<-- "docs/griptape-framework/drivers/src/web_search_drivers_2.py"
 ```
 
 ### DuckDuckGo
@@ -37,5 +37,5 @@ The [DuckDuckGoWebSearchDriver](../../reference/griptape/drivers/web_search/duck
 Example of using `DuckDuckGoWebSearchDriver` directly:
 
 ```python
---8<-- "griptape-framework/drivers/src/web_search_drivers_3.py"
+--8<-- "docs/griptape-framework/drivers/src/web_search_drivers_3.py"
 ```

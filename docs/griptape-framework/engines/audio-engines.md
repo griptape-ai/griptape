@@ -12,7 +12,7 @@ search:
 This Engine facilitates synthesizing speech from text inputs.
 
 ```python
---8<-- "griptape-framework/engines/src/audio_engines_1.py"
+--8<-- "docs/griptape-framework/engines/src/audio_engines_1.py"
 ```
 
 ### Audio Transcription
@@ -20,5 +20,5 @@ This Engine facilitates synthesizing speech from text inputs.
 The [Audio Transcription Engine](../../reference/griptape/engines/audio/audio_transcription_engine.md) facilitates transcribing speech from audio inputs.
 
 ```python
---8<-- "griptape-framework/engines/src/audio_engines_2.py"
+--8<-- "docs/griptape-framework/engines/src/audio_engines_2.py"
 ```

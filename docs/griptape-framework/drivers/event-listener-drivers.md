@@ -10,13 +10,13 @@ Event Listener Drivers are used to send Griptape [Events](../misc/events.md) to 
 You can instantiate Drivers and pass them to Event Listeners in your Structure:
 
 ```python
---8<-- "griptape-framework/drivers/src/event_listener_drivers_1.py"
+--8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_1.py"
 ```
 
 Or use them independently:
 
 ```python
---8<-- "griptape-framework/drivers/src/event_listener_drivers_2.py"
+--8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_2.py"
 ```
 
 ## Event Listener Drivers
@@ -31,7 +31,7 @@ Griptape offers the following Event Listener Drivers for forwarding Griptape Eve
 The [AmazonSqsEventListenerDriver](../../reference/griptape/drivers/event_listener/amazon_sqs_event_listener_driver.md) sends Events to an [Amazon SQS](https://aws.amazon.com/sqs/) queue.
 
 ```python
---8<-- "griptape-framework/drivers/src/event_listener_drivers_3.py"
+--8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_3.py"
 ```
 
 ### AWS IoT
@@ -42,7 +42,7 @@ The [AmazonSqsEventListenerDriver](../../reference/griptape/drivers/event_listen
 The [AwsIotCoreEventListenerDriver](../../reference/griptape/drivers/event_listener/aws_iot_core_event_listener_driver.md) sends Events to the [AWS IoT Message Broker](https://aws.amazon.com/iot-core/).
 
 ```python
---8<-- "griptape-framework/drivers/src/event_listener_drivers_4.py"
+--8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_4.py"
 ```
 
 ### Griptape Cloud
@@ -53,7 +53,7 @@ The [GriptapeCloudEventListenerDriver](../../reference/griptape/drivers/event_li
     This Driver is required when using the Griptape Cloud Managed Structures feature. For local development, you can use the [Skatepark Emulator](https://github.com/griptape-ai/griptape-cli?tab=readme-ov-file#skatepark-emulator).
 
 ```python
---8<-- "griptape-framework/drivers/src/event_listener_drivers_5.py"
+--8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_5.py"
 ``` 
 
 ### Webhook Event Listener Driver
@@ -61,7 +61,7 @@ The [GriptapeCloudEventListenerDriver](../../reference/griptape/drivers/event_li
 The [WebhookEventListenerDriver](../../reference/griptape/drivers/event_listener/webhook_event_listener_driver.md) sends Events to any [Webhook](https://en.wikipedia.org/wiki/Webhook) URL.
 
 ```python
---8<-- "griptape-framework/drivers/src/event_listener_drivers_6.py"
+--8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_6.py"
 ```
 ### Pusher
 
@@ -71,5 +71,5 @@ The [WebhookEventListenerDriver](../../reference/griptape/drivers/event_listener
 The [PusherEventListenerDriver](../../reference/griptape/drivers/event_listener/pusher_event_listener_driver.md) sends Events to [Pusher](https://pusher.com).
 
 ```python
---8<-- "griptape-framework/drivers/src/event_listener_drivers_7.py"
+--8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_7.py"
 ```

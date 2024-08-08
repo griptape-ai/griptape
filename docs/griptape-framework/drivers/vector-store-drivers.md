@@ -28,7 +28,7 @@ Each Vector Store Driver takes a [BaseEmbeddingDriver](../../reference/griptape/
 The [LocalVectorStoreDriver](../../reference/griptape/drivers/vector/local_vector_store_driver.md) can be used to load and query data from memory. Here is a complete example of how the Driver can be used to load a webpage into the Driver and query it later:
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_1.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_1.py"
 ```
 
 ### Griptape Cloud Knowledge Base
@@ -36,7 +36,7 @@ The [LocalVectorStoreDriver](../../reference/griptape/drivers/vector/local_vecto
 The [GriptapeCloudKnowledgeBaseVectorStoreDriver](../../reference/griptape/drivers/vector/griptape_cloud_knowledge_base_vector_store_driver.md) can be used to query data from a Griptape Cloud Knowledge Base. Loading into Knowledge Bases is not supported at this time, only querying. Here is a complete example of how the Driver can be used to query an existing Knowledge Base:
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_2.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_2.py"
 ```
 
 ### Pinecone
@@ -49,7 +49,7 @@ The [PineconeVectorStoreDriver](../../reference/griptape/drivers/vector/pinecone
 Here is an example of how the Driver can be used to load and query information in a Pinecone cluster:
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_3.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_3.py"
 ```
 
 ### Marqo
@@ -62,7 +62,7 @@ The [MarqoVectorStoreDriver](../../reference/griptape/drivers/vector/marqo_vecto
 Here is an example of how the Driver can be used to load and query information in a Marqo cluster:
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_4.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_4.py"
 ```
 
 ### Mongodb Atlas
@@ -75,7 +75,7 @@ The [MongodbAtlasVectorStoreDriver](../../reference/griptape/drivers/vector/mong
 Here is an example of how the Driver can be used to load and query information in a MongoDb Atlas Cluster:
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_5.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_5.py"
 ```
 
 The format for creating a vector index should look similar to the following:
@@ -107,7 +107,7 @@ The [AzureMongoDbVectorStoreDriver](../../reference/griptape/drivers/vector/azur
 Here is an example of how the Driver can be used to load and query information in an Azure CosmosDb MongoDb vCore database. It is very similar to the Driver for [MongoDb Atlas](#mongodb-atlas):
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_6.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_6.py"
 ```
 
 ### Redis
@@ -120,7 +120,7 @@ The [RedisVectorStoreDriver](../../reference/griptape/drivers/vector/redis_vecto
 Here is an example of how the Driver can be used to load and query information in a Redis Cluster:
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_7.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_7.py"
 ```
 
 The format for creating a vector index should be similar to the following:
@@ -138,7 +138,7 @@ The [OpenSearchVectorStoreDriver](../../reference/griptape/drivers/vector/opense
 Here is an example of how the Driver can be used to load and query information in an OpenSearch Cluster:
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_8.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_8.py"
 ```
 
 The body mappings for creating a vector index should look similar to the following:
@@ -164,7 +164,7 @@ The [PGVectorVectorStoreDriver](../../reference/griptape/drivers/vector/pgvector
 Here is an example of how the Driver can be used to load and query information in a Postgres database:
 
 ```python 
---8<-- "griptape-framework/drivers/src/vector_store_drivers_9.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_9.py"
 ```
 
 ### Qdrant
@@ -177,7 +177,7 @@ The QdrantVectorStoreDriver supports the [Qdrant vector database](https://qdrant
 Here is an example of how the Driver can be used to query information in a Qdrant collection:
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_10.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_10.py"
 ```
 
 ### Astra DB
@@ -190,5 +190,5 @@ The AstraDbVectorStoreDriver supports [DataStax Astra DB](https://www.datastax.c
 The following example shows how to store vector entries and query the information using the driver:
 
 ```python
---8<-- "griptape-framework/drivers/src/vector_store_drivers_11.py"
+--8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_11.py"
 ```

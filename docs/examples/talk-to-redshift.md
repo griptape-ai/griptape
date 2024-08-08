@@ -3,5 +3,5 @@ This example demonstrates how to build an agent that can dynamically query Amazo
 Let's build a support agent that uses GPT-4:
 
 ```python
---8<-- "examples/src/talk_to_redshift_1.py"
+--8<-- "docs/examples/src/talk_to_redshift_1.py"
 ```

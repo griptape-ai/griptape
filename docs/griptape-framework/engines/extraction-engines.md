@@ -16,7 +16,7 @@ The CSV Extraction Engine is designed specifically for extracting data from CSV-
     The CSV Extraction Engine requires the `column_names` parameter for specifying the columns to be extracted.
 
 ```python
---8<-- "griptape-framework/engines/src/extraction_engines_1.py"
+--8<-- "docs/griptape-framework/engines/src/extraction_engines_1.py"
 ```
 ```
 name,age,location
@@ -33,7 +33,7 @@ The JSON Extraction Engine is tailored for extracting data from JSON-formatted c
     The JSON Extraction Engine requires the `template_schema` parameter for specifying the structure to be extracted.
 
 ```python
---8<-- "griptape-framework/engines/src/extraction_engines_2.py"
+--8<-- "docs/griptape-framework/engines/src/extraction_engines_2.py"
 ```
 ```
 {'name': 'Alice', 'age': 28, 'location': 'New York'}

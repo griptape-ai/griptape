@@ -17,7 +17,7 @@ You can access the final output of the Agent by using the [output](../../referen
 ## Toolkit Task Agent
 
 ```python
---8<-- "griptape-framework/structures/src/agents_1.py"
+--8<-- "docs/griptape-framework/structures/src/agents_1.py"
 ```
 
 ```
@@ -46,7 +46,7 @@ Answer: 62,748,517
 ## Prompt Task Agent
 
 ```python
---8<-- "griptape-framework/structures/src/agents_2.py"
+--8<-- "docs/griptape-framework/structures/src/agents_2.py"
 ```
 
 ```

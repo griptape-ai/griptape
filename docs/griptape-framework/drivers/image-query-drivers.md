@@ -20,13 +20,13 @@ Image Query Drivers are used by [Image Query Engines](../engines/image-query-eng
 The [AnthropicImageQueryDriver](../../reference/griptape/drivers/image_query/anthropic_image_query_driver.md) is used to query images using Anthropic's Claude 3 multi-modal model. Here is an example of how to use it:
 
 ```python
---8<-- "griptape-framework/drivers/src/image_query_drivers_1.py"
+--8<-- "docs/griptape-framework/drivers/src/image_query_drivers_1.py"
 ```
 
 You can also specify multiple images with a single text prompt. This applies the same text prompt to all images specified, up to a max of 20. However, you will still receive one text response from the model currently.
 
 ```python
---8<-- "griptape-framework/drivers/src/image_query_drivers_2.py"
+--8<-- "docs/griptape-framework/drivers/src/image_query_drivers_2.py"
 ```
 
 ### OpenAI
@@ -37,7 +37,7 @@ You can also specify multiple images with a single text prompt. This applies the
 The [OpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/openai_image_query_driver.md) is used to query images using the OpenAI Vision API. Here is an example of how to use it:
 
 ```python
---8<-- "griptape-framework/drivers/src/image_query_drivers_3.py"
+--8<-- "docs/griptape-framework/drivers/src/image_query_drivers_3.py"
 ```
 
 ### Azure OpenAI
@@ -48,7 +48,7 @@ The [OpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/
 The [AzureOpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/azure_openai_image_query_driver.md) is used to query images using the Azure OpenAI Vision API. Here is an example of how to use it:
 
 ```python
---8<-- "griptape-framework/drivers/src/image_query_drivers_4.py"
+--8<-- "docs/griptape-framework/drivers/src/image_query_drivers_4.py"
 ```
 
 ### Amazon Bedrock
@@ -60,5 +60,5 @@ The [Amazon Bedrock Image Query Driver](../../reference/griptape/drivers/image_q
 The [BedrockClaudeImageQueryModelDriver](../../reference/griptape/drivers/image_query_model/bedrock_claude_image_query_model_driver.md) provides support for Claude models hosted by Bedrock.
 
 ```python
---8<-- "griptape-framework/drivers/src/image_query_drivers_5.py"
+--8<-- "docs/griptape-framework/drivers/src/image_query_drivers_5.py"
 ```

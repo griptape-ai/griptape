@@ -3,7 +3,7 @@
 This tool enables LLMs to make AWS IAM API requests.
 
 ```python
---8<-- "griptape-tools/official-tools/src/aws_iam_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/aws_iam_client_1.py"
 ```
 ```
 [09/11/23 16:45:45] INFO     Task 890fcf77fb074c9490d5c91563e0c995              

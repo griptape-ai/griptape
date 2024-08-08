@@ -10,13 +10,13 @@ Prompt Drivers are used by Griptape Structures to make API calls to the underlyi
 You can instantiate drivers and pass them to structures:
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_1.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_1.py"
 ```
 
 Or use them independently:
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_2.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_2.py"
 ```
 
 ## Prompt Drivers
@@ -29,7 +29,7 @@ The [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat
 This driver uses [OpenAi function calling](https://platform.openai.com/docs/guides/function-calling) when using [Tools](../tools/index.md).
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_3.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_3.py"
 ```
 
 !!! info
@@ -41,7 +41,7 @@ Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www
 Simply set the `base_url` to the service's API endpoint and the `model` to the model name. If the service requires an API key, you can set it in the `api_key` field.
 
 ```python title="PYTEST_IGNORE"
---8<-- "griptape-framework/drivers/src/prompt_drivers_4.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_4.py"
 ```
 
 !!! tip
@@ -53,7 +53,7 @@ The [AzureOpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/azure_
 This driver uses [Azure OpenAi function calling](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/function-calling) when using [Tools](../tools/index.md).
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_5.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_5.py"
 ```
 
 ### Cohere
@@ -65,7 +65,7 @@ This driver uses [Cohere tool use](https://docs.cohere.com/docs/tools) when usin
     This driver requires the `drivers-prompt-cohere` [extra](../index.md#extras).
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_6.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_6.py"
 ```
 
 ### Anthropic
@@ -77,7 +77,7 @@ The [AnthropicPromptDriver](../../reference/griptape/drivers/prompt/anthropic_pr
 This driver uses [Anthropic tool use](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) when using [Tools](../tools/index.md).
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_7.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_7.py"
 ```
 
 ### Google
@@ -89,7 +89,7 @@ The [GooglePromptDriver](../../reference/griptape/drivers/prompt/google_prompt_d
 This driver uses [Gemini function calling](https://ai.google.dev/gemini-api/docs/function-calling) when using [Tools](../tools/index.md).
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_8.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_8.py"
 ```
 
 ### Amazon Bedrock
@@ -103,7 +103,7 @@ This driver uses [Bedrock tool use](https://docs.aws.amazon.com/bedrock/latest/u
 All models supported by the Converse API are available for use with this driver.
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_9.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_9.py"
 ```
 
 ### Ollama
@@ -115,7 +115,7 @@ The [OllamaPromptDriver](../../reference/griptape/drivers/prompt/ollama_prompt_d
 This driver uses [Ollama tool calling](https://ollama.com/blog/tool-support) when using [Tools](../tools/index.md).
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_10.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_10.py"
 ```
 
 ### Hugging Face Hub
@@ -131,7 +131,7 @@ The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/hugging
     Due to the limitations of Hugging Face serverless inference, only models that are than 10GB are supported.
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_11.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_11.py"
 ```
 
 #### Text Generation Interface
@@ -139,7 +139,7 @@ The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/hugging
 The [HuggingFaceHubPromptDriver](#hugging-face-hub) also supports [Text Generation Interface](https://huggingface.co/docs/text-generation-inference/basic_tutorials/consuming_tgi#inference-client) for running models locally. To use Text Generation Interface, just set `model` to a TGI endpoint.
 
 ```python title="PYTEST_IGNORE"
---8<-- "griptape-framework/drivers/src/prompt_drivers_12.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_12.py"
 ```
 
 ### Hugging Face Pipeline
@@ -153,7 +153,7 @@ The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/hu
     Running a model locally can be a computationally expensive process.
 
 ```python
---8<-- "griptape-framework/drivers/src/prompt_drivers_13.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_13.py"
 ```
 
 ### Amazon SageMaker Jumpstart
@@ -169,5 +169,5 @@ If your model does not fit this use-case, we suggest sub-classing [AmazonSageMak
     
 
 ```python title="PYTEST_IGNORE"
---8<-- "griptape-framework/drivers/src/prompt_drivers_14.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_14.py"
 ```

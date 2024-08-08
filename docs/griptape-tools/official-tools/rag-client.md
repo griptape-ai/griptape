@@ -3,7 +3,7 @@ The [RagClient](../../reference/griptape/tools/rag_client/tool.md) enables LLMs 
 Here is an example of how it can be used with a local vector store driver:
 
 ```python
---8<-- "griptape-tools/official-tools/src/rag_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/rag_client_1.py"
 ```
 ```
 [07/11/24 13:30:43] INFO     ToolkitTask a6d057d5c71d4e9cb6863a2adb64b76c

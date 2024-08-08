@@ -5,5 +5,5 @@ The `GriptapeCloudKnowledgeBaseClient` is a lightweight Tool to retrieve data fr
 **Note:** This tool requires a [Knowledge Base](https://cloud.griptape.ai/knowledge-bases) hosted in Griptape Cloud and an [API Key](https://cloud.griptape.ai/keys) for access.
 
 ```python
---8<-- "griptape-tools/official-tools/src/griptape_cloud_knowledge_base_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/griptape_cloud_knowledge_base_client_1.py"
 ```

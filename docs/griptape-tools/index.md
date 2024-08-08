@@ -3,7 +3,7 @@ Tools give the LLM abilities to invoke outside APIs, reference data sets, and ge
 Griptape tools are special Python classes that LLMs can use to accomplish specific goals. Here is an example custom tool for generating a random number:
 
 ```python
---8<-- "griptape-tools/src/index_1.py"
+--8<-- "docs/griptape-tools/src/index_1.py"
 ```
 
 A tool can have many "activities" as denoted by the `@activity` decorator. Each activity has a description (used to provide context to the LLM), and the input schema that the LLM must follow in order to use the tool.

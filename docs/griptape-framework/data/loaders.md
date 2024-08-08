@@ -17,7 +17,7 @@ multiple documents with [load_collection()](../../reference/griptape/loaders/bas
 Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) and can be used to load PDFs from a path or from an IO stream:
 
 ```python
---8<-- "griptape-framework/data/src/loaders_1.py"
+--8<-- "docs/griptape-framework/data/src/loaders_1.py"
 ```
 
 ## SQL
@@ -25,7 +25,7 @@ Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) 
 Can be used to load data from a SQL database into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
 
 ```python
---8<-- "griptape-framework/data/src/loaders_2.py"
+--8<-- "docs/griptape-framework/data/src/loaders_2.py"
 ```
 
 ## CSV
@@ -33,7 +33,7 @@ Can be used to load data from a SQL database into [CsvRowArtifact](../../referen
 Can be used to load CSV files into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
 
 ```python
---8<-- "griptape-framework/data/src/loaders_3.py"
+--8<-- "docs/griptape-framework/data/src/loaders_3.py"
 ```
 
 
@@ -45,7 +45,7 @@ Can be used to load CSV files into [CsvRowArtifact](../../reference/griptape/art
 Can be used to load [pandas](https://pandas.pydata.org/) [DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)s into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
 
 ```python
---8<-- "griptape-framework/data/src/loaders_4.py"
+--8<-- "docs/griptape-framework/data/src/loaders_4.py"
 ```
 
 
@@ -54,7 +54,7 @@ Can be used to load [pandas](https://pandas.pydata.org/) [DataFrame](https://pan
 Used to load arbitrary text and text files:
 
 ```python
---8<-- "griptape-framework/data/src/loaders_5.py"
+--8<-- "docs/griptape-framework/data/src/loaders_5.py"
 ```
 
 You can set a custom [tokenizer](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.tokenizer), [max_tokens](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.max_tokens) parameter, and [chunker](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.chunker).
@@ -67,7 +67,7 @@ You can set a custom [tokenizer](../../reference/griptape/loaders/text_loader.md
 Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) and can be used to load web pages:
 
 ```python
---8<-- "griptape-framework/data/src/loaders_6.py"
+--8<-- "docs/griptape-framework/data/src/loaders_6.py"
 ```
 
 ## Image
@@ -78,13 +78,13 @@ Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) 
 The Image Loader is used to load an image as an [ImageArtifact](./artifacts.md#imageartifact). The Loader operates on image bytes that can be sourced from files on disk, downloaded images, or images in memory.
 
 ```python
---8<-- "griptape-framework/data/src/loaders_7.py"
+--8<-- "docs/griptape-framework/data/src/loaders_7.py"
 ```
 
 By default, the Image Loader will load images in their native format, but not all models work on all formats. To normalize the format of Artifacts returned by the Loader, set the `format` field.
 
 ```python
---8<-- "griptape-framework/data/src/loaders_8.py"
+--8<-- "docs/griptape-framework/data/src/loaders_8.py"
 ```
 
 
@@ -96,7 +96,7 @@ By default, the Image Loader will load images in their native format, but not al
 Can be used to load email from an imap server:
 
 ```python
---8<-- "griptape-framework/data/src/loaders_9.py"
+--8<-- "docs/griptape-framework/data/src/loaders_9.py"
 ```
 
 ## Audio
@@ -109,5 +109,5 @@ The [Audio Loader](../../reference/griptape/loaders/audio_loader.md) is used to 
 The Loader will load audio in its native format and populates the resulting Artifact's `format` field by making a best-effort guess of the underlying audio format using the `filetype` package.
 
 ```python
---8<-- "griptape-framework/data/src/loaders_10.py"
+--8<-- "docs/griptape-framework/data/src/loaders_10.py"
 ```

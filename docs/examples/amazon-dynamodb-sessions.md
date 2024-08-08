@@ -7,7 +7,7 @@ In this example, we will show you how to use the [AmazonDynamoDbConversationMemo
 This code implements the idea of a generic "Session" that represents a Conversation Memory entry. For example, a "Session" could be used to represent an individual user's conversation, or a group conversation thread.
 
 ```python
---8<-- "examples/src/amazon_dynamodb_sessions_1.py"
+--8<-- "docs/examples/src/amazon_dynamodb_sessions_1.py"
 ```
 
 Conversation Memory for an individual user:

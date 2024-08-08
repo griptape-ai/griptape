@@ -15,7 +15,7 @@ You can switch between the two strategies by setting `use_native_tools` to `True
 Here is an example of a Pipeline using Tools: 
 
 ```python
---8<-- "griptape-framework/tools/src/index_1.py"
+--8<-- "docs/griptape-framework/tools/src/index_1.py"
 ```
 
 ```

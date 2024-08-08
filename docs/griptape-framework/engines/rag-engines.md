@@ -48,5 +48,5 @@ RAG modules are used to implement concrete actions in the RAG pipeline. `RagEngi
 The following example shows a simple RAG pipeline that translates incoming queries into English, retrieves data from a local vector store, and generates a response:
 
 ```python
---8<-- "griptape-framework/engines/src/rag_engines_1.py"
+--8<-- "docs/griptape-framework/engines/src/rag_engines_1.py"
 ```

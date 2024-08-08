@@ -1,3 +1,3 @@
 ```python
---8<-- "examples/src/load_and_query_pinecone_1.py"
+--8<-- "docs/examples/src/load_and_query_pinecone_1.py"
 ```

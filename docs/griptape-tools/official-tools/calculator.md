@@ -3,7 +3,7 @@
 This tool enables LLMs to make simple calculations.
 
 ```python
---8<-- "griptape-tools/official-tools/src/calculator_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/calculator_1.py"
 ```
 ```
 [09/08/23 14:23:51] INFO     Task bbc6002a5e5b4655bb52b6a550a1b2a5              

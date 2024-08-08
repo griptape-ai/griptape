@@ -4,7 +4,7 @@ The StructureRunClient Tool provides a way to run Structures via a Tool.
 It requires you to provide a [Structure Run Driver](../../griptape-framework/drivers/structure-run-drivers.md) to run the Structure in the desired environment.
 
 ```python
---8<-- "griptape-tools/official-tools/src/structure_run_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/structure_run_client_1.py"
 ```
 ```
 [05/02/24 13:50:03] INFO     ToolkitTask 4e9458375bda4fbcadb77a94624ed64c

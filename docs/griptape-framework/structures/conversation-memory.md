@@ -10,7 +10,7 @@ You can use Conversation Memory to give Griptape Structures the ability to keep 
 ### Example
 
 ```python
---8<-- "griptape-framework/structures/src/conversation_memory_1.py"
+--8<-- "docs/griptape-framework/structures/src/conversation_memory_1.py"
 ```
 
 ```
@@ -29,7 +29,7 @@ You can use Conversation Memory to give Griptape Structures the ability to keep 
 You can disable conversation memory in any structure by setting it to `None`:
 
 ```python
---8<-- "griptape-framework/structures/src/conversation_memory_2.py"
+--8<-- "docs/griptape-framework/structures/src/conversation_memory_2.py"
 ```
 
 ## Types of Memory
@@ -41,13 +41,13 @@ Griptape provides several types of Conversation Memory to fit various use-cases.
 [ConversationMemory](../../reference/griptape/memory/structure/conversation_memory.md) will keep track of the full task input and output for all runs.
 
 ```python
---8<-- "griptape-framework/structures/src/conversation_memory_3.py"
+--8<-- "docs/griptape-framework/structures/src/conversation_memory_3.py"
 ```
 
 You can set the [max_runs](../../reference/griptape/memory/structure/base_conversation_memory.md#griptape.memory.structure.base_conversation_memory.BaseConversationMemory.max_runs) parameter to limit how many runs are kept in memory.
 
 ```python
---8<-- "griptape-framework/structures/src/conversation_memory_4.py"
+--8<-- "docs/griptape-framework/structures/src/conversation_memory_4.py"
 ```
 
 ### Summary Conversation Memory
@@ -58,6 +58,6 @@ You can choose to offset which runs are summarized with the
 [offset](../../reference/griptape/memory/structure/summary_conversation_memory.md#griptape.memory.structure.summary_conversation_memory.SummaryConversationMemory.offset) parameter.
 
 ```python
---8<-- "griptape-framework/structures/src/conversation_memory_5.py"
+--8<-- "docs/griptape-framework/structures/src/conversation_memory_5.py"
 ```
 

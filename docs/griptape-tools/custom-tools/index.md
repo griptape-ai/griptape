@@ -31,7 +31,7 @@ To add Python dependencies for your tool, add a `requirements.txt` file. The too
 Next, create a `tool.py` file with the following code:
 
 ```python
---8<-- "griptape-tools/custom-tools/src/index_1.py"
+--8<-- "docs/griptape-tools/custom-tools/src/index_1.py"
 ```
 
 ## Testing Custom Tools
@@ -39,7 +39,7 @@ Next, create a `tool.py` file with the following code:
 Finally, let's test our tool:
 
 ```python
---8<-- "griptape-tools/custom-tools/src/index_2.py"
+--8<-- "docs/griptape-tools/custom-tools/src/index_2.py"
 ```
 
 That's it! You can start using this tool with any converter or directly via Griptape.

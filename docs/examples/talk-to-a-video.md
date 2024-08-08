@@ -3,7 +3,7 @@ In this example, we upload a video file using Gemini's file API, and then pass t
 Note that because we are using Gemini-specific features, this will not work with other [Prompt Drivers](../griptape-framework/drivers/prompt-drivers.md).
 
 ```python
---8<-- "examples/src/talk_to_a_video_1.py"
+--8<-- "docs/examples/src/talk_to_a_video_1.py"
 ```
 
 ```

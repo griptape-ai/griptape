@@ -12,5 +12,5 @@ Griptape extra to be installed as well.
 
 
 ```python
---8<-- "examples/src/query_webpage_astra_db_1.py"
+--8<-- "docs/examples/src/query_webpage_astra_db_1.py"
 ```

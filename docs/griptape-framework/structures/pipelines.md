@@ -20,7 +20,7 @@ Pipelines have access to the following [context](../../reference/griptape/struct
 ## Pipeline
 
 ```python
---8<-- "griptape-framework/structures/src/pipelines_1.py"
+--8<-- "docs/griptape-framework/structures/src/pipelines_1.py"
 ```
 
 ```
