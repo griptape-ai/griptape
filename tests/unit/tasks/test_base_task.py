@@ -18,7 +18,7 @@ class TestBaseTask:
         agent = Agent(
             tools=[MockTool()],
         )
-        event_bus.event_listeners = [EventListener(handler=Mock())]
+        event_bus.add_event_listeners([EventListener(handler=Mock())])
 
         agent.add_task(MockTask("foobar", max_meta_memory_entries=2))
 

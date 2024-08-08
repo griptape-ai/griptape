@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from attrs import Attribute, define, field
 
-from griptape.config import Config
+from griptape.config import config
 from griptape.loaders import ImageLoader
 from griptape.mixins import BlobArtifactFileOutputMixin, RuleMixin
 from griptape.rules import Rule, Ruleset
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from griptape.artifacts import MediaArtifact
 
 
-logger = logging.getLogger(Config.logging.logger_name)
+logger = logging.getLogger(config.logging.logger_name)
 
 
 @define

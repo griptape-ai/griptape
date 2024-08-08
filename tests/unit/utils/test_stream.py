@@ -2,7 +2,7 @@ from collections.abc import Iterator
 
 import pytest
 
-from griptape.config import Config
+from griptape.config import config
 from griptape.structures import Agent
 from griptape.utils import Stream
 
@@ -10,11 +10,11 @@ from griptape.utils import Stream
 class TestStream:
     @pytest.fixture(params=[True, False])
     def agent(self, request):
-        Config.drivers.prompt.stream = request.param
+        config.drivers.prompt.stream = request.param
         return Agent()
 
     def test_init(self, agent):
-        if Config.drivers.prompt.stream:
+        if config.drivers.prompt.stream:
             chat_stream = Stream(agent)
 
             assert chat_stream.structure == agent

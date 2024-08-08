@@ -220,9 +220,9 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     VoyageAiEmbeddingDriver,
 )
-from griptape.config import DriverConfig, Config
+from griptape.config import DriverConfig, config
 
-Config.drivers = DriverConfig(
+config.drivers = DriverConfig(
         prompt=OpenAiChatPromptDriver(model="gpt-4o"),
         embedding=VoyageAiEmbeddingDriver(),
 )

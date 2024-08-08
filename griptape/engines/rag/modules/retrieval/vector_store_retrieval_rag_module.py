@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Callable
 from attrs import Factory, define, field
 
 from griptape import utils
-from griptape.config import Config
+from griptape.config import config
 from griptape.engines.rag.modules import BaseRetrievalRagModule
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class VectorStoreRetrievalRagModule(BaseRetrievalRagModule):
-    vector_store_driver: BaseVectorStoreDriver = field(default=Factory(lambda: Config.drivers.vector_store))
+    vector_store_driver: BaseVectorStoreDriver = field(default=Factory(lambda: config.drivers.vector_store))
     query_params: dict[str, Any] = field(factory=dict)
     process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], Sequence[TextArtifact]] = field(
         default=Factory(lambda: lambda es: [e.to_artifact() for e in es]),

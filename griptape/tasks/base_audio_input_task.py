@@ -7,11 +7,11 @@ from typing import Callable
 from attrs import define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
-from griptape.config.config import Config
+from griptape.config.config import config
 from griptape.mixins import RuleMixin
 from griptape.tasks import BaseTask
 
-logger = logging.getLogger(Config.logging.logger_name)
+logger = logging.getLogger(config.logging.logger_name)
 
 
 @define

@@ -12,4 +12,4 @@ class _Config(BaseConfig):
     logging: LoggingConfig = field(default=Factory(lambda: LoggingConfig()), kw_only=True)
 
 
-Config = _Config()
+config = _Config()

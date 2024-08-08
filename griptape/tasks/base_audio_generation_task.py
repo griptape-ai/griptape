@@ -5,11 +5,11 @@ from abc import ABC
 
 from attrs import define
 
-from griptape.config import Config
+from griptape.config import config
 from griptape.mixins import BlobArtifactFileOutputMixin, RuleMixin
 from griptape.tasks import BaseTask
 
-logger = logging.getLogger(Config.logging.logger_name)
+logger = logging.getLogger(config.logging.logger_name)
 
 
 @define

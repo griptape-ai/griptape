@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import BaseArtifact, InfoArtifact, ListArtifact, TextArtifact
-from griptape.config import Config
+from griptape.config import config
 from griptape.engines.rag import RagContext, RagEngine
 from griptape.memory.task.storage import BaseArtifactStorage
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class TextArtifactStorage(BaseArtifactStorage):
-    vector_store_driver: BaseVectorStoreDriver = field(default=Factory(lambda: Config.drivers.vector_store))
+    vector_store_driver: BaseVectorStoreDriver = field(default=Factory(lambda: config.drivers.vector_store))
     rag_engine: Optional[RagEngine] = field(default=None)
     retrieval_rag_module_name: Optional[str] = field(default=None)
     summary_engine: Optional[BaseSummaryEngine] = field(default=None)

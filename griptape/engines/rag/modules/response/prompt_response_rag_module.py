@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Callable
 from attrs import Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.config import Config
+from griptape.config import config
 from griptape.engines.rag.modules import BaseResponseRagModule
 from griptape.utils import J2
 
@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class PromptResponseRagModule(BaseResponseRagModule):
     answer_token_offset: int = field(default=400)
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: Config.drivers.prompt), kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt), kw_only=True)
     generate_system_template: Callable[[RagContext, list[TextArtifact]], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
     )

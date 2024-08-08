@@ -7,7 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
-from griptape.config import Config
+from griptape.config import config
 from griptape.mixins import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2
@@ -15,12 +15,12 @@ from griptape.utils import J2
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
 
-logger = logging.getLogger(Config.logging.logger_name)
+logger = logging.getLogger(config.logging.logger_name)
 
 
 @define
 class PromptTask(RuleMixin, BaseTask):
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: Config.drivers.prompt), kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt), kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
         kw_only=True,

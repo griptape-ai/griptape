@@ -34,9 +34,9 @@ class Stream:
 
     @structure.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_structure(self, _: Attribute, structure: Structure) -> None:
-        from griptape.config import Config
+        from griptape.config import config
 
-        if not Config.drivers.prompt.stream:
+        if not config.drivers.prompt.stream:
             raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")
 
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))

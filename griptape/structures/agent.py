@@ -6,7 +6,7 @@ from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import observable
-from griptape.config import Config
+from griptape.config import config
 from griptape.memory.structure import Run
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
@@ -24,7 +24,7 @@ class Agent(Structure):
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
     stream: bool = field(default=False, kw_only=True)
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: Config.drivers.prompt), kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt), kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
     fail_fast: bool = field(default=False, kw_only=True)

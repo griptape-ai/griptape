@@ -11,7 +11,7 @@ from attrs import define, field
 from griptape import utils
 from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.common import ToolAction
-from griptape.config import Config
+from griptape.config import config
 from griptape.events import FinishActionsSubtaskEvent, StartActionsSubtaskEvent, event_bus
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
@@ -20,7 +20,7 @@ from griptape.utils import remove_null_values_in_dict_recursively
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
 
-logger = logging.getLogger(Config.logging.logger_name)
+logger = logging.getLogger(config.logging.logger_name)
 
 
 @define

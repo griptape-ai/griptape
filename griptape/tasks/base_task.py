@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING, Any, Callable, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
-from griptape.config import Config
+from griptape.config import config
 from griptape.events import FinishTaskEvent, StartTaskEvent, event_bus
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from griptape.memory.meta import BaseMetaEntry
     from griptape.structures import Structure
 
-logger = logging.getLogger(Config.logging.logger_name)
+logger = logging.getLogger(config.logging.logger_name)
 
 
 @define

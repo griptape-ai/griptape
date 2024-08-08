@@ -14,9 +14,9 @@ from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask
 from griptape.tools import RestApiClient
-from griptape.config import Config
+from griptape.config import config
 
-Config.drivers = DriverConfig(
+config.drivers = DriverConfig(
     prompt=OpenAiChatPromptDriver(
         model="gpt-4o",
         temperature=0.1
