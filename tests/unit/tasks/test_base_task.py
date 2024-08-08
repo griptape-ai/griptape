@@ -14,7 +14,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestBaseTask:
     @pytest.fixture()
     def task(self):
-        event_bus.event_listeners = [EventListener(handler=Mock())]
+        event_bus.add_event_listeners([EventListener(handler=Mock())])
         agent = Agent(
             tools=[MockTool()],
         )

@@ -35,7 +35,7 @@ class TestEventBus:
         # Given
         mock_handler = Mock()
         mock_handler.return_value = None
-        event_bus.event_listeners = [EventListener(handler=mock_handler)]
+        event_bus.add_event_listeners([EventListener(handler=mock_handler)])
         mock_event = MockEvent()
 
         # When
