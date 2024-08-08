@@ -11,19 +11,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to set custom schema properties on Tool Activities via `extra_schema_properties`.
 - Parameter `structure` to `BaseTask`.
 - Method `try_find_task` to `Structure`.
-- Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
-- Global config, `griptape.config.config`, for setting global configuration defaults.
 - `TranslateQueryRagModule` `RagEngine` module for translating input queries.
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
+- Global config, `griptape.config.config`, for setting global configuration defaults.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
 - **BREAKING**: Removed `EventPublisherMixin`.
-- **BREAKING**: Removed `Workflow.prompt_driver` and `Workflow.prompt_driver`. `Agent.prompt_driver` has not been removed.
+- **BREAKING**: Removed `Pipeline.prompt_driver` and `Workflow.prompt_driver`. `Agent.prompt_driver` has not been removed.
+- **BREAKING**: Removed `Pipeline.stream` and `Workflow.stream`. `Agent.stream` has not been removed.
 - **BREAKING**: Removed `Structure.embedding_driver`, set this via `griptape.config.config.drivers.embedding` instead.
 - **BREAKING**: Removed `Structure.custom_logger` and `Structure.logger_level`, set these via `griptape.config.config.logger` instead. 
+- **BREAKING**: Removed `BaseStructureConfig.merge_config`.
+- **BREAKING**: Renamed `StructureConfig` to `DriverConfig`, and renamed fields accordingly.
+- Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
-- All Task and Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 
 ## [0.29.0] - 2024-07-30
 
