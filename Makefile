@@ -68,7 +68,7 @@ check/lint:
 
 .PHONY: check/types
 check/types:
-	@poetry run pyright griptape/ docs/
+	@poetry run pyright griptape/ docs/**/src/**
 	
 .PHONY: check/spell
 check/spell:
