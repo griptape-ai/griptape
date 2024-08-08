@@ -1,7 +1,6 @@
 import os
 
-from griptape.drivers import GoogleWebSearchDriver, LocalStructureRunDriver, WebhookEventListenerDriver
-from griptape.events import EventListener, FinishStructureRunEvent, event_bus
+from griptape.drivers import GoogleWebSearchDriver, LocalStructureRunDriver
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Workflow
 from griptape.tasks import PromptTask, StructureRunTask
@@ -23,17 +22,6 @@ WRITERS = [
         "backstory": "From the latest trends in home decor to tips for wellness, your articles help readers create a life that feels both aspirational and attainable.",
     },
 ]
-
-event_bus.add_event_listeners(
-    [
-        EventListener(
-            event_types=[FinishStructureRunEvent],
-            driver=WebhookEventListenerDriver(
-                webhook_url=os.environ["WEBHOOK_URL"],
-            ),
-        )
-    ]
-)
 
 
 def build_researcher() -> Agent:

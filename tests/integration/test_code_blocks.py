@@ -1,22 +1,46 @@
-import io
 import os
+import subprocess
 
 import pytest
 
-from tests.utils.code_blocks import check_py_string, get_all_code_blocks
+SKIP_FILES = [
+    "docs/griptape-tools/official-tools/src/computer_1.py",
+    "docs/examples/src/load_query_and_chat_marqo_1.py",
+    "docs/griptape-framework/drivers/src/embedding_drivers_6.py",
+    "docs/griptape-framework/drivers/src/embedding_drivers_7.py",
+    "docs/griptape-framework/drivers/src/image_generation_drivers_7.py",
+    "docs/griptape-framework/drivers/src/image_generation_drivers_8.py",
+    "docs/griptape-framework/drivers/src/image_generation_drivers_9.py",
+    "docs/griptape-framework/drivers/src/prompt_drivers_4.py",
+    "docs/griptape-framework/drivers/src/prompt_drivers_12.py",
+    "docs/griptape-framework/drivers/src/prompt_drivers_14.py",
+    "docs/griptape-framework/drivers/src/observability_drivers_1.py",
+    "docs/griptape-framework/drivers/src/observability_drivers_2.py",
+    "docs/griptape-framework/structures/src/observability_1.py",
+    "docs/griptape-framework/structures/src/observability_2.py",
+]
 
-if "DOCS_ALL_CHANGED_FILES" in os.environ and os.environ["DOCS_ALL_CHANGED_FILES"] != "":
-    docs_all_changed_files = os.environ["DOCS_ALL_CHANGED_FILES"].split()
 
-    all_code_blocks = [get_all_code_blocks(changed_file) for changed_file in docs_all_changed_files]
-    all_code_blocks = [block for sublist in all_code_blocks for block in sublist]
-else:
-    all_code_blocks = get_all_code_blocks("docs/**/*.md")
+def discover_python_files(directory):
+    python_files = []
+    for root, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".py"):
+                path = os.path.join(root, file)
+                python_files.append(
+                    pytest.param(path, marks=pytest.mark.skipif(path in SKIP_FILES, reason="Skip file"))
+                )
+    return python_files
 
 
-@pytest.mark.parametrize("block", all_code_blocks, ids=[f["id"] for f in all_code_blocks])
-def test_code_block(block, monkeypatch):
-    # Send some stdin for tests that use the Chat util
-    monkeypatch.setattr("sys.stdin", io.StringIO("Hi\nexit\n"))
+@pytest.mark.parametrize("python_file", discover_python_files("docs"))
+def test_python_file_execution(python_file):
+    """Test that the Python file executes successfully."""
+    result = subprocess.run(
+        ["poetry", "run", "python", python_file],
+        capture_output=True,
+        text=True,
+        input="Hi\nexit\n",
+    )
 
-    check_py_string(block["code"])
+    assert result.returncode == 0, f"Execution failed for {python_file} with error: {result.stderr}"

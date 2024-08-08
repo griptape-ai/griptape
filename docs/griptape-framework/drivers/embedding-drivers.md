@@ -32,7 +32,7 @@ The [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_em
 Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) provide OpenAI-compatible APIs. You can use the [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md) to interact with these services.
 Simply set the `base_url` to the service's API endpoint and the `model` to the model name. If the service requires an API key, you can set it in the `api_key` field.
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_2.py"
 ```
 
@@ -91,7 +91,7 @@ The [HuggingFaceHubEmbeddingDriver](../../reference/griptape/drivers/embedding/h
 
 The [OllamaEmbeddingDriver](../../reference/griptape/drivers/embedding/ollama_embedding_driver.md) uses the [Ollama Embeddings API](https://ollama.com/blog/embedding-models).
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_6.py"
 ```
 
@@ -102,7 +102,7 @@ The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/e
 !!! info
     This driver requires the `drivers-embedding-amazon-sagemaker` [extra](../index.md#extras).
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_7.py"
 ```
 

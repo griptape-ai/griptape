@@ -28,7 +28,7 @@ The Griptape Cloud Observability Driver instruments `@observable` functions and 
 Here is an example of how to use the `GriptapeCloudObservabilityDriver` with the `Observability` context manager to send the telemetry to Griptape Cloud:
 
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/observability_drivers_1.py"
 ```
 
@@ -43,7 +43,7 @@ The [OpenTelemetry](https://opentelemetry.io/) Observability Driver instruments 
 
 Here is an example of how to use the `OpenTelemetryObservabilityDriver` with the `Observability` context manager to output the telemetry directly to the console:
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/observability_drivers_2.py"
 ```
 

@@ -93,7 +93,7 @@ The [Stable Diffusion 3 Image Generation Pipeline Driver](../../reference/gripta
 
 Image generation consumes substantial memory. On devices with limited VRAM, it may be necessary to enable the `enable_model_cpu_offload` or `drop_t5_encoder` configurations. For more information, see [HuggingFace's documentation](https://huggingface.co/docs/diffusers/en/optimization/memory) on reduced memory usage.
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_7.py"
 ```
 
@@ -104,7 +104,7 @@ Image generation consumes substantial memory. On devices with limited VRAM, it m
 
 The [Stable Diffusion 3 Img2Img Image Generation Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_img_2_img_image_generation_pipeline_driver.md) provides a `StableDiffusion3Img2ImgPipeline` for image-to-image generations, accepting a text prompt and input image. This Driver accepts a text prompt, an input image, and configurations including Stable Diffusion 3 model, output image size, inference steps, generation seed, and strength of generation over the input image.
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_8.py"
 ```
 
@@ -115,6 +115,6 @@ The [Stable Diffusion 3 Img2Img Image Generation Pipeline Driver](../../referenc
 
 The [StableDiffusion3ControlNetImageGenerationPipelineDriver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_controlnet_image_generation_pipeline_driver.md) provides a `StableDiffusion3ControlNetPipeline` for image-to-image generations, accepting a text prompt and a control image. This Driver accepts a text prompt, a control image, and configurations including Stable Diffusion 3 model, ControlNet model, output image size, generation seed, inference steps, and the degree to which the model adheres to the control image.
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_9.py"
 ```

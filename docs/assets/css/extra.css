@@ -5,8 +5,3 @@
 .md-typeset table:not([class]) {
     display: table;
 }
-
-/* Hide the code block title since we're using it for other purposes.*/
-.filename {
-    display: none !important
-}

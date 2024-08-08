@@ -40,7 +40,7 @@ This driver uses [OpenAi function calling](https://platform.openai.com/docs/guid
 Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) provide OpenAI-compatible APIs. You can use the [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) to interact with these services.
 Simply set the `base_url` to the service's API endpoint and the `model` to the model name. If the service requires an API key, you can set it in the `api_key` field.
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_4.py"
 ```
 
@@ -138,7 +138,7 @@ The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/hugging
 
 The [HuggingFaceHubPromptDriver](#hugging-face-hub) also supports [Text Generation Interface](https://huggingface.co/docs/text-generation-inference/basic_tutorials/consuming_tgi#inference-client) for running models locally. To use Text Generation Interface, just set `model` to a TGI endpoint.
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_12.py"
 ```
 
@@ -168,6 +168,6 @@ This Driver has been primarily _chat-optimized_ models that have a [Huggingface 
 If your model does not fit this use-case, we suggest sub-classing [AmazonSageMakerJumpstartPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_jumpstart_prompt_driver.md) and overriding the `_to_model_input` and `_to_model_params` methods.
     
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_14.py"
 ```
