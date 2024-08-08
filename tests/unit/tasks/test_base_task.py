@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.events import EventBus
+from griptape.events import event_bus
 from griptape.events.event_listener import EventListener
 from griptape.structures import Agent, Workflow
 from griptape.tasks import ActionsSubtask
@@ -16,7 +16,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestBaseTask:
     @pytest.fixture()
     def task(self):
-        EventBus.add_event_listeners([EventListener(handler=Mock())])
+        event_bus.add_event_listeners([EventListener(handler=Mock())])
         agent = Agent(
             prompt_driver=MockPromptDriver(),
             embedding_driver=MockEmbeddingDriver(),
@@ -118,4 +118,4 @@ class TestBaseTask:
     def test_execute_publish_events(self, task):
         task.execute()
 
-        assert EventBus.event_listeners[0].handler.call_count == 2
+        assert event_bus.event_listeners[0].handler.call_count == 2

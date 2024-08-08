@@ -14,12 +14,12 @@ import os
 
 from griptape.drivers import AmazonSqsEventListenerDriver
 from griptape.events import (
-    EventListener, EventBus
+    EventListener, event_bus
 )
 from griptape.rules import Rule
 from griptape.structures import Agent
 
-EventBus.add_event_listeners(
+event_bus.add_event_listeners(
     [
         EventListener(
             driver=AmazonSqsEventListenerDriver(
@@ -84,12 +84,12 @@ import os
 
 from griptape.drivers import AmazonSqsEventListenerDriver
 from griptape.events import (
-    EventListener, EventBus
+    EventListener, event_bus
 )
 from griptape.rules import Rule
 from griptape.structures import Agent
 
-EventBus.add_event_listeners(
+event_bus.add_event_listeners(
     [
         EventListener(
             driver=AmazonSqsEventListenerDriver(
@@ -132,12 +132,12 @@ from griptape.drivers import AwsIotCoreEventListenerDriver, OpenAiChatPromptDriv
 from griptape.events import (
     EventListener,
     FinishStructureRunEvent,
-    EventBus
+    event_bus
 )
 from griptape.rules import Rule
 from griptape.structures import Agent
 
-EventBus.add_event_listeners(
+event_bus.add_event_listeners(
     [
         EventListener(
             event_types=[FinishStructureRunEvent],
@@ -179,11 +179,11 @@ from griptape.drivers import GriptapeCloudEventListenerDriver
 from griptape.events import (
     EventListener,
     FinishStructureRunEvent,
-    EventBus
+    event_bus
 )
 from griptape.structures import Agent
 
-EventBus.add_event_listeners(
+event_bus.add_event_listeners(
     [
         EventListener(
             event_types=[FinishStructureRunEvent],
@@ -210,11 +210,11 @@ from griptape.drivers import WebhookEventListenerDriver
 from griptape.events import (
     EventListener,
     FinishStructureRunEvent,
-    EventBus
+    event_bus
 )
 from griptape.structures import Agent
 
-EventBus.add_event_listeners(
+event_bus.add_event_listeners(
     [
         EventListener(
             event_types=[FinishStructureRunEvent],
@@ -242,11 +242,11 @@ from griptape.drivers import PusherEventListenerDriver
 from griptape.events import (
     EventListener,
     FinishStructureRunEvent,
-    EventBus
+    event_bus
 )
 from griptape.structures import Agent
 
-EventBus.add_event_listeners(
+event_bus.add_event_listeners(
     [
         EventListener(
             event_types=[FinishStructureRunEvent],

@@ -41,4 +41,4 @@ class _EventBus:
         self._event_listeners.clear()
 
 
-EventBus = _EventBus()
+event_bus = _EventBus()

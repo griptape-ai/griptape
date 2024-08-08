@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.artifacts.image_artifact import ImageArtifact
-from griptape.events import EventBus
+from griptape.events import event_bus
 from griptape.events.event_listener import EventListener
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
 
@@ -15,7 +15,7 @@ class TestBaseImageGenerationDriver:
 
     def test_run_text_to_image_publish_events(self, driver):
         mock_handler = Mock()
-        EventBus.add_event_listener(EventListener(handler=mock_handler))
+        event_bus.add_event_listener(EventListener(handler=mock_handler))
 
         driver.run_text_to_image(
             ["foo", "bar"],
@@ -31,7 +31,7 @@ class TestBaseImageGenerationDriver:
 
     def test_run_image_variation_publish_events(self, driver):
         mock_handler = Mock()
-        EventBus.add_event_listener(EventListener(handler=mock_handler))
+        event_bus.add_event_listener(EventListener(handler=mock_handler))
 
         driver.run_image_variation(
             ["foo", "bar"],
@@ -53,7 +53,7 @@ class TestBaseImageGenerationDriver:
 
     def test_run_image_image_inpainting_publish_events(self, driver):
         mock_handler = Mock()
-        EventBus.add_event_listener(EventListener(handler=mock_handler))
+        event_bus.add_event_listener(EventListener(handler=mock_handler))
 
         driver.run_image_inpainting(
             ["foo", "bar"],
@@ -81,7 +81,7 @@ class TestBaseImageGenerationDriver:
 
     def test_run_image_image_outpainting_publish_events(self, driver):
         mock_handler = Mock()
-        EventBus.add_event_listener(EventListener(handler=mock_handler))
+        event_bus.add_event_listener(EventListener(handler=mock_handler))
 
         driver.run_image_outpainting(
             ["foo", "bar"],

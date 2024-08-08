@@ -11,10 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to set custom schema properties on Tool Activities via `extra_schema_properties`.
 - Parameter `structure` to `BaseTask`.
 - Method `try_find_task` to `Structure`.
-- Global event bus, `griptape.events.EventBus`, for publishing and subscribing to events.
+- Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
 
 ### Changed
-- **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `EventBus`.
+- **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
 - **BREAKING**: Removed `EventPublisherMixin`.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.events import EventBus, FinishImageQueryEvent, StartImageQueryEvent
+from griptape.events import FinishImageQueryEvent, StartImageQueryEvent, event_bus
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
@@ -17,12 +17,12 @@ class BaseImageQueryDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     max_tokens: int = field(default=256, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, query: str, images: list[ImageArtifact]) -> None:
-        EventBus.publish_event(
+        event_bus.publish_event(
             StartImageQueryEvent(query=query, images_info=[image.to_text() for image in images]),
         )
 
     def after_run(self, result: str) -> None:
-        EventBus.publish_event(FinishImageQueryEvent(result=result))
+        event_bus.publish_event(FinishImageQueryEvent(result=result))
 
     def query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
         for attempt in self.retrying():
