@@ -16,7 +16,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestBaseTask:
     @pytest.fixture()
     def task(self):
-        EventBus.event_listeners = [EventListener(handler=Mock())]
+        EventBus.add_event_listeners([EventListener(handler=Mock())])
         agent = Agent(
             prompt_driver=MockPromptDriver(),
             embedding_driver=MockEmbeddingDriver(),
