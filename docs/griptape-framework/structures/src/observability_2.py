@@ -7,14 +7,14 @@ from griptape.observability import Observability
 
 # Decorate a function
 @observable
-def my_function():
+def my_function() -> None:
     time.sleep(3)
 
 
 class MyClass:
     # Decorate a method
     @observable
-    def my_method(self):
+    def my_method(self) -> None:
         time.sleep(1)
         my_function()
         time.sleep(2)

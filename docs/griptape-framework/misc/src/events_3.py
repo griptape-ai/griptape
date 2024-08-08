@@ -1,3 +1,5 @@
+from typing import cast
+
 from griptape.config import OpenAiStructureConfig
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.events import CompletionChunkEvent, EventListener
@@ -9,7 +11,7 @@ pipeline = Pipeline(
     config=OpenAiStructureConfig(prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True)),
     event_listeners=[
         EventListener(
-            lambda e: print(e.token, end="", flush=True),
+            lambda e: print(cast(CompletionChunkEvent, e).token, end="", flush=True),
             event_types=[CompletionChunkEvent],
         )
     ],

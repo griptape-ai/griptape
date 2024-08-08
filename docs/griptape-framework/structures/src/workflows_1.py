@@ -9,7 +9,7 @@ world_task = PromptTask(
 )
 
 
-def character_task(task_id, character_name) -> PromptTask:
+def character_task(task_id: str, character_name: str) -> PromptTask:
     return PromptTask(
         "Based on the following world description create a character named {{ name }}:\n{{ parent_outputs['world'] }}",
         context={"name": character_name},

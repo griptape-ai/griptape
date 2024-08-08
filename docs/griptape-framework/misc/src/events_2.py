@@ -2,11 +2,11 @@ from griptape.events import BaseEvent, EventListener
 from griptape.structures import Agent
 
 
-def handler1(event: BaseEvent):
+def handler1(event: BaseEvent) -> None:
     print("Handler 1", event.__class__)
 
 
-def handler2(event: BaseEvent):
+def handler2(event: BaseEvent) -> None:
     print("Handler 2", event.__class__)
 
 

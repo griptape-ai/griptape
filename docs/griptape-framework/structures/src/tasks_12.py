@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
 from griptape.engines import VariationImageGenerationEngine
 from griptape.loaders import ImageLoader
@@ -16,8 +18,7 @@ engine = VariationImageGenerationEngine(
 )
 
 # Load input image artifact.
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact = ImageLoader().load(f.read())
+image_artifact = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
 
 # Instantiate a pipeline.
 pipeline = Pipeline()

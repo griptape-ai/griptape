@@ -5,9 +5,9 @@ from griptape.structures import Agent
 token_counter = utils.TokenCounter()
 
 
-def count_tokens(e: BaseEvent):
-    if isinstance(e, StartPromptEvent) or isinstance(e, FinishPromptEvent):
-        token_counter.add_tokens(e.token_count)
+def count_tokens(e: BaseEvent) -> None:
+    if isinstance(e, FinishPromptEvent) and e.output_token_count is not None:
+        token_counter.add_tokens(e.output_token_count)
 
 
 agent = Agent(

@@ -1,5 +1,6 @@
 import os
 
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import OpenAiEmbeddingDriver, RedisVectorStoreDriver
 from griptape.loaders import WebLoader
 
@@ -8,7 +9,7 @@ embedding_driver = OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"])
 
 vector_store_driver = RedisVectorStoreDriver(
     host=os.environ["REDIS_HOST"],
-    port=os.environ["REDIS_PORT"],
+    port=int(os.environ["REDIS_PORT"]),
     password=os.environ["REDIS_PASSWORD"],
     index=os.environ["REDIS_INDEX"],
     embedding_driver=embedding_driver,
@@ -16,6 +17,9 @@ vector_store_driver = RedisVectorStoreDriver(
 
 # Load Artifacts from the web
 artifacts = WebLoader(max_tokens=200).load("https://www.griptape.ai")
+
+if isinstance(artifacts, ErrorArtifact):
+    raise Exception(artifacts.value)
 
 # Upsert Artifacts into the Vector Store Driver
 vector_store_driver.upsert_text_artifacts(

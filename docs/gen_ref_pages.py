@@ -7,7 +7,7 @@ import mkdocs_gen_files
 
 
 def build_reference_docs() -> None:
-    nav = mkdocs_gen_files.Nav()
+    nav = mkdocs_gen_files.Nav()  # pyright: ignore[reportPrivateImportUsage]
 
     for path in sorted(Path("griptape").rglob("*.py")):
         module_path = path.relative_to(".").with_suffix("")

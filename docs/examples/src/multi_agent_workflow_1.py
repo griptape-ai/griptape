@@ -25,7 +25,7 @@ WRITERS = [
 ]
 
 
-def build_researcher():
+def build_researcher() -> Agent:
     """Builds a Researcher Structure."""
     researcher = Agent(
         id="researcher",
@@ -82,7 +82,7 @@ def build_researcher():
     return researcher
 
 
-def build_writer(role: str, goal: str, backstory: str):
+def build_writer(role: str, goal: str, backstory: str) -> Agent:
     """Builds a Writer Structure.
 
     Args:
@@ -163,7 +163,7 @@ if __name__ == "__main__":
                 {{ parent_outputs["research"] }}""",
                 ),
                 driver=LocalStructureRunDriver(
-                    structure_factory_fn=lambda: build_writer(
+                    structure_factory_fn=lambda writer=writer: build_writer(
                         role=writer["role"],
                         goal=writer["goal"],
                         backstory=writer["backstory"],

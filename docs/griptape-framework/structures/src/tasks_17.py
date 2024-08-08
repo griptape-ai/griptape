@@ -6,7 +6,7 @@ from griptape.structures import Pipeline
 from griptape.tasks import TextToSpeechTask
 
 driver = ElevenLabsTextToSpeechDriver(
-    api_key=os.getenv("ELEVEN_LABS_API_KEY"),
+    api_key=os.environ["ELEVEN_LABS_API_KEY"],
     model="eleven_multilingual_v2",
     voice="Matilda",
 )

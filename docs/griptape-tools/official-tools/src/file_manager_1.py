@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from griptape.structures import Agent
 from griptape.tools import FileManager
 
@@ -11,8 +13,7 @@ agent = Agent(tools=[file_manager_tool])
 filename = "sample1.txt"
 content = "This is the content of sample1.txt"
 
-with open(filename, "w") as f:
-    f.write(content)
+Path(filename).write_text(filename)
 
 # Now, read content from the file 'sample1.txt' using the agent's command
 agent.run("Can you get me the sample1.txt file?")

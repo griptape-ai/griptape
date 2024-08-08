@@ -10,10 +10,10 @@ from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
 
 if len(sys.argv) > 2:
-    input = sys.argv[1]
+    user_input = sys.argv[1]
     session_id = sys.argv[2]
 else:
-    input = "Hello!"  # Default input
+    user_input = "Hello!"  # Default input
     session_id = "session-id-123"  # Default session ID
 
 structure = Agent(
@@ -31,4 +31,4 @@ structure = Agent(
     )
 )
 
-print(structure.run(input).output_task.output.value)
+print(structure.run(user_input).output_task.output.value)

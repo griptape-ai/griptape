@@ -1,3 +1,4 @@
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRetrievalRagModule
@@ -26,6 +27,9 @@ engine = RagEngine(
 )
 
 artifacts = WebLoader().load("https://en.wikipedia.org/wiki/Physics")
+
+if isinstance(artifacts, ErrorArtifact):
+    raise Exception(artifacts.value)
 
 vector_store_driver.upsert_text_artifacts({namespace: artifacts})
 

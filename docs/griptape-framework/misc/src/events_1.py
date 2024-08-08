@@ -11,7 +11,7 @@ from griptape.events import (
 from griptape.structures import Agent
 
 
-def handler(event: BaseEvent):
+def handler(event: BaseEvent) -> None:
     print(event.__class__)
 
 

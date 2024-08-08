@@ -30,7 +30,7 @@ To add Python dependencies for your tool, add a `requirements.txt` file. The too
 
 Next, create a `tool.py` file with the following code:
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "griptape-tools/custom-tools/src/index_1.py"
 ```
 
@@ -38,7 +38,7 @@ Next, create a `tool.py` file with the following code:
 
 Finally, let's test our tool:
 
-```python title="PYTEST_IGNORE"
+```python
 --8<-- "griptape-tools/custom-tools/src/index_2.py"
 ```
 

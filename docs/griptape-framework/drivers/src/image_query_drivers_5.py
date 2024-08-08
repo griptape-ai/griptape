@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import boto3
 
 from griptape.drivers import AmazonBedrockImageQueryDriver, BedrockClaudeImageQueryModelDriver
@@ -14,8 +16,7 @@ driver = AmazonBedrockImageQueryDriver(
 
 engine = ImageQueryEngine(image_query_driver=driver)
 
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact = ImageLoader().load(f.read())
+image_artifact = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
 
 
 result = engine.run("Describe the weather in the image", [image_artifact])

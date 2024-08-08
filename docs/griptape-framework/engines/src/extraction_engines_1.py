@@ -1,3 +1,4 @@
+from griptape.artifacts import ListArtifact
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.engines import CsvExtractionEngine
 
@@ -16,5 +17,8 @@ Charlie is 40 and lives in Texas.
 # Extract CSV rows using the engine
 result = csv_engine.extract(sample_text, column_names=["name", "age", "location"])
 
-for row in result.value:
-    print(row.to_text())
+if isinstance(result, ListArtifact):
+    for row in result.value:
+        print(row.to_text())
+else:
+    print(result.to_text())

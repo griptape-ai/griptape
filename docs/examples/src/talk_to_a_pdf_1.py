@@ -1,5 +1,6 @@
 import requests
 
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRetrievalRagModule
@@ -30,7 +31,11 @@ vector_store_tool = RagClient(
     rag_engine=engine,
 )
 
-vector_store.upsert_text_artifacts({namespace: PdfLoader().load(response.content)})
+artifacts = PdfLoader().load(response.content)
+if isinstance(artifacts, ErrorArtifact):
+    raise Exception(artifacts.value)
+
+vector_store.upsert_text_artifacts({namespace: artifacts})
 
 agent = Agent(tools=[vector_store_tool])
 

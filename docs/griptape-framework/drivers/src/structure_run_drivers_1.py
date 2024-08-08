@@ -4,7 +4,7 @@ from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
 
 
-def build_joke_teller():
+def build_joke_teller() -> Agent:
     joke_teller = Agent(
         rules=[
             Rule(
@@ -16,7 +16,7 @@ def build_joke_teller():
     return joke_teller
 
 
-def build_joke_rewriter():
+def build_joke_rewriter() -> Agent:
     joke_rewriter = Agent(
         rules=[
             Rule(

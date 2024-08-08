@@ -11,7 +11,7 @@ from griptape.tools import (
 )
 
 
-def build_researcher():
+def build_researcher() -> Agent:
     researcher = Agent(
         tools=[
             WebSearch(
@@ -66,7 +66,7 @@ def build_researcher():
     return researcher
 
 
-def build_writer():
+def build_writer() -> Agent:
     writer = Agent(
         input="Instructions: {{args[0]}}\nContext: {{args[1]}}",
         rulesets=[

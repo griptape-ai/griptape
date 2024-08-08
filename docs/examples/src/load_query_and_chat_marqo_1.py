@@ -1,6 +1,7 @@
 import os
 
 from griptape import utils
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import MarqoVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
@@ -20,12 +21,14 @@ vector_store = MarqoVectorStoreDriver(
 # Initialize the knowledge base tool
 vector_store_tool = VectorStoreClient(
     description="Contains information about the Griptape Framework from www.griptape.ai",
-    namespace=namespace,
     vector_store_driver=vector_store,
 )
 
 # Load artifacts from the web
 artifacts = WebLoader().load("https://www.griptape.ai")
+
+if isinstance(artifacts, ErrorArtifact):
+    raise Exception(artifacts.value)
 
 # Upsert the artifacts into the vector store
 vector_store.upsert_text_artifacts(

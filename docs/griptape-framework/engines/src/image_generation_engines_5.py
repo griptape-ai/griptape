@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
 from griptape.engines import OutpaintingImageGenerationEngine
 from griptape.loaders import ImageLoader
@@ -13,11 +15,9 @@ engine = OutpaintingImageGenerationEngine(
     image_generation_driver=driver,
 )
 
-with open("tests/resources/mountain.png", "rb") as f:
-    image_artifact = ImageLoader().load(f.read())
+image_artifact = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
 
-with open("tests/resources/mountain-mask.png", "rb") as f:
-    mask_artifact = ImageLoader().load(f.read())
+mask_artifact = ImageLoader().load(Path("tests/resources/mountain-mask.png").read_bytes())
 
 engine.run(
     prompts=["A photo of a mountain shrouded in clouds"],

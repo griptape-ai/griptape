@@ -18,3 +18,6 @@ class RandomNumberGenerator(BaseTool):
     )
     def generate(self, params: dict) -> TextArtifact:
         return TextArtifact(str(round(random.random(), params["values"].get("decimals"))))
+
+
+RandomNumberGenerator()
