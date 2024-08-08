@@ -1,5 +1,6 @@
 from .base_rag_module import BaseRagModule
 from .query.base_query_rag_module import BaseQueryRagModule
+from .query.translate_query_rag_module import TranslateQueryRagModule
 from .retrieval.base_retrieval_rag_module import BaseRetrievalRagModule
 from .retrieval.base_rerank_rag_module import BaseRerankRagModule
 from .retrieval.text_chunks_rerank_rag_module import TextChunksRerankRagModule
@@ -17,6 +18,7 @@ from .response.footnote_prompt_response_rag_module import FootnotePromptResponse
 __all__ = [
     "BaseRagModule",
     "BaseQueryRagModule",
+    "TranslateQueryRagModule",
     "BaseRetrievalRagModule",
     "BaseRerankRagModule",
     "TextChunksRerankRagModule",

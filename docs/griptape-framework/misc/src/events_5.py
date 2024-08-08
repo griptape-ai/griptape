@@ -1,5 +1,5 @@
 from griptape import utils
-from griptape.events import BaseEvent, EventListener, FinishPromptEvent, StartPromptEvent
+from griptape.events import BaseEvent, EventListener, FinishPromptEvent, event_bus
 from griptape.structures import Agent
 
 token_counter = utils.TokenCounter()
@@ -10,14 +10,17 @@ def count_tokens(e: BaseEvent) -> None:
         token_counter.add_tokens(e.output_token_count)
 
 
-agent = Agent(
-    event_listeners=[
+event_bus.add_event_listeners(
+    [
         EventListener(
-            handler=lambda e: count_tokens(e),
-            event_types=[StartPromptEvent, FinishPromptEvent],
+            count_tokens,
+            event_types=[FinishPromptEvent],
         )
     ]
 )
+
+
+agent = Agent()
 
 agent.run("tell me about large language models")
 

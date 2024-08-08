@@ -1,7 +1,7 @@
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.common import Message, PromptStack
 from griptape.events import FinishPromptEvent, StartPromptEvent
-from griptape.mixins import EventPublisherMixin
+from griptape.events.event_bus import _EventBus
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask, ToolkitTask
 from tests.mocks.mock_failing_prompt_driver import MockFailingPromptDriver
@@ -27,7 +27,7 @@ class TestBasePromptDriver:
         assert isinstance(pipeline.run().output_task.output, ErrorArtifact)
 
     def test_run_via_pipeline_publishes_events(self, mocker):
-        mock_publish_event = mocker.patch.object(EventPublisherMixin, "publish_event")
+        mock_publish_event = mocker.patch.object(_EventBus, "publish_event")
         driver = MockPromptDriver()
         pipeline = Pipeline(prompt_driver=driver)
         pipeline.add_task(PromptTask("test"))
@@ -42,8 +42,7 @@ class TestBasePromptDriver:
         assert isinstance(MockPromptDriver().run(PromptStack(messages=[])), Message)
 
     def test_run_with_stream(self):
-        pipeline = Pipeline()
-        result = MockPromptDriver(stream=True, event_listeners=pipeline.event_listeners).run(PromptStack(messages=[]))
+        result = MockPromptDriver(stream=True).run(PromptStack(messages=[]))
         assert isinstance(result, Message)
         assert result.value == "mock output"
 

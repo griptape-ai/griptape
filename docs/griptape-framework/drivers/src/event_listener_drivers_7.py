@@ -1,11 +1,11 @@
 import os
 
 from griptape.drivers import PusherEventListenerDriver
-from griptape.events import EventListener, FinishStructureRunEvent
+from griptape.events import EventListener, FinishStructureRunEvent, event_bus
 from griptape.structures import Agent
 
-agent = Agent(
-    event_listeners=[
+event_bus.add_event_listeners(
+    [
         EventListener(
             event_types=[FinishStructureRunEvent],
             driver=PusherEventListenerDriver(
@@ -20,5 +20,7 @@ agent = Agent(
         ),
     ],
 )
+
+agent = Agent()
 
 agent.run("Analyze the pros and cons of remote work vs. office work")

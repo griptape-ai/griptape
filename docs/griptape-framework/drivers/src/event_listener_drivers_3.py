@@ -1,22 +1,23 @@
 import os
 
 from griptape.drivers import AmazonSqsEventListenerDriver
-from griptape.events import (
-    EventListener,
-)
+from griptape.events import EventListener, event_bus
 from griptape.rules import Rule
 from griptape.structures import Agent
 
-agent = Agent(
-    rules=[
-        Rule(value="You will be provided with a block of text, and your task is to extract a list of keywords from it.")
-    ],
-    event_listeners=[
+event_bus.add_event_listeners(
+    [
         EventListener(
             driver=AmazonSqsEventListenerDriver(
                 queue_url=os.environ["AMAZON_SQS_QUEUE_URL"],
             ),
         ),
+    ]
+)
+
+agent = Agent(
+    rules=[
+        Rule(value="You will be provided with a block of text, and your task is to extract a list of keywords from it.")
     ],
 )
 

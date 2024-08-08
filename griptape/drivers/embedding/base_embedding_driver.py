@@ -7,7 +7,7 @@ import numpy as np
 from attrs import define, field
 
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
+from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import TextArtifact
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseEmbeddingDriver(EventPublisherMixin, SerializableMixin, ExponentialBackoffMixin, ABC):
+class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """Base Embedding Driver.
 
     Attributes:

@@ -1,5 +1,7 @@
-from griptape.events import BaseEvent, EventListener, StartPromptEvent
+from griptape.events import BaseEvent, EventListener, StartPromptEvent, event_bus
 from griptape.structures import Agent
+
+event_bus.add_event_listeners([EventListener(handler=lambda e: print(e), event_types=[StartPromptEvent])])
 
 
 def handler(event: BaseEvent) -> None:
@@ -9,6 +11,6 @@ def handler(event: BaseEvent) -> None:
             print(f"{message.role}: {message.content}")
 
 
-agent = Agent(event_listeners=[EventListener(handler=handler, event_types=[StartPromptEvent])])
+agent = Agent()
 
 agent.run("Write me a poem.")

@@ -5,7 +5,7 @@ search:
 
 ## Overview
 
-You can use [EventListener](../../reference/griptape/events/event_listener.md)s to listen for events during a Structure's execution.
+You can configure the global [event_bus](../../reference/griptape/events/event_bus.md) with [EventListener](../../reference/griptape/events/event_listener.md)s to listen for various framework events.
 See [Event Listener Drivers](../drivers/event-listener-drivers.md) for examples on forwarding events to external services.
 
 ## Specific Event Types

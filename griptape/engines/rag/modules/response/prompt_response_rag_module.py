@@ -32,7 +32,7 @@ class PromptResponseRagModule(BaseResponseRagModule):
 
             system_prompt = self.generate_system_template(context, included_chunks)
             message_token_count = self.prompt_driver.tokenizer.count_tokens(
-                self.prompt_driver.prompt_stack_to_string(self.generate_query_prompt_stack(system_prompt, query)),
+                self.prompt_driver.prompt_stack_to_string(self.generate_prompt_stack(system_prompt, query)),
             )
 
             if message_token_count + self.answer_token_offset >= tokenizer.max_input_tokens:
@@ -42,7 +42,7 @@ class PromptResponseRagModule(BaseResponseRagModule):
 
                 break
 
-        output = self.prompt_driver.run(self.generate_query_prompt_stack(system_prompt, query)).to_artifact()
+        output = self.prompt_driver.run(self.generate_prompt_stack(system_prompt, query)).to_artifact()
 
         if isinstance(output, TextArtifact):
             context.output = output

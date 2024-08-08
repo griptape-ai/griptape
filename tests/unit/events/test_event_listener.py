@@ -13,6 +13,7 @@ from griptape.events import (
     StartPromptEvent,
     StartStructureRunEvent,
     StartTaskEvent,
+    event_bus,
 )
 from griptape.events.base_event import BaseEvent
 from griptape.structures import Pipeline
@@ -37,7 +38,7 @@ class TestEventListener:
         event_handler_1 = Mock()
         event_handler_2 = Mock()
 
-        pipeline.event_listeners = [EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)]
+        event_bus.add_event_listeners([EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)])
 
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
@@ -58,17 +59,19 @@ class TestEventListener:
         finish_structure_run_event_handler = Mock()
         completion_chunk_handler = Mock()
 
-        pipeline.event_listeners = [
-            EventListener(start_prompt_event_handler, event_types=[StartPromptEvent]),
-            EventListener(finish_prompt_event_handler, event_types=[FinishPromptEvent]),
-            EventListener(start_task_event_handler, event_types=[StartTaskEvent]),
-            EventListener(finish_task_event_handler, event_types=[FinishTaskEvent]),
-            EventListener(start_subtask_event_handler, event_types=[StartActionsSubtaskEvent]),
-            EventListener(finish_subtask_event_handler, event_types=[FinishActionsSubtaskEvent]),
-            EventListener(start_structure_run_event_handler, event_types=[StartStructureRunEvent]),
-            EventListener(finish_structure_run_event_handler, event_types=[FinishStructureRunEvent]),
-            EventListener(completion_chunk_handler, event_types=[CompletionChunkEvent]),
-        ]
+        event_bus.add_event_listeners(
+            [
+                EventListener(start_prompt_event_handler, event_types=[StartPromptEvent]),
+                EventListener(finish_prompt_event_handler, event_types=[FinishPromptEvent]),
+                EventListener(start_task_event_handler, event_types=[StartTaskEvent]),
+                EventListener(finish_task_event_handler, event_types=[FinishTaskEvent]),
+                EventListener(start_subtask_event_handler, event_types=[StartActionsSubtaskEvent]),
+                EventListener(finish_subtask_event_handler, event_types=[FinishActionsSubtaskEvent]),
+                EventListener(start_structure_run_event_handler, event_types=[StartStructureRunEvent]),
+                EventListener(finish_structure_run_event_handler, event_types=[FinishStructureRunEvent]),
+                EventListener(completion_chunk_handler, event_types=[CompletionChunkEvent]),
+            ]
+        )
 
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()
@@ -86,25 +89,25 @@ class TestEventListener:
         completion_chunk_handler.assert_called_once()
 
     def test_add_remove_event_listener(self, pipeline):
-        pipeline.event_listeners = []
+        event_bus.clear_event_listeners()
         mock1 = Mock()
         mock2 = Mock()
         # duplicate event listeners will only get added once
-        event_listener_1 = pipeline.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
-        pipeline.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
+        event_listener_1 = event_bus.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
+        event_bus.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
 
-        event_listener_3 = pipeline.add_event_listener(EventListener(mock1, event_types=[FinishPromptEvent]))
-        event_listener_4 = pipeline.add_event_listener(EventListener(mock2, event_types=[StartPromptEvent]))
+        event_listener_3 = event_bus.add_event_listener(EventListener(mock1, event_types=[FinishPromptEvent]))
+        event_listener_4 = event_bus.add_event_listener(EventListener(mock2, event_types=[StartPromptEvent]))
 
-        event_listener_5 = pipeline.add_event_listener(EventListener(mock2))
+        event_listener_5 = event_bus.add_event_listener(EventListener(mock2))
 
-        assert len(pipeline.event_listeners) == 4
+        assert len(event_bus.event_listeners) == 4
 
-        pipeline.remove_event_listener(event_listener_1)
-        pipeline.remove_event_listener(event_listener_3)
-        pipeline.remove_event_listener(event_listener_4)
-        pipeline.remove_event_listener(event_listener_5)
-        assert len(pipeline.event_listeners) == 0
+        event_bus.remove_event_listener(event_listener_1)
+        event_bus.remove_event_listener(event_listener_3)
+        event_bus.remove_event_listener(event_listener_4)
+        event_bus.remove_event_listener(event_listener_5)
+        assert len(event_bus.event_listeners) == 0
 
     def test_publish_event(self):
         mock_event_listener_driver = Mock()

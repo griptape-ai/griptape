@@ -1,4 +1,4 @@
-from griptape.events import BaseEvent, EventListener
+from griptape.events import BaseEvent, EventListener, event_bus
 from griptape.structures import Agent
 
 
@@ -10,11 +10,13 @@ def handler2(event: BaseEvent) -> None:
     print("Handler 2", event.__class__)
 
 
-agent = Agent(
-    event_listeners=[
+event_bus.add_event_listeners(
+    [
         EventListener(handler1),
         EventListener(handler2),
     ]
 )
+
+agent = Agent()
 
 agent.run("tell me about griptape")
