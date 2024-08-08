@@ -89,6 +89,8 @@ agent = Agent()
 
 agent = Agent()
 
+agent = Agent()
+
 agent.run("tell me about griptape")
 ```
 

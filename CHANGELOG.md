@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Method `try_find_task` to `Structure`.
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
 - Global config, `griptape.config.config`, for setting global configuration defaults.
+- `TranslateQueryRagModule` `RagEngine` module for translating input queries.
+- Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
