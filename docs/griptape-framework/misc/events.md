@@ -84,10 +84,7 @@ event_bus.add_event_listeners([
         EventListener(handler1),
         EventListener(handler2),
     ]
-
-agent = Agent()
-
-agent = Agent()
+)
 
 agent = Agent()
 
