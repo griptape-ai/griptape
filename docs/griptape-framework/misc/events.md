@@ -30,7 +30,7 @@ from griptape.events import (
 def handler(event: BaseEvent):
     print(event.__class__)
 
-EventBus.event_listeners=[
+EventBus.add_event_listeners([
         EventListener(
             handler,
             event_types=[
@@ -42,7 +42,7 @@ EventBus.event_listeners=[
                 FinishPromptEvent,
             ],
         )
-    ]
+    ])
 
 agent = Agent()
 
@@ -140,12 +140,12 @@ from griptape.drivers import OpenAiChatPromptDriver
 
 
 
-EventBus.event_listeners = [
+EventBus.add_event_listeners([
     EventListener(
         lambda e: print(e.token, end="", flush=True),
         event_types=[CompletionChunkEvent],
     )
-]
+])
 
 pipeline = Pipeline(
     config=OpenAiStructureConfig(
@@ -194,12 +194,12 @@ from griptape.structures import Agent
 
 token_counter = utils.TokenCounter()
 
-EventBus.event_listeners = [
+EventBus.add_event_listeners([
     EventListener(
         lambda e: token_counter.add_tokens(e.token_count),
         event_types=[StartPromptEvent, FinishPromptEvent],
     )
-]
+])
 
 def count_tokens(e: BaseEvent):
     if isinstance(e, StartPromptEvent) or isinstance(e, FinishPromptEvent):
@@ -248,7 +248,7 @@ from griptape.structures import Agent
 from griptape.events import BaseEvent, StartPromptEvent, EventListener, EventBus
 
 
-EventBus.event_listeners = [EventListener(handler=lambda e: print(e), event_types=[StartPromptEvent])]
+EventBus.add_event_listeners([EventListener(handler=lambda e: print(e), event_types=[StartPromptEvent])])
 
 def handler(event: BaseEvent):
     if isinstance(event, StartPromptEvent):
