@@ -311,6 +311,9 @@ convention = "google"
     "ANN201", # missing-return-type-undocumented-public-function
     "ANN202", # missing-return-type-private-function
 ]
+"docs/*" = [
+    "T20" # flake8-print
+]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "attr".msg = "The attr module is deprecated, use attrs instead."

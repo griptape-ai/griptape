@@ -3,16 +3,7 @@
 This tool enables LLMs to make simple calculations.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import Calculator
-
-# Create an agent with the Calculator tool
-agent = Agent(
-    tools=[Calculator()]
-)
-
-# Run the agent with a task to perform the arithmetic calculation of \(10^5\)
-agent.run("What is 10 raised to the power of 5?")
+--8<-- "docs/griptape-tools/official-tools/src/calculator_1.py"
 ```
 ```
 [09/08/23 14:23:51] INFO     Task bbc6002a5e5b4655bb52b6a550a1b2a5              

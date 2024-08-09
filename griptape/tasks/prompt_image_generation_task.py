@@ -29,7 +29,9 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
 
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
-    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
+    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(
+        default=DEFAULT_INPUT_TEMPLATE, alias="input"
+    )
     _image_generation_engine: PromptImageGenerationEngine = field(
         default=None,
         kw_only=True,
