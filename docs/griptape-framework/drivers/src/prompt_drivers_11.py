@@ -1,16 +1,13 @@
 import os
 
-from griptape.config import StructureConfig
 from griptape.drivers import HuggingFaceHubPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 
 agent = Agent(
-    config=StructureConfig(
-        prompt_driver=HuggingFaceHubPromptDriver(
-            model="HuggingFaceH4/zephyr-7b-beta",
-            api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
-        )
+    prompt_driver=HuggingFaceHubPromptDriver(
+        model="HuggingFaceH4/zephyr-7b-beta",
+        api_token=os.environ["HUGGINGFACE_HUB_ACCESS_TOKEN"],
     ),
     rulesets=[
         Ruleset(

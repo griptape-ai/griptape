@@ -1,13 +1,10 @@
-from griptape.config import StructureConfig
 from griptape.drivers import AmazonBedrockPromptDriver
 from griptape.rules import Rule
 from griptape.structures import Agent
 
 agent = Agent(
-    config=StructureConfig(
-        prompt_driver=AmazonBedrockPromptDriver(
-            model="anthropic.claude-3-sonnet-20240229-v1:0",
-        )
+    prompt_driver=AmazonBedrockPromptDriver(
+        model="anthropic.claude-3-sonnet-20240229-v1:0",
     ),
     rules=[
         Rule(
