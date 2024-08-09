@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional, Any
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from attrs import Factory, define, field
 

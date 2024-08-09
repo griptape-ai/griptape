@@ -3,7 +3,7 @@ import pytest
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import PromptResponseRagModule
-from griptape.rules import Ruleset, Rule
+from griptape.rules import Rule, Ruleset
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 

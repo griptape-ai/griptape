@@ -1,9 +1,9 @@
-from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
-from griptape.engines.rag import RagEngine, RagContext
-from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule, TranslateQueryRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage, QueryRagStage
+from griptape.drivers import LocalVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
+from griptape.engines.rag import RagContext, RagEngine
+from griptape.engines.rag.modules import PromptResponseRagModule, TranslateQueryRagModule, VectorStoreRetrievalRagModule
+from griptape.engines.rag.stages import QueryRagStage, ResponseRagStage, RetrievalRagStage
 from griptape.loaders import WebLoader
-from griptape.rules import Ruleset, Rule
+from griptape.rules import Rule, Ruleset
 
 prompt_driver = OpenAiChatPromptDriver(model="gpt-4o", temperature=0)
 

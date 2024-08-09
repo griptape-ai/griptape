@@ -40,6 +40,7 @@ class TestVectorStoreRetrievalRagModule:
     def test_run_with_namespace_overrides(self):
         vector_store_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
         module = VectorStoreRetrievalRagModule(
+            name="TestModule",
             vector_store_driver=vector_store_driver, query_params={"namespace": "test"}
         )
 
@@ -48,13 +49,13 @@ class TestVectorStoreRetrievalRagModule:
 
         result1 = module.run(
             RagContext(
-                query="test", module_configs={"VectorStoreRetrievalRagModule": {"query_params": {"namespace": "empty"}}}
+                query="test", module_configs={"TestModule": {"query_params": {"namespace": "empty"}}}
             )
         )
 
         result2 = module.run(
             RagContext(
-                query="test", module_configs={"VectorStoreRetrievalRagModule": {"query_params": {"namespace": "test"}}}
+                query="test", module_configs={"TestModule": {"query_params": {"namespace": "test"}}}
             )
         )
 
