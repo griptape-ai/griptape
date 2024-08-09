@@ -1,6 +1,7 @@
 from griptape.artifacts import TextArtifact
 from griptape.config import (
-    OpenAiStructureConfig,
+    OpenAiDriverConfig,
+    config,
 )
 from griptape.drivers import (
     LocalVectorStoreDriver,
@@ -15,12 +16,13 @@ from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
 from griptape.tools import FileManager, TaskMemoryClient, WebScraper
 
+config.drivers = OpenAiDriverConfig(
+    prompt=OpenAiChatPromptDriver(model="gpt-4"),
+)
+
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 
 agent = Agent(
-    config=OpenAiStructureConfig(
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
-    ),
     task_memory=TaskMemory(
         artifact_storages={
             TextArtifact: TextArtifactStorage(

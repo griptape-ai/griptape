@@ -1,6 +1,6 @@
 from attrs import Factory, define, field
 
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 from griptape.drivers import (
     BaseEmbeddingDriver,
     BasePromptDriver,
@@ -12,15 +12,15 @@ from griptape.drivers import (
 
 
 @define
-class CohereStructureConfig(StructureConfig):
+class CohereDriverConfig(DriverConfig):
     api_key: str = field(metadata={"serializable": False}, kw_only=True)
 
-    prompt_driver: BasePromptDriver = field(
+    prompt: BasePromptDriver = field(
         default=Factory(lambda self: CoherePromptDriver(model="command-r", api_key=self.api_key), takes_self=True),
         metadata={"serializable": True},
         kw_only=True,
     )
-    embedding_driver: BaseEmbeddingDriver = field(
+    embedding: BaseEmbeddingDriver = field(
         default=Factory(
             lambda self: CohereEmbeddingDriver(
                 model="embed-english-v3.0",
@@ -32,8 +32,8 @@ class CohereStructureConfig(StructureConfig):
         metadata={"serializable": True},
         kw_only=True,
     )
-    vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding_driver), takes_self=True),
+    vector_store: BaseVectorStoreDriver = field(
+        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding), takes_self=True),
         kw_only=True,
         metadata={"serializable": True},
     )

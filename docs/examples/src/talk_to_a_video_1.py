@@ -3,8 +3,10 @@ import time
 import google.generativeai as genai
 
 from griptape.artifacts import GenericArtifact, TextArtifact
-from griptape.config import GoogleStructureConfig
+from griptape.config import GoogleDriverConfig, config
 from griptape.structures import Agent
+
+config.drivers = GoogleDriverConfig()
 
 video_file = genai.upload_file(path="tests/resources/griptape-comfyui.mp4")
 while video_file.state.name == "PROCESSING":
@@ -15,11 +17,10 @@ if video_file.state.name == "FAILED":
     raise ValueError(video_file.state.name)
 
 agent = Agent(
-    config=GoogleStructureConfig(),
     input=[
         GenericArtifact(video_file),
         TextArtifact("Answer this question regarding the video: {{ args[0] }}"),
-    ],
+    ]
 )
 
 agent.run("Are there any scenes that show a character with earings?")

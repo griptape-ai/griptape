@@ -5,11 +5,12 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.drivers import BaseConversationMemoryDriver
-from griptape.memory.structure import BaseConversationMemory
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     import boto3
+
+    from griptape.memory.structure import BaseConversationMemory
 
 
 @define
@@ -38,6 +39,8 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
         )
 
     def load(self) -> Optional[BaseConversationMemory]:
+        from griptape.memory.structure import BaseConversationMemory
+
         response = self.table.get_item(Key=self._get_key())
 
         if "Item" in response and self.value_attribute_key in response["Item"]:

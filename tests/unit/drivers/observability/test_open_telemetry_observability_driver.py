@@ -8,7 +8,6 @@ from griptape.common import Observable
 from griptape.drivers import OpenTelemetryObservabilityDriver
 from griptape.observability.observability import Observability
 from griptape.structures.agent import Agent
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils.expected_spans import ExpectedSpan, ExpectedSpans
 
 
@@ -170,7 +169,7 @@ class TestOpenTelemetryObservabilityDriver:
         )
 
         with Observability(observability_driver=driver):
-            agent = Agent(prompt_driver=MockPromptDriver())
+            agent = Agent()
             agent.run("Hi")
 
         assert mock_span_exporter.export.call_count == 1

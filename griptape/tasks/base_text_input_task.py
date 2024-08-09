@@ -1,14 +1,18 @@
 from __future__ import annotations
 
+import logging
 from abc import ABC
 from typing import Callable
 
 from attrs import define, field
 
 from griptape.artifacts import TextArtifact
+from griptape.config import config
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2
+
+logger = logging.getLogger(config.logging.logger_name)
 
 
 @define
@@ -36,9 +40,9 @@ class BaseTextInputTask(RuleMixin, BaseTask, ABC):
     def before_run(self) -> None:
         super().before_run()
 
-        self.structure.logger.info("%s %s\nInput: %s", self.__class__.__name__, self.id, self.input.to_text())
+        logger.info("%s %s\nInput: %s", self.__class__.__name__, self.id, self.input.to_text())
 
     def after_run(self) -> None:
         super().after_run()
 
-        self.structure.logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
+        logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())

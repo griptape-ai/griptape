@@ -4,7 +4,6 @@ from griptape.tools import TaskMemoryClient, WebScraper
 from griptape.utils import Stream
 
 pipeline = Pipeline()
-pipeline.config.prompt_driver.stream = True
 pipeline.add_tasks(
     ToolkitTask(
         "Based on https://griptape.ai, tell me what griptape is.",

@@ -3,9 +3,10 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 
-from attrs import define, field
+from attrs import Factory, define, field
 
 from griptape.common import PromptStack
+from griptape.config import config
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
@@ -16,7 +17,9 @@ if TYPE_CHECKING:
 
 @define
 class BaseConversationMemory(SerializableMixin, ABC):
-    driver: Optional[BaseConversationMemoryDriver] = field(default=None, kw_only=True)
+    driver: Optional[BaseConversationMemoryDriver] = field(
+        default=Factory(lambda: config.drivers.conversation_memory), kw_only=True
+    )
     runs: list[Run] = field(factory=list, kw_only=True, metadata={"serializable": True})
     structure: Structure = field(init=False)
     autoload: bool = field(default=True, kw_only=True)
@@ -64,7 +67,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
         if self.autoprune and hasattr(self, "structure"):
             should_prune = True
-            prompt_driver = self.structure.config.prompt_driver
+            prompt_driver = config.drivers.prompt
             temp_stack = PromptStack()
 
             # Try to determine how many Conversation Memory runs we can

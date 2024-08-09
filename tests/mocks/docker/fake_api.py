@@ -154,7 +154,7 @@ def get_fake_inspect_container(*, tty=False):
     status_code = 200
     response = {
         "Id": FAKE_CONTAINER_ID,
-        "Config": {"Labels": {"foo": "bar"}, "Privileged": True, "Tty": tty},
+        "config": {"Labels": {"foo": "bar"}, "Privileged": True, "Tty": tty},
         "ID": FAKE_CONTAINER_ID,
         "Image": "busybox:latest",
         "Name": "foobar",
@@ -166,7 +166,7 @@ def get_fake_inspect_container(*, tty=False):
             "StartedAt": "2013-09-25T14:01:18.869545111+02:00",
             "Ghost": False,
         },
-        "HostConfig": {"LogConfig": {"Type": "json-file", "Config": {}}},
+        "HostConfig": {"LogConfig": {"Type": "json-file", "config": {}}},
         "MacAddress": "02:42:ac:11:00:0a",
     }
     return status_code, response
@@ -179,7 +179,7 @@ def get_fake_inspect_image():
         "Parent": "27cf784147099545",
         "Created": "2013-03-23T22:24:18.818426-07:00",
         "Container": FAKE_CONTAINER_ID,
-        "Config": {"Labels": {"bar": "foo"}},
+        "config": {"Labels": {"bar": "foo"}},
         "ContainerConfig": {
             "Hostname": "",
             "User": "",
@@ -446,7 +446,7 @@ def get_fake_network_list():
             "Driver": "bridge",
             "EnableIPv6": False,
             "Internal": False,
-            "IPAM": {"Driver": "default", "Config": [{"Subnet": "172.17.0.0/16"}]},
+            "IPAM": {"Driver": "default", "config": [{"Subnet": "172.17.0.0/16"}]},
             "Containers": {
                 FAKE_CONTAINER_ID: {
                     "EndpointID": "ed2419a97c1d99",

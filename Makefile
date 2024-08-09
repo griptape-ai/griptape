@@ -68,7 +68,7 @@ check/lint:
 
 .PHONY: check/types
 check/types:
-	@poetry run pyright griptape/ docs/**/src/**
+	@poetry run pyright griptape $(shell find docs -type f -path "*/src/*")
 	
 .PHONY: check/spell
 check/spell:

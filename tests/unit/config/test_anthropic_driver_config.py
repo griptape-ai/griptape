@@ -1,9 +1,9 @@
 import pytest
 
-from griptape.config import AnthropicStructureConfig
+from griptape.config import AnthropicDriverConfig
 
 
-class TestAnthropicStructureConfig:
+class TestAnthropicDriverConfig:
     @pytest.fixture(autouse=True)
     def _mock_anthropic(self, mocker):
         mocker.patch("anthropic.Anthropic")
@@ -11,12 +11,12 @@ class TestAnthropicStructureConfig:
 
     @pytest.fixture()
     def config(self):
-        return AnthropicStructureConfig()
+        return AnthropicDriverConfig()
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "AnthropicStructureConfig",
-            "prompt_driver": {
+            "type": "AnthropicDriverConfig",
+            "prompt": {
                 "type": "AnthropicPromptDriver",
                 "temperature": 0.1,
                 "max_tokens": 1000,
@@ -26,18 +26,18 @@ class TestAnthropicStructureConfig:
                 "top_k": 250,
                 "use_native_tools": True,
             },
-            "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-            "image_query_driver": {
+            "image_generation": {"type": "DummyImageGenerationDriver"},
+            "image_query": {
                 "type": "AnthropicImageQueryDriver",
                 "model": "claude-3-5-sonnet-20240620",
                 "max_tokens": 256,
             },
-            "embedding_driver": {
+            "embedding": {
                 "type": "VoyageAiEmbeddingDriver",
                 "model": "voyage-large-2",
                 "input_type": "document",
             },
-            "vector_store_driver": {
+            "vector_store": {
                 "type": "LocalVectorStoreDriver",
                 "embedding_driver": {
                     "type": "VoyageAiEmbeddingDriver",
@@ -45,10 +45,10 @@ class TestAnthropicStructureConfig:
                     "input_type": "document",
                 },
             },
-            "conversation_memory_driver": None,
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "conversation_memory": None,
+            "text_to_speech": {"type": "DummyTextToSpeechDriver"},
+            "audio_transcription": {"type": "DummyAudioTranscriptionDriver"},
         }
 
     def test_from_dict(self, config):
-        assert AnthropicStructureConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
+        assert AnthropicDriverConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()

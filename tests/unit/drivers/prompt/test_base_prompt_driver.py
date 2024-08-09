@@ -10,17 +10,17 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestBasePromptDriver:
-    def test_run_via_pipeline_retries_success(self):
-        driver = MockPromptDriver(max_attempts=1)
-        pipeline = Pipeline(prompt_driver=driver)
+    def test_run_via_pipeline_retries_success(self, mock_config):
+        mock_config.drivers.prompt = MockPromptDriver(max_attempts=2)
+        pipeline = Pipeline()
 
         pipeline.add_task(PromptTask("test"))
 
         assert isinstance(pipeline.run().output_task.output, TextArtifact)
 
-    def test_run_via_pipeline_retries_failure(self):
-        driver = MockFailingPromptDriver(max_failures=2, max_attempts=1)
-        pipeline = Pipeline(prompt_driver=driver)
+    def test_run_via_pipeline_retries_failure(self, mock_config):
+        mock_config.drivers.prompt = MockFailingPromptDriver(max_failures=2, max_attempts=1)
+        pipeline = Pipeline()
 
         pipeline.add_task(PromptTask("test"))
 
@@ -28,8 +28,7 @@ class TestBasePromptDriver:
 
     def test_run_via_pipeline_publishes_events(self, mocker):
         mock_publish_event = mocker.patch.object(_EventBus, "publish_event")
-        driver = MockPromptDriver()
-        pipeline = Pipeline(prompt_driver=driver)
+        pipeline = Pipeline()
         pipeline.add_task(PromptTask("test"))
 
         pipeline.run()
@@ -46,9 +45,9 @@ class TestBasePromptDriver:
         assert isinstance(result, Message)
         assert result.value == "mock output"
 
-    def test_run_with_tools(self):
-        driver = MockPromptDriver(max_attempts=1, use_native_tools=True)
-        pipeline = Pipeline(prompt_driver=driver)
+    def test_run_with_tools(self, mock_config):
+        mock_config.drivers.prompt = MockPromptDriver(max_attempts=1, use_native_tools=True)
+        pipeline = Pipeline()
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 
@@ -56,9 +55,9 @@ class TestBasePromptDriver:
         assert isinstance(output, TextArtifact)
         assert output.value == "mock output"
 
-    def test_run_with_tools_and_stream(self):
-        driver = MockPromptDriver(max_attempts=1, stream=True, use_native_tools=True)
-        pipeline = Pipeline(prompt_driver=driver)
+    def test_run_with_tools_and_stream(self, mock_config):
+        mock_config.driver = MockPromptDriver(max_attempts=1, stream=True, use_native_tools=True)
+        pipeline = Pipeline()
 
         pipeline.add_task(ToolkitTask(tools=[MockTool()]))
 

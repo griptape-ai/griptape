@@ -1,14 +1,13 @@
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
 from griptape.utils import Chat
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestConversation:
     def test_init(self):
         import logging
 
-        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
+        agent = Agent(conversation_memory=ConversationMemory())
 
         chat = Chat(
             agent,

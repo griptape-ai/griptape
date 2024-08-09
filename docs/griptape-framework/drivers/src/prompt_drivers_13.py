@@ -1,13 +1,10 @@
-from griptape.config import StructureConfig
 from griptape.drivers import HuggingFacePipelinePromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 
 agent = Agent(
-    config=StructureConfig(
-        prompt_driver=HuggingFacePipelinePromptDriver(
-            model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
-        )
+    prompt_driver=HuggingFacePipelinePromptDriver(
+        model="TinyLlama/TinyLlama-1.1B-Chat-v1.0",
     ),
     rulesets=[
         Ruleset(

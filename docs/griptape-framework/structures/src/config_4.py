@@ -1,4 +1,6 @@
-from griptape.config import GoogleStructureConfig
+from griptape.config import GoogleDriverConfig, config
 from griptape.structures import Agent
 
-agent = Agent(config=GoogleStructureConfig())
+config.drivers = GoogleDriverConfig()
+
+agent = Agent()

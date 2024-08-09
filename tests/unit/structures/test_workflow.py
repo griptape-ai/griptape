@@ -4,12 +4,9 @@ import pytest
 
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.memory.structure import ConversationMemory
-from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Workflow
 from griptape.tasks import BaseTask, CodeExecutionTask, PromptTask, ToolkitTask
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -30,10 +27,8 @@ class TestWorkflow:
         return CodeExecutionTask(run_fn=fn)
 
     def test_init(self):
-        driver = MockPromptDriver()
-        workflow = Workflow(prompt_driver=driver, rulesets=[Ruleset("TestRuleset", [Rule("test")])])
+        workflow = Workflow(rulesets=[Ruleset("TestRuleset", [Rule("test")])])
 
-        assert workflow.prompt_driver is driver
         assert len(workflow.tasks) == 0
         assert workflow.rulesets[0].name == "TestRuleset"
         assert workflow.rulesets[0].rules[0].value == "test"
@@ -100,20 +95,6 @@ class TestWorkflow:
         assert workflow.tasks[0].tools[0].output_memory is not None
         assert workflow.tasks[0].tools[0].output_memory["test"][0] == workflow.task_memory
 
-    def test_embedding_driver(self):
-        embedding_driver = MockEmbeddingDriver()
-        workflow = Workflow(embedding_driver=embedding_driver)
-
-        workflow.add_task(ToolkitTask(tools=[MockTool()]))
-
-        storage = list(workflow.task_memory.artifact_storages.values())[0]
-        assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
-            0
-        ].vector_store_driver.embedding_driver
-
-        assert memory_embedding_driver == embedding_driver
-
     def test_with_task_memory_and_empty_tool_output_memory(self):
         workflow = Workflow()
 
@@ -136,7 +117,7 @@ class TestWorkflow:
         second_task = PromptTask("test2")
         third_task = PromptTask("test3")
 
-        workflow = Workflow(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
+        workflow = Workflow(conversation_memory=ConversationMemory())
 
         workflow + [first_task, second_task, third_task]
 
@@ -170,7 +151,7 @@ class TestWorkflow:
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
 
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         workflow + first_task
         workflow.add_task(second_task)
@@ -189,7 +170,7 @@ class TestWorkflow:
         first_task = PromptTask("test1")
         second_task = PromptTask("test2")
 
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         workflow + [first_task, second_task]
 
@@ -206,7 +187,7 @@ class TestWorkflow:
     def test_run(self):
         task1 = PromptTask("test")
         task2 = PromptTask("test")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
         workflow + [task1, task2]
 
         assert task1.state == BaseTask.State.PENDING
@@ -219,7 +200,7 @@ class TestWorkflow:
 
     def test_run_with_args(self):
         task = PromptTask("{{ args[0] }}-{{ args[1] }}")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
         workflow + task
 
         workflow._execution_args = ("test1", "test2")
@@ -241,7 +222,7 @@ class TestWorkflow:
         ],
     )
     def test_run_raises_on_missing_parent_or_child_id(self, tasks):
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=tasks)
+        workflow = Workflow(tasks=tasks)
 
         with pytest.raises(ValueError) as e:
             workflow.run()
@@ -250,7 +231,6 @@ class TestWorkflow:
 
     def test_run_topology_1_declarative_parents(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask("test1", id="task1"),
                 PromptTask("test2", id="task2", parent_ids=["task1"]),
@@ -265,7 +245,6 @@ class TestWorkflow:
 
     def test_run_topology_1_declarative_children(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask("test1", id="task1", child_ids=["task2", "task3"]),
                 PromptTask("test2", id="task2", child_ids=["task4"]),
@@ -280,7 +259,6 @@ class TestWorkflow:
 
     def test_run_topology_1_declarative_mixed(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask("test1", id="task1", child_ids=["task3"]),
                 PromptTask("test2", id="task2", parent_ids=["task1"], child_ids=["task4"]),
@@ -301,7 +279,7 @@ class TestWorkflow:
         task2.add_parent(task1)
         task3.add_parent("task1")
         task4.add_parents([task2, "task3"])
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, task3, task4])
+        workflow = Workflow(tasks=[task1, task2, task3, task4])
 
         workflow.run()
 
@@ -315,14 +293,14 @@ class TestWorkflow:
         task1.add_children([task2, task3])
         task2.add_child(task4)
         task3.add_child(task4)
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, task3, task4])
+        workflow = Workflow(tasks=[task1, task2, task3, task4])
 
         workflow.run()
 
         self._validate_topology_1(workflow)
 
     def test_run_topology_1_imperative_parents_structure_init(self):
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
         task1 = PromptTask("test1", id="task1")
         task2 = PromptTask("test2", id="task2", structure=workflow)
         task3 = PromptTask("test3", id="task3", structure=workflow)
@@ -336,7 +314,7 @@ class TestWorkflow:
         self._validate_topology_1(workflow)
 
     def test_run_topology_1_imperative_children_structure_init(self):
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
         task1 = PromptTask("test1", id="task1", structure=workflow)
         task2 = PromptTask("test2", id="task2", structure=workflow)
         task3 = PromptTask("test3", id="task3", structure=workflow)
@@ -356,7 +334,7 @@ class TestWorkflow:
         task4 = PromptTask("test4", id="task4")
         task1.add_children([task2, task3])
         task4.add_parents([task2, task3])
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task1, task2, task3, task4])
+        workflow = Workflow(tasks=[task1, task2, task3, task4])
 
         workflow.run()
 
@@ -367,7 +345,7 @@ class TestWorkflow:
         task2 = PromptTask("test2", id="task2")
         task3 = PromptTask("test3", id="task3")
         task4 = PromptTask("test4", id="task4")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         # task1 splits into task2 and task3
         # task2 and task3 converge into task4
@@ -384,7 +362,7 @@ class TestWorkflow:
         task2 = PromptTask("test2", id="task2")
         task3 = PromptTask("test3", id="task3")
         task4 = PromptTask("test4", id="task4")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         # task1 never added to workflow
         workflow + task4
@@ -396,7 +374,7 @@ class TestWorkflow:
         task2 = PromptTask("test2", id="task2")
         task3 = PromptTask("test3", id="task3")
         task4 = PromptTask("test4", id="task4")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         # task4 never added to workflow
         workflow + task1
@@ -410,7 +388,7 @@ class TestWorkflow:
         task2 = PromptTask("test2", id="task2")
         task3 = PromptTask("test3", id="task3")
         task4 = PromptTask("test4", id="task4")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         workflow + task1
         workflow + task4
@@ -419,7 +397,6 @@ class TestWorkflow:
 
     def test_run_topology_2_declarative_parents(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask("testa", id="taska"),
                 PromptTask("testb", id="taskb", parent_ids=["taska"]),
@@ -435,7 +412,6 @@ class TestWorkflow:
 
     def test_run_topology_2_declarative_children(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask("testa", id="taska", child_ids=["taskb", "taskc", "taskd", "taske"]),
                 PromptTask("testb", id="taskb", child_ids=["taskd"]),
@@ -459,7 +435,7 @@ class TestWorkflow:
         taskc.add_parent("taska")
         taskd.add_parents([taska, taskb, taskc])
         taske.add_parents(["taska", taskd, "taskc"])
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska, taskb, taskc, taskd, taske])
+        workflow = Workflow(tasks=[taska, taskb, taskc, taskd, taske])
 
         workflow.run()
 
@@ -475,7 +451,7 @@ class TestWorkflow:
         taskb.add_child(taskd)
         taskc.add_children([taskd, taske])
         taskd.add_child(taske)
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska, taskb, taskc, taskd, taske])
+        workflow = Workflow(tasks=[taska, taskb, taskc, taskd, taske])
 
         workflow.run()
 
@@ -491,7 +467,7 @@ class TestWorkflow:
         taskb.add_child(taskd)
         taskd.add_parent(taskc)
         taske.add_parents(["taska", taskd, "taskc"])
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[taska, taskb, taskc, taskd, taske])
+        workflow = Workflow(tasks=[taska, taskb, taskc, taskd, taske])
 
         workflow.run()
 
@@ -503,7 +479,7 @@ class TestWorkflow:
         taskc = PromptTask("testc", id="taskc")
         taskd = PromptTask("testd", id="taskd")
         taske = PromptTask("teste", id="taske")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
         workflow.add_task(taska)
         workflow.add_task(taske)
         taske.add_parent(taska)
@@ -517,7 +493,6 @@ class TestWorkflow:
 
     def test_run_topology_3_declarative_parents(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask("test1", id="task1"),
                 PromptTask("test2", id="task2", parent_ids=["task4"]),
@@ -532,7 +507,6 @@ class TestWorkflow:
 
     def test_run_topology_3_declarative_children(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask("test1", id="task1", child_ids=["task4"]),
                 PromptTask("test2", id="task2", child_ids=["task3"]),
@@ -547,7 +521,6 @@ class TestWorkflow:
 
     def test_run_topology_3_declarative_mixed(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask("test1", id="task1"),
                 PromptTask("test2", id="task2", parent_ids=["task4"], child_ids=["task3"]),
@@ -565,7 +538,7 @@ class TestWorkflow:
         task2 = PromptTask("test2", id="task2")
         task3 = PromptTask("test3", id="task3")
         task4 = PromptTask("test4", id="task4")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         workflow + task1
         workflow + task2
@@ -580,7 +553,6 @@ class TestWorkflow:
 
     def test_run_topology_4_declarative_parents(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask(id="collect_movie_info"),
                 PromptTask(id="movie_info_1", parent_ids=["collect_movie_info"]),
@@ -600,7 +572,6 @@ class TestWorkflow:
 
     def test_run_topology_4_declarative_children(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask(id="collect_movie_info", child_ids=["movie_info_1", "movie_info_2", "movie_info_3"]),
                 PromptTask(id="movie_info_1", child_ids=["compare_movies"]),
@@ -620,7 +591,6 @@ class TestWorkflow:
 
     def test_run_topology_4_declarative_mixed(self):
         workflow = Workflow(
-            prompt_driver=MockPromptDriver(),
             tasks=[
                 PromptTask(id="collect_movie_info"),
                 PromptTask(id="movie_info_1", parent_ids=["collect_movie_info"], child_ids=["compare_movies"]),
@@ -650,7 +620,7 @@ class TestWorkflow:
         publish_website = PromptTask(id="publish_website")
         movie_info_3 = PromptTask(id="movie_info_3")
 
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
         workflow.add_tasks(collect_movie_info, summarize_to_slack)
         workflow.insert_tasks(collect_movie_info, [movie_info_1, movie_info_2, movie_info_3], summarize_to_slack)
         workflow.insert_tasks([movie_info_1, movie_info_2, movie_info_3], compare_movies, summarize_to_slack)
@@ -672,7 +642,7 @@ class TestWorkflow:
         ],
     )
     def test_run_raises_on_cycle(self, tasks):
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=tasks)
+        workflow = Workflow(tasks=tasks)
 
         with pytest.raises(ValueError) as e:
             workflow.run()
@@ -684,7 +654,7 @@ class TestWorkflow:
         task2 = PromptTask("prompt2")
         task3 = PromptTask("prompt3")
         task4 = PromptTask("prompt4")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         workflow + task1
         workflow + task4
@@ -697,7 +667,7 @@ class TestWorkflow:
         task2 = PromptTask("prompt2")
         task3 = PromptTask("prompt3")
         task4 = PromptTask("prompt4")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         workflow + task1
         workflow + task4
@@ -709,7 +679,7 @@ class TestWorkflow:
         task1.add_children([task2, task3])
 
         # task4 is the final task, but its defined at index 0
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[task4, task1, task2, task3])
+        workflow = Workflow(tasks=[task4, task1, task2, task3])
 
         # output_task topologically should be task4
         assert task4 == workflow.output_task
@@ -719,7 +689,7 @@ class TestWorkflow:
         task2 = PromptTask("prompt2", id="task2")
         task3 = PromptTask("prompt3", id="task3")
         task4 = PromptTask("prompt4", id="task4")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         workflow + task1
         workflow + task4
@@ -736,7 +706,7 @@ class TestWorkflow:
         task2 = PromptTask("prompt2", id="task2")
         task3 = PromptTask("prompt3", id="task3")
         task4 = PromptTask("prompt4", id="task4")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         workflow + task1
         workflow + task4
@@ -753,7 +723,7 @@ class TestWorkflow:
         parent = PromptTask("parent")
         task = PromptTask("test")
         child = PromptTask("child")
-        workflow = Workflow(prompt_driver=MockPromptDriver())
+        workflow = Workflow()
 
         workflow + parent
         workflow + task
@@ -776,20 +746,10 @@ class TestWorkflow:
         assert context["parents"] == {parent.id: parent}
         assert context["children"] == {child.id: child}
 
-    def test_deprecation(self):
-        with pytest.deprecated_call():
-            Workflow(prompt_driver=MockPromptDriver())
-
-        with pytest.deprecated_call():
-            Workflow(embedding_driver=MockEmbeddingDriver())
-
-        with pytest.deprecated_call():
-            Workflow(stream=True)
-
     def test_run_with_error_artifact(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
         end_task.add_parents([error_artifact_task, waiting_task])
-        workflow = Workflow(prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task])
+        workflow = Workflow(tasks=[waiting_task, error_artifact_task, end_task])
         workflow.run()
 
         assert workflow.output is None
@@ -797,9 +757,7 @@ class TestWorkflow:
     def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
         end_task.add_parents([error_artifact_task, waiting_task])
-        workflow = Workflow(
-            prompt_driver=MockPromptDriver(), tasks=[waiting_task, error_artifact_task, end_task], fail_fast=False
-        )
+        workflow = Workflow(tasks=[waiting_task, error_artifact_task, end_task], fail_fast=False)
         workflow.run()
 
         assert workflow.output is not None
