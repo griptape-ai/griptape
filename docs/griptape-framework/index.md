@@ -65,11 +65,7 @@ For a comprehensive list of extras, please refer to the `[tool.poetry.extras]` s
 With Griptape, you can create *structures*, such as [Agents](./structures/agents.md), [Pipelines](./structures/pipelines.md), and [Workflows](./structures/workflows.md), that are composed of different types of tasks. First, let's build a simple Agent that we can interact with through a chat based interface. 
 
 ```python
-from griptape.structures import Agent
-from griptape.utils import Chat
-
-agent = Agent()
-Chat(agent).start()
+--8<-- "docs/griptape-framework/src/index_1.py"
 ```
 Run this script in your IDE and you'll be presented with a `Q:` prompt where you can interact with your model. 
 ```
@@ -89,29 +85,13 @@ Q:
 If you want to skip the chat interface and load an initial prompt, you can do so using the `.run()` method: 
 
 ```python
-from griptape.structures import Agent
-from griptape.utils import Chat
-
-agent = Agent()
-agent.run("write me a haiku about griptape")
+--8<-- "docs/griptape-framework/src/index_2.py"
 ```
 Agents on their own are fun, but let's add some capabilities to them using Griptape Tools. 
 ### Build a Simple Agent with Tools 
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import Calculator
-
-calculator = Calculator()
-
-agent = Agent(
-   tools=[calculator]
-)
-
-agent.run(
-    "what is 7^12"
-)
-print("Answer:", agent.output)
+--8<-- "docs/griptape-framework/src/index_3.py"
 ```
 Here is the chain of thought from the Agent. Notice where it realizes it can use the tool you just injected to do the calculation.[^1] 
 [^1]: In some cases a model might be capable of basic arithmetic. For example, gpt-3.5 returns the correct numeric answer but in an odd format.
@@ -144,33 +124,7 @@ Answer: 13,841,287,201
 Agents are great for getting started, but they are intentionally limited to a single task. Pipelines, however, allow us to define any number of tasks to run in sequence. Let's define a simple two-task Pipeline that uses tools and memory:
 
 ```python
-from griptape.memory.structure import ConversationMemory
-from griptape.structures import Pipeline
-from griptape.tasks import ToolkitTask, PromptTask
-from griptape.tools import WebScraper, FileManager, TaskMemoryClient
-
-
-# Pipelines represent sequences of tasks.
-pipeline = Pipeline(
-    conversation_memory=ConversationMemory()
-)
-
-pipeline.add_tasks(
-    # Load up the first argument from `pipeline.run`.
-    ToolkitTask(
-        "{{ args[0] }}",
-        # Add tools for web scraping, and file management
-        tools=[WebScraper(off_prompt=True), FileManager(off_prompt=True), TaskMemoryClient(off_prompt=False)]
-    ),
-    # Augment `input` from the previous task.
-    PromptTask(
-        "Say the following in spanish: {{ parent_output }}"
-    )
-)
-
-pipeline.run(
-    "Load https://www.griptape.ai, summarize it, and store it in griptape.txt"
-)
+--8<-- "docs/griptape-framework/src/index_4.py"
 ```
 
 ```

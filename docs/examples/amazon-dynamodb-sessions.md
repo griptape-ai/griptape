@@ -7,40 +7,7 @@ In this example, we will show you how to use the [AmazonDynamoDbConversationMemo
 This code implements the idea of a generic "Session" that represents a Conversation Memory entry. For example, a "Session" could be used to represent an individual user's conversation, or a group conversation thread.
 
 ```python
-import sys
-import os
-import argparse
-
-import boto3
-from griptape.drivers import (
-    AmazonDynamoDbConversationMemoryDriver,
-)
-from griptape.structures import Agent
-from griptape.memory.structure import ConversationMemory
-
-if len(sys.argv) > 2:
-    input = sys.argv[1]
-    session_id = sys.argv[2]
-else:
-    input = "Hello!" # Default input
-    session_id = "session-id-123" # Default session ID
-
-structure = Agent(
-    conversation_memory=ConversationMemory(
-        driver=AmazonDynamoDbConversationMemoryDriver(
-            session=boto3.Session(
-                aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
-                aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
-            ),
-            table_name=os.environ["DYNAMODB_TABLE_NAME"],  # The name of the DynamoDB table
-            partition_key="id",  # The name of the partition key
-            partition_key_value=session_id,  # The value of the partition key
-            value_attribute_key="value",  # The key in the DynamoDB item that stores the memory value
-        )
-    )
-)
-
-print(structure.run(input).output_task.output.value)
+--8<-- "docs/examples/src/amazon_dynamodb_sessions_1.py"
 ```
 
 Conversation Memory for an individual user:

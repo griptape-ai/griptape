@@ -24,7 +24,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
         text: str | ListArtifact,
         *,
         rulesets: Optional[list[Ruleset]] = None,
-        template_schema: Optional[list[dict]] = None,
+        template_schema: Optional[dict | list[dict]] = None,
         **kwargs,
     ) -> ListArtifact | ErrorArtifact:
         if template_schema is None:

@@ -34,7 +34,7 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
         alias="image_generation_engine",
     )
     _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact = field(
-        default=None,
+        default=None, alias="input"
     )
 
     @property

@@ -33,6 +33,8 @@ RAG modules are used to implement concrete actions in the RAG pipeline. `RagEngi
 - `TextChunksRerankRagModule` is for re-ranking retrieved results.
 
 #### Response Modules
+- `MetadataBeforeResponseRagModule` is for appending metadata.
+- `RulesetsBeforeResponseRagModule` is for appending rulesets.
 - `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
 - `TextChunksResponseRagModule` is for responding with retrieved text chunks.
 - `FootnotePromptResponseRagModule` is for responding with automatic footnotes from text chunk references.
@@ -46,64 +48,5 @@ RAG modules are used to implement concrete actions in the RAG pipeline. `RagEngi
 The following example shows a simple RAG pipeline that translates incoming queries into English, retrieves data from a local vector store, and generates a response:
 
 ```python
-from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
-from griptape.engines.rag import RagEngine, RagContext
-from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule, TranslateQueryRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage, QueryRagStage
-from griptape.loaders import WebLoader
-
-prompt_driver = OpenAiChatPromptDriver(model="gpt-4o", temperature=0)
-
-vector_store = LocalVectorStoreDriver(
-    embedding_driver=OpenAiEmbeddingDriver()
-)
-
-vector_store.upsert_text_artifacts({
-    "griptape": WebLoader(max_tokens=500).load("https://www.griptape.ai"),
-})
-
-rag_engine = RagEngine(
-    query_stage=QueryRagStage(
-        query_modules=[
-            TranslateQueryRagModule(
-                prompt_driver=prompt_driver,
-                language="English"
-            )
-        ]
-    ),
-    retrieval_stage=RetrievalRagStage(
-        max_chunks=5,
-        retrieval_modules=[
-            VectorStoreRetrievalRagModule(
-                name="MyAwesomeRetriever",
-                vector_store_driver=vector_store,
-                query_params={
-                    "top_n": 20
-                }
-            )
-        ]
-    ),
-    response_stage=ResponseRagStage(
-        response_modules=[
-            PromptResponseRagModule(
-                prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
-            )
-        ]
-    )
-)
-
-rag_context = RagContext(
-    query="¿Qué ofrecen los servicios en la nube de Griptape?",
-    module_configs={
-        "MyAwesomeRetriever": {
-            "query_params": {
-                "namespace": "griptape"
-            }
-        }
-    }
-)
-
-print(
-    rag_engine.process(rag_context).outputs[0].to_text()
-)
+--8<-- "docs/griptape-framework/engines/src/rag_engines_1.py"
 ```
