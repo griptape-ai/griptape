@@ -7,6 +7,8 @@ from attrs import define
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
 from griptape.memory.structure import Run
+from typing import TYPE_CHECKING, Any
+from attrs import define
 from griptape.structures import Structure
 
 if TYPE_CHECKING:
@@ -49,17 +51,6 @@ class Pipeline(Structure):
 
         return task
 
-    @observable
-    def try_run(self, *args) -> Pipeline:
-        self.__run_from_task(self.input_task)
-
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
-
-            self.conversation_memory.add_run(run)
-
-        return self
-
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
 
@@ -73,11 +64,17 @@ class Pipeline(Structure):
 
         return context
 
-    def __run_from_task(self, task: Optional[BaseTask]) -> None:
-        if task is None:
-            return
-        else:
-            if isinstance(task.execute(), ErrorArtifact) and self.fail_fast:
-                return
-            else:
-                self.__run_from_task(next(iter(task.children), None))
+    def resolve_relationships(self) -> None:
+        for i, task in enumerate(self.tasks):
+            if i > 0 and self.tasks[i - 1].id not in task.parent_ids:
+                task.parent_ids.append(self.tasks[i - 1].id)
+            if i < len(self.tasks) - 1 and self.tasks[i + 1].id not in task.child_ids:
+                task.child_ids.append(self.tasks[i + 1].id)
+            if i == 0 and len(task.parent_ids) > 0:
+                raise ValueError("The first task in a pipeline cannot have a parent.")
+            if len(task.parent_ids) > 1 or len(task.child_ids) > 1:
+                raise ValueError("Pipelines can only have one parent and one child per task.")
+            if i == len(self.tasks) - 1 and len(task.child_ids) > 0:
+                raise ValueError("The last task in a pipeline cannot have a child.")
+
+        super().resolve_relationships()
