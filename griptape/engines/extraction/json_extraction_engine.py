@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import cast
+from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import Factory, define, field
 
@@ -10,6 +10,9 @@ from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
+
+if TYPE_CHECKING:
+    from griptape.rules import Ruleset
 
 
 @define
@@ -20,6 +23,8 @@ class JsonExtractionEngine(BaseExtractionEngine):
     def extract(
         self,
         text: str | ListArtifact,
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
     ) -> ListArtifact | ErrorArtifact:
         try:
@@ -40,12 +45,14 @@ class JsonExtractionEngine(BaseExtractionEngine):
         self,
         artifacts: list[TextArtifact],
         extractions: list[TextArtifact],
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
     ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
             json_template_schema=json.dumps(self.template_schema),
             text=artifacts_text,
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
         if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
@@ -61,7 +68,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
             partial_text = self.template_generator.render(
                 template_schema=self.template_schema,
                 text=chunks[0].value,
-                rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
+                rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
             )
 
             extractions.extend(
@@ -70,4 +77,4 @@ class JsonExtractionEngine(BaseExtractionEngine):
                 ),
             )
 
-            return self._extract_rec(chunks[1:], extractions)
+            return self._extract_rec(chunks[1:], extractions, rulesets=rulesets)

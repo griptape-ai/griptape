@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import csv
 import io
-from typing import cast
+from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import Factory, define, field
 
@@ -10,6 +10,9 @@ from griptape.artifacts import CsvRowArtifact, ErrorArtifact, ListArtifact, Text
 from griptape.common import Message, PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
+
+if TYPE_CHECKING:
+    from griptape.rules import Ruleset
 
 
 @define
@@ -20,6 +23,8 @@ class CsvExtractionEngine(BaseExtractionEngine):
     def extract(
         self,
         text: str | ListArtifact,
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
     ) -> ListArtifact | ErrorArtifact:
         try:
@@ -46,11 +51,13 @@ class CsvExtractionEngine(BaseExtractionEngine):
         self,
         artifacts: list[TextArtifact],
         rows: list[CsvRowArtifact],
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
     ) -> list[CsvRowArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         full_text = self.template_generator.render(
             text=artifacts_text,
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
         if self.prompt_driver.tokenizer.count_input_tokens_left(full_text) >= self.min_response_tokens:
@@ -67,7 +74,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
             partial_text = self.template_generator.render(
                 column_names=self.column_names,
                 text=chunks[0].value,
-                rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
+                rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
             )
 
             rows.extend(
@@ -77,4 +84,4 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 ),
             )
 
-            return self._extract_rec(chunks[1:], rows)
+            return self._extract_rec(chunks[1:], rows, rulesets=rulesets)

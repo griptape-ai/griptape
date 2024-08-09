@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -8,11 +8,14 @@ if TYPE_CHECKING:
 
 
 def load_artifact_from_memory(
-    memory: TaskMemory,
+    memory: Optional[TaskMemory],
     artifact_namespace: str,
     artifact_name: str,
     artifact_type: type,
 ) -> BaseArtifact:
+    if memory is None:
+        raise ValueError("memory not found")
+
     artifacts = memory.load_artifacts(namespace=artifact_namespace)
     if len(artifacts) == 0:
         raise ValueError("no artifacts found in namespace")

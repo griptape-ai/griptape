@@ -1,21 +1,21 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
 
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.config import config
-from griptape.mixins.rule_mixin import RuleMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import ErrorArtifact, ListArtifact
     from griptape.drivers import BasePromptDriver
+    from griptape.rules import Ruleset
 
 
 @define
-class BaseExtractionEngine(ABC, RuleMixin):
+class BaseExtractionEngine(ABC):
     max_token_multiplier: float = field(default=0.5, kw_only=True)
     chunk_joiner: str = field(default="\n\n", kw_only=True)
     prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt), kw_only=True)
@@ -49,5 +49,7 @@ class BaseExtractionEngine(ABC, RuleMixin):
     def extract(
         self,
         text: str | ListArtifact,
+        *,
+        rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
     ) -> ListArtifact | ErrorArtifact: ...

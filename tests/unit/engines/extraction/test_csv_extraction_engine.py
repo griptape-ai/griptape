@@ -6,10 +6,10 @@ from griptape.engines import CsvExtractionEngine
 class TestCsvExtractionEngine:
     @pytest.fixture()
     def engine(self):
-        return CsvExtractionEngine()
+        return CsvExtractionEngine(column_names=["test1"])
 
     def test_extract(self, engine):
-        result = engine.extract("foo", column_names=["test1"])
+        result = engine.extract("foo")
 
         assert len(result.value) == 1
         assert result.value[0].value == {"test1": "mock output"}
