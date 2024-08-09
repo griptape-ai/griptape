@@ -6,25 +6,14 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Attribute, Factory, define, field
 
-from griptape.artifacts import BaseArtifact, BlobArtifact, TextArtifact
 from griptape.common import observable
-from griptape.config import config
-from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
-from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import (
-    MetadataBeforeResponseRagModule,
-    PromptResponseRagModule,
-    RulesetsBeforeResponseRagModule,
-    VectorStoreRetrievalRagModule,
-)
-from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
 from griptape.events import FinishStructureRunEvent, StartStructureRunEvent, event_bus
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
-from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 
 if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact
     from griptape.memory.structure import BaseConversationMemory
     from griptape.rules import Rule, Ruleset
     from griptape.tasks import BaseTask
@@ -40,9 +29,8 @@ class Structure(ABC):
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
     )
-    rag_engine: RagEngine = field(default=Factory(lambda self: self.default_rag_engine, takes_self=True), kw_only=True)
     task_memory: TaskMemory = field(
-        default=Factory(lambda self: self.default_task_memory, takes_self=True),
+        default=Factory(lambda self: TaskMemory(), takes_self=True),
         kw_only=True,
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
@@ -95,37 +83,6 @@ class Structure(ABC):
     @property
     def finished_tasks(self) -> list[BaseTask]:
         return [s for s in self.tasks if s.is_finished()]
-
-    @property
-    def default_rag_engine(self) -> RagEngine:
-        return RagEngine(
-            retrieval_stage=RetrievalRagStage(
-                retrieval_modules=[VectorStoreRetrievalRagModule()],
-            ),
-            response_stage=ResponseRagStage(
-                before_response_modules=[
-                    RulesetsBeforeResponseRagModule(rulesets=self.rulesets),
-                    MetadataBeforeResponseRagModule(),
-                ],
-                response_module=PromptResponseRagModule(),
-            ),
-        )
-
-    @property
-    def default_task_memory(self) -> TaskMemory:
-        return TaskMemory(
-            artifact_storages={
-                TextArtifact: TextArtifactStorage(
-                    rag_engine=self.rag_engine,
-                    retrieval_rag_module_name="VectorStoreRetrievalRagModule",
-                    vector_store_driver=config.drivers.vector_store,
-                    summary_engine=PromptSummaryEngine(prompt_driver=config.drivers.prompt),
-                    csv_extraction_engine=CsvExtractionEngine(prompt_driver=config.drivers.prompt),
-                    json_extraction_engine=JsonExtractionEngine(prompt_driver=config.drivers.prompt),
-                ),
-                BlobArtifact: BlobArtifactStorage(),
-            },
-        )
 
     def is_finished(self) -> bool:
         return all(s.is_finished() for s in self.tasks)

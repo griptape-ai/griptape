@@ -4,8 +4,9 @@ from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from attrs import Attribute, Factory, define, field
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, BlobArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.memory.meta import ActionSubtaskMetaEntry
+from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.mixins import ActivityMixin
 
 if TYPE_CHECKING:
@@ -16,7 +17,15 @@ if TYPE_CHECKING:
 @define
 class TaskMemory(ActivityMixin):
     name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-    artifact_storages: dict[type, BaseArtifactStorage] = field(factory=dict, kw_only=True)
+    artifact_storages: dict[type, BaseArtifactStorage] = field(
+        default=Factory(
+            lambda: {
+                TextArtifact: TextArtifactStorage(),
+                BlobArtifact: BlobArtifactStorage(),
+            }
+        ),
+        kw_only=True,
+    )
     namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
     namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True)
 
@@ -123,19 +132,3 @@ class TaskMemory(ActivityMixin):
             return self
         else:
             return None
-
-    def summarize_namespace(self, namespace: str) -> TextArtifact | InfoArtifact:
-        storage = self.namespace_storage.get(namespace)
-
-        if storage:
-            return storage.summarize(namespace)
-        else:
-            return InfoArtifact("Can't find memory content")
-
-    def query_namespace(self, namespace: str, query: str) -> BaseArtifact:
-        storage = self.namespace_storage.get(namespace)
-
-        if storage:
-            return storage.query(namespace=namespace, query=query, metadata=self.namespace_metadata.get(namespace))
-        else:
-            return InfoArtifact("Can't find memory content")

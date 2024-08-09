@@ -1,11 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from attrs import define
 from schema import Literal, Schema
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+
+if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
 
 
 @define
@@ -16,14 +20,7 @@ class TaskMemoryClient(BaseTool):
             "schema": Schema({"memory_name": str, "artifact_namespace": str}),
         },
     )
-    def summarize(self, params: dict) -> TextArtifact | InfoArtifact | ErrorArtifact:
-        memory = self.find_input_memory(params["values"]["memory_name"])
-        artifact_namespace = params["values"]["artifact_namespace"]
-
-        if memory:
-            return memory.summarize_namespace(artifact_namespace)
-        else:
-            return ErrorArtifact("memory not found")
+    def summarize(self, params: dict) -> TextArtifact | InfoArtifact | ErrorArtifact: ...
 
     @activity(
         config={
@@ -41,12 +38,4 @@ class TaskMemoryClient(BaseTool):
             ),
         },
     )
-    def query(self, params: dict) -> BaseArtifact:
-        memory = self.find_input_memory(params["values"]["memory_name"])
-        artifact_namespace = params["values"]["artifact_namespace"]
-        query = params["values"]["query"]
-
-        if memory:
-            return memory.query_namespace(namespace=artifact_namespace, query=query)
-        else:
-            return ErrorArtifact("memory not found")
+    def query(self, params: dict) -> BaseArtifact: ...
