@@ -34,9 +34,7 @@ agent = Agent(
                         ]
                     ),
                     response_stage=ResponseRagStage(
-                        response_modules=[
-                            PromptResponseRagModule(prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"))
-                        ]
+                        response_modules=[PromptResponseRagModule(prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"))]
                     ),
                 ),
                 retrieval_rag_module_name="VectorStoreRetrievalRagModule",

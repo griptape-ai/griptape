@@ -27,9 +27,7 @@ rag_client = RagClient(
             ]
         ),
         response_stage=ResponseRagStage(
-            response_modules=[
-                PromptResponseRagModule(prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"))
-            ]
+            response_modules=[PromptResponseRagModule(prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"))]
         ),
     ),
 )
