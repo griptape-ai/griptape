@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
 - **BREAKING**: Removed `EventPublisherMixin`.
-- **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules we adjusted accordingly.
+- **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules were adjusted accordingly.
  **BREAKING**: Removed before and after response modules from `ResponseRagStage`.
  **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
