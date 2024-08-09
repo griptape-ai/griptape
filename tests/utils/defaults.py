@@ -34,9 +34,5 @@ def rag_engine(prompt_driver, vector_store_driver):
         retrieval_stage=RetrievalRagStage(
             retrieval_modules=[VectorStoreRetrievalRagModule(vector_store_driver=vector_store_driver)]
         ),
-        response_stage=ResponseRagStage(
-            response_modules=[
-                PromptResponseRagModule(prompt_driver=prompt_driver)
-            ]
-        ),
+        response_stage=ResponseRagStage(response_modules=[PromptResponseRagModule(prompt_driver=prompt_driver)]),
     )

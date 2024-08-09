@@ -33,8 +33,6 @@ RAG modules are used to implement concrete actions in the RAG pipeline. `RagEngi
 - `TextChunksRerankRagModule` is for re-ranking retrieved results.
 
 #### Response Modules
-- `MetadataBeforeResponseRagModule` is for appending metadata.
-- `RulesetsBeforeResponseRagModule` is for appending rulesets.
 - `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
 - `TextChunksResponseRagModule` is for responding with retrieved text chunks.
 - `FootnotePromptResponseRagModule` is for responding with automatic footnotes from text chunk references.

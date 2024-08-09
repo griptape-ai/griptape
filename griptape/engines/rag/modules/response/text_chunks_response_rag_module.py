@@ -1,6 +1,6 @@
 from attrs import define
 
-from griptape.artifacts import ListArtifact, BaseArtifact
+from griptape.artifacts import BaseArtifact, ListArtifact
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseResponseRagModule
 
