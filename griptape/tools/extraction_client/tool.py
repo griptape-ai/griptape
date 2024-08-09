@@ -7,6 +7,7 @@ from schema import Literal, Or, Schema
 
 from griptape.artifacts import ErrorArtifact
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine
+from griptape.mixins import RuleMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -16,7 +17,7 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True)
-class ExtractionClient(BaseTool):
+class ExtractionClient(BaseTool, RuleMixin):
     """Tool for using an Extraction Engine.
 
     Attributes:
@@ -77,7 +78,7 @@ class ExtractionClient(BaseTool):
         data = params["values"]["data"]
 
         if isinstance(data, str):
-            return self.extraction_engine.extract(data)
+            return self.extraction_engine.extract(data, rulesets=self.rulesets)
         else:
             memory = self.find_input_memory(data["memory_name"])
             artifact_namespace = data["artifact_namespace"]
