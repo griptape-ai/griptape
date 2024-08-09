@@ -1,0 +1,5 @@
+version: "v1"
+name: Prompt Summary Client
+description: Tool for using a Prompt Summary Engine
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

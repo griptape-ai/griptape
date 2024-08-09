@@ -30,6 +30,8 @@ from .image_query_client.tool import ImageQueryClient
 from .rag_client.tool import RagClient
 from .text_to_speech_client.tool import TextToSpeechClient
 from .audio_transcription_client.tool import AudioTranscriptionClient
+from .extraction_client.tool import ExtractionClient
+from .prompt_summary_client.tool import PromptSummaryClient
 
 __all__ = [
     "BaseTool",
@@ -64,4 +66,6 @@ __all__ = [
     "RagClient",
     "TextToSpeechClient",
     "AudioTranscriptionClient",
+    "ExtractionClient",
+    "PromptSummaryClient",
 ]
