@@ -34,7 +34,7 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
     )
     _input: (
         tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact
-    ) = field(default=None)
+    ) = field(default=None, alias="input")
 
     @property
     def input(self) -> ListArtifact:

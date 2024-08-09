@@ -3,26 +3,7 @@
 This tool enables LLMs to save and load files.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import FileManager
-
-# Initialize the FileManager tool with the current directory as its base
-file_manager_tool = FileManager()
-
-# Add the tool to the Agent
-agent = Agent(
-    tools=[file_manager_tool]
-)
-
-# Directly create a file named 'sample1.txt' with some content
-filename = "sample1.txt"
-content = "This is the content of sample1.txt"
-
-with open(filename, "w") as f:
-    f.write(content)
-
-# Now, read content from the file 'sample1.txt' using the agent's command
-agent.run("Can you get me the sample1.txt file?")
+--8<-- "docs/griptape-tools/official-tools/src/file_manager_1.py"
 ```
 ```
 [09/12/23 12:07:56] INFO     Task 16a1ce1847284ae3805485bad7d99116              

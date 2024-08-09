@@ -16,12 +16,7 @@ Griptape provides predefined [DriverConfig](../../reference/griptape/config/driv
 The [OpenAI Driver config](../../reference/griptape/config/openai_driver_config.md) provides default Drivers for OpenAI's APIs. This is the default config for all Structures.
 
 ```python
-from griptape.structures import Agent
-from griptape.config import OpenAiDriverConfig, config
-
-config.drivers = OpenAiDriverConfig()
-
-agent = Agent()
+--8<-- "docs/griptape-framework/structures/src/config_1.py"
 ```
 
 #### Azure OpenAI
@@ -29,48 +24,21 @@ agent = Agent()
 The [Azure OpenAI Driver config](../../reference/griptape/config/azure_openai_driver_config.md) provides default Drivers for Azure's OpenAI APIs.
 
 ```python
-import os
-from griptape.structures import Agent
-from griptape.config import AzureOpenAiDriverConfig, config
-
-config.drivers = AzureOpenAiDriverConfig(
-    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"],
-    api_key=os.environ["AZURE_OPENAI_API_KEY_3"]
-)
-
-agent = Agent()
+--8<-- "docs/griptape-framework/structures/src/config_2.py"
 ```
 
 #### Amazon Bedrock
 The [Amazon Bedrock Driver config](../../reference/griptape/config/amazon_bedrock_driver_config.md) provides default Drivers for Amazon Bedrock's APIs.
 
 ```python
-import os
-import boto3
-from griptape.structures import Agent
-from griptape.config import AmazonBedrockDriverConfig, config
-
-config.drivers = AmazonBedrockDriverConfig(
-    session=boto3.Session(
-        region_name=os.environ["AWS_DEFAULT_REGION"],
-        aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
-        aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
-    )
-)
-
-agent = Agent()
+--8<-- "docs/griptape-framework/structures/src/config_3.py"
 ```
 
 #### Google
 The [Google Driver config](../../reference/griptape/config/google_driver_config.md) provides default Drivers for Google's Gemini APIs.
 
 ```python
-from griptape.structures import Agent
-from griptape.config import GoogleDriverConfig, config
-
-config.drivers = GoogleDriverConfig()
-
-agent = Agent()
+--8<-- "docs/griptape-framework/structures/src/config_4.py"
 ```
 
 #### Anthropic
@@ -83,12 +51,7 @@ The [Anthropic Driver config](../../reference/griptape/config/anthropic_driver_c
     To override the default embedding driver, see: [Override Default Structure Embedding Driver](../drivers/embedding-drivers.md#override-default-structure-embedding-driver).
 
 ```python
-from griptape.structures import Agent
-from griptape.config import AnthropicDriverConfig, config
-
-config.drivers = AnthropicDriverConfig()
-
-agent = Agent()
+--8<-- "docs/griptape-framework/structures/src/config_5.py"
 ```
 
 #### Cohere
@@ -96,13 +59,7 @@ agent = Agent()
 The [Cohere Driver config](../../reference/griptape/config/cohere_driver_config.md) provides default Drivers for Cohere's APIs.
 
 ```python
-import os
-from griptape.config import CohereDriverConfig, config
-from griptape.structures import Agent
-
-config.drivers = CohereDriverConfig(api_key=os.environ["COHERE_API_KEY"])
-
-agent = Agent()
+--8<-- "docs/griptape-framework/structures/src/config_6.py"
 ```
 
 ### Custom Configs
@@ -112,40 +69,11 @@ The [DriverConfig](../../reference/griptape/config/driver_config.md) class inclu
 This approach ensures that you are informed through clear error messages if you attempt to use Structures without proper Driver configurations.
 
 ```python
-import os
-from griptape.structures import Agent
-from griptape.config import DriverConfig, config
-from griptape.drivers import AnthropicPromptDriver
-
-config.drivers = DriverConfig(
-    prompt=AnthropicPromptDriver(
-        model="claude-3-sonnet-20240229",
-        api_key=os.environ["ANTHROPIC_API_KEY"],
-    )
-)
-
-
-agent = Agent()
+--8<-- "docs/griptape-framework/structures/src/config_7.py"
 ```
 
 ### Loading/Saving Configs
 
 ```python
-from griptape.structures import Agent
-from griptape.config import AmazonBedrockDriverConfig, config
-
-custom_config = AmazonBedrockDriverConfig()
-dict_config = custom_config.to_dict()
-# Use OpenAi for embeddings
-dict_config["embedding"] = {
-    "base_url": None,
-    "model": "text-embedding-3-small",
-    "organization": None,
-    "type": "OpenAiEmbeddingDriver",
-}
-custom_config = AmazonBedrockDriverConfig.from_dict(dict_config)
-
-config.drivers = custom_config
-
-agent = Agent()
+--8<-- "docs/griptape-framework/structures/src/config_8.py"
 ```

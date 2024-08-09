@@ -3,16 +3,7 @@
 This tool enables LLMs to get current date and time.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import DateTime
-
-# Create an agent with the DateTime tool
-agent = Agent(
-    tools=[DateTime()]
-)
-
-# Fetch the current date and time
-agent.run("What is the current date and time?")
+--8<-- "docs/griptape-tools/official-tools/src/date_time_1.py"
 ```
 ```
 [09/11/23 15:26:02] INFO     Task d0bf49dacd8849e695494578a333f6cc              

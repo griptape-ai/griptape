@@ -15,95 +15,39 @@ Tokenizers are a low level abstraction that you will rarely interact with direct
 ### OpenAI
 
 ```python
-from griptape.tokenizers import OpenAiTokenizer
-
-
-tokenizer = OpenAiTokenizer(model="gpt-4o")
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
+--8<-- "docs/griptape-framework/misc/src/tokenizers_1.py"
 ```
 
 ### Cohere
 ```python
-import os
-from cohere import Client
-from griptape.tokenizers import CohereTokenizer
-
-
-tokenizer = CohereTokenizer(
-    model="command", client=Client(os.environ["COHERE_API_KEY"])
-)
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
+--8<-- "docs/griptape-framework/misc/src/tokenizers_2.py"
 ```
 
 ### Anthropic
 
 ```python
-from griptape.tokenizers import AnthropicTokenizer
-
-
-tokenizer = AnthropicTokenizer(model="claude-3-opus-20240229")
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
+--8<-- "docs/griptape-framework/misc/src/tokenizers_3.py"
 ```
 
 ### Google
 
 ```python
-import os
-from griptape.tokenizers import GoogleTokenizer
-
-tokenizer = GoogleTokenizer(model="gemini-pro", api_key=os.environ["GOOGLE_API_KEY"])
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
+--8<-- "docs/griptape-framework/misc/src/tokenizers_4.py"
 ```
 
 ### Hugging Face
 ```python
-from transformers import AutoTokenizer
-from griptape.tokenizers import HuggingFaceTokenizer
-
-
-tokenizer = HuggingFaceTokenizer(
-    model="sentence-transformers/all-MiniLM-L6-v2",
-    max_output_tokens=512,
-)
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
+--8<-- "docs/griptape-framework/misc/src/tokenizers_5.py"
 ```
 
 ### Amazon Bedrock
 ```python
-from griptape.tokenizers import AmazonBedrockTokenizer
-
-
-tokenizer = AmazonBedrockTokenizer(model="amazon.titan-text-express-v1")
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
+--8<-- "docs/griptape-framework/misc/src/tokenizers_6.py"
 ```
 
 ### Simple
 Not all LLM providers have a public tokenizer API. In this case, you can use the `SimpleTokenizer` to count tokens based on a simple heuristic. 
 
 ```python
-from griptape.tokenizers import SimpleTokenizer
-
-tokenizer = SimpleTokenizer(max_input_tokens=1024, max_output_tokens=1024, characters_per_token=6)
-
-print(tokenizer.count_tokens("Hello world!"))
-print(tokenizer.count_input_tokens_left("Hello world!"))
-print(tokenizer.count_output_tokens_left("Hello world!"))
+--8<-- "docs/griptape-framework/misc/src/tokenizers_7.py"
 ```
