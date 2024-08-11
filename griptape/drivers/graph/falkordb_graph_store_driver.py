@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging
 from typing import Any, Optional
 
-import redis
 from falkordb import FalkorDB
+from redis.exceptions import ResponseError
 
 from .base_graph_store_driver import BaseGraphStoreDriver
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
-    """FalkorDB Graph Store Driver with triplet handling, schema management, and relationship mapping."""
+    """FalkorDB Graph Store Driver with triplet handling, ontology management, and relationship mapping."""
 
     def __init__(self, url: str, database: str = "falkor", node_label: str = "Entity", **kwargs: Any) -> None:
         """Initialize the graph store driver."""
@@ -22,15 +22,15 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
         try:
             if not self.index_exists("id"):
                 self._driver.query(f"CREATE INDEX FOR (n:`{self._node_label}`) ON (n.id)")
-        except redis.exceptions.ResponseError as e:
+        except ResponseError as e:
             if "already indexed" in str(e):
                 logger.warning("Index on 'id' already exists: %s", e)
             else:
                 raise e
 
         self._database = database
-        self.schema = ""
-        self.get_query = f"""
+        self._ontology = ""
+        self._get_query = f"""
             MATCH (n1:`{self._node_label}`)-[r]->(n2:`{self._node_label}`)
             WHERE n1.id = $subj RETURN type(r), n2.id
         """
@@ -47,7 +47,7 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
 
     def get(self, subj: str) -> list[list[str]]:
         """Get triplets for a given subject."""
-        result = self._driver.query(self.get_query, params={"subj": subj})
+        result = self._driver.query(self._get_query, params={"subj": subj})
         return result.result_set
 
     def get_rel_map(
@@ -79,8 +79,7 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
             for i, edge in enumerate(edges):
                 dest = nodes[i + 1]
                 dest_id = dest.properties["id"]
-                path.append(edge.relation)
-                path.append(dest_id)
+                path.extend((edge.relation, dest_id))
 
             paths = rel_map.get(subj_id, [])
             paths.append(path)
@@ -133,24 +132,30 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
         if not check_edges(obj):
             delete_entity(obj)
 
-    def refresh_schema(self) -> None:
-        """Refresh the FalkorDB graph schema information."""
+    def refresh_ontology(self) -> None:
+        """Refresh the FalkorDB graph ontology information."""
         node_properties = self.query("CALL DB.PROPERTYKEYS()")
         relationships = self.query("CALL DB.RELATIONSHIPTYPES()")
-        self.schema = f"""
+        self._ontology = f"""
         Properties: {node_properties}
         Relationships: {relationships}
         """
 
-    def get_schema(self, *, refresh: bool = False) -> str:
+    def get_ontology(self, *, refresh: bool = False) -> str:
         """Get the schema of the FalkorDBGraph store."""
-        if self.schema and not refresh:
-            return self.schema
-        self.refresh_schema()
-        logger.debug(f"get_schema() schema:\n{self.schema}")
-        return self.schema
+        if self._ontology and not refresh:
+            return self._ontology
+        self.refresh_ontology()
+        logger.debug("get_ontology() ontology: %s", self._ontology)
+        return self._ontology
 
-    def query(self, query: str, params: Optional[dict[str, Any]] = None) -> Any:
+    def query(
+        self,
+        query: str,
+        params: Optional[dict[str, Any]] = None,
+        namespace: Optional[str] = None,
+        **kwargs,
+    ) -> Any:
         """Execute a query on the database."""
         result = self._driver.query(query, params=params)
         return result.result_set
@@ -161,7 +166,7 @@ class FalkorDBGraphStoreDriver(BaseGraphStoreDriver):
             connection = FalkorDB(**connection_params)
             return connection
         except Exception as e:
-            logger.error(f"Error connecting to FalkorDB: {e}")
+            logger.error("Error connecting to FalkorDB: %s", e)
             return None
 
     # Implement abstract methods
