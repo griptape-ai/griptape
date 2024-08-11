@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact
 from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver
 
 
@@ -44,7 +44,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
         except (exceptions.RequestException, HTTPError) as err:
             return ErrorArtifact(str(err))
 
-    def _get_structure_run_result(self, structure_run_id: str) -> InfoArtifact | TextArtifact | ErrorArtifact:
+    def _get_structure_run_result(self, structure_run_id: str) -> InfoArtifact | BaseArtifact | ErrorArtifact:
         url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{structure_run_id}")
 
         result = self._get_structure_run_result_attempt(url)
@@ -67,7 +67,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
             return ErrorArtifact(result)
 
         if "output" in result:
-            return TextArtifact.from_dict(result["output"])
+            return BaseArtifact.from_dict(result["output"])
         else:
             return InfoArtifact("No output found in response")
 

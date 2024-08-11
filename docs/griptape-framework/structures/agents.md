@@ -17,17 +17,7 @@ You can access the final output of the Agent by using the [output](../../referen
 ## Toolkit Task Agent
 
 ```python
-from griptape.tools import Calculator
-from griptape.structures import Agent
-
-
-agent = Agent(
-    input="Calculate the following: {{ args[0] }}",
-    tools=[Calculator()]
-)
-
-agent.run("what's 13^7?")
-print("Answer:", agent.output)
+--8<-- "docs/griptape-framework/structures/src/agents_1.py"
 ```
 
 ```
@@ -56,21 +46,7 @@ Answer: 62,748,517
 ## Prompt Task Agent
 
 ```python
-from griptape.structures import Agent
-from griptape.tasks import PromptTask
-
-
-agent = Agent()
-agent.add_task(
-    PromptTask(
-        "Write me a {{ creative_medium }} about {{ args[0] }} and {{ args[1] }}",
-        context={
-            'creative_medium': 'haiku'
-        }
-    )
-)
-
-agent.run("Skateboards", "Programming")
+--8<-- "docs/griptape-framework/structures/src/agents_2.py"
 ```
 
 ```

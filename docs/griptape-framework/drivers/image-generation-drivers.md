@@ -10,22 +10,7 @@ search:
 Provide a Driver when building an [Engine](../engines/image-generation-engines.md), then pass it to a [Tool](../tools/index.md) for use by an [Agent](../structures/agents.md):
 
 ```python
-from griptape.structures import Agent
-from griptape.engines import PromptImageGenerationEngine
-from griptape.drivers import OpenAiImageGenerationDriver
-from griptape.tools import PromptImageGenerationClient
-
-driver = OpenAiImageGenerationDriver(
-    model="dall-e-2",
-)
-
-engine = PromptImageGenerationEngine(image_generation_driver=driver)
-
-agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
-])
-
-agent.run("Generate a watercolor painting of a dog riding a skateboard")
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_1.py"
 ```
 
 ## Image Generation Drivers
@@ -41,28 +26,7 @@ The [Bedrock Stable Diffusion Model Driver](../../reference/griptape/drivers/ima
 This Model Driver supports negative prompts. When provided (for example, when used with an [image generation Engine](../engines/image-generation-engines.md) configured with [Negative Rulesets](../engines/image-generation-engines.md#image-generation-engine-rulesets)), the image generation request will include negatively-weighted prompts describing features or characteristics to avoid in the resulting generation.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import PromptImageGenerationClient
-from griptape.engines import PromptImageGenerationEngine
-from griptape.drivers import AmazonBedrockImageGenerationDriver, \
-    BedrockStableDiffusionImageGenerationModelDriver
-
-model_driver = BedrockStableDiffusionImageGenerationModelDriver(
-    style_preset="pixel-art",
-)
-
-driver = AmazonBedrockImageGenerationDriver(
-    image_generation_model_driver=model_driver,
-    model="stability.stable-diffusion-xl-v0",
-)
-
-engine = PromptImageGenerationEngine(image_generation_driver=driver)
-
-agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
-])
-
-agent.run("Generate an image of a dog riding a skateboard")
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_2.py"
 ```
 
 #### Titan 
@@ -72,26 +36,7 @@ The [Bedrock Titan Image Generator Model Driver](../../reference/griptape/driver
 This Model Driver supports negative prompts. When provided (for example, when used with an [image generation engine](../engines/image-generation-engines.md) configured with [Negative Rulesets](../engines/image-generation-engines.md#image-generation-engine-rulesets)), the image generation request will include negatively-weighted prompts describing features or characteristics to avoid in the resulting generation.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import PromptImageGenerationClient
-from griptape.engines import PromptImageGenerationEngine
-from griptape.drivers import AmazonBedrockImageGenerationDriver, \
-    BedrockTitanImageGenerationModelDriver
-
-model_driver = BedrockTitanImageGenerationModelDriver()
-
-driver = AmazonBedrockImageGenerationDriver(
-    image_generation_model_driver=model_driver,
-    model="amazon.titan-image-generator-v1",
-)
-
-engine = PromptImageGenerationEngine(image_generation_driver=driver)
-
-agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
-])
-
-agent.run("Generate a watercolor painting of a dog riding a skateboard")
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_3.py"
 ```
 
 ### Azure OpenAI
@@ -99,27 +44,7 @@ agent.run("Generate a watercolor painting of a dog riding a skateboard")
 The [Azure OpenAI Image Generation Driver](../../reference/griptape/drivers/image_generation/azure_openai_image_generation_driver.md) provides access to OpenAI models hosted by Azure. In addition to the configurations provided by the underlying OpenAI Driver, the Azure OpenAI Driver allows configuration of Azure-specific deployment values.
 
 ```python
-import os
-
-from griptape.structures import Agent
-from griptape.tools import PromptImageGenerationClient
-from griptape.engines import PromptImageGenerationEngine
-from griptape.drivers import AzureOpenAiImageGenerationDriver
-
-driver = AzureOpenAiImageGenerationDriver(
-    model="dall-e-3",
-    azure_deployment=os.environ["AZURE_OPENAI_DALL_E_3_DEPLOYMENT_ID"],
-    azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_2"],
-    api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
-)
-
-engine = PromptImageGenerationEngine(image_generation_driver=driver)
-
-agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
-])
-
-agent.run("Generate a watercolor painting of a dog riding a skateboard")
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_4.py"
 ```
 
 ### Leonardo.Ai
@@ -131,27 +56,7 @@ This Driver supports configurations like model selection, image size, specifying
 This Driver supports negative prompts. When provided (for example, when used with an [image generation engine](../engines/image-generation-engines.md) configured with [Negative Rulesets](../engines/image-generation-engines.md#image-generation-engine-rulesets)), the image generation request will include negatively-weighted prompts describing features or characteristics to avoid in the resulting generation.
 
 ```python
-import os
-
-from griptape.structures import Agent
-from griptape.tools import PromptImageGenerationClient
-from griptape.engines import PromptImageGenerationEngine
-from griptape.drivers import LeonardoImageGenerationDriver
-
-driver = LeonardoImageGenerationDriver(
-    model=os.environ["LEONARDO_MODEL_ID"],
-    api_key=os.environ["LEONARDO_API_KEY"],
-    image_width=512,
-    image_height=1024,
-)
-
-engine = PromptImageGenerationEngine(image_generation_driver=driver)
-
-agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
-])
-
-agent.run("Generate a watercolor painting of a dog riding a skateboard")
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_5.py"
 ```
 
 ### OpenAI
@@ -161,21 +66,55 @@ The [OpenAI Image Generation Driver](../../reference/griptape/drivers/image_gene
 This Driver supports image generation configurations like style presets, image quality preference, and image size. For details on supported configuration values, see the [OpenAI documentation](https://platform.openai.com/docs/guides/images/introduction).
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import PromptImageGenerationClient
-from griptape.engines import PromptImageGenerationEngine
-from griptape.drivers import OpenAiImageGenerationDriver
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_6.py"
+```
 
-driver = OpenAiImageGenerationDriver(
-    model="dall-e-2",
-    image_size="512x512",
-)
+### HuggingFace Pipelines
 
-engine = PromptImageGenerationEngine(image_generation_driver=driver)
+!!! info
+    This driver requires the `drivers-image-generation-huggingface` [extra](../index.md#extras).
 
-agent = Agent(tools=[
-    PromptImageGenerationClient(engine=engine),
-])
+The [HuggingFace Pipelines Image Generation Driver](../../reference/griptape/drivers/image_generation/huggingface_pipeline_image_generation_driver.md) enables image generation through locally-hosted models using the HuggingFace [Diffusers](https://huggingface.co/docs/diffusers/en/index) library. This Driver requires a [Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/index.md) to prepare the appropriate Pipeline.
 
-agent.run("Generate a watercolor painting of a dog riding a skateboard")
+This Driver requires a `model` configuration, specifying the model to use for image generation. The value of the `model` configuration must be one of the following:
+
+ - A model name from the HuggingFace Model Hub, like `stabilityai/stable-diffusion-3-medium-diffusers`
+ - A path to the directory containing a model on the filesystem, like `./models/stable-diffusion-3/`
+ - A path to a file containing a model on the filesystem, like `./models/sd3_medium_incl_clips.safetensors`
+
+The `device` configuration specifies the hardware device used to run inference. Common values include `cuda` (supporting CUDA-enabled GPUs), `cpu` (supported by a device's CPU), and `mps` (supported by Apple silicon GPUs). For more information, see [HuggingFace's documentation](https://huggingface.co/docs/transformers/en/perf_infer_gpu_one) on GPU inference.
+
+#### Stable Diffusion 3 Image Generation Pipeline Driver
+
+!!! info
+    The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
+
+The [Stable Diffusion 3 Image Generation Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_image_generation_pipeline_driver.md) provides a Stable `Diffusion3DiffusionPipeline` for text-to-image generations via the [HuggingFace Pipelines Image Generation Driver's](../../reference/griptape/drivers/image_generation/huggingface_pipeline_image_generation_driver.md) `.try_text_to_image()` method. This Driver accepts a text prompt and configurations including Stable Diffusion 3 model, output image size, generation seed, and inference steps.
+
+Image generation consumes substantial memory. On devices with limited VRAM, it may be necessary to enable the `enable_model_cpu_offload` or `drop_t5_encoder` configurations. For more information, see [HuggingFace's documentation](https://huggingface.co/docs/diffusers/en/optimization/memory) on reduced memory usage.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_7.py"
+```
+
+#### Stable Diffusion 3 Img2Img Image Generation Pipeline Driver
+
+!!! info
+    The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
+
+The [Stable Diffusion 3 Img2Img Image Generation Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_img_2_img_image_generation_pipeline_driver.md) provides a `StableDiffusion3Img2ImgPipeline` for image-to-image generations, accepting a text prompt and input image. This Driver accepts a text prompt, an input image, and configurations including Stable Diffusion 3 model, output image size, inference steps, generation seed, and strength of generation over the input image.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_8.py"
+```
+
+#### StableDiffusion3ControlNetImageGenerationPipelineDriver
+
+!!! note
+    The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
+
+The [StableDiffusion3ControlNetImageGenerationPipelineDriver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_controlnet_image_generation_pipeline_driver.md) provides a `StableDiffusion3ControlNetPipeline` for image-to-image generations, accepting a text prompt and a control image. This Driver accepts a text prompt, a control image, and configurations including Stable Diffusion 3 model, ControlNet model, output image size, generation seed, inference steps, and the degree to which the model adheres to the control image.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_9.py"
 ```

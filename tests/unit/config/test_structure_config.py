@@ -1,7 +1,6 @@
 import pytest
 
 from griptape.config import StructureConfig
-from griptape.structures import Agent
 
 
 class TestStructureConfig:
@@ -61,37 +60,3 @@ class TestStructureConfig:
         config.prompt_driver.max_tokens = 10
 
         assert config.prompt_driver.max_tokens == 10
-
-    def test_drivers(self, config):
-        assert config.drivers == [
-            config.prompt_driver,
-            config.image_generation_driver,
-            config.image_query_driver,
-            config.embedding_driver,
-            config.vector_store_driver,
-            config.conversation_memory_driver,
-            config.text_to_speech_driver,
-            config.audio_transcription_driver,
-        ]
-
-    def test_structure(self, config):
-        structure_1 = Agent(
-            config=config,
-        )
-
-        assert config.structure == structure_1
-        assert config._event_listener is not None
-        for driver in config.drivers:
-            if driver is not None:
-                assert config._event_listener in driver.event_listeners
-                assert len(driver.event_listeners) == 1
-
-        structure_2 = Agent(
-            config=config,
-        )
-        assert config.structure == structure_2
-        assert config._event_listener is not None
-        for driver in config.drivers:
-            if driver is not None:
-                assert config._event_listener in driver.event_listeners
-                assert len(driver.event_listeners) == 1

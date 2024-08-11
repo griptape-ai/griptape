@@ -5,7 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 ### Added
+- `AstraDbVectorStoreDriver` to support DataStax Astra DB as a vector store.
+- Ability to set custom schema properties on Tool Activities via `extra_schema_properties`.
+- Parameter `structure` to `BaseTask`.
+- Method `try_find_task` to `Structure`.
+- `TranslateQueryRagModule` `RagEngine` module for translating input queries.
+- Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
+
+### Changed
+- **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
+- **BREAKING**: Removed `EventPublisherMixin`.
+- `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
+
+## [0.29.0] - 2024-07-30
+
+### Added
+
 - `BaseGraphStoreDriver` as the base class for all graph store drivers.
 - `FalkorDBGraphStoreDriver` to support the FalkorDB graph database in Griptape.
 - Unit tests for `BaseGraphStoreDriver` and `FalkorDBGraphStoreDriver` to ensure their functionality.
@@ -14,6 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   
 ### Added
 - Native function calling support to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AnthropicPromptDriver`, `AmazonBedrockPromptDriver`, `GooglePromptDriver`, and `CoherePromptDriver`.
+=======
+- Native function calling support to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AnthropicPromptDriver`, `AmazonBedrockPromptDriver`, `GooglePromptDriver`, `OllamaPromptDriver`, and `CoherePromptDriver`.
+
 - `OllamaEmbeddingDriver` for generating embeddings with Ollama.
 - `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
 - `GriptapeCloudEventListenerDriver.api_key` defaults to the value in the `GT_CLOUD_API_KEY` environment variable.
@@ -26,6 +46,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `@observable` decorator for selecting which functions/methods to provide observability for.
 - `GenericArtifact` for storing any data.
 - `BaseTextArtifact` for text-based Artifacts to subclass.
+- `HuggingFacePipelineImageGenerationDriver` for generating images locally with HuggingFace pipelines.
+- `BaseImageGenerationPipelineDriver` as the base class for drivers interfacing with HuggingFace image generation pipelines.
+- `StableDiffusion3ImageGenerationPipelineDriver` for local text-to-image generation using a Stable Diffusion 3 pipeline.
+- `StableDiffusion3Img2ImgImageGenerationPipelineDriver` for local image-to-image generation using a Stable Diffusion 3 pipeline.
+- `StableDiffusion3ControlNetImageGenerationPipelineDriver` for local ControlNet image generation using a Stable Diffusion 3 pipeline.
+- Optional `params` field to `WebSearch`'s `search` schema that the LLM can be steered into using.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
@@ -45,6 +71,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed `drivers-vector-postgresql` extra to `drivers-vector-pgvector`.
 - **BREAKING**: Update `marqo` dependency to `^3.7.0`.
 - **BREAKING**: Removed `drivers-sql-postgresql` extra. Use `drivers-sql` extra and install necessary drivers (i.e. `psycopg2`) separately.
+- **BREAKING**: `api_key` and `search_id` are now required fields in `GoogleWebSearchDriver`.
+- **BREAKING**: `web_search_driver` is now required fields in the `WebSearch` Tool.
+- `GoogleWebSearchDriver` and `DuckDuckGoWebSearchDriver` now use `kwargs` passed to the `run` method.
 - Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
 - Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
@@ -368,6 +397,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default model of `AmazonBedrockStructureConfig` to `anthropic.claude-3-sonnet-20240229-v1:0`.
 - `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Anthropic's Messages API.
 - `OpenAiVisionImageQueryDriver` now has a required field `max_tokens` that defaults to 256
+- `GriptapeCloudStructureRunDriver` now outputs a `BaseArtifact` instead of a `TextArtifact`
 
 ## [0.23.2] - 2024-03-15
 

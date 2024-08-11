@@ -3,29 +3,7 @@
 This tool enables LLMs to search the web.
 
 ```python
-import os
-from griptape.tools import WebSearch
-from griptape.structures import Agent
-from griptape.drivers import GoogleWebSearchDriver
-
-# Initialize the WebSearch tool with necessary parameters
-web_search_tool = WebSearch(
-    web_search_driver=GoogleWebSearchDriver(
-        api_key=os.environ["GOOGLE_API_KEY"],
-        search_id=os.environ["GOOGLE_API_SEARCH_ID"],
-        results_count=5,
-        language="en",
-        country="us",
-    ),
-)
-
-# Set up an agent using the WebSearch tool
-agent = Agent(
-    tools=[web_search_tool]
-)
-
-# Task: Search the web for a specific query
-agent.run("Tell me how photosynthesis works")
+--8<-- "docs/griptape-tools/official-tools/src/web_search_1.py"
 ```
 ```
 [09/08/23 15:37:25] INFO     Task 2cf557f7f7cd4a20a7fa2f0c46af2f71              
@@ -109,4 +87,11 @@ agent.run("Tell me how photosynthesis works")
                              life on Earth as it is the primary source of oxygen
                              in the atmosphere and forms the basis of the food  
                              chain.      
+```
+
+Extra schema properties can be added to the Tool to allow for more customization if the Driver supports it.
+In this example, we add a `sort` property to the `search` Activity which will be added as a [Google custom search query parameter](https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list).
+
+```python
+--8<-- "docs/griptape-tools/official-tools/src/web_search_2.py"
 ```

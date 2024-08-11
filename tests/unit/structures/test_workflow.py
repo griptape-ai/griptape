@@ -321,6 +321,34 @@ class TestWorkflow:
 
         self._validate_topology_1(workflow)
 
+    def test_run_topology_1_imperative_parents_structure_init(self):
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+        task1 = PromptTask("test1", id="task1")
+        task2 = PromptTask("test2", id="task2", structure=workflow)
+        task3 = PromptTask("test3", id="task3", structure=workflow)
+        task4 = PromptTask("test4", id="task4", structure=workflow)
+        task2.add_parent(task1)
+        task3.add_parent("task1")
+        task4.add_parents([task2, "task3"])
+
+        workflow.run()
+
+        self._validate_topology_1(workflow)
+
+    def test_run_topology_1_imperative_children_structure_init(self):
+        workflow = Workflow(prompt_driver=MockPromptDriver())
+        task1 = PromptTask("test1", id="task1", structure=workflow)
+        task2 = PromptTask("test2", id="task2", structure=workflow)
+        task3 = PromptTask("test3", id="task3", structure=workflow)
+        task4 = PromptTask("test4", id="task4")
+        task1.add_children([task2, task3])
+        task2.add_child(task4)
+        task3.add_child(task4)
+
+        workflow.run()
+
+        self._validate_topology_1(workflow)
+
     def test_run_topology_1_imperative_mixed(self):
         task1 = PromptTask("test1", id="task1")
         task2 = PromptTask("test2", id="task2")
@@ -781,8 +809,8 @@ class TestWorkflow:
         assert len(workflow.tasks) == 4
         assert workflow.input_task.id == "task1"
         assert workflow.output_task.id == "task4"
-        assert workflow.input_task.id == workflow.tasks[0].id
-        assert workflow.output_task.id == workflow.tasks[-1].id
+        assert workflow.input_task.id == workflow.order_tasks()[0].id
+        assert workflow.output_task.id == workflow.order_tasks()[-1].id
 
         task1 = workflow.find_task("task1")
         assert task1.state == BaseTask.State.FINISHED
@@ -810,8 +838,6 @@ class TestWorkflow:
         assert len(workflow.tasks) == 5
         assert workflow.input_task.id == "taska"
         assert workflow.output_task.id == "taske"
-        assert workflow.input_task.id == workflow.tasks[0].id
-        assert workflow.output_task.id == workflow.tasks[-1].id
 
         taska = workflow.find_task("taska")
         assert taska.state == BaseTask.State.FINISHED
@@ -832,6 +858,8 @@ class TestWorkflow:
         assert taskd.state == BaseTask.State.FINISHED
         assert sorted(taskd.parent_ids) == ["taska", "taskb", "taskc"]
         assert taskd.child_ids == ["taske"]
+        assert workflow.input_task.id == workflow.order_tasks()[0].id
+        assert workflow.output_task.id == workflow.order_tasks()[-1].id
 
         taske = workflow.find_task("taske")
         assert taske.state == BaseTask.State.FINISHED
@@ -843,9 +871,6 @@ class TestWorkflow:
         assert len(workflow.tasks) == 4
         assert workflow.input_task.id == "task1"
         assert workflow.output_task.id == "task3"
-        assert workflow.input_task.id == workflow.tasks[0].id
-        assert workflow.output_task.id == workflow.tasks[-1].id
-
         task1 = workflow.find_task("task1")
         assert task1.state == BaseTask.State.FINISHED
         assert task1.parent_ids == []
@@ -855,6 +880,8 @@ class TestWorkflow:
         assert task2.state == BaseTask.State.FINISHED
         assert task2.parent_ids == ["task4"]
         assert task2.child_ids == ["task3"]
+        assert workflow.input_task.id == workflow.order_tasks()[0].id
+        assert workflow.output_task.id == workflow.order_tasks()[-1].id
 
         task3 = workflow.find_task("task3")
         assert task3.state == BaseTask.State.FINISHED
@@ -871,8 +898,8 @@ class TestWorkflow:
         assert len(workflow.tasks) == 9
         assert workflow.input_task.id == "collect_movie_info"
         assert workflow.output_task.id == "summarize_to_slack"
-        assert workflow.input_task.id == workflow.tasks[0].id
-        assert workflow.output_task.id == workflow.tasks[-1].id
+        assert workflow.input_task.id == workflow.order_tasks()[0].id
+        assert workflow.output_task.id == workflow.order_tasks()[-1].id
 
         collect_movie_info = workflow.find_task("collect_movie_info")
         assert collect_movie_info.parent_ids == []

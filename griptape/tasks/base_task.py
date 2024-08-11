@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Callable, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
-from griptape.events import FinishTaskEvent, StartTaskEvent
+from griptape.events import FinishTaskEvent, StartTaskEvent, event_bus
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -29,14 +29,18 @@ class BaseTask(ABC):
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
+    structure: Optional[Structure] = field(default=None, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
-    structure: Optional[Structure] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
     futures_executor_fn: Callable[[], futures.Executor] = field(
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
         kw_only=True,
     )
+
+    def __attrs_post_init__(self) -> None:
+        if self.structure is not None:
+            self.structure.add_task(self)
 
     @property
     @abstractmethod
@@ -44,11 +48,15 @@ class BaseTask(ABC):
 
     @property
     def parents(self) -> list[BaseTask]:
-        return [self.structure.find_task(parent_id) for parent_id in self.parent_ids]
+        if self.structure is not None:
+            return [self.structure.find_task(parent_id) for parent_id in self.parent_ids]
+        raise ValueError("Structure must be set to access parents")
 
     @property
     def children(self) -> list[BaseTask]:
-        return [self.structure.find_task(child_id) for child_id in self.child_ids]
+        if self.structure is not None:
+            return [self.structure.find_task(child_id) for child_id in self.child_ids]
+        raise ValueError("Structure must be set to access children")
 
     @property
     def parent_outputs(self) -> dict[str, str]:
@@ -81,6 +89,12 @@ class BaseTask(ABC):
         if parent_id not in self.parent_ids:
             self.parent_ids.append(parent_id)
 
+        if isinstance(parent, BaseTask):
+            parent.add_child(self.id)
+
+            if self.structure is not None:
+                self.structure.add_task(parent)
+
     def add_children(self, children: list[str | BaseTask]) -> None:
         for child in children:
             self.add_child(child)
@@ -90,6 +104,12 @@ class BaseTask(ABC):
 
         if child_id not in self.child_ids:
             self.child_ids.append(child_id)
+
+        if isinstance(child, BaseTask):
+            child.add_parent(self.id)
+
+            if self.structure is not None:
+                self.structure.add_task(child)
 
     def preprocess(self, structure: Structure) -> BaseTask:
         self.structure = structure
@@ -107,7 +127,7 @@ class BaseTask(ABC):
 
     def before_run(self) -> None:
         if self.structure is not None:
-            self.structure.publish_event(
+            event_bus.publish_event(
                 StartTaskEvent(
                     task_id=self.id,
                     task_parent_ids=self.parent_ids,
@@ -119,7 +139,7 @@ class BaseTask(ABC):
 
     def after_run(self) -> None:
         if self.structure is not None:
-            self.structure.publish_event(
+            event_bus.publish_event(
                 FinishTaskEvent(
                     task_id=self.id,
                     task_parent_ids=self.parent_ids,

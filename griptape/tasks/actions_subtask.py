@@ -10,7 +10,7 @@ from attrs import define, field
 from griptape import utils
 from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.common import ToolAction
-from griptape.events import FinishActionsSubtaskEvent, StartActionsSubtaskEvent
+from griptape.events import FinishActionsSubtaskEvent, StartActionsSubtaskEvent, event_bus
 from griptape.mixins import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
 from griptape.utils import remove_null_values_in_dict_recursively
@@ -64,6 +64,18 @@ class ActionsSubtask(BaseTask):
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
+    def add_child(self, child: str | BaseTask) -> None:
+        child_id = child if isinstance(child, str) else child.id
+
+        if child_id not in self.child_ids:
+            self.child_ids.append(child_id)
+
+    def add_parent(self, parent: str | BaseTask) -> None:
+        parent_id = parent if isinstance(parent, str) else parent.id
+
+        if parent_id not in self.parent_ids:
+            self.parent_ids.append(parent_id)
+
     def attach_to(self, parent_task: BaseTask) -> None:
         self.parent_task_id = parent_task.id
         self.structure = parent_task.structure
@@ -79,7 +91,7 @@ class ActionsSubtask(BaseTask):
             self.output = ErrorArtifact(f"ToolAction input parsing error: {e}", exception=e)
 
     def before_run(self) -> None:
-        self.structure.publish_event(
+        event_bus.publish_event(
             StartActionsSubtaskEvent(
                 task_id=self.id,
                 task_parent_ids=self.parent_ids,
@@ -145,7 +157,7 @@ class ActionsSubtask(BaseTask):
     def after_run(self) -> None:
         response = self.output.to_text() if isinstance(self.output, BaseArtifact) else str(self.output)
 
-        self.structure.publish_event(
+        event_bus.publish_event(
             FinishActionsSubtaskEvent(
                 task_id=self.id,
                 task_parent_ids=self.parent_ids,

@@ -22,43 +22,7 @@ Workflows have access to the following [context](../../reference/griptape/struct
 Let's build a simple workflow. Let's say, we want to write a story in a fantasy world with some unique characters. We could setup a workflow that generates a world based on some keywords. Then we pass the world description to any number of child tasks that create characters. Finally, the last task pulls in information from all parent tasks and writes up a short story.
 
 ```python
-from griptape.tasks import PromptTask
-from griptape.structures import Workflow
-from griptape.utils import StructureVisualizer
-
-
-world_task = PromptTask(
-    "Create a fictional world based on the following key words {{ keywords|join(', ') }}",
-    context={
-        "keywords": ["fantasy", "ocean", "tidal lock"]
-    },
-    id="world"
-)
-
-def character_task(task_id, character_name) -> PromptTask:
-    return PromptTask(
-        "Based on the following world description create a character named {{ name }}:\n{{ parent_outputs['world'] }}",
-        context={
-            "name": character_name
-        },
-        id=task_id,
-        parent_ids=["world"]
-    )
-
-scotty_task = character_task("scotty", "Scotty")
-annie_task = character_task("annie", "Annie")
-
-story_task = PromptTask(
-    "Based on the following description of the world and characters, write a short story:\n{{ parent_outputs['world'] }}\n{{ parent_outputs['scotty'] }}\n{{ parent_outputs['annie'] }}",
-    id="story",
-    parent_ids=["world", "scotty", "annie"]
-)
-
-workflow = Workflow(tasks=[world_task, story_task, scotty_task, annie_task, story_task])
-
-print(StructureVisualizer(workflow).to_url())
-
-workflow.run()
+--8<-- "docs/griptape-framework/structures/src/workflows_1.py"
 ```
 
 Note that we use the `StructureVisualizer` to get a visual representation of the workflow. If we visit the printed url, it should look like this:
@@ -164,146 +128,43 @@ The above example showed how to create a workflow using the declarative syntax v
 Declaratively specify parents (same as above example):
 
 ```python
-from griptape.tasks import PromptTask
-from griptape.structures import Workflow
-from griptape.rules import Rule
-
-workflow = Workflow(
-    tasks=[
-        PromptTask("Name an animal", id="animal"),
-        PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", parent_ids=["animal"]),
-        PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal", parent_ids=["adjective"]),
-    ],
-    rules=[Rule("output a single lowercase word")]
-)
-
-workflow.run()
+--8<-- "docs/griptape-framework/structures/src/workflows_2.py"
 ```
 
 Declaratively specify children:
 
 ```python
-from griptape.tasks import PromptTask
-from griptape.structures import Workflow
-from griptape.rules import Rule
-
-workflow = Workflow(
-    tasks=[
-        PromptTask("Name an animal", id="animal", child_ids=["adjective"]),
-        PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", child_ids=["new-animal"]),
-        PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal"),
-    ],
-    rules=[Rule("output a single lowercase word")],
-)
-
-workflow.run()
+--8<-- "docs/griptape-framework/structures/src/workflows_3.py"
 ```
 
 Declaratively specifying a mix of parents and children:
 
 ```python
-from griptape.tasks import PromptTask
-from griptape.structures import Workflow
-from griptape.rules import Rule
-
-workflow = Workflow(
-    tasks=[
-        PromptTask("Name an animal", id="animal"),
-        PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", parent_ids=["animal"], child_ids=["new-animal"]),
-        PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal"),
-    ],
-    rules=[Rule("output a single lowercase word")],
-)
-
-workflow.run()
+--8<-- "docs/griptape-framework/structures/src/workflows_4.py"
 ```
 
 Imperatively specify parents:
 
 ```python
-from griptape.tasks import PromptTask
-from griptape.structures import Workflow
-from griptape.rules import Rule
-
-animal_task = PromptTask("Name an animal", id="animal")
-adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
-new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
-
-adjective_task.add_parent(animal_task)
-new_animal_task.add_parent(adjective_task)
-
-workflow = Workflow(
-    tasks=[animal_task, adjective_task, new_animal_task],
-    rules=[Rule("output a single lowercase word")],
-)
-
-workflow.run()
+--8<-- "docs/griptape-framework/structures/src/workflows_5.py"
 ```
 
 Imperatively specify children:
 
 ```python
-from griptape.tasks import PromptTask
-from griptape.structures import Workflow
-from griptape.rules import Rule
-
-animal_task = PromptTask("Name an animal", id="animal")
-adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
-new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
-
-animal_task.add_child(adjective_task)
-adjective_task.add_child(new_animal_task)
-
-workflow = Workflow(
-    tasks=[animal_task, adjective_task, new_animal_task],
-    rules=[Rule("output a single lowercase word")],
-)
-
-workflow.run()
+--8<-- "docs/griptape-framework/structures/src/workflows_6.py"
 ```
 
 Imperatively specify a mix of parents and children:
 
 ```python
-from griptape.tasks import PromptTask
-from griptape.structures import Workflow
-from griptape.rules import Rule
-
-animal_task = PromptTask("Name an animal", id="animal")
-adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
-new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
-
-adjective_task.add_parent(animal_task)
-adjective_task.add_child(new_animal_task)
-
-workflow = Workflow(
-    tasks=[animal_task, adjective_task, new_animal_task],
-    rules=[Rule("output a single lowercase word")],
-)
-
-workflow.run()
+--8<-- "docs/griptape-framework/structures/src/workflows_7.py"
 ```
 
 Or even mix imperative and declarative:
 
 ```python
-from griptape.tasks import PromptTask
-from griptape.structures import Workflow
-from griptape.rules import Rule
-
-animal_task = PromptTask("Name an animal", id="animal")
-adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective", parent_ids=["animal"])
-
-
-new_animal_task = PromptTask("Name a {{ parent_outputs['adjective'] }} animal", id="new-animal")
-new_animal_task.add_parent(adjective_task)
-
-workflow = Workflow(
-    tasks=[animal_task, adjective_task, new_animal_task],
-    rules=[Rule("output a single lowercase word")],
-)
-
-workflow.run()
+--8<-- "docs/griptape-framework/structures/src/workflows_8.py"
 ```
 
 ### Insert Parallel Tasks
@@ -316,29 +177,7 @@ workflow.run()
 Imperatively insert parallel tasks between a parent and child:
 
 ```python
-from griptape.tasks import PromptTask
-from griptape.structures import Workflow
-from griptape.rules import Rule
-
-workflow = Workflow(
-    rules=[Rule("output a single lowercase word")],
-)
-
-animal_task = PromptTask("Name an animal", id="animal")
-adjective_task = PromptTask("Describe {{ parent_outputs['animal'] }} with an adjective", id="adjective")
-color_task = PromptTask("Describe {{ parent_outputs['animal'] }} with a color", id="color")
-new_animal_task = PromptTask("Name an animal described as: \n{{ parents_output_text }}", id="new-animal")
-
-# The following workflow runs animal_task, then (adjective_task, and color_task)
-# in parallel, then finally new_animal_task.
-#
-# In other words, the output of animal_task is passed to both adjective_task and color_task
-# and the outputs of adjective_task and color_task are then passed to new_animal_task.
-workflow.add_task(animal_task)
-workflow.add_task(new_animal_task)
-workflow.insert_tasks(animal_task, [adjective_task, color_task], new_animal_task)
-
-workflow.run()
+--8<-- "docs/griptape-framework/structures/src/workflows_9.py"
 ```
 
 output:

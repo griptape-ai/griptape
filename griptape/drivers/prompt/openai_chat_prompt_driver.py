@@ -159,58 +159,53 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         openai_messages = []
 
         for message in messages:
+            # If the message only contains textual content we can send it as a single content.
             if message.is_text():
-                openai_messages.append({"role": message.role, "content": message.to_text()})
+                openai_messages.append({"role": self.__to_openai_role(message), "content": message.to_text()})
+            # Action results must be sent as separate messages.
             elif message.has_any_content_type(ActionResultMessageContent):
-                # ToolAction results need to be expanded into separate messages.
                 openai_messages.extend(
-                    [
-                        {
-                            "role": self.__to_openai_role(message),
-                            "content": self.__to_openai_message_content(action_result),
-                            "tool_call_id": action_result.action.tag,
-                        }
-                        for action_result in message.get_content_type(ActionResultMessageContent)
-                    ],
-                )
-            else:
-                # ToolAction calls are attached to the assistant message that originally generated them.
-                action_call_content = []
-                non_action_call_content = []
-                for content in message.content:
-                    if isinstance(content, ActionCallMessageContent):
-                        action_call_content.append(content)
-                    else:
-                        non_action_call_content.append(content)
-
-                openai_messages.append(
                     {
-                        "role": self.__to_openai_role(message),
-                        "content": [
-                            self.__to_openai_message_content(content)
-                            for content in non_action_call_content  # ToolAction calls do not belong in the content
-                        ],
-                        **(
-                            {
-                                "tool_calls": [
-                                    self.__to_openai_message_content(action_call) for action_call in action_call_content
-                                ],
-                            }
-                            if action_call_content
-                            else {}
-                        ),
-                    },
+                        "role": self.__to_openai_role(message, action_result),
+                        "content": self.__to_openai_message_content(action_result),
+                        "tool_call_id": action_result.action.tag,
+                    }
+                    for action_result in message.get_content_type(ActionResultMessageContent)
                 )
+
+                if message.has_any_content_type(TextMessageContent):
+                    openai_messages.append({"role": self.__to_openai_role(message), "content": message.to_text()})
+            else:
+                openai_message = {
+                    "role": self.__to_openai_role(message),
+                    "content": [
+                        self.__to_openai_message_content(content)
+                        for content in [
+                            content for content in message.content if not isinstance(content, ActionCallMessageContent)
+                        ]
+                    ],
+                }
+
+                # Action calls must be attached to the message, not sent as content.
+                action_call_content = [
+                    content for content in message.content if isinstance(content, ActionCallMessageContent)
+                ]
+                if action_call_content:
+                    openai_message["tool_calls"] = [
+                        self.__to_openai_message_content(action_call) for action_call in action_call_content
+                    ]
+
+                openai_messages.append(openai_message)
 
         return openai_messages
 
-    def __to_openai_role(self, message: Message) -> str:
+    def __to_openai_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
         if message.is_system():
             return "system"
         elif message.is_assistant():
             return "assistant"
         else:
-            if message.has_any_content_type(ActionResultMessageContent):
+            if isinstance(message_content, ActionResultMessageContent):
                 return "tool"
             else:
                 return "user"

@@ -28,13 +28,11 @@ from griptape.engines.rag.modules import (
     VectorStoreRetrievalRagModule,
 )
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
-from griptape.events.finish_structure_run_event import FinishStructureRunEvent
-from griptape.events.start_structure_run_event import StartStructureRunEvent
+from griptape.events import FinishStructureRunEvent, StartStructureRunEvent, event_bus
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
-from griptape.mixins import EventPublisherMixin
 from griptape.utils import deprecation_warn
 
 if TYPE_CHECKING:
@@ -44,7 +42,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Structure(ABC, EventPublisherMixin):
+class Structure(ABC):
     LOGGER_NAME = "griptape"
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
@@ -96,8 +94,6 @@ class Structure(ABC, EventPublisherMixin):
     def __attrs_post_init__(self) -> None:
         if self.conversation_memory is not None:
             self.conversation_memory.structure = self
-
-        self.config.structure = self
 
         tasks = self.tasks.copy()
         self.tasks.clear()
@@ -215,10 +211,15 @@ class Structure(ABC, EventPublisherMixin):
         return any(s for s in self.tasks if s.is_executing())
 
     def find_task(self, task_id: str) -> BaseTask:
+        if (task := self.try_find_task(task_id)) is not None:
+            return task
+        raise ValueError(f"Task with id {task_id} doesn't exist.")
+
+    def try_find_task(self, task_id: str) -> Optional[BaseTask]:
         for task in self.tasks:
             if task.id == task_id:
                 return task
-        raise ValueError(f"Task with id {task_id} doesn't exist.")
+        return None
 
     def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
         return [self.add_task(s) for s in tasks]
@@ -227,7 +228,11 @@ class Structure(ABC, EventPublisherMixin):
         return {"args": self.execution_args, "structure": self}
 
     def resolve_relationships(self) -> None:
-        task_by_id = {task.id: task for task in self.tasks}
+        task_by_id = {}
+        for task in self.tasks:
+            if task.id in task_by_id:
+                raise ValueError(f"Duplicate task with id {task.id} found.")
+            task_by_id[task.id] = task
 
         for task in self.tasks:
             # Ensure parents include this task as a child
@@ -252,7 +257,7 @@ class Structure(ABC, EventPublisherMixin):
 
         [task.reset() for task in self.tasks]
 
-        self.publish_event(
+        event_bus.publish_event(
             StartStructureRunEvent(
                 structure_id=self.id,
                 input_task_input=self.input_task.input,
@@ -264,7 +269,7 @@ class Structure(ABC, EventPublisherMixin):
 
     @observable
     def after_run(self) -> None:
-        self.publish_event(
+        event_bus.publish_event(
             FinishStructureRunEvent(
                 structure_id=self.id,
                 output_task_input=self.output_task.input,

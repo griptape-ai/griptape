@@ -5,7 +5,7 @@ search:
 
 ## Overview
 
-You can use [EventListener](../../reference/griptape/events/event_listener.md)s to listen for events during a Structure's execution.
+You can configure the global [event_bus](../../reference/griptape/events/event_bus.md) with [EventListener](../../reference/griptape/events/event_listener.md)s to listen for various framework events.
 See [Event Listener Drivers](../drivers/event-listener-drivers.md) for examples on forwarding events to external services.
 
 ## Specific Event Types
@@ -13,40 +13,7 @@ See [Event Listener Drivers](../drivers/event-listener-drivers.md) for examples 
 You can listen to specific event types:
 
 ```python
-from griptape.structures import Agent
-from griptape.events import (
-    BaseEvent,
-    StartTaskEvent,
-    FinishTaskEvent,
-    StartActionsSubtaskEvent,
-    FinishActionsSubtaskEvent,
-    StartPromptEvent,
-    FinishPromptEvent,
-    EventListener,
-)
-
-
-def handler(event: BaseEvent):
-    print(event.__class__)
-
-
-agent = Agent(
-    event_listeners=[
-        EventListener(
-            handler,
-            event_types=[
-                StartTaskEvent,
-                FinishTaskEvent,
-                StartActionsSubtaskEvent,
-                FinishActionsSubtaskEvent,
-                StartPromptEvent,
-                FinishPromptEvent,
-            ],
-        )
-    ]
-)
-
-agent.run("tell me about griptape")
+--8<-- "docs/griptape-framework/misc/src/events_1.py"
 ```
 ```
 <class 'griptape.events.start_task_event.StartTaskEvent'>
@@ -68,26 +35,7 @@ agent.run("tell me about griptape")
 Or listen to all events:
 
 ```python
-from griptape.structures import Agent
-from griptape.events import BaseEvent, EventListener
-
-
-def handler1(event: BaseEvent):
-    print("Handler 1", event.__class__)
-
-
-def handler2(event: BaseEvent):
-    print("Handler 2", event.__class__)
-
-
-agent = Agent(
-    event_listeners=[
-        EventListener(handler1),
-        EventListener(handler2),
-    ]
-)
-
-agent.run("tell me about griptape")
+--8<-- "docs/griptape-framework/misc/src/events_2.py"
 ```
 
 ```
@@ -131,52 +79,14 @@ Handler 2 <class 'griptape.events.finish_structure_run_event.FinishStructureRunE
 You can use the [CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md) to stream the completion results from Prompt Drivers.
 
 ```python
-from griptape.events import CompletionChunkEvent, EventListener
-from griptape.tasks import ToolkitTask
-from griptape.structures import Pipeline
-from griptape.tools import WebScraper, TaskMemoryClient
-from griptape.config import OpenAiStructureConfig
-from griptape.drivers import OpenAiChatPromptDriver
-
-
-pipeline = Pipeline(
-    config=OpenAiStructureConfig(
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True)
-    ),
-    event_listeners=[
-        EventListener(
-            lambda e: print(e.token, end="", flush=True),
-            event_types=[CompletionChunkEvent],
-        )
-    ],
-)
-
-pipeline.add_tasks(
-    ToolkitTask(
-        "Based on https://griptape.ai, tell me what griptape is.",
-        tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
-    )
-)
-
-pipeline.run()
+--8<-- "docs/griptape-framework/misc/src/events_3.py"
 ```
 
 You can also use the [Stream](../../reference/griptape/utils/stream.md) utility to automatically wrap
 [CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md)s in a Python iterator.
 
 ```python
-from griptape.utils import Stream
-from griptape.tasks import ToolkitTask
-from griptape.structures import Pipeline
-from griptape.tools import WebScraper, TaskMemoryClient
-
-
-pipeline = Pipeline()
-pipeline.config.prompt_driver.stream = True
-pipeline.add_tasks(ToolkitTask("Based on https://griptape.ai, tell me what griptape is.", tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)]))
-
-for artifact in Stream(pipeline).run():
-    print(artifact.value, end="", flush=True)
+--8<-- "docs/griptape-framework/misc/src/events_4.py"
 ```
 
 
@@ -185,31 +95,7 @@ for artifact in Stream(pipeline).run():
 To count tokens, you can use Event Listeners and the [TokenCounter](../../reference/griptape/utils/token_counter.md) util:
 
 ```python
-from griptape import utils
-from griptape.events import BaseEvent, StartPromptEvent, FinishPromptEvent, EventListener
-from griptape.structures import Agent
-
-
-token_counter = utils.TokenCounter()
-
-
-def count_tokens(e: BaseEvent):
-    if isinstance(e, StartPromptEvent) or isinstance(e, FinishPromptEvent):
-        token_counter.add_tokens(e.token_count)
-
-
-agent = Agent(
-    event_listeners=[
-        EventListener(
-            handler=lambda e: count_tokens(e),
-            event_types=[StartPromptEvent, FinishPromptEvent],
-        )
-    ]
-)
-
-agent.run("tell me about large language models")
-
-print(f"total tokens: {token_counter.tokens}")
+--8<-- "docs/griptape-framework/misc/src/events_5.py"
 ```
 
 ```
@@ -243,24 +129,7 @@ total tokens: 273
 You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_event.md) to inspect the Prompt Stack and final prompt string before it is sent to the LLM. 
 
 ```python
-from griptape.structures import Agent
-from griptape.events import BaseEvent, StartPromptEvent, EventListener
-
-
-def handler(event: BaseEvent):
-    if isinstance(event, StartPromptEvent):
-        print("Prompt Stack Messages:")
-        for message in event.prompt_stack.messages:
-            print(f"{message.role}: {message.content}")
-        print("Final Prompt String:")
-        print(event.prompt)
-
-
-agent = Agent(
-    event_listeners=[EventListener(handler=handler, event_types=[StartPromptEvent])]
-)
-
-agent.run("Write me a poem.")
+--8<-- "docs/griptape-framework/misc/src/events_6.py"
 ```
 ```
 ...
