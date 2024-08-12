@@ -5,7 +5,7 @@ from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
 from griptape.tools import (
-    TaskMemoryClient,
+    PromptSummaryClient,
     WebScraper,
     WebSearch,
 )
@@ -23,7 +23,7 @@ def build_researcher() -> Agent:
             WebScraper(
                 off_prompt=True,
             ),
-            TaskMemoryClient(off_prompt=False),
+            PromptSummaryClient(off_prompt=False),
         ],
         rulesets=[
             Ruleset(

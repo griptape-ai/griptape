@@ -128,44 +128,75 @@ Agents are great for getting started, but they are intentionally limited to a si
 ```
 
 ```
-[09/08/23 10:02:34] INFO     ToolkitTask 3c1d2f4a49384873820a9a8cd8acc983
+[08/12/24 14:50:28] INFO     ToolkitTask 19dcf6020968468a91aa8a93c2a3f645
                              Input: Load https://www.griptape.ai, summarize it, and store it in griptape.txt
-[09/08/23 10:02:44] INFO     Subtask 42fd56ba100e45688401c5ce32b79a33
-                             Thought: To complete this task, I need to first load the webpage using the WebScraper tool's get_content
-                             activity. Then, I will summarize the content using the TaskMemory tool's summarize activity. Finally, I will
-                             store the summarized content in a file named griptape.txt using the FileManager tool's save_file_to_disk
-                             activity.
+[08/12/24 14:50:30] INFO     Subtask a685799379c5421b91768353fc219939
+                             Actions: [
+                               {
+                                 "tag": "call_YL5Ozd9WUtag4ykR5Agm12Ce",
+                                 "name": "WebScraper",
+                                 "path": "get_content",
+                                 "input": {
+                                   "values": {
+                                     "url": "https://www.griptape.ai"
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 14:50:31] INFO     Subtask a685799379c5421b91768353fc219939
+                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "6be3a2e0494841fda966b98bec9ffccb"
+[08/12/24 14:50:33] INFO     Subtask 1cf0c19843aa4fada5745c4a82eb4237
+                             Actions: [
+                               {
+                                 "tag": "call_ElTYTPeocOU62I0VjzRqmfoF",
+                                 "name": "PromptSummaryClient",
+                                 "path": "summarize",
+                                 "input": {
+                                   "values": {
+                                     "summary": {
+                                       "memory_name": "TaskMemory",
+                                       "artifact_namespace": "6be3a2e0494841fda966b98bec9ffccb"
+                                     }
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 14:50:35] INFO     Subtask 1cf0c19843aa4fada5745c4a82eb4237
+                             Response: Griptape offers a comprehensive solution for building, deploying, and scaling AI applications in the cloud. It provides developers
+                             with a framework and cloud services to create retrieval-driven AI-powered applications. The Griptape Framework allows developers to build
+                             business logic using Python, ensuring better security, performance, and cost-efficiency. It simplifies the creation of Gen AI Agents, Systems of
+                             Agents, Pipelines, Workflows, and RAG implementations without needing extensive knowledge of Gen AI or Prompt Engineering.
 
-                             Action: {"name": "WebScraper", "path": "get_content", "input": {"values": {"url":
-                             "https://www.griptape.ai"}}}
-[09/08/23 10:02:45] INFO     Subtask 42fd56ba100e45688401c5ce32b79a33
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and
-                             artifact_namespace "39ca67bbe26b4e1584193b87ed82170d"
-[09/08/23 10:02:53] INFO     Subtask 8023e3d257274df29065b22e736faca8
-                             Thought: Now that the webpage content is stored in memory, I can use the TaskMemory tool's summarize activity
-                             to summarize the content.
-                             Action: {"name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "39ca67bbe26b4e1584193b87ed82170d"}}}
-[09/08/23 10:02:57] INFO     Subtask 8023e3d257274df29065b22e736faca8
-                             Response: Griptape is an open source framework that allows developers to build and deploy AI applications
-                             using large language models (LLMs). It provides the ability to create conversational and event-driven apps that
-                             can securely access and manipulate data. The framework enforces structures for predictability and creativity,
-                             allowing developers to easily transition between the two. Griptape Cloud is a managed platform for deploying and
-                             managing AI apps.
-[09/08/23 10:03:06] INFO     Subtask 7baae700239943c18b5b6b21873f0e13
-                             Thought: Now that I have the summarized content, I can store it in a file named griptape.txt using the
-                             FileManager tool's save_file_to_disk activity.
-                             Action: {"name": "FileManager", "path": "save_file_to_disk", "input": {"values":
-                             {"memory_name": "TaskMemory", "artifact_namespace": "39ca67bbe26b4e1584193b87ed82170d", "path":
-                             "griptape.txt"}}}
-                    INFO     Subtask 7baae700239943c18b5b6b21873f0e13
-                             Response: saved successfully
-[09/08/23 10:03:14] INFO     ToolkitTask 3c1d2f4a49384873820a9a8cd8acc983
-                             Output: The summarized content of the webpage https://www.griptape.ai has been successfully stored in the file
-                             named griptape.txt.
-                    INFO     PromptTask 8635925ff23b46f28a740105bd11ca8f
-                             Input: Say the following in spanish: The summarized content of the webpage https://www.griptape.ai has been
-                             successfully stored in the file named griptape.txt.
-[09/08/23 10:03:18] INFO     PromptTask 8635925ff23b46f28a740105bd11ca8f
-                             Output: El contenido resumido de la página web https://www.griptape.ai se ha almacenado con éxito en el archivo
-                             llamado griptape.txt.
+                             Griptape Cloud handles infrastructure management, offering services like ETL pipelines for data preparation, Retrieval as a Service (RAG) for
+                             generating answers and summaries, and a Structure Runtime (RUN) for building AI agents and workflows. This enables seamless scaling and
+                             integration with client applications, catering to custom projects, turnkey SaaS offerings, and finished apps.
+[08/12/24 14:50:38] INFO     Subtask aaaeca1a089844d4915d065deb3c00cf
+                             Actions: [
+                               {
+                                 "tag": "call_eKvIUIw45aRYKDBpT1gGKc9b",
+                                 "name": "FileManager",
+                                 "path": "save_content_to_file",
+                                 "input": {
+                                   "values": {
+                                     "path": "griptape.txt",
+                                     "content": "Griptape offers a comprehensive solution for building, deploying, and scaling AI applications in the cloud. It provides
+                             developers with a framework and cloud services to create retrieval-driven AI-powered applications. The Griptape Framework allows developers to
+                             build business logic using Python, ensuring better security, performance, and cost-efficiency. It simplifies the creation of Gen AI Agents,
+                             Systems of Agents, Pipelines, Workflows, and RAG implementations without needing extensive knowledge of Gen AI or Prompt
+                             Engineering.\n\nGriptape Cloud handles infrastructure management, offering services like ETL pipelines for data preparation, Retrieval as a
+                             Service (RAG) for generating answers and summaries, and a Structure Runtime (RUN) for building AI agents and workflows. This enables seamless
+                             scaling and integration with client applications, catering to custom projects, turnkey SaaS offerings, and finished apps."
+                                   }
+                                 }
+                               }
+                             ]
+                    INFO     Subtask aaaeca1a089844d4915d065deb3c00cf
+                             Response: Successfully saved file
+[08/12/24 14:50:39] INFO     ToolkitTask 19dcf6020968468a91aa8a93c2a3f645
+                             Output: The content from https://www.griptape.ai has been summarized and stored in griptape.txt.
+                    INFO     PromptTask dbbb38f144f445db896dc12854f17ad3
+                             Input: Say the following in spanish: The content from https://www.griptape.ai has been summarized and stored in griptape.txt.
+[08/12/24 14:50:42] INFO     PromptTask dbbb38f144f445db896dc12854f17ad3
+                             Output: El contenido de https://www.griptape.ai ha sido resumido y almacenado en griptape.txt.
 ```

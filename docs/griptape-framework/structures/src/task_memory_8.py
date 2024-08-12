@@ -1,10 +1,10 @@
 from griptape.structures import Agent
-from griptape.tools import TaskMemoryClient, WebScraper
+from griptape.tools import PromptSummaryClient, WebScraper
 
 agent = Agent(
     tools=[
         WebScraper(off_prompt=True),  # This tool will store the data in Task Memory
-        TaskMemoryClient(
+        PromptSummaryClient(
             off_prompt=True
         ),  # This tool will store the data back in Task Memory with no way to get it out
     ]

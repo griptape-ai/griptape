@@ -2,7 +2,7 @@ import os
 
 from griptape.drivers import GoogleWebSearchDriver
 from griptape.structures import Agent
-from griptape.tools import TaskMemoryClient, WebSearch
+from griptape.tools import PromptSummaryClient, WebSearch
 
 agent = Agent(
     tools=[
@@ -12,7 +12,7 @@ agent = Agent(
                 search_id=os.environ["GOOGLE_API_SEARCH_ID"],
             ),
         ),
-        TaskMemoryClient(off_prompt=False),
+        PromptSummaryClient(off_prompt=False),
     ],
 )
 agent.run("Give me some websites with information about AI frameworks.")

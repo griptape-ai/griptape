@@ -144,7 +144,6 @@ nav:
           - OpenWeatherClient: "griptape-tools/official-tools/openweather-client.md"
           - RestApiClient: "griptape-tools/official-tools/rest-api-client.md"
           - SqlClient: "griptape-tools/official-tools/sql-client.md"
-          - TaskMemoryClient: "griptape-tools/official-tools/task-memory-client.md"
           - VectorStoreClient: "griptape-tools/official-tools/vector-store-client.md"
           - WebScraper: "griptape-tools/official-tools/web-scraper.md"
           - WebSearch: "griptape-tools/official-tools/web-search.md"

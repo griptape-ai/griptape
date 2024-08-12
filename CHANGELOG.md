@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
 - Global config, `griptape.config.config`, for setting global configuration defaults.
 - Unique name generation for all `RagEngine` modules.
+- `ExtractionClient` Tool for having the LLM extract structured data from text.
+- `PromptSummaryClient` Tool for having the LLM summarize text.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
@@ -28,8 +30,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules were adjusted accordingly.
 - **BREAKING**: Removed before and after response modules from `ResponseRagStage`.
 - **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.
+- **BREAKING**: Removed `TextArtifactStorage.query` and `TextArtifactStorage.summarize`. 
+- **BREAKING**: Removed `TextArtifactStorage.rag_engine`, and `TextArtifactStorage.retrieval_rag_module_name`.
+- **BREAKING**: Removed `TextArtifactStorage.summary_engine`, `TextArtifactStorage.csv_extraction_engine`, and `TextArtifactStorage.json_extraction_engine`.
+- **BREAKING**: Removed `TaskMemory.summarize_namespace` and `TaskMemory.query_namespace`.
+- **BREAKING**: Removed `Structure.rag_engine`.
+- **BREAKING**: Split `JsonExtractionEngine.template_generator` into `JsonExtractionEngine.system_template_generator` and `JsonExtractionEngine.user_template_generator`.
+- **BREAKING**: Split `CsvExtractionEngine.template_generator` into `CsvExtractionEngine.system_template_generator` and `CsvExtractionEngine.user_template_generator`.
+- **BREAKING**: Changed `JsonExtractionEngine.template_schema` from a `run` argument to a class attribute. 
+- **BREAKING**: Changed `CsvExtractionEngine.column_names` from a `run` argument to a class attribute. 
+- **BREAKING**: Removed `JsonExtractionTask`, and `CsvExtractionTask` use `ExtractionTask` instead.
+- **BREAKING**: Removed `TaskMemoryClient`, use `RagClient`, `ExtractionClient`, or `PromptSummaryClient` instead.
+- `RagClient` now can be used to search through Artifacts stored in Task Memory.
 - Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
+
+### Fixed
+- `JsonExtractionEngine` failing to parse json when the LLM outputs more than just the json.
 
 ## [0.29.1] - 2024-08-02
 

@@ -99,39 +99,63 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
 ```
 
 ```
-[09/08/23 11:14:55] INFO     ToolkitTask 22af656c6ad643e188fe80f9378dfff9
+[08/12/24 15:16:30] INFO     ToolkitTask f5b44fe1dadc4e6688053df71d97e0de
                              Input: Load https://www.griptape.ai, summarize it, and store it in a file called griptape.txt
-[09/08/23 11:15:02] INFO     Subtask 7a6356470e6a4b08b61edc5591b37f0c
-                             Thought: The first step is to load the webpage using the WebScraper tool's get_content activity.
-
-                             Action: {"name": "WebScraper", "path": "get_content", "input": {"values": {"url":
-                             "https://www.griptape.ai"}}}
-[09/08/23 11:15:03] INFO     Subtask 7a6356470e6a4b08b61edc5591b37f0c
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and
-                             artifact_namespace "2b50373849d140f698ba8071066437ee"
-[09/08/23 11:15:11] INFO     Subtask a22a7e4ebf594b4b895fcbe8a95c1dd3
-                             Thought: Now that the webpage content is stored in memory, I can use the TaskMemory tool's summarize activity
-                             to summarize it.
-                             Action: {"name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "2b50373849d140f698ba8071066437ee"}}}
-[09/08/23 11:15:15] INFO     Subtask a22a7e4ebf594b4b895fcbe8a95c1dd3
-                             Response: Griptape is an open source framework that allows developers to build and deploy AI applications
-                             using large language models (LLMs). It provides the ability to create conversational and event-driven apps that
-                             can access and manipulate data securely. Griptape enforces structures like sequential pipelines and DAG-based
-                             workflows for predictability, while also allowing for creativity by safely prompting LLMs with external APIs and
-                             data stores. The framework can be used to create AI systems that operate across both dimensions. Griptape Cloud
-                             is a managed platform for deploying and managing AI apps, and it offers features like scheduling and connecting
-                             to data stores and APIs.
-[09/08/23 11:15:27] INFO     Subtask 7afb3d44d0114b7f8ef2dac4314a8e90
-                             Thought: Now that I have the summary, I can use the FileManager tool's save_file_to_disk activity to store the
-                             summary in a file named griptape.txt.
-                             Action: {"name": "FileManager", "path": "save_file_to_disk", "input": {"values":
-                             {"memory_name": "TaskMemory", "artifact_namespace": "2b50373849d140f698ba8071066437ee", "path":
-                             "griptape.txt"}}}
-                    INFO     Subtask 7afb3d44d0114b7f8ef2dac4314a8e90
-                             Response: saved successfully
-[09/08/23 11:15:31] INFO     ToolkitTask 22af656c6ad643e188fe80f9378dfff9
-                             Output: The summary of the webpage https://www.griptape.ai has been successfully stored in a file named
-                             griptape.txt.
+[08/12/24 15:16:32] INFO     Subtask a4483eddfbe84129b0f4c04ef0f5d695
+                             Actions: [
+                               {
+                                 "tag": "call_AFeOL9MGhZ4mPFCULcBEm4NQ",
+                                 "name": "WebScraper",
+                                 "path": "get_content",
+                                 "input": {
+                                   "values": {
+                                     "url": "https://www.griptape.ai"
+                                   }
+                                 }
+                               }
+                             ]
+                    INFO     Subtask a4483eddfbe84129b0f4c04ef0f5d695
+                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "c6a6bcfc16f34481a068108aeaa6838e"
+[08/12/24 15:16:33] INFO     Subtask ee5f11666ded4dc39b94e4c59d18fbc7
+                             Actions: [
+                               {
+                                 "tag": "call_aT7DX0YSQPmOcnumWXrGoMNt",
+                                 "name": "PromptSummaryClient",
+                                 "path": "summarize",
+                                 "input": {
+                                   "values": {
+                                     "summary": {
+                                       "memory_name": "TaskMemory",
+                                       "artifact_namespace": "c6a6bcfc16f34481a068108aeaa6838e"
+                                     }
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 15:16:37] INFO     Subtask ee5f11666ded4dc39b94e4c59d18fbc7
+                             Response: Output of "PromptSummaryClient.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "669d29a704444176be93d09d014298df"
+[08/12/24 15:16:38] INFO     Subtask d9b2dd9f96d841f49f5d460e33905183
+                             Actions: [
+                               {
+                                 "tag": "call_QgMk1M1UuD6DAnxjfQz1MH6X",
+                                 "name": "FileManager",
+                                 "path": "save_memory_artifacts_to_disk",
+                                 "input": {
+                                   "values": {
+                                     "dir_name": ".",
+                                     "file_name": "griptape.txt",
+                                     "memory_name": "TaskMemory",
+                                     "artifact_namespace": "669d29a704444176be93d09d014298df"
+                                   }
+                                 }
+                               }
+                             ]
+                    INFO     Subtask d9b2dd9f96d841f49f5d460e33905183
+                             Response: Successfully saved memory artifacts to disk
+[08/12/24 15:16:39] INFO     ToolkitTask f5b44fe1dadc4e6688053df71d97e0de
+                             Output: The content from https://www.griptape.ai has been summarized and stored in a file called `griptape.txt`.
 ```
 
 ## Tool Task

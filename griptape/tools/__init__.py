@@ -9,7 +9,6 @@ from .rest_api_client.tool import RestApiClient
 from .file_manager.tool import FileManager
 from .vector_store_client.tool import VectorStoreClient
 from .date_time.tool import DateTime
-from .task_memory_client.tool import TaskMemoryClient
 from .base_aws_client import BaseAwsClient
 from .aws_iam_client.tool import AwsIamClient
 from .aws_s3_client.tool import AwsS3Client
@@ -32,6 +31,7 @@ from .text_to_speech_client.tool import TextToSpeechClient
 from .audio_transcription_client.tool import AudioTranscriptionClient
 from .extraction_client.tool import ExtractionClient
 from .prompt_summary_client.tool import PromptSummaryClient
+from .query_client.tool import QueryClient
 
 __all__ = [
     "BaseTool",
@@ -53,7 +53,6 @@ __all__ = [
     "FileManager",
     "VectorStoreClient",
     "DateTime",
-    "TaskMemoryClient",
     "Computer",
     "OpenWeatherClient",
     "PromptImageGenerationClient",
@@ -68,4 +67,5 @@ __all__ = [
     "AudioTranscriptionClient",
     "ExtractionClient",
     "PromptSummaryClient",
+    "QueryClient",
 ]

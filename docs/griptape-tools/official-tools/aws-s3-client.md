@@ -6,45 +6,36 @@ This tool enables LLMs to make AWS S3 API requests.
 --8<-- "docs/griptape-tools/official-tools/src/aws_s3_client_1.py"
 ```
 ```
-[09/11/23 16:49:35] INFO     Task 8bf7538e217a4b5a8472829f5eee75b9              
-                             Input: List all my S3 buckets.                     
-[09/11/23 16:49:41] INFO     Subtask 9fc44f5c8e73447ba737283cb2ef7f5d           
-                             Thought: To list all S3 buckets, I can use the     
-                             "list_s3_buckets" activity of the "AwsS3Client"    
-                             tool. This activity doesn't require any input.     
-                                                                                
-                             Action: {"name": "AwsS3Client",    
-                             "path": "list_s3_buckets"}                     
-[09/11/23 16:49:42] INFO     Subtask 9fc44f5c8e73447ba737283cb2ef7f5d           
-                             Response: Output of                             
-                             "AwsS3Client.list_s3_buckets" was stored in memory 
-                             with memory_name "TaskMemory" and              
-                             artifact_namespace                                 
-                             "f2592085fd4a430286a46770ea508cc9"                 
-[09/11/23 16:49:50] INFO     Subtask 0e9bb639a432431a92ef40a8c085ca0f           
-                             Thought: The output of the "list_s3_buckets"       
-                             activity is stored in memory. I can retrieve this  
-                             information using the "summarize" activity of the  
-                             "TaskMemory" tool.
-                             Action: {"name": "TaskMemoryClient", "path":   
-                             "summarize", "input": {"values": {"memory_name":   
-                             "TaskMemory", "artifact_namespace":                
-                             "f2592085fd4a430286a46770ea508cc9"}}}                                       
-[09/11/23 16:49:52] INFO     Subtask 0e9bb639a432431a92ef40a8c085ca0f           
-                             Response: The text consists of multiple         
-                             dictionaries, each containing a 'Name' and         
-                             'CreationDate' key-value pair. The 'Name'          
-                             represents the name of a resource or bucket, while 
-                             the 'CreationDate' represents the date and time    
-                             when the resource or bucket was created.           
-[09/11/23 16:50:03] INFO     Task 8bf7538e217a4b5a8472829f5eee75b9              
-                             Output: The names of your S3 buckets are as        
-                             follows:                                           
-                             1. Bucket Name: 'example-bucket-1', Creation Date: 
-                             '2022-01-01T00:00:00Z'                             
-                             2. Bucket Name: 'example-bucket-2', Creation Date: 
-                             '2022-01-02T00:00:00Z'                             
-                             3. Bucket Name: 'example-bucket-3', Creation Date: 
-                             '2022-01-03T00:00:00Z'                             
-                             Please note that the creation dates are in UTC.  
+[08/12/24 14:51:36] INFO     ToolkitTask bfc329ebc7d34497b429ab0d18ff7e7b
+                             Input: List all my S3 buckets.
+[08/12/24 14:51:37] INFO     Subtask dfd07f9e204c4a3d8f55ca3eb9d37ec5
+                             Actions: [
+                               {
+                                 "tag": "call_pZQ05Zmm6lSbEcvPWt4XEDj6",
+                                 "name": "AwsS3Client",
+                                 "path": "list_s3_buckets",
+                                 "input": {
+                                   "values": {}
+                                 }
+                               }
+                             ]
+                    INFO     Subtask dfd07f9e204c4a3d8f55ca3eb9d37ec5
+                             Response: {'Name': 'dummy-bucket-1', 'CreationDate': datetime.datetime(2023, 9, 14, 15, 41, 46,
+                             tzinfo=tzutc())}
+
+                             {'Name': 'dummy-bucket-2', 'CreationDate': datetime.datetime(2023, 9, 14, 15, 40, 33, tzinfo=tzutc())}
+
+                             {'Name': 'dummy-bucket-3', 'CreationDate': datetime.datetime(2023, 6, 23, 20, 19, 53, tzinfo=tzutc())}
+
+                             {'Name': 'dummy-bucket-4', 'CreationDate': datetime.datetime(2023, 8, 19, 17, 17, 13, tzinfo=tzutc())}
+
+                             {'Name': 'dummy-bucket-5', 'CreationDate': datetime.datetime(2024, 2, 15, 23, 17, 21, tzinfo=tzutc())}
+[08/12/24 14:51:43] INFO     ToolkitTask bfc329ebc7d34497b429ab0d18ff7e7b
+                             Output: Here are all your S3 buckets:
+
+                             1. dummy-bucket-1 (Created on 2023-09-14)
+                             2. dummy-bucket-2 (Created on 2023-09-14)
+                             3. dummy-bucket-3 (Created on 2023-06-23)
+                             4. dummy-bucket-4 (Created on 2023-08-19)
+                             5. dummy-bucket-5 (Created on 2024-02-15)
 ```

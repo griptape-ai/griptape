@@ -1,10 +1,10 @@
 from griptape.structures import Agent
-from griptape.tools import TaskMemoryClient, WebScraper
+from griptape.tools import QueryClient, WebScraper
 
 agent = Agent(
     tools=[
         WebScraper(off_prompt=True),
-        TaskMemoryClient(off_prompt=False),
+        QueryClient(off_prompt=False),
     ]
 )
 

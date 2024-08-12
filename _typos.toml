@@ -1,3 +1,6 @@
+[default]
+extend-ignore-re = ["call_[[:alnum:]]+"]
+
 [default.extend-words]
 # Don't correct the state ND
 ND = "ND"
@@ -6,3 +9,4 @@ mornin = "mornin"
 
 [files]
 extend-exclude = ["docs/assets", "tests/resources/"]
+

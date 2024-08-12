@@ -89,13 +89,13 @@ With Griptape, you can create Structures, such as Agents, Pipelines, and Workflo
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, FileManager, TaskMemoryClient
+from griptape.tools import WebScraper, FileManager, PromptSummaryClient
 
 agent = Agent(
     input="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
     tools=[
         WebScraper(off_prompt=True),
-        TaskMemoryClient(off_prompt=True),
+        PromptSummaryClient(off_prompt=True),
         FileManager()
     ]
 )
@@ -104,42 +104,63 @@ agent.run("https://griptape.ai", "griptape.txt")
 
 And here is the output:
 ```
-[04/02/24 13:51:09] INFO     ToolkitTask 85700ec1b0594e1a9502c0efe7da6ef4
+[08/12/24 14:48:15] INFO     ToolkitTask c90d263ec69046e8b30323c131ae4ba0
                              Input: Load https://griptape.ai, summarize it, and store it in a file called griptape.txt.
-[04/02/24 13:51:15] INFO     Subtask db6a3e7cb2f549128c358149d340f91c
-                             Thought: First, I need to load the content of the website using the WebScraper action. Then, I will use the TaskMemoryClient action to
-                             summarize the content. Finally, I will save the summarized content to a file using the FileManager action.
+[08/12/24 14:48:16] INFO     Subtask ebe23832cbe2464fb9ecde9fcee7c30f
                              Actions: [
                                {
+                                 "tag": "call_62kBnkswnk9Y6GH6kn1GIKk6",
                                  "name": "WebScraper",
                                  "path": "get_content",
                                  "input": {
                                    "values": {
                                      "url": "https://griptape.ai"
                                    }
-                                 },
-                                 "tag": "load_website_content"
+                                 }
                                }
                              ]
-[04/02/24 13:51:16] INFO     Subtask db6a3e7cb2f549128c358149d340f91c
+[08/12/24 14:48:17] INFO     Subtask ebe23832cbe2464fb9ecde9fcee7c30f
                              Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
-                             "752b38bb86da4baabdbd9f444eb4a0d1"
-[04/02/24 13:51:19] INFO     Subtask c3edba87ebf845d4b85e3a791f8fde8d
-                             Thought: Now that the website content is loaded into memory, I need to summarize it using the TaskMemoryClient action.
-                             Actions: [{"tag": "summarize_content", "name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory",
-                             "artifact_namespace": "752b38bb86da4baabdbd9f444eb4a0d1"}}}]
-[04/02/24 13:51:25] INFO     Subtask c3edba87ebf845d4b85e3a791f8fde8d
-                             Response: Output of "TaskMemoryClient.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
-                             "c4f131c201f147dcab07be3925b46294"
-[04/02/24 13:51:33] INFO     Subtask 06fe01ca64a744b38a8c08eb152aaacb
-                             Thought: Now that the content has been summarized and stored in memory, I need to save this summarized content to a file named 'griptape.txt'
-                             using the FileManager action.
-                             Actions: [{"tag": "save_summarized_content", "name": "FileManager", "path": "save_memory_artifacts_to_disk", "input": {"values": {"dir_name":
-                             ".", "file_name": "griptape.txt", "memory_name": "TaskMemory", "artifact_namespace": "c4f131c201f147dcab07be3925b46294"}}}]
-                    INFO     Subtask 06fe01ca64a744b38a8c08eb152aaacb
-                             Response: saved successfully
-[04/02/24 13:51:35] INFO     ToolkitTask 85700ec1b0594e1a9502c0efe7da6ef4
-                             Output: The summarized content of the website https://griptape.ai has been successfully saved to a file named 'griptape.txt'.
+                             "cecca28eb0c74bcd8c7119ed7f790c95"
+[08/12/24 14:48:18] INFO     Subtask dca04901436d49d2ade86cd6b4e1038a
+                             Actions: [
+                               {
+                                 "tag": "call_o9F1taIxHty0mDlWLcAjTAAu",
+                                 "name": "PromptSummaryClient",
+                                 "path": "summarize",
+                                 "input": {
+                                   "values": {
+                                     "summary": {
+                                       "memory_name": "TaskMemory",
+                                       "artifact_namespace": "cecca28eb0c74bcd8c7119ed7f790c95"
+                                     }
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 14:48:21] INFO     Subtask dca04901436d49d2ade86cd6b4e1038a
+                             Response: Output of "PromptSummaryClient.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "73765e32b8404e32927822250dc2ae8b"
+[08/12/24 14:48:22] INFO     Subtask c233853450fb4fd6a3e9c04c52b33bf6
+                             Actions: [
+                               {
+                                 "tag": "call_eKvIUIw45aRYKDBpT1gGKc9b",
+                                 "name": "FileManager",
+                                 "path": "save_memory_artifacts_to_disk",
+                                 "input": {
+                                   "values": {
+                                     "dir_name": ".",
+                                     "file_name": "griptape.txt",
+                                     "memory_name": "TaskMemory",
+                                     "artifact_namespace": "73765e32b8404e32927822250dc2ae8b"
+                                   }
+                                 }
+                               }
+                             ]
+                    INFO     Subtask c233853450fb4fd6a3e9c04c52b33bf6
+                             Response: Successfully saved memory artifacts to disk
+[08/12/24 14:48:23] INFO     ToolkitTask c90d263ec69046e8b30323c131ae4ba0
+                             Output: The content from https://griptape.ai has been summarized and stored in a file called `griptape.txt`.
 ```
 
 During the run, the Griptape Agent loaded a webpage with a [Tool](https://docs.griptape.ai/stable/griptape-tools/), stored its full content in [Task Memory](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md), queried it to answer the original question, and finally saved the answer to a file.

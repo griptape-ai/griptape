@@ -26,7 +26,7 @@ Griptape offers the following Prompt Drivers for interacting with LLMs.
 ### OpenAI Chat
 
 The [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) connects to the [OpenAI Chat](https://platform.openai.com/docs/guides/chat) API.
-This driver uses [OpenAI function calling](https://platform.openai.com/docs/guides/function-calling) when using [Tools](../tools/index.md).
+This driver uses [OpenAi function calling](https://platform.openai.com/docs/guides/function-calling) when using [Tools](../tools/index.md).
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_3.py"
