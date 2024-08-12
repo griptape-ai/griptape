@@ -13,10 +13,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Method `try_find_task` to `Structure`.
 - `TranslateQueryRagModule` `RagEngine` module for translating input queries.
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
+- Unique name generation for all `RagEngine` modules.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
 - **BREAKING**: Removed `EventPublisherMixin`.
+- **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules were adjusted accordingly.
+- **BREAKING**: Removed before and after response modules from `ResponseRagStage`.
+- **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
 
 ## [0.29.0] - 2024-07-30

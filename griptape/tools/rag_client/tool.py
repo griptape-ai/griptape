@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attrs import define, field
 from schema import Literal, Schema
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -35,11 +35,12 @@ class RagClient(BaseTool):
         query = params["values"]["query"]
 
         try:
-            result = self.rag_engine.process_query(query)
+            outputs = self.rag_engine.process_query(query).outputs
 
-            if result.output is None:
-                return ErrorArtifact("query output is empty")
+            if len(outputs) > 0:
+                return ListArtifact(outputs)
             else:
-                return result.output
+                return ErrorArtifact("query output is empty")
+
         except Exception as e:
             return ErrorArtifact(f"error querying: {e}")

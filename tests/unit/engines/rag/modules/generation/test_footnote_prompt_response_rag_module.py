@@ -13,7 +13,7 @@ class TestFootnotePromptResponseRagModule:
         return FootnotePromptResponseRagModule(prompt_driver=MockPromptDriver())
 
     def test_run(self, module):
-        assert module.run(RagContext(query="test")).output.value == "mock output"
+        assert module.run(RagContext(query="test")).value == "mock output"
 
     def test_prompt(self, module):
         system_message = module.default_system_template_generator(
