@@ -134,3 +134,21 @@ class TestBaseTask:
         assert child.id in task.child_ids
         assert task.id in child.parent_ids
         assert result == task
+
+    def test_add_parent_bitshift(self, task):
+        parent = MockTask("parent foobar", id="parent_foobar")
+
+        added_task = task << parent
+
+        assert parent.id in task.parent_ids
+        assert task.id in parent.child_ids
+        assert added_task == parent
+
+    def test_add_child_bitshift(self, task):
+        child = MockTask("child foobar", id="child_foobar")
+
+        added_task = task >> child
+
+        assert child.id in task.child_ids
+        assert task.id in child.parent_ids
+        assert added_task == child

@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
 - Global config, `griptape.config.config`, for setting global configuration defaults.
 - Unique name generation for all `RagEngine` modules.
+- Support for bitshift composition in `BaseTask` for adding parent/child tasks.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
@@ -34,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseTask.add_parent/child` now take a `BaseTask` instead of `str | BaseTask`.
 - Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
-- `BaseTask.add_parent/child` returns `self` allowing for chaining.
+- `BaseTask.add_parent/child` now returns `self`, allowing for chaining.
 
 ## [0.29.1] - 2024-08-02
 

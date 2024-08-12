@@ -42,6 +42,16 @@ class BaseTask(ABC):
         kw_only=True,
     )
 
+    def __rshift__(self, other: BaseTask) -> BaseTask:
+        self.add_child(other)
+
+        return other
+
+    def __lshift__(self, other: BaseTask) -> BaseTask:
+        self.add_parent(other)
+
+        return other
+
     def __attrs_post_init__(self) -> None:
         if self.structure is not None:
             self.structure.add_task(self)
