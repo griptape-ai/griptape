@@ -40,22 +40,18 @@ class TestVectorStoreRetrievalRagModule:
     def test_run_with_namespace_overrides(self):
         vector_store_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
         module = VectorStoreRetrievalRagModule(
-            vector_store_driver=vector_store_driver, query_params={"namespace": "test"}
+            name="TestModule", vector_store_driver=vector_store_driver, query_params={"namespace": "test"}
         )
 
         vector_store_driver.upsert_text_artifact(TextArtifact("foobar1"), namespace="test")
         vector_store_driver.upsert_text_artifact(TextArtifact("foobar2"), namespace="test")
 
         result1 = module.run(
-            RagContext(
-                query="test", module_configs={"VectorStoreRetrievalRagModule": {"query_params": {"namespace": "empty"}}}
-            )
+            RagContext(query="test", module_configs={"TestModule": {"query_params": {"namespace": "empty"}}})
         )
 
         result2 = module.run(
-            RagContext(
-                query="test", module_configs={"VectorStoreRetrievalRagModule": {"query_params": {"namespace": "test"}}}
-            )
+            RagContext(query="test", module_configs={"TestModule": {"query_params": {"namespace": "test"}}})
         )
 
         assert len(result1) == 0

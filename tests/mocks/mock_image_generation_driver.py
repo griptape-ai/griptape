@@ -10,6 +10,8 @@ from griptape.drivers.image_generation.base_image_generation_driver import BaseI
 
 @define
 class MockImageGenerationDriver(BaseImageGenerationDriver):
+    model: str = "test-model"
+
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         return ImageArtifact(value="mock image", width=512, height=512, format="png")
 

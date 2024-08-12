@@ -12,9 +12,7 @@ from griptape.config import config
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
-    MetadataBeforeResponseRagModule,
     PromptResponseRagModule,
-    RulesetsBeforeResponseRagModule,
     VectorStoreRetrievalRagModule,
 )
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
@@ -103,11 +101,7 @@ class Structure(ABC):
                 retrieval_modules=[VectorStoreRetrievalRagModule()],
             ),
             response_stage=ResponseRagStage(
-                before_response_modules=[
-                    RulesetsBeforeResponseRagModule(rulesets=self.rulesets),
-                    MetadataBeforeResponseRagModule(),
-                ],
-                response_module=PromptResponseRagModule(),
+                response_modules=[PromptResponseRagModule(prompt_driver=config.drivers.prompt, rulesets=self.rulesets)],
             ),
         )
 

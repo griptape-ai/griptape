@@ -53,7 +53,7 @@ class TextArtifactStorage(BaseArtifactStorage):
         if self.retrieval_rag_module_name is None:
             raise ValueError("retrieval_rag_module_name is not set")
 
-        result = self.rag_engine.process(
+        outputs = self.rag_engine.process(
             RagContext(
                 query=query,
                 module_configs={
@@ -65,9 +65,9 @@ class TextArtifactStorage(BaseArtifactStorage):
                     },
                 },
             ),
-        ).output
+        ).outputs
 
-        if result is None:
-            return InfoArtifact("Empty output")
+        if len(outputs) > 0:
+            return outputs[0]
         else:
-            return result
+            return InfoArtifact("Empty output")

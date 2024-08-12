@@ -12,13 +12,14 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 class MockDriverConfig(DriverConfig):
     prompt: MockPromptDriver = field(default=Factory(lambda: MockPromptDriver()), metadata={"serializable": True})
     image_generation: MockImageGenerationDriver = field(
-        default=Factory(lambda: MockImageGenerationDriver(model="dall-e-2")), metadata={"serializable": True}
+        default=Factory(lambda: MockImageGenerationDriver()),
+        metadata={"serializable": True},
     )
     image_query: MockImageQueryDriver = field(
-        default=Factory(lambda: MockImageQueryDriver(model="gpt-4-vision-preview")), metadata={"serializable": True}
+        default=Factory(lambda: MockImageQueryDriver()), metadata={"serializable": True}
     )
     embedding: MockEmbeddingDriver = field(
-        default=Factory(lambda: MockEmbeddingDriver(model="text-embedding-3-small")), metadata={"serializable": True}
+        default=Factory(lambda: MockEmbeddingDriver()), metadata={"serializable": True}
     )
     vector_store: LocalVectorStoreDriver = field(
         default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding), takes_self=True),

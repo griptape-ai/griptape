@@ -10,4 +10,4 @@ class TestRagClient:
         vector_store_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
         tool = RagClient(description="Test", rag_engine=rag_engine(MockPromptDriver(), vector_store_driver))
 
-        assert tool.search({"values": {"query": "test"}}).value == "mock output"
+        assert tool.search({"values": {"query": "test"}}).value[0].value == "mock output"
