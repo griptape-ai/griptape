@@ -156,6 +156,9 @@ nav:
           - AudioTranscriptionClient: "griptape-tools/official-tools/audio-transcription-client.md"
           - GriptapeCloudKnowledgeBaseClient: "griptape-tools/official-tools/griptape-cloud-knowledge-base-client.md"
           - RagClient: "griptape-tools/official-tools/rag-client.md"
+          - ExtractionClient: "griptape-tools/official-tools/extraction-client.md"
+          - QueryClient: "griptape-tools/official-tools/query-client.md"
+          - PromptSummaryClient: "griptape-tools/official-tools/prompt-summary-client.md"
       - Custom Tools:
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
   - Recipes:

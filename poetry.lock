@@ -3124,23 +3124,25 @@ mkdocs = ">=1.2"
 
 [[package]]
 name = "mkdocstrings"
-version = "0.23.0"
+version = "0.25.2"
 description = "Automatic documentation from sources, for MkDocs."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "mkdocstrings-0.23.0-py3-none-any.whl", hash = "sha256:051fa4014dfcd9ed90254ae91de2dbb4f24e166347dae7be9a997fe16316c65e"},
-    {file = "mkdocstrings-0.23.0.tar.gz", hash = "sha256:d9c6a37ffbe7c14a7a54ef1258c70b8d394e6a33a1c80832bce40b9567138d1c"},
+    {file = "mkdocstrings-0.25.2-py3-none-any.whl", hash = "sha256:9e2cda5e2e12db8bb98d21e3410f3f27f8faab685a24b03b06ba7daa5b92abfc"},
+    {file = "mkdocstrings-0.25.2.tar.gz", hash = "sha256:5cf57ad7f61e8be3111a2458b4e49c2029c9cb35525393b179f9c916ca8042dc"},
 ]
 
 [package.dependencies]
+click = ">=7.0"
 importlib-metadata = {version = ">=4.6", markers = "python_version < \"3.10\""}
 Jinja2 = ">=2.11.1"
 Markdown = ">=3.3"
 MarkupSafe = ">=1.1"
-mkdocs = ">=1.2"
+mkdocs = ">=1.4"
 mkdocs-autorefs = ">=0.3.1"
 mkdocstrings-python = {version = ">=0.5.2", optional = true, markers = "extra == \"python\""}
+platformdirs = ">=2.2.0"
 pymdown-extensions = ">=6.3"
 typing-extensions = {version = ">=4.1", markers = "python_version < \"3.10\""}
 
@@ -6955,4 +6957,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "107e2bcaa620a1134fb649254bc6157304754eb7f617334c544ac5db70286fdd"
+content-hash = "06a69b74f09aa3ff57b7bd87e9b59d6627c08c2aedbf6862fafc180f0a90fa57"

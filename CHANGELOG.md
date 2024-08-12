@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unique name generation for all `RagEngine` modules.
 - `ExtractionClient` Tool for having the LLM extract structured data from text.
 - `PromptSummaryClient` Tool for having the LLM summarize text.
+- `QueryClient` Tool for having hte LLM queyr text.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.

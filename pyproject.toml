@@ -239,7 +239,7 @@ optional = true
 mkdocs = "^1.5.2"
 mkdocs-material = "^9.2.8"
 mkdocs-glightbox = "^0.3.4"
-mkdocstrings = {extras = ["python"], version = "^0.23.0"}
+mkdocstrings = {extras = ["python"], version = "^0.25.2"}
 mkdocs-gen-files = "^0.5.0"
 mkdocs-literate-nav = "^0.6.0"
 mkdocs-section-index = "^0.3.6"
