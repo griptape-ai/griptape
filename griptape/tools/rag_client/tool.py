@@ -3,12 +3,10 @@ from __future__ import annotations
 from attrs import Factory, define, field
 from schema import Literal, Or, Schema
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
-    MetadataBeforeResponseRagModule,
     PromptResponseRagModule,
-    RulesetsBeforeResponseRagModule,
 )
 from griptape.engines.rag.rag_context import RagContext
 from griptape.engines.rag.stages import ResponseRagStage
@@ -31,11 +29,9 @@ class RagClient(BaseTool, RuleMixin):
         default=Factory(
             lambda self: RagEngine(
                 response_stage=ResponseRagStage(
-                    before_response_modules=[
-                        RulesetsBeforeResponseRagModule(rulesets=self.all_rulesets),
-                        MetadataBeforeResponseRagModule(),
+                    response_modules=[
+                        PromptResponseRagModule(prompt_driver=self.config.prompt_driver, rulesets=self.rulesets)
                     ],
-                    response_module=PromptResponseRagModule(),
                 ),
             ),
             takes_self=True,
@@ -79,11 +75,12 @@ class RagClient(BaseTool, RuleMixin):
             text_artifacts = [artifact for artifact in artifacts if isinstance(artifact, TextArtifact)]
 
         try:
-            result = self.rag_engine.process(RagContext(query=query, text_chunks=text_artifacts))
+            outputs = self.rag_engine.process(RagContext(query=query, text_chunks=text_artifacts)).outputs
 
-            if result.output is None:
-                return ErrorArtifact("query output is empty")
+            if len(outputs) > 0:
+                return ListArtifact(outputs)
             else:
-                return result.output
+                return ErrorArtifact("query output is empty")
+
         except Exception as e:
             return ErrorArtifact(f"error querying: {e}")

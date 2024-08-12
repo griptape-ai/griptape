@@ -5,11 +5,11 @@ import io
 
 from attrs import define, field
 
-from griptape.artifacts import BaseArtifact, BaseTextArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact
 
 
 @define
-class CsvRowArtifact(BaseTextArtifact):
+class CsvRowArtifact(TextArtifact):
     value: dict[str, str] = field(converter=BaseArtifact.value_to_dict, metadata={"serializable": True})
     delimiter: str = field(default=",", kw_only=True, metadata={"serializable": True})
 

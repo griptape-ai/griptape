@@ -1,10 +1,13 @@
 import pytest
 
+from griptape.engines import PromptSummaryEngine
 from griptape.memory import TaskMemory
 from griptape.memory.structure import ConversationMemory
+from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, PromptTask, ToolkitTask
+from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -214,6 +217,24 @@ class TestAgent:
         context = agent.context(task)
 
         assert context["structure"] == agent
+
+    def test_task_memory_defaults(self):
+        prompt_driver = MockPromptDriver()
+        embedding_driver = MockEmbeddingDriver()
+        agent = Agent(prompt_driver=prompt_driver)
+
+        storage = list(agent.task_memory.artifact_storages.values())[0]
+        assert isinstance(storage, TextArtifactStorage)
+
+        assert storage.rag_engine.response_stage.response_modules[0].prompt_driver == prompt_driver
+        assert (
+            storage.rag_engine.retrieval_stage.retrieval_modules[0].vector_store_driver.embedding_driver
+            == embedding_driver
+        )
+        assert isinstance(storage.summary_engine, PromptSummaryEngine)
+        assert storage.summary_engine.prompt_driver == prompt_driver
+        assert storage.csv_extraction_engine.prompt_driver == prompt_driver
+        assert storage.json_extraction_engine.prompt_driver == prompt_driver
 
     def finished_tasks(self):
         task = PromptTask("test prompt")

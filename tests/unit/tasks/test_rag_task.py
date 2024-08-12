@@ -5,6 +5,7 @@ from griptape.engines.rag.modules import PromptResponseRagModule
 from griptape.engines.rag.stages import ResponseRagStage
 from griptape.structures import Agent
 from griptape.tasks import RagTask
+from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestRagTask:
@@ -12,7 +13,11 @@ class TestRagTask:
     def task(self):
         return RagTask(
             input="test",
-            rag_engine=RagEngine(response_stage=ResponseRagStage(response_module=PromptResponseRagModule())),
+            rag_engine=RagEngine(
+                response_stage=ResponseRagStage(
+                    response_modules=[PromptResponseRagModule(prompt_driver=MockPromptDriver())]
+                )
+            ),
         )
 
     def test_run(self, task):

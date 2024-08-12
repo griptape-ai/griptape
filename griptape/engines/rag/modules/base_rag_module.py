@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import uuid
 from abc import ABC
 from concurrent import futures
 from typing import TYPE_CHECKING, Any, Callable, Optional
@@ -14,7 +15,9 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class BaseRagModule(ABC):
-    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+    name: str = field(
+        default=Factory(lambda self: f"{self.__class__.__name__}-{uuid.uuid4().hex}", takes_self=True), kw_only=True
+    )
     futures_executor_fn: Callable[[], futures.Executor] = field(
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
     )
