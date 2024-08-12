@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `EventPublisherMixin`.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
 
+### Fixed
+- Explicit `None` check in `BaseTool.after_run`.
+
 ## [0.29.0] - 2024-07-30
 
 ### Added

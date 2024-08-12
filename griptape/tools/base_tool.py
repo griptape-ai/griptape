@@ -155,10 +155,10 @@ class BaseTool(ActivityMixin, ABC):
         activity: Callable,
         subtask: ActionsSubtask,
         action: ToolAction,
-        value: BaseArtifact,
+        value: Optional[BaseArtifact],
     ) -> BaseArtifact:
-        if value:
-            if self.output_memory:
+        if value is not None:
+            if self.output_memory is not None:
                 output_memories = self.output_memory[getattr(activity, "name")] or []
                 for memory in output_memories:
                     value = memory.process_output(activity, subtask, value)
