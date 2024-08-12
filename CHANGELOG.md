@@ -23,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
 
+## [0.29.1] - 2024-08-02
+
+### Changed
+- Remove `BaseTextArtifact`, revert `CsvRowArtifact` to subclass `TextArtifact`.
+
+### Fixed
+- Missing extra for `drivers-text-to-speech-elevenlabs`.
+
 ## [0.29.0] - 2024-07-30
 
 ### Added
