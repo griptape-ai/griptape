@@ -25,9 +25,12 @@ class Chat:
     )
 
     def default_output_fn(self, text: str) -> None:
-        from griptape.config import config
+        from griptape.tasks.prompt_task import PromptTask
 
-        if config.drivers.prompt.stream:
+        streaming_tasks = [
+            task for task in self.structure.tasks if isinstance(task, PromptTask) and task.prompt_driver.stream
+        ]
+        if streaming_tasks:
             print(text, end="", flush=True)  # noqa: T201
         else:
             print(text)  # noqa: T201

@@ -2,19 +2,17 @@ from collections.abc import Iterator
 
 import pytest
 
-from griptape.config import config
-from griptape.structures import Agent
+from griptape.structures import Agent, Pipeline
 from griptape.utils import Stream
 
 
 class TestStream:
     @pytest.fixture(params=[True, False])
     def agent(self, request):
-        config.drivers.prompt.stream = request.param
-        return Agent()
+        return Agent(stream=request.param)
 
     def test_init(self, agent):
-        if config.drivers.prompt.stream:
+        if agent.stream:
             chat_stream = Stream(agent)
 
             assert chat_stream.structure == agent
@@ -29,3 +27,9 @@ class TestStream:
         else:
             with pytest.raises(ValueError):
                 Stream(agent)
+
+    def test_validate_structure_invalid(self):
+        pipeline = Pipeline(tasks=[])
+
+        with pytest.raises(ValueError):
+            Stream(pipeline)
