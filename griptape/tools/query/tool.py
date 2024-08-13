@@ -12,16 +12,15 @@ from griptape.engines.rag.modules import (
 from griptape.engines.rag.rag_context import RagContext
 from griptape.engines.rag.stages import ResponseRagStage
 from griptape.mixins.rule_mixin import RuleMixin
-from griptape.tools.rag_client.tool import RagClient
+from griptape.tools.base_tool import BaseTool
 from griptape.utils.decorators import activity
 
 
 @define(kw_only=True)
-class QueryTool(RagClient, RuleMixin):
+class QueryTool(BaseTool, RuleMixin):
     """Tool for performing a query against data."""
 
-    description: str = field(init=False)
-    rag_engine: RagEngine = field(
+    _rag_engine: RagEngine = field(
         default=Factory(
             lambda self: RagEngine(
                 response_stage=ResponseRagStage(
@@ -32,6 +31,7 @@ class QueryTool(RagClient, RuleMixin):
             ),
             takes_self=True,
         ),
+        alias="_rag_engine",
     )
 
     @activity(
@@ -70,7 +70,7 @@ class QueryTool(RagClient, RuleMixin):
 
             text_artifacts = [artifact for artifact in artifacts if isinstance(artifact, TextArtifact)]
 
-        outputs = self.rag_engine.process(RagContext(query=query, text_chunks=text_artifacts)).outputs
+        outputs = self._rag_engine.process(RagContext(query=query, text_chunks=text_artifacts)).outputs
 
         if len(outputs) > 0:
             return ListArtifact(outputs)
