@@ -89,14 +89,14 @@ With Griptape, you can create Structures, such as Agents, Pipelines, and Workflo
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, FileManager, PromptSummaryTool
+from griptape.tools import WebScraperTool, FileManagerTool, PromptSummaryTool
 
 agent = Agent(
     input="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
     tools=[
-        WebScraper(off_prompt=True),
+        WebScraperTool(off_prompt=True),
         PromptSummaryTool(off_prompt=True),
-        FileManager()
+        FileManagerTool()
     ]
 )
 agent.run("https://griptape.ai", "griptape.txt")
@@ -110,7 +110,7 @@ And here is the output:
                              Actions: [
                                {
                                  "tag": "call_62kBnkswnk9Y6GH6kn1GIKk6",
-                                 "name": "WebScraper",
+                                 "name": "WebScraperTool",
                                  "path": "get_content",
                                  "input": {
                                    "values": {
@@ -120,7 +120,7 @@ And here is the output:
                                }
                              ]
 [08/12/24 14:48:17] INFO     Subtask ebe23832cbe2464fb9ecde9fcee7c30f
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "cecca28eb0c74bcd8c7119ed7f790c95"
 [08/12/24 14:48:18] INFO     Subtask dca04901436d49d2ade86cd6b4e1038a
                              Actions: [
@@ -145,7 +145,7 @@ And here is the output:
                              Actions: [
                                {
                                  "tag": "call_eKvIUIw45aRYKDBpT1gGKc9b",
-                                 "name": "FileManager",
+                                 "name": "FileManagerTool",
                                  "path": "save_memory_artifacts_to_disk",
                                  "input": {
                                    "values": {

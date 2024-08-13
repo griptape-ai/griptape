@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Computer(BaseTool):
+class ComputerTool(BaseTool):
     local_workdir: Optional[str] = field(default=None, kw_only=True)
     container_workdir: str = field(default="/griptape", kw_only=True)
     env_vars: dict = field(factory=dict, kw_only=True)

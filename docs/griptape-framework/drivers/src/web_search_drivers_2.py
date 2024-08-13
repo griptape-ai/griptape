@@ -2,11 +2,11 @@ import os
 
 from griptape.drivers import GoogleWebSearchDriver
 from griptape.structures import Agent
-from griptape.tools import PromptSummaryTool, WebSearch
+from griptape.tools import PromptSummaryTool, WebSearchTool
 
 agent = Agent(
     tools=[
-        WebSearch(
+        WebSearchTool(
             web_search_driver=GoogleWebSearchDriver(
                 api_key=os.environ["GOOGLE_API_KEY"],
                 search_id=os.environ["GOOGLE_API_SEARCH_ID"],

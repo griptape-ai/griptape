@@ -6,8 +6,8 @@ from griptape.structures import Agent, Workflow
 from griptape.tasks import PromptTask, StructureRunTask
 from griptape.tools import (
     PromptSummaryTool,
-    WebScraper,
-    WebSearch,
+    WebScraperTool,
+    WebSearchTool,
 )
 
 WRITERS = [
@@ -29,13 +29,13 @@ def build_researcher() -> Agent:
     researcher = Agent(
         id="researcher",
         tools=[
-            WebSearch(
+            WebSearchTool(
                 web_search_driver=GoogleWebSearchDriver(
                     api_key=os.environ["GOOGLE_API_KEY"],
                     search_id=os.environ["GOOGLE_API_SEARCH_ID"],
                 ),
             ),
-            WebScraper(
+            WebScraperTool(
                 off_prompt=True,
             ),
             PromptSummaryTool(off_prompt=False),

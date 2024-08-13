@@ -103,7 +103,7 @@ Here is the chain of thought from the Agent. Notice where it realizes it can use
                              Actions: [
                                {
                                  "tag": "call_RTRm7JLFV0F73dCVPmoWVJqO",
-                                 "name": "Calculator",
+                                 "name": "CalculatorTool",
                                  "path": "calculate",
                                  "input": {
                                    "values": {
@@ -134,7 +134,7 @@ Agents are great for getting started, but they are intentionally limited to a si
                              Actions: [
                                {
                                  "tag": "call_YL5Ozd9WUtag4ykR5Agm12Ce",
-                                 "name": "WebScraper",
+                                 "name": "WebScraperTool",
                                  "path": "get_content",
                                  "input": {
                                    "values": {
@@ -144,7 +144,7 @@ Agents are great for getting started, but they are intentionally limited to a si
                                }
                              ]
 [08/12/24 14:50:31] INFO     Subtask a685799379c5421b91768353fc219939
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "6be3a2e0494841fda966b98bec9ffccb"
 [08/12/24 14:50:33] INFO     Subtask 1cf0c19843aa4fada5745c4a82eb4237
                              Actions: [
@@ -175,7 +175,7 @@ Agents are great for getting started, but they are intentionally limited to a si
                              Actions: [
                                {
                                  "tag": "call_eKvIUIw45aRYKDBpT1gGKc9b",
-                                 "name": "FileManager",
+                                 "name": "FileManagerTool",
                                  "path": "save_content_to_file",
                                  "input": {
                                    "values": {

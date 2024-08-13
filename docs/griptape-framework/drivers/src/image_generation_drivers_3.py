@@ -1,7 +1,7 @@
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockTitanImageGenerationModelDriver
 from griptape.engines import PromptImageGenerationEngine
 from griptape.structures import Agent
-from griptape.tools import PromptImageGenerationClient
+from griptape.tools import PromptImageGenerationTool
 
 model_driver = BedrockTitanImageGenerationModelDriver()
 
@@ -14,7 +14,7 @@ engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(
     tools=[
-        PromptImageGenerationClient(engine=engine),
+        PromptImageGenerationTool(engine=engine),
     ]
 )
 

@@ -5,7 +5,7 @@ from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
 
-class Calculator(BaseTool):
+class CalculatorTool(BaseTool):
     @activity(
         config={
             "description": "Can be used for computing simple numerical or algebraic calculations in Python",

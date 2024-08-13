@@ -6,21 +6,21 @@ from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
 from griptape.tools import (
     PromptSummaryTool,
-    WebScraper,
-    WebSearch,
+    WebScraperTool,
+    WebSearchTool,
 )
 
 
 def build_researcher() -> Agent:
     researcher = Agent(
         tools=[
-            WebSearch(
+            WebSearchTool(
                 web_search_driver=GoogleWebSearchDriver(
                     api_key=os.environ["GOOGLE_API_KEY"],
                     search_id=os.environ["GOOGLE_API_SEARCH_ID"],
                 ),
             ),
-            WebScraper(
+            WebScraperTool(
                 off_prompt=True,
             ),
             PromptSummaryTool(off_prompt=False),

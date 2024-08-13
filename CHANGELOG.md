@@ -42,6 +42,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Changed `CsvExtractionEngine.column_names` from a `run` argument to a class attribute. 
 - **BREAKING**: Removed `JsonExtractionTask`, and `CsvExtractionTask` use `ExtractionTask` instead.
 - **BREAKING**: Removed `TaskMemoryClient`, use `RagClient`, `ExtractionTool`, or `PromptSummaryClient` instead.
+- **BREAKING**: Dropped `Client` from all Tool names for better naming consistency. 
+- **BREAKING**: Dropped `_client` suffix from all Tool packages. 
+- **BREAKING**: Added `Tool` suffix to all Tool names for better naming consistency. 
 - `RagClient` now can be used to search through Artifacts stored in Task Memory.
 - Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.

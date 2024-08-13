@@ -11,7 +11,7 @@ from griptape.drivers import (
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
-from griptape.tools import FileManager, QueryTool, WebScraper
+from griptape.tools import FileManagerTool, QueryTool, WebScraperTool
 
 config.drivers = OpenAiDriverConfig(
     prompt=OpenAiChatPromptDriver(model="gpt-4"),
@@ -32,9 +32,9 @@ agent = Agent(
         }
     ),
     tools=[
-        WebScraper(off_prompt=True),
+        WebScraperTool(off_prompt=True),
         QueryTool(off_prompt=True),
-        FileManager(off_prompt=True),
+        FileManagerTool(off_prompt=True),
     ],
 )
 

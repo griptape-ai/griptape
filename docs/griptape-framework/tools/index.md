@@ -25,7 +25,7 @@ Here is an example of a Pipeline using Tools:
                              Actions: [
                                {
                                  "tag": "call_P6vaURTXfiYBJZolTkUSRHRc",
-                                 "name": "WebScraper",
+                                 "name": "WebScraperTool",
                                  "path": "get_content",
                                  "input": {
                                    "values": {
@@ -35,7 +35,7 @@ Here is an example of a Pipeline using Tools:
                                }
                              ]
                     INFO     Subtask 3b8365c077ae4a7e94087bfeff7a858c
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "301e546f4450489ea4680645297092a2"
 [08/12/24 15:18:21] INFO     Subtask 930e9ca52e4140a48cce1e47368d45be
                              Actions: [
@@ -64,7 +64,7 @@ Here is an example of a Pipeline using Tools:
                              Actions: [
                                {
                                  "tag": "call_zdUe2vdR0DCfR6LKcxjI6ayb",
-                                 "name": "FileManager",
+                                 "name": "FileManagerTool",
                                  "path": "save_content_to_file",
                                  "input": {
                                    "values": {

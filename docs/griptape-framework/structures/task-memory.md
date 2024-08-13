@@ -29,15 +29,15 @@ Lets look at a simple example where `off_prompt` is set to `False`:
 [04/26/24 13:06:42] INFO     ToolkitTask 36b9dea13b9d479fb752014f41dca54c
                              Input: What is the square root of 12345?
 [04/26/24 13:06:48] INFO     Subtask a88c0feeaef6493796a9148ed68c9caf
-                             Thought: To find the square root of 12345, I can use the Calculator action with the expression "12345 ** 0.5".
-                             Actions: [{"name": "Calculator", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
+                             Thought: To find the square root of 12345, I can use the CalculatorTool action with the expression "12345 ** 0.5".
+                             Actions: [{"name": "CalculatorTool", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
                     INFO     Subtask a88c0feeaef6493796a9148ed68c9caf
                              Response: 111.1080555135405
 [04/26/24 13:06:49] INFO     ToolkitTask 36b9dea13b9d479fb752014f41dca54c
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
-Since the result of the Calculator Tool is neither sensitive nor too large, we can set `off_prompt` to `False` and not use Task Memory.
+Since the result of the CalculatorTool Tool is neither sensitive nor too large, we can set `off_prompt` to `False` and not use Task Memory.
 
 Let's explore what happens when `off_prompt` is set to `True`:
 
@@ -49,22 +49,22 @@ Let's explore what happens when `off_prompt` is set to `True`:
 [04/26/24 13:07:02] INFO     ToolkitTask ecbb788d9830491ab72a8a2bbef5fb0a
                              Input: What is the square root of 12345?
 [04/26/24 13:07:10] INFO     Subtask 4700dc0c2e934d1a9af60a28bd770bc6
-                             Thought: To find the square root of a number, we can use the Calculator action with the expression "sqrt(12345)". However, the Calculator
+                             Thought: To find the square root of a number, we can use the CalculatorTool action with the expression "sqrt(12345)". However, the CalculatorTool
                              action only supports basic arithmetic operations and does not support the sqrt function. Therefore, we need to use the equivalent expression
                              for square root which is raising the number to the power of 0.5.
-                             Actions: [{"name": "Calculator", "path": "calculate", "input": {"values": {"expression": "12345**0.5"}}, "tag": "sqrt_calculation"}]
+                             Actions: [{"name": "CalculatorTool", "path": "calculate", "input": {"values": {"expression": "12345**0.5"}}, "tag": "sqrt_calculation"}]
                     INFO     Subtask 4700dc0c2e934d1a9af60a28bd770bc6
-                             Response: Output of "Calculator.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "CalculatorTool.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "6be74c5128024c0588eb9bee1fdb9aa5"
 [04/26/24 13:07:16] ERROR    Subtask ecbb788d9830491ab72a8a2bbef5fb0a
-                             Invalid action JSON: Or({Literal("name", description=""): 'Calculator', Literal("path", description="Can be used for computing simple
+                             Invalid action JSON: Or({Literal("name", description=""): 'CalculatorTool', Literal("path", description="Can be used for computing simple
                              numerical or algebraic calculations in Python"): 'calculate', Literal("input", description=""): {'values': Schema({Literal("expression",
                              description="Arithmetic expression parsable in pure Python. Single line only. Don't use variables. Don't use any imports or external
                              libraries"): <class 'str'>})}, Literal("tag", description="Unique tag name for action execution."): <class 'str'>}) did not validate {'name':
                              'Memory', 'path': 'get', 'input': {'memory_name': 'TaskMemory', 'artifact_namespace': '6be74c5128024c0588eb9bee1fdb9aa5'}, 'tag':
                              'get_sqrt_result'}
                              Key 'name' error:
-                             'Calculator' does not match 'Memory'
+                             'CalculatorTool' does not match 'Memory'
 ...Output truncated for brevity...
 ```
 
@@ -125,7 +125,7 @@ If we had kept it as `True`, the results would have been stored back Task Memory
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
-While this fixed the problem, it took a handful more steps than when we just had `Calculator()`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary).
+While this fixed the problem, it took a handful more steps than when we just had `CalculatorTool()`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary).
 Let's look at a more complex example where Task Memory shines.
 
 ## Large Data
@@ -158,7 +158,7 @@ And now we get the expected output:
                              Actions: [
                                {
                                  "tag": "call_DGsOHC4AVxhV7RPVA7q3rATX",
-                                 "name": "WebScraper",
+                                 "name": "WebScraperTool",
                                  "path": "get_content",
                                  "input": {
                                    "values": {
@@ -168,7 +168,7 @@ And now we get the expected output:
                                }
                              ]
 [08/12/24 14:56:25] INFO     Subtask 494850ec40fe474c83d48b5620c5dcbb
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "b9f53d6d9b35455aaf4d99719c1bfffa"
 [08/12/24 14:56:26] INFO     Subtask 8669ee523bb64550850566011bcd14e2
                              Actions: [
@@ -199,7 +199,7 @@ And now we get the expected output:
 Because Task Memory splits up the storage and retrieval of data, you can use different models for each step.
 
 Here is an example where we use GPT-4 to orchestrate the Tools and store the data in Task Memory, and Amazon Bedrock's Titan model to query the raw content.
-In this example, GPT-4 _never_ sees the contents of the page, only that it was stored in Task Memory. Even the query results generated by the Titan model are stored in Task Memory so that the `FileManager` can save the results to disk without GPT-4 ever seeing them.
+In this example, GPT-4 _never_ sees the contents of the page, only that it was stored in Task Memory. Even the query results generated by the Titan model are stored in Task Memory so that the `FileManagerTool` can save the results to disk without GPT-4 ever seeing them.
 
 ```python 
 --8<-- "docs/griptape-framework/structures/src/task_memory_6.py"
@@ -213,7 +213,7 @@ In this example, GPT-4 _never_ sees the contents of the page, only that it was s
                              Actions: [
                                {
                                  "tag": "call_xMK0IyFZFbjlTapK7AA6kbNq",
-                                 "name": "WebScraper",
+                                 "name": "WebScraperTool",
                                  "path": "get_content",
                                  "input": {
                                    "values": {
@@ -223,7 +223,7 @@ In this example, GPT-4 _never_ sees the contents of the page, only that it was s
                                }
                              ]
 [08/12/24 14:55:28] INFO     Subtask 26205b5623174424b618abafd886c4d8
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "44b8f230645148d0b8d44354c0f2df5b"
 [08/12/24 14:55:31] INFO     Subtask d8b4cf297a0d4d9db04e4f8e63b746c8
                              Actions: [
@@ -249,7 +249,7 @@ In this example, GPT-4 _never_ sees the contents of the page, only that it was s
                              Actions: [
                                {
                                  "tag": "call_nV1DIPAEhUEAVMCjXND0pKoS",
-                                 "name": "FileManager",
+                                 "name": "FileManagerTool",
                                  "path": "save_memory_artifacts_to_disk",
                                  "input": {
                                    "values": {
@@ -276,7 +276,7 @@ Today, these include:
 - [PromptSummaryClient](../../griptape-tools/official-tools/prompt-summary-client.md)
 - [ExtractionTool](../../griptape-tools/official-tools/extraction-client.md)
 - [RagClient](../../griptape-tools/official-tools/rag-client.md)
-- [FileManager](../../griptape-tools/official-tools/file-manager.md)
+- [FileManagerTool](../../griptape-tools/official-tools/file-manager.md)
 
 ## Task Memory Considerations
 

@@ -12,7 +12,7 @@ Here is an example of how it can be used with a local vector store driver:
                              Actions: [
                                {
                                  "tag": "call_SgrmWdXaYTQ1Cz9iB0iIZSYD",
-                                 "name": "WebScraper",
+                                 "name": "WebScraperTool",
                                  "path": "get_content",
                                  "input": {
                                    "values": {
@@ -22,7 +22,7 @@ Here is an example of how it can be used with a local vector store driver:
                                }
                              ]
 [08/12/24 15:58:06] INFO     Subtask 6a9a63802faf4717bab24bbbea2cb49b
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "bf1c865b82554c9e896cb514bb86844c"
 [08/12/24 15:58:07] INFO     Subtask c06388d6079541d5aaff25c30e322c51
                              Actions: [

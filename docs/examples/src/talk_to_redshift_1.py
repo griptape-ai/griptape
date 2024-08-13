@@ -6,7 +6,7 @@ from griptape.drivers import AmazonRedshiftSqlDriver
 from griptape.loaders import SqlLoader
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
-from griptape.tools import FileManager, SqlClient
+from griptape.tools import FileManagerTool, SqlTool
 from griptape.utils import Chat
 
 session = boto3.Session()
@@ -19,7 +19,7 @@ sql_loader = SqlLoader(
     )
 )
 
-sql_tool = SqlClient(
+sql_tool = SqlTool(
     sql_loader=sql_loader,
     table_name="people",
     table_description="contains information about tech industry professionals",
@@ -27,7 +27,7 @@ sql_tool = SqlClient(
 )
 
 agent = Agent(
-    tools=[sql_tool, FileManager()],
+    tools=[sql_tool, FileManagerTool()],
     rulesets=[
         Ruleset(
             name="HumansOrg Agent",

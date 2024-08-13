@@ -105,7 +105,7 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
                              Actions: [
                                {
                                  "tag": "call_AFeOL9MGhZ4mPFCULcBEm4NQ",
-                                 "name": "WebScraper",
+                                 "name": "WebScraperTool",
                                  "path": "get_content",
                                  "input": {
                                    "values": {
@@ -115,7 +115,7 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
                                }
                              ]
                     INFO     Subtask a4483eddfbe84129b0f4c04ef0f5d695
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "c6a6bcfc16f34481a068108aeaa6838e"
 [08/12/24 15:16:33] INFO     Subtask ee5f11666ded4dc39b94e4c59d18fbc7
                              Actions: [
@@ -140,7 +140,7 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
                              Actions: [
                                {
                                  "tag": "call_QgMk1M1UuD6DAnxjfQz1MH6X",
-                                 "name": "FileManager",
+                                 "name": "FileManagerTool",
                                  "path": "save_memory_artifacts_to_disk",
                                  "input": {
                                    "values": {
@@ -173,7 +173,7 @@ This Task takes in a single Tool which the LLM will use without Chain of Thought
 [10/20/23 14:20:29] INFO     Subtask a9a9ad7be2bf465fa82bd350116fabe4           
                              Action: {                                          
                                                                 
-                               "name": "Calculator",                            
+                               "name": "CalculatorTool",                            
                                "path": "calculate",                         
                                "input": {                                       
                                  "values": {                                    

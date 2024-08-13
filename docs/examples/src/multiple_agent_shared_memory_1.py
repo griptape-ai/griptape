@@ -3,7 +3,7 @@ import os
 from griptape.config import AzureOpenAiDriverConfig, config
 from griptape.drivers import AzureMongoDbVectorStoreDriver, AzureOpenAiEmbeddingDriver
 from griptape.structures import Agent
-from griptape.tools import QueryTool, WebScraper
+from griptape.tools import QueryTool, WebScraperTool
 
 AZURE_OPENAI_ENDPOINT_1 = os.environ["AZURE_OPENAI_ENDPOINT_1"]
 AZURE_OPENAI_API_KEY_1 = os.environ["AZURE_OPENAI_API_KEY_1"]
@@ -41,7 +41,7 @@ config.drivers = AzureOpenAiDriverConfig(
 
 loader = Agent(
     tools=[
-        WebScraper(off_prompt=True),
+        WebScraperTool(off_prompt=True),
     ],
 )
 asker = Agent(

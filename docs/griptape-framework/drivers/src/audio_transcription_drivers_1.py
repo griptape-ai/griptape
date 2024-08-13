@@ -1,11 +1,11 @@
 from griptape.drivers import OpenAiAudioTranscriptionDriver
 from griptape.engines import AudioTranscriptionEngine
 from griptape.structures import Agent
-from griptape.tools.audio_transcription_client.tool import AudioTranscriptionClient
+from griptape.tools.audio_transcription.tool import AudioTranscriptionTool
 
 driver = OpenAiAudioTranscriptionDriver(model="whisper-1")
 
-tool = AudioTranscriptionClient(
+tool = AudioTranscriptionTool(
     off_prompt=False,
     engine=AudioTranscriptionEngine(
         audio_transcription_driver=driver,

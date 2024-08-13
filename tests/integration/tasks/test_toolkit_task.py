@@ -1,5 +1,6 @@
 import pytest
 
+from griptape.tools import WebSearchTool
 from tests.utils.structure_tester import StructureTester
 
 
@@ -14,17 +15,17 @@ class TestToolkitTask:
 
         from griptape.drivers import GoogleWebSearchDriver
         from griptape.structures import Agent
-        from griptape.tools import PromptSummaryTool, WebScraper, WebSearch
+        from griptape.tools import PromptSummaryTool, WebScraperTool
 
         return StructureTester(
             Agent(
                 tools=[
-                    WebSearch(
+                    WebSearchTool(
                         web_search_driver=GoogleWebSearchDriver(
                             api_key=os.environ["GOOGLE_API_KEY"], search_id=os.environ["GOOGLE_API_SEARCH_ID"]
                         )
                     ),
-                    WebScraper(off_prompt=True),
+                    WebScraperTool(off_prompt=True),
                     PromptSummaryTool(off_prompt=False),
                 ],
                 conversation_memory=None,

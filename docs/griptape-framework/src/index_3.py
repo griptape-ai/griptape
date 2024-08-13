@@ -1,7 +1,7 @@
 from griptape.structures import Agent
-from griptape.tools import Calculator
+from griptape.tools import CalculatorTool
 
-calculator = Calculator()
+calculator = CalculatorTool()
 
 agent = Agent(tools=[calculator])
 

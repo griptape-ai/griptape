@@ -9,12 +9,12 @@ from attrs import define, field
 from schema import Literal, Or, Schema
 
 from griptape.artifacts import BlobArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
-from griptape.tools import BaseGoogleClient
+from griptape.tools import BaseGoogleTool
 from griptape.utils.decorators import activity
 
 
 @define
-class GoogleDriveClient(BaseGoogleClient):
+class GoogleDriveTool(BaseGoogleTool):
     LIST_FILES_SCOPES = ["https://www.googleapis.com/auth/drive.readonly"]
 
     GOOGLE_EXPORT_MIME_MAPPING = {
