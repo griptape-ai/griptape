@@ -32,3 +32,6 @@ class TestJsonExtractionEngine:
             a.value
             for a in engine.json_to_text_artifacts('[{"test_key_1": "test_value_1"}, {"test_key_2": "test_value_2"}]')
         ] == ['{"test_key_1": "test_value_1"}', '{"test_key_2": "test_value_2"}']
+
+    def test_json_to_text_artifacts_no_matches(self, engine):
+        assert engine.json_to_text_artifacts("asdfasdfasdf") == []
