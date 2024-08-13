@@ -2,7 +2,7 @@ from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
-from griptape.tools import PromptSummaryClient, VectorStoreClient
+from griptape.tools import PromptSummaryTool, VectorStoreClient
 
 vector_store_driver = LocalVectorStoreDriver(
     embedding_driver=OpenAiEmbeddingDriver(),
@@ -20,6 +20,6 @@ vector_db = VectorStoreClient(
     off_prompt=True,
 )
 
-agent = Agent(tools=[vector_db, PromptSummaryClient()])
+agent = Agent(tools=[vector_db, PromptSummaryTool()])
 
 agent.run("what is Griptape?")

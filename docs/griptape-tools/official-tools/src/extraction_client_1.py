@@ -2,13 +2,13 @@ import schema
 
 from griptape.engines import JsonExtractionEngine
 from griptape.structures import Agent
-from griptape.tools import ExtractionClient, WebScraper
+from griptape.tools import ExtractionTool, WebScraper
 
 agent = Agent(
     input="Load {{ args[0] }} and extract key info",
     tools=[
         WebScraper(off_prompt=True),
-        ExtractionClient(
+        ExtractionTool(
             off_prompt=False,
             extraction_engine=JsonExtractionEngine(
                 template_schema=schema.Schema(

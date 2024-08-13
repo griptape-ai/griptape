@@ -28,7 +28,7 @@ Here is an example of how it can be used with a local vector store driver:
                              Actions: [
                                {
                                  "tag": "call_GtBICZi6oIeL85Aj7q5szul9",
-                                 "name": "QueryClient",
+                                 "name": "QueryTool",
                                  "path": "query",
                                  "input": {
                                    "values": {

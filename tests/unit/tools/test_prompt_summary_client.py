@@ -2,7 +2,7 @@ import pytest
 
 from griptape.artifacts import TextArtifact
 from griptape.engines import PromptSummaryEngine
-from griptape.tools import PromptSummaryClient
+from griptape.tools import PromptSummaryTool
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils import defaults
 
@@ -10,7 +10,7 @@ from tests.utils import defaults
 class TestPromptSummaryClient:
     @pytest.fixture()
     def tool(self):
-        return PromptSummaryClient(
+        return PromptSummaryTool(
             input_memory=[defaults.text_task_memory("TestMemory")],
             prompt_summary_engine=PromptSummaryEngine(prompt_driver=MockPromptDriver()),
         )

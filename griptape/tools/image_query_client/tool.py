@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 @define
-class ImageQueryClient(BaseTool):
+class ImageQueryTool(BaseTool):
     image_query_engine: ImageQueryEngine = field(kw_only=True)
     image_loader: ImageLoader = field(default=Factory(lambda: ImageLoader()), kw_only=True)
 

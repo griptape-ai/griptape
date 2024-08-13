@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True)
-class ExtractionClient(BaseTool, RuleMixin):
+class ExtractionTool(BaseTool, RuleMixin):
     """Tool for using an Extraction Engine.
 
     Attributes:

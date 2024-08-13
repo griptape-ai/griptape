@@ -25,13 +25,13 @@ from .inpainting_image_generation_client.tool import InpaintingImageGenerationCl
 from .outpainting_image_generation_client.tool import OutpaintingImageGenerationClient
 from .griptape_cloud_knowledge_base_client.tool import GriptapeCloudKnowledgeBaseClient
 from .structure_run_client.tool import StructureRunClient
-from .image_query_client.tool import ImageQueryClient
+from .image_query_client.tool import ImageQueryTool
 from .rag_client.tool import RagClient
 from .text_to_speech_client.tool import TextToSpeechClient
 from .audio_transcription_client.tool import AudioTranscriptionClient
-from .extraction_client.tool import ExtractionClient
-from .prompt_summary_client.tool import PromptSummaryClient
-from .query_client.tool import QueryClient
+from .extraction.tool import ExtractionTool
+from .prompt_summary.tool import PromptSummaryTool
+from .query.tool import QueryTool
 
 __all__ = [
     "BaseTool",
@@ -61,11 +61,11 @@ __all__ = [
     "OutpaintingImageGenerationClient",
     "GriptapeCloudKnowledgeBaseClient",
     "StructureRunClient",
-    "ImageQueryClient",
+    "ImageQueryTool",
     "RagClient",
     "TextToSpeechClient",
     "AudioTranscriptionClient",
-    "ExtractionClient",
-    "PromptSummaryClient",
-    "QueryClient",
+    "ExtractionTool",
+    "PromptSummaryTool",
+    "QueryTool",
 ]

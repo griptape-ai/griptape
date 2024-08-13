@@ -143,8 +143,8 @@ When running this example, we get the following error:
                              Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
 ```
 
-This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `QueryClient`.
-Note that we're setting `off_prompt` to `False` on the `QueryClient` so that the _queried_ content can be returned directly to the LLM.
+This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `QueryTool`.
+Note that we're setting `off_prompt` to `False` on the `QueryTool` so that the _queried_ content can be returned directly to the LLM.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/task_memory_5.py"
@@ -174,7 +174,7 @@ And now we get the expected output:
                              Actions: [
                                {
                                  "tag": "call_DGsOHC4AVxhV7RPVA7q3rATX",
-                                 "name": "QueryClient",
+                                 "name": "QueryTool",
                                  "path": "search",
                                  "input": {
                                    "values": {
@@ -229,7 +229,7 @@ In this example, GPT-4 _never_ sees the contents of the page, only that it was s
                              Actions: [
                                {
                                  "tag": "call_Oiqq6oI20yqmdNrH9Mawb2fS",
-                                 "name": "QueryClient",
+                                 "name": "QueryTool",
                                  "path": "search",
                                  "input": {
                                    "values": {
@@ -243,7 +243,7 @@ In this example, GPT-4 _never_ sees the contents of the page, only that it was s
                                }
                              ]
 [08/12/24 14:55:34] INFO     Subtask d8b4cf297a0d4d9db04e4f8e63b746c8
-                             Response: Output of "QueryClient.search" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "QueryTool.search" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "fd828ddd629e4974a7837f9dfde65954"
 [08/12/24 14:55:38] INFO     Subtask 7aafcb3fb0d845858e2fcf9b8dc8a7ec
                              Actions: [
@@ -274,7 +274,7 @@ As seen in the previous example, certain Tools are designed to read directly fro
 Today, these include:
 
 - [PromptSummaryClient](../../griptape-tools/official-tools/prompt-summary-client.md)
-- [ExtractionClient](../../griptape-tools/official-tools/extraction-client.md)
+- [ExtractionTool](../../griptape-tools/official-tools/extraction-client.md)
 - [RagClient](../../griptape-tools/official-tools/rag-client.md)
 - [FileManager](../../griptape-tools/official-tools/file-manager.md)
 

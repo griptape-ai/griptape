@@ -11,7 +11,7 @@ from griptape.utils.decorators import activity
 
 
 @define(kw_only=True)
-class PromptSummaryClient(BaseTool, RuleMixin):
+class PromptSummaryTool(BaseTool, RuleMixin):
     """Tool for using a Prompt Summary Engine.
 
     Attributes:

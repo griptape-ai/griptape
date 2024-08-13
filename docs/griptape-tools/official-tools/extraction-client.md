@@ -28,7 +28,7 @@ Here is an example of how it can be used with a local vector store driver:
                              Actions: [
                                {
                                  "tag": "call_o3MrpM01OnhCfpxsMe85tpDF",
-                                 "name": "ExtractionClient",
+                                 "name": "ExtractionTool",
                                  "path": "extract_json",
                                  "input": {
                                    "values": {

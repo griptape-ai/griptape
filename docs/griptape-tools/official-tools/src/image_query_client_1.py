@@ -1,7 +1,7 @@
 from griptape.drivers import OpenAiImageQueryDriver
 from griptape.engines import ImageQueryEngine
 from griptape.structures import Agent
-from griptape.tools import ImageQueryClient
+from griptape.tools import ImageQueryTool
 
 # Create an Image Query Driver.
 driver = OpenAiImageQueryDriver(model="gpt-4o")
@@ -12,7 +12,7 @@ engine = ImageQueryEngine(
 )
 
 # Create an Image Query Client configured to use the engine.
-tool = ImageQueryClient(
+tool = ImageQueryTool(
     image_query_engine=engine,
 )
 

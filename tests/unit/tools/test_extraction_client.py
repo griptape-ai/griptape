@@ -4,15 +4,15 @@ import pytest
 
 from griptape.artifacts import TextArtifact
 from griptape.engines import CsvExtractionEngine, JsonExtractionEngine
-from griptape.tools import ExtractionClient
+from griptape.tools import ExtractionTool
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils import defaults
 
 
-class TestExtractionClient:
+class TestExtractionTool:
     @pytest.fixture()
     def json_tool(self):
-        return ExtractionClient(
+        return ExtractionTool(
             input_memory=[defaults.text_task_memory("TestMemory")],
             extraction_engine=JsonExtractionEngine(
                 prompt_driver=MockPromptDriver(
@@ -24,7 +24,7 @@ class TestExtractionClient:
 
     @pytest.fixture()
     def csv_tool(self):
-        return ExtractionClient(
+        return ExtractionTool(
             input_memory=[defaults.text_task_memory("TestMemory")],
             extraction_engine=CsvExtractionEngine(
                 prompt_driver=MockPromptDriver(),

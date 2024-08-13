@@ -1,4 +1,4 @@
-# ImageQueryClient
+# ImageQueryTool
 
 This tool allows Agents to execute natural language queries on the contents of images using multimodal models.
 

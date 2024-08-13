@@ -15,9 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
 - Global config, `griptape.config.config`, for setting global configuration defaults.
 - Unique name generation for all `RagEngine` modules.
-- `ExtractionClient` Tool for having the LLM extract structured data from text.
+- `ExtractionTool` Tool for having the LLM extract structured data from text.
 - `PromptSummaryClient` Tool for having the LLM summarize text.
-- `QueryClient` Tool for having the LLM queyr text.
+- `QueryTool` Tool for having the LLM query text.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
@@ -41,7 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Changed `JsonExtractionEngine.template_schema` from a `run` argument to a class attribute. 
 - **BREAKING**: Changed `CsvExtractionEngine.column_names` from a `run` argument to a class attribute. 
 - **BREAKING**: Removed `JsonExtractionTask`, and `CsvExtractionTask` use `ExtractionTask` instead.
-- **BREAKING**: Removed `TaskMemoryClient`, use `RagClient`, `ExtractionClient`, or `PromptSummaryClient` instead.
+- **BREAKING**: Removed `TaskMemoryClient`, use `RagClient`, `ExtractionTool`, or `PromptSummaryClient` instead.
 - `RagClient` now can be used to search through Artifacts stored in Task Memory.
 - Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
@@ -454,7 +454,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `JsonExtractionTask` for convenience over using `ExtractionTask` with a `JsonExtractionEngine`.
 - `CsvExtractionTask` for convenience over using `ExtractionTask` with a `CsvExtractionEngine`.
 - `OpenAiVisionImageQueryDriver` to support queries on images using OpenAI's Vision model.
-- `ImageQueryClient` allowing an Agent to make queries on images on disk or in Task Memory.
+- `ImageQueryTool` allowing an Agent to make queries on images on disk or in Task Memory.
 - `ImageQueryTask` and `ImageQueryEngine`.
 
 ### Fixed 

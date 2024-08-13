@@ -1,6 +1,6 @@
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask
-from griptape.tools import FileManager, PromptSummaryClient, WebScraper
+from griptape.tools import FileManager, PromptSummaryTool, WebScraper
 
 pipeline = Pipeline()
 
@@ -10,7 +10,7 @@ pipeline.add_tasks(
         tools=[
             WebScraper(off_prompt=True),
             FileManager(off_prompt=True),
-            PromptSummaryClient(off_prompt=False),
+            PromptSummaryTool(off_prompt=False),
         ],
     ),
 )

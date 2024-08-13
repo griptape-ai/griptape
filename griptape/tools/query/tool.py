@@ -17,7 +17,7 @@ from griptape.utils.decorators import activity
 
 
 @define(kw_only=True)
-class QueryClient(RagClient, RuleMixin):
+class QueryTool(RagClient, RuleMixin):
     """Tool for performing a query against data."""
 
     description: str = field(init=False)
