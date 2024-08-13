@@ -1,6 +1,4 @@
-The [RagClient](../../reference/griptape/tools/rag_client/tool.md) enables LLMs to query modular RAG engines.
-
-Here is an example of how it can be used with a local vector store driver:
+The [PromptSummaryTool](../../reference/griptape/tools/prompt_summary/tool.md) enables LLMs summarize text data. 
 
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/prompt_summary_tool_1.py"

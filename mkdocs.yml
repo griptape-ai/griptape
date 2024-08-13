@@ -157,9 +157,9 @@ nav:
           - Audio Transcription: "griptape-tools/official-tools/audio-transcription-tool.md"
           - Griptape Cloud Knowledge Base: "griptape-tools/official-tools/griptape-cloud-knowledge-base-tool.md"
           - Rag: "griptape-tools/official-tools/rag-tool.md"
-          - Extraction: "griptape-tools/official-tools/extraction-client.md"
-          - Query: "griptape-tools/official-tools/query-client.md"
-          - Prompt Summary: "griptape-tools/official-tools/prompt-summary-client.md"
+          - Extraction: "griptape-tools/official-tools/extraction-tool.md"
+          - Query: "griptape-tools/official-tools/query-tool.md"
+          - Prompt Summary: "griptape-tools/official-tools/prompt-summary-tool.md"
       - Custom Tools:
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
   - Recipes:

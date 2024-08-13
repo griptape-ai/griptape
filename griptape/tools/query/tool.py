@@ -55,13 +55,13 @@ class QueryTool(BaseTool, RuleMixin):
     )
     def query(self, params: dict) -> BaseArtifact:
         query = params["values"]["query"]
-        summary = params["values"]["content"]
+        content = params["values"]["content"]
 
-        if isinstance(summary, str):
-            text_artifacts = [TextArtifact(summary)]
+        if isinstance(content, str):
+            text_artifacts = [TextArtifact(content)]
         else:
-            memory = self.find_input_memory(summary["memory_name"])
-            artifact_namespace = summary["artifact_namespace"]
+            memory = self.find_input_memory(content["memory_name"])
+            artifact_namespace = content["artifact_namespace"]
 
             if memory is not None:
                 artifacts = memory.load_artifacts(artifact_namespace)
