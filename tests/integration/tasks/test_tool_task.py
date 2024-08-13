@@ -10,10 +10,10 @@ class TestToolTask:
     def structure_tester(self, request):
         from griptape.structures import Agent
         from griptape.tasks import ToolTask
-        from griptape.tools import Calculator
+        from griptape.tools import CalculatorTool
 
         return StructureTester(
-            Agent(tasks=[ToolTask(tool=Calculator())], conversation_memory=None, prompt_driver=request.param)
+            Agent(tasks=[ToolTask(tool=CalculatorTool())], conversation_memory=None, prompt_driver=request.param)
         )
 
     def test_tool_task(self, structure_tester):

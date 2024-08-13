@@ -3,7 +3,7 @@ import os
 from griptape.drivers import AzureOpenAiImageGenerationDriver
 from griptape.engines import PromptImageGenerationEngine
 from griptape.structures import Agent
-from griptape.tools import PromptImageGenerationClient
+from griptape.tools import PromptImageGenerationTool
 
 driver = AzureOpenAiImageGenerationDriver(
     model="dall-e-3",
@@ -16,7 +16,7 @@ engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(
     tools=[
-        PromptImageGenerationClient(engine=engine),
+        PromptImageGenerationTool(engine=engine),
     ]
 )
 

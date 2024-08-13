@@ -7,7 +7,7 @@ from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRet
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
 from griptape.loaders import PdfLoader
 from griptape.structures import Agent
-from griptape.tools import RagClient
+from griptape.tools import RagTool
 from griptape.utils import Chat
 
 namespace = "attention"
@@ -25,7 +25,7 @@ engine = RagEngine(
         response_modules=[PromptResponseRagModule(prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"))]
     ),
 )
-vector_store_tool = RagClient(
+rag_tool = RagTool(
     description="Contains information about the Attention Is All You Need paper. "
     "Use it to answer any related questions.",
     rag_engine=engine,
@@ -37,6 +37,6 @@ if isinstance(artifacts, ErrorArtifact):
 
 vector_store.upsert_text_artifacts({namespace: artifacts})
 
-agent = Agent(tools=[vector_store_tool])
+agent = Agent(tools=[rag_tool])
 
 Chat(agent).start()

@@ -6,12 +6,12 @@ from attrs import define, field
 from schema import Literal, Optional, Schema
 
 from griptape.artifacts import ErrorArtifact, InfoArtifact
-from griptape.tools import BaseGoogleClient
+from griptape.tools import BaseGoogleTool
 from griptape.utils.decorators import activity
 
 
 @define
-class GoogleDocsClient(BaseGoogleClient):
+class GoogleDocsTool(BaseGoogleTool):
     DOCS_SCOPES = ["https://www.googleapis.com/auth/documents"]
 
     DEFAULT_FOLDER_PATH = "root"

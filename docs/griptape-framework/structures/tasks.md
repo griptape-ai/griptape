@@ -112,7 +112,7 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
 [09/08/23 11:15:11] INFO     Subtask a22a7e4ebf594b4b895fcbe8a95c1dd3
                              Thought: Now that the webpage content is stored in memory, I can use the TaskMemory tool's summarize activity
                              to summarize it.
-                             Action: {"name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "2b50373849d140f698ba8071066437ee"}}}
+                             Action: {"name": "TaskMemoryTool", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "2b50373849d140f698ba8071066437ee"}}}
 [09/08/23 11:15:15] INFO     Subtask a22a7e4ebf594b4b895fcbe8a95c1dd3
                              Response: Griptape is an open source framework that allows developers to build and deploy AI applications
                              using large language models (LLMs). It provides the ability to create conversational and event-driven apps that
@@ -149,7 +149,7 @@ This Task takes in a single Tool which the LLM will use without Chain of Thought
 [10/20/23 14:20:29] INFO     Subtask a9a9ad7be2bf465fa82bd350116fabe4           
                              Action: {                                          
                                                                 
-                               "name": "Calculator",                            
+                               "name": "CalculatorTool",                            
                                "path": "calculate",                         
                                "input": {                                       
                                  "values": {                                    

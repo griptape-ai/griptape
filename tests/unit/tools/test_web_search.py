@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
-from griptape.tools import WebSearch
+from griptape.tools import WebSearchTool
 
 
 class TestWebSearch:
@@ -11,7 +11,7 @@ class TestWebSearch:
         driver = mocker.Mock()
         mocker.patch.object(driver, "search", return_value=mock_response)
 
-        return WebSearch(web_search_driver=driver)
+        return WebSearchTool(web_search_driver=driver)
 
     @pytest.fixture()
     def websearch_tool_with_error(self, mocker):
@@ -19,7 +19,7 @@ class TestWebSearch:
         driver = mocker.Mock()
         mocker.patch.object(driver, "search", side_effect=mock_response)
 
-        return WebSearch(web_search_driver=driver)
+        return WebSearchTool(web_search_driver=driver)
 
     def test_search(self, websearch_tool):
         assert isinstance(websearch_tool.search({"values": {"query": "foo bar"}}), BaseArtifact)

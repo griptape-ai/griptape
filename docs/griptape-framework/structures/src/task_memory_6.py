@@ -14,7 +14,7 @@ from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
-from griptape.tools import FileManager, TaskMemoryClient, WebScraper
+from griptape.tools import FileManagerTool, TaskMemoryTool, WebScraperTool
 
 config.drivers = OpenAiDriverConfig(
     prompt=OpenAiChatPromptDriver(model="gpt-4"),
@@ -45,9 +45,9 @@ agent = Agent(
         }
     ),
     tools=[
-        WebScraper(off_prompt=True),
-        TaskMemoryClient(off_prompt=True, allowlist=["query"]),
-        FileManager(off_prompt=True),
+        WebScraperTool(off_prompt=True),
+        TaskMemoryTool(off_prompt=True, allowlist=["query"]),
+        FileManagerTool(off_prompt=True),
     ],
 )
 

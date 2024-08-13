@@ -6,9 +6,9 @@ from griptape.artifacts import ListArtifact
 class TestWebScraper:
     @pytest.fixture()
     def scraper(self):
-        from griptape.tools import WebScraper
+        from griptape.tools import WebScraperTool
 
-        return WebScraper()
+        return WebScraperTool()
 
     def test_get_content(self, scraper):
         assert isinstance(

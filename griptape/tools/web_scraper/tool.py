@@ -10,7 +10,7 @@ from griptape.utils.decorators import activity
 
 
 @define
-class WebScraper(BaseTool):
+class WebScraperTool(BaseTool):
     web_loader: WebLoader = field(default=Factory(lambda: WebLoader()), kw_only=True)
 
     @activity(

@@ -1,5 +1,5 @@
 version: "v1"
-name: Google Search
-description: Tool for making making web searches on Google.
+name: Web Search Tool
+description: Tool for making making web searches.
 contact_email: hello@griptape.ai
 legal_info_url: https://www.griptape.ai/legal

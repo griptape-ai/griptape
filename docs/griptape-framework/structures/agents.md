@@ -27,7 +27,7 @@ You can access the final output of the Agent by using the [output](../../referen
                              Actions: [
                                {
                                  "tag": "call_ZSCH6vNoycOgtPJH2DL2U9ji",
-                                 "name": "Calculator",
+                                 "name": "CalculatorTool",
                                  "path": "calculate",
                                  "input": {
                                    "values": {
