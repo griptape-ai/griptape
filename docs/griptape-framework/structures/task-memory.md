@@ -29,15 +29,15 @@ Lets look at a simple example where `off_prompt` is set to `False`:
 [04/26/24 13:06:42] INFO     ToolkitTask 36b9dea13b9d479fb752014f41dca54c
                              Input: What is the square root of 12345?
 [04/26/24 13:06:48] INFO     Subtask a88c0feeaef6493796a9148ed68c9caf
-                             Thought: To find the square root of 12345, I can use the Calculator action with the expression "12345 ** 0.5".
-                             Actions: [{"name": "Calculator", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
+                             Thought: To find the square root of 12345, I can use the CalculatorTool action with the expression "12345 ** 0.5".
+                             Actions: [{"name": "CalculatorTool", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
                     INFO     Subtask a88c0feeaef6493796a9148ed68c9caf
                              Response: 111.1080555135405
 [04/26/24 13:06:49] INFO     ToolkitTask 36b9dea13b9d479fb752014f41dca54c
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
-Since the result of the Calculator Tool is neither sensitive nor too large, we can set `off_prompt` to `False` and not use Task Memory.
+Since the result of the CalculatorTool Tool is neither sensitive nor too large, we can set `off_prompt` to `False` and not use Task Memory.
 
 Let's explore what happens when `off_prompt` is set to `True`:
 
@@ -49,38 +49,38 @@ Let's explore what happens when `off_prompt` is set to `True`:
 [04/26/24 13:07:02] INFO     ToolkitTask ecbb788d9830491ab72a8a2bbef5fb0a
                              Input: What is the square root of 12345?
 [04/26/24 13:07:10] INFO     Subtask 4700dc0c2e934d1a9af60a28bd770bc6
-                             Thought: To find the square root of a number, we can use the Calculator action with the expression "sqrt(12345)". However, the Calculator
+                             Thought: To find the square root of a number, we can use the CalculatorTool action with the expression "sqrt(12345)". However, the CalculatorTool
                              action only supports basic arithmetic operations and does not support the sqrt function. Therefore, we need to use the equivalent expression
                              for square root which is raising the number to the power of 0.5.
-                             Actions: [{"name": "Calculator", "path": "calculate", "input": {"values": {"expression": "12345**0.5"}}, "tag": "sqrt_calculation"}]
+                             Actions: [{"name": "CalculatorTool", "path": "calculate", "input": {"values": {"expression": "12345**0.5"}}, "tag": "sqrt_calculation"}]
                     INFO     Subtask 4700dc0c2e934d1a9af60a28bd770bc6
-                             Response: Output of "Calculator.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "CalculatorTool.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "6be74c5128024c0588eb9bee1fdb9aa5"
 [04/26/24 13:07:16] ERROR    Subtask ecbb788d9830491ab72a8a2bbef5fb0a
-                             Invalid action JSON: Or({Literal("name", description=""): 'Calculator', Literal("path", description="Can be used for computing simple
+                             Invalid action JSON: Or({Literal("name", description=""): 'CalculatorTool', Literal("path", description="Can be used for computing simple
                              numerical or algebraic calculations in Python"): 'calculate', Literal("input", description=""): {'values': Schema({Literal("expression",
                              description="Arithmetic expression parsable in pure Python. Single line only. Don't use variables. Don't use any imports or external
                              libraries"): <class 'str'>})}, Literal("tag", description="Unique tag name for action execution."): <class 'str'>}) did not validate {'name':
                              'Memory', 'path': 'get', 'input': {'memory_name': 'TaskMemory', 'artifact_namespace': '6be74c5128024c0588eb9bee1fdb9aa5'}, 'tag':
                              'get_sqrt_result'}
                              Key 'name' error:
-                             'Calculator' does not match 'Memory'
+                             'CalculatorTool' does not match 'Memory'
 ...Output truncated for brevity...
 ```
 
-When we set `off_prompt` to `True`, the Agent does not function as expected, even generating an error. This is because the Calculator output is being stored in Task Memory but the Agent has no way to access it. 
-To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `TaskMemoryClient`.
+When we set `off_prompt` to `True`, the Agent does not function as expected, even generating an error. This is because the CalculatorTool output is being stored in Task Memory but the Agent has no way to access it. 
+To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `TaskMemoryTool`.
 This is an example of [not providing a Task Memory compatible Tool](#not-providing-a-task-memory-compatible-tool).
 
-## Task Memory Client
+## Task Memory Tool
 
-The [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md) is a Tool that allows an Agent to interact with Task Memory. It has the following methods:
+The [TaskMemoryTool](../../griptape-tools/official-tools/task-memory-tool.md) is a Tool that allows an Agent to interact with Task Memory. It has the following methods:
 
 - `query`: Retrieve the content of an Artifact stored in Task Memory.
 - `summarize`: Summarize the content of an Artifact stored in Task Memory.
 
-Let's add `TaskMemoryClient` to the Agent and run the same task.
-Note that on the `TaskMemoryClient` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. 
+Let's add `TaskMemoryTool` to the Agent and run the same task.
+Note that on the `TaskMemoryTool` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. 
 If we had kept it as `True`, the results would have been stored back Task Memory which would've put us back to square one. See [Task Memory Looping](#task-memory-looping) for more information on this scenario.
 
 ```python
@@ -91,15 +91,15 @@ If we had kept it as `True`, the results would have been stored back Task Memory
 [04/26/24 13:13:01] INFO     ToolkitTask 5b46f9ef677c4b31906b48aba3f45e2c
                              Input: What is the square root of 12345?
 [04/26/24 13:13:07] INFO     Subtask 611d98ea5576430fbc63259420577ab2
-                             Thought: To find the square root of 12345, I can use the Calculator action with the expression "12345 ** 0.5".
-                             Actions: [{"name": "Calculator", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
+                             Thought: To find the square root of 12345, I can use the CalculatorTool action with the expression "12345 ** 0.5".
+                             Actions: [{"name": "CalculatorTool", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
 [04/26/24 13:13:08] INFO     Subtask 611d98ea5576430fbc63259420577ab2
-                             Response: Output of "Calculator.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "CalculatorTool.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "7554b69e1d414a469b8882e2266dcea1"
 [04/26/24 13:13:15] INFO     Subtask 32b9163a15644212be60b8fba07bd23b
-                             Thought: The square root of 12345 has been calculated and stored in memory. I can retrieve this value using the TaskMemoryClient action with
+                             Thought: The square root of 12345 has been calculated and stored in memory. I can retrieve this value using the TaskMemoryTool action with
                              the query path, providing the memory_name and artifact_namespace as input.
-                             Actions: [{"tag": "retrieve_sqrt", "name": "TaskMemoryClient", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
+                             Actions: [{"tag": "retrieve_sqrt", "name": "TaskMemoryTool", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
                              "artifact_namespace": "7554b69e1d414a469b8882e2266dcea1", "query": "What is the result of the calculation?"}}}]
 [04/26/24 13:13:16] INFO     Subtask 32b9163a15644212be60b8fba07bd23b
                              Response: The result of the calculation is 111.1080555135405.
@@ -107,7 +107,7 @@ If we had kept it as `True`, the results would have been stored back Task Memory
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
-While this fixed the problem, it took a handful more steps than when we just had `Calculator()`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary).
+While this fixed the problem, it took a handful more steps than when we just had `CalculatorTool()`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary).
 Let's look at a more complex example where Task Memory shines.
 
 ## Large Data
@@ -125,8 +125,8 @@ When running this example, we get the following error:
                              Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
 ```
 
-This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `TaskMemoryClient`.
-Note that we're setting `off_prompt` to `False` on the `TaskMemoryClient` so that the _queried_ content can be returned directly to the LLM.
+This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `TaskMemoryTool`.
+Note that we're setting `off_prompt` to `False` on the `TaskMemoryTool` so that the _queried_ content can be returned directly to the LLM.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/task_memory_5.py"
@@ -146,7 +146,7 @@ And now we get the expected output:
 [04/26/24 13:52:11] INFO     Subtask f12eb3d3b4924e4085808236b460b43d
                              Thought: Now that the webpage content is stored in memory, I need to query this memory to find the information about how many copies of Elden
                              Ring have been sold.
-                             Actions: [{"tag": "query_sales", "name": "TaskMemoryClient", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
+                             Actions: [{"tag": "query_sales", "name": "TaskMemoryTool", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
                              "artifact_namespace": "2d4ebc7211074bb7be26613eb25d8fc1", "query": "How many copies of Elden Ring have been sold?"}}}]
 [04/26/24 13:52:14] INFO     Subtask f12eb3d3b4924e4085808236b460b43d
                              Response: Elden Ring sold 23 million copies by February 2024.
@@ -192,13 +192,13 @@ In this example, GPT-4 _never_ sees the contents of the page, only that it was s
                              information about how many copies of Elden Ring    
                              have been sold.                                    
                              Actions: [{"tag": "query_sales", "name":           
-                             "TaskMemoryClient", "path": "query", "input":      
+                             "TaskMemoryTool", "path": "query", "input":      
                              {"values": {"memory_name": "TaskMemory",           
                              "artifact_namespace":                              
                              "7e48bcff0da94ad3b06aa4e173f8f37b", "query": "How  
                              many copies of Elden Ring have been sold?"}}}]     
 [06/21/24 16:00:19] INFO     Subtask 56102d42475d413299ce52a0230506b7           
-                             Response: Output of "TaskMemoryClient.query" was   
+                             Response: Output of "TaskMemoryTool.query" was   
                              stored in memory with memory_name "TaskMemory" and 
                              artifact_namespace                                 
                              "9ecf4d7b7d0c46149dfc46ba236f178e"                 
@@ -229,11 +229,11 @@ As seen in the previous example, certain Tools are designed to read directly fro
 
 Today, these include:
 
-- [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md)
-- [FileManager](../../griptape-tools/official-tools/file-manager.md)
-- [AwsS3Client](../../griptape-tools/official-tools/aws-s3-client.md)
-- [GoogleDriveClient](../../griptape-tools/official-tools/google-drive-client.md)
-- [GoogleDocsClient](../../griptape-tools/official-tools/google-docs-client.md)
+- [TaskMemoryTool](../../griptape-tools/official-tools/task-memory-tool.md)
+- [FileManager](../../griptape-tools/official-tools/file-manager-tool.md)
+- [AwsS3Tool](../../griptape-tools/official-tools/aws-s3-tool.md)
+- [GoogleDriveTool](../../griptape-tools/official-tools/google-drive-tool.md)
+- [GoogleDocsTool](../../griptape-tools/official-tools/google-docs-tool.md)
 
 ## Task Memory Considerations
 

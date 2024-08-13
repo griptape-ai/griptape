@@ -6,7 +6,7 @@ from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
 from griptape.loaders import WebLoader
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
-from griptape.tools import RagClient
+from griptape.tools import RagTool
 from griptape.utils import Chat
 
 namespace = "physics-wiki"
@@ -33,7 +33,7 @@ if isinstance(artifacts, ErrorArtifact):
 
 vector_store_driver.upsert_text_artifacts({namespace: artifacts})
 
-vector_store_tool = RagClient(
+rag_tool = RagTool(
     description="Contains information about physics. " "Use it to answer any physics-related questions.",
     rag_engine=engine,
 )
@@ -45,7 +45,7 @@ agent = Agent(
             rules=[Rule("Always introduce yourself as a physics tutor"), Rule("Be truthful. Only discuss physics.")],
         )
     ],
-    tools=[vector_store_tool],
+    tools=[rag_tool],
 )
 
 Chat(agent).start()

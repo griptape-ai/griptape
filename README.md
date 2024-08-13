@@ -89,14 +89,14 @@ With Griptape, you can create Structures, such as Agents, Pipelines, and Workflo
 
 ```python
 from griptape.structures import Agent
-from griptape.tools import WebScraper, FileManager, TaskMemoryClient
+from griptape.tools import WebScraperTool, FileManagerTool, TaskMemoryTool
 
 agent = Agent(
     input="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
     tools=[
-        WebScraper(off_prompt=True),
-        TaskMemoryClient(off_prompt=True),
-        FileManager()
+        WebScraperTool(off_prompt=True),
+        TaskMemoryTool(off_prompt=True),
+        FileManagerTool()
     ]
 )
 agent.run("https://griptape.ai", "griptape.txt")

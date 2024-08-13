@@ -5,7 +5,7 @@ from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import MarqoVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
-from griptape.tools import VectorStoreClient
+from griptape.tools import VectorStoreTool
 
 # Define the namespace
 namespace = "griptape-ai"
@@ -19,7 +19,7 @@ vector_store = MarqoVectorStoreDriver(
 )
 
 # Initialize the knowledge base tool
-vector_store_tool = VectorStoreClient(
+vector_store_tool = VectorStoreTool(
     description="Contains information about the Griptape Framework from www.griptape.ai",
     vector_store_driver=vector_store,
 )

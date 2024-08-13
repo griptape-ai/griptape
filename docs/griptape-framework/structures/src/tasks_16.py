@@ -5,25 +5,25 @@ from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
 from griptape.tools import (
-    TaskMemoryClient,
-    WebScraper,
-    WebSearch,
+    TaskMemoryTool,
+    WebScraperTool,
+    WebSearchTool,
 )
 
 
 def build_researcher() -> Agent:
     researcher = Agent(
         tools=[
-            WebSearch(
+            WebSearchTool(
                 web_search_driver=GoogleWebSearchDriver(
                     api_key=os.environ["GOOGLE_API_KEY"],
                     search_id=os.environ["GOOGLE_API_SEARCH_ID"],
                 ),
             ),
-            WebScraper(
+            WebScraperTool(
                 off_prompt=True,
             ),
-            TaskMemoryClient(off_prompt=False),
+            TaskMemoryTool(off_prompt=False),
         ],
         rulesets=[
             Ruleset(

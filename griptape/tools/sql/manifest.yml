@@ -1,0 +1,5 @@
+version: "v1"
+name: SQL Tool
+description: Tool for executing SQL queries.
+contact_email: hello@griptape.ai
+legal_info_url: https://www.griptape.ai/legal

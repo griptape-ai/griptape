@@ -4,7 +4,7 @@ from griptape.drivers import OpenAiChatPromptDriver
 from griptape.events import CompletionChunkEvent, EventListener, event_bus
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask
-from griptape.tools import TaskMemoryClient, WebScraper
+from griptape.tools import TaskMemoryTool, WebScraperTool
 
 event_bus.add_event_listeners(
     [
@@ -20,7 +20,7 @@ pipeline.add_tasks(
     ToolkitTask(
         "Based on https://griptape.ai, tell me what griptape is.",
         prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True),
-        tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
+        tools=[WebScraperTool(off_prompt=True), TaskMemoryTool(off_prompt=False)],
     )
 )
 

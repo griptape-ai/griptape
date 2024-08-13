@@ -103,7 +103,7 @@ Here is the chain of thought from the Agent. Notice where it realizes it can use
                              Actions: [
                                {
                                  "tag": "call_RTRm7JLFV0F73dCVPmoWVJqO",
-                                 "name": "Calculator",
+                                 "name": "CalculatorTool",
                                  "path": "calculate",
                                  "input": {
                                    "values": {
@@ -144,7 +144,7 @@ Agents are great for getting started, but they are intentionally limited to a si
 [09/08/23 10:02:53] INFO     Subtask 8023e3d257274df29065b22e736faca8
                              Thought: Now that the webpage content is stored in memory, I can use the TaskMemory tool's summarize activity
                              to summarize the content.
-                             Action: {"name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "39ca67bbe26b4e1584193b87ed82170d"}}}
+                             Action: {"name": "TaskMemoryTool", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "39ca67bbe26b4e1584193b87ed82170d"}}}
 [09/08/23 10:02:57] INFO     Subtask 8023e3d257274df29065b22e736faca8
                              Response: Griptape is an open source framework that allows developers to build and deploy AI applications
                              using large language models (LLMs). It provides the ability to create conversational and event-driven apps that

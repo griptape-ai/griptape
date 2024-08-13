@@ -33,7 +33,7 @@ Here is an example of a Pipeline using Tools:
 [09/08/23 10:54:09] INFO     Subtask 7ee08458ce154e3d970711b7d3ed79ba
                              Thought: Now that the webpage content is stored in memory, I can use the TaskMemory tool with the summarize
                              activity to summarize the content.
-                             Action: {"name": "TaskMemoryClient", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "9eb6f5828cf64356bf323f11d28be27e"}}}
+                             Action: {"name": "TaskMemoryTool", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "9eb6f5828cf64356bf323f11d28be27e"}}}
 [09/08/23 10:54:12] INFO     Subtask 7ee08458ce154e3d970711b7d3ed79ba
                              Response: Griptape is an open source framework that allows developers to build and deploy AI applications
                              using large language models (LLMs). It provides the ability to create conversational and event-driven apps that

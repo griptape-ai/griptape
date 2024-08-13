@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 @define
-class WebSearch(BaseTool):
+class WebSearchTool(BaseTool):
     web_search_driver: BaseWebSearchDriver = field(kw_only=True)
 
     @activity(
