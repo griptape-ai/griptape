@@ -69,15 +69,15 @@ Let's explore what happens when `off_prompt` is set to `True`:
 ```
 
 When we set `off_prompt` to `True`, the Agent does not function as expected, even generating an error. This is because the Calculator output is being stored in Task Memory but the Agent has no way to access it. 
-To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `PromptSummaryClient`.
+To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `PromptSummaryTool`.
 This is an example of [not providing a Task Memory compatible Tool](#not-providing-a-task-memory-compatible-tool).
 
 ## Prompt Summary Client
 
-The [PromptSummaryClient](../../griptape-tools/official-tools/prompt-summary-client.md) is a Tool that allows an Agent to summarize the Artifacts in Task Memory. It has the following methods:
+The [PromptSummaryTool](../../griptape-tools/official-tools/prompt-summary-client.md) is a Tool that allows an Agent to summarize the Artifacts in Task Memory. It has the following methods:
 
-Let's add `PromptSummaryClient` to the Agent and run the same task.
-Note that on the `PromptSummaryClient` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. 
+Let's add `PromptSummaryTool` to the Agent and run the same task.
+Note that on the `PromptSummaryTool` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. 
 If we had kept it as `True`, the results would have been stored back Task Memory which would've put us back to square one. See [Task Memory Looping](#task-memory-looping) for more information on this scenario.
 
 ```python
@@ -107,7 +107,7 @@ If we had kept it as `True`, the results would have been stored back Task Memory
                              Actions: [
                                {
                                  "tag": "call_qqpsWEvAUGIcPLrwAHGuH6o3",
-                                 "name": "PromptSummaryClient",
+                                 "name": "PromptSummaryTool",
                                  "path": "summarize",
                                  "input": {
                                    "values": {
@@ -273,7 +273,7 @@ As seen in the previous example, certain Tools are designed to read directly fro
 
 Today, these include:
 
-- [PromptSummaryClient](../../griptape-tools/official-tools/prompt-summary-client.md)
+- [PromptSummaryTool](../../griptape-tools/official-tools/prompt-summary-client.md)
 - [ExtractionTool](../../griptape-tools/official-tools/extraction-client.md)
 - [RagClient](../../griptape-tools/official-tools/rag-client.md)
 - [FileManagerTool](../../griptape-tools/official-tools/file-manager.md)

@@ -121,7 +121,7 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
                              Actions: [
                                {
                                  "tag": "call_aT7DX0YSQPmOcnumWXrGoMNt",
-                                 "name": "PromptSummaryClient",
+                                 "name": "PromptSummaryTool",
                                  "path": "summarize",
                                  "input": {
                                    "values": {
@@ -134,7 +134,7 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
                                }
                              ]
 [08/12/24 15:16:37] INFO     Subtask ee5f11666ded4dc39b94e4c59d18fbc7
-                             Response: Output of "PromptSummaryClient.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "PromptSummaryTool.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "669d29a704444176be93d09d014298df"
 [08/12/24 15:16:38] INFO     Subtask d9b2dd9f96d841f49f5d460e33905183
                              Actions: [

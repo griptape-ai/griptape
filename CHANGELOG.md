@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global config, `griptape.config.config`, for setting global configuration defaults.
 - Unique name generation for all `RagEngine` modules.
 - `ExtractionTool` Tool for having the LLM extract structured data from text.
-- `PromptSummaryClient` Tool for having the LLM summarize text.
+- `PromptSummaryTool` Tool for having the LLM summarize text.
 - `QueryTool` Tool for having the LLM query text.
 
 ### Changed
@@ -31,6 +31,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules were adjusted accordingly.
 - **BREAKING**: Removed before and after response modules from `ResponseRagStage`.
 - **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.
+- **BREAKING**: Dropped `Client` from all Tool names for better naming consistency. 
+- **BREAKING**: Dropped `_client` suffix from all Tool packages. 
+- **BREAKING**: Added `Tool` suffix to all Tool names for better naming consistency. 
 - **BREAKING**: Removed `TextArtifactStorage.query` and `TextArtifactStorage.summarize`. 
 - **BREAKING**: Removed `TextArtifactStorage.rag_engine`, and `TextArtifactStorage.retrieval_rag_module_name`.
 - **BREAKING**: Removed `TextArtifactStorage.summary_engine`, `TextArtifactStorage.csv_extraction_engine`, and `TextArtifactStorage.json_extraction_engine`.
@@ -41,11 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Changed `JsonExtractionEngine.template_schema` from a `run` argument to a class attribute. 
 - **BREAKING**: Changed `CsvExtractionEngine.column_names` from a `run` argument to a class attribute. 
 - **BREAKING**: Removed `JsonExtractionTask`, and `CsvExtractionTask` use `ExtractionTask` instead.
-- **BREAKING**: Removed `TaskMemoryClient`, use `RagClient`, `ExtractionTool`, or `PromptSummaryClient` instead.
-- **BREAKING**: Dropped `Client` from all Tool names for better naming consistency. 
-- **BREAKING**: Dropped `_client` suffix from all Tool packages. 
-- **BREAKING**: Added `Tool` suffix to all Tool names for better naming consistency. 
-- `RagClient` now can be used to search through Artifacts stored in Task Memory.
+- **BREAKING**: Removed `TaskMemoryClient`, use `RagClient`, `ExtractionTool`, or `PromptSummaryTool` instead.
 - Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
 

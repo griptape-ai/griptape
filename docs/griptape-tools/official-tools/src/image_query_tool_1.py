@@ -11,7 +11,7 @@ engine = ImageQueryEngine(
     image_query_driver=driver,
 )
 
-# Create an Image Query Client configured to use the engine.
+# Create an Image Query Tool configured to use the engine.
 tool = ImageQueryTool(
     image_query_engine=engine,
 )

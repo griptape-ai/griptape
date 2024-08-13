@@ -1,6 +1,5 @@
 import pytest
 
-from griptape.tools import WebSearchTool
 from tests.utils.structure_tester import StructureTester
 
 
@@ -15,7 +14,7 @@ class TestToolkitTask:
 
         from griptape.drivers import GoogleWebSearchDriver
         from griptape.structures import Agent
-        from griptape.tools import PromptSummaryTool, WebScraperTool
+        from griptape.tools import PromptSummaryTool, WebScraperTool, WebSearchTool
 
         return StructureTester(
             Agent(

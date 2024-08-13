@@ -126,7 +126,7 @@ And here is the output:
                              Actions: [
                                {
                                  "tag": "call_o9F1taIxHty0mDlWLcAjTAAu",
-                                 "name": "PromptSummaryClient",
+                                 "name": "PromptSummaryTool",
                                  "path": "summarize",
                                  "input": {
                                    "values": {
@@ -139,7 +139,7 @@ And here is the output:
                                }
                              ]
 [08/12/24 14:48:21] INFO     Subtask dca04901436d49d2ade86cd6b4e1038a
-                             Response: Output of "PromptSummaryClient.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "PromptSummaryTool.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "73765e32b8404e32927822250dc2ae8b"
 [08/12/24 14:48:22] INFO     Subtask c233853450fb4fd6a3e9c04c52b33bf6
                              Actions: [

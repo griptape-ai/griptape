@@ -3,7 +3,7 @@ The [RagClient](../../reference/griptape/tools/rag_client/tool.md) enables LLMs 
 Here is an example of how it can be used with a local vector store driver:
 
 ```python
---8<-- "docs/griptape-tools/official-tools/src/prompt_summary_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/prompt_summary_tool_1.py"
 ```
 ```
 [08/12/24 15:54:46] INFO     ToolkitTask 8be73eb542c44418ba880399044c017a
@@ -28,7 +28,7 @@ Here is an example of how it can be used with a local vector store driver:
                              Actions: [
                                {
                                  "tag": "call_DK3a4MYoElJbaCrUJekBReIc",
-                                 "name": "PromptSummaryClient",
+                                 "name": "PromptSummaryTool",
                                  "path": "summarize",
                                  "input": {
                                    "values": {

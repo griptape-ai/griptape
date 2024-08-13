@@ -41,7 +41,7 @@ Here is an example of a Pipeline using Tools:
                              Actions: [
                                {
                                  "tag": "call_0VOTEvinRer7rG4oEirBYcow",
-                                 "name": "PromptSummaryClient",
+                                 "name": "PromptSummaryTool",
                                  "path": "summarize",
                                  "input": {
                                    "values": {

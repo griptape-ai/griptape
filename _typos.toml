@@ -9,4 +9,3 @@ mornin = "mornin"
 
 [files]
 extend-exclude = ["docs/assets", "tests/resources/"]
-

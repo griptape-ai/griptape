@@ -150,7 +150,7 @@ Agents are great for getting started, but they are intentionally limited to a si
                              Actions: [
                                {
                                  "tag": "call_ElTYTPeocOU62I0VjzRqmfoF",
-                                 "name": "PromptSummaryClient",
+                                 "name": "PromptSummaryTool",
                                  "path": "summarize",
                                  "input": {
                                    "values": {

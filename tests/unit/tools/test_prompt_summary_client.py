@@ -7,7 +7,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils import defaults
 
 
-class TestPromptSummaryClient:
+class TestPromptSummaryTool:
     @pytest.fixture()
     def tool(self):
         return PromptSummaryTool(

@@ -28,7 +28,7 @@ This tool enables LLMs to scrape web pages for full text, summaries, authors, ti
                              Actions: [
                                {
                                  "tag": "call_6Dovx2GKE2GLjaYIuwXvBxVn",
-                                 "name": "PromptSummaryClient",
+                                 "name": "PromptSummaryTool",
                                  "path": "summarize",
                                  "input": {
                                    "values": {
