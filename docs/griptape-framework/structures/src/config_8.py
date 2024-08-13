@@ -1,28 +1,17 @@
-from griptape.config import AmazonBedrockStructureConfig
-from griptape.drivers import AmazonBedrockCohereEmbeddingDriver
+from griptape.config import AmazonBedrockDriverConfig, config
 from griptape.structures import Agent
 
-custom_config = AmazonBedrockStructureConfig()
-custom_config.embedding_driver = AmazonBedrockCohereEmbeddingDriver()
-custom_config.merge_config(
-    {
-        "embedding_driver": {
-            "base_url": None,
-            "model": "text-embedding-3-small",
-            "organization": None,
-            "type": "OpenAiEmbeddingDriver",
-        },
-    }
-)
-serialized_config = custom_config.to_json()
-deserialized_config = AmazonBedrockStructureConfig.from_json(serialized_config)
+custom_config = AmazonBedrockDriverConfig()
+dict_config = custom_config.to_dict()
+# Use OpenAi for embeddings
+dict_config["embedding"] = {
+    "base_url": None,
+    "model": "text-embedding-3-small",
+    "organization": None,
+    "type": "OpenAiEmbeddingDriver",
+}
+custom_config = AmazonBedrockDriverConfig.from_dict(dict_config)
 
-agent = Agent(
-    config=deserialized_config.merge_config(
-        {
-            "prompt_driver": {
-                "model": "anthropic.claude-3-sonnet-20240229-v1:0",
-            },
-        }
-    ),
-)
+config.drivers = custom_config
+
+agent = Agent()

@@ -34,8 +34,13 @@ class Stream:
 
     @structure.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_structure(self, _: Attribute, structure: Structure) -> None:
-        if not structure.config.prompt_driver.stream:
-            raise ValueError("prompt driver does not have streaming enabled, enable with stream=True")
+        from griptape.tasks import PromptTask
+
+        streaming_tasks = [
+            task for task in structure.tasks if isinstance(task, PromptTask) and task.prompt_driver.stream
+        ]
+        if not streaming_tasks:
+            raise ValueError("Structure does not have any streaming tasks, enable with stream=True")
 
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))
 

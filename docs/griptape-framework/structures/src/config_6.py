@@ -1,6 +1,8 @@
 import os
 
-from griptape.config import CohereStructureConfig
+from griptape.config import CohereDriverConfig, config
 from griptape.structures import Agent
 
-agent = Agent(config=CohereStructureConfig(api_key=os.environ["COHERE_API_KEY"]))
+config.drivers = CohereDriverConfig(api_key=os.environ["COHERE_API_KEY"])
+
+agent = Agent()

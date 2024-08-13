@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
+from griptape.config import config
 from griptape.mixins import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2
@@ -13,10 +15,12 @@ from griptape.utils import J2
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
 
+logger = logging.getLogger(config.logging.logger_name)
+
 
 @define
 class PromptTask(RuleMixin, BaseTask):
-    _prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True, alias="prompt_driver")
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt), kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
         kw_only=True,
@@ -56,15 +60,6 @@ class PromptTask(RuleMixin, BaseTask):
 
         return stack
 
-    @property
-    def prompt_driver(self) -> BasePromptDriver:
-        if self._prompt_driver is None:
-            if self.structure is not None:
-                self._prompt_driver = self.structure.config.prompt_driver
-            else:
-                raise ValueError("Prompt Driver is not set")
-        return self._prompt_driver
-
     def default_system_template_generator(self, _: PromptTask) -> str:
         return J2("tasks/prompt_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
@@ -73,12 +68,12 @@ class PromptTask(RuleMixin, BaseTask):
     def before_run(self) -> None:
         super().before_run()
 
-        self.structure.logger.info("%s %s\nInput: %s", self.__class__.__name__, self.id, self.input.to_text())
+        logger.info("%s %s\nInput: %s", self.__class__.__name__, self.id, self.input.to_text())
 
     def after_run(self) -> None:
         super().after_run()
 
-        self.structure.logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
+        logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
 
     def run(self) -> BaseArtifact:
         message = self.prompt_driver.run(self.prompt_stack)

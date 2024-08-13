@@ -76,18 +76,6 @@ class TestAgent:
         assert agent.tools[0].input_memory[0] == agent.task_memory
         assert agent.tools[0].output_memory == {}
 
-    def test_embedding_driver(self):
-        embedding_driver = MockEmbeddingDriver()
-        agent = Agent(tools=[MockTool()], embedding_driver=embedding_driver)
-
-        storage = list(agent.task_memory.artifact_storages.values())[0]
-        assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
-            0
-        ].vector_store_driver.embedding_driver
-
-        assert memory_embedding_driver == embedding_driver
-
     def test_without_default_task_memory(self):
         agent = Agent(task_memory=None, tools=[MockTool()])
 
@@ -233,7 +221,7 @@ class TestAgent:
     def test_task_memory_defaults(self):
         prompt_driver = MockPromptDriver()
         embedding_driver = MockEmbeddingDriver()
-        agent = Agent(prompt_driver=prompt_driver, embedding_driver=embedding_driver)
+        agent = Agent(prompt_driver=prompt_driver)
 
         storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
@@ -247,16 +235,6 @@ class TestAgent:
         assert storage.summary_engine.prompt_driver == prompt_driver
         assert storage.csv_extraction_engine.prompt_driver == prompt_driver
         assert storage.json_extraction_engine.prompt_driver == prompt_driver
-
-    def test_deprecation(self):
-        with pytest.deprecated_call():
-            Agent(prompt_driver=MockPromptDriver())
-
-        with pytest.deprecated_call():
-            Agent(embedding_driver=MockEmbeddingDriver())
-
-        with pytest.deprecated_call():
-            Agent(stream=True)
 
     def finished_tasks(self):
         task = PromptTask("test prompt")

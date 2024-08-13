@@ -13,14 +13,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Method `try_find_task` to `Structure`.
 - `TranslateQueryRagModule` `RagEngine` module for translating input queries.
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
+- Global config, `griptape.config.config`, for setting global configuration defaults.
 - Unique name generation for all `RagEngine` modules.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
 - **BREAKING**: Removed `EventPublisherMixin`.
+- **BREAKING**: Removed `Pipeline.prompt_driver` and `Workflow.prompt_driver`. `Agent.prompt_driver` has not been removed.
+- **BREAKING**: Removed `Pipeline.stream` and `Workflow.stream`. `Agent.stream` has not been removed.
+- **BREAKING**: Removed `Structure.embedding_driver`, set this via `griptape.config.config.drivers.embedding` instead.
+- **BREAKING**: Removed `Structure.custom_logger` and `Structure.logger_level`, set these via `griptape.config.config.logger` instead. 
+- **BREAKING**: Removed `BaseStructureConfig.merge_config`.
+- **BREAKING**: Renamed `StructureConfig` to `DriverConfig`, and renamed fields accordingly.
 - **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules were adjusted accordingly.
 - **BREAKING**: Removed before and after response modules from `ResponseRagStage`.
 - **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.
+- Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
 
 ## [0.29.1] - 2024-08-02

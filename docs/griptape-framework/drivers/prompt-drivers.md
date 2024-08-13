@@ -166,7 +166,6 @@ The [AmazonSageMakerJumpstartPromptDriver](../../reference/griptape/drivers/prom
 Amazon Sagemaker Jumpstart provides a wide range of models with varying capabilities.
 This Driver has been primarily _chat-optimized_ models that have a [Huggingface Chat Template](https://huggingface.co/docs/transformers/en/chat_templating) available.
 If your model does not fit this use-case, we suggest sub-classing [AmazonSageMakerJumpstartPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_jumpstart_prompt_driver.md) and overriding the `_to_model_input` and `_to_model_params` methods.
-    
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_14.py"

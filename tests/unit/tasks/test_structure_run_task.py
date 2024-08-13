@@ -5,9 +5,11 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestStructureRunTask:
-    def test_run(self):
-        agent = Agent(prompt_driver=MockPromptDriver(mock_output="agent mock output"))
-        pipeline = Pipeline(prompt_driver=MockPromptDriver(mock_output="pipeline mock output"))
+    def test_run(self, mock_config):
+        mock_config.drivers.prompt = MockPromptDriver(mock_output="agent mock output")
+        agent = Agent()
+        mock_config.drivers.prompt = MockPromptDriver(mock_output="pipeline mock output")
+        pipeline = Pipeline()
         driver = LocalStructureRunDriver(structure_factory_fn=lambda: agent)
 
         task = StructureRunTask(driver=driver)

@@ -128,7 +128,7 @@ The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_em
 ```
 
 ### Override Default Structure Embedding Driver
-Here is how you can override the Embedding Driver that is used by default in Structures. 
+Here is how you can override the Embedding Driver that is used by default in Structures.
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_10.py"

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.config import StructureConfig
+from griptape.config import DriverConfig
 from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
     AmazonBedrockImageQueryDriver,
@@ -25,14 +25,14 @@ if TYPE_CHECKING:
 
 
 @define
-class AmazonBedrockStructureConfig(StructureConfig):
+class AmazonBedrockDriverConfig(DriverConfig):
     session: boto3.Session = field(
         default=Factory(lambda: import_optional_dependency("boto3").Session()),
         kw_only=True,
         metadata={"serializable": False},
     )
 
-    prompt_driver: BasePromptDriver = field(
+    prompt: BasePromptDriver = field(
         default=Factory(
             lambda self: AmazonBedrockPromptDriver(
                 session=self.session,
@@ -43,7 +43,7 @@ class AmazonBedrockStructureConfig(StructureConfig):
         kw_only=True,
         metadata={"serializable": True},
     )
-    embedding_driver: BaseEmbeddingDriver = field(
+    embedding: BaseEmbeddingDriver = field(
         default=Factory(
             lambda self: AmazonBedrockTitanEmbeddingDriver(session=self.session, model="amazon.titan-embed-text-v1"),
             takes_self=True,
@@ -51,7 +51,7 @@ class AmazonBedrockStructureConfig(StructureConfig):
         kw_only=True,
         metadata={"serializable": True},
     )
-    image_generation_driver: BaseImageGenerationDriver = field(
+    image_generation: BaseImageGenerationDriver = field(
         default=Factory(
             lambda self: AmazonBedrockImageGenerationDriver(
                 session=self.session,
@@ -63,7 +63,7 @@ class AmazonBedrockStructureConfig(StructureConfig):
         kw_only=True,
         metadata={"serializable": True},
     )
-    image_query_driver: BaseImageGenerationDriver = field(
+    image_query: BaseImageGenerationDriver = field(
         default=Factory(
             lambda self: AmazonBedrockImageQueryDriver(
                 session=self.session,
@@ -75,8 +75,8 @@ class AmazonBedrockStructureConfig(StructureConfig):
         kw_only=True,
         metadata={"serializable": True},
     )
-    vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding_driver), takes_self=True),
+    vector_store: BaseVectorStoreDriver = field(
+        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding), takes_self=True),
         kw_only=True,
         metadata={"serializable": True},
     )

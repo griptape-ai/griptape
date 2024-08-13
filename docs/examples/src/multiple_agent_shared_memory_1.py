@@ -1,6 +1,6 @@
 import os
 
-from griptape.config import AzureOpenAiStructureConfig
+from griptape.config import AzureOpenAiDriverConfig, config
 from griptape.drivers import AzureMongoDbVectorStoreDriver, AzureOpenAiEmbeddingDriver
 from griptape.structures import Agent
 from griptape.tools import TaskMemoryClient, WebScraper
@@ -33,17 +33,16 @@ mongo_driver = AzureMongoDbVectorStoreDriver(
     vector_path=MONGODB_VECTOR_PATH,
 )
 
-config = AzureOpenAiStructureConfig(
+config.drivers = AzureOpenAiDriverConfig(
     azure_endpoint=AZURE_OPENAI_ENDPOINT_1,
-    vector_store_driver=mongo_driver,
-    embedding_driver=embedding_driver,
+    vector_store=mongo_driver,
+    embedding=embedding_driver,
 )
 
 loader = Agent(
     tools=[
         WebScraper(off_prompt=True),
     ],
-    config=config,
 )
 asker = Agent(
     tools=[
@@ -51,7 +50,6 @@ asker = Agent(
     ],
     meta_memory=loader.meta_memory,
     task_memory=loader.task_memory,
-    config=config,
 )
 
 if __name__ == "__main__":

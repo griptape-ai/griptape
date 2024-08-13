@@ -25,14 +25,12 @@ class TestRagEngine:
         )
 
     def test_module_name_uniqueness(self):
-        vector_store_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
-
         with pytest.raises(ValueError):
             RagEngine(
                 retrieval_stage=RetrievalRagStage(
                     retrieval_modules=[
-                        VectorStoreRetrievalRagModule(name="test", vector_store_driver=vector_store_driver),
-                        VectorStoreRetrievalRagModule(name="test", vector_store_driver=vector_store_driver),
+                        VectorStoreRetrievalRagModule(name="test"),
+                        VectorStoreRetrievalRagModule(name="test"),
                     ]
                 )
             )
@@ -40,8 +38,8 @@ class TestRagEngine:
         assert RagEngine(
             retrieval_stage=RetrievalRagStage(
                 retrieval_modules=[
-                    VectorStoreRetrievalRagModule(name="test1", vector_store_driver=vector_store_driver),
-                    VectorStoreRetrievalRagModule(name="test2", vector_store_driver=vector_store_driver),
+                    VectorStoreRetrievalRagModule(name="test1"),
+                    VectorStoreRetrievalRagModule(name="test2"),
                 ]
             )
         )

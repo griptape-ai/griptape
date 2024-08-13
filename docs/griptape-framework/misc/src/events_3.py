@@ -1,6 +1,5 @@
 from typing import cast
 
-from griptape.config import OpenAiStructureConfig
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.events import CompletionChunkEvent, EventListener, event_bus
 from griptape.structures import Pipeline
@@ -16,13 +15,11 @@ event_bus.add_event_listeners(
     ]
 )
 
-pipeline = Pipeline(
-    config=OpenAiStructureConfig(prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True)),
-)
-
+pipeline = Pipeline()
 pipeline.add_tasks(
     ToolkitTask(
         "Based on https://griptape.ai, tell me what griptape is.",
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True),
         tools=[WebScraper(off_prompt=True), TaskMemoryClient(off_prompt=False)],
     )
 )

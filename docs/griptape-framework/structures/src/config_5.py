@@ -1,4 +1,6 @@
-from griptape.config import AnthropicStructureConfig
+from griptape.config import AnthropicDriverConfig, config
 from griptape.structures import Agent
 
-agent = Agent(config=AnthropicStructureConfig())
+config.drivers = AnthropicDriverConfig()
+
+agent = Agent()
