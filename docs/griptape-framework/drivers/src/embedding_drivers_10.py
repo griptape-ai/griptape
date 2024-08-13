@@ -11,6 +11,11 @@ config.drivers = DriverConfig(
     embedding=VoyageAiEmbeddingDriver(),
 )
 
+config.drivers = DriverConfig(
+    prompt=OpenAiChatPromptDriver(model="gpt-4o"),
+    embedding=VoyageAiEmbeddingDriver(),
+)
+
 agent = Agent(
     tools=[WebScraper(off_prompt=True), PromptSummaryClient(off_prompt=False)],
 )

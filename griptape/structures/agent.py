@@ -37,6 +37,7 @@ class Agent(Structure):
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
 
+        self.prompt_driver.stream = self.stream
         if len(self.tasks) == 0:
             if self.tools:
                 task = ToolkitTask(

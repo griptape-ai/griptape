@@ -17,6 +17,10 @@ config.drivers = OpenAiDriverConfig(
     prompt=OpenAiChatPromptDriver(model="gpt-4"),
 )
 
+config.drivers = OpenAiDriverConfig(
+    prompt=OpenAiChatPromptDriver(model="gpt-4"),
+)
+
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 
 agent = Agent(
