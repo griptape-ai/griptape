@@ -23,7 +23,7 @@ class Agent(Structure):
     input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
-    stream: bool = field(default=False, kw_only=True)
+    stream: bool = field(default=Factory(lambda: config.drivers.prompt.stream), kw_only=True)
     prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt), kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
