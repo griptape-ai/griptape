@@ -1,6 +1,6 @@
 from abc import ABC
 
-from attrs import define
+from attrs import define, field
 
 from griptape.mixins.serializable_mixin import SerializableMixin
 
@@ -10,5 +10,5 @@ from .logging_config import LoggingConfig
 
 @define(kw_only=True)
 class BaseConfig(SerializableMixin, ABC):
-    drivers: BaseDriverConfig
-    logging: LoggingConfig
+    logging: LoggingConfig = field()
+    _drivers: BaseDriverConfig = field()
