@@ -277,8 +277,8 @@ class TestWorkflow:
         task3 = PromptTask("test3", id="task3")
         task4 = PromptTask("test4", id="task4")
         task2.add_parent(task1)
-        task3.add_parent("task1")
-        task4.add_parents([task2, "task3"])
+        task3.add_parent(task1)
+        task4.add_parents([task2, task3])
         workflow = Workflow(tasks=[task1, task2, task3, task4])
 
         workflow.run()
@@ -434,7 +434,7 @@ class TestWorkflow:
         taskb.add_parent(taska)
         taskc.add_parent(taska)
         taskd.add_parents([taska, taskb, taskc])
-        taske.add_parents(["taska", taskd, "taskc"])
+        taske.add_parents([taska, taskd, taskc])
         workflow = Workflow(tasks=[taska, taskb, taskc, taskd, taske])
 
         workflow.run()
@@ -466,7 +466,7 @@ class TestWorkflow:
         taska.add_children([taskb, taskc, taskd, taske])
         taskb.add_child(taskd)
         taskd.add_parent(taskc)
-        taske.add_parents(["taska", taskd, "taskc"])
+        taske.add_parents([taska, taskd, taskc])
         workflow = Workflow(tasks=[taska, taskb, taskc, taskd, taske])
 
         workflow.run()
