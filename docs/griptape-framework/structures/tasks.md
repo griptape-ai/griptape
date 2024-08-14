@@ -342,7 +342,7 @@ The [Outpainting Image Generation Task](../../reference/griptape/tasks/outpainti
 
 The [Image Query Task](../../reference/griptape/tasks/image_query_task.md) performs a natural language query on one or more input images. This Task uses an [Image Query Engine](../engines/image-query-engines.md) configured with an [Image Query Driver](../drivers/image-query-drivers.md) to perform the query. The functionality provided by this Task depend on the capabilities of the model provided by the Driver.
 
-This Task accepts two inputs: a query (represented by either a string or a [Text Artifact](../data/artifacts.md#textartifact)) and a list of [Image Artifacts](../data/artifacts.md#image) or a Callable returning these two values.
+This Task accepts two inputs: a query (represented by either a string or a [Text Artifact](../data/artifacts.md#text)) and a list of [Image Artifacts](../data/artifacts.md#image) or a Callable returning these two values.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/tasks_15.py"

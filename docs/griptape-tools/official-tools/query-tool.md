@@ -1,4 +1,4 @@
-The [RagClient](../../reference/griptape/tools/rag_client/tool.md) enables LLMs to query modular RAG engines.
+The [RagClient](../../reference/griptape/tools/rag/tool.md) enables LLMs to query modular RAG engines.
 
 Here is an example of how it can be used with a local vector store driver:
 

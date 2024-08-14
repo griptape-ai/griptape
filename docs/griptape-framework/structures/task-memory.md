@@ -276,7 +276,7 @@ Today, these include:
 - [PromptSummaryTool](../../griptape-tools/official-tools/prompt-summary-tool.md)
 - [ExtractionTool](../../griptape-tools/official-tools/extraction-tool.md)
 - [RagClient](../../griptape-tools/official-tools/rag-tool.md)
-- [FileManagerTool](../../griptape-tools/official-tools/file-manager.md)
+- [FileManagerTool](../../griptape-tools/official-tools/file-manager-tool.md)
 
 ## Task Memory Considerations
 

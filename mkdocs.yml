@@ -144,7 +144,6 @@ nav:
           - Open Weather: "griptape-tools/official-tools/openweather-tool.md"
           - Rest Api Client: "griptape-tools/official-tools/rest-api-tool.md"
           - Sql: "griptape-tools/official-tools/sql-tool.md"
-          - Task Memory: "griptape-tools/official-tools/task-memory-tool.md"
           - Vector Store Tool: "griptape-tools/official-tools/vector-store-tool.md"
           - Web Scraper: "griptape-tools/official-tools/web-scraper-tool.md"
           - Web Search: "griptape-tools/official-tools/web-search-tool.md"
