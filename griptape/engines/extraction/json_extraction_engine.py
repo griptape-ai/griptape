@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 @define
 class JsonExtractionEngine(BaseExtractionEngine):
-    JSON_PATTERN = r"(?s)[^\[]*(\[.*\])"
+    JSON_PATTERN = r"(?s)(\{.*?\}|\[.*?\])"
 
     template_schema: dict = field(default=Factory(dict), kw_only=True)
     system_template_generator: J2 = field(
