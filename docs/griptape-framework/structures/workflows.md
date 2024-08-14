@@ -201,3 +201,31 @@ output:
 [06/18/24 09:52:23] INFO     PromptTask new-animal
                              Output: elephant
 ```
+
+### Bitshift Composition
+
+Task relationships can also be set up with the Python bitshift operators `>>` and `<<`. The following four statements are all functionally equivalent:
+
+```python
+task1 >> task2
+task1.add_child(task2)
+
+task2 << task1
+task2.add_parent(task1)
+```
+
+When using the bitshift to compose operators, the relationship is set in the direction that the bitshift operator points.
+For example, `task1 >> task2` means that `task1` runs first and `task2` runs second.
+Multiple operators can be composed – keep in mind the chain is executed left-to-right and the rightmost object is always returned. For example:
+
+```python
+task1 >> task2 >> task3 << task4
+```
+
+is equivalent to:
+
+```python
+task1.add_child(task2)
+task2.add_child(task3)
+task3.add_parent(task4)
+```
