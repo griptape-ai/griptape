@@ -1,15 +1,21 @@
-from attrs import Factory, define, field
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
+from attrs import define, field
 
 from .base_config import BaseConfig
-from .base_driver_config import BaseDriverConfig
 from .logging_config import LoggingConfig
 from .openai_driver_config import OpenAiDriverConfig
+
+if TYPE_CHECKING:
+    from .base_driver_config import BaseDriverConfig
 
 
 @define(kw_only=True)
 class _Config(BaseConfig):
-    logging: LoggingConfig = field(default=Factory(lambda: LoggingConfig()))
-    _drivers: BaseDriverConfig = field(default=None)
+    _logging: Optional[LoggingConfig] = field(default=None)
+    _drivers: Optional[BaseDriverConfig] = field(default=None)
 
     @property
     def drivers(self) -> BaseDriverConfig:
@@ -21,6 +27,16 @@ class _Config(BaseConfig):
     @drivers.setter
     def drivers(self, drivers: BaseDriverConfig) -> None:
         self._drivers = drivers
+
+    @property
+    def logging(self) -> LoggingConfig:
+        if self._logging is None:
+            self._logging = LoggingConfig()
+        return self._logging
+
+    @logging.setter
+    def logging(self, logging: LoggingConfig) -> None:
+        self._logging = logging
 
 
 config = _Config()

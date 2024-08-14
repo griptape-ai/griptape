@@ -9,6 +9,7 @@ from .amazon_bedrock_driver_config import AmazonBedrockDriverConfig
 from .anthropic_driver_config import AnthropicDriverConfig
 from .google_driver_config import GoogleDriverConfig
 from .cohere_driver_config import CohereDriverConfig
+from .logging_config import LoggingConfig
 from .config import config
 
 
@@ -22,5 +23,6 @@ __all__ = [
     "AnthropicDriverConfig",
     "GoogleDriverConfig",
     "CohereDriverConfig",
+    "LoggingConfig",
     "config",
 ]
