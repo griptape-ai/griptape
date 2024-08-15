@@ -1,6 +1,7 @@
 import os
 
-from griptape.config import AzureOpenAiDriverConfig, config
+from griptape.config import config
+from griptape.config.drivers import AzureOpenAiDriverConfig
 from griptape.structures import Agent
 
 config.drivers = AzureOpenAiDriverConfig(

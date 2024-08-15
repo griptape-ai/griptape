@@ -3,7 +3,8 @@ import time
 import google.generativeai as genai
 
 from griptape.artifacts import GenericArtifact, TextArtifact
-from griptape.config import GoogleDriverConfig, config
+from griptape.config import config
+from griptape.config.drivers import GoogleDriverConfig
 from griptape.structures import Agent
 
 config.drivers = GoogleDriverConfig()

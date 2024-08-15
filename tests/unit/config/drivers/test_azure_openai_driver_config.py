@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.config import AzureOpenAiDriverConfig
+from griptape.config.drivers import AzureOpenAiDriverConfig
 
 
 class TestAzureOpenAiDriverConfig:

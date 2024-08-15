@@ -1,4 +1,5 @@
-from griptape.config import AmazonBedrockDriverConfig, config
+from griptape.config import config
+from griptape.config.drivers import AmazonBedrockDriverConfig
 from griptape.structures import Agent
 
 custom_config = AmazonBedrockDriverConfig()

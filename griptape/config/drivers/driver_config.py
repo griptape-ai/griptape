@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.config import BaseDriverConfig
+from griptape.config.drivers import BaseDriverConfig
 from griptape.drivers import (
     DummyAudioTranscriptionDriver,
     DummyEmbeddingDriver,

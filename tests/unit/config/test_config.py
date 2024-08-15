@@ -1,12 +1,13 @@
 import pytest
 
-from griptape.config.openai_driver_config import OpenAiDriverConfig
+from griptape.config.drivers import OpenAiDriverConfig
 
 
 class TestConfig:
     @pytest.mark.skip_mock_config()
     def test_init(self):
-        from griptape.config import LoggingConfig, config
+        from griptape.config import config
+        from griptape.config.logging import LoggingConfig
 
         assert isinstance(config.drivers, OpenAiDriverConfig)
         assert isinstance(config.logging, LoggingConfig)
