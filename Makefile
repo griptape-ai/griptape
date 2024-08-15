@@ -23,6 +23,7 @@ install/core: ## Install core dependencies.
 .PHONY: install/all
 install/all: ## Install all dependencies.
 	@poetry install --with dev --with test --with docs --all-extras
+	@poetry run pre-commit install
 
 .PHONY: install/dev
 install/dev: ## Install dev dependencies.

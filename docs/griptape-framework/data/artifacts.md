@@ -58,3 +58,7 @@ A [BooleanArtifact](../../reference/griptape/artifacts/boolean_artifact.md) is u
 A [GenericArtifact](../../reference/griptape/artifacts/generic_artifact.md) can be used as an escape hatch for passing any type of data around the framework.
 It is generally not recommended to use this Artifact type, but it can be used in a handful of situations where no other Artifact type fits the data being passed.
 See [talking to a video](../../examples/talk-to-a-video.md) for an example of using a `GenericArtifact` to pass a Gemini-specific video file.
+
+## JsonArtifact
+
+A [JsonArtifact](../../reference/griptape/artifacts/json_artifact.md) is used for passing JSON-serliazable data around the framework. Any object passed to `obj` will be converted using `json.dumps`, and `JsonArtifact.value` will be the value of `json.loads(json.dumps(obj))`.

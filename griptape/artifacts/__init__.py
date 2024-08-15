@@ -2,6 +2,7 @@ from .base_artifact import BaseArtifact
 from .error_artifact import ErrorArtifact
 from .info_artifact import InfoArtifact
 from .text_artifact import TextArtifact
+from .json_artifact import JsonArtifact
 from .blob_artifact import BlobArtifact
 from .boolean_artifact import BooleanArtifact
 from .csv_row_artifact import CsvRowArtifact
@@ -18,6 +19,7 @@ __all__ = [
     "ErrorArtifact",
     "InfoArtifact",
     "TextArtifact",
+    "JsonArtifact",
     "BlobArtifact",
     "BooleanArtifact",
     "CsvRowArtifact",
