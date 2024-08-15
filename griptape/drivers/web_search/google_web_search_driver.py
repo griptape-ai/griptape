@@ -33,9 +33,8 @@ class GoogleWebSearchDriver(BaseWebSearchDriver):
         if response.status_code == 200:
             data = response.json()
 
-            links = [{"url": r["link"], "title": r["title"], "description": r["snippet"]} for r in data["items"]]
+            return [{"url": r["link"], "title": r["title"], "description": r["snippet"]} for r in data["items"]]
 
-            return links
         else:
             raise Exception(
                 f"Google Search API returned an error with status code "

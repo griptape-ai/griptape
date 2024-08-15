@@ -25,12 +25,11 @@ class MockFailingPromptDriver(BasePromptDriver):
             self.current_attempt += 1
 
             raise Exception("failed attempt")
-        else:
-            return Message(
-                content=[TextMessageContent(TextArtifact("success"))],
-                role=Message.ASSISTANT_ROLE,
-                usage=Message.Usage(input_tokens=100, output_tokens=100),
-            )
+        return Message(
+            content=[TextMessageContent(TextArtifact("success"))],
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(input_tokens=100, output_tokens=100),
+        )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         if self.current_attempt < self.max_failures:

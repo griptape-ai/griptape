@@ -47,9 +47,7 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
         content = [self._construct_image_message(image) for image in images]
         content.append(self._construct_text_message(text_query))
         messages = self._construct_messages(content)
-        params = {"model": self.model, "messages": messages, "max_tokens": self.max_tokens}
-
-        return params
+        return {"model": self.model, "messages": messages, "max_tokens": self.max_tokens}
 
     def _construct_image_message(self, image_data: ImageArtifact) -> dict:
         data = image_data.base64

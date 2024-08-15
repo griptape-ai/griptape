@@ -40,7 +40,6 @@ class TextLoaderRetrievalRagModule(BaseRetrievalRagModule):
 
         if isinstance(loader_output, ErrorArtifact):
             raise Exception(loader_output.to_text() if loader_output.exception is None else loader_output.exception)
-        else:
-            self.vector_store_driver.upsert_text_artifacts({namespace: loader_output})
+        self.vector_store_driver.upsert_text_artifacts({namespace: loader_output})
 
-            return self.process_query_output_fn(self.vector_store_driver.query(context.query, **query_params))
+        return self.process_query_output_fn(self.vector_store_driver.query(context.query, **query_params))

@@ -40,8 +40,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
         if len(files_and_dirs) == 0:
             if len(self._list_files_and_dirs(full_key.rstrip("/"), max_items=1)) > 0:
                 raise NotADirectoryError
-            else:
-                raise FileNotFoundError
+            raise FileNotFoundError
         return files_and_dirs
 
     def try_load_file(self, path: str) -> bytes:
@@ -57,8 +56,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
         except botocore.exceptions.ClientError as e:
             if e.response["Error"]["Code"] in {"NoSuchKey", "404"}:
                 raise FileNotFoundError from e
-            else:
-                raise e
+            raise e
 
     def try_save_file(self, path: str, value: bytes) -> None:
         full_key = self._to_full_key(path)
@@ -141,5 +139,4 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
             else:
                 stack.append(part)
 
-        normalized_path = "/".join(stack)
-        return normalized_path
+        return "/".join(stack)

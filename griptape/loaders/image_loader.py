@@ -42,9 +42,7 @@ class ImageLoader(BaseLoader):
             image = pil_image.open(byte_stream)
             source = byte_stream.getvalue()
 
-        image_artifact = ImageArtifact(source, format=image.format.lower(), width=image.width, height=image.height)
-
-        return image_artifact
+        return ImageArtifact(source, format=image.format.lower(), width=image.width, height=image.height)
 
     def _get_mime_type(self, image_format: str | None) -> str:
         if image_format is None:

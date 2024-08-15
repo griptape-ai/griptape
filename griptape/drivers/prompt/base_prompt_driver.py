@@ -108,9 +108,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]: ...
 
     def __process_run(self, prompt_stack: PromptStack) -> Message:
-        result = self.try_run(prompt_stack)
-
-        return result
+        return self.try_run(prompt_stack)
 
     def __process_stream(self, prompt_stack: PromptStack) -> Message:
         delta_contents: dict[int, list[BaseDeltaMessageContent]] = {}
@@ -136,9 +134,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                         event_bus.publish_event(CompletionChunkEvent(token=content.partial_input))
 
         # Build a complete content from the content deltas
-        result = self.__build_message(list(delta_contents.values()), usage)
-
-        return result
+        return self.__build_message(list(delta_contents.values()), usage)
 
     def __build_message(
         self, delta_contents: list[list[BaseDeltaMessageContent]], usage: DeltaMessage.Usage
@@ -153,10 +149,8 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             if action_deltas:
                 content.append(ActionCallMessageContent.from_deltas(action_deltas))
 
-        result = Message(
+        return Message(
             content=content,
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
-
-        return result
