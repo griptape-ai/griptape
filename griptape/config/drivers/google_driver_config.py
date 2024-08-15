@@ -1,6 +1,6 @@
 from attrs import Factory, define, field
 
-from griptape.config import DriverConfig
+from griptape.config.drivers import DriverConfig
 from griptape.drivers import (
     BaseEmbeddingDriver,
     BasePromptDriver,

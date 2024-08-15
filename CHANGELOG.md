@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `Structure.embedding_driver`, set this via `griptape.config.config.drivers.embedding` instead.
 - **BREAKING**: Removed `Structure.custom_logger` and `Structure.logger_level`, set these via `griptape.config.config.logger` instead. 
 - **BREAKING**: Removed `BaseStructureConfig.merge_config`.
-- **BREAKING**: Renamed `StructureConfig` to `DriverConfig`, and renamed fields accordingly.
+- **BREAKING**: Renamed `StructureConfig` to `DriverConfig`, moved to `griptape.config.drivers` and renamed fields accordingly.
 - **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules were adjusted accordingly.
 - **BREAKING**: Removed before and after response modules from `ResponseRagStage`.
 - **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.

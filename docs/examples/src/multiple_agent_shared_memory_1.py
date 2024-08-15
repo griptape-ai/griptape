@@ -1,6 +1,7 @@
 import os
 
-from griptape.config import AzureOpenAiDriverConfig, config
+from griptape.config import config
+from griptape.config.drivers import AzureOpenAiDriverConfig
 from griptape.drivers import AzureMongoDbVectorStoreDriver, AzureOpenAiEmbeddingDriver
 from griptape.structures import Agent
 from griptape.tools import TaskMemoryTool, WebScraperTool

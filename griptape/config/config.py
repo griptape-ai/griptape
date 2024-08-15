@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 from .base_config import BaseConfig
-from .logging_config import LoggingConfig
-from .openai_driver_config import OpenAiDriverConfig
+from .logging.logging_config import LoggingConfig
+from .drivers.openai_driver_config import OpenAiDriverConfig
 
 if TYPE_CHECKING:
-    from .base_driver_config import BaseDriverConfig
+    from .drivers.base_driver_config import BaseDriverConfig
 
 
 @define(kw_only=True)

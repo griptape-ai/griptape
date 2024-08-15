@@ -1,8 +1,6 @@
 from griptape.artifacts import TextArtifact
-from griptape.config import (
-    OpenAiDriverConfig,
-    config,
-)
+from griptape.config import config
+from griptape.config.drivers import OpenAiDriverConfig
 from griptape.drivers import (
     LocalVectorStoreDriver,
     OpenAiChatPromptDriver,

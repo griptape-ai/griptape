@@ -1,6 +1,6 @@
 from attrs import Factory, define, field
 
-from griptape.config import DriverConfig
+from griptape.config.drivers import DriverConfig
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
