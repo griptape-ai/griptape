@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 from .base_config import BaseConfig
-from .logging.logging_config import LoggingConfig
 from .drivers.openai_driver_config import OpenAiDriverConfig
+from .logging.logging_config import LoggingConfig
 
 if TYPE_CHECKING:
     from .drivers.base_driver_config import BaseDriverConfig
