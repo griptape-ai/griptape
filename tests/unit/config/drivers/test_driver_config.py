@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.config import DriverConfig
+from griptape.config.drivers import DriverConfig
 
 
 class TestDriverConfig:

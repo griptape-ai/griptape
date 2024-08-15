@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.config import AnthropicDriverConfig
+from griptape.config.drivers import AnthropicDriverConfig
 
 
 class TestAnthropicDriverConfig:

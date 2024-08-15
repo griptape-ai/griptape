@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.config import CohereDriverConfig
+from griptape.config.drivers import CohereDriverConfig
 
 
 class TestCohereDriverConfig:

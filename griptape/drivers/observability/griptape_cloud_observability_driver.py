@@ -23,11 +23,13 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")), kw_only=True
     )
-    api_key: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")), kw_only=True)
+    api_key: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")), kw_only=True)
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
-    structure_run_id: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
+    structure_run_id: Optional[str] = field(
+        default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True
+    )
     span_processor: SpanProcessor = field(
         default=Factory(
             lambda self: import_optional_dependency("opentelemetry.sdk.trace.export").BatchSpanProcessor(

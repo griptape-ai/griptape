@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.config import DriverConfig
+from griptape.config.drivers import DriverConfig
 from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
     AmazonBedrockImageQueryDriver,
@@ -12,6 +12,7 @@ from griptape.drivers import (
     AmazonBedrockTitanEmbeddingDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
+    BaseImageQueryDriver,
     BasePromptDriver,
     BaseVectorStoreDriver,
     BedrockClaudeImageQueryModelDriver,
@@ -63,7 +64,7 @@ class AmazonBedrockDriverConfig(DriverConfig):
         kw_only=True,
         metadata={"serializable": True},
     )
-    image_query: BaseImageGenerationDriver = field(
+    image_query: BaseImageQueryDriver = field(
         default=Factory(
             lambda self: AmazonBedrockImageQueryDriver(
                 session=self.session,
