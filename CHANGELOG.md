@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `QueryTool` for having the LLM query text.
 - Support for bitshift composition in `BaseTask` for adding parent/child tasks.
 - `JsonArtifact` for handling de/seralization of values.
+- `Chat.logger_level` for setting what the `Chat` utility sets the logger level to. 
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
@@ -46,11 +47,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Changed `JsonExtractionEngine.template_schema` from a `run` argument to a class attribute. 
 - **BREAKING**: Changed `CsvExtractionEngine.column_names` from a `run` argument to a class attribute. 
 - **BREAKING**: Removed `JsonExtractionTask`, and `CsvExtractionTask` use `ExtractionTask` instead.
-- **BREAKING**: Removed `TaskMemoryClient`, use `RagClient`, `ExtractionTool`, or `PromptSummaryTool` instead.
+- **BREAKING**: Removed `TaskMemoryClient`, use `QueryClient`, `ExtractionTool`, or `PromptSummaryTool` instead.
 - **BREAKING**: `BaseTask.add_parent/child` now take a `BaseTask` instead of `str | BaseTask`.
 - Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
 - `BaseTask.add_parent/child` now returns `self`, allowing for chaining.
+- `Chat` now sets the `griptape` logger level to `logging.ERROR`, suppressing all logs except for errors.
 
 ### Fixed
 - `JsonExtractionEngine` failing to parse json when the LLM outputs more than just the json.

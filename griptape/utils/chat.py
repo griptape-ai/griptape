@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
@@ -23,6 +24,7 @@ class Chat:
         default=Factory(lambda self: self.default_output_fn, takes_self=True),
         kw_only=True,
     )
+    logger_level: int = field(default=logging.ERROR, kw_only=True)
 
     def default_output_fn(self, text: str) -> None:
         from griptape.tasks.prompt_task import PromptTask
@@ -37,6 +39,10 @@ class Chat:
 
     def start(self) -> None:
         from griptape.config import config
+
+        # Hide Griptape's logging output except for errors
+        old_logger_level = logging.getLogger(config.logging.logger_name).getEffectiveLevel()
+        logging.getLogger(config.logging.logger_name).setLevel(self.logger_level)
 
         if self.intro_text:
             self.output_fn(self.intro_text)
@@ -57,3 +63,6 @@ class Chat:
             else:
                 self.output_fn(self.processing_text)
                 self.output_fn(f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}")
+
+        # Restore the original logger level
+        logging.getLogger(config.logging.logger_name).setLevel(old_logger_level)
