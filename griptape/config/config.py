@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class _Config(BaseConfig):
-    _logging: Optional[LoggingConfig] = field(default=None)
-    _drivers: Optional[BaseDriverConfig] = field(default=None)
+    _logging: Optional[LoggingConfig] = field(default=None, alias="logging")
+    _drivers: Optional[BaseDriverConfig] = field(default=None, alias="drivers")
 
     @property
     def drivers(self) -> BaseDriverConfig:
