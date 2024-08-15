@@ -15,9 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
 - Global config, `griptape.config.config`, for setting global configuration defaults.
 - Unique name generation for all `RagEngine` modules.
-- `ExtractionTool` Tool for having the LLM extract structured data from text.
-- `PromptSummaryTool` Tool for having the LLM summarize text.
-- `QueryTool` Tool for having the LLM query text.
+- `ExtractionTool` for having the LLM extract structured data from text.
+- `PromptSummaryTool` for having the LLM summarize text.
+- `QueryTool` for having the LLM query text.
 - Support for bitshift composition in `BaseTask` for adding parent/child tasks.
 
 ### Changed
