@@ -72,7 +72,7 @@ When we set `off_prompt` to `True`, the Agent does not function as expected, eve
 To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `PromptSummaryTool`.
 This is an example of [not providing a Task Memory compatible Tool](#not-providing-a-task-memory-compatible-tool).
 
-## Prompt Summary Client
+## Prompt Summary Tool
 
 The [PromptSummaryTool](../../griptape-tools/official-tools/prompt-summary-tool.md) is a Tool that allows an Agent to summarize the Artifacts in Task Memory. It has the following methods:
 
