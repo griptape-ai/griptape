@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 @define
 class JsonExtractionEngine(BaseExtractionEngine):
-    JSON_PATTERN = r"(?s)[^{]*({.*})"
+    JSON_PATTERN = r"(?s)[^\[]*(\[.*\])"
 
     template_schema: dict = field(default=Factory(dict), kw_only=True)
     system_template_generator: J2 = field(
@@ -49,7 +49,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
         json_matches = re.findall(self.JSON_PATTERN, json_input, re.DOTALL)
 
         if json_matches:
-            return [TextArtifact(json.dumps(json.loads(e))) for e in json_matches]
+            return [TextArtifact(json.dumps(e)) for e in json.loads(json_matches[-1])]
         else:
             return []
 
