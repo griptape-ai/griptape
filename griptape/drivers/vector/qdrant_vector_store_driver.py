@@ -114,7 +114,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         results = self.client.search(**request)
 
         # Convert results to QueryResult objects
-        query_results = [
+        return [
             BaseVectorStoreDriver.Entry(
                 id=result.id,
                 vector=result.vector if include_vectors else [],
@@ -123,7 +123,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             )
             for result in results
         ]
-        return query_results
 
     def upsert_vector(
         self,

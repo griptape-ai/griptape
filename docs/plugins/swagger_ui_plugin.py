@@ -20,8 +20,7 @@ def generate_page_contents(page: Any) -> str:
     env.filters["markdown"] = lambda text: Markup(md.convert(text))
 
     template = env.get_template(tmpl_url)
-    tmpl_out = template.render(spec_url=spec_url)
-    return tmpl_out
+    return template.render(spec_url=spec_url)
 
 
 def on_config(config: Any) -> None:
@@ -32,5 +31,5 @@ def on_page_read_source(page: Any, config: Any) -> Any:
     index_path = os.path.join(config["docs_dir"], config_scheme["outfile"])
     page_path = os.path.join(config["docs_dir"], page.file.src_path)
     if index_path == page_path:
-        contents = generate_page_contents(page)
-        return contents
+        return generate_page_contents(page)
+    return None

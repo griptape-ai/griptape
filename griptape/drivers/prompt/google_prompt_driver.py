@@ -155,7 +155,7 @@ class GooglePromptDriver(BasePromptDriver):
     def __to_google_messages(self, prompt_stack: PromptStack) -> ContentsType:
         types = import_optional_dependency("google.generativeai.types")
 
-        inputs = [
+        return [
             types.ContentDict(
                 {
                     "role": self.__to_google_role(message),
@@ -165,8 +165,6 @@ class GooglePromptDriver(BasePromptDriver):
             for message in prompt_stack.messages
             if not message.is_system()
         ]
-
-        return inputs
 
     def __to_google_role(self, message: Message) -> str:
         if message.is_assistant():

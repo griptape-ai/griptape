@@ -29,13 +29,12 @@ class TrafilaturaWebScraperDriver(BaseWebScraperDriver):
 
         if page is None:
             raise Exception("can't access URL")
-        else:
-            extracted_page = trafilatura.extract(
-                page,
-                include_links=self.include_links,
-                output_format="json",
-                config=config,
-            )
+        extracted_page = trafilatura.extract(
+            page,
+            include_links=self.include_links,
+            output_format="json",
+            config=config,
+        )
 
         if not extracted_page:
             raise Exception("can't extract page")

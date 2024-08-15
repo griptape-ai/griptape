@@ -26,7 +26,7 @@ WRITERS = [
 
 def build_researcher() -> Agent:
     """Builds a Researcher Structure."""
-    researcher = Agent(
+    return Agent(
         id="researcher",
         tools=[
             WebSearchTool(
@@ -78,8 +78,6 @@ def build_researcher() -> Agent:
         ],
     )
 
-    return researcher
-
 
 def build_writer(role: str, goal: str, backstory: str) -> Agent:
     """Builds a Writer Structure.
@@ -89,7 +87,7 @@ def build_writer(role: str, goal: str, backstory: str) -> Agent:
         goal: The goal of the writer.
         backstory: The backstory of the writer.
     """
-    writer = Agent(
+    return Agent(
         id=role.lower().replace(" ", "_"),
         rulesets=[
             Ruleset(
@@ -122,8 +120,6 @@ def build_writer(role: str, goal: str, backstory: str) -> Agent:
             ),
         ],
     )
-
-    return writer
 
 
 if __name__ == "__main__":

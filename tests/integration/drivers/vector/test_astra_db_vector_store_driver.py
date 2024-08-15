@@ -45,14 +45,13 @@ class TestAstraDbVectorStoreDriver:
 
     @pytest.fixture()
     def vector_store_driver(self, embedding_driver, vector_store_collection):
-        driver = AstraDbVectorStoreDriver(
+        return AstraDbVectorStoreDriver(
             api_endpoint=os.environ["ASTRA_DB_API_ENDPOINT"],
             token=os.environ["ASTRA_DB_APPLICATION_TOKEN"],
             collection_name=vector_store_collection.name,
             astra_db_namespace=os.environ.get("ASTRA_DB_KEYSPACE"),
             embedding_driver=embedding_driver,
         )
-        return driver
 
     def test_vector_crud(self, vector_store_driver, vector_store_collection, embedding_driver):
         """Test basic vector CRUD, various call patterns."""

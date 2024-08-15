@@ -35,7 +35,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
     def validate_allowlist(self, _: Attribute, max_token_multiplier: int) -> None:
         if max_token_multiplier > 1:
             raise ValueError("has to be less than or equal to 1")
-        elif max_token_multiplier <= 0:
+        if max_token_multiplier <= 0:
             raise ValueError("has to be greater than 0")
 
     @property

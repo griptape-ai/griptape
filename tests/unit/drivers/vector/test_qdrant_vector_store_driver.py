@@ -20,7 +20,7 @@ class TestQdrantVectorStoreDriver:
     @pytest.fixture(autouse=True)
     def driver(self, embedding_driver, mocker):
         mocker.patch("qdrant_client.QdrantClient")
-        driver = QdrantVectorStoreDriver(
+        return QdrantVectorStoreDriver(
             url="http://some_url",
             port=8080,
             grpc_port=50051,
@@ -36,7 +36,6 @@ class TestQdrantVectorStoreDriver:
             content_payload_key="data",
             embedding_driver=embedding_driver,
         )
-        return driver
 
     def test_attrs_post_init(self, driver):
         with patch("griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency") as mock_import:
