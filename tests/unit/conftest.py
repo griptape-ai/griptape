@@ -21,7 +21,7 @@ def mock_config(request):
     config.reset()
 
     # Some tests we don't want to use the autouse fixture's MockDriverConfig
-    if "skip_autouse_fixture" in request.keywords:
+    if "skip_mock_config" in request.keywords:
         yield
 
         return
