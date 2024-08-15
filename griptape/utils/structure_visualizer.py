@@ -34,8 +34,7 @@ class StructureVisualizer:
         graph_bytes = graph.encode("utf-8")
         base64_string = base64.b64encode(graph_bytes).decode("utf-8")
 
-        url = f"https://mermaid.ink/svg/{base64_string}"
-        return url
+        return f"https://mermaid.ink/svg/{base64_string}"
 
     def __render_task(self, task: BaseTask) -> str:
         if task.children:

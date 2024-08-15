@@ -29,7 +29,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
     def validate_params(self, _: Attribute, workgroup_name: Optional[str]) -> None:
         if not self.cluster_identifier and not self.workgroup_name:
             raise ValueError("Provide a value for one of `cluster_identifier` or `workgroup_name`")
-        elif self.cluster_identifier and self.workgroup_name:
+        if self.cluster_identifier and self.workgroup_name:
             raise ValueError("Provide a value for either `cluster_identifier` or `workgroup_name`, but not both")
 
     @classmethod
@@ -92,6 +92,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
 
         elif statement["Status"] in ["FAILED", "ABORTED"]:
             return None
+        return None
 
     def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
         function_kwargs = {"Database": self.database, "Table": table_name}

@@ -14,9 +14,7 @@ class BedrockClaudeImageQueryModelDriver(BaseImageQueryModelDriver):
         content = [self._construct_image_message(image) for image in images]
         content.append(self._construct_text_message(query))
         messages = self._construct_messages(content)
-        input_params = {"messages": messages, "anthropic_version": self.ANTHROPIC_VERSION, "max_tokens": max_tokens}
-
-        return input_params
+        return {"messages": messages, "anthropic_version": self.ANTHROPIC_VERSION, "max_tokens": max_tokens}
 
     def process_output(self, output: dict) -> TextArtifact:
         content_blocks = output["content"]

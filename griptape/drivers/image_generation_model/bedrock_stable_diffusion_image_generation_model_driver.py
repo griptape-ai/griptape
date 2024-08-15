@@ -139,9 +139,7 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
             request["mask_source"] = mask_source
             request["mask_image"] = mask.base64
 
-        request = {k: v for k, v in request.items() if v is not None}
-
-        return request
+        return {k: v for k, v in request.items() if v is not None}
 
     def get_generated_image(self, response: dict) -> bytes:
         image_response = response["artifacts"][0]
@@ -149,7 +147,7 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         # finishReason may be SUCCESS, CONTENT_FILTERED, or ERROR.
         if image_response.get("finishReason") == "ERROR":
             raise Exception(f"Image generation failed: {image_response.get('finishReason')}")
-        elif image_response.get("finishReason") == "CONTENT_FILTERED":
+        if image_response.get("finishReason") == "CONTENT_FILTERED":
             logging.warning("Image generation triggered content filter and may be blurred")
 
         return base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))

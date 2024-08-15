@@ -71,10 +71,7 @@ class PromptStack(SerializableMixin):
                 return [ActionResultMessageContent(output, action=action)]
         elif isinstance(artifact, ListArtifact):
             processed_contents = [self.__to_message_content(artifact) for artifact in artifact.value]
-            flattened_content = [
-                sub_content for processed_content in processed_contents for sub_content in processed_content
-            ]
+            return [sub_content for processed_content in processed_contents for sub_content in processed_content]
 
-            return flattened_content
         else:
             raise ValueError(f"Unsupported artifact type: {type(artifact)}")

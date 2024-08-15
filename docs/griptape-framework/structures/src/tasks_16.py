@@ -12,7 +12,7 @@ from griptape.tools import (
 
 
 def build_researcher() -> Agent:
-    researcher = Agent(
+    return Agent(
         tools=[
             WebSearchTool(
                 web_search_driver=GoogleWebSearchDriver(
@@ -63,11 +63,9 @@ def build_researcher() -> Agent:
         ],
     )
 
-    return researcher
-
 
 def build_writer() -> Agent:
-    writer = Agent(
+    return Agent(
         input="Instructions: {{args[0]}}\nContext: {{args[1]}}",
         rulesets=[
             Ruleset(
@@ -105,8 +103,6 @@ def build_writer() -> Agent:
             ),
         ],
     )
-
-    return writer
 
 
 team = Pipeline(

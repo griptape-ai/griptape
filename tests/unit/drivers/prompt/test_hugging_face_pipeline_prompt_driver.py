@@ -7,8 +7,7 @@ from griptape.drivers import HuggingFacePipelinePromptDriver
 class TestHuggingFacePipelinePromptDriver:
     @pytest.fixture(autouse=True)
     def mock_pipeline(self, mocker):
-        mock_pipeline = mocker.patch("transformers.pipeline")
-        return mock_pipeline
+        return mocker.patch("transformers.pipeline")
 
     @pytest.fixture(autouse=True)
     def mock_generator(self, mock_pipeline):

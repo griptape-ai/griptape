@@ -41,6 +41,7 @@ class SqlDriver(BaseSqlDriver):
                     return [dict(result._mapping) for result in results]
                 else:
                     con.commit()
+                    return None
             else:
                 raise ValueError("No result found")
 

@@ -9,10 +9,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 class TestAstraDbVectorStoreDriver:
     @pytest.fixture(autouse=True)
     def base_mock_collection(self, mocker):
-        mock_get_collection = mocker.patch(
-            "astrapy.DataAPIClient"
-        ).return_value.get_database.return_value.get_collection
-        return mock_get_collection
+        return mocker.patch("astrapy.DataAPIClient").return_value.get_database.return_value.get_collection
 
     @pytest.fixture()
     def mock_collection(self, base_mock_collection, one_document):

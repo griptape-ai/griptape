@@ -105,8 +105,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
 
         response = requests.post(url, json=request, headers=self.headers).json()
         entries = response.get("entries", [])
-        entry_list = [BaseVectorStoreDriver.Entry.from_dict(entry) for entry in entries]
-        return entry_list
+        return [BaseVectorStoreDriver.Entry.from_dict(entry) for entry in entries]
 
     def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

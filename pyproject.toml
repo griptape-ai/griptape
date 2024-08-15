@@ -271,6 +271,7 @@ select = [
     "G", # flake8-logging-format
     "T20", # flake8-print
     "PT", # flake8-pytest-style
+    "RET", # flake8-return
     "SIM", # flake8-simplify
     "TID", # flake8-tidy-imports
     "TCH", # flake8-type-checking
@@ -299,6 +300,7 @@ ignore = [
     "ANN102", # missing-type-cls
     "ANN401", # any-type
     "PT011", # pytest-raises-too-broad
+    "RET505" # superfluous-else-return
 ]
 [tool.ruff.lint.pydocstyle]
 convention = "google"

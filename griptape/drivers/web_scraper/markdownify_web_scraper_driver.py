@@ -60,6 +60,7 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
                 if route.request.resource_type == "image":
                     return route.abort()
                 route.continue_()
+                return None
 
             page.route("**/*", skip_loading_images)
 
