@@ -225,7 +225,7 @@ pytest-clarity = "^1.0.1"
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-ruff = "^0.5.7"
+ruff = "^0.6.0"
 pyright = "^1.1.376"
 pre-commit = "^3.7.1"
 boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker"], version = "^1.34.105"}
@@ -302,6 +302,9 @@ ignore = [
 ]
 [tool.ruff.lint.pydocstyle]
 convention = "google"
+
+[tool.ruff.lint.flake8-pytest-style]
+fixture-parentheses = true
 
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = [
