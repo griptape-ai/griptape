@@ -61,4 +61,4 @@ See [talking to a video](../../examples/talk-to-a-video.md) for an example of us
 
 ## Json
 
-A [JsonArtifact](../../reference/griptape/artifacts/json_artifact.md) is used for passing JSON-serliazable data around the framework. Any object passed to `obj` will be converted using `json.dumps`, and `JsonArtifact.value` will be the value of `json.loads(json.dumps(obj))`.
+A [JsonArtifact](../../reference/griptape/artifacts/json_artifact.md) is used for passing JSON-serliazable data around the framework. Anything passed to `value` will be converted using `json.dumps(json.loads(value))`.
