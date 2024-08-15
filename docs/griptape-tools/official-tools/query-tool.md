@@ -1,9 +1,7 @@
-The [RagClient](../../reference/griptape/tools/rag/tool.md) enables LLMs to query modular RAG engines.
-
-Here is an example of how it can be used with a local vector store driver:
+The [QueryTool](../../reference/griptape/tools/query/tool.md) enables Agents to query unstructured data for specific information.
 
 ```python
---8<-- "docs/griptape-tools/official-tools/src/query_client_1.py"
+--8<-- "docs/griptape-tools/official-tools/src/query_tool_1.py"
 ```
 ```
 [08/12/24 15:49:23] INFO     ToolkitTask a88abda2e5324bdf81a3e2b99c26b9df
