@@ -1,6 +1,7 @@
 import os
 
-from griptape.config import DriverConfig, config
+from griptape.config import config
+from griptape.config.drivers import DriverConfig
 from griptape.drivers import AnthropicPromptDriver
 from griptape.structures import Agent
 
