@@ -10,11 +10,11 @@ This tool enables LLMs to save and load files.
                              Input: Can you get me the sample1.txt file?        
 [09/12/23 12:08:04] INFO     Subtask ddcf48d970ce4edbbc22a46b2f83ec4f           
                              Thought: The user wants the content of the file    
-                             named "sample1.txt". I can use the FileManager tool
+                             named "sample1.txt". I can use the FileManagerTool tool
                              with the activity "load_files_from_disk" to load   
                              the file from the disk.                            
                                                                                 
-                             Action: {"name": "FileManager",    
+                             Action: {"name": "FileManagerTool",    
                              "path": "load_files_from_disk", "input":       
                              {"values": {"paths": ["sample1.txt"]}}}            
                     INFO     Subtask ddcf48d970ce4edbbc22a46b2f83ec4f           

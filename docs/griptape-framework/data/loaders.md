@@ -75,7 +75,7 @@ Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) 
 !!! info
     This driver requires the `loaders-image` [extra](../index.md#extras).
 
-The Image Loader is used to load an image as an [ImageArtifact](./artifacts.md#imageartifact). The Loader operates on image bytes that can be sourced from files on disk, downloaded images, or images in memory.
+The Image Loader is used to load an image as an [ImageArtifact](./artifacts.md#image). The Loader operates on image bytes that can be sourced from files on disk, downloaded images, or images in memory.
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_7.py"
@@ -104,7 +104,7 @@ Can be used to load email from an imap server:
 !!! info
     This driver requires the `loaders-audio` [extra](../index.md#extras).
 
-The [Audio Loader](../../reference/griptape/loaders/audio_loader.md) is used to load audio content as an [AudioArtifact](./artifacts.md#audioartifact). The Loader operates on audio bytes that can be sourced from files on disk, downloaded audio, or audio in memory.
+The [Audio Loader](../../reference/griptape/loaders/audio_loader.md) is used to load audio content as an [AudioArtifact](./artifacts.md#audio). The Loader operates on audio bytes that can be sourced from files on disk, downloaded audio, or audio in memory.
 
 The Loader will load audio in its native format and populates the resulting Artifact's `format` field by making a best-effort guess of the underlying audio format using the `filetype` package.
 

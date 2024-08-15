@@ -14,7 +14,7 @@ from griptape.engines.rag.modules import (
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
-from griptape.tools import RagTool, TaskMemoryTool
+from griptape.tools import RagTool
 
 namespace = "datastax_blog"
 input_blogpost = "www.datastax.com/blog/indexing-all-of-wikipedia-on-a-laptop"
@@ -53,5 +53,5 @@ rag_tool = RagTool(
     description="A DataStax blog post",
     rag_engine=engine,
 )
-agent = Agent(tools=[rag_tool, TaskMemoryTool(off_prompt=False)])
+agent = Agent(tools=[rag_tool])
 agent.run("What engine made possible to index such an amount of data, " "and what kind of tuning was required?")

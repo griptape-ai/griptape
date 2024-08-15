@@ -12,7 +12,7 @@ directly, which the agent uses to dynamically determine whether to use a [Prompt
 If [tools](../../reference/griptape/structures/agent.md#griptape.structures.agent.Agent.tools) are passed provided to the Agent, a [Toolkit Task](./tasks.md#toolkit-task) will be used. If no [tools](../../reference/griptape/structures/agent.md#griptape.structures.agent.Agent.tools)
 are provided, a [Prompt Task](./tasks.md#prompt-task) will be used.
 
-You can access the final output of the Agent by using the [output](../../reference/griptape/structures/agent.md#griptape.structures.structure.Structure.output) attribute.
+You can access the final output of the Agent by using the [output](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.output) attribute.
 
 ## Toolkit Task Agent
 

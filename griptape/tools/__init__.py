@@ -9,7 +9,6 @@ from .rest_api.tool import RestApiTool
 from .file_manager.tool import FileManagerTool
 from .vector_store.tool import VectorStoreTool
 from .date_time.tool import DateTimeTool
-from .task_memory.tool import TaskMemoryTool
 from .base_aws_tool import BaseAwsTool
 from .aws_iam.tool import AwsIamTool
 from .aws_s3.tool import AwsS3Tool
@@ -30,6 +29,9 @@ from .image_query.tool import ImageQueryTool
 from .rag.tool import RagTool
 from .text_to_speech.tool import TextToSpeechTool
 from .audio_transcription.tool import AudioTranscriptionTool
+from .extraction.tool import ExtractionTool
+from .prompt_summary.tool import PromptSummaryTool
+from .query.tool import QueryTool
 
 __all__ = [
     "BaseTool",
@@ -51,7 +53,6 @@ __all__ = [
     "FileManagerTool",
     "VectorStoreTool",
     "DateTimeTool",
-    "TaskMemoryTool",
     "ComputerTool",
     "OpenWeatherTool",
     "PromptImageGenerationTool",
@@ -64,4 +65,7 @@ __all__ = [
     "RagTool",
     "TextToSpeechTool",
     "AudioTranscriptionTool",
+    "ExtractionTool",
+    "PromptSummaryTool",
+    "QueryTool",
 ]

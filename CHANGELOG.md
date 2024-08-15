@@ -15,6 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
 - Global config, `griptape.config.config`, for setting global configuration defaults.
 - Unique name generation for all `RagEngine` modules.
+- `ExtractionTool` for having the LLM extract structured data from text.
+- `PromptSummaryTool` for having the LLM summarize text.
+- `QueryTool` for having the LLM query text.
 - Support for bitshift composition in `BaseTask` for adding parent/child tasks.
 - `JsonArtifact` for handling de/seralization of values.
 
@@ -33,10 +36,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Dropped `Client` from all Tool names for better naming consistency. 
 - **BREAKING**: Dropped `_client` suffix from all Tool packages. 
 - **BREAKING**: Added `Tool` suffix to all Tool names for better naming consistency. 
+- **BREAKING**: Removed `TextArtifactStorage.query` and `TextArtifactStorage.summarize`. 
+- **BREAKING**: Removed `TextArtifactStorage.rag_engine`, and `TextArtifactStorage.retrieval_rag_module_name`.
+- **BREAKING**: Removed `TextArtifactStorage.summary_engine`, `TextArtifactStorage.csv_extraction_engine`, and `TextArtifactStorage.json_extraction_engine`.
+- **BREAKING**: Removed `TaskMemory.summarize_namespace` and `TaskMemory.query_namespace`.
+- **BREAKING**: Removed `Structure.rag_engine`.
+- **BREAKING**: Split `JsonExtractionEngine.template_generator` into `JsonExtractionEngine.system_template_generator` and `JsonExtractionEngine.user_template_generator`.
+- **BREAKING**: Split `CsvExtractionEngine.template_generator` into `CsvExtractionEngine.system_template_generator` and `CsvExtractionEngine.user_template_generator`.
+- **BREAKING**: Changed `JsonExtractionEngine.template_schema` from a `run` argument to a class attribute. 
+- **BREAKING**: Changed `CsvExtractionEngine.column_names` from a `run` argument to a class attribute. 
+- **BREAKING**: Removed `JsonExtractionTask`, and `CsvExtractionTask` use `ExtractionTask` instead.
+- **BREAKING**: Removed `TaskMemoryClient`, use `RagClient`, `ExtractionTool`, or `PromptSummaryTool` instead.
 - **BREAKING**: `BaseTask.add_parent/child` now take a `BaseTask` instead of `str | BaseTask`.
 - Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
 - `BaseTask.add_parent/child` now returns `self`, allowing for chaining.
+
+### Fixed
+- `JsonExtractionEngine` failing to parse json when the LLM outputs more than just the json.
 
 ## [0.29.1] - 2024-08-02
 
@@ -443,7 +460,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `JsonExtractionTask` for convenience over using `ExtractionTask` with a `JsonExtractionEngine`.
 - `CsvExtractionTask` for convenience over using `ExtractionTask` with a `CsvExtractionEngine`.
 - `OpenAiVisionImageQueryDriver` to support queries on images using OpenAI's Vision model.
-- `ImageQueryClient` allowing an Agent to make queries on images on disk or in Task Memory.
+- `ImageQueryTool` allowing an Agent to make queries on images on disk or in Task Memory.
 - `ImageQueryTask` and `ImageQueryEngine`.
 
 ### Fixed 

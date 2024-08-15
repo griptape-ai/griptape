@@ -99,39 +99,63 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
 ```
 
 ```
-[09/08/23 11:14:55] INFO     ToolkitTask 22af656c6ad643e188fe80f9378dfff9
+[08/12/24 15:16:30] INFO     ToolkitTask f5b44fe1dadc4e6688053df71d97e0de
                              Input: Load https://www.griptape.ai, summarize it, and store it in a file called griptape.txt
-[09/08/23 11:15:02] INFO     Subtask 7a6356470e6a4b08b61edc5591b37f0c
-                             Thought: The first step is to load the webpage using the WebScraper tool's get_content activity.
-
-                             Action: {"name": "WebScraper", "path": "get_content", "input": {"values": {"url":
-                             "https://www.griptape.ai"}}}
-[09/08/23 11:15:03] INFO     Subtask 7a6356470e6a4b08b61edc5591b37f0c
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and
-                             artifact_namespace "2b50373849d140f698ba8071066437ee"
-[09/08/23 11:15:11] INFO     Subtask a22a7e4ebf594b4b895fcbe8a95c1dd3
-                             Thought: Now that the webpage content is stored in memory, I can use the TaskMemory tool's summarize activity
-                             to summarize it.
-                             Action: {"name": "TaskMemoryTool", "path": "summarize", "input": {"values": {"memory_name": "TaskMemory", "artifact_namespace": "2b50373849d140f698ba8071066437ee"}}}
-[09/08/23 11:15:15] INFO     Subtask a22a7e4ebf594b4b895fcbe8a95c1dd3
-                             Response: Griptape is an open source framework that allows developers to build and deploy AI applications
-                             using large language models (LLMs). It provides the ability to create conversational and event-driven apps that
-                             can access and manipulate data securely. Griptape enforces structures like sequential pipelines and DAG-based
-                             workflows for predictability, while also allowing for creativity by safely prompting LLMs with external APIs and
-                             data stores. The framework can be used to create AI systems that operate across both dimensions. Griptape Cloud
-                             is a managed platform for deploying and managing AI apps, and it offers features like scheduling and connecting
-                             to data stores and APIs.
-[09/08/23 11:15:27] INFO     Subtask 7afb3d44d0114b7f8ef2dac4314a8e90
-                             Thought: Now that I have the summary, I can use the FileManager tool's save_file_to_disk activity to store the
-                             summary in a file named griptape.txt.
-                             Action: {"name": "FileManager", "path": "save_file_to_disk", "input": {"values":
-                             {"memory_name": "TaskMemory", "artifact_namespace": "2b50373849d140f698ba8071066437ee", "path":
-                             "griptape.txt"}}}
-                    INFO     Subtask 7afb3d44d0114b7f8ef2dac4314a8e90
-                             Response: saved successfully
-[09/08/23 11:15:31] INFO     ToolkitTask 22af656c6ad643e188fe80f9378dfff9
-                             Output: The summary of the webpage https://www.griptape.ai has been successfully stored in a file named
-                             griptape.txt.
+[08/12/24 15:16:32] INFO     Subtask a4483eddfbe84129b0f4c04ef0f5d695
+                             Actions: [
+                               {
+                                 "tag": "call_AFeOL9MGhZ4mPFCULcBEm4NQ",
+                                 "name": "WebScraperTool",
+                                 "path": "get_content",
+                                 "input": {
+                                   "values": {
+                                     "url": "https://www.griptape.ai"
+                                   }
+                                 }
+                               }
+                             ]
+                    INFO     Subtask a4483eddfbe84129b0f4c04ef0f5d695
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "c6a6bcfc16f34481a068108aeaa6838e"
+[08/12/24 15:16:33] INFO     Subtask ee5f11666ded4dc39b94e4c59d18fbc7
+                             Actions: [
+                               {
+                                 "tag": "call_aT7DX0YSQPmOcnumWXrGoMNt",
+                                 "name": "PromptSummaryTool",
+                                 "path": "summarize",
+                                 "input": {
+                                   "values": {
+                                     "summary": {
+                                       "memory_name": "TaskMemory",
+                                       "artifact_namespace": "c6a6bcfc16f34481a068108aeaa6838e"
+                                     }
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 15:16:37] INFO     Subtask ee5f11666ded4dc39b94e4c59d18fbc7
+                             Response: Output of "PromptSummaryTool.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "669d29a704444176be93d09d014298df"
+[08/12/24 15:16:38] INFO     Subtask d9b2dd9f96d841f49f5d460e33905183
+                             Actions: [
+                               {
+                                 "tag": "call_QgMk1M1UuD6DAnxjfQz1MH6X",
+                                 "name": "FileManagerTool",
+                                 "path": "save_memory_artifacts_to_disk",
+                                 "input": {
+                                   "values": {
+                                     "dir_name": ".",
+                                     "file_name": "griptape.txt",
+                                     "memory_name": "TaskMemory",
+                                     "artifact_namespace": "669d29a704444176be93d09d014298df"
+                                   }
+                                 }
+                               }
+                             ]
+                    INFO     Subtask d9b2dd9f96d841f49f5d460e33905183
+                             Response: Successfully saved memory artifacts to disk
+[08/12/24 15:16:39] INFO     ToolkitTask f5b44fe1dadc4e6688053df71d97e0de
+                             Output: The content from https://www.griptape.ai has been summarized and stored in a file called `griptape.txt`.
 ```
 
 ## Tool Task
@@ -280,7 +304,7 @@ This task takes a python function, and authors can elect to return a custom arti
 
 To generate an image, use one of the following [Image Generation Tasks](../../reference/griptape/tasks/index.md). All Image Generation Tasks accept an [Image Generation Engine](../engines/image-generation-engines.md) configured to use an [Image Generation Driver](../drivers/image-generation-drivers.md).
 
-All successful Image Generation Tasks will always output an [Image Artifact](../data/artifacts.md#imageartifact). Each task can be configured to additionally write the generated image to disk by providing either the `output_file` or `output_dir` field. The `output_file` field supports file names in the current directory (`my_image.png`), relative directory prefixes (`images/my_image.png`), or absolute paths (`/usr/var/my_image.png`). By setting `output_dir`, the task will generate a file name and place the image in the requested directory.
+All successful Image Generation Tasks will always output an [Image Artifact](../data/artifacts.md#image). Each task can be configured to additionally write the generated image to disk by providing either the `output_file` or `output_dir` field. The `output_file` field supports file names in the current directory (`my_image.png`), relative directory prefixes (`images/my_image.png`), or absolute paths (`/usr/var/my_image.png`). By setting `output_dir`, the task will generate a file name and place the image in the requested directory.
 
 ### Prompt Image Generation Task
 
@@ -318,7 +342,7 @@ The [Outpainting Image Generation Task](../../reference/griptape/tasks/outpainti
 
 The [Image Query Task](../../reference/griptape/tasks/image_query_task.md) performs a natural language query on one or more input images. This Task uses an [Image Query Engine](../engines/image-query-engines.md) configured with an [Image Query Driver](../drivers/image-query-drivers.md) to perform the query. The functionality provided by this Task depend on the capabilities of the model provided by the Driver.
 
-This Task accepts two inputs: a query (represented by either a string or a [Text Artifact](../data/artifacts.md#textartifact)) and a list of [Image Artifacts](../data/artifacts.md#imageartifact) or a Callable returning these two values.
+This Task accepts two inputs: a query (represented by either a string or a [Text Artifact](../data/artifacts.md#text)) and a list of [Image Artifacts](../data/artifacts.md#image) or a Callable returning these two values.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/tasks_15.py"

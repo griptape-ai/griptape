@@ -1,25 +1,18 @@
 from griptape.artifacts import BlobArtifact, TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
-from griptape.engines import CsvExtractionEngine, JsonExtractionEngine, PromptSummaryEngine
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRetrievalRagModule
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage
 from griptape.memory import TaskMemory
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 def text_tool_artifact_storage():
     vector_store_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
 
     return TextArtifactStorage(
-        rag_engine=rag_engine(MockPromptDriver(), vector_store_driver),
         vector_store_driver=vector_store_driver,
-        retrieval_rag_module_name="VectorStoreRetrievalRagModule",
-        summary_engine=PromptSummaryEngine(),
-        csv_extraction_engine=CsvExtractionEngine(),
-        json_extraction_engine=JsonExtractionEngine(),
     )
 
 

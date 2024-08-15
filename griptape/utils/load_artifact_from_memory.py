@@ -1,9 +1,14 @@
-from griptape.artifacts import BaseArtifact
-from griptape.memory import TaskMemory
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact
+    from griptape.memory import TaskMemory
 
 
 def load_artifact_from_memory(
-    memory: TaskMemory,
+    memory: Optional[TaskMemory],
     artifact_namespace: str,
     artifact_name: str,
     artifact_type: type,

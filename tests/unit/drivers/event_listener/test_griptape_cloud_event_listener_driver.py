@@ -87,7 +87,3 @@ class TestGriptapeCloudEventListenerDriver:
                 json=event.to_dict(),
                 headers={"Authorization": "Bearer foo bar"},
             )
-
-    def test_no_structure_run_id(self):
-        with pytest.raises(ValueError):
-            GriptapeCloudEventListenerDriver(api_key="foo bar")
