@@ -8,15 +8,14 @@ from typing import Callable, Optional
 from attrs import Factory, define, field
 
 
-@define(slots=False)
+@define(slots=False, kw_only=True)
 class FuturesExecutorMixin(ABC):
     futures_executor_fn: Callable[[], futures.Executor] = field(
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-        kw_only=True,
     )
+    thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
 
     _futures_executor: Optional[futures.Executor] = field(init=False, default=None)
-    thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
 
     @property
     def futures_executor(self) -> futures.Executor:
