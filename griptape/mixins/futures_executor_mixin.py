@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import threading
 from abc import ABC
 from concurrent import futures
-from threading import Lock
 from typing import Callable, Optional
 
 from attrs import Factory, define, field
@@ -16,18 +16,18 @@ class FuturesExecutorMixin(ABC):
     )
 
     _futures_executor: Optional[futures.Executor] = field(init=False, default=None)
-    _executor_lock: Lock = field(init=False, factory=Lock)
+    thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
 
     @property
     def futures_executor(self) -> futures.Executor:
-        with self._executor_lock:
+        with self.thread_lock:
             if self._futures_executor is None:
                 self._futures_executor = self.futures_executor_fn()
 
         return self._futures_executor
 
     def __del__(self) -> None:
-        with self._executor_lock:
+        with self.thread_lock:
             if self._futures_executor:
                 self._futures_executor.shutdown(wait=True)
                 self._futures_executor = None
