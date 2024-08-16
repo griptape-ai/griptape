@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - `Workflow` threads not being properly cleaned up after completion.
+- Crash when `ToolAction`s were missing output due to an `ActionsSubtask` exception.
 
 ## [0.29.1] - 2024-08-02
 
