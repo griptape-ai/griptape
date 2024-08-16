@@ -23,18 +23,12 @@ class FuturesExecutorMixin(ABC):
         if self._futures_executor is None:
             with self._executor_lock:
                 if self._futures_executor is None:
-                    try:
-                        self._futures_executor = self.futures_executor_fn()
-                    except Exception as e:
-                        raise RuntimeError(f"Failed to initialize futures executor: {e}")
+                    self._futures_executor = self.futures_executor_fn()
 
         return self._futures_executor
 
-    def __shutdown_executor(self, wait: bool = True) -> None:
+    def __del__(self) -> None:
         with self._executor_lock:
             if self._futures_executor:
-                self._futures_executor.shutdown(wait=wait)
+                self._futures_executor.shutdown(True)
                 self._futures_executor = None
-
-    def __del__(self) -> None:
-        self.__shutdown_executor(wait=False)
