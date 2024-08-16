@@ -30,5 +30,5 @@ class FuturesExecutorMixin(ABC):
     def __del__(self) -> None:
         with self._executor_lock:
             if self._futures_executor:
-                self._futures_executor.shutdown(True)
+                self._futures_executor.shutdown(wait=True)
                 self._futures_executor = None
