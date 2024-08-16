@@ -84,7 +84,12 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                         for action in s.actions
                     ]
                     action_results = [
-                        ToolAction(name=action.name, path=action.path, tag=action.tag, output=action.output)
+                        ToolAction(
+                            name=action.name,
+                            path=action.path,
+                            tag=action.tag,
+                            output=action.output if action.output is not None else s.output,
+                        )
                         for action in s.actions
                     ]
 
