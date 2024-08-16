@@ -23,7 +23,7 @@ class FuturesExecutorMixin(ABC):
 
         return self._futures_executor
 
-    def __exit__(self, *args) -> None:
+    def __del__(self) -> None:
         if self._futures_executor:
             self._futures_executor.shutdown()
             self._futures_executor = None
