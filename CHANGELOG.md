@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.29.2] - 2024-08-16
+
+### Fixed
+- `Workflow` threads not being properly cleaned up after completion.
+
 ## [0.29.1] - 2024-08-02
 
 ### Changed
