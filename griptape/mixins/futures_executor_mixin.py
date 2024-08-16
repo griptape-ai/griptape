@@ -20,10 +20,9 @@ class FuturesExecutorMixin(ABC):
 
     @property
     def futures_executor(self) -> futures.Executor:
-        if self._futures_executor is None:
-            with self._executor_lock:
-                if self._futures_executor is None:
-                    self._futures_executor = self.futures_executor_fn()
+        with self._executor_lock:
+            if self._futures_executor is None:
+                self._futures_executor = self.futures_executor_fn()
 
         return self._futures_executor
 
