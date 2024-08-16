@@ -139,8 +139,9 @@ class ActionsSubtask(BaseTask):
             return ErrorArtifact("no tool output")
 
     def execute_actions(self, actions: list[ToolAction]) -> list[tuple[str, BaseArtifact]]:
-        with self.futures_executor_fn() as executor:
-            results = utils.execute_futures_dict({a.tag: executor.submit(self.execute_action, a) for a in actions})
+        results = utils.execute_futures_dict(
+            {a.tag: self.futures_executor.submit(self.execute_action, a) for a in actions}
+        )
 
         return list(results.values())
 

@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from concurrent import futures
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
+from attrs import define, field
 
+from griptape.mixins import FuturesExecutorMixin
 from griptape.utils.futures import execute_futures_dict
 from griptape.utils.hash import bytes_to_hash, str_to_hash
 
@@ -16,11 +16,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseLoader(ABC):
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-        kw_only=True,
-    )
+class BaseLoader(FuturesExecutorMixin, ABC):
     encoding: Optional[str] = field(default=None, kw_only=True)
 
     @abstractmethod
@@ -36,10 +32,12 @@ class BaseLoader(ABC):
         # to avoid duplicate work.
         sources_by_key = {self.to_key(source): source for source in sources}
 
-        with self.futures_executor_fn() as executor:
-            return execute_futures_dict(
-                {key: executor.submit(self.load, source, *args, **kwargs) for key, source in sources_by_key.items()},
-            )
+        return execute_futures_dict(
+            {
+                key: self.futures_executor.submit(self.load, source, *args, **kwargs)
+                for key, source in sources_by_key.items()
+            },
+        )
 
     def to_key(self, source: Any, *args, **kwargs) -> str:
         if isinstance(source, bytes):

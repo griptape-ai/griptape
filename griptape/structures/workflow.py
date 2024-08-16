@@ -1,14 +1,15 @@
 from __future__ import annotations
 
 import concurrent.futures as futures
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
+from attrs import define
 from graphlib import TopologicalSorter
 
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
 from griptape.memory.structure import Run
+from griptape.mixins import FuturesExecutorMixin
 from griptape.structures import Structure
 
 if TYPE_CHECKING:
@@ -16,12 +17,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Workflow(Structure):
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-        kw_only=True,
-    )
-
+class Workflow(Structure, FuturesExecutorMixin):
     @property
     def input_task(self) -> Optional[BaseTask]:
         return self.order_tasks()[0] if self.tasks else None
