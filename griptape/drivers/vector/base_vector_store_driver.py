@@ -2,22 +2,21 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
-from concurrent import futures
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
-from griptape.mixins import SerializableMixin
+from griptape.mixins import FuturesExecutorMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseEmbeddingDriver
 
 
 @define
-class BaseVectorStoreDriver(SerializableMixin, ABC):
+class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
     DEFAULT_QUERY_COUNT = 5
 
     @dataclass
@@ -36,10 +35,6 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
             return BaseArtifact.from_json(self.meta["artifact"])  # pyright: ignore[reportOptionalSubscript]
 
     embedding_driver: BaseEmbeddingDriver = field(kw_only=True, metadata={"serializable": True})
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-        kw_only=True,
-    )
 
     def upsert_text_artifacts(
         self,
@@ -48,24 +43,23 @@ class BaseVectorStoreDriver(SerializableMixin, ABC):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> None:
-        with self.futures_executor_fn() as executor:
-            if isinstance(artifacts, list):
-                utils.execute_futures_list(
-                    [
-                        executor.submit(self.upsert_text_artifact, a, namespace=None, meta=meta, **kwargs)
-                        for a in artifacts
-                    ],
-                )
-            else:
-                utils.execute_futures_dict(
-                    {
-                        namespace: executor.submit(
-                            self.upsert_text_artifact, a, namespace=namespace, meta=meta, **kwargs
-                        )
-                        for namespace, artifact_list in artifacts.items()
-                        for a in artifact_list
-                    },
-                )
+        if isinstance(artifacts, list):
+            utils.execute_futures_list(
+                [
+                    self.futures_executor.submit(self.upsert_text_artifact, a, namespace=None, meta=meta, **kwargs)
+                    for a in artifacts
+                ],
+            )
+        else:
+            utils.execute_futures_dict(
+                {
+                    namespace: self.futures_executor.submit(
+                        self.upsert_text_artifact, a, namespace=namespace, meta=meta, **kwargs
+                    )
+                    for namespace, artifact_list in artifacts.items()
+                    for a in artifact_list
+                },
+            )
 
     def upsert_text_artifact(
         self,

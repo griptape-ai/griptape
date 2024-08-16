@@ -3,15 +3,15 @@ from __future__ import annotations
 import logging
 import uuid
 from abc import ABC, abstractmethod
-from concurrent import futures
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
 from griptape.config import config
 from griptape.events import FinishTaskEvent, StartTaskEvent, event_bus
+from griptape.mixins import FuturesExecutorMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -22,7 +22,7 @@ logger = logging.getLogger(config.logging.logger_name)
 
 
 @define
-class BaseTask(ABC):
+class BaseTask(FuturesExecutorMixin, ABC):
     class State(Enum):
         PENDING = 1
         EXECUTING = 2
@@ -37,10 +37,6 @@ class BaseTask(ABC):
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-        kw_only=True,
-    )
 
     def __rshift__(self, other: BaseTask) -> BaseTask:
         self.add_child(other)

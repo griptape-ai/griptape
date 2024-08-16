@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for bitshift composition in `BaseTask` for adding parent/child tasks.
 - `JsonArtifact` for handling de/seralization of values.
 - `Chat.logger_level` for setting what the `Chat` utility sets the logger level to. 
+- `FuturesExecutorMixin` to DRY up and optimize concurrent code across multiple classes.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.

@@ -2,24 +2,21 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC
-from concurrent import futures
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
 from griptape.common import Message, PromptStack
+from griptape.mixins import FuturesExecutorMixin
 
 if TYPE_CHECKING:
     from griptape.engines.rag import RagContext
 
 
 @define(kw_only=True)
-class BaseRagModule(ABC):
+class BaseRagModule(FuturesExecutorMixin, ABC):
     name: str = field(
         default=Factory(lambda self: f"{self.__class__.__name__}-{uuid.uuid4().hex}", takes_self=True), kw_only=True
-    )
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
     )
 
     def generate_prompt_stack(self, system_prompt: Optional[str], query: str) -> PromptStack:
