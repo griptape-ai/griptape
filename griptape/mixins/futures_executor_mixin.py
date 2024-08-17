@@ -14,10 +14,7 @@ class FuturesExecutorMixin(ABC):
     )
 
     futures_executor: Optional[futures.Executor] = field(
-        default=Factory(
-            lambda self: self.futures_executor_fn(),
-            takes_self=True
-        )
+        default=Factory(lambda self: self.futures_executor_fn(), takes_self=True)
     )
 
     def __del__(self) -> None:

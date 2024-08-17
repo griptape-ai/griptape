@@ -7,7 +7,7 @@ import threading
 from dataclasses import asdict
 from typing import Callable, NoReturn, Optional, TextIO
 
-from attrs import define, field, Factory
+from attrs import Factory, define, field
 from numpy import dot
 from numpy.linalg import norm
 

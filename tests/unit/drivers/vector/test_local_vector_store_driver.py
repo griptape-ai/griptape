@@ -28,7 +28,7 @@ class TestLocalVectorStoreDriver(BaseLocalVectorStoreDriver):
             {
                 "test1": [TextArtifact(f"foo-{i}") for i in range(0, 1000)],
                 "test2": [TextArtifact(f"foo-{i}") for i in range(0, 1000)],
-                "test3": [TextArtifact(f"foo-{i}") for i in range(0, 1000)]
+                "test3": [TextArtifact(f"foo-{i}") for i in range(0, 1000)],
             }
         )
 
