@@ -46,20 +46,27 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         if isinstance(artifacts, list):
             utils.execute_futures_list(
                 [
-                    self.futures_executor.submit(self.upsert_text_artifact, a, namespace=None, meta=meta, **kwargs)
+                    self.futures_executor.submit(
+                        self.upsert_text_artifact, a, namespace=None, meta=meta, **kwargs
+                    )
                     for a in artifacts
                 ],
             )
         else:
-            utils.execute_futures_dict(
-                {
-                    namespace: self.futures_executor.submit(
-                        self.upsert_text_artifact, a, namespace=namespace, meta=meta, **kwargs
+            futures_dict = {}
+
+            for namespace, artifact_list in artifacts.items():
+                for a in artifact_list:
+                    if not futures_dict.get(namespace):
+                        futures_dict[namespace] = []
+
+                    futures_dict[namespace].append(
+                        self.futures_executor.submit(
+                            self.upsert_text_artifact, a, namespace=namespace, meta=meta, **kwargs
+                        )
                     )
-                    for namespace, artifact_list in artifacts.items()
-                    for a in artifact_list
-                },
-            )
+
+            utils.execute_futures_list_dict(futures_dict)
 
     def upsert_text_artifact(
         self,

@@ -16,3 +16,9 @@ def execute_futures_list(fs_list: list[futures.Future[T]]) -> list[T]:
     futures.wait(fs_list, timeout=None, return_when=futures.ALL_COMPLETED)
 
     return [future.result() for future in fs_list]
+
+
+def execute_futures_list_dict(fs_dict: dict[str, list[futures.Future[T]]]) -> dict[str, T]:
+    execute_futures_list([item for sublist in fs_dict.values() for item in sublist])
+
+    return {key: [f.result() for f in fs] for key, fs in fs_dict.items()}

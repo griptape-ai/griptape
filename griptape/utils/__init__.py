@@ -5,8 +5,7 @@ from .manifest_validator import ManifestValidator
 from .python_runner import PythonRunner
 from .command_runner import CommandRunner
 from .chat import Chat
-from .futures import execute_futures_dict
-from .futures import execute_futures_list
+from .futures import execute_futures_dict, execute_futures_list, execute_futures_list_dict
 from .token_counter import TokenCounter
 from .dict_utils import remove_null_values_in_dict_recursively, dict_merge, remove_key_in_dict_recursively
 from .file_utils import load_file, load_files
@@ -37,6 +36,7 @@ __all__ = [
     "is_dependency_installed",
     "execute_futures_dict",
     "execute_futures_list",
+    "execute_futures_list_dict",
     "TokenCounter",
     "remove_null_values_in_dict_recursively",
     "dict_merge",
