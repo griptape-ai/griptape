@@ -59,7 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `JsonExtractionEngine` failing to parse json when the LLM outputs more than just the json.
 - Exception when adding `ErrorArtifact`'s to the Prompt Stack.
-- Concurrency bug in `BaseVectorStoreDriver.upsert_text_artifacts`
+- Concurrency bug in `BaseVectorStoreDriver.upsert_text_artifacts`.
 
 ## [0.29.2] - 2024-08-16
 
