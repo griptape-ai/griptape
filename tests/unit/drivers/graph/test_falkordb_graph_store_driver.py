@@ -1,8 +1,11 @@
 import logging
+from __future__ import annotations
+from typing import Any, Optional
 from unittest.mock import MagicMock
 
 import pytest
 
+from griptape.drivers.graph.base_graph_store_driver import BaseGraphStoreDriver
 from griptape.drivers.graph.falkordb_graph_store_driver import FalkorDBGraphStoreDriver
 
 logger = logging.getLogger(__name__)
@@ -59,10 +62,10 @@ class TestFalkorDBGraphStoreDriver:
         ]
         subjs = [subj]
         rel_map = driver.get_rel_map(subjs=subjs)
-        logger.debug("rel_map: %s", rel_map)  # Debugging line to print the rel_map
+        logger.debug("rel_map: %s", rel_map)
         for k, v in rel_map.items():
-            logger.debug("Key: %s, Value: %s", k, v)  # Debugging line to print keys and values in rel_map
-        assert subj in rel_map  # Ensure the key exists
+            logger.debug("Key: %s, Value: %s", k, v)
+        assert subj in rel_map
         assert rel_map[subj] == [[rel, obj]]
         mock_client.query.assert_called()
         logger.info("test_get_rel_map passed")
@@ -140,3 +143,157 @@ class TestFalkorDBGraphStoreDriver:
         driver.upsert_node(node_data)
         mock_client.query.assert_called()
         logger.info("test_upsert_node passed")
+
+
+class TestBaseGraphStoreDriver:
+    def test_base_graph_store_driver_init(self):
+        class TestDriver(BaseGraphStoreDriver):
+            def delete_node(self, node_id: str) -> None:
+                pass
+
+            def upsert_node(
+                self, node_data: dict[str, Any], namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+            ) -> str:
+                pass
+
+            def load_entry(self, node_id: str, namespace: Optional[str] = None) -> Optional[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def load_entries(self, namespace: Optional[str] = None) -> list[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def query(
+                self, query: str, params: Optional[dict[str, Any]] = None, namespace: Optional[str] = None, **kwargs
+            ) -> Any:
+                pass
+
+        driver = TestDriver()
+        assert driver is not None
+
+    def test_upsert_artifacts(self, mocker):
+        class TestDriver(BaseGraphStoreDriver):
+            def delete_node(self, node_id: str) -> None:
+                pass
+
+            def upsert_node(
+                self, node_data: dict[str, Any], namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+            ) -> str:
+                pass
+
+            def load_entry(self, node_id: str, namespace: Optional[str] = None) -> Optional[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def load_entries(self, namespace: Optional[str] = None) -> list[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def query(
+                self, query: str, params: Optional[dict[str, Any]] = None, namespace: Optional[str] = None, **kwargs
+            ) -> Any:
+                pass
+
+        driver = TestDriver()
+
+        # Mock the BaseArtifact object with the expected methods
+        mock_artifact = MagicMock()
+        mock_artifact.to_json.return_value = '{"artifact": "json"}'
+        mock_artifact.to_text.return_value = "text"
+
+        artifacts = {"namespace1": [mock_artifact, mock_artifact], "namespace2": [mock_artifact]}
+
+        mocker.patch.object(driver, "upsert_artifact", return_value="node_id")
+        driver.upsert_artifacts(artifacts)
+        logger.info("test_upsert_artifacts passed")
+
+    def test_upsert_artifact_exists(self, mocker):
+        class TestDriver(BaseGraphStoreDriver):
+            def delete_node(self, node_id: str) -> None:
+                pass
+
+            def upsert_node(
+                self, node_data: dict[str, Any], namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+            ) -> str:
+                pass
+
+            def load_entry(self, node_id: str, namespace: Optional[str] = None) -> Optional[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def load_entries(self, namespace: Optional[str] = None) -> list[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def query(
+                self, query: str, params: Optional[dict[str, Any]] = None, namespace: Optional[str] = None, **kwargs
+            ) -> Any:
+                pass
+
+        driver = TestDriver()
+
+        # Mock the BaseArtifact object
+        mock_artifact = MagicMock()
+        mock_artifact.to_json.return_value = '{"artifact": "json"}'
+        mock_artifact.to_text.return_value = "text"
+
+        mocker.patch.object(driver, "does_entry_exist", return_value=True)
+        node_id = driver.upsert_artifact(mock_artifact, namespace="namespace1")
+        assert node_id is not None
+        logger.info("test_upsert_artifact_exists passed")
+
+    def test_upsert_artifact_new(self, mocker):
+        class TestDriver(BaseGraphStoreDriver):
+            def delete_node(self, node_id: str) -> None:
+                pass
+
+            def upsert_node(
+                self, node_data: dict[str, Any], namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+            ) -> str:
+                pass
+
+            def load_entry(self, node_id: str, namespace: Optional[str] = None) -> Optional[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def load_entries(self, namespace: Optional[str] = None) -> list[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def query(
+                self, query: str, params: Optional[dict[str, Any]] = None, namespace: Optional[str] = None, **kwargs
+            ) -> Any:
+                pass
+
+        driver = TestDriver()
+
+        # Mock the BaseArtifact object
+        mock_artifact = MagicMock()
+        mock_artifact.to_json.return_value = '{"artifact": "json"}'
+        mock_artifact.to_text.return_value = "text"
+
+        mocker.patch.object(driver, "does_entry_exist", return_value=False)
+        mocker.patch.object(driver, "upsert_node", return_value="new_node_id")
+        node_id = driver.upsert_artifact(mock_artifact, namespace="namespace1")
+        assert node_id == "new_node_id"
+        logger.info("test_upsert_artifact_new passed")
+
+    def test_does_entry_exist(self, mocker):
+        class TestDriver(BaseGraphStoreDriver):
+            def delete_node(self, node_id: str) -> None:
+                pass
+
+            def upsert_node(
+                self, node_data: dict[str, Any], namespace: Optional[str] = None, meta: Optional[dict] = None, **kwargs
+            ) -> str:
+                pass
+
+            def load_entry(self, node_id: str, namespace: Optional[str] = None) -> Optional[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def load_entries(self, namespace: Optional[str] = None) -> list[BaseGraphStoreDriver.Entry]:
+                pass
+
+            def query(
+                self, query: str, params: Optional[dict[str, Any]] = None, namespace: Optional[str] = None, **kwargs
+            ) -> Any:
+                pass
+
+        driver = TestDriver()
+        mocker.patch.object(driver, "load_entry", return_value=None)
+        exists = driver.does_entry_exist("test_id", "namespace1")
+        assert not exists
+        logger.info("test_does_entry_exist passed")
