@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import uuid
 from typing import TYPE_CHECKING, Optional
 
@@ -59,8 +60,11 @@ class RedisConversationMemoryDriver(BaseConversationMemoryDriver):
 
         key = self.index
         memory_json = self.client.hget(key, self.conversation_id)
-        if memory_json:
-            memory = BaseConversationMemory.from_json(memory_json)
+        if memory_json is not None:
+            memory_dict = json.loads(memory_json)
+            # needed to avoid recursive method calls
+            memory_dict["autoload"] = False
+            memory = BaseConversationMemory.from_dict(memory_dict)
             memory.driver = self
             return memory
         return None

@@ -9,6 +9,14 @@ You can persist and load memory by using Conversation Memory Drivers. You can bu
 
 ## Conversation Memory Drivers
 
+### Griptape Cloud
+
+The [GriptapeCloudConversationMemoryDriver](../../reference/griptape/drivers/memory/conversation/griptape_cloud_conversation_memory_driver.md)  allows you to persist Conversation Memory in Griptape Cloud. It provides seamless integration with Griptape's cloud-based `Threads` and `Messages` resources.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/conversation_memory_drivers_griptape_cloud.py"
+```
+
 ### Local
 
 The [LocalConversationMemoryDriver](../../reference/griptape/drivers/memory/conversation/local_conversation_memory_driver.md) allows you to persist Conversation Memory in a local JSON file.
@@ -40,3 +48,4 @@ The [RedisConversationMemoryDriver](../../reference/griptape/drivers/memory/conv
 ```python
 --8<-- "docs/griptape-framework/drivers/src/conversation_memory_drivers_3.py"
 ```
+
