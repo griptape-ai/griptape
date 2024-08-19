@@ -18,8 +18,6 @@ def mock_event_bus():
 def mock_config(request):
     from griptape.config import config
 
-    config.reset()
-
     # Some tests we don't want to use the autouse fixture's MockDriverConfig
     if "skip_mock_config" in request.keywords:
         yield
@@ -29,5 +27,3 @@ def mock_config(request):
     config.driver_config = MockDriverConfig()
 
     yield config
-
-    config.reset()
