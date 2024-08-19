@@ -1,39 +1,36 @@
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.config.drivers import DriverConfig
 from griptape.drivers import (
-    BaseEmbeddingDriver,
-    BasePromptDriver,
-    BaseVectorStoreDriver,
     CohereEmbeddingDriver,
     CoherePromptDriver,
     LocalVectorStoreDriver,
 )
+from griptape.utils.decorators import lazy_property
 
 
 @define
 class CohereDriverConfig(DriverConfig):
     api_key: str = field(metadata={"serializable": False}, kw_only=True)
 
-    prompt: BasePromptDriver = field(
-        default=Factory(lambda self: CoherePromptDriver(model="command-r", api_key=self.api_key), takes_self=True),
-        metadata={"serializable": True},
-        kw_only=True,
-    )
-    embedding: BaseEmbeddingDriver = field(
-        default=Factory(
-            lambda self: CohereEmbeddingDriver(
+    @lazy_property()
+    def prompt(self) -> CoherePromptDriver:
+        return CoherePromptDriver(model="command-r", api_key=self.api_key)
+
+    @lazy_property()
+    def embedding(self) -> CohereEmbeddingDriver:
+        return CohereEmbeddingDriver(
+            model="embed-english-v3.0",
+            api_key=self.api_key,
+            input_type="search_document",
+        )
+
+    @lazy_property()
+    def vector_store(self) -> LocalVectorStoreDriver:
+        return LocalVectorStoreDriver(
+            embedding_driver=CohereEmbeddingDriver(
                 model="embed-english-v3.0",
                 api_key=self.api_key,
                 input_type="search_document",
-            ),
-            takes_self=True,
-        ),
-        metadata={"serializable": True},
-        kw_only=True,
-    )
-    vector_store: BaseVectorStoreDriver = field(
-        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding), takes_self=True),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
+            )
+        )
