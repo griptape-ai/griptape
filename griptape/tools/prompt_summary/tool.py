@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from attrs import define, field
+from attrs import Factory, define, field
 from schema import Literal, Or, Schema
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
@@ -18,7 +18,7 @@ class PromptSummaryTool(BaseTool, RuleMixin):
         prompt_summary_engine: `PromptSummaryEngine`.
     """
 
-    prompt_summary_engine: PromptSummaryEngine = field(kw_only=True, default=PromptSummaryEngine())
+    prompt_summary_engine: PromptSummaryEngine = field(kw_only=True, default=Factory(lambda: PromptSummaryEngine()))
 
     @activity(
         config={
