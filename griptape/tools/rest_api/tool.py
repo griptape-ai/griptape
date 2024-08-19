@@ -83,7 +83,7 @@ class RestApiTool(BaseTool):
             ),
             "schema": Schema(
                 {
-                    Literal("path_params", description="The request path parameters."): list[str],
+                    Literal("path_params", description="The request path parameters."): Schema([str]),
                     Literal("body", description="The request body."): dict,
                 },
             ),
@@ -148,7 +148,9 @@ class RestApiTool(BaseTool):
                 Schema(
                     {
                         schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
-                        schema.Optional(Literal("path_params", description="The request path parameters.")): list[str],
+                        schema.Optional(Literal("path_params", description="The request path parameters.")): Schema(
+                            [str]
+                        ),
                     },
                 ),
             ),
@@ -187,7 +189,7 @@ class RestApiTool(BaseTool):
             "schema": Schema(
                 {
                     schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
-                    schema.Optional(Literal("path_params", description="The request path parameters.")): list[str],
+                    schema.Optional(Literal("path_params", description="The request path parameters.")): Schema([str]),
                 },
             ),
         },

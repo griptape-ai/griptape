@@ -30,7 +30,7 @@ class ImageQueryTool(BaseTool):
                         "query",
                         description="A detailed question to be answered using the contents of the provided images.",
                     ): str,
-                    Literal("image_paths", description="The paths to an image files on disk."): list[str],
+                    Literal("image_paths", description="The paths to an image files on disk."): Schema([str]),
                 },
             ),
         },
