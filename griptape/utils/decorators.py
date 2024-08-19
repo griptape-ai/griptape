@@ -31,8 +31,8 @@ def activity(config: dict) -> Any:
     return decorator
 
 
-def lazy_property(attr_name: Optional[str] = None) -> Any:
-    def decorator(func: Callable) -> Any:
+def lazy_property(attr_name: Optional[str] = None) -> Callable[[Callable[[Any], Any]], property]:
+    def decorator(func: Callable[[Any], Any]) -> property:
         actual_attr_name = f"_{func.__name__}" if attr_name is None else attr_name
 
         @property

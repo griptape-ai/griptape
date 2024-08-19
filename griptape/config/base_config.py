@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -14,9 +14,5 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class BaseConfig(SerializableMixin, ABC):
-    _logging_config: Optional[LoggingConfig] = field(alias="logging")
-    _driver_config: Optional[BaseDriverConfig] = field(alias="drivers")
-
-    def reset(self) -> None:
-        self._logging_config = None
-        self._driver_config = None
+    logging_config: LoggingConfig = field()
+    driver_config: BaseDriverConfig = field()

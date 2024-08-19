@@ -1,10 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
-from attrs import define, field
-
-from griptape.utils.decorators import lazy_property
+from attrs import Factory, define, field
 
 from .base_config import BaseConfig
 from .drivers.openai_driver_config import OpenAiDriverConfig
@@ -16,16 +14,8 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class _Config(BaseConfig):
-    _logging_config: Optional[LoggingConfig] = field(default=None, alias="logging")
-    _driver_config: Optional[BaseDriverConfig] = field(default=None, alias="drivers")
-
-    @lazy_property()
-    def driver_config(self) -> BaseDriverConfig:
-        return OpenAiDriverConfig()
-
-    @lazy_property()
-    def logging_config(self) -> LoggingConfig:
-        return LoggingConfig()
+    logging_config: LoggingConfig = field(default=Factory(lambda: LoggingConfig()))
+    driver_config: BaseDriverConfig = field(default=Factory(lambda: OpenAiDriverConfig()))
 
 
 config = _Config()
