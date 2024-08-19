@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import uuid
 from typing import TYPE_CHECKING, Optional
 from urllib.parse import urljoin
 
@@ -114,7 +115,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         return ConversationMemory(runs=runs, autoload=False, driver=self)
 
     def _get_thread_id(self) -> str:
-        res = requests.post(self._get_url("/threads"), json={"name": "test"}, headers=self.headers)
+        res = requests.post(self._get_url("/threads"), json={"name": uuid.uuid4().hex}, headers=self.headers)
         res.raise_for_status()
         return res.json().get("thread_id")
 
