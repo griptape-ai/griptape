@@ -26,7 +26,7 @@ def mock_config(request):
 
         return
 
-    config.drivers = MockDriverConfig()
+    config.driver_config = MockDriverConfig()
 
     yield config
 

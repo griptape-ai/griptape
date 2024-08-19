@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from griptape.memory.meta import BaseMetaEntry
     from griptape.structures import Structure
 
-logger = logging.getLogger(config.logging.logger_name)
+logger = logging.getLogger(config.logging_config.logger_name)
 
 
 @define

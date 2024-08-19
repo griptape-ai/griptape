@@ -12,13 +12,13 @@ from griptape.utils.decorators import lazy_property
 @define
 class GoogleDriverConfig(DriverConfig):
     @lazy_property()
-    def prompt(self) -> GooglePromptDriver:
+    def prompt_driver(self) -> GooglePromptDriver:
         return GooglePromptDriver(model="gemini-1.5-pro")
 
     @lazy_property()
-    def embedding(self) -> GoogleEmbeddingDriver:
+    def embedding_driver(self) -> GoogleEmbeddingDriver:
         return GoogleEmbeddingDriver(model="models/embedding-001")
 
     @lazy_property()
-    def vector_store(self) -> LocalVectorStoreDriver:
+    def vector_store_driver(self) -> LocalVectorStoreDriver:
         return LocalVectorStoreDriver(embedding_driver=GoogleEmbeddingDriver(model="models/embedding-001"))

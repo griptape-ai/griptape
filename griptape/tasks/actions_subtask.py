@@ -20,7 +20,7 @@ from griptape.utils import remove_null_values_in_dict_recursively
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
 
-logger = logging.getLogger(config.logging.logger_name)
+logger = logging.getLogger(config.logging_config.logger_name)
 
 
 @define

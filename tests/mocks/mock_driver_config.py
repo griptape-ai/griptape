@@ -12,21 +12,21 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 @define
 class MockDriverConfig(DriverConfig):
     @lazy_property()
-    def prompt(self) -> MockPromptDriver:
+    def prompt_driver(self) -> MockPromptDriver:
         return MockPromptDriver()
 
     @lazy_property()
-    def image_generation(self) -> MockImageGenerationDriver:
+    def image_generation_driver(self) -> MockImageGenerationDriver:
         return MockImageGenerationDriver()
 
     @lazy_property()
-    def image_query(self) -> MockImageQueryDriver:
+    def image_query_driver(self) -> MockImageQueryDriver:
         return MockImageQueryDriver()
 
     @lazy_property()
-    def embedding(self) -> MockEmbeddingDriver:
+    def embedding_driver(self) -> MockEmbeddingDriver:
         return MockEmbeddingDriver()
 
     @lazy_property()
-    def vector_store(self) -> LocalVectorStoreDriver:
+    def vector_store_driver(self) -> LocalVectorStoreDriver:
         return LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())

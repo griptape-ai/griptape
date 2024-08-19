@@ -13,6 +13,6 @@ dict_config["embedding"] = {
 }
 custom_config = AmazonBedrockDriverConfig.from_dict(dict_config)
 
-config.drivers = custom_config
+config.driver_config = custom_config
 
 agent = Agent()

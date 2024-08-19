@@ -25,7 +25,9 @@ class QueryTool(BaseTool, RuleMixin):
             lambda self: RagEngine(
                 response_stage=ResponseRagStage(
                     response_modules=[
-                        PromptResponseRagModule(prompt_driver=config.drivers.prompt, rulesets=self.rulesets)
+                        PromptResponseRagModule(
+                            prompt_driver=config.driver_config.prompt_driver, rulesets=self.rulesets
+                        )
                     ],
                 ),
             ),

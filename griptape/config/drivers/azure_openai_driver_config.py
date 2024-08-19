@@ -41,7 +41,7 @@ class AzureOpenAiDriverConfig(DriverConfig):
     api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
 
     @lazy_property()
-    def prompt(self) -> AzureOpenAiChatPromptDriver:
+    def prompt_driver(self) -> AzureOpenAiChatPromptDriver:
         return AzureOpenAiChatPromptDriver(
             model="gpt-4o",
             azure_endpoint=self.azure_endpoint,
@@ -51,7 +51,7 @@ class AzureOpenAiDriverConfig(DriverConfig):
         )
 
     @lazy_property()
-    def embedding(self) -> AzureOpenAiEmbeddingDriver:
+    def embedding_driver(self) -> AzureOpenAiEmbeddingDriver:
         return AzureOpenAiEmbeddingDriver(
             model="text-embedding-3-small",
             azure_endpoint=self.azure_endpoint,
@@ -61,7 +61,7 @@ class AzureOpenAiDriverConfig(DriverConfig):
         )
 
     @lazy_property()
-    def image_generation(self) -> AzureOpenAiImageGenerationDriver:
+    def image_generation_driver(self) -> AzureOpenAiImageGenerationDriver:
         return AzureOpenAiImageGenerationDriver(
             model="dall-e-2",
             azure_endpoint=self.azure_endpoint,
@@ -72,7 +72,7 @@ class AzureOpenAiDriverConfig(DriverConfig):
         )
 
     @lazy_property()
-    def image_query(self) -> AzureOpenAiImageQueryDriver:
+    def image_query_driver(self) -> AzureOpenAiImageQueryDriver:
         return AzureOpenAiImageQueryDriver(
             model="gpt-4o",
             azure_endpoint=self.azure_endpoint,
@@ -82,7 +82,7 @@ class AzureOpenAiDriverConfig(DriverConfig):
         )
 
     @lazy_property()
-    def vector_store(self) -> LocalVectorStoreDriver:
+    def vector_store_driver(self) -> LocalVectorStoreDriver:
         return LocalVectorStoreDriver(
             embedding_driver=AzureOpenAiEmbeddingDriver(
                 model="text-embedding-3-small",

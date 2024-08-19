@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
+from griptape.utils.decorators import lazy_property
+
 from .base_config import BaseConfig
 from .drivers.openai_driver_config import OpenAiDriverConfig
 from .logging.logging_config import LoggingConfig
@@ -14,29 +16,16 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class _Config(BaseConfig):
-    _logging: Optional[LoggingConfig] = field(default=None, alias="logging")
-    _drivers: Optional[BaseDriverConfig] = field(default=None, alias="drivers")
+    _logging_config: Optional[LoggingConfig] = field(default=None, alias="logging")
+    _driver_config: Optional[BaseDriverConfig] = field(default=None, alias="drivers")
 
-    @property
-    def drivers(self) -> BaseDriverConfig:
-        """Lazily instantiates the drivers configuration to avoid client errors like missing API key."""
-        if self._drivers is None:
-            self._drivers = OpenAiDriverConfig()
-        return self._drivers
+    @lazy_property()
+    def driver_config(self) -> BaseDriverConfig:
+        return OpenAiDriverConfig()
 
-    @drivers.setter
-    def drivers(self, drivers: BaseDriverConfig) -> None:
-        self._drivers = drivers
-
-    @property
-    def logging(self) -> LoggingConfig:
-        if self._logging is None:
-            self._logging = LoggingConfig()
-        return self._logging
-
-    @logging.setter
-    def logging(self, logging: LoggingConfig) -> None:
-        self._logging = logging
+    @lazy_property()
+    def logging_config(self) -> LoggingConfig:
+        return LoggingConfig()
 
 
 config = _Config()

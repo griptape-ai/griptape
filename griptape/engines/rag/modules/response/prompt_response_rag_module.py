@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class PromptResponseRagModule(BaseResponseRagModule, RuleMixin):
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt))
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.driver_config.prompt_driver))
     answer_token_offset: int = field(default=400)
     metadata: Optional[str] = field(default=None)
     generate_system_template: Callable[[RagContext, list[TextArtifact]], str] = field(

@@ -16,7 +16,7 @@ class TestAnthropicDriverConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "AnthropicDriverConfig",
-            "prompt": {
+            "prompt_driver": {
                 "type": "AnthropicPromptDriver",
                 "temperature": 0.1,
                 "max_tokens": 1000,
@@ -26,18 +26,18 @@ class TestAnthropicDriverConfig:
                 "top_k": 250,
                 "use_native_tools": True,
             },
-            "image_generation": {"type": "DummyImageGenerationDriver"},
-            "image_query": {
+            "image_generation_driver": {"type": "DummyImageGenerationDriver"},
+            "image_query_driver": {
                 "type": "AnthropicImageQueryDriver",
                 "model": "claude-3-5-sonnet-20240620",
                 "max_tokens": 256,
             },
-            "embedding": {
+            "embedding_driver": {
                 "type": "VoyageAiEmbeddingDriver",
                 "model": "voyage-large-2",
                 "input_type": "document",
             },
-            "vector_store": {
+            "vector_store_driver": {
                 "type": "LocalVectorStoreDriver",
                 "embedding_driver": {
                     "type": "VoyageAiEmbeddingDriver",
@@ -45,9 +45,9 @@ class TestAnthropicDriverConfig:
                     "input_type": "document",
                 },
             },
-            "conversation_memory": None,
-            "text_to_speech": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription": {"type": "DummyAudioTranscriptionDriver"},
+            "conversation_memory_driver": None,
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }
 
     def test_from_dict(self, config):

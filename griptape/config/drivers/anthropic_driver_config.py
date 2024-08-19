@@ -13,17 +13,17 @@ from griptape.utils.decorators import lazy_property
 @define
 class AnthropicDriverConfig(DriverConfig):
     @lazy_property()
-    def prompt(self) -> AnthropicPromptDriver:
+    def prompt_driver(self) -> AnthropicPromptDriver:
         return AnthropicPromptDriver(model="claude-3-5-sonnet-20240620")
 
     @lazy_property()
-    def embedding(self) -> VoyageAiEmbeddingDriver:
+    def embedding_driver(self) -> VoyageAiEmbeddingDriver:
         return VoyageAiEmbeddingDriver(model="voyage-large-2")
 
     @lazy_property()
-    def vector_store(self) -> LocalVectorStoreDriver:
+    def vector_store_driver(self) -> LocalVectorStoreDriver:
         return LocalVectorStoreDriver(embedding_driver=VoyageAiEmbeddingDriver(model="voyage-large-2"))
 
     @lazy_property()
-    def image_query(self) -> AnthropicImageQueryDriver:
+    def image_query_driver(self) -> AnthropicImageQueryDriver:
         return AnthropicImageQueryDriver(model="claude-3-5-sonnet-20240620")

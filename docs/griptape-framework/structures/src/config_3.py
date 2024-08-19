@@ -6,7 +6,7 @@ from griptape.config import config
 from griptape.config.drivers import AmazonBedrockDriverConfig
 from griptape.structures import Agent
 
-config.drivers = AmazonBedrockDriverConfig(
+config.driver_config = AmazonBedrockDriverConfig(
     session=boto3.Session(
         region_name=os.environ["AWS_DEFAULT_REGION"],
         aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],

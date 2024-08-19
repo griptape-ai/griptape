@@ -9,7 +9,7 @@ from griptape.config import config
 from griptape.mixins import BlobArtifactFileOutputMixin, RuleMixin
 from griptape.tasks import BaseTask
 
-logger = logging.getLogger(config.logging.logger_name)
+logger = logging.getLogger(config.logging_config.logger_name)
 
 
 @define
