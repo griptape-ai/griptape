@@ -240,6 +240,8 @@ class GooglePromptDriver(BasePromptDriver):
             raise ValueError(f"Unsupported message content type {content}")
 
     def __to_prompt_stack_delta_message_content(self, content: Part) -> BaseDeltaMessageContent:
+        json_format = import_optional_dependency("google.protobuf.json_format")
+
         if content.text:
             return TextDeltaMessageContent(content.text)
         elif content.function_call:
@@ -247,12 +249,12 @@ class GooglePromptDriver(BasePromptDriver):
 
             name, path = ToolAction.from_native_tool_name(function_call.name)
 
-            args = dict(function_call.args.items())
+            args = json_format.MessageToDict(function_call._pb)
             return ActionCallDeltaMessageContent(
                 tag=function_call.name,
                 name=name,
                 path=path,
-                partial_input=json.dumps(args),
+                partial_input=json.dumps(args["args"]),
             )
         else:
             raise ValueError(f"Unsupported message content type {content}")
