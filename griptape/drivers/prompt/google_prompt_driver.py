@@ -234,7 +234,7 @@ class GooglePromptDriver(BasePromptDriver):
 
             name, path = ToolAction.from_native_tool_name(function_call.name)
 
-            args = json_format.MessageToDict(function_call._pb)["args"]
+            args = json_format.MessageToDict(function_call._pb).get("args", {})
             return ActionCallMessageContent(
                 artifact=ActionArtifact(value=ToolAction(tag=function_call.name, name=name, path=path, input=args)),
             )
@@ -251,7 +251,7 @@ class GooglePromptDriver(BasePromptDriver):
 
             name, path = ToolAction.from_native_tool_name(function_call.name)
 
-            args = json_format.MessageToDict(function_call._pb)["args"]
+            args = json_format.MessageToDict(function_call._pb).get("args", {})
             return ActionCallDeltaMessageContent(
                 tag=function_call.name,
                 name=name,
