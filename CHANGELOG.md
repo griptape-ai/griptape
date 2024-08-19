@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `JsonArtifact` for handling de/seralization of values.
 - `Chat.logger_level` for setting what the `Chat` utility sets the logger level to. 
 - `FuturesExecutorMixin` to DRY up and optimize concurrent code across multiple classes.
+- `utils.execute_futures_list_dict` for executing a dict of lists of futures.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.
@@ -58,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `JsonExtractionEngine` failing to parse json when the LLM outputs more than just the json.
 - Exception when adding `ErrorArtifact`'s to the Prompt Stack.
+- Concurrency bug in `BaseVectorStoreDriver.upsert_text_artifacts`.
 
 ## [0.29.2] - 2024-08-16
 

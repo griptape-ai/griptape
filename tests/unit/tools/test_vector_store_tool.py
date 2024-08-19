@@ -1,5 +1,3 @@
-import pytest
-
 from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.drivers import LocalVectorStoreDriver
 from griptape.tools import VectorStoreTool
@@ -7,10 +5,6 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestVectorStoreTool:
-    @pytest.fixture(autouse=True)
-    def _mock_try_run(self, mocker):
-        mocker.patch("griptape.drivers.OpenAiEmbeddingDriver.try_embed_chunk", return_value=[0, 1])
-
     def test_search(self):
         driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
         tool = VectorStoreTool(description="Test", vector_store_driver=driver)
