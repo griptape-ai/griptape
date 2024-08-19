@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
-from attrs import Factory, define, field
+from attrs import define
 
 from griptape.config.drivers import BaseDriverConfig
 from griptape.drivers import (
@@ -14,6 +14,7 @@ from griptape.drivers import (
     DummyTextToSpeechDriver,
     DummyVectorStoreDriver,
 )
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from griptape.drivers import (
@@ -30,43 +31,34 @@ if TYPE_CHECKING:
 
 @define
 class DriverConfig(BaseDriverConfig):
-    prompt: BasePromptDriver = field(
-        kw_only=True,
-        default=Factory(lambda: DummyPromptDriver()),
-        metadata={"serializable": True},
-    )
-    image_generation: BaseImageGenerationDriver = field(
-        kw_only=True,
-        default=Factory(lambda: DummyImageGenerationDriver()),
-        metadata={"serializable": True},
-    )
-    image_query: BaseImageQueryDriver = field(
-        kw_only=True,
-        default=Factory(lambda: DummyImageQueryDriver()),
-        metadata={"serializable": True},
-    )
-    embedding: BaseEmbeddingDriver = field(
-        kw_only=True,
-        default=Factory(lambda: DummyEmbeddingDriver()),
-        metadata={"serializable": True},
-    )
-    vector_store: BaseVectorStoreDriver = field(
-        default=Factory(lambda: DummyVectorStoreDriver()),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
-    conversation_memory: Optional[BaseConversationMemoryDriver] = field(
-        default=None,
-        kw_only=True,
-        metadata={"serializable": True},
-    )
-    text_to_speech: BaseTextToSpeechDriver = field(
-        default=Factory(lambda: DummyTextToSpeechDriver()),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
-    audio_transcription: BaseAudioTranscriptionDriver = field(
-        default=Factory(lambda: DummyAudioTranscriptionDriver()),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
+    @lazy_property()
+    def prompt(self) -> BasePromptDriver:
+        return DummyPromptDriver()
+
+    @lazy_property()
+    def image_generation(self) -> BaseImageGenerationDriver:
+        return DummyImageGenerationDriver()
+
+    @lazy_property()
+    def image_query(self) -> BaseImageQueryDriver:
+        return DummyImageQueryDriver()
+
+    @lazy_property()
+    def embedding(self) -> BaseEmbeddingDriver:
+        return DummyEmbeddingDriver()
+
+    @lazy_property()
+    def vector_store(self) -> BaseVectorStoreDriver:
+        return DummyVectorStoreDriver(embedding_driver=self.embedding)
+
+    @lazy_property()
+    def conversation_memory(self) -> Optional[BaseConversationMemoryDriver]:
+        return None
+
+    @lazy_property()
+    def text_to_speech(self) -> BaseTextToSpeechDriver:
+        return DummyTextToSpeechDriver()
+
+    @lazy_property()
+    def audio_transcription(self) -> BaseAudioTranscriptionDriver:
+        return DummyAudioTranscriptionDriver()

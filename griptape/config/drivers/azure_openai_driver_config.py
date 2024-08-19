@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable, Optional
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.config.drivers import DriverConfig
 from griptape.drivers import (
@@ -10,13 +10,9 @@ from griptape.drivers import (
     AzureOpenAiEmbeddingDriver,
     AzureOpenAiImageGenerationDriver,
     AzureOpenAiImageQueryDriver,
-    BaseEmbeddingDriver,
-    BaseImageGenerationDriver,
-    BaseImageQueryDriver,
-    BasePromptDriver,
-    BaseVectorStoreDriver,
     LocalVectorStoreDriver,
 )
+from griptape.utils.decorators import lazy_property
 
 
 @define
@@ -43,65 +39,56 @@ class AzureOpenAiDriverConfig(DriverConfig):
         metadata={"serializable": False},
     )
     api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
-    prompt: BasePromptDriver = field(
-        default=Factory(
-            lambda self: AzureOpenAiChatPromptDriver(
-                model="gpt-4o",
-                azure_endpoint=self.azure_endpoint,
-                api_key=self.api_key,
-                azure_ad_token=self.azure_ad_token,
-                azure_ad_token_provider=self.azure_ad_token_provider,
-            ),
-            takes_self=True,
-        ),
-        metadata={"serializable": True},
-        kw_only=True,
-    )
-    image_generation: BaseImageGenerationDriver = field(
-        default=Factory(
-            lambda self: AzureOpenAiImageGenerationDriver(
-                model="dall-e-2",
-                azure_endpoint=self.azure_endpoint,
-                api_key=self.api_key,
-                azure_ad_token=self.azure_ad_token,
-                azure_ad_token_provider=self.azure_ad_token_provider,
-                image_size="512x512",
-            ),
-            takes_self=True,
-        ),
-        metadata={"serializable": True},
-        kw_only=True,
-    )
-    image_query: BaseImageQueryDriver = field(
-        default=Factory(
-            lambda self: AzureOpenAiImageQueryDriver(
-                model="gpt-4o",
-                azure_endpoint=self.azure_endpoint,
-                api_key=self.api_key,
-                azure_ad_token=self.azure_ad_token,
-                azure_ad_token_provider=self.azure_ad_token_provider,
-            ),
-            takes_self=True,
-        ),
-        metadata={"serializable": True},
-        kw_only=True,
-    )
-    embedding: BaseEmbeddingDriver = field(
-        default=Factory(
-            lambda self: AzureOpenAiEmbeddingDriver(
+
+    @lazy_property()
+    def prompt(self) -> AzureOpenAiChatPromptDriver:
+        return AzureOpenAiChatPromptDriver(
+            model="gpt-4o",
+            azure_endpoint=self.azure_endpoint,
+            api_key=self.api_key,
+            azure_ad_token=self.azure_ad_token,
+            azure_ad_token_provider=self.azure_ad_token_provider,
+        )
+
+    @lazy_property()
+    def embedding(self) -> AzureOpenAiEmbeddingDriver:
+        return AzureOpenAiEmbeddingDriver(
+            model="text-embedding-3-small",
+            azure_endpoint=self.azure_endpoint,
+            api_key=self.api_key,
+            azure_ad_token=self.azure_ad_token,
+            azure_ad_token_provider=self.azure_ad_token_provider,
+        )
+
+    @lazy_property()
+    def image_generation(self) -> AzureOpenAiImageGenerationDriver:
+        return AzureOpenAiImageGenerationDriver(
+            model="dall-e-2",
+            azure_endpoint=self.azure_endpoint,
+            api_key=self.api_key,
+            azure_ad_token=self.azure_ad_token,
+            azure_ad_token_provider=self.azure_ad_token_provider,
+            image_size="512x512",
+        )
+
+    @lazy_property()
+    def image_query(self) -> AzureOpenAiImageQueryDriver:
+        return AzureOpenAiImageQueryDriver(
+            model="gpt-4o",
+            azure_endpoint=self.azure_endpoint,
+            api_key=self.api_key,
+            azure_ad_token=self.azure_ad_token,
+            azure_ad_token_provider=self.azure_ad_token_provider,
+        )
+
+    @lazy_property()
+    def vector_store(self) -> LocalVectorStoreDriver:
+        return LocalVectorStoreDriver(
+            embedding_driver=AzureOpenAiEmbeddingDriver(
                 model="text-embedding-3-small",
                 azure_endpoint=self.azure_endpoint,
                 api_key=self.api_key,
                 azure_ad_token=self.azure_ad_token,
                 azure_ad_token_provider=self.azure_ad_token_provider,
-            ),
-            takes_self=True,
-        ),
-        metadata={"serializable": True},
-        kw_only=True,
-    )
-    vector_store: BaseVectorStoreDriver = field(
-        default=Factory(lambda self: LocalVectorStoreDriver(embedding_driver=self.embedding), takes_self=True),
-        metadata={"serializable": True},
-        kw_only=True,
-    )
+            )
+        )

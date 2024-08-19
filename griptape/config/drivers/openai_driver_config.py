@@ -1,14 +1,7 @@
-from attrs import Factory, define, field
+from attrs import define
 
 from griptape.config.drivers import DriverConfig
 from griptape.drivers import (
-    BaseAudioTranscriptionDriver,
-    BaseEmbeddingDriver,
-    BaseImageGenerationDriver,
-    BaseImageQueryDriver,
-    BasePromptDriver,
-    BaseTextToSpeechDriver,
-    BaseVectorStoreDriver,
     LocalVectorStoreDriver,
     OpenAiAudioTranscriptionDriver,
     OpenAiChatPromptDriver,
@@ -17,44 +10,35 @@ from griptape.drivers import (
     OpenAiImageQueryDriver,
     OpenAiTextToSpeechDriver,
 )
+from griptape.utils.decorators import lazy_property
 
 
 @define
 class OpenAiDriverConfig(DriverConfig):
-    prompt: BasePromptDriver = field(
-        default=Factory(lambda: OpenAiChatPromptDriver(model="gpt-4o")),
-        metadata={"serializable": True},
-        kw_only=True,
-    )
-    image_generation: BaseImageGenerationDriver = field(
-        default=Factory(lambda: OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512")),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
-    image_query: BaseImageQueryDriver = field(
-        default=Factory(lambda: OpenAiImageQueryDriver(model="gpt-4o")),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
-    embedding: BaseEmbeddingDriver = field(
-        default=Factory(lambda: OpenAiEmbeddingDriver(model="text-embedding-3-small")),
-        metadata={"serializable": True},
-        kw_only=True,
-    )
-    vector_store: BaseVectorStoreDriver = field(
-        default=Factory(
-            lambda: LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small")),
-        ),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
-    text_to_speech: BaseTextToSpeechDriver = field(
-        default=Factory(lambda: OpenAiTextToSpeechDriver(model="tts")),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
-    audio_transcription: BaseAudioTranscriptionDriver = field(
-        default=Factory(lambda: OpenAiAudioTranscriptionDriver(model="whisper-1")),
-        kw_only=True,
-        metadata={"serializable": True},
-    )
+    @lazy_property()
+    def prompt(self) -> OpenAiChatPromptDriver:
+        return OpenAiChatPromptDriver(model="gpt-4o")
+
+    @lazy_property()
+    def image_generation(self) -> OpenAiImageGenerationDriver:
+        return OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512")
+
+    @lazy_property()
+    def image_query(self) -> OpenAiImageQueryDriver:
+        return OpenAiImageQueryDriver(model="gpt-4o")
+
+    @lazy_property()
+    def embedding(self) -> OpenAiEmbeddingDriver:
+        return OpenAiEmbeddingDriver(model="text-embedding-3-small")
+
+    @lazy_property()
+    def vector_store(self) -> LocalVectorStoreDriver:
+        return LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver(model="text-embedding-3-small"))
+
+    @lazy_property()
+    def text_to_speech(self) -> OpenAiTextToSpeechDriver:
+        return OpenAiTextToSpeechDriver(model="tts")
+
+    @lazy_property()
+    def audio_transcription(self) -> OpenAiAudioTranscriptionDriver:
+        return OpenAiAudioTranscriptionDriver(model="whisper-1")
