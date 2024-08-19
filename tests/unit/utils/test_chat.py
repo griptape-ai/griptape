@@ -37,7 +37,7 @@ class TestConversation:
 
         chat = Chat(agent)
 
-        logger = logging.getLogger(config.logging.logger_name)
+        logger = logging.getLogger(config.logging_config.logger_name)
         logger.setLevel(logging.DEBUG)
 
         assert logger.getEffectiveLevel() == logging.DEBUG

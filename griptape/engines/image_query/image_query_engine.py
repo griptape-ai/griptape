@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @define
 class ImageQueryEngine:
     image_query_driver: BaseImageQueryDriver = field(
-        default=Factory(lambda: config.drivers.image_query_driver), kw_only=True
+        default=Factory(lambda: config.driver_config.image_query_driver), kw_only=True
     )
 
     def run(self, query: str, images: list[ImageArtifact]) -> TextArtifact:

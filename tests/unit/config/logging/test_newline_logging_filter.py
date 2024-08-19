@@ -10,7 +10,7 @@ from griptape.structures import Agent
 class TestNewlineLoggingFilter:
     def test_filter(self):
         # use the filter in an Agent
-        logger = logging.getLogger(config.logging.logger_name)
+        logger = logging.getLogger(config.logging_config.logger_name)
         logger.addFilter(NewlineLoggingFilter(replace_str="$$$"))
         agent = Agent()
         # use a context manager to capture the stdout

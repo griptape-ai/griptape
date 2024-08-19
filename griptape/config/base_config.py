@@ -14,9 +14,9 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class BaseConfig(SerializableMixin, ABC):
-    _logging: Optional[LoggingConfig] = field(alias="logging")
-    _drivers: Optional[BaseDriverConfig] = field(alias="drivers")
+    _logging_config: Optional[LoggingConfig] = field(alias="logging")
+    _driver_config: Optional[BaseDriverConfig] = field(alias="drivers")
 
     def reset(self) -> None:
-        self._logging = None
-        self._drivers = None
+        self._logging_config = None
+        self._driver_config = None

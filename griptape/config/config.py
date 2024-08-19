@@ -14,29 +14,29 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class _Config(BaseConfig):
-    _logging: Optional[LoggingConfig] = field(default=None, alias="logging")
-    _drivers: Optional[BaseDriverConfig] = field(default=None, alias="drivers")
+    _logging_config: Optional[LoggingConfig] = field(default=None, alias="logging")
+    _driver_config: Optional[BaseDriverConfig] = field(default=None, alias="drivers")
 
     @property
-    def drivers(self) -> BaseDriverConfig:
+    def driver_config(self) -> BaseDriverConfig:
         """Lazily instantiates the drivers configuration to avoid client errors like missing API key."""
-        if self._drivers is None:
-            self._drivers = OpenAiDriverConfig()
-        return self._drivers
+        if self._driver_config is None:
+            self._driver_config = OpenAiDriverConfig()
+        return self._driver_config
 
-    @drivers.setter
-    def drivers(self, drivers: BaseDriverConfig) -> None:
-        self._drivers = drivers
+    @driver_config.setter
+    def driver_config(self, drivers: BaseDriverConfig) -> None:
+        self._driver_config = drivers
 
     @property
-    def logging(self) -> LoggingConfig:
-        if self._logging is None:
-            self._logging = LoggingConfig()
-        return self._logging
+    def logging_config(self) -> LoggingConfig:
+        if self._logging_config is None:
+            self._logging_config = LoggingConfig()
+        return self._logging_config
 
-    @logging.setter
-    def logging(self, logging: LoggingConfig) -> None:
-        self._logging = logging
+    @logging_config.setter
+    def logging_config(self, logging: LoggingConfig) -> None:
+        self._logging_config = logging
 
 
 config = _Config()

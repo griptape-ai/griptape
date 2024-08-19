@@ -12,7 +12,7 @@ from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2
 
-logger = logging.getLogger(config.logging.logger_name)
+logger = logging.getLogger(config.logging_config.logger_name)
 
 
 @define

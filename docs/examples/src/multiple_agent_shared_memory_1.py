@@ -34,9 +34,9 @@ mongo_driver = AzureMongoDbVectorStoreDriver(
     vector_path=MONGODB_VECTOR_PATH,
 )
 
-config.drivers = AzureOpenAiDriverConfig(
+config.driver_config = AzureOpenAiDriverConfig(
     azure_endpoint=AZURE_OPENAI_ENDPOINT_1,
-    vector_store=mongo_driver,
+    vector_store_driver=mongo_driver,
     embedding_driver=embedding_driver,
 )
 

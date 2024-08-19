@@ -8,7 +8,7 @@ from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask
 from griptape.tools import RestApiTool
 
-config.drivers = DriverConfig(
+config.driver_config = DriverConfig(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.1),
 )
 

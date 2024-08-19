@@ -11,11 +11,11 @@ from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
 from griptape.tools import FileManagerTool, QueryTool, WebScraperTool
 
-config.drivers = OpenAiDriverConfig(
+config.driver_config = OpenAiDriverConfig(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
 )
 
-config.drivers = OpenAiDriverConfig(
+config.driver_config = OpenAiDriverConfig(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
 )
 

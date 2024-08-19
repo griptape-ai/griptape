@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 @define
 class BaseImageGenerationEngine(ABC):
     image_generation_driver: BaseImageGenerationDriver = field(
-        kw_only=True, default=Factory(lambda: config.drivers.image_generation_driver)
+        kw_only=True, default=Factory(lambda: config.driver_config.image_generation_driver)
     )
 
     @abstractmethod

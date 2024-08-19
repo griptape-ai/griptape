@@ -15,12 +15,12 @@ from griptape.utils import J2
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
 
-logger = logging.getLogger(config.logging.logger_name)
+logger = logging.getLogger(config.logging_config.logger_name)
 
 
 @define
 class PromptTask(RuleMixin, BaseTask):
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt_driver), kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.driver_config.prompt_driver), kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
         kw_only=True,
