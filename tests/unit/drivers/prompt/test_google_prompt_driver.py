@@ -1,4 +1,4 @@
-from unittest.mock import Mock
+from unittest.mock import MagicMock, Mock
 
 import pytest
 from google.generativeai.protos import FunctionCall, FunctionResponse, Part
@@ -46,11 +46,19 @@ class TestGooglePromptDriver:
     @pytest.fixture()
     def mock_generative_model(self, mocker):
         mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
-        mock_function_call = Mock(type="tool_use", id="MockTool_test", args={"foo": "bar"})
+        mocker.patch("google.protobuf.json_format.MessageToDict").return_value = {
+            "args": {"foo": "bar"},
+        }
+        mock_function_call = MagicMock(
+            type="tool_use", name="bar", id="MockTool_test", _pb=MagicMock(args={"foo": "bar"})
+        )
         mock_function_call.name = "MockTool_test"
         mock_generative_model.return_value.generate_content.return_value = Mock(
-            parts=[Mock(text="model-output", function_call=None), Mock(text=None, function_call=mock_function_call)],
-            usage_metadata=Mock(prompt_token_count=5, candidates_token_count=10),
+            parts=[
+                Mock(text="model-output", function_call=None),
+                MagicMock(name="foo", text=None, function_call=mock_function_call),
+            ],
+            usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=10),
         )
 
         return mock_generative_model
@@ -58,21 +66,26 @@ class TestGooglePromptDriver:
     @pytest.fixture()
     def mock_stream_generative_model(self, mocker):
         mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
-        mock_function_call_delta = Mock(type="tool_use", id="MockTool_test", args={"foo": "bar"})
+        mocker.patch("google.protobuf.json_format.MessageToDict").return_value = {
+            "args": {"foo": "bar"},
+        }
+        mock_function_call_delta = MagicMock(
+            type="tool_use", name="func call", id="MockTool_test", _pb=MagicMock(args={"foo": "bar"})
+        )
         mock_function_call_delta.name = "MockTool_test"
         mock_generative_model.return_value.generate_content.return_value = iter(
             [
-                Mock(
-                    parts=[Mock(text="model-output")],
-                    usage_metadata=Mock(prompt_token_count=5, candidates_token_count=5),
+                MagicMock(
+                    parts=[MagicMock(text="model-output")],
+                    usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
                 ),
-                Mock(
-                    parts=[Mock(text=None, function_call=mock_function_call_delta)],
-                    usage_metadata=Mock(prompt_token_count=5, candidates_token_count=5),
+                MagicMock(
+                    parts=[MagicMock(text=None, function_call=mock_function_call_delta)],
+                    usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
                 ),
-                Mock(
-                    parts=[Mock(text="model-output")],
-                    usage_metadata=Mock(prompt_token_count=5, candidates_token_count=5),
+                MagicMock(
+                    parts=[MagicMock(text="model-output", id="3")],
+                    usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
                 ),
             ]
         )
