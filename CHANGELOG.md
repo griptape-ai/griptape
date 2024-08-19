@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Chat.logger_level` for setting what the `Chat` utility sets the logger level to. 
 - `FuturesExecutorMixin` to DRY up and optimize concurrent code across multiple classes.
 - `utils.execute_futures_list_dict` for executing a dict of lists of futures.
+- `GriptapeCloudConversationMemoryDriver` to store conversation history in Griptape Cloud.
 
 ### Changed
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `event_bus`.

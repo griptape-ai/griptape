@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -24,7 +25,11 @@ class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
 
         if not os.path.exists(self.file_path):
             return None
-        memory = BaseConversationMemory.from_json(Path(self.file_path).read_text())
+
+        memory_dict = json.loads(Path(self.file_path).read_text())
+        # needed to avoid recursive method calls
+        memory_dict["autoload"] = False
+        memory = BaseConversationMemory.from_dict(memory_dict)
 
         memory.driver = self
 

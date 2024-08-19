@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
@@ -44,9 +45,11 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
         response = self.table.get_item(Key=self._get_key())
 
         if "Item" in response and self.value_attribute_key in response["Item"]:
-            memory_value = response["Item"][self.value_attribute_key]
+            memory_dict = json.loads(response["Item"][self.value_attribute_key])
+            # needed to avoid recursive method calls
+            memory_dict["autoload"] = False
 
-            memory = BaseConversationMemory.from_json(memory_value)
+            memory = BaseConversationMemory.from_dict(memory_dict)
 
             memory.driver = self
 

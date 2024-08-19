@@ -15,6 +15,7 @@ from .memory.conversation.base_conversation_memory_driver import BaseConversatio
 from .memory.conversation.local_conversation_memory_driver import LocalConversationMemoryDriver
 from .memory.conversation.amazon_dynamodb_conversation_memory_driver import AmazonDynamoDbConversationMemoryDriver
 from .memory.conversation.redis_conversation_memory_driver import RedisConversationMemoryDriver
+from .memory.conversation.griptape_cloud_conversation_memory_driver import GriptapeCloudConversationMemoryDriver
 
 from .embedding.base_embedding_driver import BaseEmbeddingDriver
 from .embedding.openai_embedding_driver import OpenAiEmbeddingDriver
@@ -149,6 +150,7 @@ __all__ = [
     "LocalConversationMemoryDriver",
     "AmazonDynamoDbConversationMemoryDriver",
     "RedisConversationMemoryDriver",
+    "GriptapeCloudConversationMemoryDriver",
     "BaseEmbeddingDriver",
     "OpenAiEmbeddingDriver",
     "AzureOpenAiEmbeddingDriver",
