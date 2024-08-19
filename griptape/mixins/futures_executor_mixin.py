@@ -20,7 +20,7 @@ class FuturesExecutorMixin(ABC):
     def __del__(self) -> None:
         executor = self.futures_executor
 
-        if executor:
+        if executor is not None:
             self.futures_executor = None
 
             executor.shutdown(wait=True)
