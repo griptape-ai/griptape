@@ -18,7 +18,9 @@ class FuturesExecutorMixin(ABC):
     )
 
     def __del__(self) -> None:
-        if executor := self.futures_executor is not None:
+        executor = self.futures_executor
+
+        if executor is not None:
             self.futures_executor = None
 
             executor.shutdown(wait=True)
