@@ -37,3 +37,34 @@ class TestDriverConfig:
         config.prompt_driver.max_tokens = 10
 
         assert config.prompt_driver.max_tokens == 10
+
+    @pytest.mark.skip_mock_config()
+    def test_lazy_init(self):
+        from griptape.config import config
+
+        assert config.driver_config._prompt_driver is None
+        assert config.driver_config._image_generation_driver is None
+        assert config.driver_config._image_query_driver is None
+        assert config.driver_config._embedding_driver is None
+        assert config.driver_config._vector_store_driver is None
+        assert config.driver_config._conversation_memory_driver is None
+        assert config.driver_config._text_to_speech_driver is None
+        assert config.driver_config._audio_transcription_driver is None
+
+        assert config.driver_config.prompt_driver is not None
+        assert config.driver_config.image_generation_driver is not None
+        assert config.driver_config.image_query_driver is not None
+        assert config.driver_config.embedding_driver is not None
+        assert config.driver_config.vector_store_driver is not None
+        assert config.driver_config.conversation_memory_driver is None
+        assert config.driver_config.text_to_speech_driver is not None
+        assert config.driver_config.audio_transcription_driver is not None
+
+        assert config.driver_config._prompt_driver is not None
+        assert config.driver_config._image_generation_driver is not None
+        assert config.driver_config._image_query_driver is not None
+        assert config.driver_config._embedding_driver is not None
+        assert config.driver_config._vector_store_driver is not None
+        assert config.driver_config._conversation_memory_driver is None
+        assert config.driver_config._text_to_speech_driver is not None
+        assert config.driver_config._audio_transcription_driver is not None
