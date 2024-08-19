@@ -20,7 +20,7 @@ logger = logging.getLogger(config.logging.logger_name)
 
 @define
 class PromptTask(RuleMixin, BaseTask):
-    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt), kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: config.drivers.prompt_driver), kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
         kw_only=True,

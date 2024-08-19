@@ -32,33 +32,33 @@ if TYPE_CHECKING:
 @define
 class DriverConfig(BaseDriverConfig):
     @lazy_property()
-    def prompt(self) -> BasePromptDriver:
+    def prompt_driver(self) -> BasePromptDriver:
         return DummyPromptDriver()
 
     @lazy_property()
-    def image_generation(self) -> BaseImageGenerationDriver:
+    def image_generation_driver(self) -> BaseImageGenerationDriver:
         return DummyImageGenerationDriver()
 
     @lazy_property()
-    def image_query(self) -> BaseImageQueryDriver:
+    def image_query_driver(self) -> BaseImageQueryDriver:
         return DummyImageQueryDriver()
 
     @lazy_property()
-    def embedding(self) -> BaseEmbeddingDriver:
+    def embedding_driver(self) -> BaseEmbeddingDriver:
         return DummyEmbeddingDriver()
 
     @lazy_property()
-    def vector_store(self) -> BaseVectorStoreDriver:
-        return DummyVectorStoreDriver(embedding_driver=self.embedding)
+    def vector_store_driver(self) -> BaseVectorStoreDriver:
+        return DummyVectorStoreDriver(embedding_driver=self.embedding_driver)
 
     @lazy_property()
-    def conversation_memory(self) -> Optional[BaseConversationMemoryDriver]:
+    def conversation_memory_driver(self) -> Optional[BaseConversationMemoryDriver]:
         return None
 
     @lazy_property()
-    def text_to_speech(self) -> BaseTextToSpeechDriver:
+    def text_to_speech_driver(self) -> BaseTextToSpeechDriver:
         return DummyTextToSpeechDriver()
 
     @lazy_property()
-    def audio_transcription(self) -> BaseAudioTranscriptionDriver:
+    def audio_transcription_driver(self) -> BaseAudioTranscriptionDriver:
         return DummyAudioTranscriptionDriver()

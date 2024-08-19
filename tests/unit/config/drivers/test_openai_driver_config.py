@@ -15,7 +15,7 @@ class TestOpenAiDriverConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "OpenAiDriverConfig",
-            "prompt": {
+            "prompt_driver": {
                 "type": "OpenAiChatPromptDriver",
                 "base_url": None,
                 "model": "gpt-4o",
@@ -28,14 +28,14 @@ class TestOpenAiDriverConfig:
                 "user": "",
                 "use_native_tools": True,
             },
-            "conversation_memory": None,
-            "embedding": {
+            "conversation_memory_driver": None,
+            "embedding_driver": {
                 "base_url": None,
                 "model": "text-embedding-3-small",
                 "organization": None,
                 "type": "OpenAiEmbeddingDriver",
             },
-            "image_generation": {
+            "image_generation_driver": {
                 "api_version": None,
                 "base_url": None,
                 "image_size": "512x512",
@@ -46,7 +46,7 @@ class TestOpenAiDriverConfig:
                 "style": None,
                 "type": "OpenAiImageGenerationDriver",
             },
-            "image_query": {
+            "image_query_driver": {
                 "api_version": None,
                 "base_url": None,
                 "image_quality": "auto",
@@ -55,7 +55,7 @@ class TestOpenAiDriverConfig:
                 "organization": None,
                 "type": "OpenAiImageQueryDriver",
             },
-            "vector_store": {
+            "vector_store_driver": {
                 "embedding_driver": {
                     "base_url": None,
                     "model": "text-embedding-3-small",
@@ -64,7 +64,7 @@ class TestOpenAiDriverConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "text_to_speech": {
+            "text_to_speech_driver": {
                 "type": "OpenAiTextToSpeechDriver",
                 "api_version": None,
                 "base_url": None,
@@ -73,7 +73,7 @@ class TestOpenAiDriverConfig:
                 "organization": None,
                 "voice": "alloy",
             },
-            "audio_transcription": {
+            "audio_transcription_driver": {
                 "type": "OpenAiAudioTranscriptionDriver",
                 "api_version": None,
                 "base_url": None,

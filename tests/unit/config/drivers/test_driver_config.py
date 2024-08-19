@@ -11,29 +11,29 @@ class TestDriverConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "DriverConfig",
-            "prompt": {
+            "prompt_driver": {
                 "type": "DummyPromptDriver",
                 "temperature": 0.1,
                 "max_tokens": None,
                 "stream": False,
                 "use_native_tools": False,
             },
-            "conversation_memory": None,
-            "embedding": {"type": "DummyEmbeddingDriver"},
-            "image_generation": {"type": "DummyImageGenerationDriver"},
-            "image_query": {"type": "DummyImageQueryDriver"},
-            "vector_store": {
+            "conversation_memory_driver": None,
+            "embedding_driver": {"type": "DummyEmbeddingDriver"},
+            "image_generation_driver": {"type": "DummyImageGenerationDriver"},
+            "image_query_driver": {"type": "DummyImageQueryDriver"},
+            "vector_store_driver": {
                 "embedding_driver": {"type": "DummyEmbeddingDriver"},
                 "type": "DummyVectorStoreDriver",
             },
-            "text_to_speech": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription": {"type": "DummyAudioTranscriptionDriver"},
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }
 
     def test_from_dict(self, config):
         assert DriverConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
 
     def test_dot_update(self, config):
-        config.prompt.max_tokens = 10
+        config.prompt_driver.max_tokens = 10
 
-        assert config.prompt.max_tokens == 10
+        assert config.prompt_driver.max_tokens == 10

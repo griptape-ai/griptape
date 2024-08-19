@@ -20,7 +20,7 @@ class TestAzureOpenAiDriverConfig:
         assert config.to_dict() == {
             "type": "AzureOpenAiDriverConfig",
             "azure_endpoint": "http://localhost:8080",
-            "prompt": {
+            "prompt_driver": {
                 "type": "AzureOpenAiChatPromptDriver",
                 "base_url": None,
                 "model": "gpt-4o",
@@ -36,8 +36,8 @@ class TestAzureOpenAiDriverConfig:
                 "user": "",
                 "use_native_tools": True,
             },
-            "conversation_memory": None,
-            "embedding": {
+            "conversation_memory_driver": None,
+            "embedding_driver": {
                 "base_url": None,
                 "model": "text-embedding-3-small",
                 "api_version": "2023-05-15",
@@ -46,7 +46,7 @@ class TestAzureOpenAiDriverConfig:
                 "organization": None,
                 "type": "AzureOpenAiEmbeddingDriver",
             },
-            "image_generation": {
+            "image_generation_driver": {
                 "api_version": "2024-02-01",
                 "base_url": None,
                 "image_size": "512x512",
@@ -59,7 +59,7 @@ class TestAzureOpenAiDriverConfig:
                 "style": None,
                 "type": "AzureOpenAiImageGenerationDriver",
             },
-            "image_query": {
+            "image_query_driver": {
                 "base_url": None,
                 "image_quality": "auto",
                 "max_tokens": 256,
@@ -70,7 +70,7 @@ class TestAzureOpenAiDriverConfig:
                 "organization": None,
                 "type": "AzureOpenAiImageQueryDriver",
             },
-            "vector_store": {
+            "vector_store_driver": {
                 "embedding_driver": {
                     "base_url": None,
                     "model": "text-embedding-3-small",
@@ -82,6 +82,6 @@ class TestAzureOpenAiDriverConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "text_to_speech": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription": {"type": "DummyAudioTranscriptionDriver"},
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }

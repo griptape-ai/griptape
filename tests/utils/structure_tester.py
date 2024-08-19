@@ -25,7 +25,9 @@ from griptape.tasks import PromptTask
 
 def get_enabled_prompt_drivers(prompt_drivers_options) -> list[BasePromptDriver]:
     return [
-        prompt_driver_option.prompt for prompt_driver_option in prompt_drivers_options if prompt_driver_option.enabled
+        prompt_driver_option.prompt_driver
+        for prompt_driver_option in prompt_drivers_options
+        if prompt_driver_option.enabled
     ]
 
 
@@ -228,7 +230,7 @@ class StructureTester:
     def verify_structure_output(self, structure) -> dict:
         from griptape.config import config
 
-        config.drivers.prompt = AzureOpenAiChatPromptDriver(
+        config.drivers.prompt_driver = AzureOpenAiChatPromptDriver(
             api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
             model="gpt-4o",
             azure_deployment=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],

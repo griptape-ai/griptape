@@ -23,57 +23,59 @@ if TYPE_CHECKING:
 
 @define
 class BaseDriverConfig(ABC, SerializableMixin):
-    _prompt: BasePromptDriver = field(kw_only=True, default=None, metadata={"serializable": True}, alias="prompt")
-    _image_generation: BaseImageGenerationDriver = field(
-        kw_only=True, default=None, metadata={"serializable": True}, alias="image_generation"
+    _prompt_driver: BasePromptDriver = field(
+        kw_only=True, default=None, metadata={"serializable": True}, alias="prompt_driver"
     )
-    _image_query: BaseImageQueryDriver = field(
-        kw_only=True, default=None, metadata={"serializable": True}, alias="image_query"
+    _image_generation_driver: BaseImageGenerationDriver = field(
+        kw_only=True, default=None, metadata={"serializable": True}, alias="image_generation_driver"
     )
-    _embedding: BaseEmbeddingDriver = field(
-        kw_only=True, default=None, metadata={"serializable": True}, alias="embedding"
+    _image_query_driver: BaseImageQueryDriver = field(
+        kw_only=True, default=None, metadata={"serializable": True}, alias="image_query_driver"
     )
-    _vector_store: BaseVectorStoreDriver = field(
-        default=None, kw_only=True, metadata={"serializable": True}, alias="vector_store"
+    _embedding_driver: BaseEmbeddingDriver = field(
+        kw_only=True, default=None, metadata={"serializable": True}, alias="embedding_driver"
     )
-    _conversation_memory: Optional[BaseConversationMemoryDriver] = field(
-        default=None, kw_only=True, metadata={"serializable": True}, alias="conversation_memory"
+    _vector_store_driver: BaseVectorStoreDriver = field(
+        default=None, kw_only=True, metadata={"serializable": True}, alias="vector_store_driver"
     )
-    _text_to_speech: BaseTextToSpeechDriver = field(
-        default=None, kw_only=True, metadata={"serializable": True}, alias="text_to_speech"
+    _conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
+        default=None, kw_only=True, metadata={"serializable": True}, alias="conversation_memory_driver"
     )
-    _audio_transcription: BaseAudioTranscriptionDriver = field(
-        default=None, kw_only=True, metadata={"serializable": True}, alias="audio_transcription"
+    _text_to_speech_driver: BaseTextToSpeechDriver = field(
+        default=None, kw_only=True, metadata={"serializable": True}, alias="text_to_speech_driver"
+    )
+    _audio_transcription_driver: BaseAudioTranscriptionDriver = field(
+        default=None, kw_only=True, metadata={"serializable": True}, alias="audio_transcription_driver"
     )
 
     @lazy_property()
     @abstractmethod
-    def prompt(self) -> BasePromptDriver: ...
+    def prompt_driver(self) -> BasePromptDriver: ...
 
     @lazy_property()
     @abstractmethod
-    def image_generation(self) -> BaseImageGenerationDriver: ...
+    def image_generation_driver(self) -> BaseImageGenerationDriver: ...
 
     @lazy_property()
     @abstractmethod
-    def image_query(self) -> BaseImageQueryDriver: ...
+    def image_query_driver(self) -> BaseImageQueryDriver: ...
 
     @lazy_property()
     @abstractmethod
-    def embedding(self) -> BaseEmbeddingDriver: ...
+    def embedding_driver(self) -> BaseEmbeddingDriver: ...
 
     @lazy_property()
     @abstractmethod
-    def vector_store(self) -> BaseVectorStoreDriver: ...
+    def vector_store_driver(self) -> BaseVectorStoreDriver: ...
 
     @lazy_property()
     @abstractmethod
-    def conversation_memory(self) -> Optional[BaseConversationMemoryDriver]: ...
+    def conversation_memory_driver(self) -> Optional[BaseConversationMemoryDriver]: ...
 
     @lazy_property()
     @abstractmethod
-    def text_to_speech(self) -> BaseTextToSpeechDriver: ...
+    def text_to_speech_driver(self) -> BaseTextToSpeechDriver: ...
 
     @lazy_property()
     @abstractmethod
-    def audio_transcription(self) -> BaseAudioTranscriptionDriver: ...
+    def audio_transcription_driver(self) -> BaseAudioTranscriptionDriver: ...

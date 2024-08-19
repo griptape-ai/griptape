@@ -12,11 +12,11 @@ from griptape.structures import Agent
 from griptape.tools import FileManagerTool, QueryTool, WebScraperTool
 
 config.drivers = OpenAiDriverConfig(
-    prompt=OpenAiChatPromptDriver(model="gpt-4"),
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
 )
 
 config.drivers = OpenAiDriverConfig(
-    prompt=OpenAiChatPromptDriver(model="gpt-4"),
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
 )
 
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())

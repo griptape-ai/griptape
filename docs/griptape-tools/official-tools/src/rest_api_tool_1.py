@@ -9,7 +9,7 @@ from griptape.tasks import ToolkitTask
 from griptape.tools import RestApiTool
 
 config.drivers = DriverConfig(
-    prompt=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.1),
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.1),
 )
 
 posts_client = RestApiTool(

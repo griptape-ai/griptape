@@ -7,7 +7,7 @@ from griptape.events import EventListener, FinishStructureRunEvent, event_bus
 from griptape.rules import Rule
 from griptape.structures import Agent
 
-config.drivers = DriverConfig(prompt=OpenAiChatPromptDriver(model="gpt-3.5-turbo", temperature=0.7))
+config.drivers = DriverConfig(prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo", temperature=0.7))
 event_bus.add_event_listeners(
     [
         EventListener(

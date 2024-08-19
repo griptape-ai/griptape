@@ -15,7 +15,7 @@ class TestGoogleDriverConfig:
     def test_to_dict(self, config):
         assert config.to_dict() == {
             "type": "GoogleDriverConfig",
-            "prompt": {
+            "prompt_driver": {
                 "type": "GooglePromptDriver",
                 "temperature": 0.1,
                 "max_tokens": None,
@@ -26,15 +26,15 @@ class TestGoogleDriverConfig:
                 "tool_choice": "auto",
                 "use_native_tools": True,
             },
-            "image_generation": {"type": "DummyImageGenerationDriver"},
-            "image_query": {"type": "DummyImageQueryDriver"},
-            "embedding": {
+            "image_generation_driver": {"type": "DummyImageGenerationDriver"},
+            "image_query_driver": {"type": "DummyImageQueryDriver"},
+            "embedding_driver": {
                 "type": "GoogleEmbeddingDriver",
                 "model": "models/embedding-001",
                 "task_type": "retrieval_document",
                 "title": None,
             },
-            "vector_store": {
+            "vector_store_driver": {
                 "type": "LocalVectorStoreDriver",
                 "embedding_driver": {
                     "type": "GoogleEmbeddingDriver",
@@ -43,9 +43,9 @@ class TestGoogleDriverConfig:
                     "title": None,
                 },
             },
-            "conversation_memory": None,
-            "text_to_speech": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription": {"type": "DummyAudioTranscriptionDriver"},
+            "conversation_memory_driver": None,
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }
 
     def test_from_dict(self, config):
