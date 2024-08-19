@@ -55,7 +55,7 @@ class RedisConversationMemoryDriver(BaseConversationMemoryDriver):
 
     def load(self) -> Optional[BaseConversationMemory]:
         key = self.index
-        memory_json = self.client.hget(key, self.conversation_id)
+        memory_json: Optional[str] = self.client.hget(key, self.conversation_id)  # type: ignore[assignment]
         if memory_json:
             memory = BaseConversationMemory.from_json(memory_json)
             memory.driver = self

@@ -18,7 +18,7 @@ class OpenAiTextToSpeechDriver(BaseTextToSpeechDriver):
         metadata={"serializable": True},
     )
     format: Literal["mp3", "opus", "aac", "flac"] = field(default="mp3", kw_only=True, metadata={"serializable": True})
-    api_type: str = field(default=openai.api_type, kw_only=True)
+    api_type: Optional[str] = field(default=openai.api_type, kw_only=True)
     api_version: Optional[str] = field(default=openai.api_version, kw_only=True, metadata={"serializable": True})
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True)

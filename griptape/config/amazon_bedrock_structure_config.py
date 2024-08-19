@@ -12,6 +12,7 @@ from griptape.drivers import (
     AmazonBedrockTitanEmbeddingDriver,
     BaseEmbeddingDriver,
     BaseImageGenerationDriver,
+    BaseImageQueryDriver,
     BasePromptDriver,
     BaseVectorStoreDriver,
     BedrockClaudeImageQueryModelDriver,
@@ -63,7 +64,7 @@ class AmazonBedrockStructureConfig(StructureConfig):
         kw_only=True,
         metadata={"serializable": True},
     )
-    image_query_driver: BaseImageGenerationDriver = field(
+    image_query_driver: BaseImageQueryDriver = field(
         default=Factory(
             lambda self: AmazonBedrockImageQueryDriver(
                 session=self.session,

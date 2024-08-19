@@ -85,7 +85,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             If the entry is found, it returns an instance of BaseVectorStoreDriver.Entry; otherwise, None is returned.
         """
         key = self._generate_key(vector_id, namespace)
-        result = self.client.hgetall(key)
+        result: dict[bytes, bytes] = self.client.hgetall(key)  # type: ignore[assignment]
         vector = np.frombuffer(result[b"vector"], dtype=np.float32).tolist()
         meta = json.loads(result[b"metadata"]) if b"metadata" in result else None
 
@@ -98,7 +98,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             A list of `BaseVectorStoreDriver.Entry` objects.
         """
         pattern = f"{namespace}:*" if namespace else "*"
-        keys = self.client.keys(pattern)
+
+        # Keys are of type bytes, so we need to decode them to strings
+        keys: list[bytes] = self.client.keys(pattern)  # type: ignore[assignment]
 
         entries = []
         for key in keys:
@@ -139,10 +141,10 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         query_params = {"vector": np.array(vector, dtype=np.float32).tobytes()}
 
-        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore[reportArgumentType]
+        results = self.client.ft(self.index).search(query_expression, query_params)  # pyright: ignore[reportArgumentType]
 
         query_results = []
-        for document in results:
+        for document in results.docs:  # type: ignore[attr-defined]
             metadata = json.loads(document.metadata) if hasattr(document, "metadata") else None
             namespace = document.id.split(":")[0] if ":" in document.id else None
             vector_id = document.id.split(":")[1] if ":" in document.id else document.id
