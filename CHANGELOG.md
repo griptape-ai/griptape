@@ -63,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exception when adding `ErrorArtifact`'s to the Prompt Stack.
 - Concurrency bug in `BaseVectorStoreDriver.upsert_text_artifacts`.
 - Schema issues with Tools that use lists.
+- Issue with native Tool calling and streaming with `GooglePromptDriver`.
 
 ## [0.29.2] - 2024-08-16
 
