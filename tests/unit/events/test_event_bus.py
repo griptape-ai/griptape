@@ -5,6 +5,11 @@ from tests.mocks.mock_event import MockEvent
 
 
 class TestEventBus:
+    def test_init(self):
+        from griptape.events.event_bus import _EventBus
+
+        assert _EventBus() is _EventBus()
+
     def test_add_event_listeners(self):
         EventBus.add_event_listeners([EventListener(), EventListener()])
         assert len(EventBus.event_listeners) == 2
