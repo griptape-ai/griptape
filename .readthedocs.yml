@@ -7,7 +7,7 @@ build:
   jobs:
     post_create_environment:
       - pip install poetry
-      - poetry configs virtualenvs.create false
+      - poetry config virtualenvs.create false
     post_install:
       - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH poetry install --with docs
 
