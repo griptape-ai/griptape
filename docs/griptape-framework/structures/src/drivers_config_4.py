@@ -1,7 +1,7 @@
-from griptape.configs import config
+from griptape.configs import Defaults
 from griptape.configs.drivers import GoogleDriversConfig
 from griptape.structures import Agent
 
-config.drivers_config = GoogleDriversConfig()
+Defaults.drivers_config = GoogleDriversConfig()
 
 agent = Agent()

@@ -1,4 +1,4 @@
-from griptape.configs import config
+from griptape.configs import Defaults
 from griptape.configs.drivers import AmazonBedrockDriversConfig
 from griptape.structures import Agent
 
@@ -13,6 +13,6 @@ dict_config["embedding_driver"] = {
 }
 custom_config = AmazonBedrockDriversConfig.from_dict(dict_config)
 
-config.drivers_config = custom_config
+Defaults.drivers_config = custom_config
 
 agent = Agent()

@@ -1,13 +1,13 @@
 import os
 
-from griptape.configs import config
+from griptape.configs import Defaults
 from griptape.configs.drivers import DriversConfig
 from griptape.drivers import AwsIotCoreEventListenerDriver, OpenAiChatPromptDriver
 from griptape.events import EventListener, FinishStructureRunEvent, event_bus
 from griptape.rules import Rule
 from griptape.structures import Agent
 
-config.drivers_config = DriversConfig(prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo", temperature=0.7))
+Defaults.drivers_config = DriversConfig(prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo", temperature=0.7))
 event_bus.add_event_listeners(
     [
         EventListener(

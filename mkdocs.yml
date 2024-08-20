@@ -80,7 +80,7 @@ nav:
       - Cloud API:
           - API Reference: "griptape-cloud/api/api-reference.md"
       - Structures:
-          - Structure Config: "griptape-cloud/structures/structure-config.md"
+          - Structure Config: "griptape-cloud/structures/structure-Defaults.md"
   - Framework:
       - Overview: "griptape-framework/index.md"
       - Structures:

@@ -7,12 +7,12 @@ from typing import Callable
 from attrs import define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.configs import config
+from griptape.configs import Defaults
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2
 
-logger = logging.getLogger(config.logging_config.logger_name)
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.configs import config
+from griptape.configs import Defaults
 
 if TYPE_CHECKING:
     from griptape.artifacts import ImageArtifact
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 @define
 class BaseImageGenerationEngine(ABC):
     image_generation_driver: BaseImageGenerationDriver = field(
-        kw_only=True, default=Factory(lambda: config.drivers_config.image_generation_driver)
+        kw_only=True, default=Factory(lambda: Defaults.drivers_config.image_generation_driver)
     )
 
     @abstractmethod

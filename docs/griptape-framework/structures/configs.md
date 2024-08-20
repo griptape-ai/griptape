@@ -76,7 +76,7 @@ This approach ensures that you are informed through clear error messages if you 
 
 ### Logging Config
 
-Griptape provides a predefined [LoggingConfig](../../reference/griptape/configs/logging/logging_config.md)'s for easily customizing the logging events that the framework emits. In order to customize the logger, the logger can be fetched by using the `config.logging.logger_name`.
+Griptape provides a predefined [LoggingConfig](../../reference/griptape/configs/logging/logging_config.md)'s for easily customizing the logging events that the framework emits. In order to customize the logger, the logger can be fetched by using the `Defaults.logging.logger_name`.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/logging_config.py"

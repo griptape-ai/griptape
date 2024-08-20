@@ -1,8 +1,8 @@
 from .base_config import BaseConfig
-from .config import config
+from .defaults_config import Defaults
 
 
 __all__ = [
     "BaseConfig",
-    "config",
+    "Defaults",
 ]

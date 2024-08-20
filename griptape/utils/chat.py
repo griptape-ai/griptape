@@ -38,11 +38,11 @@ class Chat:
             print(text)  # noqa: T201
 
     def start(self) -> None:
-        from griptape.configs import config
+        from griptape.configs import Defaults
 
         # Hide Griptape's logging output except for errors
-        old_logger_level = logging.getLogger(config.logging_config.logger_name).getEffectiveLevel()
-        logging.getLogger(config.logging_config.logger_name).setLevel(self.logger_level)
+        old_logger_level = logging.getLogger(Defaults.logging_config.logger_name).getEffectiveLevel()
+        logging.getLogger(Defaults.logging_config.logger_name).setLevel(self.logger_level)
 
         if self.intro_text:
             self.output_fn(self.intro_text)
@@ -53,7 +53,7 @@ class Chat:
                 self.output_fn(self.exiting_text)
                 break
 
-            if config.drivers_config.prompt_driver.stream:
+            if Defaults.drivers_config.prompt_driver.stream:
                 self.output_fn(self.processing_text + "\n")
                 stream = Stream(self.structure).run(question)
                 first_chunk = next(stream)
@@ -65,4 +65,4 @@ class Chat:
                 self.output_fn(f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}")
 
         # Restore the original logger level
-        logging.getLogger(config.logging_config.logger_name).setLevel(old_logger_level)
+        logging.getLogger(Defaults.logging_config.logger_name).setLevel(old_logger_level)

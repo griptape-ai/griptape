@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
-from griptape.configs import config
+from griptape.configs import Defaults
 from griptape.memory.task.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class TextArtifactStorage(BaseArtifactStorage):
     vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(lambda: config.drivers_config.vector_store_driver)
+        default=Factory(lambda: Defaults.drivers_config.vector_store_driver)
     )
 
     def can_store(self, artifact: BaseArtifact) -> bool:
