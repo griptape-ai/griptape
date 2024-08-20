@@ -82,14 +82,14 @@ class ActivityMixin:
     def activity_description(self, activity: Callable) -> str:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
-        return Template(getattr(activity, "config")["description"]).render({"_self": self})
+        return Template(getattr(activity, "configs")["description"]).render({"_self": self})
 
     def activity_schema(self, activity: Callable) -> Optional[Schema]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
-        if getattr(activity, "config")["schema"] is not None:
+        if getattr(activity, "configs")["schema"] is not None:
             # Need to deepcopy to avoid modifying the original schema
-            config_schema = deepcopy(getattr(activity, "config")["schema"])
+            config_schema = deepcopy(getattr(activity, "configs")["schema"])
             activity_name = self.activity_name(activity)
 
             if self.extra_schema_properties is not None and activity_name in self.extra_schema_properties:

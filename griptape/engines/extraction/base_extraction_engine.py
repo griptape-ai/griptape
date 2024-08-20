@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Attribute, Factory, define, field
 
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.config import config
+from griptape.configs import config
 
 if TYPE_CHECKING:
     from griptape.artifacts import ErrorArtifact, ListArtifact

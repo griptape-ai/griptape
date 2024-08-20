@@ -1,7 +1,7 @@
 from json import dumps
 
-from griptape.config import config
-from griptape.config.drivers import DriversConfig
+from griptape.configs import config
+from griptape.configs.drivers import DriversConfig
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline

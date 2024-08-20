@@ -1,7 +1,7 @@
 import boto3
 import pytest
 
-from griptape.config.drivers import AmazonBedrockDriversConfig
+from griptape.configs.drivers import AmazonBedrockDriversConfig
 from tests.utils.aws import mock_aws_credentials
 
 

@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.config.drivers import DriversConfig
+from griptape.configs.drivers import DriversConfig
 
 
 class TestDriversConfig:
@@ -40,7 +40,7 @@ class TestDriversConfig:
 
     @pytest.mark.skip_mock_config()
     def test_lazy_init(self):
-        from griptape.config import config
+        from griptape.configs import config
 
         assert config.drivers_config._prompt_driver is None
         assert config.drivers_config._image_generation_driver is None

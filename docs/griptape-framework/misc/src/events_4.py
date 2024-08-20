@@ -1,6 +1,6 @@
 import logging
 
-from griptape.config import config
+from griptape.configs import config
 from griptape.structures import Agent
 from griptape.tools import PromptSummaryTool, WebScraperTool
 from griptape.utils import Stream

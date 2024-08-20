@@ -2,8 +2,8 @@ import os
 
 import boto3
 
-from griptape.config import config
-from griptape.config.drivers import AmazonBedrockDriversConfig
+from griptape.configs import config
+from griptape.configs.drivers import AmazonBedrockDriversConfig
 from griptape.structures import Agent
 
 config.drivers_config = AmazonBedrockDriversConfig(

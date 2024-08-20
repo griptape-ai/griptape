@@ -23,7 +23,7 @@ def activity(config: dict) -> Any:
             return func(self, *args, **kwargs)
 
         setattr(wrapper, "name", func.__name__)
-        setattr(wrapper, "config", validated_config)
+        setattr(wrapper, "configs", validated_config)
         setattr(wrapper, "is_activity", True)
 
         return wrapper

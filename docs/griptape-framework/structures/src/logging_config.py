@@ -1,8 +1,8 @@
 import logging
 
-from griptape.config import config
-from griptape.config.drivers import OpenAiDriversConfig
-from griptape.config.logging import TruncateLoggingFilter
+from griptape.configs import config
+from griptape.configs.drivers import OpenAiDriversConfig
+from griptape.configs.logging import TruncateLoggingFilter
 from griptape.structures import Agent
 
 config.drivers_config = OpenAiDriversConfig()

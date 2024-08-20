@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Factory, define, field
 
 from griptape.common import Message, PromptStack
-from griptape.config import config
+from griptape.configs import config
 from griptape.memory.structure import ConversationMemory
 from griptape.utils import J2
 

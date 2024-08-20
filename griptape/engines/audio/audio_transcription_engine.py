@@ -1,7 +1,7 @@
 from attrs import Factory, define, field
 
 from griptape.artifacts import AudioArtifact, TextArtifact
-from griptape.config import config
+from griptape.configs import config
 from griptape.drivers import BaseAudioTranscriptionDriver
 
 

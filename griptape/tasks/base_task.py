@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
-from griptape.config import config
+from griptape.configs import config
 from griptape.events import FinishTaskEvent, StartTaskEvent, event_bus
 from griptape.mixins import FuturesExecutorMixin
 

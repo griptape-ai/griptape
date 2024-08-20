@@ -4,7 +4,7 @@ from typing import Callable, Optional
 
 from attrs import define, field
 
-from griptape.config.drivers import DriversConfig
+from griptape.configs.drivers import DriversConfig
 from griptape.drivers import (
     AzureOpenAiChatPromptDriver,
     AzureOpenAiEmbeddingDriver,

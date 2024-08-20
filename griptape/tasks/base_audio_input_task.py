@@ -7,7 +7,7 @@ from typing import Callable
 from attrs import define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
-from griptape.config.config import config
+from griptape.configs.config import config
 from griptape.mixins import RuleMixin
 from griptape.tasks import BaseTask
 

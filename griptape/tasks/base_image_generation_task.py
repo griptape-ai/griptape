@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING
 
 from attrs import Attribute, define, field
 
-from griptape.config import config
+from griptape.configs import config
 from griptape.loaders import ImageLoader
 from griptape.mixins import BlobArtifactFileOutputMixin, RuleMixin
 from griptape.rules import Rule, Ruleset

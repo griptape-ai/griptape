@@ -7,7 +7,7 @@ from typing import Callable
 from attrs import Factory, define, field
 
 from griptape.artifacts import ListArtifact, TextArtifact
-from griptape.config import config
+from griptape.configs import config
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2

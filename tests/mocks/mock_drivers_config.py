@@ -1,6 +1,6 @@
 from attrs import define
 
-from griptape.config.drivers import DriversConfig
+from griptape.configs.drivers import DriversConfig
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from griptape.utils.decorators import lazy_property
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver

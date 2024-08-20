@@ -1,7 +1,7 @@
 import logging
 from unittest.mock import patch
 
-from griptape.config import config
+from griptape.configs import config
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
 from griptape.utils import Chat

@@ -4,7 +4,7 @@ from attrs import Factory, define, field
 from schema import Literal, Or, Schema
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
-from griptape.config import config
+from griptape.configs import config
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
     PromptResponseRagModule,

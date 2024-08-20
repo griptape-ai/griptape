@@ -6,7 +6,7 @@ from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import observable
-from griptape.config import config
+from griptape.configs import config
 from griptape.memory.structure import Run
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask

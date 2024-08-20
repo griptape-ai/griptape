@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Callable
 from attrs import Factory, define, field
 
 from griptape import utils
-from griptape.config import config
+from griptape.configs import config
 from griptape.engines.rag.modules import BaseRetrievalRagModule
 
 if TYPE_CHECKING:

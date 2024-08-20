@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.config.drivers import DriversConfig
+from griptape.configs.drivers import DriversConfig
 from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
     AmazonBedrockImageQueryDriver,

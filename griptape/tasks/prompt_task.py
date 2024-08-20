@@ -7,7 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
-from griptape.config import config
+from griptape.configs import config
 from griptape.mixins import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2

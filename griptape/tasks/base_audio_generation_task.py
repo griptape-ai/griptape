@@ -5,7 +5,7 @@ from abc import ABC
 
 from attrs import define
 
-from griptape.config import config
+from griptape.configs import config
 from griptape.mixins import BlobArtifactFileOutputMixin, RuleMixin
 from griptape.tasks import BaseTask
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
-from griptape.config import config
+from griptape.configs import config
 from griptape.memory.task.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:

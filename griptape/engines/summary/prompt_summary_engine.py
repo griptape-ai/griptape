@@ -7,7 +7,7 @@ from attrs import Attribute, Factory, define, field
 from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.common import Message, PromptStack
-from griptape.config import config
+from griptape.configs import config
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
 

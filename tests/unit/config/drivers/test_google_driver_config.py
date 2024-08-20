@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.config.drivers import GoogleDriversConfig
+from griptape.configs.drivers import GoogleDriversConfig
 
 
 class TestGoogleDriversConfig:

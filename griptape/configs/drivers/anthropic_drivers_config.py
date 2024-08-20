@@ -1,6 +1,6 @@
 from attrs import define
 
-from griptape.config.drivers import DriversConfig
+from griptape.configs.drivers import DriversConfig
 from griptape.drivers import (
     AnthropicImageQueryDriver,
     AnthropicPromptDriver,

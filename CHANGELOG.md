@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Method `try_find_task` to `Structure`.
 - `TranslateQueryRagModule` `RagEngine` module for translating input queries.
 - Global event bus, `griptape.events.event_bus`, for publishing and subscribing to events.
-- Global config, `griptape.config.config`, for setting global configuration defaults.
+- Global config, `griptape.configs.config`, for setting global configuration defaults.
 - Unique name generation for all `RagEngine` modules.
 - `ExtractionTool` for having the LLM extract structured data from text.
 - `PromptSummaryTool` for having the LLM summarize text.
@@ -31,10 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `EventPublisherMixin`.
 - **BREAKING**: Removed `Pipeline.prompt_driver` and `Workflow.prompt_driver`. `Agent.prompt_driver` has not been removed.
 - **BREAKING**: Removed `Pipeline.stream` and `Workflow.stream`. `Agent.stream` has not been removed.
-- **BREAKING**: Removed `Structure.embedding_driver`, set this via `griptape.config.config.drivers.embedding` instead.
-- **BREAKING**: Removed `Structure.custom_logger` and `Structure.logger_level`, set these via `griptape.config.config.logger` instead. 
+- **BREAKING**: Removed `Structure.embedding_driver`, set this via `griptape.configs.config.drivers.embedding` instead.
+- **BREAKING**: Removed `Structure.custom_logger` and `Structure.logger_level`, set these via `griptape.configs.config.logger` instead. 
 - **BREAKING**: Removed `BaseStructureConfig.merge_config`.
-- **BREAKING**: Renamed `StructureConfig` to `DriversConfig`, moved to `griptape.config.drivers` and renamed fields accordingly.
+- **BREAKING**: Renamed `StructureConfig` to `DriversConfig`, moved to `griptape.configs.drivers` and renamed fields accordingly.
 - **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules were adjusted accordingly.
 - **BREAKING**: Removed before and after response modules from `ResponseRagStage`.
 - **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.
@@ -53,7 +53,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `JsonExtractionTask`, and `CsvExtractionTask` use `ExtractionTask` instead.
 - **BREAKING**: Removed `TaskMemoryClient`, use `QueryClient`, `ExtractionTool`, or `PromptSummaryTool` instead.
 - **BREAKING**: `BaseTask.add_parent/child` now take a `BaseTask` instead of `str | BaseTask`.
-- Engines that previously required Drivers now pull from `griptape.config.config.drivers` by default.
+- Engines that previously required Drivers now pull from `griptape.configs.config.drivers` by default.
 - `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
 - `BaseTask.add_parent/child` now returns `self`, allowing for chaining.
 - `Chat` now sets the `griptape` logger level to `logging.ERROR`, suppressing all logs except for errors.

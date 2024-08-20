@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Factory, define, field
 
 from griptape.common import PromptStack
-from griptape.config import config
+from griptape.configs import config
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:

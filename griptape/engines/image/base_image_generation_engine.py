@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.config import config
+from griptape.configs import config
 
 if TYPE_CHECKING:
     from griptape.artifacts import ImageArtifact

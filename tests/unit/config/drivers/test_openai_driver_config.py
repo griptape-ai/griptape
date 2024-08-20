@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.config.drivers import OpenAiDriversConfig
+from griptape.configs.drivers import OpenAiDriversConfig
 
 
 class TestOpenAiDriversConfig:

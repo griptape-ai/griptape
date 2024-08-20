@@ -2,8 +2,8 @@ import io
 import logging
 from contextlib import redirect_stdout
 
-from griptape.config import config
-from griptape.config.logging import TruncateLoggingFilter
+from griptape.configs import config
+from griptape.configs.logging import TruncateLoggingFilter
 from griptape.structures import Agent
 
 

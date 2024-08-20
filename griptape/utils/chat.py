@@ -38,7 +38,7 @@ class Chat:
             print(text)  # noqa: T201
 
     def start(self) -> None:
-        from griptape.config import config
+        from griptape.configs import config
 
         # Hide Griptape's logging output except for errors
         old_logger_level = logging.getLogger(config.logging_config.logger_name).getEffectiveLevel()
