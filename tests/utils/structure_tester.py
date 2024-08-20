@@ -228,9 +228,9 @@ class StructureTester:
         return f"{prompt_driver.__class__.__name__}-{prompt_driver.model}"
 
     def verify_structure_output(self, structure) -> dict:
-        from griptape.config import config
+        from griptape.configs import Defaults
 
-        config.driver_config.prompt_driver = AzureOpenAiChatPromptDriver(
+        Defaults.drivers_config.prompt_driver = AzureOpenAiChatPromptDriver(
             api_key=os.environ["AZURE_OPENAI_API_KEY_1"],
             model="gpt-4o",
             azure_deployment=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],

@@ -3,11 +3,11 @@ import time
 import google.generativeai as genai
 
 from griptape.artifacts import GenericArtifact, TextArtifact
-from griptape.config import config
-from griptape.config.drivers import GoogleDriverConfig
+from griptape.configs import Defaults
+from griptape.configs.drivers import GoogleDriversConfig
 from griptape.structures import Agent
 
-config.driver_config = GoogleDriverConfig()
+Defaults.drivers_config = GoogleDriversConfig()
 
 video_file = genai.upload_file(path="tests/resources/griptape-comfyui.mp4")
 while video_file.state.name == "PROCESSING":

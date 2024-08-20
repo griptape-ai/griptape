@@ -1,11 +1,11 @@
 import os
 
 from griptape.drivers import AmazonSqsEventListenerDriver
-from griptape.events import EventListener, event_bus
+from griptape.events import EventBus, EventListener
 from griptape.rules import Rule
 from griptape.structures import Agent
 
-event_bus.add_event_listeners(
+EventBus.add_event_listeners(
     [
         EventListener(
             driver=AmazonSqsEventListenerDriver(

@@ -1,6 +1,6 @@
 from griptape.artifacts import TextArtifact
-from griptape.config import config
-from griptape.config.drivers import OpenAiDriverConfig
+from griptape.configs import Defaults
+from griptape.configs.drivers import OpenAiDriversConfig
 from griptape.drivers import (
     LocalVectorStoreDriver,
     OpenAiChatPromptDriver,
@@ -11,11 +11,11 @@ from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
 from griptape.tools import FileManagerTool, QueryTool, WebScraperTool
 
-config.driver_config = OpenAiDriverConfig(
+Defaults.drivers_config = OpenAiDriversConfig(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
 )
 
-config.driver_config = OpenAiDriverConfig(
+Defaults.drivers_config = OpenAiDriversConfig(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
 )
 

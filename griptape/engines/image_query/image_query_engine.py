@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.config import config
+from griptape.configs import Defaults
 
 if TYPE_CHECKING:
     from griptape.artifacts import ImageArtifact, TextArtifact
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @define
 class ImageQueryEngine:
     image_query_driver: BaseImageQueryDriver = field(
-        default=Factory(lambda: config.driver_config.image_query_driver), kw_only=True
+        default=Factory(lambda: Defaults.drivers_config.image_query_driver), kw_only=True
     )
 
     def run(self, query: str, images: list[ImageArtifact]) -> TextArtifact:

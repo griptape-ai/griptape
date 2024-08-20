@@ -1,12 +1,12 @@
 from typing import cast
 
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.events import CompletionChunkEvent, EventListener, event_bus
+from griptape.events import CompletionChunkEvent, EventBus, EventListener
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask
 from griptape.tools import PromptSummaryTool, WebScraperTool
 
-event_bus.add_event_listeners(
+EventBus.add_event_listeners(
     [
         EventListener(
             lambda e: print(cast(CompletionChunkEvent, e).token, end="", flush=True),

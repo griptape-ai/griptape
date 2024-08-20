@@ -91,7 +91,7 @@ nav:
           - Task Memory and Off Prompt: "griptape-framework/structures/task-memory.md"
           - Conversation Memory: "griptape-framework/structures/conversation-memory.md"
           - Rulesets: "griptape-framework/structures/rulesets.md"
-          - Config: "griptape-framework/structures/config.md"
+          - Configs: "griptape-framework/structures/configs.md"
           - Observability: "griptape-framework/structures/observability.md"
       - Tools:
           - Overview: "griptape-framework/tools/index.md"

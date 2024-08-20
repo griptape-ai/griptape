@@ -1,5 +1,6 @@
 from griptape.events import (
     BaseEvent,
+    EventBus,
     EventListener,
     FinishActionsSubtaskEvent,
     FinishPromptEvent,
@@ -7,7 +8,6 @@ from griptape.events import (
     StartActionsSubtaskEvent,
     StartPromptEvent,
     StartTaskEvent,
-    event_bus,
 )
 from griptape.structures import Agent
 
@@ -16,7 +16,7 @@ def handler(event: BaseEvent) -> None:
     print(event.__class__)
 
 
-event_bus.add_event_listeners(
+EventBus.add_event_listeners(
     [
         EventListener(
             handler,

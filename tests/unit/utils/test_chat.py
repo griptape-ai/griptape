@@ -1,7 +1,7 @@
 import logging
 from unittest.mock import patch
 
-from griptape.config import config
+from griptape.configs import Defaults
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
 from griptape.utils import Chat
@@ -37,7 +37,7 @@ class TestConversation:
 
         chat = Chat(agent)
 
-        logger = logging.getLogger(config.logging_config.logger_name)
+        logger = logging.getLogger(Defaults.logging_config.logger_name)
         logger.setLevel(logging.DEBUG)
 
         assert logger.getEffectiveLevel() == logging.DEBUG

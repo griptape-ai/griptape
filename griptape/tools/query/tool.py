@@ -4,7 +4,7 @@ from attrs import Factory, define, field
 from schema import Literal, Or, Schema
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
-from griptape.config import config
+from griptape.configs import Defaults
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
     PromptResponseRagModule,
@@ -26,7 +26,7 @@ class QueryTool(BaseTool, RuleMixin):
                 response_stage=ResponseRagStage(
                     response_modules=[
                         PromptResponseRagModule(
-                            prompt_driver=config.driver_config.prompt_driver, rulesets=self.rulesets
+                            prompt_driver=Defaults.drivers_config.prompt_driver, rulesets=self.rulesets
                         )
                     ],
                 ),

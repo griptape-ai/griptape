@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Factory, define, field
 
 from griptape.common import Message, PromptStack
-from griptape.config import config
+from griptape.configs import Defaults
 from griptape.memory.structure import ConversationMemory
 from griptape.utils import J2
 
@@ -18,7 +18,9 @@ if TYPE_CHECKING:
 @define
 class SummaryConversationMemory(ConversationMemory):
     offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
-    prompt_driver: BasePromptDriver = field(kw_only=True, default=Factory(lambda: config.driver_config.prompt_driver))
+    prompt_driver: BasePromptDriver = field(
+        kw_only=True, default=Factory(lambda: Defaults.drivers_config.prompt_driver)
+    )
     summary: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     summary_index: int = field(default=0, kw_only=True, metadata={"serializable": True})
     summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)

@@ -9,8 +9,8 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
-from griptape.config import config
-from griptape.events import FinishTaskEvent, StartTaskEvent, event_bus
+from griptape.configs import Defaults
+from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
 from griptape.mixins import FuturesExecutorMixin
 
 if TYPE_CHECKING:
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from griptape.memory.meta import BaseMetaEntry
     from griptape.structures import Structure
 
-logger = logging.getLogger(config.logging_config.logger_name)
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -137,7 +137,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
 
     def before_run(self) -> None:
         if self.structure is not None:
-            event_bus.publish_event(
+            EventBus.publish_event(
                 StartTaskEvent(
                     task_id=self.id,
                     task_parent_ids=self.parent_ids,
@@ -149,7 +149,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
 
     def after_run(self) -> None:
         if self.structure is not None:
-            event_bus.publish_event(
+            EventBus.publish_event(
                 FinishTaskEvent(
                     task_id=self.id,
                     task_parent_ids=self.parent_ids,

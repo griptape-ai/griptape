@@ -1,5 +1,5 @@
 from griptape import utils
-from griptape.events import BaseEvent, EventListener, FinishPromptEvent, event_bus
+from griptape.events import BaseEvent, EventBus, EventListener, FinishPromptEvent
 from griptape.structures import Agent
 
 token_counter = utils.TokenCounter()
@@ -10,7 +10,7 @@ def count_tokens(e: BaseEvent) -> None:
         token_counter.add_tokens(e.output_token_count)
 
 
-event_bus.add_event_listeners(
+EventBus.add_event_listeners(
     [
         EventListener(
             count_tokens,

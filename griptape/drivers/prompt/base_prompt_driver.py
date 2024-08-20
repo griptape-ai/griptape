@@ -16,7 +16,7 @@ from griptape.common import (
     TextMessageContent,
     observable,
 )
-from griptape.events import CompletionChunkEvent, FinishPromptEvent, StartPromptEvent, event_bus
+from griptape.events import CompletionChunkEvent, EventBus, FinishPromptEvent, StartPromptEvent
 from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
@@ -49,10 +49,10 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
-        event_bus.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
+        EventBus.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
     def after_run(self, result: Message) -> None:
-        event_bus.publish_event(
+        EventBus.publish_event(
             FinishPromptEvent(
                 model=self.model,
                 result=result.value,
@@ -126,12 +126,12 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 else:
                     delta_contents[content.index] = [content]
                 if isinstance(content, TextDeltaMessageContent):
-                    event_bus.publish_event(CompletionChunkEvent(token=content.text))
+                    EventBus.publish_event(CompletionChunkEvent(token=content.text))
                 elif isinstance(content, ActionCallDeltaMessageContent):
                     if content.tag is not None and content.name is not None and content.path is not None:
-                        event_bus.publish_event(CompletionChunkEvent(token=str(content)))
+                        EventBus.publish_event(CompletionChunkEvent(token=str(content)))
                     elif content.partial_input is not None:
-                        event_bus.publish_event(CompletionChunkEvent(token=content.partial_input))
+                        EventBus.publish_event(CompletionChunkEvent(token=content.partial_input))
 
         # Build a complete content from the content deltas
         return self.__build_message(list(delta_contents.values()), usage)

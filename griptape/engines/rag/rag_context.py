@@ -18,7 +18,7 @@ class RagContext(SerializableMixin):
 
     Attributes:
         query: Query provided by the user.
-        module_configs: Dictionary of module configs. First key should be a module name and the second a dictionary of config parameters.
+        module_configs: Dictionary of module configs. First key should be a module name and the second a dictionary of configs parameters.
         before_query: An optional list of strings to add before the query in response modules.
         after_query: An optional list of strings to add after the query in response modules.
         text_chunks: A list of text chunks to pass around from the retrieval stage to the response stage.

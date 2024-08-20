@@ -1,14 +1,14 @@
 from attrs import Factory, define, field
 
 from griptape.artifacts import AudioArtifact, TextArtifact
-from griptape.config import config
+from griptape.configs import Defaults
 from griptape.drivers import BaseAudioTranscriptionDriver
 
 
 @define
 class AudioTranscriptionEngine:
     audio_transcription_driver: BaseAudioTranscriptionDriver = field(
-        default=Factory(lambda: config.driver_config.audio_transcription_driver), kw_only=True
+        default=Factory(lambda: Defaults.drivers_config.audio_transcription_driver), kw_only=True
     )
 
     def run(self, audio: AudioArtifact, *args, **kwargs) -> TextArtifact:
