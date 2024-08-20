@@ -5,7 +5,7 @@ search:
 
 ## Overview
 
-You can configure the global [EventBus](../../reference/griptape/events/EventBus.md) with [EventListener](../../reference/griptape/events/event_listener.md)s to listen for various framework events.
+You can configure the global [EventBus](../../reference/griptape/events/event_bus.md) with [EventListener](../../reference/griptape/events/event_listener.md)s to listen for various framework events.
 See [Event Listener Drivers](../drivers/event-listener-drivers.md) for examples on forwarding events to external services.
 
 ## Specific Event Types
