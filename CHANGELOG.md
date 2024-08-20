@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Parsing streaming response with some OpenAi compatible services.
+
 ## [0.30.0] - 2024-08-20
 
 ### Added
