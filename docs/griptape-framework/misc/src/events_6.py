@@ -1,7 +1,7 @@
-from griptape.events import BaseEvent, EventListener, StartPromptEvent, event_bus
+from griptape.events import BaseEvent, EventBus, EventListener, StartPromptEvent
 from griptape.structures import Agent
 
-event_bus.add_event_listeners([EventListener(handler=lambda e: print(e), event_types=[StartPromptEvent])])
+EventBus.add_event_listeners([EventListener(handler=lambda e: print(e), event_types=[StartPromptEvent])])
 
 
 def handler(event: BaseEvent) -> None:

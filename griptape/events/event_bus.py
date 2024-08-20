@@ -4,12 +4,14 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
+from griptape.mixins.singleton_mixin import SingletonMixin
+
 if TYPE_CHECKING:
     from griptape.events import BaseEvent, EventListener
 
 
 @define
-class _EventBus:
+class _EventBus(SingletonMixin):
     _event_listeners: list[EventListener] = field(factory=list, kw_only=True, alias="_event_listeners")
 
     @property
@@ -41,4 +43,4 @@ class _EventBus:
         self._event_listeners.clear()
 
 
-event_bus = _EventBus()
+EventBus = _EventBus()

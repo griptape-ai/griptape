@@ -1,10 +1,10 @@
 import os
 
 from griptape.drivers import PusherEventListenerDriver
-from griptape.events import EventListener, FinishStructureRunEvent, event_bus
+from griptape.events import EventBus, EventListener, FinishStructureRunEvent
 from griptape.structures import Agent
 
-event_bus.add_event_listeners(
+EventBus.add_event_listeners(
     [
         EventListener(
             event_types=[FinishStructureRunEvent],

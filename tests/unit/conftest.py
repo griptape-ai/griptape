@@ -5,13 +5,13 @@ from tests.mocks.mock_drivers_config import MockDriversConfig
 
 @pytest.fixture(autouse=True)
 def mock_event_bus():
-    from griptape.events import event_bus
+    from griptape.events import EventBus
 
-    event_bus.clear_event_listeners()
+    EventBus.clear_event_listeners()
 
-    yield event_bus
+    yield EventBus
 
-    event_bus.clear_event_listeners()
+    EventBus.clear_event_listeners()
 
 
 @pytest.fixture(autouse=True)

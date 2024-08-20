@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Attribute, Factory, define, field
 
 from griptape.common import observable
-from griptape.events import FinishStructureRunEvent, StartStructureRunEvent, event_bus
+from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRunEvent
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory
@@ -137,7 +137,7 @@ class Structure(ABC):
 
         [task.reset() for task in self.tasks]
 
-        event_bus.publish_event(
+        EventBus.publish_event(
             StartStructureRunEvent(
                 structure_id=self.id,
                 input_task_input=self.input_task.input,
@@ -149,7 +149,7 @@ class Structure(ABC):
 
     @observable
     def after_run(self) -> None:
-        event_bus.publish_event(
+        EventBus.publish_event(
             FinishStructureRunEvent(
                 structure_id=self.id,
                 output_task_input=self.output_task.input,
