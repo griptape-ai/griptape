@@ -1,19 +1,13 @@
-from griptape.artifacts import TextArtifact
 from griptape.configs import Defaults
 from griptape.configs.drivers import OpenAiDriversConfig
 from griptape.drivers import (
+    AmazonBedrockPromptDriver,
     LocalVectorStoreDriver,
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
 )
-from griptape.memory import TaskMemory
-from griptape.memory.task.storage import TextArtifactStorage
 from griptape.structures import Agent
 from griptape.tools import FileManagerTool, QueryTool, WebScraperTool
-
-Defaults.drivers_config = OpenAiDriversConfig(
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
-)
 
 Defaults.drivers_config = OpenAiDriversConfig(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
@@ -22,16 +16,12 @@ Defaults.drivers_config = OpenAiDriversConfig(
 vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 
 agent = Agent(
-    task_memory=TaskMemory(
-        artifact_storages={
-            TextArtifact: TextArtifactStorage(
-                vector_store_driver=vector_store_driver,
-            )
-        }
-    ),
     tools=[
         WebScraperTool(off_prompt=True),
-        QueryTool(off_prompt=True),
+        QueryTool(
+            off_prompt=True,
+            prompt_driver=AmazonBedrockPromptDriver(model="anthropic.claude-3-haiku-20240307-v1:0"),
+        ),
         FileManagerTool(off_prompt=True),
     ],
 )

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from attrs import Factory, define, field
 from schema import Literal, Or, Schema
 
@@ -15,19 +17,22 @@ from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tools.base_tool import BaseTool
 from griptape.utils.decorators import activity
 
+if TYPE_CHECKING:
+    from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
+
 
 @define(kw_only=True)
 class QueryTool(BaseTool, RuleMixin):
     """Tool for performing a query against data."""
+
+    prompt_driver: BasePromptDriver = field(default=Factory(lambda: Defaults.drivers_config.prompt_driver))
 
     _rag_engine: RagEngine = field(
         default=Factory(
             lambda self: RagEngine(
                 response_stage=ResponseRagStage(
                     response_modules=[
-                        PromptResponseRagModule(
-                            prompt_driver=Defaults.drivers_config.prompt_driver, rulesets=self.rulesets
-                        )
+                        PromptResponseRagModule(prompt_driver=self.prompt_driver, rulesets=self.rulesets)
                     ],
                 ),
             ),
