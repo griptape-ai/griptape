@@ -1,16 +1,16 @@
 import pytest
 
-from griptape.config.drivers import AzureOpenAiDriverConfig
+from griptape.config.drivers import AzureOpenAiDriversConfig
 
 
-class TestAzureOpenAiDriverConfig:
+class TestAzureOpenAiDriversConfig:
     @pytest.fixture(autouse=True)
     def mock_openai(self, mocker):
         return mocker.patch("openai.AzureOpenAI")
 
     @pytest.fixture()
     def config(self):
-        return AzureOpenAiDriverConfig(
+        return AzureOpenAiDriversConfig(
             azure_endpoint="http://localhost:8080",
             azure_ad_token="test-token",
             azure_ad_token_provider=lambda: "test-provider",
@@ -18,7 +18,7 @@ class TestAzureOpenAiDriverConfig:
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "AzureOpenAiDriverConfig",
+            "type": "AzureOpenAiDriversConfig",
             "azure_endpoint": "http://localhost:8080",
             "prompt_driver": {
                 "type": "AzureOpenAiChatPromptDriver",

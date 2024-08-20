@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class VectorStoreRetrievalRagModule(BaseRetrievalRagModule):
     vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(lambda: config.driver_config.vector_store_driver)
+        default=Factory(lambda: config.drivers_config.vector_store_driver)
     )
     query_params: dict[str, Any] = field(factory=dict)
     process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], Sequence[TextArtifact]] = field(

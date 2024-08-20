@@ -1,6 +1,6 @@
 from attrs import define
 
-from griptape.config.drivers import DriverConfig
+from griptape.config.drivers import DriversConfig
 from griptape.drivers import (
     GoogleEmbeddingDriver,
     GooglePromptDriver,
@@ -10,7 +10,7 @@ from griptape.utils.decorators import lazy_property
 
 
 @define
-class GoogleDriverConfig(DriverConfig):
+class GoogleDriversConfig(DriversConfig):
     @lazy_property()
     def prompt_driver(self) -> GooglePromptDriver:
         return GooglePromptDriver(model="gemini-1.5-pro")

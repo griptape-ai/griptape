@@ -1,14 +1,14 @@
 from json import dumps
 
 from griptape.config import config
-from griptape.config.drivers import DriverConfig
+from griptape.config.drivers import DriversConfig
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask
 from griptape.tools import RestApiTool
 
-config.driver_config = DriverConfig(
+config.drivers_config = DriversConfig(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", temperature=0.1),
 )
 

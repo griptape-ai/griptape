@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseDriverConfig(ABC, SerializableMixin):
+class BaseDriversConfig(ABC, SerializableMixin):
     _prompt_driver: BasePromptDriver = field(
         kw_only=True, default=None, metadata={"serializable": True}, alias="prompt_driver"
     )

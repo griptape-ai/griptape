@@ -53,7 +53,7 @@ class Chat:
                 self.output_fn(self.exiting_text)
                 break
 
-            if config.driver_config.prompt_driver.stream:
+            if config.drivers_config.prompt_driver.stream:
                 self.output_fn(self.processing_text + "\n")
                 stream = Stream(self.structure).run(question)
                 first_chunk = next(stream)

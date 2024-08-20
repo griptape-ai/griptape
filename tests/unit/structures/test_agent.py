@@ -222,7 +222,7 @@ class TestAgent:
         storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
 
-        assert storage.vector_store_driver.embedding_driver == mock_config.driver_config.embedding_driver
+        assert storage.vector_store_driver.embedding_driver == mock_config.drivers_config.embedding_driver
 
     def finished_tasks(self):
         task = PromptTask("test prompt")

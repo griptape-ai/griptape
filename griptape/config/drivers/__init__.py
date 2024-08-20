@@ -1,20 +1,20 @@
-from .base_driver_config import BaseDriverConfig
-from .driver_config import DriverConfig
+from .base_drivers_config import BaseDriversConfig
+from .drivers_config import DriversConfig
 
-from .openai_driver_config import OpenAiDriverConfig
-from .azure_openai_driver_config import AzureOpenAiDriverConfig
-from .amazon_bedrock_driver_config import AmazonBedrockDriverConfig
-from .anthropic_driver_config import AnthropicDriverConfig
-from .google_driver_config import GoogleDriverConfig
-from .cohere_driver_config import CohereDriverConfig
+from .openai_drivers_config import OpenAiDriversConfig
+from .azure_openai_drivers_config import AzureOpenAiDriversConfig
+from .amazon_bedrock_drivers_config import AmazonBedrockDriversConfig
+from .anthropic_drivers_config import AnthropicDriversConfig
+from .google_drivers_config import GoogleDriversConfig
+from .cohere_drivers_config import CohereDriversConfig
 
 __all__ = [
-    "BaseDriverConfig",
-    "DriverConfig",
-    "OpenAiDriverConfig",
-    "AzureOpenAiDriverConfig",
-    "AmazonBedrockDriverConfig",
-    "AnthropicDriverConfig",
-    "GoogleDriverConfig",
-    "CohereDriverConfig",
+    "BaseDriversConfig",
+    "DriversConfig",
+    "OpenAiDriversConfig",
+    "AzureOpenAiDriversConfig",
+    "AmazonBedrockDriversConfig",
+    "AnthropicDriversConfig",
+    "GoogleDriversConfig",
+    "CohereDriversConfig",
 ]

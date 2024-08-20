@@ -1,5 +1,5 @@
 from griptape.config import config
-from griptape.config.drivers import DriverConfig
+from griptape.config.drivers import DriversConfig
 from griptape.drivers import (
     OpenAiChatPromptDriver,
     VoyageAiEmbeddingDriver,
@@ -7,12 +7,12 @@ from griptape.drivers import (
 from griptape.structures import Agent
 from griptape.tools import PromptSummaryTool, WebScraperTool
 
-config.driver_config = DriverConfig(
+config.drivers_config = DriversConfig(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
     embedding_driver=VoyageAiEmbeddingDriver(),
 )
 
-config.driver_config = DriverConfig(
+config.drivers_config = DriversConfig(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
     embedding_driver=VoyageAiEmbeddingDriver(),
 )

@@ -1,7 +1,7 @@
 from griptape.config import config
-from griptape.config.drivers import OpenAiDriverConfig
+from griptape.config.drivers import OpenAiDriversConfig
 from griptape.structures import Agent
 
-config.driver_config = OpenAiDriverConfig()
+config.drivers_config = OpenAiDriversConfig()
 
 agent = Agent()

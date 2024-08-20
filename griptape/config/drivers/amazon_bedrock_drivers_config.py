@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.config.drivers import DriverConfig
+from griptape.config.drivers import DriversConfig
 from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
     AmazonBedrockImageQueryDriver,
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 
 @define
-class AmazonBedrockDriverConfig(DriverConfig):
+class AmazonBedrockDriversConfig(DriversConfig):
     session: boto3.Session = field(
         default=Factory(lambda: import_optional_dependency("boto3").Session()),
         kw_only=True,

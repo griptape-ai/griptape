@@ -1,10 +1,10 @@
 import os
 
 from griptape.config import config
-from griptape.config.drivers import AzureOpenAiDriverConfig
+from griptape.config.drivers import AzureOpenAiDriversConfig
 from griptape.structures import Agent
 
-config.driver_config = AzureOpenAiDriverConfig(
+config.drivers_config = AzureOpenAiDriversConfig(
     azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_3"], api_key=os.environ["AZURE_OPENAI_API_KEY_3"]
 )
 

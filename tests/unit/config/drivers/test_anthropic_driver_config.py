@@ -1,9 +1,9 @@
 import pytest
 
-from griptape.config.drivers import AnthropicDriverConfig
+from griptape.config.drivers import AnthropicDriversConfig
 
 
-class TestAnthropicDriverConfig:
+class TestAnthropicDriversConfig:
     @pytest.fixture(autouse=True)
     def _mock_anthropic(self, mocker):
         mocker.patch("anthropic.Anthropic")
@@ -11,11 +11,11 @@ class TestAnthropicDriverConfig:
 
     @pytest.fixture()
     def config(self):
-        return AnthropicDriverConfig()
+        return AnthropicDriversConfig()
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "AnthropicDriverConfig",
+            "type": "AnthropicDriversConfig",
             "prompt_driver": {
                 "type": "AnthropicPromptDriver",
                 "temperature": 0.1,
@@ -51,4 +51,4 @@ class TestAnthropicDriverConfig:
         }
 
     def test_from_dict(self, config):
-        assert AnthropicDriverConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
+        assert AnthropicDriversConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()

@@ -1,6 +1,6 @@
 from attrs import define
 
-from griptape.config.drivers import DriverConfig
+from griptape.config.drivers import DriversConfig
 from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDriver
 from griptape.utils.decorators import lazy_property
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
@@ -10,7 +10,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 @define
-class MockDriverConfig(DriverConfig):
+class MockDriversConfig(DriversConfig):
     @lazy_property()
     def prompt_driver(self) -> MockPromptDriver:
         return MockPromptDriver()

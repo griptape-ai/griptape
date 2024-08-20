@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class TextArtifactStorage(BaseArtifactStorage):
     vector_store_driver: BaseVectorStoreDriver = field(
-        default=Factory(lambda: config.driver_config.vector_store_driver)
+        default=Factory(lambda: config.drivers_config.vector_store_driver)
     )
 
     def can_store(self, artifact: BaseArtifact) -> bool:

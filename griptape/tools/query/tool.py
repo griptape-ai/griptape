@@ -26,7 +26,7 @@ class QueryTool(BaseTool, RuleMixin):
                 response_stage=ResponseRagStage(
                     response_modules=[
                         PromptResponseRagModule(
-                            prompt_driver=config.driver_config.prompt_driver, rulesets=self.rulesets
+                            prompt_driver=config.drivers_config.prompt_driver, rulesets=self.rulesets
                         )
                     ],
                 ),

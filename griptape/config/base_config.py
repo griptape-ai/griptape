@@ -8,11 +8,11 @@ from attrs import define, field
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
-    from .drivers.base_driver_config import BaseDriverConfig
+    from .drivers.base_drivers_config import BaseDriversConfig
     from .logging.logging_config import LoggingConfig
 
 
 @define(kw_only=True)
 class BaseConfig(SerializableMixin, ABC):
     logging_config: LoggingConfig = field()
-    driver_config: BaseDriverConfig = field()
+    drivers_config: BaseDriversConfig = field()

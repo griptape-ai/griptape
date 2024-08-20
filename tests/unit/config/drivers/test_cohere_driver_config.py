@@ -1,16 +1,16 @@
 import pytest
 
-from griptape.config.drivers import CohereDriverConfig
+from griptape.config.drivers import CohereDriversConfig
 
 
-class TestCohereDriverConfig:
+class TestCohereDriversConfig:
     @pytest.fixture()
     def config(self):
-        return CohereDriverConfig(api_key="api_key")
+        return CohereDriversConfig(api_key="api_key")
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "CohereDriverConfig",
+            "type": "CohereDriversConfig",
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {"type": "DummyImageQueryDriver"},
             "conversation_memory_driver": None,

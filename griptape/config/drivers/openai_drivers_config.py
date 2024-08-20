@@ -1,6 +1,6 @@
 from attrs import define
 
-from griptape.config.drivers import DriverConfig
+from griptape.config.drivers import DriversConfig
 from griptape.drivers import (
     LocalVectorStoreDriver,
     OpenAiAudioTranscriptionDriver,
@@ -14,7 +14,7 @@ from griptape.utils.decorators import lazy_property
 
 
 @define
-class OpenAiDriverConfig(DriverConfig):
+class OpenAiDriversConfig(DriversConfig):
     @lazy_property()
     def prompt_driver(self) -> OpenAiChatPromptDriver:
         return OpenAiChatPromptDriver(model="gpt-4o")

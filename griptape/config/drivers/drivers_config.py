@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define
 
-from griptape.config.drivers import BaseDriverConfig
+from griptape.config.drivers import BaseDriversConfig
 from griptape.drivers import (
     DummyAudioTranscriptionDriver,
     DummyEmbeddingDriver,
@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 
 
 @define
-class DriverConfig(BaseDriverConfig):
+class DriversConfig(BaseDriversConfig):
     @lazy_property()
     def prompt_driver(self) -> BasePromptDriver:
         return DummyPromptDriver()

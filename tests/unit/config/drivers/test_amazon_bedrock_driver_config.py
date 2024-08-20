@@ -1,11 +1,11 @@
 import boto3
 import pytest
 
-from griptape.config.drivers import AmazonBedrockDriverConfig
+from griptape.config.drivers import AmazonBedrockDriversConfig
 from tests.utils.aws import mock_aws_credentials
 
 
-class TestAmazonBedrockDriverConfig:
+class TestAmazonBedrockDriversConfig:
     @pytest.fixture(autouse=True)
     def _run_before_and_after_tests(self):
         mock_aws_credentials()
@@ -13,11 +13,11 @@ class TestAmazonBedrockDriverConfig:
     @pytest.fixture()
     def config(self):
         mock_aws_credentials()
-        return AmazonBedrockDriverConfig()
+        return AmazonBedrockDriversConfig()
 
     @pytest.fixture()
     def config_with_values(self):
-        return AmazonBedrockDriverConfig(
+        return AmazonBedrockDriversConfig(
             session=boto3.Session(
                 aws_access_key_id="testing", aws_secret_access_key="testing", region_name="region-value"
             )
@@ -62,17 +62,17 @@ class TestAmazonBedrockDriverConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "type": "AmazonBedrockDriverConfig",
+            "type": "AmazonBedrockDriversConfig",
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }
 
     def test_from_dict(self, config):
-        assert AmazonBedrockDriverConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
+        assert AmazonBedrockDriversConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
 
     def test_from_dict_with_values(self, config_with_values):
         assert (
-            AmazonBedrockDriverConfig.from_dict(config_with_values.to_dict()).to_dict() == config_with_values.to_dict()
+            AmazonBedrockDriversConfig.from_dict(config_with_values.to_dict()).to_dict() == config_with_values.to_dict()
         )
 
     def test_to_dict_with_values(self, config_with_values):
@@ -114,7 +114,7 @@ class TestAmazonBedrockDriverConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "type": "AmazonBedrockDriverConfig",
+            "type": "AmazonBedrockDriversConfig",
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }

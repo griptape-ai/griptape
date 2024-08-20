@@ -1,7 +1,7 @@
 from griptape.config import config
-from griptape.config.drivers import AnthropicDriverConfig
+from griptape.config.drivers import AnthropicDriversConfig
 from griptape.structures import Agent
 
-config.driver_config = AnthropicDriverConfig()
+config.drivers_config = AnthropicDriversConfig()
 
 agent = Agent()

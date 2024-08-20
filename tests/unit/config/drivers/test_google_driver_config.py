@@ -1,20 +1,20 @@
 import pytest
 
-from griptape.config.drivers import GoogleDriverConfig
+from griptape.config.drivers import GoogleDriversConfig
 
 
-class TestGoogleDriverConfig:
+class TestGoogleDriversConfig:
     @pytest.fixture(autouse=True)
     def mock_openai(self, mocker):
         return mocker.patch("google.generativeai.GenerativeModel")
 
     @pytest.fixture()
     def config(self):
-        return GoogleDriverConfig()
+        return GoogleDriversConfig()
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "GoogleDriverConfig",
+            "type": "GoogleDriversConfig",
             "prompt_driver": {
                 "type": "GooglePromptDriver",
                 "temperature": 0.1,
@@ -49,4 +49,4 @@ class TestGoogleDriverConfig:
         }
 
     def test_from_dict(self, config):
-        assert GoogleDriverConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
+        assert GoogleDriversConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()

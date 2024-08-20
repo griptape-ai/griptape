@@ -4,7 +4,7 @@ from typing import Callable, Optional
 
 from attrs import define, field
 
-from griptape.config.drivers import DriverConfig
+from griptape.config.drivers import DriversConfig
 from griptape.drivers import (
     AzureOpenAiChatPromptDriver,
     AzureOpenAiEmbeddingDriver,
@@ -16,8 +16,8 @@ from griptape.utils.decorators import lazy_property
 
 
 @define
-class AzureOpenAiDriverConfig(DriverConfig):
-    """Azure OpenAI Driver Configuration.
+class AzureOpenAiDriversConfig(DriversConfig):
+    """Azure OpenAI Drivers Configuration.
 
     Attributes:
         azure_endpoint: The endpoint for the Azure OpenAI instance.

@@ -1,20 +1,20 @@
 import pytest
 
-from griptape.config.drivers import OpenAiDriverConfig
+from griptape.config.drivers import OpenAiDriversConfig
 
 
-class TestOpenAiDriverConfig:
+class TestOpenAiDriversConfig:
     @pytest.fixture(autouse=True)
     def mock_openai(self, mocker):
         return mocker.patch("openai.OpenAI")
 
     @pytest.fixture()
     def config(self):
-        return OpenAiDriverConfig()
+        return OpenAiDriversConfig()
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "type": "OpenAiDriverConfig",
+            "type": "OpenAiDriversConfig",
             "prompt_driver": {
                 "type": "OpenAiChatPromptDriver",
                 "base_url": None,
@@ -83,4 +83,4 @@ class TestOpenAiDriverConfig:
         }
 
     def test_from_dict(self, config):
-        assert OpenAiDriverConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()
+        assert OpenAiDriversConfig.from_dict(config.to_dict()).to_dict() == config.to_dict()

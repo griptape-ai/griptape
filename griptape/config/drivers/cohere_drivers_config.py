@@ -1,6 +1,6 @@
 from attrs import define, field
 
-from griptape.config.drivers import DriverConfig
+from griptape.config.drivers import DriversConfig
 from griptape.drivers import (
     CohereEmbeddingDriver,
     CoherePromptDriver,
@@ -10,7 +10,7 @@ from griptape.utils.decorators import lazy_property
 
 
 @define
-class CohereDriverConfig(DriverConfig):
+class CohereDriversConfig(DriversConfig):
     api_key: str = field(metadata={"serializable": False}, kw_only=True)
 
     @lazy_property()

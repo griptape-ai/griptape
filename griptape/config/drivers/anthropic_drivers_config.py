@@ -1,6 +1,6 @@
 from attrs import define
 
-from griptape.config.drivers import DriverConfig
+from griptape.config.drivers import DriversConfig
 from griptape.drivers import (
     AnthropicImageQueryDriver,
     AnthropicPromptDriver,
@@ -11,7 +11,7 @@ from griptape.utils.decorators import lazy_property
 
 
 @define
-class AnthropicDriverConfig(DriverConfig):
+class AnthropicDriversConfig(DriversConfig):
     @lazy_property()
     def prompt_driver(self) -> AnthropicPromptDriver:
         return AnthropicPromptDriver(model="claude-3-5-sonnet-20240620")
