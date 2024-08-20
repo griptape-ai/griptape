@@ -1,6 +1,7 @@
 import pytest
 
 from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.common import (
     ActionCallMessageContent,
     ActionResultMessageContent,
@@ -45,6 +46,8 @@ class TestPromptStack:
             "role",
         )
 
+        prompt_stack.add_message(ErrorArtifact("foo"), "role")
+
         assert prompt_stack.messages[0].role == "role"
         assert isinstance(prompt_stack.messages[0].content[0], TextMessageContent)
         assert prompt_stack.messages[0].content[0].artifact.value == "foo"
@@ -84,6 +87,9 @@ class TestPromptStack:
         assert prompt_stack.messages[6].role == "role"
         assert isinstance(prompt_stack.messages[6].content[0], GenericMessageContent)
         assert prompt_stack.messages[6].content[0].artifact.value == "foo"
+
+        assert prompt_stack.messages[7].role == "role"
+        assert isinstance(prompt_stack.messages[7].content[0], TextMessageContent)
 
     def test_add_system_message(self, prompt_stack):
         prompt_stack.add_system_message("foo")

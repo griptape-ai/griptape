@@ -37,6 +37,4 @@ class AmazonBedrockTokenizer(BaseTokenizer):
     characters_per_token: int = field(default=4, kw_only=True)
 
     def count_tokens(self, text: str) -> int:
-        num_tokens = (len(text) + self.characters_per_token - 1) // self.characters_per_token
-
-        return num_tokens
+        return (len(text) + self.characters_per_token - 1) // self.characters_per_token

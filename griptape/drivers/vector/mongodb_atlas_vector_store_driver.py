@@ -160,7 +160,7 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         if namespace:
             pipeline[0]["$vectorSearch"]["filter"] = {"namespace": namespace}
 
-        results = [
+        return [
             BaseVectorStoreDriver.Entry(
                 id=str(doc["_id"]),
                 vector=doc[self.vector_path] if include_vectors else [],
@@ -170,8 +170,6 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             )
             for doc in collection.aggregate(pipeline)
         ]
-
-        return results
 
     def delete_vector(self, vector_id: str) -> None:
         """Deletes the vector from the collection."""

@@ -3,11 +3,10 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.artifacts import TextArtifact
+from griptape.events import EventBus
 from griptape.events.event_listener import EventListener
 from griptape.structures import Agent, Workflow
 from griptape.tasks import ActionsSubtask
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_task import MockTask
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -15,12 +14,11 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestBaseTask:
     @pytest.fixture()
     def task(self):
+        EventBus.add_event_listeners([EventListener(handler=Mock())])
         agent = Agent(
-            prompt_driver=MockPromptDriver(),
-            embedding_driver=MockEmbeddingDriver(),
             tools=[MockTool()],
-            event_listeners=[EventListener(handler=Mock())],
         )
+        EventBus.add_event_listeners([EventListener(handler=Mock())])
 
         agent.add_task(MockTask("foobar", max_meta_memory_entries=2))
 
@@ -76,7 +74,81 @@ class TestBaseTask:
 
         assert child.parents_output_text == "foobar1\nfoobar3"
 
+    def test_parents_property_no_structure(self, task):
+        workflow = Workflow()
+        task1 = MockTask("foobar1", id="foobar1")
+        task2 = MockTask("foobar2", id="foobar2")
+        task3 = MockTask("foobar3", id="foobar3")
+        child = MockTask("foobar", id="foobar")
+
+        child.add_parent(task1)
+        child.add_parent(task2)
+        child.add_parent(task3)
+
+        with pytest.raises(ValueError, match="Structure must be set to access parents"):
+            child.parents  # noqa: B018
+
+        workflow.add_tasks(task1, task2, task3, child)
+        child.structure = workflow
+
+        assert len(child.parents) == 3
+
+    def test_children_property_no_structure(self, task):
+        workflow = Workflow()
+        task1 = MockTask("foobar1", id="foobar1")
+        task2 = MockTask("foobar2", id="foobar2")
+        task3 = MockTask("foobar3", id="foobar3")
+        parent = MockTask("foobar", id="foobar")
+
+        parent.add_child(task1)
+        parent.add_child(task2)
+        parent.add_child(task3)
+
+        with pytest.raises(ValueError, match="Structure must be set to access children"):
+            parent.children  # noqa: B018
+
+        workflow.add_tasks(task1, task2, task3, parent)
+        parent.structure = workflow
+
+        assert len(parent.children) == 3
+
     def test_execute_publish_events(self, task):
         task.execute()
 
-        assert task.structure.event_listeners[0].handler.call_count == 2
+        assert EventBus.event_listeners[0].handler.call_count == 2
+
+    def test_add_parent(self, task):
+        parent = MockTask("parent foobar", id="parent_foobar")
+
+        result = task.add_parent(parent)
+
+        assert parent.id in task.parent_ids
+        assert task.id in parent.child_ids
+        assert result == task
+
+    def test_add_child(self, task):
+        child = MockTask("child foobar", id="child_foobar")
+
+        result = task.add_child(child)
+
+        assert child.id in task.child_ids
+        assert task.id in child.parent_ids
+        assert result == task
+
+    def test_add_parent_bitshift(self, task):
+        parent = MockTask("parent foobar", id="parent_foobar")
+
+        added_task = task << parent
+
+        assert parent.id in task.parent_ids
+        assert task.id in parent.child_ids
+        assert added_task == parent
+
+    def test_add_child_bitshift(self, task):
+        child = MockTask("child foobar", id="child_foobar")
+
+        added_task = task >> child
+
+        assert child.id in task.child_ids
+        assert task.id in child.parent_ids
+        assert added_task == child

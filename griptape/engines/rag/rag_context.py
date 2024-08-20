@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -18,11 +18,11 @@ class RagContext(SerializableMixin):
 
     Attributes:
         query: Query provided by the user.
-        module_configs: Dictionary of module configs. First key should be a module name and the second a dictionary of config parameters.
-        before_query: An optional list of strings to add before the query in generation modules.
-        after_query: An optional list of strings to add after the query in generation modules.
-        text_chunks: A list of text chunks to pass around from the retrieval stage to the generation stage.
-        output: Final output from the generation stage.
+        module_configs: Dictionary of module configs. First key should be a module name and the second a dictionary of configs parameters.
+        before_query: An optional list of strings to add before the query in response modules.
+        after_query: An optional list of strings to add after the query in response modules.
+        text_chunks: A list of text chunks to pass around from the retrieval stage to the response stage.
+        outputs: List of outputs from the response stage.
     """
 
     query: str = field(metadata={"serializable": True})
@@ -30,7 +30,7 @@ class RagContext(SerializableMixin):
     before_query: list[str] = field(factory=list, metadata={"serializable": True})
     after_query: list[str] = field(factory=list, metadata={"serializable": True})
     text_chunks: list[TextArtifact] = field(factory=list, metadata={"serializable": True})
-    output: Optional[BaseArtifact] = field(default=None, metadata={"serializable": True})
+    outputs: list[BaseArtifact] = field(factory=list, metadata={"serializable": True})
 
     def get_references(self) -> list[Reference]:
         return utils.references_from_artifacts(self.text_chunks)

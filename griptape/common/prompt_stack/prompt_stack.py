@@ -4,7 +4,15 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.artifacts import ActionArtifact, BaseArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import (
+    ActionArtifact,
+    BaseArtifact,
+    ErrorArtifact,
+    GenericArtifact,
+    ImageArtifact,
+    ListArtifact,
+    TextArtifact,
+)
 from griptape.common import (
     ActionCallMessageContent,
     ActionResultMessageContent,
@@ -62,6 +70,8 @@ class PromptStack(SerializableMixin):
             return [ImageMessageContent(artifact)]
         elif isinstance(artifact, GenericArtifact):
             return [GenericMessageContent(artifact)]
+        elif isinstance(artifact, ErrorArtifact):
+            return [TextMessageContent(TextArtifact(artifact.to_text()))]
         elif isinstance(artifact, ActionArtifact):
             action = artifact.value
             output = action.output
@@ -71,10 +81,6 @@ class PromptStack(SerializableMixin):
                 return [ActionResultMessageContent(output, action=action)]
         elif isinstance(artifact, ListArtifact):
             processed_contents = [self.__to_message_content(artifact) for artifact in artifact.value]
-            flattened_content = [
-                sub_content for processed_content in processed_contents for sub_content in processed_content
-            ]
-
-            return flattened_content
+            return [sub_content for processed_content in processed_contents for sub_content in processed_content]
         else:
             raise ValueError(f"Unsupported artifact type: {type(artifact)}")

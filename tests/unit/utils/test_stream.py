@@ -2,18 +2,17 @@ from collections.abc import Iterator
 
 import pytest
 
-from griptape.structures import Agent
+from griptape.structures import Agent, Pipeline
 from griptape.utils import Stream
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestStream:
     @pytest.fixture(params=[True, False])
     def agent(self, request):
-        return Agent(prompt_driver=MockPromptDriver(stream=request.param, max_attempts=0))
+        return Agent(stream=request.param)
 
     def test_init(self, agent):
-        if agent.prompt_driver.stream:
+        if agent.stream:
             chat_stream = Stream(agent)
 
             assert chat_stream.structure == agent
@@ -28,3 +27,9 @@ class TestStream:
         else:
             with pytest.raises(ValueError):
                 Stream(agent)
+
+    def test_validate_structure_invalid(self):
+        pipeline = Pipeline(tasks=[])
+
+        with pytest.raises(ValueError):
+            Stream(pipeline)

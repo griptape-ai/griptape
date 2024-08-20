@@ -14,18 +14,18 @@ class TestToolkitTask:
 
         from griptape.drivers import GoogleWebSearchDriver
         from griptape.structures import Agent
-        from griptape.tools import TaskMemoryClient, WebScraper, WebSearch
+        from griptape.tools import PromptSummaryTool, WebScraperTool, WebSearchTool
 
         return StructureTester(
             Agent(
                 tools=[
-                    WebSearch(
+                    WebSearchTool(
                         web_search_driver=GoogleWebSearchDriver(
                             api_key=os.environ["GOOGLE_API_KEY"], search_id=os.environ["GOOGLE_API_SEARCH_ID"]
                         )
                     ),
-                    WebScraper(off_prompt=True),
-                    TaskMemoryClient(off_prompt=False),
+                    WebScraperTool(off_prompt=True),
+                    PromptSummaryTool(off_prompt=False),
                 ],
                 conversation_memory=None,
                 prompt_driver=request.param,

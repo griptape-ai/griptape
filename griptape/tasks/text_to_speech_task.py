@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable
 
-from attrs import define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.engines import TextToSpeechEngine
@@ -19,7 +19,7 @@ class TextToSpeechTask(BaseAudioGenerationTask):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
-    _text_to_speech_engine: TextToSpeechEngine = field(default=None, kw_only=True, alias="text_to_speech_engine")
+    text_to_speech_engine: TextToSpeechEngine = field(default=Factory(lambda: TextToSpeechEngine()), kw_only=True)
 
     @property
     def input(self) -> TextArtifact:
@@ -33,21 +33,6 @@ class TextToSpeechTask(BaseAudioGenerationTask):
     @input.setter
     def input(self, value: TextArtifact) -> None:
         self._input = value
-
-    @property
-    def text_to_speech_engine(self) -> TextToSpeechEngine:
-        if self._text_to_speech_engine is None:
-            if self.structure is not None:
-                self._text_to_speech_engine = TextToSpeechEngine(
-                    text_to_speech_driver=self.structure.config.text_to_speech_driver,
-                )
-            else:
-                raise ValueError("Audio Generation Engine is not set.")
-        return self._text_to_speech_engine
-
-    @text_to_speech_engine.setter
-    def text_to_speech_engine(self, value: TextToSpeechEngine) -> None:
-        self._text_to_speech_engine = value
 
     def run(self) -> AudioArtifact:
         audio_artifact = self.text_to_speech_engine.run(prompts=[self.input.to_text()], rulesets=self.all_rulesets)

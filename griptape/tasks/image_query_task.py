@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable
 
-from attrs import define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
 from griptape.engines import ImageQueryEngine
@@ -24,7 +24,7 @@ class ImageQueryTask(BaseTask):
         image_query_engine: The engine used to execute the query.
     """
 
-    _image_query_engine: ImageQueryEngine = field(default=None, kw_only=True, alias="image_query_engine")
+    image_query_engine: ImageQueryEngine = field(default=Factory(lambda: ImageQueryEngine()), kw_only=True)
     _input: (
         tuple[str, list[ImageArtifact]]
         | tuple[TextArtifact, list[ImageArtifact]]
@@ -61,19 +61,6 @@ class ImageQueryTask(BaseTask):
         ),
     ) -> None:
         self._input = value
-
-    @property
-    def image_query_engine(self) -> ImageQueryEngine:
-        if self._image_query_engine is None:
-            if self.structure is not None:
-                self._image_query_engine = ImageQueryEngine(image_query_driver=self.structure.config.image_query_driver)
-            else:
-                raise ValueError("Image Query Engine is not set.")
-        return self._image_query_engine
-
-    @image_query_engine.setter
-    def image_query_engine(self, value: ImageQueryEngine) -> None:
-        self._image_query_engine = value
 
     def run(self) -> TextArtifact:
         query = self.input.value[0]

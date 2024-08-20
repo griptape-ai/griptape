@@ -6,8 +6,8 @@ from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.common import PromptStack
-from griptape.common.prompt_stack.messages.message import Message
+from griptape.common import Message, PromptStack
+from griptape.configs import Defaults
 from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
 
@@ -22,7 +22,9 @@ class PromptSummaryEngine(BaseSummaryEngine):
     max_token_multiplier: float = field(default=0.5, kw_only=True)
     system_template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/system.j2")), kw_only=True)
     user_template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/user.j2")), kw_only=True)
-    prompt_driver: BasePromptDriver = field(kw_only=True)
+    prompt_driver: BasePromptDriver = field(
+        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
+    )
     chunker: BaseChunker = field(
         default=Factory(
             lambda self: TextChunker(tokenizer=self.prompt_driver.tokenizer, max_tokens=self.max_chunker_tokens),
@@ -35,7 +37,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
     def validate_allowlist(self, _: Attribute, max_token_multiplier: int) -> None:
         if max_token_multiplier > 1:
             raise ValueError("has to be less than or equal to 1")
-        elif max_token_multiplier <= 0:
+        if max_token_multiplier <= 0:
             raise ValueError("has to be greater than 0")
 
     @property

@@ -14,9 +14,7 @@ class AudioLoader(BaseLoader):
     """Loads audio content into audio artifacts."""
 
     def load(self, source: bytes, *args, **kwargs) -> AudioArtifact:
-        audio_artifact = AudioArtifact(source, format=import_optional_dependency("filetype").guess(source).extension)
-
-        return audio_artifact
+        return AudioArtifact(source, format=import_optional_dependency("filetype").guess(source).extension)
 
     def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, AudioArtifact]:
         return cast(dict[str, AudioArtifact], super().load_collection(sources, *args, **kwargs))

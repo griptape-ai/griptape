@@ -19,6 +19,7 @@ class TestObservable:
             """Bar's docstring."""
             if args:
                 return args[0]
+            return None
 
         assert bar() is None
         assert bar("a") == "a"
@@ -48,6 +49,7 @@ class TestObservable:
         def bar(*args, **kwargs):
             if args:
                 return args[0]
+            return None
 
         assert bar() is None
         assert bar("a") == "a"
@@ -73,6 +75,7 @@ class TestObservable:
         def bar(*args, **kwargs):
             if args:
                 return args[0]
+            return None
 
         assert bar() is None
         assert bar("a") == "a"

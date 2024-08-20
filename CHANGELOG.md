@@ -6,6 +6,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- `AstraDbVectorStoreDriver` to support DataStax Astra DB as a vector store.
+- Ability to set custom schema properties on Tool Activities via `extra_schema_properties`.
+- Parameter `structure` to `BaseTask`.
+- Method `try_find_task` to `Structure`.
+- `TranslateQueryRagModule` `RagEngine` module for translating input queries.
+- Global event bus, `griptape.events.EventBus`, for publishing and subscribing to events.
+- Global object, `griptape.configs.Defaults`, for setting default values throughout the framework.
+- Unique name generation for all `RagEngine` modules.
+- `ExtractionTool` for having the LLM extract structured data from text.
+- `PromptSummaryTool` for having the LLM summarize text.
+- `QueryTool` for having the LLM query text.
+- Support for bitshift composition in `BaseTask` for adding parent/child tasks.
+- `JsonArtifact` for handling de/seralization of values.
+- `Chat.logger_level` for setting what the `Chat` utility sets the logger level to. 
+- `FuturesExecutorMixin` to DRY up and optimize concurrent code across multiple classes.
+- `utils.execute_futures_list_dict` for executing a dict of lists of futures.
+- `GriptapeCloudConversationMemoryDriver` to store conversation history in Griptape Cloud.
+- `griptape.utils.decorators.lazy_property` for creating lazy properties.
+
+### Changed
+- **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `EventBus`.
+- **BREAKING**: Removed `EventPublisherMixin`.
+- **BREAKING**: Removed `Pipeline.prompt_driver` and `Workflow.prompt_driver`. Set this via `griptape.configs.Defaults.drivers.prompt_driver` instead. `Agent.prompt_driver` has not been removed.
+- **BREAKING**: Removed `Pipeline.stream` and `Workflow.stream`. Set this via `griptape.configs.Defaults.drivers.prompt_driver.stream` instead. `Agent.stream` has not been removed.
+- **BREAKING**: Removed `Structure.embedding_driver`, set this via `griptape.configs.Defaults.drivers.embedding_driver` instead.
+- **BREAKING**: Removed `Structure.custom_logger` and `Structure.logger_level`, set these via `logging.getLogger(griptape.configs.Defaults.logger_name)` instead.
+- **BREAKING**: Removed `BaseStructureConfig.merge_config`.
+- **BREAKING**: Renamed `StructureConfig` to `DriversConfig`, moved to `griptape.configs.drivers` and renamed fields accordingly.
+- **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules were adjusted accordingly.
+- **BREAKING**: Removed before and after response modules from `ResponseRagStage`.
+- **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.
+- **BREAKING**: Dropped `Client` from all Tool names for better naming consistency. 
+- **BREAKING**: Dropped `_client` suffix from all Tool packages. 
+- **BREAKING**: Added `Tool` suffix to all Tool names for better naming consistency. 
+- **BREAKING**: Removed `TextArtifactStorage.query` and `TextArtifactStorage.summarize`. 
+- **BREAKING**: Removed `TextArtifactStorage.rag_engine`, and `TextArtifactStorage.retrieval_rag_module_name`.
+- **BREAKING**: Removed `TextArtifactStorage.summary_engine`, `TextArtifactStorage.csv_extraction_engine`, and `TextArtifactStorage.json_extraction_engine`.
+- **BREAKING**: Removed `TaskMemory.summarize_namespace` and `TaskMemory.query_namespace`.
+- **BREAKING**: Removed `Structure.rag_engine`.
+- **BREAKING**: Split `JsonExtractionEngine.template_generator` into `JsonExtractionEngine.system_template_generator` and `JsonExtractionEngine.user_template_generator`.
+- **BREAKING**: Split `CsvExtractionEngine.template_generator` into `CsvExtractionEngine.system_template_generator` and `CsvExtractionEngine.user_template_generator`.
+- **BREAKING**: Changed `JsonExtractionEngine.template_schema` from a `run` argument to a class attribute. 
+- **BREAKING**: Changed `CsvExtractionEngine.column_names` from a `run` argument to a class attribute. 
+- **BREAKING**: Removed `JsonExtractionTask`, and `CsvExtractionTask` use `ExtractionTask` instead.
+- **BREAKING**: Removed `TaskMemoryClient`, use `QueryClient`, `ExtractionTool`, or `PromptSummaryTool` instead.
+- **BREAKING**: `BaseTask.add_parent/child` now take a `BaseTask` instead of `str | BaseTask`.
+- Engines that previously required Drivers now pull from `griptape.configs.Defaults.drivers_config` by default.
+- `BaseTask.add_parent/child` will now call `self.structure.add_task` if possible.
+- `BaseTask.add_parent/child` now returns `self`, allowing for chaining.
+- `Chat` now sets the `griptape` logger level to `logging.ERROR`, suppressing all logs except for errors.
+
+### Fixed
+- `JsonExtractionEngine` failing to parse json when the LLM outputs more than just the json.
+- Exception when adding `ErrorArtifact`'s to the Prompt Stack.
+- Concurrency bug in `BaseVectorStoreDriver.upsert_text_artifacts`.
+- Schema issues with Tools that use lists.
+- Issue with native Tool calling and streaming with `GooglePromptDriver`.
+- Description not being used properly in `StructureRunTool`.
+
 ## [0.29.2] - 2024-08-16
 
 ### Fixed
@@ -36,6 +96,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `@observable` decorator for selecting which functions/methods to provide observability for.
 - `GenericArtifact` for storing any data.
 - `BaseTextArtifact` for text-based Artifacts to subclass.
+- `HuggingFacePipelineImageGenerationDriver` for generating images locally with HuggingFace pipelines.
+- `BaseImageGenerationPipelineDriver` as the base class for drivers interfacing with HuggingFace image generation pipelines.
+- `StableDiffusion3ImageGenerationPipelineDriver` for local text-to-image generation using a Stable Diffusion 3 pipeline.
+- `StableDiffusion3Img2ImgImageGenerationPipelineDriver` for local image-to-image generation using a Stable Diffusion 3 pipeline.
+- `StableDiffusion3ControlNetImageGenerationPipelineDriver` for local ControlNet image generation using a Stable Diffusion 3 pipeline.
+- Optional `params` field to `WebSearch`'s `search` schema that the LLM can be steered into using.
 
 ### Changed
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
@@ -55,6 +121,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed `drivers-vector-postgresql` extra to `drivers-vector-pgvector`.
 - **BREAKING**: Update `marqo` dependency to `^3.7.0`.
 - **BREAKING**: Removed `drivers-sql-postgresql` extra. Use `drivers-sql` extra and install necessary drivers (i.e. `psycopg2`) separately.
+- **BREAKING**: `api_key` and `search_id` are now required fields in `GoogleWebSearchDriver`.
+- **BREAKING**: `web_search_driver` is now required fields in the `WebSearch` Tool.
+- `GoogleWebSearchDriver` and `DuckDuckGoWebSearchDriver` now use `kwargs` passed to the `run` method.
 - Removed unnecessary `sqlalchemy-redshift` dependency in `drivers-sql-amazon-redshift` extra.
 - Removed unnecessary `transformers` dependency in `drivers-prompt-huggingface` extra.
 - Removed unnecessary `huggingface-hub` dependency in `drivers-prompt-huggingface-pipeline` extra.
@@ -378,6 +447,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default model of `AmazonBedrockStructureConfig` to `anthropic.claude-3-sonnet-20240229-v1:0`.
 - `AnthropicPromptDriver` and `BedrockClaudePromptModelDriver` to use Anthropic's Messages API.
 - `OpenAiVisionImageQueryDriver` now has a required field `max_tokens` that defaults to 256
+- `GriptapeCloudStructureRunDriver` now outputs a `BaseArtifact` instead of a `TextArtifact`
 
 ## [0.23.2] - 2024-03-15
 
@@ -407,7 +477,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `JsonExtractionTask` for convenience over using `ExtractionTask` with a `JsonExtractionEngine`.
 - `CsvExtractionTask` for convenience over using `ExtractionTask` with a `CsvExtractionEngine`.
 - `OpenAiVisionImageQueryDriver` to support queries on images using OpenAI's Vision model.
-- `ImageQueryClient` allowing an Agent to make queries on images on disk or in Task Memory.
+- `ImageQueryTool` allowing an Agent to make queries on images on disk or in Task Memory.
 - `ImageQueryTask` and `ImageQueryEngine`.
 
 ### Fixed 

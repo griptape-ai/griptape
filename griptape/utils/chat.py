@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
@@ -23,14 +24,26 @@ class Chat:
         default=Factory(lambda self: self.default_output_fn, takes_self=True),
         kw_only=True,
     )
+    logger_level: int = field(default=logging.ERROR, kw_only=True)
 
     def default_output_fn(self, text: str) -> None:
-        if self.structure.config.prompt_driver.stream:
+        from griptape.tasks.prompt_task import PromptTask
+
+        streaming_tasks = [
+            task for task in self.structure.tasks if isinstance(task, PromptTask) and task.prompt_driver.stream
+        ]
+        if streaming_tasks:
             print(text, end="", flush=True)  # noqa: T201
         else:
             print(text)  # noqa: T201
 
     def start(self) -> None:
+        from griptape.configs import Defaults
+
+        # Hide Griptape's logging output except for errors
+        old_logger_level = logging.getLogger(Defaults.logging_config.logger_name).getEffectiveLevel()
+        logging.getLogger(Defaults.logging_config.logger_name).setLevel(self.logger_level)
+
         if self.intro_text:
             self.output_fn(self.intro_text)
         while True:
@@ -40,7 +53,7 @@ class Chat:
                 self.output_fn(self.exiting_text)
                 break
 
-            if self.structure.config.prompt_driver.stream:
+            if Defaults.drivers_config.prompt_driver.stream:
                 self.output_fn(self.processing_text + "\n")
                 stream = Stream(self.structure).run(question)
                 first_chunk = next(stream)
@@ -50,3 +63,6 @@ class Chat:
             else:
                 self.output_fn(self.processing_text)
                 self.output_fn(f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}")
+
+        # Restore the original logger level
+        logging.getLogger(Defaults.logging_config.logger_name).setLevel(old_logger_level)

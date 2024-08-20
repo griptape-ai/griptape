@@ -1,7 +1,6 @@
 from griptape.artifacts import TextArtifact
 from griptape.structures import Pipeline
 from tests.mocks.mock_multi_text_input_task import MockMultiTextInputTask
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestBaseMultiTextInputTask:
@@ -42,7 +41,7 @@ class TestBaseMultiTextInputTask:
         parent = MockMultiTextInputTask(("parent1", "parent2"))
         subtask = MockMultiTextInputTask(("test1", "test2"), context={"foo": "bar"})
         child = MockMultiTextInputTask(("child2", "child2"))
-        pipeline = Pipeline(prompt_driver=MockPromptDriver())
+        pipeline = Pipeline()
 
         pipeline.add_tasks(parent, subtask, child)
 

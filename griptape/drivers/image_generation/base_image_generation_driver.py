@@ -5,22 +5,22 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.events import FinishImageGenerationEvent, StartImageGenerationEvent
-from griptape.mixins import EventPublisherMixin, ExponentialBackoffMixin, SerializableMixin
+from griptape.events import EventBus, FinishImageGenerationEvent, StartImageGenerationEvent
+from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import ImageArtifact
 
 
 @define
-class BaseImageGenerationDriver(EventPublisherMixin, SerializableMixin, ExponentialBackoffMixin, ABC):
+class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     model: str = field(kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> None:
-        self.publish_event(StartImageGenerationEvent(prompts=prompts, negative_prompts=negative_prompts))
+        EventBus.publish_event(StartImageGenerationEvent(prompts=prompts, negative_prompts=negative_prompts))
 
     def after_run(self) -> None:
-        self.publish_event(FinishImageGenerationEvent())
+        EventBus.publish_event(FinishImageGenerationEvent())
 
     def run_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         for attempt in self.retrying():

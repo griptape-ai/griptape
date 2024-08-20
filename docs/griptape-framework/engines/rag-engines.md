@@ -8,70 +8,45 @@ search:
 !!! note
     This section is a work in progress.
 
-`RagEngine` is an abstraction for implementing modular RAG pipelines.
-
-`RagContext` is a container object for passing around RAG context. 
+[Rag Engine](../../reference/griptape/engines/rag/index.md) is an abstraction for implementing modular retrieval augmented generation (RAG) pipelines.
 
 ### RAG Stages
-- `QueryRagStage` is for parsing and expanding queries.
-- `RetrievalRagStage` is for retrieving content.
-- `ResponseRagStage` is for augmenting and generating outputs.
+
+`RagEngine`s consist of three _stages_: `QueryRagStage`, `RetrievalRagStage`, and `ResponseRagStage`. These stages are always executed sequentially. Each stage comprises multiple _modules_, which are executed in a customized manner. Due to this unique structure, `RagEngines` are not intended to replace [Workflows](../structures/workflows.md) or [Pipelines](../structures/pipelines.md).
+
+
+- `QueryRagStage` is used for modifying user queries.
+- `RetrievalRagStage` is used for retrieving and re-ranking text chunks.
+- `ResponseRagStage` is used for generating responses.
 
 ### RAG Modules
 
-#### Query
+RAG modules are used to implement concrete actions in the RAG pipeline. `RagEngine` enables developers to easily add new modules to experiment with novel RAG strategies.
 
-No modules implemented yet.
+#### Query Modules
 
-#### Retrieval
+- `TranslateQueryRagModule` is for translating the query into another language.
+
+#### Retrieval Modules
 - `TextRetrievalRagModule` is for retrieving text chunks.
 - `TextLoaderRetrievalRagModule` is for retrieving data with text loaders in real time.
 - `TextChunksRerankRagModule` is for re-ranking retrieved results.
 
-#### Response
+#### Response Modules
 - `MetadataBeforeResponseRagModule` is for appending metadata.
 - `RulesetsBeforeResponseRagModule` is for appending rulesets.
 - `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
 - `TextChunksResponseRagModule` is for responding with retrieved text chunks.
 - `FootnotePromptResponseRagModule` is for responding with automatic footnotes from text chunk references.
 
+### RAG Context
+
+`RagContext` is a container object for passing around queries, text chunks, module configs, and other metadata. `RagContext` is modified by modules when appropriate. Some modules support runtime config overrides through `RagContext.module_configs`.
+
 ### Example
 
+The following example shows a simple RAG pipeline that translates incoming queries into English, retrieves data from a local vector store, and generates a response:
+
 ```python
-from griptape.artifacts import TextArtifact
-from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver, OpenAiChatPromptDriver
-from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
-
-vector_store = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
-
-artifacts = [
-    TextArtifact("Griptape builds AI-powered applications that connect securely to your enterprise data and APIs."),
-    TextArtifact("Griptape Agents provide incredible power and flexibility when working with large language models.")
-]
-vector_store.upsert_text_artifacts({"griptape": artifacts})
-
-engine = RagEngine(
-    retrieval_stage=RetrievalRagStage(
-        retrieval_modules=[
-            VectorStoreRetrievalRagModule(
-                vector_store_driver=vector_store,
-                query_params={
-                    "namespace": "griptape",
-                    "top_n": 20
-                }
-            )
-        ]
-    ),
-    response_stage=ResponseRagStage(
-        response_module=PromptResponseRagModule(
-            prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
-        )
-    )
-)
-
-print(
-    engine.process_query("what are Griptape agents?").output.to_text()
-)
+--8<-- "docs/griptape-framework/engines/src/rag_engines_1.py"
 ```

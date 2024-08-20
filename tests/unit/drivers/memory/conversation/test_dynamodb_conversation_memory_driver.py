@@ -6,7 +6,6 @@ from griptape.drivers import AmazonDynamoDbConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.utils.aws import mock_aws_credentials
 
 
@@ -40,7 +39,6 @@ class TestDynamoDbConversationMemoryDriver:
         session = boto3.Session(region_name=self.AWS_REGION)
         dynamodb = session.resource("dynamodb")
         table = dynamodb.Table(self.DYNAMODB_TABLE_NAME)
-        prompt_driver = MockPromptDriver()
         memory_driver = AmazonDynamoDbConversationMemoryDriver(
             session=session,
             table_name=self.DYNAMODB_TABLE_NAME,
@@ -49,7 +47,7 @@ class TestDynamoDbConversationMemoryDriver:
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
         memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 
@@ -65,7 +63,6 @@ class TestDynamoDbConversationMemoryDriver:
         session = boto3.Session(region_name=self.AWS_REGION)
         dynamodb = session.resource("dynamodb")
         table = dynamodb.Table(self.DYNAMODB_TABLE_NAME)
-        prompt_driver = MockPromptDriver()
         memory_driver = AmazonDynamoDbConversationMemoryDriver(
             session=session,
             table_name=self.DYNAMODB_TABLE_NAME,
@@ -76,7 +73,7 @@ class TestDynamoDbConversationMemoryDriver:
             sort_key_value="foo",
         )
         memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 
@@ -89,7 +86,6 @@ class TestDynamoDbConversationMemoryDriver:
         assert "Item" in response
 
     def test_load(self):
-        prompt_driver = MockPromptDriver()
         memory_driver = AmazonDynamoDbConversationMemoryDriver(
             session=boto3.Session(region_name=self.AWS_REGION),
             table_name=self.DYNAMODB_TABLE_NAME,
@@ -98,7 +94,7 @@ class TestDynamoDbConversationMemoryDriver:
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
         memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 
@@ -113,7 +109,6 @@ class TestDynamoDbConversationMemoryDriver:
         assert new_memory.runs[0].output.value == "mock output"
 
     def test_load_with_sort_key(self):
-        prompt_driver = MockPromptDriver()
         memory_driver = AmazonDynamoDbConversationMemoryDriver(
             session=boto3.Session(region_name=self.AWS_REGION),
             table_name=self.DYNAMODB_TABLE_NAME,
@@ -124,7 +119,7 @@ class TestDynamoDbConversationMemoryDriver:
             sort_key_value="foo",
         )
         memory = ConversationMemory(driver=memory_driver)
-        pipeline = Pipeline(prompt_driver=prompt_driver, conversation_memory=memory)
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 

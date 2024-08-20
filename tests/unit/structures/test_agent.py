@@ -1,13 +1,11 @@
 import pytest
 
-from griptape.engines import PromptSummaryEngine
 from griptape.memory import TaskMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, PromptTask, ToolkitTask
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -75,18 +73,6 @@ class TestAgent:
         assert isinstance(agent.task_memory, TaskMemory)
         assert agent.tools[0].input_memory[0] == agent.task_memory
         assert agent.tools[0].output_memory == {}
-
-    def test_embedding_driver(self):
-        embedding_driver = MockEmbeddingDriver()
-        agent = Agent(tools=[MockTool()], embedding_driver=embedding_driver)
-
-        storage = list(agent.task_memory.artifact_storages.values())[0]
-        assert isinstance(storage, TextArtifactStorage)
-        memory_embedding_driver = storage.rag_engine.retrieval_stage.retrieval_modules[
-            0
-        ].vector_store_driver.embedding_driver
-
-        assert memory_embedding_driver == embedding_driver
 
     def test_without_default_task_memory(self):
         agent = Agent(task_memory=None, tools=[MockTool()])
@@ -230,33 +216,13 @@ class TestAgent:
 
         assert context["structure"] == agent
 
-    def test_task_memory_defaults(self):
-        prompt_driver = MockPromptDriver()
-        embedding_driver = MockEmbeddingDriver()
-        agent = Agent(prompt_driver=prompt_driver, embedding_driver=embedding_driver)
+    def test_task_memory_defaults(self, mock_config):
+        agent = Agent()
 
         storage = list(agent.task_memory.artifact_storages.values())[0]
         assert isinstance(storage, TextArtifactStorage)
 
-        assert storage.rag_engine.response_stage.response_module.prompt_driver == prompt_driver
-        assert (
-            storage.rag_engine.retrieval_stage.retrieval_modules[0].vector_store_driver.embedding_driver
-            == embedding_driver
-        )
-        assert isinstance(storage.summary_engine, PromptSummaryEngine)
-        assert storage.summary_engine.prompt_driver == prompt_driver
-        assert storage.csv_extraction_engine.prompt_driver == prompt_driver
-        assert storage.json_extraction_engine.prompt_driver == prompt_driver
-
-    def test_deprecation(self):
-        with pytest.deprecated_call():
-            Agent(prompt_driver=MockPromptDriver())
-
-        with pytest.deprecated_call():
-            Agent(embedding_driver=MockEmbeddingDriver())
-
-        with pytest.deprecated_call():
-            Agent(stream=True)
+        assert storage.vector_store_driver.embedding_driver == mock_config.drivers_config.embedding_driver
 
     def finished_tasks(self):
         task = PromptTask("test prompt")

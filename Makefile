@@ -23,6 +23,7 @@ install/core: ## Install core dependencies.
 .PHONY: install/all
 install/all: ## Install all dependencies.
 	@poetry install --with dev --with test --with docs --all-extras
+	@poetry run pre-commit install
 
 .PHONY: install/dev
 install/dev: ## Install dev dependencies.
@@ -68,7 +69,7 @@ check/lint:
 
 .PHONY: check/types
 check/types:
-	@poetry run pyright griptape/
+	@poetry run pyright griptape $(shell find docs -type f -path "*/src/*")
 	
 .PHONY: check/spell
 check/spell:

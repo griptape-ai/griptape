@@ -1,14 +1,15 @@
+import logging
+from unittest.mock import patch
+
+from griptape.configs import Defaults
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
 from griptape.utils import Chat
-from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
 class TestConversation:
     def test_init(self):
-        import logging
-
-        agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=ConversationMemory())
+        agent = Agent(conversation_memory=ConversationMemory())
 
         chat = Chat(
             agent,
@@ -19,6 +20,7 @@ class TestConversation:
             prompt_prefix="Question: ",
             response_prefix="Answer: ",
             output_fn=logging.info,
+            logger_level=logging.INFO,
         )
         assert chat.structure == agent
         assert chat.exiting_text == "foo..."
@@ -27,3 +29,20 @@ class TestConversation:
         assert chat.prompt_prefix == "Question: "
         assert chat.response_prefix == "Answer: "
         assert callable(chat.output_fn)
+        assert chat.logger_level == logging.INFO
+
+    @patch("builtins.input", side_effect=["exit"])
+    def test_chat_logger_level(self, mock_input):
+        agent = Agent(conversation_memory=ConversationMemory())
+
+        chat = Chat(agent)
+
+        logger = logging.getLogger(Defaults.logging_config.logger_name)
+        logger.setLevel(logging.DEBUG)
+
+        assert logger.getEffectiveLevel() == logging.DEBUG
+
+        chat.start()
+
+        assert logger.getEffectiveLevel() == logging.DEBUG
+        assert mock_input.call_count == 1

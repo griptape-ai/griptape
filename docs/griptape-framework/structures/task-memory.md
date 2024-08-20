@@ -22,114 +22,110 @@ When `off_prompt` is set to `True`, the Tool will store its output in Task Memor
 Lets look at a simple example where `off_prompt` is set to `False`:
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import Calculator
-
-# Create an agent with the Calculator tool
-agent = Agent(
-    tools=[Calculator(off_prompt=False)]
-)
-
-agent.run("What is 10 raised to the power of 5?")
+--8<-- "docs/griptape-framework/structures/src/task_memory_1.py"
 ```
 
 ```
 [04/26/24 13:06:42] INFO     ToolkitTask 36b9dea13b9d479fb752014f41dca54c
                              Input: What is the square root of 12345?
 [04/26/24 13:06:48] INFO     Subtask a88c0feeaef6493796a9148ed68c9caf
-                             Thought: To find the square root of 12345, I can use the Calculator action with the expression "12345 ** 0.5".
-                             Actions: [{"name": "Calculator", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
+                             Thought: To find the square root of 12345, I can use the CalculatorTool action with the expression "12345 ** 0.5".
+                             Actions: [{"name": "CalculatorTool", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
                     INFO     Subtask a88c0feeaef6493796a9148ed68c9caf
                              Response: 111.1080555135405
 [04/26/24 13:06:49] INFO     ToolkitTask 36b9dea13b9d479fb752014f41dca54c
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
-Since the result of the Calculator Tool is neither sensitive nor too large, we can set `off_prompt` to `False` and not use Task Memory.
+Since the result of the CalculatorTool Tool is neither sensitive nor too large, we can set `off_prompt` to `False` and not use Task Memory.
 
 Let's explore what happens when `off_prompt` is set to `True`:
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import Calculator
-
-# Create an agent with the Calculator tool
-agent = Agent(
-    tools=[Calculator(off_prompt=True)]
-)
-
-agent.run("What is 10 raised to the power of 5?")
+--8<-- "docs/griptape-framework/structures/src/task_memory_2.py"
 ```
 
 ```
 [04/26/24 13:07:02] INFO     ToolkitTask ecbb788d9830491ab72a8a2bbef5fb0a
                              Input: What is the square root of 12345?
 [04/26/24 13:07:10] INFO     Subtask 4700dc0c2e934d1a9af60a28bd770bc6
-                             Thought: To find the square root of a number, we can use the Calculator action with the expression "sqrt(12345)". However, the Calculator
+                             Thought: To find the square root of a number, we can use the CalculatorTool action with the expression "sqrt(12345)". However, the CalculatorTool
                              action only supports basic arithmetic operations and does not support the sqrt function. Therefore, we need to use the equivalent expression
                              for square root which is raising the number to the power of 0.5.
-                             Actions: [{"name": "Calculator", "path": "calculate", "input": {"values": {"expression": "12345**0.5"}}, "tag": "sqrt_calculation"}]
+                             Actions: [{"name": "CalculatorTool", "path": "calculate", "input": {"values": {"expression": "12345**0.5"}}, "tag": "sqrt_calculation"}]
                     INFO     Subtask 4700dc0c2e934d1a9af60a28bd770bc6
-                             Response: Output of "Calculator.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             Response: Output of "CalculatorTool.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
                              "6be74c5128024c0588eb9bee1fdb9aa5"
 [04/26/24 13:07:16] ERROR    Subtask ecbb788d9830491ab72a8a2bbef5fb0a
-                             Invalid action JSON: Or({Literal("name", description=""): 'Calculator', Literal("path", description="Can be used for computing simple
+                             Invalid action JSON: Or({Literal("name", description=""): 'CalculatorTool', Literal("path", description="Can be used for computing simple
                              numerical or algebraic calculations in Python"): 'calculate', Literal("input", description=""): {'values': Schema({Literal("expression",
                              description="Arithmetic expression parsable in pure Python. Single line only. Don't use variables. Don't use any imports or external
                              libraries"): <class 'str'>})}, Literal("tag", description="Unique tag name for action execution."): <class 'str'>}) did not validate {'name':
                              'Memory', 'path': 'get', 'input': {'memory_name': 'TaskMemory', 'artifact_namespace': '6be74c5128024c0588eb9bee1fdb9aa5'}, 'tag':
                              'get_sqrt_result'}
                              Key 'name' error:
-                             'Calculator' does not match 'Memory'
+                             'CalculatorTool' does not match 'Memory'
 ...Output truncated for brevity...
 ```
 
 When we set `off_prompt` to `True`, the Agent does not function as expected, even generating an error. This is because the Calculator output is being stored in Task Memory but the Agent has no way to access it. 
-To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `TaskMemoryClient`.
+To fix this, we need a [Tool that can read from Task Memory](#tools-that-can-read-from-task-memory) such as the `PromptSummaryTool`.
 This is an example of [not providing a Task Memory compatible Tool](#not-providing-a-task-memory-compatible-tool).
 
-## Task Memory Client
+## Prompt Summary Tool
 
-The [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md) is a Tool that allows an Agent to interact with Task Memory. It has the following methods:
+The [PromptSummaryTool](../../griptape-tools/official-tools/prompt-summary-tool.md) is a Tool that allows an Agent to summarize the Artifacts in Task Memory. It has the following methods:
 
-- `query`: Retrieve the content of an Artifact stored in Task Memory.
-- `summarize`: Summarize the content of an Artifact stored in Task Memory.
-
-Let's add `TaskMemoryClient` to the Agent and run the same task.
-Note that on the `TaskMemoryClient` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. 
+Let's add `PromptSummaryTool` to the Agent and run the same task.
+Note that on the `PromptSummaryTool` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM. 
 If we had kept it as `True`, the results would have been stored back Task Memory which would've put us back to square one. See [Task Memory Looping](#task-memory-looping) for more information on this scenario.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import Calculator, TaskMemoryClient
-
-# Create an agent with the Calculator tool
-agent = Agent(tools=[Calculator(off_prompt=True), TaskMemoryClient(off_prompt=False)])
-
-agent.run("What is the square root of 12345?")
+--8<-- "docs/griptape-framework/structures/src/task_memory_3.py"
 ```
 
 ```
-[04/26/24 13:13:01] INFO     ToolkitTask 5b46f9ef677c4b31906b48aba3f45e2c
+[08/12/24 14:54:04] INFO     ToolkitTask f7ebd8acc3d64e3ca9db82ef9ec4e65f
                              Input: What is the square root of 12345?
-[04/26/24 13:13:07] INFO     Subtask 611d98ea5576430fbc63259420577ab2
-                             Thought: To find the square root of 12345, I can use the Calculator action with the expression "12345 ** 0.5".
-                             Actions: [{"name": "Calculator", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
-[04/26/24 13:13:08] INFO     Subtask 611d98ea5576430fbc63259420577ab2
+[08/12/24 14:54:05] INFO     Subtask 777693d039e74ed288f663742fdde2ea
+                             Actions: [
+                               {
+                                 "tag": "call_DXSs19G27VOV7EmP3PoRwGZI",
+                                 "name": "Calculator",
+                                 "path": "calculate",
+                                 "input": {
+                                   "values": {
+                                     "expression": "12345 ** 0.5"
+                                   }
+                                 }
+                               }
+                             ]
+                    INFO     Subtask 777693d039e74ed288f663742fdde2ea
                              Response: Output of "Calculator.calculate" was stored in memory with memory_name "TaskMemory" and artifact_namespace
-                             "7554b69e1d414a469b8882e2266dcea1"
-[04/26/24 13:13:15] INFO     Subtask 32b9163a15644212be60b8fba07bd23b
-                             Thought: The square root of 12345 has been calculated and stored in memory. I can retrieve this value using the TaskMemoryClient action with
-                             the query path, providing the memory_name and artifact_namespace as input.
-                             Actions: [{"tag": "retrieve_sqrt", "name": "TaskMemoryClient", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
-                             "artifact_namespace": "7554b69e1d414a469b8882e2266dcea1", "query": "What is the result of the calculation?"}}}]
-[04/26/24 13:13:16] INFO     Subtask 32b9163a15644212be60b8fba07bd23b
-                             Response: The result of the calculation is 111.1080555135405.
-[04/26/24 13:13:17] INFO     ToolkitTask 5b46f9ef677c4b31906b48aba3f45e2c
+                             "370853a8937f4dd7a9e923254459cff2"
+[08/12/24 14:54:06] INFO     Subtask c8394ca51f1f4ae1b715618a2c5c8120
+                             Actions: [
+                               {
+                                 "tag": "call_qqpsWEvAUGIcPLrwAHGuH6o3",
+                                 "name": "PromptSummaryTool",
+                                 "path": "summarize",
+                                 "input": {
+                                   "values": {
+                                     "summary": {
+                                       "memory_name": "TaskMemory",
+                                       "artifact_namespace": "370853a8937f4dd7a9e923254459cff2"
+                                     }
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 14:54:07] INFO     Subtask c8394ca51f1f4ae1b715618a2c5c8120
+                             Response: The text contains a single numerical value: 111.1080555135405.
+[08/12/24 14:54:08] INFO     ToolkitTask f7ebd8acc3d64e3ca9db82ef9ec4e65f
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
-While this fixed the problem, it took a handful more steps than when we just had `Calculator()`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary).
+While this fixed the problem, it took a handful more steps than when we just had `CalculatorTool()`. Something like a basic calculation is an instance of where [Task Memory may not be necessary](#task-memory-may-not-be-necessary).
 Let's look at a more complex example where Task Memory shines.
 
 ## Large Data
@@ -137,15 +133,7 @@ Let's look at a more complex example where Task Memory shines.
 Let's say we want to query the contents of a very large webpage.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import WebScraper
-
-# Create an agent with the WebScraper tool
-agent = Agent(tools=[WebScraper()])
-
-agent.run(
-    "According to this page https://en.wikipedia.org/wiki/Elden_Ring, how many copies of Elden Ring have been sold?"
-)
+--8<-- "docs/griptape-framework/structures/src/task_memory_4.py"
 ```
 
 When running this example, we get the following error:
@@ -155,172 +143,128 @@ When running this example, we get the following error:
                              Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
 ```
 
-This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `TaskMemoryClient`.
-Note that we're setting `off_prompt` to `False` on the `TaskMemoryClient` so that the _queried_ content can be returned directly to the LLM.
+This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `QueryTool`.
+Note that we're setting `off_prompt` to `False` on the `QueryTool` so that the _queried_ content can be returned directly to the LLM.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import WebScraper, TaskMemoryClient
-
-agent = Agent(
-    tools=[
-        WebScraper(off_prompt=True),
-        TaskMemoryClient(off_prompt=False),
-    ]
-)
-
-agent.run(
-    "According to this page https://en.wikipedia.org/wiki/Elden_Ring, how many copies of Elden Ring have been sold?"
-)
+--8<-- "docs/griptape-framework/structures/src/task_memory_5.py"
 ```
 
 And now we get the expected output:
 ```
-[04/26/24 13:51:51] INFO     ToolkitTask 7aca20f202df47a2b9848ed7025f9c21
+[08/12/24 14:56:18] INFO     ToolkitTask d3ce58587dc944b0a30a205631b82944
                              Input: According to this page https://en.wikipedia.org/wiki/Elden_Ring, how many copies of Elden Ring have been sold?
-[04/26/24 13:51:58] INFO     Subtask 5b21d8ead32b4644abcd1e852bb5f512
-                             Thought: I need to scrape the content of the provided URL to find the information about how many copies of Elden Ring have been sold.
-                             Actions: [{"name": "WebScraper", "path": "get_content", "input": {"values": {"url": "https://en.wikipedia.org/wiki/Elden_Ring"}}, "tag":
-                             "scrape_elden_ring"}]
-[04/26/24 13:52:04] INFO     Subtask 5b21d8ead32b4644abcd1e852bb5f512
-                             Response: Output of "WebScraper.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
-                             "2d4ebc7211074bb7be26613eb25d8fc1"
-[04/26/24 13:52:11] INFO     Subtask f12eb3d3b4924e4085808236b460b43d
-                             Thought: Now that the webpage content is stored in memory, I need to query this memory to find the information about how many copies of Elden
-                             Ring have been sold.
-                             Actions: [{"tag": "query_sales", "name": "TaskMemoryClient", "path": "query", "input": {"values": {"memory_name": "TaskMemory",
-                             "artifact_namespace": "2d4ebc7211074bb7be26613eb25d8fc1", "query": "How many copies of Elden Ring have been sold?"}}}]
-[04/26/24 13:52:14] INFO     Subtask f12eb3d3b4924e4085808236b460b43d
-                             Response: Elden Ring sold 23 million copies by February 2024.
-[04/26/24 13:52:15] INFO     ToolkitTask 7aca20f202df47a2b9848ed7025f9c21
-                             Output: Elden Ring sold 23 million copies by February 2024.
+[08/12/24 14:56:20] INFO     Subtask 494850ec40fe474c83d48b5620c5dcbb
+                             Actions: [
+                               {
+                                 "tag": "call_DGsOHC4AVxhV7RPVA7q3rATX",
+                                 "name": "WebScraperTool",
+                                 "path": "get_content",
+                                 "input": {
+                                   "values": {
+                                     "url": "https://en.wikipedia.org/wiki/Elden_Ring"
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 14:56:25] INFO     Subtask 494850ec40fe474c83d48b5620c5dcbb
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "b9f53d6d9b35455aaf4d99719c1bfffa"
+[08/12/24 14:56:26] INFO     Subtask 8669ee523bb64550850566011bcd14e2
+                             Actions: [
+                               {
+                                 "tag": "call_DGsOHC4AVxhV7RPVA7q3rATX",
+                                 "name": "QueryTool",
+                                 "path": "search",
+                                 "input": {
+                                   "values": {
+                                     "query": "number of copies sold",
+                                     "content": {
+                                       "memory_name": "TaskMemory",
+                                       "artifact_namespace": "b9f53d6d9b35455aaf4d99719c1bfffa"
+                                     }
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 14:56:29] INFO     Subtask 8669ee523bb64550850566011bcd14e2
+                             Response: "Elden Ring" sold 13.4 million copies worldwide by the end of March 2022 and 25 million by June 2024. The downloadable content (DLC)
+                             "Shadow of the Erdtree" sold five million copies within three days of its release.
+[08/12/24 14:56:30] INFO     ToolkitTask d3ce58587dc944b0a30a205631b82944
+                             Output: Elden Ring sold 13.4 million copies worldwide by the end of March 2022 and 25 million by June 2024.
 ```
 
 ## Sensitive Data
 
 Because Task Memory splits up the storage and retrieval of data, you can use different models for each step.
 
-Here is an example where we use GPT-4 to orchestrate the Tools and store the data in Task Memory, and Amazon Bedrock's Titan model to query the raw content.
-In this example, GPT-4 _never_ sees the contents of the page, only that it was stored in Task Memory. Even the query results generated by the Titan model are stored in Task Memory so that the `FileManager` can save the results to disk without GPT-4 ever seeing them.
+Here is an example where we use GPT-4 to orchestrate the Tools and store the data in Task Memory, and Anthropic's Claude 3 Haiku model to query the raw content.
+In this example, GPT-4 _never_ sees the contents of the page, only that it was stored in Task Memory. Even the query results generated by the Haiku model are stored in Task Memory so that the `FileManagerTool` can save the results to disk without GPT-4 ever seeing them.
 
 ```python 
-from griptape.artifacts import TextArtifact
-from griptape.config import (
-    OpenAiStructureConfig,
-)
-from griptape.drivers import (
-    LocalVectorStoreDriver,
-    OpenAiChatPromptDriver, OpenAiEmbeddingDriver,
-)
-from griptape.engines.rag import RagEngine
-from griptape.engines.rag.modules import VectorStoreRetrievalRagModule, PromptResponseRagModule
-from griptape.engines.rag.stages import RetrievalRagStage, ResponseRagStage
-from griptape.memory import TaskMemory
-from griptape.memory.task.storage import TextArtifactStorage
-from griptape.structures import Agent
-from griptape.tools import FileManager, TaskMemoryClient, WebScraper
-
-vector_store_driver = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
-
-agent = Agent(
-    config=OpenAiStructureConfig(
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4"),
-    ),
-    task_memory=TaskMemory(
-        artifact_storages={
-            TextArtifact: TextArtifactStorage(
-                rag_engine=RagEngine(
-                    retrieval_stage=RetrievalRagStage(
-                        retrieval_modules=[
-                            VectorStoreRetrievalRagModule(
-
-                                vector_store_driver=vector_store_driver,
-                                query_params={
-                                    "namespace": "griptape",
-                                    "count": 20
-                                }
-                            )
-                        ]
-                    ),
-                    response_stage=ResponseRagStage(
-                        response_module=PromptResponseRagModule(
-                            prompt_driver=OpenAiChatPromptDriver(model="gpt-4o")
-                        )
-                    )
-                ),
-                retrieval_rag_module_name="VectorStoreRetrievalRagModule",
-                vector_store_driver=vector_store_driver
-            )
-        }
-    ),
-    tools=[
-        WebScraper(off_prompt=True),
-        TaskMemoryClient(off_prompt=True, allowlist=["query"]),
-        FileManager(off_prompt=True),
-    ],
-)
-
-agent.run(
-    "Use this page https://en.wikipedia.org/wiki/Elden_Ring to find how many copies of Elden Ring have been sold, and then save the result to a file."
-)
+--8<-- "docs/griptape-framework/structures/src/task_memory_6.py"
 ```
 
 ```
-[06/21/24 16:00:01] INFO     ToolkitTask 17f30ac14701490c8ef71508f420ea9f       
-                             Input: Use this page                               
-                             https://en.wikipedia.org/wiki/Elden_Ring to find   
-                             how many copies of Elden Ring have been sold, and  
-                             then save the result to a file.                    
-[06/21/24 16:00:05] INFO     Subtask cb06889205334ec9afd7e97f7f231ab5           
-                             Thought: First, I need to scrape the content of the
-                             provided URL to find the information about how many
-                             copies of Elden Ring have been sold. Then, I will  
-                             save this information to a file.                   
-                                                                                
-                             Actions: [{"name": "WebScraper", "path":           
-                             "get_content", "input": {"values": {"url":         
-                             "https://en.wikipedia.org/wiki/Elden_Ring"}},      
-                             "tag": "scrape_elden_ring"}]                       
-[06/21/24 16:00:12] INFO     Subtask cb06889205334ec9afd7e97f7f231ab5           
-                             Response: Output of "WebScraper.get_content" was   
-                             stored in memory with memory_name "TaskMemory" and 
-                             artifact_namespace                                 
-                             "7e48bcff0da94ad3b06aa4e173f8f37b"                 
-[06/21/24 16:00:17] INFO     Subtask 56102d42475d413299ce52a0230506b7           
-                             Thought: Now that the webpage content is stored in 
-                             memory, I need to query this memory to find the    
-                             information about how many copies of Elden Ring    
-                             have been sold.                                    
-                             Actions: [{"tag": "query_sales", "name":           
-                             "TaskMemoryClient", "path": "query", "input":      
-                             {"values": {"memory_name": "TaskMemory",           
-                             "artifact_namespace":                              
-                             "7e48bcff0da94ad3b06aa4e173f8f37b", "query": "How  
-                             many copies of Elden Ring have been sold?"}}}]     
-[06/21/24 16:00:19] INFO     Subtask 56102d42475d413299ce52a0230506b7           
-                             Response: Output of "TaskMemoryClient.query" was   
-                             stored in memory with memory_name "TaskMemory" and 
-                             artifact_namespace                                 
-                             "9ecf4d7b7d0c46149dfc46ba236f178e"                 
-[06/21/24 16:00:25] INFO     Subtask ed2921791dcf46b68c9d8d2f8dbeddbd           
-                             Thought: Now that I have the sales information     
-                             stored in memory, I need to save this information  
-                             to a file.                                         
-                             Actions: [{"tag": "save_sales_info", "name":       
-                             "FileManager", "path":                             
-                             "save_memory_artifacts_to_disk", "input":          
-                             {"values": {"dir_name": "sales_info", "file_name": 
-                             "elden_ring_sales.txt", "memory_name":             
-                             "TaskMemory", "artifact_namespace":                
-                             "9ecf4d7b7d0c46149dfc46ba236f178e"}}}]             
-                    INFO     Subtask ed2921791dcf46b68c9d8d2f8dbeddbd           
-                             Response: Successfully saved memory artifacts to   
-                             disk                                               
-[06/21/24 16:00:27] INFO     ToolkitTask 17f30ac14701490c8ef71508f420ea9f       
-                             Output: The information about how many copies of   
-                             Elden Ring have been sold has been successfully    
-                             saved to the file "elden_ring_sales.txt" in the    
-                             "sales_info" directory.
+[08/12/24 14:55:21] INFO     ToolkitTask 329b1abc760e4d30bbf23e349451d930
+                             Input: Use this page https://en.wikipedia.org/wiki/Elden_Ring to find how many copies of Elden Ring have been sold, and then save the result to
+                             a file.
+[08/12/24 14:55:23] INFO     Subtask 26205b5623174424b618abafd886c4d8
+                             Actions: [
+                               {
+                                 "tag": "call_xMK0IyFZFbjlTapK7AA6kbNq",
+                                 "name": "WebScraperTool",
+                                 "path": "get_content",
+                                 "input": {
+                                   "values": {
+                                     "url": "https://en.wikipedia.org/wiki/Elden_Ring"
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 14:55:28] INFO     Subtask 26205b5623174424b618abafd886c4d8
+                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "44b8f230645148d0b8d44354c0f2df5b"
+[08/12/24 14:55:31] INFO     Subtask d8b4cf297a0d4d9db04e4f8e63b746c8
+                             Actions: [
+                               {
+                                 "tag": "call_Oiqq6oI20yqmdNrH9Mawb2fS",
+                                 "name": "QueryTool",
+                                 "path": "search",
+                                 "input": {
+                                   "values": {
+                                     "query": "copies sold",
+                                     "content": {
+                                       "memory_name": "TaskMemory",
+                                       "artifact_namespace": "44b8f230645148d0b8d44354c0f2df5b"
+                                     }
+                                   }
+                                 }
+                               }
+                             ]
+[08/12/24 14:55:34] INFO     Subtask d8b4cf297a0d4d9db04e4f8e63b746c8
+                             Response: Output of "QueryTool.search" was stored in memory with memory_name "TaskMemory" and artifact_namespace
+                             "fd828ddd629e4974a7837f9dfde65954"
+[08/12/24 14:55:38] INFO     Subtask 7aafcb3fb0d845858e2fcf9b8dc8a7ec
+                             Actions: [
+                               {
+                                 "tag": "call_nV1DIPAEhUEAVMCjXND0pKoS",
+                                 "name": "FileManagerTool",
+                                 "path": "save_memory_artifacts_to_disk",
+                                 "input": {
+                                   "values": {
+                                     "dir_name": "results",
+                                     "file_name": "elden_ring_sales.txt",
+                                     "memory_name": "TaskMemory",
+                                     "artifact_namespace": "fd828ddd629e4974a7837f9dfde65954"
+                                   }
+                                 }
+                               }
+                             ]
+                    INFO     Subtask 7aafcb3fb0d845858e2fcf9b8dc8a7ec
+                             Response: Successfully saved memory artifacts to disk
+[08/12/24 14:55:40] INFO     ToolkitTask 329b1abc760e4d30bbf23e349451d930
+                             Output: Successfully saved the number of copies sold of Elden Ring to a file named "elden_ring_sales.txt" in the "results" directory.
 ```
 
 ## Tools That Can Read From Task Memory
@@ -329,11 +273,10 @@ As seen in the previous example, certain Tools are designed to read directly fro
 
 Today, these include:
 
-- [TaskMemoryClient](../../griptape-tools/official-tools/task-memory-client.md)
-- [FileManager](../../griptape-tools/official-tools/file-manager.md)
-- [AwsS3Client](../../griptape-tools/official-tools/aws-s3-client.md)
-- [GoogleDriveClient](../../griptape-tools/official-tools/google-drive-client.md)
-- [GoogleDocsClient](../../griptape-tools/official-tools/google-docs-client.md)
+- [PromptSummaryTool](../../griptape-tools/official-tools/prompt-summary-tool.md)
+- [ExtractionTool](../../griptape-tools/official-tools/extraction-tool.md)
+- [RagClient](../../griptape-tools/official-tools/rag-tool.md)
+- [FileManagerTool](../../griptape-tools/official-tools/file-manager-tool.md)
 
 ## Task Memory Considerations
 
@@ -348,16 +291,7 @@ By default, Griptape will store `TextArtifact`'s, `BlobArtifact`'s in Task Memor
 When using Task Memory, make sure that you have at least one Tool that can read from Task Memory. If you don't, the data stored in Task Memory will be inaccessible to the Agent and it may hallucinate Tool Activities.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import WebScraper
-
-agent = Agent(
-    tools=[
-        WebScraper(off_prompt=True) # `off_prompt=True` will store the data in Task Memory
-        # Missing a Tool that can read from Task Memory
-    ]
-)
-agent.run("According to this page https://en.wikipedia.org/wiki/San_Francisco, what is the population of San Francisco?")
+--8<-- "docs/griptape-framework/structures/src/task_memory_7.py"
 ```
 
 ### Task Memory Looping
@@ -365,30 +299,13 @@ An improper configuration of Tools can lead to the LLM using the Tools in a loop
 This can create a loop where the same data is stored and queried over and over again.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import WebScraper, TaskMemoryClient
-
-agent = Agent(
-    tools=[
-        WebScraper(off_prompt=True), # This tool will store the data in Task Memory
-        TaskMemoryClient(off_prompt=True) # This tool will store the data back in Task Memory with no way to get it out
-    ]
-)
-agent.run("According to this page https://en.wikipedia.org/wiki/Dark_forest_hypothesis, what is the Dark Forest Hypothesis?")
+--8<-- "docs/griptape-framework/structures/src/task_memory_8.py"
 ```
 
 ### Task Memory May Not Be Necessary
 Task Memory may not be necessary for all use cases. If the data returned by a Tool is not sensitive, not too large, and does not need to be acted upon by another Tool, you can leave the default of `off_prompt` to `False` and return the data directly to the LLM.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import Calculator
-
-agent = Agent(
-    tools=[
-        Calculator() # Default value of `off_prompt=False` will return the data directly to the LLM
-    ]
-)
-agent.run("What is 10 ^ 3, 55 / 23, and 12345 * 0.5?")
+--8<-- "docs/griptape-framework/structures/src/task_memory_9.py"
 ```
 

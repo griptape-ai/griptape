@@ -8,12 +8,12 @@ from attrs import define, field
 from schema import Literal, Schema
 
 from griptape.artifacts import ErrorArtifact, InfoArtifact
-from griptape.tools import BaseGoogleClient
+from griptape.tools import BaseGoogleTool
 from griptape.utils.decorators import activity
 
 
 @define
-class GoogleGmailClient(BaseGoogleClient):
+class GoogleGmailTool(BaseGoogleTool):
     CREATE_DRAFT_EMAIL_SCOPES = ["https://www.googleapis.com/auth/gmail.compose"]
 
     owner_email: str = field(kw_only=True)

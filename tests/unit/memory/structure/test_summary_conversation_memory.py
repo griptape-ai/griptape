@@ -5,14 +5,13 @@ from griptape.memory.structure import Run, SummaryConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
-from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestSummaryConversationMemory:
     def test_unsummarized_subtasks(self):
-        memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
+        memory = SummaryConversationMemory(offset=1)
 
-        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_tasks(PromptTask("test"))
 
@@ -24,9 +23,9 @@ class TestSummaryConversationMemory:
         assert len(memory.unsummarized_runs()) == 1
 
     def test_after_run(self):
-        memory = SummaryConversationMemory(offset=1, prompt_driver=MockPromptDriver())
+        memory = SummaryConversationMemory(offset=1)
 
-        pipeline = Pipeline(conversation_memory=memory, prompt_driver=MockPromptDriver())
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_tasks(PromptTask("test"))
 
@@ -85,7 +84,7 @@ class TestSummaryConversationMemory:
 
     def test_config_prompt_driver(self):
         memory = SummaryConversationMemory()
-        pipeline = Pipeline(conversation_memory=memory, config=MockStructureConfig())
+        pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_tasks(PromptTask("test"))
 

@@ -12,22 +12,12 @@ directly, which the agent uses to dynamically determine whether to use a [Prompt
 If [tools](../../reference/griptape/structures/agent.md#griptape.structures.agent.Agent.tools) are passed provided to the Agent, a [Toolkit Task](./tasks.md#toolkit-task) will be used. If no [tools](../../reference/griptape/structures/agent.md#griptape.structures.agent.Agent.tools)
 are provided, a [Prompt Task](./tasks.md#prompt-task) will be used.
 
-You can access the final output of the Agent by using the [output](../../reference/griptape/structures/agent.md#griptape.structures.structure.Structure.output) attribute.
+You can access the final output of the Agent by using the [output](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.output) attribute.
 
 ## Toolkit Task Agent
 
 ```python
-from griptape.tools import Calculator
-from griptape.structures import Agent
-
-
-agent = Agent(
-    input="Calculate the following: {{ args[0] }}",
-    tools=[Calculator()]
-)
-
-agent.run("what's 13^7?")
-print("Answer:", agent.output)
+--8<-- "docs/griptape-framework/structures/src/agents_1.py"
 ```
 
 ```
@@ -37,7 +27,7 @@ print("Answer:", agent.output)
                              Actions: [
                                {
                                  "tag": "call_ZSCH6vNoycOgtPJH2DL2U9ji",
-                                 "name": "Calculator",
+                                 "name": "CalculatorTool",
                                  "path": "calculate",
                                  "input": {
                                    "values": {
@@ -56,21 +46,7 @@ Answer: 62,748,517
 ## Prompt Task Agent
 
 ```python
-from griptape.structures import Agent
-from griptape.tasks import PromptTask
-
-
-agent = Agent()
-agent.add_task(
-    PromptTask(
-        "Write me a {{ creative_medium }} about {{ args[0] }} and {{ args[1] }}",
-        context={
-            'creative_medium': 'haiku'
-        }
-    )
-)
-
-agent.run("Skateboards", "Programming")
+--8<-- "docs/griptape-framework/structures/src/agents_2.py"
 ```
 
 ```

@@ -27,7 +27,7 @@ runs:
 
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root --with test --with dev --all-extras
+        run: poetry install --no-interaction --with test --with dev --with docs --all-extras
         shell: bash
 
       - name: Activate venv 

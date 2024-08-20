@@ -19,27 +19,7 @@ The [Eleven Labs Text to Speech Driver](../../reference/griptape/drivers/text_to
     This driver requires the `drivers-text-to-speech-elevenlabs` [extra](../index.md#extras).
 
 ```python
-import os
-
-from griptape.drivers import ElevenLabsTextToSpeechDriver
-from griptape.engines import TextToSpeechEngine
-from griptape.tools.text_to_speech_client.tool import TextToSpeechClient
-from griptape.structures import Agent
-
-
-driver = ElevenLabsTextToSpeechDriver(
-    api_key=os.getenv("ELEVEN_LABS_API_KEY"),
-    model="eleven_multilingual_v2",
-    voice="Matilda",
-)
-
-tool = TextToSpeechClient(
-    engine=TextToSpeechEngine(
-        text_to_speech_driver=driver,
-    ),
-)
-
-Agent(tools=[tool]).run("Generate audio from this text: 'Hello, world!'")
+--8<-- "docs/griptape-framework/drivers/src/text_to_speech_drivers_1.py"
 ```
 
 ## OpenAI
@@ -47,18 +27,5 @@ Agent(tools=[tool]).run("Generate audio from this text: 'Hello, world!'")
 The [OpenAI Text to Speech Driver](../../reference/griptape/drivers/text_to_speech/openai_text_to_speech_driver.md) provides support for text-to-speech models hosted by OpenAI. This Driver supports configurations specific to OpenAI, like voice selection and output format.
 
 ```python
-from griptape.drivers import OpenAiTextToSpeechDriver
-from griptape.engines import TextToSpeechEngine
-from griptape.tools.text_to_speech_client.tool import TextToSpeechClient
-from griptape.structures import Agent
-
-driver = OpenAiTextToSpeechDriver()
-
-tool = TextToSpeechClient(
-    engine=TextToSpeechEngine(
-        text_to_speech_driver=driver,
-    ),
-)
-
-Agent(tools=[tool]).run("Generate audio from this text: 'Hello, world!'")
+--8<-- "docs/griptape-framework/drivers/src/text_to_speech_drivers_2.py"
 ```

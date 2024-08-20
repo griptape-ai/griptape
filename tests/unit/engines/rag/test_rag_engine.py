@@ -19,18 +19,18 @@ class TestRagEngine:
                     )
                 ]
             ),
-            response_stage=ResponseRagStage(response_module=PromptResponseRagModule(prompt_driver=MockPromptDriver())),
+            response_stage=ResponseRagStage(
+                response_modules=[PromptResponseRagModule(prompt_driver=MockPromptDriver())]
+            ),
         )
 
     def test_module_name_uniqueness(self):
-        vector_store_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
-
         with pytest.raises(ValueError):
             RagEngine(
                 retrieval_stage=RetrievalRagStage(
                     retrieval_modules=[
-                        VectorStoreRetrievalRagModule(name="test", vector_store_driver=vector_store_driver),
-                        VectorStoreRetrievalRagModule(name="test", vector_store_driver=vector_store_driver),
+                        VectorStoreRetrievalRagModule(name="test"),
+                        VectorStoreRetrievalRagModule(name="test"),
                     ]
                 )
             )
@@ -38,14 +38,14 @@ class TestRagEngine:
         assert RagEngine(
             retrieval_stage=RetrievalRagStage(
                 retrieval_modules=[
-                    VectorStoreRetrievalRagModule(name="test1", vector_store_driver=vector_store_driver),
-                    VectorStoreRetrievalRagModule(name="test2", vector_store_driver=vector_store_driver),
+                    VectorStoreRetrievalRagModule(name="test1"),
+                    VectorStoreRetrievalRagModule(name="test2"),
                 ]
             )
         )
 
     def test_process_query(self, engine):
-        assert engine.process_query("test").output.value == "mock output"
+        assert engine.process_query("test").outputs[0].value == "mock output"
 
     def test_process(self, engine):
-        assert engine.process(RagContext(query="test")).output.value == "mock output"
+        assert engine.process(RagContext(query="test")).outputs[0].value == "mock output"

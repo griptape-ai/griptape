@@ -3,7 +3,6 @@ from concurrent import futures
 
 from griptape import utils
 from griptape.loaders import TextLoader
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 MAX_TOKENS = 50
 
@@ -32,7 +31,7 @@ class TestFileUtils:
     def test_load_file_with_loader(self):
         dirname = os.path.dirname(__file__)
         file = utils.load_file(os.path.join(dirname, "../../", "resources/foobar-many.txt"))
-        artifacts = TextLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver()).load(file)
+        artifacts = TextLoader(max_tokens=MAX_TOKENS).load(file)
 
         assert len(artifacts) == 39
         assert isinstance(artifacts, list)
@@ -43,7 +42,7 @@ class TestFileUtils:
         sources = ["resources/foobar-many.txt"]
         sources = [os.path.join(dirname, "../../", source) for source in sources]
         files = utils.load_files(sources)
-        loader = TextLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver())
+        loader = TextLoader(max_tokens=MAX_TOKENS)
         collection = loader.load_collection(list(files.values()))
 
         test_file_artifacts = collection[loader.to_key(files[utils.str_to_hash(sources[0])])]

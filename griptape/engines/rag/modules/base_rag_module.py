@@ -1,28 +1,33 @@
 from __future__ import annotations
 
+import uuid
 from abc import ABC
-from concurrent import futures
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
 from griptape.common import Message, PromptStack
+from griptape.mixins import FuturesExecutorMixin
 
 if TYPE_CHECKING:
     from griptape.engines.rag import RagContext
 
 
 @define(kw_only=True)
-class BaseRagModule(ABC):
-    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
+class BaseRagModule(FuturesExecutorMixin, ABC):
+    name: str = field(
+        default=Factory(lambda self: f"{self.__class__.__name__}-{uuid.uuid4().hex}", takes_self=True), kw_only=True
     )
 
-    def generate_query_prompt_stack(self, system_prompt: str, query: str) -> PromptStack:
-        return PromptStack(
-            messages=[Message(system_prompt, role=Message.SYSTEM_ROLE), Message(query, role=Message.USER_ROLE)],
-        )
+    def generate_prompt_stack(self, system_prompt: Optional[str], query: str) -> PromptStack:
+        messages = []
+
+        if system_prompt is not None:
+            messages.append(Message(system_prompt, role=Message.SYSTEM_ROLE))
+
+        messages.append(Message(query, role=Message.USER_ROLE))
+
+        return PromptStack(messages=messages)
 
     def get_context_param(self, context: RagContext, key: str) -> Optional[Any]:
         return context.module_configs.get(self.name, {}).get(key)

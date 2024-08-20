@@ -12,8 +12,8 @@ from griptape.utils.decorators import activity
 
 
 @define
-class FileManager(BaseTool):
-    """FileManager is a tool that can be used to list, load, and save files.
+class FileManagerTool(BaseTool):
+    """FileManagerTool is a tool that can be used to list, load, and save files.
 
     Attributes:
         file_manager_driver: File Manager Driver to use to list, load, and save files.
@@ -41,7 +41,7 @@ class FileManager(BaseTool):
                     Literal(
                         "paths",
                         description="Relative paths to files to be loaded in the POSIX format. For example, ['foo/bar/file.txt']",
-                    ): list[str],
+                    ): Schema([str]),
                 },
             ),
         },

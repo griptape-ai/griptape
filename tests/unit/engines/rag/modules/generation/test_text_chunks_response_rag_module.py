@@ -13,4 +13,4 @@ class TestTextChunksResponseRagModule:
     def test_run(self, module):
         text_chunks = [TextArtifact("foo"), TextArtifact("bar")]
 
-        assert module.run(RagContext(query="test", text_chunks=text_chunks)).output.value == text_chunks
+        assert module.run(RagContext(query="test", text_chunks=text_chunks)).value == text_chunks

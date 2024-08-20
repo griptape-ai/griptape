@@ -8,7 +8,6 @@ from griptape.engines import OutpaintingImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, OutpaintingImageGenerationTask
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
-from tests.mocks.mock_structure_config import MockStructureConfig
 
 
 class TestOutpaintingImageGenerationTask:
@@ -51,13 +50,7 @@ class TestOutpaintingImageGenerationTask:
 
     def test_config_image_generation_engine(self, text_artifact, image_artifact):
         task = OutpaintingImageGenerationTask((text_artifact, image_artifact, image_artifact))
-        Agent(config=MockStructureConfig()).add_task(task)
+        Agent().add_task(task)
 
         assert isinstance(task.image_generation_engine, OutpaintingImageGenerationEngine)
         assert isinstance(task.image_generation_engine.image_generation_driver, MockImageGenerationDriver)
-
-    def test_missing_image_generation_engine(self, text_artifact, image_artifact):
-        task = OutpaintingImageGenerationTask((text_artifact, image_artifact, image_artifact))
-
-        with pytest.raises(ValueError):
-            task.image_generation_engine  # noqa: B018

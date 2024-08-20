@@ -28,17 +28,8 @@ The Griptape Cloud Observability Driver instruments `@observable` functions and 
 Here is an example of how to use the `GriptapeCloudObservabilityDriver` with the `Observability` context manager to send the telemetry to Griptape Cloud:
 
 
-```python title="PYTEST_IGNORE"
-from griptape.drivers import GriptapeCloudObservabilityDriver
-from griptape.rules import Rule
-from griptape.structures import Agent
-from griptape.observability import Observability
-
-observability_driver = GriptapeCloudObservabilityDriver()
-
-with Observability(observability_driver=observability_driver):
-    agent = Agent(rules=[Rule("Output one word")])
-    agent.run("Name an animal")
+```python
+--8<-- "docs/griptape-framework/drivers/src/observability_drivers_1.py"
 ```
 
 
@@ -52,21 +43,8 @@ The [OpenTelemetry](https://opentelemetry.io/) Observability Driver instruments 
 
 Here is an example of how to use the `OpenTelemetryObservabilityDriver` with the `Observability` context manager to output the telemetry directly to the console:
 
-```python title="PYTEST_IGNORE"
-from griptape.drivers import OpenTelemetryObservabilityDriver
-from griptape.rules import Rule
-from griptape.structures import Agent
-from griptape.observability import Observability
-from opentelemetry.sdk.trace.export import ConsoleSpanExporter, BatchSpanProcessor
-
-observability_driver = OpenTelemetryObservabilityDriver(
-    service_name="name-an-animal",
-    span_processor=BatchSpanProcessor(ConsoleSpanExporter())
-)
-
-with Observability(observability_driver=observability_driver):
-    agent = Agent(rules=[Rule("Output one word")])
-    agent.run("Name an animal")
+```python
+--8<-- "docs/griptape-framework/drivers/src/observability_drivers_2.py"
 ```
 
 Output (only relevant because of use of `ConsoleSpanExporter`):

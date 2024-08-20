@@ -25,13 +25,3 @@ class TestBlobArtifactStorage:
     def test_can_store(self, storage):
         assert not storage.can_store(TextArtifact("foo"))
         assert storage.can_store(BlobArtifact(b"foo"))
-
-    def test_summarize(self, storage):
-        storage.store_artifact("foo", BlobArtifact(b"test"))
-
-        assert storage.summarize("foo").value == "can't summarize artifacts"
-
-    def test_query(self, storage):
-        storage.store_artifact("foo", BlobArtifact(b"test"))
-
-        assert storage.query("foo", "query").value == "can't query artifacts"

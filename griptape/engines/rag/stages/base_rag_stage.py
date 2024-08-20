@@ -1,20 +1,15 @@
 from abc import ABC, abstractmethod
 from collections.abc import Sequence
-from concurrent import futures
-from typing import Callable
 
-from attrs import Factory, define, field
+from attrs import define
 
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRagModule
+from griptape.mixins import FuturesExecutorMixin
 
 
 @define(kw_only=True)
-class BaseRagStage(ABC):
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
-    )
-
+class BaseRagStage(FuturesExecutorMixin, ABC):
     @abstractmethod
     def run(self, context: RagContext) -> RagContext: ...
 

@@ -13,14 +13,21 @@ class TestDuckDuckGoWebSearchDriver:
             {"title": "foo", "href": "bar", "body": "baz"},
             {"title": "foo2", "href": "bar2", "body": "baz2"},
         ]
-
-        mocker.patch("duckduckgo_search.DDGS.text", return_value=mock_response)
-
+        mock_ddg = mocker.Mock(
+            text=lambda *args, **kwargs: mock_response,
+        )
+        mocker.patch("duckduckgo_search.DDGS", return_value=mock_ddg)
         return DuckDuckGoWebSearchDriver()
 
     @pytest.fixture()
     def driver_with_error(self, mocker):
-        mocker.patch("duckduckgo_search.DDGS.text", side_effect=Exception("test_error"))
+        def error(*args, **kwargs):
+            raise Exception("test_error")
+
+        mock_ddg = mocker.Mock(
+            text=error,
+        )
+        mocker.patch("duckduckgo_search.DDGS", return_value=mock_ddg)
 
         return DuckDuckGoWebSearchDriver()
 
