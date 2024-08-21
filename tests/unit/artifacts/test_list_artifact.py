@@ -24,6 +24,12 @@ class TestListArtifact:
         assert artifact.value[0].value == "foo"
         assert artifact.value[1].value == "bar"
 
+    def test___iter__(self):
+        assert [a.value for a in ListArtifact([TextArtifact("foo"), TextArtifact("bar")])] == ["foo", "bar"]
+
+    def test_type_var(self):
+        assert ListArtifact[TextArtifact]([TextArtifact("foo")]).value[0].value == "foo"
+
     def test_validate_value(self):
         with pytest.raises(ValueError):
             ListArtifact([TextArtifact("foo"), BlobArtifact(b"bar")], validate_uniform_types=True)
