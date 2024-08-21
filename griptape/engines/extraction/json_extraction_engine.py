@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import JsonArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.engines import BaseExtractionEngine
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 
 @define
 class JsonExtractionEngine(BaseExtractionEngine):
-    JSON_PATTERN = r"(?s)[^\[]*(\[.*\])"
+    JSON_PATTERN = r"(?s)(\{.*\}|\[.*\])"
 
     template_schema: dict = field(default=Factory(dict), kw_only=True)
     system_template_generator: J2 = field(
@@ -26,40 +26,33 @@ class JsonExtractionEngine(BaseExtractionEngine):
     )
     user_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/json/user.j2")), kw_only=True)
 
-    def extract(
+    def extract_artifacts(
         self,
-        text: str | ListArtifact,
+        artifacts: ListArtifact[TextArtifact],
         *,
         rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
-    ) -> ListArtifact | ErrorArtifact:
-        try:
-            return ListArtifact(
-                self._extract_rec(
-                    cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
-                    [],
-                    rulesets=rulesets,
-                ),
-                item_separator="\n",
-            )
-        except Exception as e:
-            return ErrorArtifact(f"error extracting JSON: {e}")
+    ) -> ListArtifact[JsonArtifact]:
+        return ListArtifact(
+            self._extract_rec(cast(list[TextArtifact], artifacts.value), [], rulesets=rulesets),
+            item_separator="\n",
+        )
 
-    def json_to_text_artifacts(self, json_input: str) -> list[TextArtifact]:
+    def json_to_text_artifacts(self, json_input: str) -> list[JsonArtifact]:
         json_matches = re.findall(self.JSON_PATTERN, json_input, re.DOTALL)
 
         if json_matches:
-            return [TextArtifact(json.dumps(e)) for e in json.loads(json_matches[-1])]
+            return [JsonArtifact(json.loads(e)) for e in json_matches]
         else:
             return []
 
     def _extract_rec(
         self,
         artifacts: list[TextArtifact],
-        extractions: list[TextArtifact],
+        extractions: list[JsonArtifact],
         *,
         rulesets: Optional[list[Ruleset]] = None,
-    ) -> list[TextArtifact]:
+    ) -> list[JsonArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         system_prompt = self.system_template_generator.render(
             json_template_schema=json.dumps(self.template_schema),

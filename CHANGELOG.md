@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generic type support to `ListArtifact`.
 - Iteration support to `ListArtifact`.
 
+### Changed
+- **BREAKING**: Split `BaseExtractionEngine.extract` into `extract` and `extract_artifacts` for consistency with `BaseSummaryEngine`.
+- **BREAKING**: `BaseExtractionEngine` no longer catches exceptions and returns `ErrorArtifact`s.
+- `JsonExtractionEngine` to extract either a JSON object or array depending on the provided schema. 
+- `JsonExtractionEngine.extract_artifacts` now returns a `ListArtifact[JsonArtifact]`.
+- `CsvExtractionEngine.extract_artifacts` now returns a `ListArtifact[CsvRowArtifact]`.
+
 ### Fixed
 - Parsing streaming response with some OpenAi compatible services.
 

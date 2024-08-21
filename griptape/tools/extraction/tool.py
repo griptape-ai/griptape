@@ -57,4 +57,4 @@ class ExtractionTool(BaseTool, RuleMixin):
             else:
                 return ErrorArtifact("memory not found")
 
-        return self.extraction_engine.extract(artifacts)
+        return self.extraction_engine.extract_artifacts(artifacts)

@@ -39,16 +39,14 @@ class TestExtractionTool:
             {"values": {"data": {"memory_name": json_tool.input_memory[0].name, "artifact_namespace": "foo"}}}
         )
 
-        assert len(result.value) == 2
-        assert result.value[0].value == '{"test_key_1": "test_value_1"}'
-        assert result.value[1].value == '{"test_key_2": "test_value_2"}'
+        assert len(result.value) == 1
+        assert result.value[0].value == [{"test_key_1": "test_value_1"}, {"test_key_2": "test_value_2"}]
 
     def test_json_extract_content(self, json_tool):
         result = json_tool.extract({"values": {"data": "foo"}})
 
-        assert len(result.value) == 2
-        assert result.value[0].value == '{"test_key_1": "test_value_1"}'
-        assert result.value[1].value == '{"test_key_2": "test_value_2"}'
+        assert len(result.value) == 1
+        assert result.value[0].value == [{"test_key_1": "test_value_1"}, {"test_key_2": "test_value_2"}]
 
     def test_csv_extract_artifacts(self, csv_tool):
         csv_tool.input_memory[0].store_artifact("foo", TextArtifact("foo,bar\nbaz,maz"))

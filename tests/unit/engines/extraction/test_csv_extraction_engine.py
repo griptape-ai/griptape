@@ -8,8 +8,8 @@ class TestCsvExtractionEngine:
     def engine(self):
         return CsvExtractionEngine(column_names=["test1"])
 
-    def test_extract(self, engine):
-        result = engine.extract("foo")
+    def test_extract_text(self, engine):
+        result = engine.extract_text("foo")
 
         assert len(result.value) == 1
         assert result.value[0].value == {"test1": "mock output"}

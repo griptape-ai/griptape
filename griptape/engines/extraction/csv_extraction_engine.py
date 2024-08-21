@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import CsvRowArtifact, ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import CsvRowArtifact, ListArtifact, TextArtifact
 from griptape.common import Message, PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
@@ -21,23 +21,21 @@ class CsvExtractionEngine(BaseExtractionEngine):
     system_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/system.j2")), kw_only=True)
     user_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/user.j2")), kw_only=True)
 
-    def extract(
+    def extract_artifacts(
         self,
-        text: str | ListArtifact,
+        artifacts: ListArtifact[TextArtifact],
         *,
         rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
-    ) -> ListArtifact | ErrorArtifact:
-        try:
-            return ListArtifact(
-                self._extract_rec(
-                    cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
-                    [],
-                ),
-                item_separator="\n",
-            )
-        except Exception as e:
-            return ErrorArtifact(f"error extracting CSV rows: {e}")
+    ) -> ListArtifact[CsvRowArtifact]:
+        return ListArtifact(
+            self._extract_rec(
+                cast(list[TextArtifact], artifacts.value),
+                [],
+                rulesets=rulesets,
+            ),
+            item_separator="\n",
+        )
 
     def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[CsvRowArtifact]:
         rows = []
