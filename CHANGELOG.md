@@ -48,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module. 
 - `Defaults.drivers_config.conversation_memory_driver` now defaults to `LocalConversationMemoryDriver` instead of `None`.
 - `CsvRowArtifact.to_text()` now includes the header.
+- `BaseConversationMemory.prompt_driver` for use with autopruning. 
 
 ### Fixed
 - Parsing streaming response with some OpenAI compatible services.
