@@ -33,6 +33,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
                 self._extract_rec(
                     cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
                     [],
+                    rulesets=rulesets,
                 ),
                 item_separator="\n",
             )
