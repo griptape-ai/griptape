@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - `BaseConversationMemory.prompt_driver` for use with autopruning. 
+- Generic type support to `ListArtifact`.
+- Iteration support to `ListArtifact`.
 
 ### Fixed
 - Parsing streaming response with some OpenAi compatible services.
