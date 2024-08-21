@@ -4,7 +4,9 @@ from griptape.structures import Agent
 from griptape.tasks import ExtractionTask
 
 # Instantiate the CSV extraction engine
-csv_extraction_engine = CsvExtractionEngine(prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"))
+csv_extraction_engine = CsvExtractionEngine(
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"), column_names=["Name", "Age", "Address"]
+)
 
 # Define some unstructured data and columns
 csv_data = """
@@ -13,15 +15,12 @@ Bob, 35 lives in California.
 Charlie is 40 and lives in Texas.
 """
 
-columns = ["Name", "Age", "Address"]
-
 
 # Create an agent and add the ExtractionTask to it
 agent = Agent()
 agent.add_task(
     ExtractionTask(
         extraction_engine=csv_extraction_engine,
-        args={"column_names": columns},
     )
 )
 
