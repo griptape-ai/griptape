@@ -13,7 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **BREAKING**: Split `BaseExtractionEngine.extract` into `extract` and `extract_artifacts` for consistency with `BaseSummaryEngine`.
 - **BREAKING**: `BaseExtractionEngine` no longer catches exceptions and returns `ErrorArtifact`s.
-- `JsonExtractionEngine` to extract either a JSON object or array depending on the provided schema. 
+- **BREAKING**: `JsonExtractionEngine.template_schema` is now required.
+- **BREAKING**: `CsvExtractionEngine.column_names` is now required.
 - `JsonExtractionEngine.extract_artifacts` now returns a `ListArtifact[JsonArtifact]`.
 - `CsvExtractionEngine.extract_artifacts` now returns a `ListArtifact[CsvRowArtifact]`.
 

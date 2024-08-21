@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 
 @define
 class CsvExtractionEngine(BaseExtractionEngine):
-    column_names: list[str] = field(default=Factory(list), kw_only=True)
+    column_names: list[str] = field(kw_only=True)
     system_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/system.j2")), kw_only=True)
     user_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/user.j2")), kw_only=True)
 

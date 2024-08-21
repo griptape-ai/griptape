@@ -7,11 +7,11 @@ from attrs import define, field
 
 from griptape.artifacts import BaseArtifact
 
-Json = Union[dict[str, "Json"], list["Json"], str, int, float, bool, None]
-
 
 @define
 class JsonArtifact(BaseArtifact):
+    Json = Union[dict[str, "Json"], list["Json"], str, int, float, bool, None]
+
     value: Json = field(converter=lambda v: json.loads(json.dumps(v)), metadata={"serializable": True})
 
     def to_text(self) -> str:
