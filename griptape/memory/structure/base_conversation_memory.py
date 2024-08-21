@@ -10,9 +10,8 @@ from griptape.configs import Defaults
 from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseConversationMemoryDriver
+    from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
     from griptape.memory.structure import Run
-    from griptape.structures import Structure
 
 
 @define
@@ -20,8 +19,10 @@ class BaseConversationMemory(SerializableMixin, ABC):
     driver: Optional[BaseConversationMemoryDriver] = field(
         default=Factory(lambda: Defaults.drivers_config.conversation_memory_driver), kw_only=True
     )
+    prompt_driver: BasePromptDriver = field(
+        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
+    )
     runs: list[Run] = field(factory=list, kw_only=True, metadata={"serializable": True})
-    structure: Structure = field(init=False)
     autoload: bool = field(default=True, kw_only=True)
     autoprune: bool = field(default=True, kw_only=True)
     max_runs: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -65,9 +66,8 @@ class BaseConversationMemory(SerializableMixin, ABC):
         """
         num_runs_to_fit_in_prompt = len(self.runs)
 
-        if self.autoprune and hasattr(self, "structure"):
+        if self.autoprune:
             should_prune = True
-            prompt_driver = Defaults.drivers_config.prompt_driver
             temp_stack = PromptStack()
 
             # Try to determine how many Conversation Memory runs we can
@@ -82,8 +82,8 @@ class BaseConversationMemory(SerializableMixin, ABC):
                 temp_stack.messages.extend(memory_inputs)
 
                 # Convert the Prompt Stack into tokens left.
-                tokens_left = prompt_driver.tokenizer.count_input_tokens_left(
-                    prompt_driver.prompt_stack_to_string(temp_stack),
+                tokens_left = self.prompt_driver.tokenizer.count_input_tokens_left(
+                    self.prompt_driver.prompt_stack_to_string(temp_stack),
                 )
                 if tokens_left > 0:
                     # There are still tokens left, no need to prune.
