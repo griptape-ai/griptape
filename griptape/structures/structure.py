@@ -22,6 +22,8 @@ from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory, Run
 
+from griptape.mixins import FuturesExecutorMixin
+
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
     from griptape.memory.structure import BaseConversationMemory
@@ -30,7 +32,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Structure(ABC):
+class Structure(ABC, FuturesExecutorMixin):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[Rule] = field(factory=list, kw_only=True)
@@ -45,9 +47,6 @@ class Structure(ABC):
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True)
-    futures_executor_fn: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()), kw_only=True
-    )
 
     _execution_args: tuple = ()
 
@@ -182,6 +181,7 @@ class Structure(ABC):
 
         return result
 
+    @observable
     def try_run(self, *args) -> Structure:
         exit_loop = False
 
@@ -191,7 +191,7 @@ class Structure(ABC):
 
             for task in ordered_tasks:
                 if task.can_execute():
-                    future = self.futures_executor_fn().submit(task.execute)
+                    future = self.futures_executor.submit(task.execute)
                     futures_list[future] = task
 
             # Wait for all tasks to complete
