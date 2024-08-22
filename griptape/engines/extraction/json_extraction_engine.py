@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.common import PromptStack
 from griptape.common.prompt_stack.messages.message import Message
 from griptape.engines import BaseExtractionEngine
@@ -32,18 +32,15 @@ class JsonExtractionEngine(BaseExtractionEngine):
         *,
         rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
-    ) -> ListArtifact | ErrorArtifact:
-        try:
-            return ListArtifact(
-                self._extract_rec(
-                    cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
-                    [],
-                    rulesets=rulesets,
-                ),
-                item_separator="\n",
-            )
-        except Exception as e:
-            return ErrorArtifact(f"error extracting JSON: {e}")
+    ) -> ListArtifact:
+        return ListArtifact(
+            self._extract_rec(
+                cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                [],
+                rulesets=rulesets,
+            ),
+            item_separator="\n",
+        )
 
     def json_to_text_artifacts(self, json_input: str) -> list[TextArtifact]:
         json_matches = re.findall(self.JSON_PATTERN, json_input, re.DOTALL)

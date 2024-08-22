@@ -1,4 +1,3 @@
-from griptape.artifacts import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
 from griptape.engines.rag import RagContext, RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, TranslateQueryRagModule, VectorStoreRetrievalRagModule
@@ -11,8 +10,6 @@ prompt_driver = OpenAiChatPromptDriver(model="gpt-4o", temperature=0)
 vector_store = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 artifacts = WebLoader(max_tokens=500).load("https://www.griptape.ai")
 
-if isinstance(artifacts, ErrorArtifact):
-    raise Exception(artifacts.value)
 
 vector_store.upsert_text_artifacts(
     {

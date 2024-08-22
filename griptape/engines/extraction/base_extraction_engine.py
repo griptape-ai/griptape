@@ -9,7 +9,7 @@ from griptape.chunkers import BaseChunker, TextChunker
 from griptape.configs import Defaults
 
 if TYPE_CHECKING:
-    from griptape.artifacts import ErrorArtifact, ListArtifact
+    from griptape.artifacts import ListArtifact
     from griptape.drivers import BasePromptDriver
     from griptape.rules import Ruleset
 
@@ -54,4 +54,4 @@ class BaseExtractionEngine(ABC):
         *,
         rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
-    ) -> ListArtifact | ErrorArtifact: ...
+    ) -> ListArtifact: ...

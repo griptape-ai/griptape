@@ -1,12 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, Optional, cast
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.loaders import BaseLoader
 from griptape.tokenizers import OpenAiTokenizer
@@ -40,11 +39,11 @@ class BaseTextLoader(BaseLoader, ABC):
     reference: Optional[Reference] = field(default=None, kw_only=True)
 
     @abstractmethod
-    def load(self, source: Any, *args, **kwargs) -> ErrorArtifact | list[TextArtifact]: ...
+    def load(self, source: Any, *args, **kwargs) -> list[TextArtifact]: ...
 
-    def load_collection(self, sources: list[Any], *args, **kwargs) -> dict[str, ErrorArtifact | list[TextArtifact]]:
+    def load_collection(self, sources: list[Any], *args, **kwargs) -> dict[str, list[TextArtifact]]:
         return cast(
-            dict[str, Union[ErrorArtifact, list[TextArtifact]]],
+            dict[str, list[TextArtifact]],
             super().load_collection(sources, *args, **kwargs),
         )
 

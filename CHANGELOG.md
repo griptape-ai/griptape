@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseConversationMemory.prompt_driver` for use with autopruning. 
 - Parameter `meta: dict` on `BaseEvent`.
 
+### Changed
+- **BREAKING**: Drivers, Loaders, and Engines will now raises exceptions rather than returning `ErrorArtifact`s.
+
 ### Fixed
 - Parsing streaming response with some OpenAi compatible services.
 
