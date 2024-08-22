@@ -9,7 +9,7 @@ from griptape.artifacts import BaseArtifact
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
 
-T = TypeVar("T", bound=BaseArtifact)
+T = TypeVar("T", bound=BaseArtifact, covariant=True)
 
 
 @define
