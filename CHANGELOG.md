@@ -21,6 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Parsing streaming response with some OpenAi compatible services.
 
+## [0.30.1] - 2024-08-21
+
+### Fixed
+- `CsvExtractionEngine` not using provided `Ruleset`s.
+- Docs examples for Extraction Engines not properly passing in schemas.
+
 ## [0.30.0] - 2024-08-20
 
 ### Added

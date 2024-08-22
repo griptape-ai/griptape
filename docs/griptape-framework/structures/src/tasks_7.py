@@ -17,7 +17,6 @@ Alice (Age 28) lives in New York.
 Bob (Age 35) lives in California.
 """
 
-
 agent = Agent()
 agent.add_task(
     ExtractionTask(
