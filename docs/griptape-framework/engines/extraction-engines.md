@@ -10,7 +10,7 @@ As of now, Griptape supports two types of Extraction Engines: the CSV Extraction
 
 ## CSV
 
-The CSV Extraction Engine is designed for extracting CSV-formatted content from unstructured data.
+The CSV Extraction Engine extracts tabular content from unstructured data.
 
 ```python
 --8<-- "docs/griptape-framework/engines/src/extraction_engines_1.py"
@@ -24,7 +24,7 @@ Charlie,40,Texas
 
 ## JSON
 
-The JSON Extraction Engine is designed for extracting JSON-formatted content from unstructed data. 
+The JSON Extraction Engine extracts JSON-formatted content from unstructed data. 
 
 
 ```python
