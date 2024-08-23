@@ -12,7 +12,7 @@ class TestMarkdownifyWebScraperDriver:
 
     @pytest.fixture(autouse=True)
     def mock_content(self, mock_playwright):
-        mock_content = mock_playwright.__enter__.return_value.chromium.launch.return_value.__enter__.return_value.new_page.return_value.content
+        mock_content = mock_playwright.__enter__.return_value.chromium.launch.return_value.__enter__.return_value.new_context.return_value.new_page.return_value.content
         mock_content.return_value = '<html><a href="foobar.com">foobar</a></html>'
         return mock_content
 

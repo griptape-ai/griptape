@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from random import randint
 from typing import Any, Optional
 
 from attrs import Factory, define, field
@@ -40,6 +41,7 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
 
     def scrape_url(self, url: str) -> TextArtifact:
         sync_playwright = import_optional_dependency("playwright.sync_api").sync_playwright
+        fake_useragent = import_optional_dependency("fake_useragent")
         bs4 = import_optional_dependency("bs4")
         markdownify = import_optional_dependency("markdownify")
 
@@ -54,7 +56,43 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
                 return text
 
         with sync_playwright() as p, p.chromium.launch(headless=True) as browser:
-            page = browser.new_page()
+            # Randomize user agent to help prevent fingerprinting
+            user_agent = fake_useragent.UserAgent().random
+
+            # Randomize viewport size to help prevent fingerprinting
+            viewport = {"width": randint(1024, 1920), "height": randint(768, 1080)}
+
+            context = browser.new_context(user_agent=user_agent, viewport=viewport)
+
+            # Disable WebRTC to prevent IP leaks
+            context.add_init_script("""
+            Object.defineProperty(navigator, 'mediaDevices', {
+                value: {
+                    getUserMedia: () => Promise.reject(new Error('Not allowed')),
+                },
+                configurable: True,
+            });
+            """)
+
+            # Prevent canvas fingerprinting
+            context.add_init_script("""
+            HTMLCanvasElement.prototype.toDataURL = () => "data:image/png;base64,spoofedData";
+            HTMLCanvasElement.prototype.getImageData = function(sx, sy, sw, sh) {
+                const data = CanvasRenderingContext2D.prototype.getImageData.call(this, sx, sy, sw, sh);
+                for (let i = 0; i < data.data.length; i += 4) data.data[i] ^= 0xFF; // Invert colors
+                return data;
+            };
+            """)
+
+            # Add random plugins to prevent fingerprinting
+            context.add_init_script(f"""
+            Object.defineProperty(navigator, 'plugins', {{
+                get: () => {self._random_js_plugin_array(user_agent)},
+                configurable: True,
+            }});
+            """)
+
+            page = context.new_page()
 
             def skip_loading_images(route: Any) -> Any:
                 if route.request.resource_type == "image":
@@ -101,3 +139,41 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
             text = re.sub(r"\n\n+", "\n\n", text)
 
             return TextArtifact(text)
+
+    def _random_js_plugin_array(self, user_agent: str) -> str:
+        faker = import_optional_dependency("faker")
+        fake = faker.Faker()
+        num_plugins = randint(0, 5)
+        extension = self._get_os_extension(user_agent)
+        plugins = []
+        for _ in range(num_plugins):
+            plugins.append(
+                "".join(
+                    [
+                        "{",
+                        ", ".join(
+                            [
+                                f'{k}: "{v}"'
+                                for k, v in {
+                                    "name": f"{fake.word().capitalize()} Plugin",
+                                    "description": f"{fake.catch_phrase()} Description",
+                                    "filename": f"{fake.file_name(extension=extension)}",
+                                }.items()
+                            ]
+                        ),
+                        "}",
+                    ]
+                )
+            )
+
+        return f"[{', '.join(plugins)}]"
+
+    def _get_os_extension(self, user_agent: str) -> str:
+        if "Windows" in user_agent:
+            return "dll"
+        elif "Macintosh" in user_agent:
+            return "dylib"
+        elif "Linux" in user_agent:
+            return "so"
+        else:
+            return "plugin"  # Default fallback
