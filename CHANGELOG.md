@@ -9,13 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseConversationMemory.prompt_driver` for use with autopruning. 
 - Parameter `meta: dict` on `BaseEvent`.
 
-### Changed
-- **BREAKING**: Drivers, Loaders, and Engines will now raises exceptions rather than returning `ErrorArtifact`s.
-
 ### Fixed
 - Parsing streaming response with some OpenAi compatible services.
 
-**Note**: This release includes breaking changes. Please refer to the [Migration Guide](MIGRATION.md#0.31.0) for details.
+**Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.
 
 ## [0.30.1] - 2024-08-21
 
