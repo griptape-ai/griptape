@@ -34,6 +34,7 @@ class TestBaseEvent:
             "id": "917298d4bf894b0a824a8fdb26717a0c",
             "timestamp": 123,
             "model": "foo bar",
+            "meta": {"foo": "bar"},
             "prompt_stack": {
                 "type": "PromptStack",
                 "messages": [
@@ -66,10 +67,12 @@ class TestBaseEvent:
         assert event.prompt_stack.messages[1].content[0].artifact.value == "bar"
         assert event.prompt_stack.messages[1].role == "system"
         assert event.model == "foo bar"
+        assert event.meta == {"foo": "bar"}
 
     def test_finish_prompt_event_from_dict(self):
         dict_value = {
             "type": "FinishPromptEvent",
+            "meta": {"foo": "bar"},
             "timestamp": 123.0,
             "input_token_count": 10,
             "output_token_count": 12,
@@ -85,10 +88,12 @@ class TestBaseEvent:
         assert event.output_token_count == 12
         assert event.result == "foo bar"
         assert event.model == "foo bar"
+        assert event.meta == {"foo": "bar"}
 
     def test_start_task_event_from_dict(self):
         dict_value = {
             "type": "StartTaskEvent",
+            "meta": {"foo": "bar"},
             "timestamp": 123.0,
             "task_id": "foo",
             "task_parent_ids": ["bar"],
@@ -107,10 +112,12 @@ class TestBaseEvent:
         assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
+        assert event.meta == {"foo": "bar"}
 
     def test_start_subtask_event_from_dict(self):
         dict_value = {
             "type": "StartActionsSubtaskEvent",
+            "meta": {"foo": "bar"},
             "timestamp": 123.0,
             "task_id": "foo",
             "task_parent_ids": ["bar"],
@@ -139,10 +146,12 @@ class TestBaseEvent:
         assert event.subtask_actions[0]["path"] == "foopath"
         assert event.subtask_actions[0]["input"] is not None
         assert event.subtask_actions[0]["input"]["value"] == "quux"
+        assert event.meta == {"foo": "bar"}
 
     def test_finish_task_event_from_dict(self):
         dict_value = {
             "type": "FinishTaskEvent",
+            "meta": {"foo": "bar"},
             "timestamp": 123.0,
             "task_id": "foo",
             "task_parent_ids": ["bar"],
@@ -161,10 +170,12 @@ class TestBaseEvent:
         assert isinstance(event.task_input, BaseArtifact)
         assert event.task_input.value == "foo"
         assert event.task_output.value == "bar"
+        assert event.meta == {"foo": "bar"}
 
     def test_finish_subtask_event_from_dict(self):
         dict_value = {
             "type": "FinishActionsSubtaskEvent",
+            "meta": {"foo": "bar"},
             "timestamp": 123.0,
             "task_id": "foo",
             "task_parent_ids": ["bar"],
@@ -193,10 +204,12 @@ class TestBaseEvent:
         assert event.subtask_actions[0]["path"] == "foopath"
         assert event.subtask_actions[0]["input"] is not None
         assert event.subtask_actions[0]["input"]["value"] == "quux"
+        assert event.meta == {"foo": "bar"}
 
     def test_start_structure_run_event_from_dict(self):
         dict_value = {
             "type": "StartStructureRunEvent",
+            "meta": {"foo": "bar"},
             "timestamp": 123.0,
             "structure_id": "foo",
             "input_task_input": {"type": "TextArtifact", "value": "foo"},
@@ -210,10 +223,12 @@ class TestBaseEvent:
         assert isinstance(event.input_task_input, BaseArtifact)
         assert event.input_task_input.value == "foo"
         assert event.input_task_output.value == "bar"
+        assert event.meta == {"foo": "bar"}
 
     def test_finish_structure_run_event_from_dict(self):
         dict_value = {
             "type": "FinishStructureRunEvent",
+            "meta": {"foo": "bar"},
             "timestamp": 123.0,
             "structure_id": "foo",
             "output_task_input": {"type": "TextArtifact", "value": "foo"},
@@ -227,14 +242,16 @@ class TestBaseEvent:
         assert isinstance(event.output_task_input, BaseArtifact)
         assert event.output_task_input.value == "foo"
         assert event.output_task_output.value == "bar"
+        assert event.meta == {"foo": "bar"}
 
     def test_completion_chunk_event_from_dict(self):
-        dict_value = {"type": "CompletionChunkEvent", "timestamp": 123.0, "token": "foo"}
+        dict_value = {"type": "CompletionChunkEvent", "timestamp": 123.0, "token": "foo", "meta": {}}
 
         event = BaseEvent.from_dict(dict_value)
 
         assert isinstance(event, CompletionChunkEvent)
         assert event.token == "foo"
+        assert event.meta == {}
 
     def test_unsupported_from_dict(self):
         dict_value = {"type": "foo", "value": "foobar"}
