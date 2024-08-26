@@ -25,7 +25,10 @@ class TestAmazonBedrockDriversConfig:
 
     def test_to_dict(self, config):
         assert config.to_dict() == {
-            "conversation_memory_driver": None,
+            "conversation_memory_driver": {
+                "type": "LocalConversationMemoryDriver",
+                "persist_file": None,
+            },
             "embedding_driver": {"model": "amazon.titan-embed-text-v1", "type": "AmazonBedrockTitanEmbeddingDriver"},
             "image_generation_driver": {
                 "image_generation_model_driver": {
@@ -77,7 +80,10 @@ class TestAmazonBedrockDriversConfig:
 
     def test_to_dict_with_values(self, config_with_values):
         assert config_with_values.to_dict() == {
-            "conversation_memory_driver": None,
+            "conversation_memory_driver": {
+                "type": "LocalConversationMemoryDriver",
+                "persist_file": None,
+            },
             "embedding_driver": {"model": "amazon.titan-embed-text-v1", "type": "AmazonBedrockTitanEmbeddingDriver"},
             "image_generation_driver": {
                 "image_generation_model_driver": {

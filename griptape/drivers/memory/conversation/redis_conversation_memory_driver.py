@@ -2,17 +2,17 @@ from __future__ import annotations
 
 import json
 import uuid
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
 from griptape.drivers import BaseConversationMemoryDriver
-from griptape.utils.import_utils import import_optional_dependency
+from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from redis import Redis
 
-    from griptape.memory.structure import BaseConversationMemory
+    from griptape.memory.structure import Run
 
 
 @define
@@ -52,19 +52,11 @@ class RedisConversationMemoryDriver(BaseConversationMemoryDriver):
         ),
     )
 
-    def store(self, memory: BaseConversationMemory) -> None:
-        self.client.hset(self.index, self.conversation_id, memory.to_json())
+    def store(self, runs: list[Run], metadata: dict[str, Any]) -> None:
+        self.client.hset(self.index, self.conversation_id, json.dumps(self._to_params_dict(runs, metadata)))
 
-    def load(self) -> Optional[BaseConversationMemory]:
-        from griptape.memory.structure import BaseConversationMemory
-
-        key = self.index
-        memory_json = self.client.hget(key, self.conversation_id)
+    def load(self) -> tuple[list[Run], dict[str, Any]]:
+        memory_json = self.client.hget(self.index, self.conversation_id)
         if memory_json is not None:
-            memory_dict = json.loads(memory_json)
-            # needed to avoid recursive method calls
-            memory_dict["autoload"] = False
-            memory = BaseConversationMemory.from_dict(memory_dict)
-            memory.driver = self
-            return memory
-        return None
+            return self._from_params_dict(json.loads(memory_json))
+        return [], {}

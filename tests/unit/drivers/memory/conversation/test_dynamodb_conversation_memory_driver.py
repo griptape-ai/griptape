@@ -46,7 +46,7 @@ class TestDynamoDbConversationMemoryDriver:
             value_attribute_key=self.VALUE_ATTRIBUTE_KEY,
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
-        memory = ConversationMemory(driver=memory_driver)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver)
         pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -72,7 +72,7 @@ class TestDynamoDbConversationMemoryDriver:
             sort_key="sortKey",
             sort_key_value="foo",
         )
-        memory = ConversationMemory(driver=memory_driver)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver)
         pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -93,7 +93,7 @@ class TestDynamoDbConversationMemoryDriver:
             value_attribute_key=self.VALUE_ATTRIBUTE_KEY,
             partition_key_value=self.PARTITION_KEY_VALUE,
         )
-        memory = ConversationMemory(driver=memory_driver)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver, meta={"foo": "bar"})
         pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -101,12 +101,10 @@ class TestDynamoDbConversationMemoryDriver:
         pipeline.run()
         pipeline.run()
 
-        new_memory = memory_driver.load()
+        runs, metadata = memory_driver.load()
 
-        assert new_memory.type == "ConversationMemory"
-        assert len(new_memory.runs) == 2
-        assert new_memory.runs[0].input.value == "test"
-        assert new_memory.runs[0].output.value == "mock output"
+        assert len(runs) == 2
+        assert metadata == {"foo": "bar"}
 
     def test_load_with_sort_key(self):
         memory_driver = AmazonDynamoDbConversationMemoryDriver(
@@ -118,7 +116,7 @@ class TestDynamoDbConversationMemoryDriver:
             sort_key="sortKey",
             sort_key_value="foo",
         )
-        memory = ConversationMemory(driver=memory_driver)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver, meta={"foo": "bar"})
         pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -126,9 +124,7 @@ class TestDynamoDbConversationMemoryDriver:
         pipeline.run()
         pipeline.run()
 
-        new_memory = memory_driver.load()
+        runs, metadata = memory_driver.load()
 
-        assert new_memory.type == "ConversationMemory"
-        assert len(new_memory.runs) == 2
-        assert new_memory.runs[0].input.value == "test"
-        assert new_memory.runs[0].output.value == "mock output"
+        assert len(runs) == 2
+        assert metadata == {"foo": "bar"}

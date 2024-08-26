@@ -11,7 +11,7 @@ from griptape.utils import import_optional_dependency
 if TYPE_CHECKING:
     import boto3
 
-    from griptape.memory.structure import BaseConversationMemory
+    from griptape.memory.structure import Run
 
 
 @define
@@ -27,35 +27,26 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
     table: Any = field(init=False)
 
     def __attrs_post_init__(self) -> None:
-        dynamodb = self.session.resource("dynamodb")
+        self.table = self.session.resource("dynamodb").Table(self.table_name)
 
-        self.table = dynamodb.Table(self.table_name)
-
-    def store(self, memory: BaseConversationMemory) -> None:
+    def store(self, runs: list[Run], metadata: dict) -> None:
         self.table.update_item(
             Key=self._get_key(),
             UpdateExpression="set #attr = :value",
             ExpressionAttributeNames={"#attr": self.value_attribute_key},
-            ExpressionAttributeValues={":value": memory.to_json()},
+            ExpressionAttributeValues={
+                ":value": json.dumps(self._to_params_dict(runs, metadata)),
+            },
         )
 
-    def load(self) -> Optional[BaseConversationMemory]:
-        from griptape.memory.structure import BaseConversationMemory
-
+    def load(self) -> tuple[list[Run], dict[str, Any]]:
         response = self.table.get_item(Key=self._get_key())
 
         if "Item" in response and self.value_attribute_key in response["Item"]:
             memory_dict = json.loads(response["Item"][self.value_attribute_key])
-            # needed to avoid recursive method calls
-            memory_dict["autoload"] = False
-
-            memory = BaseConversationMemory.from_dict(memory_dict)
-
-            memory.driver = self
-
-            return memory
+            return self._from_params_dict(memory_dict)
         else:
-            return None
+            return [], {}
 
     def _get_key(self) -> dict[str, str | int]:
         key: dict[str, str | int] = {self.partition_key: self.partition_key_value}

@@ -45,7 +45,10 @@ class TestAnthropicDriversConfig:
                     "input_type": "document",
                 },
             },
-            "conversation_memory_driver": None,
+            "conversation_memory_driver": {
+                "type": "LocalConversationMemoryDriver",
+                "persist_file": None,
+            },
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }

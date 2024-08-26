@@ -115,7 +115,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
-            memory.add_to_prompt_stack(stack, 1)
+            memory.add_to_prompt_stack(self.prompt_driver, stack, 1)
 
         return stack
 
