@@ -1,10 +1,6 @@
 import pytest
 
-from griptape.utils import (
-    dict_merge,
-    remove_key_in_dict_recursively,
-    remove_null_values_in_dict_recursively,
-)
+from griptape.utils import dict_merge, remove_key_in_dict_recursively, remove_null_values_in_dict_recursively
 
 
 class TestDictUtils:
