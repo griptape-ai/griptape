@@ -93,7 +93,8 @@ class FileManagerTool(BaseTool):
 
         for artifact in list_artifact.value:
             formatted_file_name = f"{artifact.name}-{file_name}" if len(list_artifact) > 1 else file_name
-            result = self.file_manager_driver.save_file(os.path.join(dir_name, formatted_file_name), artifact.value)
+            value = artifact.value if isinstance(artifact.value, (str, bytes)) else artifact.to_text()
+            result = self.file_manager_driver.save_file(os.path.join(dir_name, formatted_file_name), value)
             if isinstance(result, ErrorArtifact):
                 return result
 

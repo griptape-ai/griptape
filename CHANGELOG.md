@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Ensure thread safety when publishing events by adding a thread lock to batch operations in `BaseEventListenerDriver`. 
+- `FileManagerTool` failing to save Artifacts created by `ExtractionTool` with a `CsvExtractionEngine`.
 
 ## [0.30.1] - 2024-08-21
 
