@@ -1,6 +1,5 @@
 import requests
 
-from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.engines import PromptSummaryEngine
 from griptape.loaders import PdfLoader
@@ -11,9 +10,6 @@ engine = PromptSummaryEngine(
 )
 
 artifacts = PdfLoader().load(response.content)
-
-if isinstance(artifacts, ErrorArtifact):
-    raise Exception(artifacts.value)
 
 text = "\n\n".join([a.value for a in artifacts])
 

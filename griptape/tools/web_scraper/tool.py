@@ -24,9 +24,6 @@ class WebScraperTool(BaseTool):
 
         try:
             result = self.web_loader.load(url)
-            if isinstance(result, ErrorArtifact):
-                return result
-            else:
-                return ListArtifact(result)
+            return ListArtifact(result)
         except Exception as e:
             return ErrorArtifact("Error getting page content: " + str(e))

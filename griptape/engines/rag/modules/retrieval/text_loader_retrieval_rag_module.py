@@ -6,12 +6,12 @@ from typing import TYPE_CHECKING, Any, Callable
 from attrs import Factory, define, field
 
 from griptape import utils
-from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.engines.rag.modules import BaseRetrievalRagModule
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
+    from griptape.artifacts import TextArtifact
     from griptape.drivers import BaseVectorStoreDriver
     from griptape.engines.rag import RagContext
     from griptape.loaders import BaseTextLoader
@@ -38,8 +38,6 @@ class TextLoaderRetrievalRagModule(BaseRetrievalRagModule):
 
         loader_output = self.loader.load(source)
 
-        if isinstance(loader_output, ErrorArtifact):
-            raise Exception(loader_output.to_text() if loader_output.exception is None else loader_output.exception)
         self.vector_store_driver.upsert_text_artifacts({namespace: loader_output})
 
         return self.process_query_output_fn(self.vector_store_driver.query(context.query, **query_params))

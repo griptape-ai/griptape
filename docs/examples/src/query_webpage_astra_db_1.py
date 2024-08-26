@@ -1,6 +1,5 @@
 import os
 
-from griptape.artifacts import ErrorArtifact
 from griptape.drivers import (
     AstraDbVectorStoreDriver,
     OpenAiChatPromptDriver,
@@ -45,8 +44,7 @@ engine = RagEngine(
 )
 
 artifacts = WebLoader(max_tokens=256).load(input_blogpost)
-if isinstance(artifacts, ErrorArtifact):
-    raise Exception(artifacts.value)
+
 vector_store_driver.upsert_text_artifacts({namespace: artifacts})
 
 rag_tool = RagTool(
