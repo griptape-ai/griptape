@@ -1,5 +1,12 @@
 # Griptape Cloud
 
-Griptape Cloud provides managed services for your AI app stack. Deploy and scale end-to-end solutions, from LLM-powered data prep and retrieval to AI agents, pipelines and workflows.
+[Griptape Cloud](https://cloud.griptape.ai/) provides managed services for your AI app stack. Deploy and scale end-to-end solutions, from LLM-powered data prep and retrieval to AI Agents, Pipelines and Workflows.
 
-To get started with AI Structures in the Cloud, check out the [managed-structure-template](https://github.com/griptape-ai/managed-structure-template) or deploy one of the [griptape-sample-structures](https://github.com/griptape-ai/griptape-sample-structures/tree/main).
+## Build Your Own RAG Pipeline
+Connect to your data with our [Data Sources](data-sources/index.md) and prepare them for retrieval with [Knowledge Bases](knowledge-bases/index.md).
+
+## Host and Run Your Code
+Have custom AI code? You can host your python code using [Structures](structures/index.md) whether it uses the Griptape Framework or not.
+
+## APIs
+All of our features can be called via API. See the [API Reference](api/api-reference.md) for detailed information.
