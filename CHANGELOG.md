@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Parsing streaming response with some OpenAi compatible services.
 
-**Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.
+**Note**: This release includes breaking changes. Please refer to the [Migration Guide](MIGRATION.md#0.31.0) for details.
 
 ## [0.30.1] - 2024-08-21
 
