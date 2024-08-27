@@ -1,5 +1,6 @@
 import requests
 
+from griptape.chunkers import TextChunker
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.engines import PromptSummaryEngine
 from griptape.loaders import PdfLoader
@@ -9,8 +10,9 @@ engine = PromptSummaryEngine(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"),
 )
 
-artifacts = PdfLoader().load(response.content)
+artifact = PdfLoader().load(response.content)
+chunks = TextChunker().chunk(artifact)
 
-text = "\n\n".join([a.value for a in artifacts])
+text = "\n\n".join([a.value for a in chunks])
 
 engine.summarize_text(text)

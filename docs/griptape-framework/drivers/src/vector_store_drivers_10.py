@@ -1,5 +1,6 @@
 import os
 
+from griptape.chunkers import TextChunker
 from griptape.drivers import OpenAiEmbeddingDriver, QdrantVectorStoreDriver
 from griptape.loaders import WebLoader
 
@@ -19,7 +20,8 @@ vector_store_driver = QdrantVectorStoreDriver(
 )
 
 # Load Artifacts from the web
-artifacts = WebLoader().load("https://www.griptape.ai")
+artifact = WebLoader().load("https://www.griptape.ai")
+chunks = TextChunker(max_tokens=100).chunk(artifact)
 
 # Recreate Qdrant collection
 vector_store_driver.client.recreate_collection(
@@ -28,7 +30,7 @@ vector_store_driver.client.recreate_collection(
 )
 
 # Upsert Artifacts into the Vector Store Driver
-[vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in artifacts]
+[vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in chunks]
 
 results = vector_store_driver.query(query="What is griptape?")
 

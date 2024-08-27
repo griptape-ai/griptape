@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 
 T = TypeVar("T", bound=BaseArtifact, covariant=True)
 
+    from griptape.artifacts import BaseArtifact
+
 
 @define
 class ListArtifact(BaseArtifact, Generic[T]):

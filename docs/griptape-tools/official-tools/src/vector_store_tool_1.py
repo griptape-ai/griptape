@@ -1,3 +1,4 @@
+from griptape.chunkers import TextChunker
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
@@ -8,8 +9,9 @@ vector_store_driver = LocalVectorStoreDriver(
 )
 
 artifacts = WebLoader().load("https://www.griptape.ai")
+chunks = TextChunker().chunk(artifacts)
 
-vector_store_driver.upsert_text_artifacts({"griptape": artifacts})
+vector_store_driver.upsert_text_artifacts({"griptape": chunks})
 vector_db = VectorStoreTool(
     description="This DB has information about the Griptape Python framework",
     vector_store_driver=vector_store_driver,

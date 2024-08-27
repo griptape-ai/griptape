@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import email
-from email import message
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 import pytest
 
 from griptape.artifacts import ListArtifact
 from griptape.loaders import EmailLoader
+
+if TYPE_CHECKING:
+    from email.message import Message
 
 
 class TestEmailLoader:
@@ -127,23 +129,21 @@ def to_fetch_message(body: str, content_type: Optional[str]):
     return to_fetch_response(to_message(body, content_type))
 
 
-def to_fetch_response(message: message):
+def to_fetch_response(message: Message):
     return (None, ((None, message.as_bytes()),))
 
 
-def to_message(body: str, content_type: Optional[str]) -> message:
+def to_message(body: str, content_type: Optional[str]) -> Message:
     message = email.message_from_string(body)
     if content_type:
         message.set_type(content_type)
     return message
 
 
-def to_value_set(artifact_or_dict: ListArtifact | dict[str, ListArtifact]) -> set[str]:
-    if isinstance(artifact_or_dict, ListArtifact):
-        return {value.value for value in artifact_or_dict.value}
-    elif isinstance(artifact_or_dict, dict):
-        return {
-            text_artifact.value for list_artifact in artifact_or_dict.values() for text_artifact in list_artifact.value
-        }
+def to_value_set(artifacts: ListArtifact | dict[str, ListArtifact]) -> set[str]:
+    if isinstance(artifacts, dict):
+        return set(
+            {text_artifact.value for list_artifact in artifacts.values() for text_artifact in list_artifact.value}
+        )
     else:
-        raise Exception
+        return {artifact.value for artifact in artifacts.value}

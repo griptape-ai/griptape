@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Optional
 
 from attrs import Attribute, Factory, define, field
 
@@ -16,11 +17,11 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
         workdir: The absolute working directory. List, load, and save operations will be performed relative to this directory.
     """
 
-    workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True)
+    workdir: Optional[str] = field(default=Factory(lambda: os.getcwd()), kw_only=True)
 
     @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_workdir(self, _: Attribute, workdir: str) -> None:
-        if not Path(workdir).is_absolute():
+        if self.workdir is not None and not Path(workdir).is_absolute():
             raise ValueError("Workdir must be an absolute path")
 
     def try_list_files(self, path: str) -> list[str]:
@@ -41,8 +42,7 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
         Path(full_path).write_bytes(value)
 
     def _full_path(self, path: str) -> str:
-        path = path.lstrip("/")
-        full_path = os.path.join(self.workdir, path)
+        full_path = path if self.workdir is None else os.path.join(self.workdir, path.lstrip("/"))
         # Need to keep the trailing slash if it was there,
         # because it means the path is a directory.
         ended_with_slash = path.endswith("/")

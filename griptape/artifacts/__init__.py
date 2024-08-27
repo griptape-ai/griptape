@@ -10,6 +10,8 @@ from .image_artifact import ImageArtifact
 from .audio_artifact import AudioArtifact
 from .json_artifact import JsonArtifact
 from .action_artifact import ActionArtifact
+from .table_artifact import TableArtifact
+
 from .generic_artifact import GenericArtifact
 
 from .error_artifact import ErrorArtifact
@@ -32,4 +34,5 @@ __all__ = [
     "AudioArtifact",
     "ActionArtifact",
     "GenericArtifact",
+    "TableArtifact",
 ]

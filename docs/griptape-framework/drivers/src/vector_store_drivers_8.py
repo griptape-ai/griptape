@@ -2,6 +2,7 @@ import os
 
 import boto3
 
+from griptape.chunkers import TextChunker
 from griptape.drivers import AmazonOpenSearchVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 
@@ -16,12 +17,13 @@ vector_store_driver = AmazonOpenSearchVectorStoreDriver(
 )
 
 # Load Artifacts from the web
-artifacts = WebLoader(max_tokens=200).load("https://www.griptape.ai")
+artifact = WebLoader().load("https://www.griptape.ai")
+chunks = TextChunker(max_tokens=200).chunk(artifact)
 
 # Upsert Artifacts into the Vector Store Driver
 vector_store_driver.upsert_text_artifacts(
     {
-        "griptape": artifacts,
+        "griptape": chunks,
     }
 )
 

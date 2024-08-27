@@ -36,19 +36,6 @@ Can be used to load CSV files into [TextArtifact](../../reference/griptape/artif
 --8<-- "docs/griptape-framework/data/src/loaders_3.py"
 ```
 
-
-## DataFrame
-
-!!! info
-    This driver requires the `loaders-dataframe` [extra](../index.md#extras).
-
-Can be used to load [pandas](https://pandas.pydata.org/) [DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)s into [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s:
-
-```python
---8<-- "docs/griptape-framework/data/src/loaders_4.py"
-```
-
-
 ## Text
 
 Used to load arbitrary text and text files:

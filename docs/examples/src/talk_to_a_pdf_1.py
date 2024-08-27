@@ -1,5 +1,6 @@
 import requests
 
+from griptape.chunkers import TextChunker
 from griptape.drivers import LocalVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRetrievalRagModule
@@ -31,8 +32,9 @@ rag_tool = RagTool(
 )
 
 artifacts = PdfLoader().load(response.content)
+chunks = TextChunker().chunk(artifacts)
 
-vector_store.upsert_text_artifacts({namespace: artifacts})
+vector_store.upsert_text_artifacts({namespace: chunks})
 
 agent = Agent(tools=[rag_tool])
 

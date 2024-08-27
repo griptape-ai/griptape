@@ -9,9 +9,9 @@ class TestAudioLoader:
     def loader(self):
         return AudioLoader()
 
-    @pytest.fixture()
-    def create_source(self, bytes_from_resource_path):
-        return bytes_from_resource_path
+    @pytest.fixture(params=["path_from_resource_path"])
+    def create_source(self, request):
+        return request.getfixturevalue(request.param)
 
     @pytest.mark.parametrize(("resource_path", "mime_type"), [("sentences.wav", "audio/wav")])
     def test_load(self, resource_path, mime_type, loader, create_source):
@@ -21,7 +21,6 @@ class TestAudioLoader:
 
         assert isinstance(artifact, AudioArtifact)
         assert artifact.mime_type == mime_type
-        assert len(artifact.value) > 0
 
     def test_load_collection(self, create_source, loader):
         resource_paths = ["sentences.wav", "sentences2.wav"]

@@ -1,37 +1,29 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import Optional, cast
+from typing import Any, Optional, cast
 
-from attrs import Factory, define, field
+from attrs import define
 
-from griptape.artifacts import TextArtifact
-from griptape.chunkers import PdfChunker
-from griptape.loaders import BaseTextLoader
+from griptape.artifacts import ListArtifact, TextArtifact
+from griptape.loaders.base_file_loader import BaseFileLoader
 from griptape.utils import import_optional_dependency
 
 
 @define
-class PdfLoader(BaseTextLoader):
-    chunker: PdfChunker = field(
-        default=Factory(lambda self: PdfChunker(tokenizer=self.tokenizer, max_tokens=self.max_tokens), takes_self=True),
-        kw_only=True,
-    )
-    encoding: None = field(default=None, kw_only=True)
+class PdfLoader(BaseFileLoader):
+    def load(self, source: Any, *args, **kwargs) -> TextArtifact:
+        return cast(TextArtifact, super().load(source, *args, **kwargs))
 
-    def load(
+    def parse(
         self,
         source: bytes,
         password: Optional[str] = None,
         *args,
         **kwargs,
-    ) -> list[TextArtifact]:
+    ) -> ListArtifact:
         pypdf = import_optional_dependency("pypdf")
         reader = pypdf.PdfReader(BytesIO(source), strict=True, password=password)
-        return self._text_to_artifacts("\n".join([p.extract_text() for p in reader.pages]))
+        pages = [TextArtifact(p.extract_text()) for p in reader.pages]
 
-    def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, list[TextArtifact]]:
-        return cast(
-            dict[str, list[TextArtifact]],
-            super().load_collection(sources, *args, **kwargs),
-        )
+        return ListArtifact(pages)

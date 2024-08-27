@@ -12,7 +12,7 @@ from griptape.utils import import_optional_dependency
 class TrafilaturaWebScraperDriver(BaseWebScraperDriver):
     include_links: bool = field(default=True, kw_only=True)
 
-    def scrape_url(self, url: str) -> TextArtifact:
+    def fetch_url(self, url: str) -> str:
         trafilatura = import_optional_dependency("trafilatura")
         use_config = trafilatura.settings.use_config
 
@@ -29,6 +29,15 @@ class TrafilaturaWebScraperDriver(BaseWebScraperDriver):
 
         if page is None:
             raise Exception("can't access URL")
+
+        return page
+
+    def extract_page(self, page: str) -> TextArtifact:
+        trafilatura = import_optional_dependency("trafilatura")
+        use_config = trafilatura.settings.use_config
+
+        config = use_config()
+
         extracted_page = trafilatura.extract(
             page,
             include_links=self.include_links,

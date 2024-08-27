@@ -18,7 +18,7 @@ class TestTextLoaderRetrievalRagModule:
         embedding_driver = MockEmbeddingDriver()
 
         module = TextLoaderRetrievalRagModule(
-            loader=WebLoader(max_tokens=MAX_TOKENS, embedding_driver=embedding_driver),
+            loader=WebLoader(),
             vector_store_driver=LocalVectorStoreDriver(embedding_driver=embedding_driver),
             source="https://www.griptape.ai",
         )

@@ -1,7 +1,6 @@
 import pytest
 
 from griptape.loaders import WebLoader
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 MAX_TOKENS = 50
 
@@ -13,15 +12,12 @@ class TestWebLoader:
 
     @pytest.fixture()
     def loader(self):
-        return WebLoader(max_tokens=MAX_TOKENS, embedding_driver=MockEmbeddingDriver())
+        return WebLoader()
 
     def test_load(self, loader):
-        artifacts = loader.load("https://github.com/griptape-ai/griptape")
+        artifact = loader.load("https://github.com/griptape-ai/griptape")
 
-        assert len(artifacts) == 1
-        assert "foobar" in artifacts[0].value.lower()
-
-        assert artifacts[0].embedding == [0, 1]
+        assert "foobar" in artifact.value.lower()
 
     def test_load_exception(self, mocker, loader):
         mocker.patch("trafilatura.fetch_url", side_effect=Exception("error"))
@@ -38,9 +34,7 @@ class TestWebLoader:
             loader.to_key("https://github.com/griptape-ai/griptape"),
             loader.to_key("https://github.com/griptape-ai/griptape-docs"),
         ]
-        assert "foobar" in [a.value for artifact_list in artifacts.values() for a in artifact_list][0].lower()
-
-        assert list(artifacts.values())[0][0].embedding == [0, 1]
+        assert "foobar" in [a.value for a in artifacts.values()]
 
     def test_empty_page_string_response(self, loader, mocker):
         mocker.patch("trafilatura.extract", return_value="")
