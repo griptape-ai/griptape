@@ -9,7 +9,13 @@ from griptape.artifacts import BaseArtifact
 
 @define
 class GenericArtifact(BaseArtifact):
+    """Serves as an escape hatch for artifacts that don't fit into any other category.
+
+    Attributes:
+        value: The value of the Artifact.
+    """
+
     value: Any = field(metadata={"serializable": True})
 
-    def __add__(self, other: BaseArtifact) -> BaseArtifact:
-        raise NotImplementedError
+    def to_text(self) -> str:
+        return str(self.value)

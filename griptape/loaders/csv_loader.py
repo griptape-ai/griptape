@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import define, field
 
-from griptape.artifacts import CsvRowArtifact
+from griptape.artifacts import TextArtifact
 from griptape.loaders import BaseLoader
 
 if TYPE_CHECKING:
@@ -19,7 +19,7 @@ class CsvLoader(BaseLoader):
     delimiter: str = field(default=",", kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def load(self, source: bytes | str, *args, **kwargs) -> list[CsvRowArtifact]:
+    def load(self, source: bytes | str, *args, **kwargs) -> list[TextArtifact]:
         artifacts = []
 
         if isinstance(source, bytes):
@@ -28,7 +28,7 @@ class CsvLoader(BaseLoader):
             raise ValueError(f"Unsupported source type: {type(source)}")
 
         reader = csv.DictReader(StringIO(source), delimiter=self.delimiter)
-        chunks = [CsvRowArtifact(row) for row in reader]
+        chunks = [TextArtifact(row, meta={"row": row_num}) for row_num, row in enumerate(reader)]
 
         if self.embedding_driver:
             for chunk in chunks:
@@ -44,8 +44,8 @@ class CsvLoader(BaseLoader):
         sources: list[bytes | str],
         *args,
         **kwargs,
-    ) -> dict[str, list[CsvRowArtifact]]:
+    ) -> dict[str, list[TextArtifact]]:
         return cast(
-            dict[str, list[CsvRowArtifact]],
+            dict[str, list[TextArtifact]],
             super().load_collection(sources, *args, **kwargs),
         )

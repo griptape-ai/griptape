@@ -1,6 +1,123 @@
 # Migration Guide
 
 This document provides instructions for migrating your codebase to accommodate breaking changes introduced in new versions of Griptape.
+## 0.31.X to 0.32.X
+
+### Removed `MediaArtifact`
+
+`MediaArtifact` has been removed. Use `ImageArtifact` or `AudioArtifact` instead.
+
+#### Before
+
+```python
+image_media = MediaArtifact(
+    b"image_data",
+    media_type="image",
+    format="jpeg"
+)
+
+audio_media = MediaArtifact(
+    b"audio_data",
+    media_type="audio",
+    format="wav"
+)
+``` 
+
+#### After
+```python
+image_artifact = ImageArtifact(
+    b"image_data",
+    format="jpeg"
+)
+
+audio_artifact = AudioArtifact(
+    b"audio_data",
+    format="wav"
+)
+```
+
+### Removed `BooleanArtifact`
+
+`BooleanArtifact` has been removed. Use `JsonArtifact` instead.
+
+#### Before
+
+```python
+boolean_artifact = BooleanArtifact("true")
+
+print(boolean_artifact.value) # Value is True
+```
+
+#### After
+```python
+json_artifact = JsonArtifact("true")
+
+print(json_artifact.value) # Value is True
+```
+
+### Removed `CsvRowArtifact`
+
+`CsvRowArtifact` has been removed. Use `TextArtifact` instead.
+
+#### Before
+
+```python
+CsvRowArtifact({"name": "John", "age": 30})
+```
+
+#### After
+```python
+TextArtifact("name: John\nAge: 30")
+```
+
+### `CsvLoader`, `DataframeLoader`, and `SqlLoader` return types 
+
+`CsvLoader`, `DataframeLoader`, and `SqlLoader` now return a tuple of `list[TextArtifact]` instead of `list[CsvRowArtifact]`.
+
+#### Before
+
+```python
+results = CsvLoader().load(Path("people.csv").read_text())
+
+print(results[0].value) # {"name": "John", "age": 30}
+```
+
+#### After
+```python
+results = CsvLoader().load(Path("people.csv").read_text())
+
+print(results[0].value) # name: John\nAge: 30
+print(results[0].meta["row"]) # 0
+```
+
+### Moved `ImageArtifact.prompt` and `ImageArtifact.model` to `ImageArtifact.meta`
+
+`ImageArtifact.prompt` and `ImageArtifact.model` have been moved to `ImageArtifact.meta`.
+
+#### Before
+
+```python
+image_artifact = ImageArtifact(
+    b"image_data",
+    format="jpeg",
+    prompt="Generate an image of a cat",
+    model="DALL-E"
+)
+
+print(image_artifact.prompt, image_artifact.model) # Generate an image of a cat, DALL-E
+```
+
+#### After
+```python
+image_artifact = ImageArtifact(
+    b"image_data",
+    format="jpeg",
+    meta={"prompt": "Generate an image of a cat", "model": "DALL-E"}
+)
+
+print(image_artifact.meta["prompt"], image_artifact.meta["model"]) # Generate an image of a cat, DALL-E
+```
+
 
 ## 0.30.X to 0.31.X
 

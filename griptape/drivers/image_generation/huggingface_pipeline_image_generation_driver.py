@@ -44,7 +44,7 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
             format=self.output_format.lower(),
             height=output_image.height,
             width=output_image.width,
-            prompt=prompt,
+            meta={"prompt": prompt},
         )
 
     def try_image_variation(
@@ -76,7 +76,7 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
             format=self.output_format.lower(),
             height=output_image.height,
             width=output_image.width,
-            prompt=prompt,
+            meta={"prompt": prompt},
         )
 
     def try_image_inpainting(

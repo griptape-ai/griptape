@@ -14,7 +14,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class BaseAudioGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, ABC):
+class BaseAudioGenerationTask(ArtifactFileOutputMixin, RuleMixin, BaseTask, ABC):
     def before_run(self) -> None:
         super().before_run()
 

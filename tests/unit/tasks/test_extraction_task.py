@@ -18,4 +18,4 @@ class TestExtractionTask:
         result = task.run()
 
         assert len(result.value) == 1
-        assert result.value[0].value == {"test1": "mock output"}
+        assert result.value[0].value == "test1: mock output"

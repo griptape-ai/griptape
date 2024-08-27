@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- `BaseArtifact.to_bytes()` method to convert an Artifact to bytes.
+
+### Changed
+- **BREAKING**: Removed `MediaArtifact`, use `ImageArtifact` or `AudioArtifact` instead.
+- **BREAKING**: Removed `BooleanArtifact`, use `JsonArtifact` instead.
+- **BREAKING**: Removed `CsvRowArtifact`.
+- **BREAKING**: `CsvLoader`, `DataframeLoader`, and `SqlLoader` now return `list[TextArtifact]`.
+- **BREAKING**: Removed `ImageArtifact.media_type`.
+- **BREAKING**: Removed `AudioArtifact.media_type`.
+- **BREAKING**: Removed `BlobArtifact.dir_name`.
+- **BREAKING**: Moved `ImageArtifact.prompt` and `ImageArtifact.model` into `ImageArtifact.meta`.
+- **BREAKING**: `ImageArtifact.to_text()` now returns the base64 encoded image.
+- Updated `JsonArtifact` value converter to properly handle more types. 
+- `AudioArtifact` now subclasses `BaseArtifact` instead of `MediaArtifact`.
+- `ImageArtifact` now subclasses `BaseArtifact` instead of `MediaArtifact`.
+- Passing a dictionary as the value to `TextArtifact` will convert to a key-value formatted string. 
+- Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
+
 ## [0.31.0] - 2024-09-03
 
 **Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.

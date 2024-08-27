@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 from schema import Literal, Or, Schema
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
 from griptape.configs import Defaults
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
@@ -60,7 +60,7 @@ class QueryTool(BaseTool, RuleMixin):
             ),
         },
     )
-    def query(self, params: dict) -> BaseArtifact:
+    def query(self, params: dict) -> ListArtifact | ErrorArtifact:
         query = params["values"]["query"]
         content = params["values"]["content"]
 
