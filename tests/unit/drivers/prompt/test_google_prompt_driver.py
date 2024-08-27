@@ -29,8 +29,8 @@ class TestGooglePromptDriver:
             "description": "test description: foo",
             "parameters": {"type": "OBJECT", "properties": {"test": {"type": "STRING"}}, "required": ["test"]},
         },
-        {"name": "MockTool_test_list_output", "description": "test description", "parameters": {"type": "OBJECT"}},
-        {"name": "MockTool_test_no_schema", "description": "test description", "parameters": {"type": "OBJECT"}},
+        {"name": "MockTool_test_list_output", "description": "test description"},
+        {"name": "MockTool_test_no_schema", "description": "test description"},
         {
             "name": "MockTool_test_str_output",
             "description": "test description: foo",
