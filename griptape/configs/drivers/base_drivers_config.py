@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -38,7 +38,7 @@ class BaseDriversConfig(ABC, SerializableMixin):
     _vector_store_driver: BaseVectorStoreDriver = field(
         default=None, kw_only=True, metadata={"serializable": True}, alias="vector_store_driver"
     )
-    _conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
+    _conversation_memory_driver: BaseConversationMemoryDriver = field(
         default=None, kw_only=True, metadata={"serializable": True}, alias="conversation_memory_driver"
     )
     _text_to_speech_driver: BaseTextToSpeechDriver = field(
@@ -70,7 +70,7 @@ class BaseDriversConfig(ABC, SerializableMixin):
 
     @lazy_property()
     @abstractmethod
-    def conversation_memory_driver(self) -> Optional[BaseConversationMemoryDriver]: ...
+    def conversation_memory_driver(self) -> BaseConversationMemoryDriver: ...
 
     @lazy_property()
     @abstractmethod

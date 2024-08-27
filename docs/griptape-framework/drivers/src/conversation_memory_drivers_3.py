@@ -14,7 +14,7 @@ redis_conversation_driver = RedisConversationMemoryDriver(
     conversation_id=conversation_id,
 )
 
-agent = Agent(conversation_memory=ConversationMemory(driver=redis_conversation_driver))
+agent = Agent(conversation_memory=ConversationMemory(conversation_memory_driver=redis_conversation_driver))
 
 agent.run("My name is Jeff.")
 agent.run("What is my name?")

@@ -90,7 +90,7 @@ class TestConversationMemory:
         prompt_stack = PromptStack()
         prompt_stack.add_user_message(TextArtifact("foo"))
         prompt_stack.add_assistant_message("bar")
-        memory.add_to_prompt_stack(prompt_stack)
+        memory.add_to_prompt_stack(agent.prompt_driver, prompt_stack)
 
         assert len(prompt_stack.messages) == 12
 
@@ -116,7 +116,7 @@ class TestConversationMemory:
         prompt_stack.add_system_message("fizz")
         prompt_stack.add_user_message("foo")
         prompt_stack.add_assistant_message("bar")
-        memory.add_to_prompt_stack(prompt_stack)
+        memory.add_to_prompt_stack(agent.prompt_driver, prompt_stack)
 
         assert len(prompt_stack.messages) == 3
 
@@ -140,7 +140,7 @@ class TestConversationMemory:
         prompt_stack.add_system_message("fizz")
         prompt_stack.add_user_message("foo")
         prompt_stack.add_assistant_message("bar")
-        memory.add_to_prompt_stack(prompt_stack)
+        memory.add_to_prompt_stack(agent.prompt_driver, prompt_stack)
 
         assert len(prompt_stack.messages) == 13
 
@@ -168,7 +168,7 @@ class TestConversationMemory:
         prompt_stack.add_system_message("fizz")
         prompt_stack.add_user_message("foo")
         prompt_stack.add_assistant_message("bar")
-        memory.add_to_prompt_stack(prompt_stack, 1)
+        memory.add_to_prompt_stack(agent.prompt_driver, prompt_stack, 1)
 
         # We expect one run (2 Prompt Stack inputs) to be pruned.
         assert len(prompt_stack.messages) == 11
