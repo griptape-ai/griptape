@@ -187,11 +187,17 @@ class GooglePromptDriver(BasePromptDriver):
                 tool_declaration = types.FunctionDeclaration(
                     name=tool.to_native_tool_name(activity),
                     description=tool.activity_description(activity),
-                    parameters={
-                        "type": schema["type"],
-                        "properties": schema["properties"],
-                        "required": schema.get("required", []),
-                    },
+                    **(
+                        {
+                            "parameters": {
+                                "type": schema["type"],
+                                "properties": schema["properties"],
+                                "required": schema.get("required", []),
+                            }
+                        }
+                        if schema.get("properties")
+                        else {}
+                    ),
                 )
 
                 tool_declarations.append(tool_declaration)
