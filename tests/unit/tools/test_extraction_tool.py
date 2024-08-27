@@ -58,10 +58,10 @@ class TestExtractionTool:
         )
 
         assert len(result.value) == 1
-        assert result.value[0].value == {"test1": "mock output"}
+        assert result.value[0].value == "test1: mock output"
 
     def test_csv_extract_content(self, csv_tool):
         result = csv_tool.extract({"values": {"data": "foo"}})
 
         assert len(result.value) == 1
-        assert result.value[0].value == {"test1": "mock output"}
+        assert result.value[0].value == "test1: mock output"

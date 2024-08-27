@@ -4,17 +4,26 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, define, field
 
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import BaseArtifact, BaseSystemArtifact
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
 @define
-class ListArtifact(BaseArtifact):
+class ListArtifact(BaseSystemArtifact):
     value: Sequence[BaseArtifact] = field(factory=list, metadata={"serializable": True})
     item_separator: str = field(default="\n\n", kw_only=True, metadata={"serializable": True})
     validate_uniform_types: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+
+    def __getitem__(self, key: int) -> BaseArtifact:
+        return self.value[key]
+
+    def __bool__(self) -> bool:
+        return len(self) > 0
+
+    def __add__(self, other: BaseArtifact) -> BaseArtifact:
+        return ListArtifact(self.value + other.value)
 
     @value.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_value(self, _: Attribute, value: list[BaseArtifact]) -> None:
@@ -31,17 +40,8 @@ class ListArtifact(BaseArtifact):
         else:
             return None
 
-    def __getitem__(self, key: int) -> BaseArtifact:
-        return self.value[key]
-
-    def __bool__(self) -> bool:
-        return len(self) > 0
-
     def to_text(self) -> str:
         return self.item_separator.join([v.to_text() for v in self.value])
-
-    def __add__(self, other: BaseArtifact) -> BaseArtifact:
-        return ListArtifact(self.value + other.value)
 
     def is_type(self, target_type: type) -> bool:
         if self.value:

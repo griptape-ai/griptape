@@ -2,12 +2,17 @@ from __future__ import annotations
 
 from attrs import define, field
 
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import BaseSystemArtifact
 
 
 @define
-class InfoArtifact(BaseArtifact):
-    value: str = field(converter=str, metadata={"serializable": True})
+class InfoArtifact(BaseSystemArtifact):
+    """Represents helpful info that can be conveyed to the LLM.
 
-    def __add__(self, other: BaseArtifact) -> InfoArtifact:
-        return InfoArtifact(self.value + other.value)
+    For example, "No results found" or "Please try again.".
+
+    Attributes:
+        value: The info to convey.
+    """
+
+    value: str = field(converter=str, metadata={"serializable": True})

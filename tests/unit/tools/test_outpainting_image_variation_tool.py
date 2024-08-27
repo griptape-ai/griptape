@@ -34,8 +34,8 @@ class TestOutpaintingImageGenerationTool:
             OutpaintingImageGenerationTool(engine=image_generation_engine, output_dir="test", output_file="test")
 
     def test_image_outpainting(self, image_generator, path_from_resource_path) -> None:
-        image_generator.engine.run.return_value = Mock(
-            value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
+        image_generator.engine.run.return_value = ImageArtifact(
+            value=b"image data", format="png", width=512, height=512
         )
 
         image_artifact = image_generator.image_outpainting_from_file(
@@ -59,8 +59,8 @@ class TestOutpaintingImageGenerationTool:
             engine=image_generation_engine, output_file=outfile, image_loader=image_loader
         )
 
-        image_generator.engine.run.return_value = Mock(  # pyright: ignore[reportFunctionMemberAccess]
-            value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
+        image_generator.engine.run.return_value = ImageArtifact(  # pyright: ignore[reportFunctionMemberAccess]
+            value=b"image data", format="png", width=512, height=512
         )
 
         image_artifact = image_generator.image_outpainting_from_file(

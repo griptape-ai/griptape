@@ -22,8 +22,8 @@ class TestOpenAiImageGenerationDriver:
         assert image_artifact.mime_type == "image/png"
         assert image_artifact.width == 512
         assert image_artifact.height == 512
-        assert image_artifact.model == "dall-e-2"
-        assert image_artifact.prompt == "test prompt"
+        assert image_artifact.meta["model"] == "dall-e-2"
+        assert image_artifact.meta["prompt"] == "test prompt"
 
     def test_try_image_variation(self, driver):
         driver.client.images.create_variation.return_value = Mock(data=[Mock(b64_json=b"aW1hZ2UgZGF0YQ==")])
@@ -34,7 +34,7 @@ class TestOpenAiImageGenerationDriver:
         assert image_artifact.mime_type == "image/png"
         assert image_artifact.width == 512
         assert image_artifact.height == 512
-        assert image_artifact.model == "dall-e-2"
+        assert image_artifact.meta["model"] == "dall-e-2"
 
     def test_try_image_variation_invalid_size(self, driver):
         driver.image_size = "1024x1792"
@@ -59,8 +59,8 @@ class TestOpenAiImageGenerationDriver:
         assert image_artifact.mime_type == "image/png"
         assert image_artifact.width == 512
         assert image_artifact.height == 512
-        assert image_artifact.model == "dall-e-2"
-        assert image_artifact.prompt == "test prompt"
+        assert image_artifact.meta["model"] == "dall-e-2"
+        assert image_artifact.meta["prompt"] == "test prompt"
 
     def test_try_image_inpainting_invalid_size(self, driver):
         driver.image_size = "1024x1792"

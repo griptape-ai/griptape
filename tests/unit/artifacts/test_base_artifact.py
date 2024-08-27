@@ -41,7 +41,7 @@ class TestBaseArtifact:
         assert artifact.to_text() == "foobar"
 
     def test_blob_artifact_from_dict(self):
-        dict_value = {"type": "BlobArtifact", "value": b"Zm9vYmFy", "dir_name": "foo", "name": "bar"}
+        dict_value = {"type": "BlobArtifact", "value": b"Zm9vYmFy", "name": "bar"}
         artifact = BaseArtifact.from_dict(dict_value)
 
         assert isinstance(artifact, BlobArtifact)
@@ -51,17 +51,15 @@ class TestBaseArtifact:
         dict_value = {
             "type": "ImageArtifact",
             "value": b"aW1hZ2UgZGF0YQ==",
-            "dir_name": "foo",
             "format": "png",
             "width": 256,
             "height": 256,
-            "model": "test-model",
-            "prompt": "some prompt",
+            "meta": {"model": "test-model", "prompt": "some prompt"},
         }
         artifact = BaseArtifact.from_dict(dict_value)
 
         assert isinstance(artifact, ImageArtifact)
-        assert artifact.to_text() == "Media, type: image/png, size: 10 bytes"
+        assert artifact.to_text() == "aW1hZ2UgZGF0YQ=="
         assert artifact.value == b"image data"
 
     def test_unsupported_from_dict(self):

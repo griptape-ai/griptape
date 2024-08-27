@@ -46,12 +46,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         image_bytes = self._make_request(request)
 
         return ImageArtifact(
-            prompt=", ".join(prompts),
             value=image_bytes,
             format="png",
             width=self.image_width,
             height=self.image_height,
-            model=self.model,
+            meta={"prompt": ", ".join(prompts), "model": self.model},
         )
 
     def try_image_variation(
@@ -70,12 +69,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         image_bytes = self._make_request(request)
 
         return ImageArtifact(
-            prompt=", ".join(prompts),
             value=image_bytes,
             format="png",
             width=image.width,
             height=image.height,
-            model=self.model,
+            meta={"prompt": ", ".join(prompts), "model": self.model},
         )
 
     def try_image_inpainting(
@@ -96,12 +94,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         image_bytes = self._make_request(request)
 
         return ImageArtifact(
-            prompt=", ".join(prompts),
             value=image_bytes,
             format="png",
             width=image.width,
             height=image.height,
-            model=self.model,
+            meta={"prompt": ", ".join(prompts), "model": self.model},
         )
 
     def try_image_outpainting(
@@ -122,12 +119,11 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
         image_bytes = self._make_request(request)
 
         return ImageArtifact(
-            prompt=", ".join(prompts),
             value=image_bytes,
             format="png",
             width=image.width,
             height=image.height,
-            model=self.model,
+            meta={"prompt": ", ".join(prompts), "model": self.model},
         )
 
     def _make_request(self, request: dict) -> bytes:

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 @define
-class TextToSpeechTool(BlobArtifactFileOutputMixin, BaseTool):
+class TextToSpeechTool(ArtifactFileOutputMixin, BaseTool):
     """A tool that can be used to generate speech from input text.
 
     Attributes:
