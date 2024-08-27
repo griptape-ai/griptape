@@ -1,14 +1,14 @@
 # Structures
 
-Use [Structures](https://cloud.griptape.ai/structures) to host any python code in the cloud in seconds.
+Use [Structures](https://cloud.griptape.ai/structures) to host any python code in the cloud.
 
 ## Create a Structure
 
-1. First [Connect Your GitHub Account](https://cloud.griptape.ai/account)
+1. [Connect Your GitHub Account](https://cloud.griptape.ai/account) in your Griptape Cloud account
 1. Install the [Griptape Cloud GitHub app](https://github.com/apps/griptape-cloud/installations/new/) to any account or organization you'd like to pull code in from
-    1. Be sure to allow the app access to `All Repositories` or select the specific repositories you need
+    - Be sure to allow the app access to `All Repositories` or select the specific repositories you need
 
-You can then [create a Structure](https://cloud.griptape.ai/structures/create) by providing your GitHub repository information. Make sure that your repository has a [Structure Config YAML](structure-config.md).
+You can now [create a Structure](https://cloud.griptape.ai/structures/create) by providing your GitHub repository information. Make sure that your repository has a [Structure Config YAML](structure-config.md).
 
 ### Quickstart With Samples and Templates
 
@@ -31,14 +31,18 @@ input_file.txt
 
 ### From the API
 
-You can run your Structure via the API using CURL or any other code that can make HTTP requests. You will need a [Griptape Cloud API Key](https://cloud.griptape.ai/configuration/api-keys) and the `Structure Invocation URL` which is located on the `Config` tab of your Structure.
+You can run your Structure via the API using CURL or any other code that can make HTTP requests. You will need a [Griptape Cloud API Key](https://cloud.griptape.ai/configuration/api-keys) and the `Structure Invocation URL` which is located on the `Config` tab of your Structure. 
+
+The example below will kick off a run with the args you pass as a json object.
 
 ```shell
+export GT_CLOUD_API_KEY=<your API key here>
+export INVOCATION_URL=<your structure invocation URL>
 curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"args": ["arg1"], "env": {"var1":"value1"}}' ${INVOCATION_URL}
 ```
 
-For more information on other Structure run APIs, check out the [StructureRuns API docs](api/api-reference/#/StructureRuns).
+For more information on other Structure run APIs, check out the [StructureRuns API docs](../api/api-reference.md/#/StructureRuns).
 
 ### Using the Griptape Framework
 
-You can use [StructureRunDrivers](../../griptape-framework/drivers/structure-run-drivers/#griptape-cloud) in the Griptape Framework to run your code.
+You can use [StructureRunDrivers](../../griptape-framework/drivers/structure-run-drivers.md/#griptape-cloud) to run your Structure with Griptape.
