@@ -10,6 +10,13 @@ from griptape.artifacts import BaseArtifact
 Json = Union[dict[str, "Json"], list["Json"], str, int, float, bool, None]
 
 
+def value_to_json(value: Any) -> Json:
+    if isinstance(value, str):
+        return json.loads(value)
+    else:
+        return json.loads(json.dumps(value))
+
+
 @define
 class JsonArtifact(BaseArtifact):
     """Stores JSON data.

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Generic, Optional, TypeVar
 
 from attrs import Attribute, define, field
 
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import BaseArtifact, BaseSystemArtifact
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence

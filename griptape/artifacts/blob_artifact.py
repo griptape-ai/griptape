@@ -7,6 +7,13 @@ from attrs import define, field
 from griptape.artifacts import BaseArtifact
 
 
+def value_to_bytes(value: Any) -> bytes:
+    if isinstance(value, bytes):
+        return value
+    else:
+        return str(value).encode()
+
+
 @define
 class BlobArtifact(BaseArtifact):
     """Stores arbitrary binary data.
