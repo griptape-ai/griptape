@@ -10,7 +10,7 @@ If you do not see a Data Source configuration you'd wish to use, you can submit 
 
 ### Web Page
 
-You can scrape and ingest a single, public web page by providing a URL. If you wish to scrape multiple pages, you must create mutliple Data Sources. However, you can then add all of the pages to the same Knowledge Base if you wish to access all the pages together.
+You can scrape and ingest a single, public web page by providing a URL. If you wish to scrape multiple pages, you must create multiple Data Sources. However, you can then add all of the pages to the same Knowledge Base if you wish to access all the pages together.
 
 ### Google Drive
 
