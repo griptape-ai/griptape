@@ -1,12 +1,12 @@
 # Running a Structure
 
-Once your Structure is created and deployed, you can run your Structure one of three ways outlined below. You view the output of any of your runs, no matter how you created them, you can view them in the `Runs` tab of your Structure.
+Once your Structure is created and deployed, you can run your Structure one of three ways outlined below. You view the output of any of your runs, no matter how you created them, in the `Runs` tab of your Structure.
 
-## From the UI
+## From the Cloud Console
 
-In the UI, click on the name of the Structure you wish to run and then go to the `Test` tab. Here you can specify arguments to pass to your Structure run and any run-specific environment variables you need.
+In the cloud console, click on the name of the Structure you wish to run and then go to the `Test` tab. Here you can specify arguments to pass to your Structure run and any run-specific environment variables you need.
 
-When passing arguments through the UI, pass each new argument on a new line. For example if your local code could be ran with the inputs `-i input_file.txt` then the arguments you would pass in the cloud would be:
+When passing arguments through the cloud console, pass each new argument on a new line. For example if your local code is ran with the inputs `-i input_file.txt` then the arguments you would pass in the cloud would be:
 
 ```
 -i
@@ -22,7 +22,7 @@ The example below will kick off a run with the args you pass as a json object.
 ```shell
 export GT_CLOUD_API_KEY=<your API key here>
 export INVOCATION_URL=<your structure invocation URL>
-curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"args": ["arg1"], "env": {"var1":"value1"}}' ${INVOCATION_URL}
+curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"args": ["arg1"], ""env_vars"": [{"name":"var1", "value": "value"}]}' ${INVOCATION_URL}
 ```
 
 For more information on other Structure run APIs, check out the [StructureRuns API docs](../api/api-reference.md/#/StructureRuns).

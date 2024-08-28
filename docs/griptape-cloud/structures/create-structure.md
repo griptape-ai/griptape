@@ -1,6 +1,6 @@
 # Structures
 
-Use [Structures](https://cloud.griptape.ai/structures) to host any python code in the cloud.
+Structures are the primary building block in the Griptape.
 
 ## Create a Structure
 

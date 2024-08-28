@@ -1,9 +1,21 @@
 # Data Sources
 
-Use [Data Sources](https://cloud.griptape.ai/data-sources) to connect and ingest your own data for use with your AI applications via [Knowledge Bases](../knowledge-bases/create-knowledge-base.md).
+Data Sources are the first step to Griptape's RAG pipeline. They allow you to bring your own data to ingest and transform for use with your AI applications via [Knowledge Bases](../knowledge-bases/create-knowledge-base.md).
 
 ## Create a Data Source
 
-You can [Create a Data Source](https://cloud.griptape.ai/data-sources/create) by specifying the required configuration for your chosen Data Source.
+You can [create a Data Source](https://cloud.griptape.ai/data-sources/create) by specifying the required configuration for your chosen Data Source in the cloud console.
 
-If you do not see a data source configuration you'd wish to use, you can submit a request via [Discord](https://discord.gg/gnWRz88eym) or `hello@griptape.ai`.
+If you do not see a Data Source configuration you'd wish to use, you can submit a request via [Discord](https://discord.gg/gnWRz88eym) or `hello@griptape.ai`.
+
+### Web Page
+
+You can scrape and ingest a single, public web page by providing a URL. If you wish to scrape multiple pages, you must create mutliple Data Sources. However, you can then add all of the pages to the same Knowledge Base if you wish to access all the pages together.
+
+### Google Drive
+
+You can ingest documents and spreadsheets stored in a Google Drive account. We support all standard file formats such as text, markdown, spreadsheets, and presentations.
+
+### Confluence
+
+You can connect to your personal or company Confluence by providing a domain, [Atlassian API Token](https://id.atlassian.com/manage-profile/security/api-tokens), and the email address for the token holder's account. Each Confluence Data Source is limited to a single space in Confluence.

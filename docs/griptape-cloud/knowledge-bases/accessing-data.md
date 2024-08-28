@@ -2,9 +2,9 @@
 
 You can `Search` or `Query` the Knowledge Base for information contained in your Data Sources. `Search` will return a natural language response while `Query` will return the individual entries. Use whichever one best fits your use case.
 
-## From the UI
+## From the Cloud Console
 
-You can try out both actions from the UI on the `Test` tab of your Knowledge Base.
+You can try out both actions from the cloud console on the `Test` tab of your Knowledge Base.
 
 ## From the API
 
@@ -30,4 +30,4 @@ curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test quer
 
 ## Using the Griptape Framework
 
-You can use [VectorStoreDrivers](../../griptape-framework/drivers/vector-store-drivers.md/#griptape-cloud-knowledge-base) to query your Knowledge Base with Griptape.
+You can use the [GriptapeCloudKnowledgeBaseVectorStoreDriver](../../griptape-framework/drivers/vector-store-drivers.md/#griptape-cloud-knowledge-base) to query your Knowledge Base with Griptape and the [GriptapeCloudKnowledgeBaseTool](../../griptape-tools/official-tools/griptape-cloud-knowledge-base-tool.md) to search.
