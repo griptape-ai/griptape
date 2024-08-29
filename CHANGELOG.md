@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parsing streaming response with some OpenAi compatible services.
 - Issue in `PromptSummaryEngine` if there are no artifacts during recursive summarization.
 - Issue in `GooglePromptDriver` using Tools with no schema.
+- Missing `maxTokens` inference parameter in `AmazonBedrockPromptDriver`.
 - Incorrect model in `OpenAiDriverConfig`'s `text_to_speech_driver`.
 
 **Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.
