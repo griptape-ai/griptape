@@ -4,28 +4,28 @@ You can `Search` or `Query` the Knowledge Base for information contained in your
 
 ## From the Cloud Console
 
-You can try out both actions from the cloud console on the `Test` tab of your Knowledge Base.
+You can explore your data with a natural language question on the `Test` tab of your Knowledge Base. Compare and contrast the results of `Search` vs. `Query` to understand which is correct for your application.
 
 ## From the API
 
-You can enact both `Query` and `Search` via the API by hitting their respective endpoints using a [Griptape Cloud API Key](https://cloud.griptape.ai/configuration/api-keys) and the Knowledge Base ID found on the `Config` tab of your Knowledge Base. 
+You can enact both `Search` and `Query` via the API by hitting their respective endpoints using a [Griptape Cloud API Key](https://cloud.griptape.ai/configuration/api-keys) and the Knowledge Base ID found on the `Config` tab of your Knowledge Base. 
 
-The following example commands will send the query string "test query string" and return the results from the Knowledge Base.
-
-### Query
-
-```shell
-export GT_CLOUD_API_KEY=<your API key here>
-export KNOWLEDGE_BASE_ID=<your knowledge base id here>
-curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test query string"}' https://cloud.griptape.ai/api/knowledge-bases/${KNOWLEDGE_BASE_ID}/query
-```
+The following example commands will send the string `"test question"` and return the results from the Knowledge Base.
 
 ### Search
 
 ```shell
 export GT_CLOUD_API_KEY=<your API key here>
 export KNOWLEDGE_BASE_ID=<your knowledge base id here>
-curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test query string"}' https://cloud.griptape.ai/api/knowledge-bases/${KNOWLEDGE_BASE_ID}/search
+curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test question"}' https://cloud.griptape.ai/api/knowledge-bases/${KNOWLEDGE_BASE_ID}/search
+```
+
+### Query
+
+```shell
+export GT_CLOUD_API_KEY=<your API key here>
+export KNOWLEDGE_BASE_ID=<your knowledge base id here>
+curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test question"}' https://cloud.griptape.ai/api/knowledge-bases/${KNOWLEDGE_BASE_ID}/query
 ```
 
 ## Using the Griptape Framework
