@@ -4,7 +4,7 @@ Data Sources are the first step to Griptape's RAG pipeline. They allow you to br
 
 ## Create a Data Source
 
-You can [create a Data Source](https://cloud.griptape.ai/data-sources/create) by specifying the required configuration for your chosen Data Source in the cloud console.
+You can [create a Data Source in the Griptape Cloud console](https://cloud.griptape.ai/data-sources/create) by specifying the required configuration for your chosen Data Source in the cloud console.
 
 ### Web Page
 
@@ -20,7 +20,7 @@ You can connect to your personal or company Confluence by providing a URL, [Atla
 
 ### Structure (Experimental)
 
-You can specify a [Structure](../structures/create-structure.md) to run as a Data Source as long as your Structure returns a [`TextArtifact` or `ListArtifact` from Griptape](../../griptape-framework/data/artifacts.md). You can use this as a way to build custom Data Sources.
+You can specify a [Structure](../structures/create-structure.md) to run as a Data Source as long as your Structure returns a [`TextArtifact` or `ListArtifact` from the Griptape Framework](../../griptape-framework/data/artifacts.md). You can use this as a way to build custom Data Sources.
 
 ## Other Data Source Types
 
