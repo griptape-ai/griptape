@@ -4,4 +4,4 @@ Knowledge Bases are the way to organize and access your data ingested from [Data
 
 ## Create a Knowledge Base
 
-You can [create a Knowledge Base](https://cloud.griptape.ai/knowledge-bases/create) by specifying which Data Sources you wish to include. Once created, you can [access your data](accessing-data.md) instantly.
+You can [create a Knowledge Base](https://cloud.griptape.ai/knowledge-bases/create) by specifying which Data Sources you wish to include. Once created, you can [access your data](accessing-data.md).
