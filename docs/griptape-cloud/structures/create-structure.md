@@ -1,6 +1,6 @@
 # Structures
 
-Structures are the primary building block in the Griptape.
+Structures are a primary component in Griptape for organizing and executing Tasks against a LLM.
 
 ## Create a Structure
 

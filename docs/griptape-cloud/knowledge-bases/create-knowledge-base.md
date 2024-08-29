@@ -1,6 +1,6 @@
 # Knowledge Bases
 
-Use [Knowledge Bases](https://cloud.griptape.ai/knowledge-bases) to prep your data ingested from [Data Sources](../data-sources/create-data-source.md) for retrieval. You can specify multiple Data Sources per Knowledge Base in order to access data ingested from different sources all in one place.
+Knowledge Bases are the way to organize and access your data ingested from [Data Sources](../data-sources/create-data-source.md). You can specify multiple Data Sources per Knowledge Base in order to access data ingested from different sources all in one place.
 
 ## Create a Knowledge Base
 
