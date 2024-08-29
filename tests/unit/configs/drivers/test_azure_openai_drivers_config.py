@@ -36,7 +36,10 @@ class TestAzureOpenAiDriversConfig:
                 "user": "",
                 "use_native_tools": True,
             },
-            "conversation_memory_driver": None,
+            "conversation_memory_driver": {
+                "type": "LocalConversationMemoryDriver",
+                "persist_file": None,
+            },
             "embedding_driver": {
                 "base_url": None,
                 "model": "text-embedding-3-small",

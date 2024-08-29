@@ -42,3 +42,10 @@ class TestPromptSummaryEngine:
             return Path(full_path).read_text()
 
         assert engine.summarize_text(copy_test_resource("test.txt") * 50)
+
+    def test_summarize_artifacts_rec_no_artifacts(self, engine):
+        with pytest.raises(ValueError):
+            engine.summarize_artifacts_rec([])
+
+        output = engine.summarize_artifacts_rec([], "summary")
+        assert output.value == "summary"

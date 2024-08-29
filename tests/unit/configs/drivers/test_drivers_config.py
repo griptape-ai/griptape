@@ -18,7 +18,10 @@ class TestDriversConfig:
                 "stream": False,
                 "use_native_tools": False,
             },
-            "conversation_memory_driver": None,
+            "conversation_memory_driver": {
+                "type": "LocalConversationMemoryDriver",
+                "persist_file": None,
+            },
             "embedding_driver": {"type": "DummyEmbeddingDriver"},
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {"type": "DummyImageQueryDriver"},
@@ -56,7 +59,7 @@ class TestDriversConfig:
         assert Defaults.drivers_config.image_query_driver is not None
         assert Defaults.drivers_config.embedding_driver is not None
         assert Defaults.drivers_config.vector_store_driver is not None
-        assert Defaults.drivers_config.conversation_memory_driver is None
+        assert Defaults.drivers_config.conversation_memory_driver is not None
         assert Defaults.drivers_config.text_to_speech_driver is not None
         assert Defaults.drivers_config.audio_transcription_driver is not None
 
@@ -65,6 +68,6 @@ class TestDriversConfig:
         assert Defaults.drivers_config._image_query_driver is not None
         assert Defaults.drivers_config._embedding_driver is not None
         assert Defaults.drivers_config._vector_store_driver is not None
-        assert Defaults.drivers_config._conversation_memory_driver is None
+        assert Defaults.drivers_config._conversation_memory_driver is not None
         assert Defaults.drivers_config._text_to_speech_driver is not None
         assert Defaults.drivers_config._audio_transcription_driver is not None

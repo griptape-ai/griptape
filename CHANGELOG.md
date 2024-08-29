@@ -5,12 +5,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 ### Added
-- `BaseConversationMemory.prompt_driver` for use with autopruning. 
 - Parameter `meta: dict` on `BaseEvent`.
+
+### Changed
+- **BREAKING**: Parameter `driver` on `BaseConversationMemory` renamed to `conversation_memory_driver`.
+- **BREAKING**: `BaseConversationMemory.add_to_prompt_stack` now takes a `prompt_driver` parameter.
+- **BREAKING**: `BaseConversationMemoryDriver.load` now returns `tuple[list[Run], Optional[dict]]`.
+- **BREAKING**: `BaseConversationMemoryDriver.store` now takes `runs: list[Run]` and `metadata: Optional[dict]` as input.
+- **BREAKING**: Parameter `file_path` on `LocalConversationMemoryDriver` renamed to `persist_file` and is now type `Optional[str]`.
+- `Defaults.drivers_config.conversation_memory_driver` now defaults to `LocalConversationMemoryDriver` instead of `None`.
 
 ### Fixed
 - Parsing streaming response with some OpenAi compatible services.
+- Issue in `PromptSummaryEngine` if there are no artifacts during recursive summarization.
+- Issue in `GooglePromptDriver` using Tools with no schema.
+
+**Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.
 
 ## [0.30.1] - 2024-08-21
 

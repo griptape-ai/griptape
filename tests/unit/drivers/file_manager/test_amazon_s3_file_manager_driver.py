@@ -5,7 +5,7 @@ import boto3
 import pytest
 from moto import mock_s3
 
-from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers import AmazonS3FileManagerDriver
 from griptape.loaders import TextLoader
 from tests.utils.aws import mock_aws_credentials
@@ -135,23 +135,21 @@ class TestAmazonS3FileManagerDriver:
         ("workdir", "path", "expected"),
         [
             # non-existent paths
-            ("/", "bar", "Path not found"),
-            ("/", "bar/", "Path not found"),
-            ("/", "bitcoin.pdf", "Path not found"),
+            ("/", "bar", FileNotFoundError),
+            ("/", "bar/", FileNotFoundError),
+            ("/", "bitcoin.pdf", FileNotFoundError),
             # # paths to files (not directories)
-            ("/", "foo.txt", "Path is not a directory"),
-            ("/", "/foo.txt", "Path is not a directory"),
-            ("/resources", "bitcoin.pdf", "Path is not a directory"),
-            ("/resources", "/bitcoin.pdf", "Path is not a directory"),
+            ("/", "foo.txt", NotADirectoryError),
+            ("/", "/foo.txt", NotADirectoryError),
+            ("/resources", "bitcoin.pdf", NotADirectoryError),
+            ("/resources", "/bitcoin.pdf", NotADirectoryError),
         ],
     )
     def test_list_files_failure(self, workdir, path, expected, driver):
         driver.workdir = workdir
 
-        artifact = driver.list_files(path)
-
-        assert isinstance(artifact, ErrorArtifact)
-        assert artifact.value == expected
+        with pytest.raises(expected):
+            driver.list_files(path)
 
     def test_load_file(self, driver):
         artifact = driver.load_file("resources/bitcoin.pdf")
@@ -163,28 +161,26 @@ class TestAmazonS3FileManagerDriver:
         ("workdir", "path", "expected"),
         [
             # non-existent files or directories
-            ("/", "bitcoin.pdf", "Path not found"),
-            ("/resources", "foo.txt", "Path not found"),
-            ("/", "bar/", "Path is a directory"),
+            ("/", "bitcoin.pdf", FileNotFoundError),
+            ("/resources", "foo.txt", FileNotFoundError),
+            ("/", "bar/", IsADirectoryError),
             # existing files with trailing slash
-            ("/", "resources/bitcoin.pdf/", "Path is a directory"),
-            ("/resources", "bitcoin.pdf/", "Path is a directory"),
+            ("/", "resources/bitcoin.pdf/", IsADirectoryError),
+            ("/resources", "bitcoin.pdf/", IsADirectoryError),
             # directories -- not files
-            ("/", "", "Path is a directory"),
-            ("/", "/", "Path is a directory"),
-            ("/", "resources", "Path is a directory"),
-            ("/", "resources/", "Path is a directory"),
-            ("/resources", "", "Path is a directory"),
-            ("/resources", "/", "Path is a directory"),
+            ("/", "", IsADirectoryError),
+            ("/", "/", IsADirectoryError),
+            ("/", "resources", IsADirectoryError),
+            ("/", "resources/", IsADirectoryError),
+            ("/resources", "", IsADirectoryError),
+            ("/resources", "/", IsADirectoryError),
         ],
     )
     def test_load_file_failure(self, workdir, path, expected, driver):
         driver.workdir = workdir
 
-        artifact = driver.load_file(path)
-
-        assert isinstance(artifact, ErrorArtifact)
-        assert artifact.value == expected
+        with pytest.raises(expected):
+            driver.load_file(path)
 
     def test_load_file_with_encoding(self, driver):
         artifact = driver.load_file("resources/test.txt")
@@ -192,15 +188,6 @@ class TestAmazonS3FileManagerDriver:
         assert isinstance(artifact, ListArtifact)
         assert len(artifact.value) == 1
         assert isinstance(artifact.value[0], TextArtifact)
-
-    def test_load_file_with_encoding_failure(self, session, bucket):
-        driver = AmazonS3FileManagerDriver(
-            session=session, bucket=bucket, default_loader=TextLoader(encoding="utf-8"), loaders={}
-        )
-
-        artifact = driver.load_file("resources/bitcoin.pdf")
-
-        assert isinstance(artifact, ErrorArtifact)
 
     @pytest.mark.parametrize(
         ("workdir", "path", "content"),
@@ -231,27 +218,25 @@ class TestAmazonS3FileManagerDriver:
         ("workdir", "path", "expected"),
         [
             # non-existent directories
-            ("/", "bar/", "Path is a directory"),
-            ("/", "/bar/", "Path is a directory"),
+            ("/", "bar/", IsADirectoryError),
+            ("/", "/bar/", IsADirectoryError),
             # # existing directories
-            ("/", "", "Path is a directory"),
-            ("/", "/", "Path is a directory"),
-            ("/", "resources", "Path is a directory"),
-            ("/", "resources/", "Path is a directory"),
-            ("/resources", "", "Path is a directory"),
-            ("/resources", "/", "Path is a directory"),
+            ("/", "", IsADirectoryError),
+            ("/", "/", IsADirectoryError),
+            ("/", "resources", IsADirectoryError),
+            ("/", "resources/", IsADirectoryError),
+            ("/resources", "", IsADirectoryError),
+            ("/resources", "/", IsADirectoryError),
             # existing files with trailing slash
-            ("/", "resources/bitcoin.pdf/", "Path is a directory"),
-            ("/resources", "bitcoin.pdf/", "Path is a directory"),
+            ("/", "resources/bitcoin.pdf/", IsADirectoryError),
+            ("/resources", "bitcoin.pdf/", IsADirectoryError),
         ],
     )
     def test_save_file_failure(self, workdir, path, expected, temp_dir, driver, s3_client, bucket):
         driver.workdir = workdir
 
-        artifact = driver.save_file(path, "foobar")
-
-        assert isinstance(artifact, ErrorArtifact)
-        assert artifact.value == expected
+        with pytest.raises(expected):
+            driver.save_file(path, "foobar")
 
     def test_save_file_with_encoding(self, session, bucket, get_s3_value):
         workdir = "/sub-folder"

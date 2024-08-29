@@ -49,7 +49,7 @@ class TestGriptapeCloudEventListenerDriver:
 
         mock_post.assert_called_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
-            json=[event.to_dict()],
+            json=[driver._get_event_request(event.to_dict())],
             headers={"Authorization": "Bearer foo bar"},
         )
 
@@ -63,7 +63,7 @@ class TestGriptapeCloudEventListenerDriver:
 
         mock_post.assert_called_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
-            json=[{**event.to_dict(), "span_id": "test"}],
+            json=[driver._get_event_request({**event.to_dict(), "span_id": "test"})],
             headers={"Authorization": "Bearer foo bar"},
         )
 
@@ -73,7 +73,7 @@ class TestGriptapeCloudEventListenerDriver:
 
         mock_post.assert_called_once_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
-            json=event.to_dict(),
+            json=driver._get_event_request(event.to_dict()),
             headers={"Authorization": "Bearer foo bar"},
         )
 
@@ -84,6 +84,6 @@ class TestGriptapeCloudEventListenerDriver:
 
             mock_post.assert_called_with(
                 url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
-                json=event.to_dict(),
+                json=driver._get_event_request(event.to_dict()),
                 headers={"Authorization": "Bearer foo bar"},
             )

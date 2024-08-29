@@ -1,6 +1,5 @@
 import os
 
-from griptape.artifacts import ErrorArtifact
 from griptape.drivers import OpenAiEmbeddingDriver, PineconeVectorStoreDriver
 from griptape.loaders import WebLoader
 
@@ -16,9 +15,6 @@ vector_store_driver = PineconeVectorStoreDriver(
 
 # Load Artifacts from the web
 artifacts = WebLoader(max_tokens=100).load("https://www.griptape.ai")
-
-if isinstance(artifacts, ErrorArtifact):
-    raise Exception(artifacts.value)
 
 # Upsert Artifacts into the Vector Store Driver
 [vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in artifacts]

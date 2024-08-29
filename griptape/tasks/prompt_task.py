@@ -58,7 +58,7 @@ class PromptTask(RuleMixin, BaseTask):
 
         if memory is not None:
             # insert memory into the stack right before the user messages
-            memory.add_to_prompt_stack(stack, 1 if system_template else 0)
+            memory.add_to_prompt_stack(self.prompt_driver, stack, 1 if system_template else 0)
 
         return stack
 

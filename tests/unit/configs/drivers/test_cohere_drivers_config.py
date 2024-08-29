@@ -13,7 +13,10 @@ class TestCohereDriversConfig:
             "type": "CohereDriversConfig",
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {"type": "DummyImageQueryDriver"},
-            "conversation_memory_driver": None,
+            "conversation_memory_driver": {
+                "type": "LocalConversationMemoryDriver",
+                "persist_file": None,
+            },
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
             "prompt_driver": {
