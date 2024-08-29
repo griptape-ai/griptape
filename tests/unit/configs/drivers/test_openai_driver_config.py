@@ -72,7 +72,7 @@ class TestOpenAiDriversConfig:
                 "api_version": None,
                 "base_url": None,
                 "format": "mp3",
-                "model": "tts",
+                "model": "tts-1",
                 "organization": None,
                 "voice": "alloy",
             },
