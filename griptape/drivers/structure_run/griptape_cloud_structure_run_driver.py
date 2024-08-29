@@ -28,9 +28,11 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
 
         url = urljoin(self.base_url.strip("/"), f"/api/structures/{self.structure_id}/runs")
 
+        env_vars = [{"name": key, "value": value, "source": "manual"} for key, value in self.env.items()]
+
         response: Response = post(
             url,
-            json={"args": [arg.value for arg in args], "env": self.env},
+            json={"args": [arg.value for arg in args], "env_vars": env_vars},
             headers=self.headers,
         )
         response.raise_for_status()
