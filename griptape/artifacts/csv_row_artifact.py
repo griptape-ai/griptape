@@ -28,6 +28,7 @@ class CsvRowArtifact(TextArtifact):
                 delimiter=self.delimiter,
             )
 
+            writer.writeheader()
             writer.writerow(self.value)
 
             return csvfile.getvalue().strip()
