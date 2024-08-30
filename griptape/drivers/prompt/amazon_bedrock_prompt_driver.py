@@ -98,7 +98,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             "modelId": self.model,
             "messages": messages,
             "system": system_messages,
-            "inferenceConfig": {"temperature": self.temperature},
+            "inferenceConfig": {"temperature": self.temperature, "maxTokens": self.max_tokens},
             "additionalModelRequestFields": self.additional_model_request_fields,
             **(
                 {"toolConfig": {"tools": self.__to_bedrock_tools(prompt_stack.tools), "toolChoice": self.tool_choice}}

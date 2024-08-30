@@ -77,10 +77,18 @@ nav:
       - Contributing: "contributing.md"
   - Cloud:
       - Overview: "griptape-cloud/index.md"
+      - Data Sources:
+          - Create a Data Source: "griptape-cloud/data-sources/create-data-source.md"
+          - Refreshing Your Data: "griptape-cloud/data-sources/refresh-data.md"
+      - Knowledge Bases:
+          - Create a Knowledge Base: "griptape-cloud/knowledge-bases/create-knowledge-base.md"
+          - Accessing Your Data: "griptape-cloud/knowledge-bases/accessing-data.md"
+      - Structures:
+          - Create a Structure: "griptape-cloud/structures/create-structure.md"
+          - Structure Config YAML: "griptape-cloud/structures/structure-config.md"
+          - Running Your Structure: "griptape-cloud/structures/run-structure.md"
       - Cloud API:
           - API Reference: "griptape-cloud/api/api-reference.md"
-      - Structures:
-          - Structure Config: "griptape-cloud/structures/structure-config.md"
   - Framework:
       - Overview: "griptape-framework/index.md"
       - Structures:

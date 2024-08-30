@@ -8,7 +8,7 @@ Griptape Topic Guides discuss key topics at a high level and provide useful back
 
 ### Griptape Cloud
 
-[Griptape Cloud](griptape-cloud/api/api-reference.md) provides an overview of the APIs available in the managed cloud service. 
+[Griptape Cloud](griptape-cloud/index.md) provides an overview of the features in Griptape's cloud offering.
 
 ### Griptape Framework
 
