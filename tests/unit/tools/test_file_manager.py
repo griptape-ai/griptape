@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from griptape.artifacts import ListArtifact, TextArtifact
+from griptape.artifacts import CsvRowArtifact, ListArtifact, TextArtifact
 from griptape.drivers.file_manager.local_file_manager_driver import LocalFileManagerDriver
 from griptape.loaders.text_loader import TextLoader
 from griptape.tools import FileManagerTool
@@ -104,6 +104,29 @@ class TestFileManager:
 
         assert Path(os.path.join(temp_dir, "test", f"{artifacts[0].name}-{file_name}")).read_text() == "foobar"
         assert Path(os.path.join(temp_dir, "test", f"{artifacts[1].name}-{file_name}")).read_text() == "baz"
+        assert result.value == "Successfully saved memory artifacts to disk"
+
+    def test_save_memory_artifacts_to_disk_for_non_string_artifact(self, temp_dir):
+        memory = defaults.text_task_memory("Memory1")
+        artifact = CsvRowArtifact({"foo": "bar"})
+
+        memory.store_artifact("foobar", artifact)
+
+        file_manager = FileManagerTool(
+            input_memory=[memory], file_manager_driver=LocalFileManagerDriver(workdir=temp_dir)
+        )
+        result = file_manager.save_memory_artifacts_to_disk(
+            {
+                "values": {
+                    "dir_name": "test",
+                    "file_name": "foobar.txt",
+                    "memory_name": memory.name,
+                    "artifact_namespace": "foobar",
+                }
+            }
+        )
+
+        assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foo\nbar"
         assert result.value == "Successfully saved memory artifacts to disk"
 
     def test_save_content_to_file(self, temp_dir):
