@@ -6,7 +6,7 @@ This document provides instructions for migrating your codebase to accommodate b
 
 ### Exceptions Over `ErrorArtifact`s
 
-Drivers, Loaders, and Engines will now raises exceptions rather than returning `ErrorArtifact`s.
+Drivers, Loaders, and Engines now raise exceptions rather than returning `ErrorArtifact`s.
 Update any logic that expects `ErrorArtifact` to handle exceptions instead.
 
 #### Before
