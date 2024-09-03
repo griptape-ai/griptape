@@ -1,7 +1,6 @@
 import pytest
 from schema import Schema
 
-from griptape.artifacts import ErrorArtifact
 from griptape.engines import JsonExtractionEngine
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
@@ -25,7 +24,9 @@ class TestJsonExtractionEngine:
 
     def test_extract_error(self, engine):
         engine.template_schema = lambda: "non serializable"
-        assert isinstance(engine.extract("foo"), ErrorArtifact)
+
+        with pytest.raises(TypeError):
+            engine.extract("foo")
 
     def test_json_to_text_artifacts(self, engine):
         assert [

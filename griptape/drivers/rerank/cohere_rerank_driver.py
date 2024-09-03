@@ -24,11 +24,11 @@ class CohereRerankDriver(BaseRerankDriver):
     )
 
     def run(self, query: str, artifacts: list[TextArtifact]) -> list[TextArtifact]:
-        artifacts_dict = {str(hash(a.value)): a for a in artifacts}
+        artifacts_dict = {str(hash(a.to_text())): a for a in artifacts}
         response = self.client.rerank(
             model=self.model,
             query=query,
-            documents=[a.value for a in artifacts_dict.values()],
+            documents=[a.to_text() for a in artifacts_dict.values()],
             return_documents=True,
             top_n=self.top_n,
         )

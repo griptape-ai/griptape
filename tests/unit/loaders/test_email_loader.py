@@ -6,7 +6,7 @@ from typing import Optional
 
 import pytest
 
-from griptape.artifacts import ErrorArtifact, ListArtifact
+from griptape.artifacts import ListArtifact
 from griptape.loaders import EmailLoader
 
 
@@ -79,20 +79,16 @@ class TestEmailLoader:
         mock_select.return_value = (None, [b"NOT-OK"])
 
         # When
-        artifact = loader.load(EmailLoader.EmailQuery(label="INBOX"))
-
-        # Then
-        assert isinstance(artifact, ErrorArtifact)
+        with pytest.raises(Exception, match="NOT-OK"):
+            loader.load(EmailLoader.EmailQuery(label="INBOX"))
 
     def test_load_returns_error_artifact_when_login_throws(self, loader, mock_login):
         # Given
         mock_login.side_effect = Exception("login-failed")
 
         # When
-        artifact = loader.load(EmailLoader.EmailQuery(label="INBOX"))
-
-        # Then
-        assert isinstance(artifact, ErrorArtifact)
+        with pytest.raises(Exception, match="login-failed"):
+            loader.load(EmailLoader.EmailQuery(label="INBOX"))
 
     def test_load_collection(self, loader, mock_fetch):
         # Given

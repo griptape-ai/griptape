@@ -119,14 +119,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         output_tokens=chunk.usage.completion_tokens,
                     ),
                 )
-            elif chunk.choices is not None:
-                if len(chunk.choices) == 1:
-                    choice = chunk.choices[0]
-                    delta = choice.delta
+            if chunk.choices:
+                choice = chunk.choices[0]
+                delta = choice.delta
 
-                    yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(delta))
-                else:
-                    raise Exception("Completion with more than one choice is not supported yet.")
+                yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(delta))
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {

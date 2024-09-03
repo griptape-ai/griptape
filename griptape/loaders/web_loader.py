@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import BaseWebScraperDriver, TrafilaturaWebScraperDriver
 from griptape.loaders import BaseTextLoader
 
@@ -19,9 +18,6 @@ class WebLoader(BaseTextLoader):
         kw_only=True,
     )
 
-    def load(self, source: str, *args, **kwargs) -> ErrorArtifact | list[TextArtifact]:
-        try:
-            single_chunk_text_artifact = self.web_scraper_driver.scrape_url(source)
-            return self._text_to_artifacts(single_chunk_text_artifact.value)
-        except Exception as e:
-            return ErrorArtifact(f"Error loading from source: {source}", exception=e)
+    def load(self, source: str, *args, **kwargs) -> list[TextArtifact]:
+        single_chunk_text_artifact = self.web_scraper_driver.scrape_url(source)
+        return self._text_to_artifacts(single_chunk_text_artifact.value)

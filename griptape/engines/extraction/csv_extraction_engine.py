@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import CsvRowArtifact, ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import CsvRowArtifact, ListArtifact, TextArtifact
 from griptape.common import Message, PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
@@ -27,18 +27,14 @@ class CsvExtractionEngine(BaseExtractionEngine):
         *,
         rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
-    ) -> ListArtifact | ErrorArtifact:
-        try:
-            return ListArtifact(
-                self._extract_rec(
-                    cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
-                    [],
-                    rulesets=rulesets,
-                ),
-                item_separator="\n",
-            )
-        except Exception as e:
-            return ErrorArtifact(f"error extracting CSV rows: {e}")
+    ) -> ListArtifact:
+        return ListArtifact(
+            self._extract_rec(
+                cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                [],
+            ),
+            item_separator="\n",
+        )
 
     def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[CsvRowArtifact]:
         rows = []

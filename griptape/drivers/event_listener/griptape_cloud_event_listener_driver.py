@@ -54,13 +54,21 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
         super().publish_event(event_payload, flush=flush)
 
     def try_publish_event_payload(self, event_payload: dict) -> None:
-        url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/events")
-
-        response = requests.post(url=url, json=event_payload, headers=self.headers)
-        response.raise_for_status()
+        self._post_event(self._get_event_request(event_payload))
 
     def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None:
-        url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/events")
+        self._post_event([self._get_event_request(event_payload) for event_payload in event_payload_batch])
 
-        response = requests.post(url=url, json=event_payload_batch, headers=self.headers)
-        response.raise_for_status()
+    def _get_event_request(self, event_payload: dict) -> dict:
+        return {
+            "payload": event_payload,
+            "timestamp": event_payload["timestamp"],
+            "type": event_payload["type"],
+        }
+
+    def _post_event(self, json: list[dict] | dict) -> None:
+        requests.post(
+            url=urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/events"),
+            json=json,
+            headers=self.headers,
+        ).raise_for_status()

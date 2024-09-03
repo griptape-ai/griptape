@@ -54,9 +54,6 @@ class Structure(ABC):
             raise ValueError("can't have both rules and rulesets specified")
 
     def __attrs_post_init__(self) -> None:
-        if self.conversation_memory is not None:
-            self.conversation_memory.structure = self
-
         tasks = self.tasks.copy()
         self.tasks.clear()
         self.add_tasks(*tasks)

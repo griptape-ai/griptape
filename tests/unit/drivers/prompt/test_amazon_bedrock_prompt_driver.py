@@ -344,7 +344,7 @@ class TestAmazonBedrockPromptDriver:
         mock_converse.assert_called_once_with(
             modelId=driver.model,
             messages=messages,
-            inferenceConfig={"temperature": driver.temperature},
+            inferenceConfig={"temperature": driver.temperature, "maxTokens": driver.max_tokens},
             additionalModelRequestFields={},
             **({"system": [{"text": "system-input"}]} if prompt_stack.system_messages else {"system": []}),
             **(
@@ -376,7 +376,7 @@ class TestAmazonBedrockPromptDriver:
         mock_converse_stream.assert_called_once_with(
             modelId=driver.model,
             messages=messages,
-            inferenceConfig={"temperature": driver.temperature},
+            inferenceConfig={"temperature": driver.temperature, "maxTokens": driver.max_tokens},
             additionalModelRequestFields={},
             **({"system": [{"text": "system-input"}]} if prompt_stack.system_messages else {"system": []}),
             **(

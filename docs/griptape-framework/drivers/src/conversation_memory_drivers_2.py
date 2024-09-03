@@ -13,7 +13,7 @@ dynamodb_driver = AmazonDynamoDbConversationMemoryDriver(
     partition_key_value=conversation_id,
 )
 
-agent = Agent(conversation_memory=ConversationMemory(driver=dynamodb_driver))
+agent = Agent(conversation_memory=ConversationMemory(conversation_memory_driver=dynamodb_driver))
 
 agent.run("My name is Jeff.")
 agent.run("What is my name?")

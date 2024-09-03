@@ -1,4 +1,3 @@
-from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
@@ -9,8 +8,6 @@ vector_store_driver = LocalVectorStoreDriver(
 )
 
 artifacts = WebLoader().load("https://www.griptape.ai")
-if isinstance(artifacts, ErrorArtifact):
-    raise Exception(artifacts.value)
 
 vector_store_driver.upsert_text_artifacts({"griptape": artifacts})
 vector_db = VectorStoreTool(

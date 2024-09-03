@@ -6,6 +6,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.31.0] - 2024-09-03
+
+**Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.
+
+### Added
+- Parameter `meta: dict` on `BaseEvent`.
+
+### Changed
+- **BREAKING**: Drivers, Loaders, and Engines now raise exceptions rather than returning `ErrorArtifacts`.
+- **BREAKING**: Parameter `driver` on `BaseConversationMemory` renamed to `conversation_memory_driver`.
+- **BREAKING**: `BaseConversationMemory.add_to_prompt_stack` now takes a `prompt_driver` parameter.
+- **BREAKING**: `BaseConversationMemoryDriver.load` now returns `tuple[list[Run], dict]`. This represents the runs and metadata.
+- **BREAKING**: `BaseConversationMemoryDriver.store` now takes `runs: list[Run]` and `metadata: dict` as input.
+- **BREAKING**: Parameter `file_path` on `LocalConversationMemoryDriver` renamed to `persist_file` and is now type `Optional[str]`.
+- `Defaults.drivers_config.conversation_memory_driver` now defaults to `LocalConversationMemoryDriver` instead of `None`.
+- `CsvRowArtifact.to_text()` now includes the header.
+
+### Fixed
+- Parsing streaming response with some OpenAI compatible services.
+- Issue in `PromptSummaryEngine` if there are no artifacts during recursive summarization.
+- Issue in `GooglePromptDriver` using Tools with no schema.
+- Missing `maxTokens` inference parameter in `AmazonBedrockPromptDriver`.
+- Incorrect model in `OpenAiDriverConfig`'s `text_to_speech_driver`.
+- Crash when using `CohereRerankDriver` with `CsvRowArtifact`s.
+
+
 ## [0.30.2] - 2024-08-26
 
 ### Fixed

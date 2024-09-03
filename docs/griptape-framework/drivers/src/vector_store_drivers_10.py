@@ -1,6 +1,5 @@
 import os
 
-from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import OpenAiEmbeddingDriver, QdrantVectorStoreDriver
 from griptape.loaders import WebLoader
 
@@ -21,9 +20,6 @@ vector_store_driver = QdrantVectorStoreDriver(
 
 # Load Artifacts from the web
 artifacts = WebLoader().load("https://www.griptape.ai")
-
-if isinstance(artifacts, ErrorArtifact):
-    raise Exception(artifacts.value)
 
 # Recreate Qdrant collection
 vector_store_driver.client.recreate_collection(

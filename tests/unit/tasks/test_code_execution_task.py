@@ -1,4 +1,6 @@
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
+import pytest
+
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.structures import Pipeline
 from griptape.tasks import CodeExecutionTask
 
@@ -35,7 +37,5 @@ class TestCodeExecutionTask:
     def test_error_fn(self):
         task = CodeExecutionTask(run_fn=deliberate_exception)
 
-        result = task.run()
-
-        assert isinstance(result, ErrorArtifact)
-        assert result.value == "error during Code Execution Task: Intentional Error"
+        with pytest.raises(ValueError):
+            task.run()

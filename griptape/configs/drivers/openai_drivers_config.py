@@ -37,7 +37,7 @@ class OpenAiDriversConfig(DriversConfig):
 
     @lazy_property()
     def text_to_speech_driver(self) -> OpenAiTextToSpeechDriver:
-        return OpenAiTextToSpeechDriver(model="tts")
+        return OpenAiTextToSpeechDriver(model="tts-1")
 
     @lazy_property()
     def audio_transcription_driver(self) -> OpenAiAudioTranscriptionDriver:
