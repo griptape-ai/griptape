@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseConversationMemoryDriver.store` now takes `runs: list[Run]` and `metadata: Optional[dict]` as input.
 - **BREAKING**: Parameter `file_path` on `LocalConversationMemoryDriver` renamed to `persist_file` and is now type `Optional[str]`.
 - `Defaults.drivers_config.conversation_memory_driver` now defaults to `LocalConversationMemoryDriver` instead of `None`.
+- `CsvRowArtifact.to_text()` now includes the header.
 
 ### Fixed
 - Parsing streaming response with some OpenAi compatible services.
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Issue in `GooglePromptDriver` using Tools with no schema.
 - Missing `maxTokens` inference parameter in `AmazonBedrockPromptDriver`.
 - Incorrect model in `OpenAiDriverConfig`'s `text_to_speech_driver`.
+- Crash when using `CohereRerankDriver` with `CsvRowArtifact`s.
 
 **Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.
 

@@ -14,7 +14,7 @@ class TestCsvRowArtifact:
         }
 
     def test_to_text(self):
-        assert CsvRowArtifact({"test1": "foo|bar", "test2": 1}, delimiter="|").to_text() == '"foo|bar"|1'
+        assert CsvRowArtifact({"test1": "foo|bar", "test2": 1}, delimiter="|").to_text() == 'test1|test2\r\n"foo|bar"|1'
 
     def test_to_dict(self):
         assert CsvRowArtifact({"test1": "foo"}).to_dict()["value"] == {"test1": "foo"}
