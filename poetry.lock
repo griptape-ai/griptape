@@ -4092,17 +4092,19 @@ xmp = ["defusedxml"]
 
 [[package]]
 name = "pinecone-client"
-version = "3.2.2"
+version = "5.0.1"
 description = "Pinecone client and SDK"
 optional = true
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "pinecone_client-3.2.2-py3-none-any.whl", hash = "sha256:7e492fdda23c73726bc0cb94c689bb950d06fb94e82b701a0c610c2e830db327"},
-    {file = "pinecone_client-3.2.2.tar.gz", hash = "sha256:887a12405f90ac11c396490f605fc479f31cf282361034d1ae0fccc02ac75bee"},
+    {file = "pinecone_client-5.0.1-py3-none-any.whl", hash = "sha256:c8f7835e1045ba84e295f217a8e85573ffb80b41501bbc1af6d92c9631c567a7"},
+    {file = "pinecone_client-5.0.1.tar.gz", hash = "sha256:11c33ff5d1c38a6ce69e69fe532c0f22f312fb28d761bb30b3767816d3181d64"},
 ]
 
 [package.dependencies]
 certifi = ">=2019.11.17"
+pinecone-plugin-inference = ">=1.0.3,<2.0.0"
+pinecone-plugin-interface = ">=0.0.7,<0.0.8"
 tqdm = ">=4.64.1"
 typing-extensions = ">=3.7.4"
 urllib3 = [
@@ -4111,7 +4113,32 @@ urllib3 = [
 ]
 
 [package.extras]
-grpc = ["googleapis-common-protos (>=1.53.0)", "grpc-gateway-protoc-gen-openapiv2 (==0.1.0)", "grpcio (>=1.44.0)", "grpcio (>=1.59.0)", "lz4 (>=3.1.3)", "protobuf (>=3.20.0,<3.21.0)"]
+grpc = ["googleapis-common-protos (>=1.53.0)", "grpcio (>=1.44.0)", "grpcio (>=1.59.0)", "lz4 (>=3.1.3)", "protobuf (>=4.25,<5.0)", "protoc-gen-openapiv2 (>=0.0.1,<0.0.2)"]
+
+[[package]]
+name = "pinecone-plugin-inference"
+version = "1.0.3"
+description = "Embeddings plugin for Pinecone SDK"
+optional = true
+python-versions = "<4.0,>=3.8"
+files = [
+    {file = "pinecone_plugin_inference-1.0.3-py3-none-any.whl", hash = "sha256:bbdfe5dba99a87374d9e3315b62b8e1bbca52d5fe069a64cd6b212efbc8b9afd"},
+    {file = "pinecone_plugin_inference-1.0.3.tar.gz", hash = "sha256:c6519ba730123713a181c010f0db9d6449d11de451b8e79bec4efd662b096f41"},
+]
+
+[package.dependencies]
+pinecone-plugin-interface = ">=0.0.7,<0.0.8"
+
+[[package]]
+name = "pinecone-plugin-interface"
+version = "0.0.7"
+description = "Plugin interface for the Pinecone python client"
+optional = true
+python-versions = "<4.0,>=3.8"
+files = [
+    {file = "pinecone_plugin_interface-0.0.7-py3-none-any.whl", hash = "sha256:875857ad9c9fc8bbc074dbe780d187a2afd21f5bfe0f3b08601924a61ef1bba8"},
+    {file = "pinecone_plugin_interface-0.0.7.tar.gz", hash = "sha256:b8e6675e41847333aa13923cc44daa3f85676d7157324682dc1640588a982846"},
+]
 
 [[package]]
 name = "pkginfo"
@@ -7007,4 +7034,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "5c8d23b1fdeb14a1dc7efd7c757a8282a60f6a006cceed741ab99b37467ef57e"
+content-hash = "2e0b3c151c00b9f68cbd54ca84257ca41323f1ba3eeee7afb33133b6d2dfcb8f"
