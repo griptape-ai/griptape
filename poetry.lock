@@ -3735,13 +3735,13 @@ datalib = ["numpy (>=1)", "pandas (>=1.2.3)", "pandas-stubs (>=1.1.0.11)"]
 
 [[package]]
 name = "opensearch-py"
-version = "2.7.0"
+version = "2.7.1"
 description = "Python client for OpenSearch"
 optional = true
 python-versions = "<4,>=3.8"
 files = [
-    {file = "opensearch_py-2.7.0-py3-none-any.whl", hash = "sha256:6a36535efcda870c820fd84c4bda96d7d57fc900a8c7dec660a48c079904df97"},
-    {file = "opensearch_py-2.7.0.tar.gz", hash = "sha256:c09a73727868c29f86ffbed1e987afb7f86bcce983b28bf69249cfad8c831d68"},
+    {file = "opensearch_py-2.7.1-py3-none-any.whl", hash = "sha256:5417650eba98a1c7648e502207cebf3a12beab623ffe0ebbf55f9b1b4b6e44e9"},
+    {file = "opensearch_py-2.7.1.tar.gz", hash = "sha256:67ab76e9373669bc71da417096df59827c08369ac3795d5438c9a8be21cbd759"},
 ]
 
 [package.dependencies]
