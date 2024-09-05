@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import warnings
 from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
@@ -24,9 +23,6 @@ from griptape.common.prompt_stack.contents.action_call_delta_message_content imp
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, CohereTokenizer
 from griptape.utils import import_optional_dependency
-
-# TODO Remove once https://github.com/cohere-ai/cohere-python/issues/559 is resolved
-warnings.filterwarnings("ignore", module="pydantic")
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
