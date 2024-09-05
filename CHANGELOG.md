@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseFileManager.encoding` to specify the encoding when loading and saving files.
 - `BaseWebScraperDriver.extract_page()` method for extracting data from an already scraped web page.
 - `TextLoaderRetrievalRagModule.chunker` for specifying the chunking strategy.
+- `file_utils.get_mime_type` utility for getting the MIME type of a file.
 
 ### Changed
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
@@ -30,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `ImageArtifact.format` is now required.
 - **BREAKING**: Removed `BaseFileManager.default_loader` and `BaseFileManager.loaders`.
 - **BREAKING**: Loaders no longer chunk data, use a Chunker to chunk the data.
+- **BREAKING**: Removed `fileutils.load_file` and `fileutils.load_files`.
+- **BREAKING**: Removed `loaders-dataframe` and `loaders-audio` extras.
+- `filetype` is now a core dependency.
+- `FileManagerTool` now uses `filetype` for more accurate file type detection.
 - `BaseFileLoader.load_file()` will now either return a `TextArtifact` or a `BlobArtifact` depending on whether `BaseFileManager.encoding` is set.
 - Updated `JsonArtifact` value converter to properly handle more types. 
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
