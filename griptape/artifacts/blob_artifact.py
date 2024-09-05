@@ -35,6 +35,10 @@ class BlobArtifact(BaseArtifact):
     def mime_type(self) -> str:
         return "application/octet-stream"
 
+    @property
+    def mime_type(self) -> str:
+        return "application/octet-stream"
+
     def to_bytes(self) -> bytes:
         return self.value
 
