@@ -4,14 +4,14 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, define, field
 
-from griptape.artifacts import BaseArtifact, BaseSystemArtifact
+from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
 
 @define
-class ListArtifact(BaseSystemArtifact):
+class ListArtifact(BaseArtifact):
     value: Sequence[BaseArtifact] = field(factory=list, metadata={"serializable": True})
     item_separator: str = field(default="\n\n", kw_only=True, metadata={"serializable": True})
     validate_uniform_types: bool = field(default=False, kw_only=True, metadata={"serializable": True})

@@ -5,54 +5,50 @@ search:
 
 ## Overview
 
-
-**[Artifacts](../../reference/griptape/artifacts/base_artifact.md)** are used to store data that can be provided as input to or received as output from a Language Learning Model (LLM).
+**[Artifacts](../../reference/griptape/artifacts/base_artifact.md)** are the core data structure in Griptape. They are used to encapsulate data and enhance it with metadata.
 
 ## Text
 
-[TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s store textual data. They can be used to count tokens using the [token_count()](../../reference/griptape/artifacts/text_artifact.md#griptape.artifacts.text_artifact.TextArtifact.token_count) method with a tokenizer, generate a text embedding through the [generate_embedding()](../../reference/griptape/artifacts/text_artifact.md#griptape.artifacts.text_artifact.TextArtifact.generate_embedding) method, and access the embedding with the [embedding](../../reference/griptape/artifacts/text_artifact.md#griptape.artifacts.text_artifact.TextArtifact.embedding) property.
+[TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s store textual data. They offer methods such as [token_count()](../../reference/griptape/artifacts/text_artifact.md#griptape.artifacts.text_artifact.TextArtifact.token_count) for counting tokens with a tokenizer, and [generate_embedding()](../../reference/griptape/artifacts/text_artifact.md#griptape.artifacts.text_artifact.TextArtifact.generate_embedding) for creating text embeddings. You can also access the embedding via the [embedding](../../reference/griptape/artifacts/text_artifact.md#griptape.artifacts.text_artifact.TextArtifact.embedding) property.
 
-[TaskMemory](../../reference/griptape/memory/task/task_memory.md) automatically stores `TextArtifacts` returned by tool activities and provides their IDs back to the LLM.
+When `TextArtifact`s are returned from Tools, they will be stored in [Task Memory](../../griptape-framework/structures/task-memory.md) if the Tool has set `off_prompt=True`.
 
-## Image
+## Blob
 
-[ImageArtifact](../../reference/griptape/artifacts/image_artifact.md)s store image data. They include binary image data and metadata such as MIME type, dimensions, and prompt and model information for images returned by [image generation drivers](../drivers/image-generation-drivers.md). They inherit functionality from [BlobArtifacts](#blob).
+[BlobArtifact](../../reference/griptape/artifacts/blob_artifact.md)s store binary large objects (blobs).
 
-## Audio
+When `BlobArtifact`s are returned from Tools, they will be stored in [Task Memory](../../griptape-framework/structures/task-memory.md) if the Tool has set `off_prompt=True`.
 
-[AudioArtifact](../../reference/griptape/artifacts/audio_artifact.md)s store audio content, including binary audio data and metadata such as format, duration, and prompt and model information for audio returned by generative models. They inherit from [BlobArtifacts](#blob).
+### Image
 
-## Action
+[ImageArtifact](../../reference/griptape/artifacts/image_artifact.md)s store image data. This includes binary image data along with metadata such as MIME type and dimensions. They are a subclass of [BlobArtifacts](#blob).
 
-[ActionArtifact](../../reference/griptape/artifacts/action_artifact.md)s represent actions taken by the LLM. Currently, the only supported action is [ToolAction](../../reference/griptape/common/actions/tool_action.md), which is used to execute a [Tool](../../griptape-framework/tools/index.md).
+### Audio
+
+[AudioArtifact](../../reference/griptape/artifacts/audio_artifact.md)s store audio content. This includes binary audio data and metadata such as format, and duration. They are a subclass of [BlobArtifacts](#blob).
+
+## List
+
+[ListArtifact](../../reference/griptape/artifacts/list_artifact.md)s store lists of Artifacts.
+
+When `ListArtifact`s are returned from Tools, their elements will be stored in [Task Memory](../../griptape-framework/structures/task-memory.md) if the element is either a `TextArtifact` or a `BlobArtifact` and the Tool has set `off_prompt=True`.
+
+## Info
+
+[InfoArtifact](../../reference/griptape/artifacts/info_artifact.md)s store small pieces of textual information. These are useful for conveying messages about the execution or results of an operation, such as "No results found" or "Operation completed successfully."
 
 ## JSON
 
-[JsonArtifact](../../reference/griptape/artifacts/json_artifact.md)s store JSON-serializable data. Any data assigned to the `value` property is converted using `json.dumps(json.loads(value))`.
+[JsonArtifact](../../reference/griptape/artifacts/json_artifact.md)s store JSON-serializable data. Any data assigned to the `value` property is processed using `json.dumps(json.loads(value))`.
+
+## Error
+
+[ErrorArtifact](../../reference/griptape/artifacts/error_artifact.md)s store exception information, providing a structured way to convey errors.
+
+## Action
+
+[ActionArtifact](../../reference/griptape/artifacts/action_artifact.md)s represent actions taken by an LLM. Currently, the only supported action type is [ToolAction](../../reference/griptape/common/actions/tool_action.md), which is used to execute a [Tool](../../griptape-framework/tools/index.md).
 
 ## Generic
 
-[GenericArtifact](../../reference/griptape/artifacts/generic_artifact.md)s act as an escape hatch for passing any type of data that does not fit into any other artifact type. While generally not recommended, they are suitable for specific scenarios. For example, see [talking to a video](../../examples/talk-to-a-video.md), which demonstrates using a `GenericArtifact` to pass a Gemini-specific video file.
-
-## System Artifacts
-
-These Artifacts don't map to an LLM modality. They must be transformed in some way before they can be used as LLM input.
-
-### Blob
-
-[BlobArtifact](../../reference/griptape/artifacts/blob_artifact.md)s store binary large objects (blobs) and are used to pass unstructured data back to the LLM via [InfoArtifact](#info).
-
-`TaskMemory` automatically stores `BlobArtifacts` returned by tool activities, allowing them to be reused by other tools.
-
-### Info
-
-[InfoArtifact](../../reference/griptape/artifacts/info_artifact.md)s store short notifications that are passed back to the LLM without being stored in Task Memory.
-
-### Error
-
-[ErrorArtifact](../../reference/griptape/artifacts/error_artifact.md)s store errors that are passed back to the LLM without being stored in Task Memory.
-
-### List
-
-[ListArtifact](../../reference/griptape/artifacts/list_artifact.md)s store lists of Artifacts that can be passed to the LLM.
-
+[GenericArtifact](../../reference/griptape/artifacts/generic_artifact.md)s provide a flexible way to pass data that does not fit into any other artifact category. While not generally recommended, they can be useful for specific use cases. For instance, see [talking to a video](../../examples/talk-to-a-video.md), which demonstrates using a `GenericArtifact` to pass a Gemini-specific video file.
