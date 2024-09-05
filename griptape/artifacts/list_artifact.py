@@ -4,14 +4,12 @@ from typing import TYPE_CHECKING, Generic, Optional, TypeVar
 
 from attrs import Attribute, define, field
 
-from griptape.artifacts import BaseArtifact, BaseSystemArtifact
+from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
     from collections.abc import Iterator, Sequence
 
 T = TypeVar("T", bound=BaseArtifact, covariant=True)
-
-    from griptape.artifacts import BaseArtifact
 
 
 @define

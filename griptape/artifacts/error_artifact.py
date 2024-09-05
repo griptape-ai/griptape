@@ -4,7 +4,7 @@ from typing import Optional
 
 from attrs import define, field
 
-from griptape.artifacts import BaseSystemArtifact
+from griptape.artifacts import BaseArtifact
 
 
 @define

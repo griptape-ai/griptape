@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from attrs import define, field
 
-from griptape.artifacts import BaseSystemArtifact
+from griptape.artifacts import BaseArtifact
 
 
 @define
