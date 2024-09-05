@@ -19,8 +19,6 @@ class PdfLoader(BaseFileLoader):
         self,
         source: bytes,
         password: Optional[str] = None,
-        *args,
-        **kwargs,
     ) -> ListArtifact:
         pypdf = import_optional_dependency("pypdf")
         reader = pypdf.PdfReader(BytesIO(source), strict=True, password=password)

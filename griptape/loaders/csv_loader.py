@@ -11,14 +11,14 @@ from griptape.loaders.base_file_loader import BaseFileLoader
 
 
 @define
-class CsvLoader(BaseFileLoader):
+class CsvLoader(BaseFileLoader[ListArtifact]):
     delimiter: str = field(default=",", kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
     formatter_fn: Callable[[dict], str] = field(
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
-    def parse(self, source: bytes, *args, **kwargs) -> ListArtifact:
+    def parse(self, source: bytes) -> ListArtifact:
         reader = csv.DictReader(StringIO(source.decode(self.encoding)), delimiter=self.delimiter)
 
         return ListArtifact([TextArtifact(row, meta={"row": row_num}) for row_num, row in enumerate(reader)])

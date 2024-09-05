@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import Any, Optional, cast
+from typing import Optional
 
 from attrs import define, field
 
@@ -11,7 +11,7 @@ from griptape.utils import import_optional_dependency
 
 
 @define
-class ImageLoader(BaseFileLoader):
+class ImageLoader(BaseFileLoader[ImageArtifact]):
     """Loads images into image artifacts.
 
     Attributes:
@@ -22,10 +22,7 @@ class ImageLoader(BaseFileLoader):
 
     format: Optional[str] = field(default=None, kw_only=True)
 
-    def load(self, source: Any, *args, **kwargs) -> ImageArtifact:
-        return cast(ImageArtifact, super().load(source, *args, **kwargs))
-
-    def parse(self, source: bytes, *args, **kwargs) -> ImageArtifact:
+    def parse(self, source: bytes) -> ImageArtifact:
         pil_image = import_optional_dependency("PIL.Image")
         image = pil_image.open(BytesIO(source))
 

@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any, cast
-
 from attrs import define, field
 
 from griptape.artifacts import TextArtifact
@@ -9,13 +7,10 @@ from griptape.loaders import BaseFileLoader
 
 
 @define
-class TextLoader(BaseFileLoader):
+class TextLoader(BaseFileLoader[TextArtifact]):
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def load(self, source: Any, *args, **kwargs) -> TextArtifact:
-        return cast(TextArtifact, super().load(source, *args, **kwargs))
-
-    def parse(self, source: str | bytes, *args, **kwargs) -> TextArtifact:
+    def parse(self, source: str | bytes) -> TextArtifact:
         if isinstance(source, str):
             return TextArtifact(source, encoding=self.encoding)
         else:

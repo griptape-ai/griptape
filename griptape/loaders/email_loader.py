@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import imaplib
-from typing import Any, Optional, cast
+from typing import Optional
 
 from attrs import astuple, define, field
 
@@ -11,7 +11,7 @@ from griptape.utils import import_optional_dependency
 
 
 @define
-class EmailLoader(BaseLoader):
+class EmailLoader(BaseLoader["EmailLoader.EmailQuery", list[bytes], ListArtifact]):  # pyright: ignore[reportGeneralTypeIssues]
     @define(frozen=True)
     class EmailQuery:
         """An email retrieval query.
@@ -32,10 +32,7 @@ class EmailLoader(BaseLoader):
     username: str = field(kw_only=True)
     password: str = field(kw_only=True)
 
-    def load(self, source: Any, *args, **kwargs) -> ListArtifact:
-        return cast(ListArtifact, super().load(source, *args, **kwargs))
-
-    def fetch(self, source: EmailQuery, *args, **kwargs) -> list[bytes]:
+    def fetch(self, source: EmailLoader.EmailQuery) -> list[bytes]:
         label, key, search_criteria, max_count = astuple(source)
 
         mail_bytes = []
@@ -67,7 +64,7 @@ class EmailLoader(BaseLoader):
 
         return mail_bytes
 
-    def parse(self, source: list[bytes], *args, **kwargs) -> ListArtifact:
+    def parse(self, source: list[bytes]) -> ListArtifact:
         mailparser = import_optional_dependency("mailparser")
         artifacts = []
         for byte in source:

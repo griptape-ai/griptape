@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 from attrs import define, field
 
@@ -12,31 +12,38 @@ from griptape.utils.hash import bytes_to_hash, str_to_hash
 if TYPE_CHECKING:
     from collections.abc import Mapping
 
-    from griptape.artifacts import BaseArtifact
     from griptape.common import Reference
+
+S = TypeVar("S")
+F = TypeVar("F")
+A = TypeVar("A", bound=BaseArtifact)
 
 
 @define
-class BaseLoader(FuturesExecutorMixin, ABC):
+class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
     reference: Optional[Reference] = field(default=None, kw_only=True)
 
-    def load(self, source: Any, *args, **kwargs) -> BaseArtifact:
+    def load(self, source: S, *args, **kwargs) -> A:
         data = self.fetch(source)
 
-        return self.parse(data)
+        artifact = self.parse(data)
+
+        artifact.reference = self.reference
+
+        return artifact
 
     @abstractmethod
-    def fetch(self, source: Any, *args, **kwargs) -> Any: ...
+    def fetch(self, source: S) -> F: ...
 
     @abstractmethod
-    def parse(self, source: Any, *args, **kwargs) -> BaseArtifact: ...
+    def parse(self, source: F) -> A: ...
 
     def load_collection(
         self,
         sources: list[Any],
         *args,
         **kwargs,
-    ) -> Mapping[str, BaseArtifact]:
+    ) -> Mapping[str, A]:
         # Create a dictionary before actually submitting the jobs to the executor
         # to avoid duplicate work.
         sources_by_key = {self.to_key(source): source for source in sources}
