@@ -28,6 +28,10 @@ class BlobArtifact(BaseArtifact):
     encoding: str = field(default="utf-8", kw_only=True)
     encoding_error_handler: str = field(default="strict", kw_only=True)
 
+    @property
+    def mime_type(self) -> str:
+        return "application/octet-stream"
+
     def to_bytes(self) -> bytes:
         return self.value
 

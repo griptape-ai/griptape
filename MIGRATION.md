@@ -36,25 +36,6 @@ audio_artifact = AudioArtifact(
 )
 ```
 
-### Removed `BooleanArtifact`
-
-`BooleanArtifact` has been removed. Use `JsonArtifact` instead.
-
-#### Before
-
-```python
-boolean_artifact = BooleanArtifact("true")
-
-print(boolean_artifact.value) # Value is True
-```
-
-#### After
-```python
-json_artifact = JsonArtifact("true")
-
-print(json_artifact.value) # Value is True
-```
-
 ### Removed `CsvRowArtifact`
 
 `CsvRowArtifact` has been removed. Use `TextArtifact` instead.

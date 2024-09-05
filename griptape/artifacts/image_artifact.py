@@ -4,11 +4,11 @@ import base64
 
 from attrs import define, field
 
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import BlobArtifact
 
 
 @define
-class ImageArtifact(BaseArtifact):
+class ImageArtifact(BlobArtifact):
     """Stores image data.
 
     Attributes:
