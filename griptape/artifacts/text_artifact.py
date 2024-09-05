@@ -33,7 +33,7 @@ class TextArtifact(BaseArtifact):
         self.embedding.clear()
         self.embedding.extend(embedding)
 
-        return self.embedding
+        return self._embedding
 
     def token_count(self, tokenizer: BaseTokenizer) -> int:
         return tokenizer.count_tokens(str(self.value))
