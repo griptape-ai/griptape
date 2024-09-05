@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseFileLoader` for Loaders that load from a path.
 - `BaseLoader.fetch()` method for fetching data from a source.
 - `BaseLoader.parse()` method for parsing fetched data.
+- `BaseFileManager.encoding` to specify the encoding when loading and saving files.
 
 ### Changed
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
@@ -23,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BlobArtifact.dir_name`.
 - **BREAKING**: Moved `ImageArtifact.prompt` and `ImageArtifact.model` into `ImageArtifact.meta`.
 - **BREAKING**: `ImageArtifact.format` is now required.
+- **BREAKING**: Removed `BaseFileManager.default_loader` and `BaseFileManager.loaders`.
+- `BaseFileLoader.load_file()` will now either return a `TextArtifact` or a `BlobArtifact` depending on whether `BaseFileManager.encoding` is set.
 - Updated `JsonArtifact` value converter to properly handle more types. 
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - `ImageArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
