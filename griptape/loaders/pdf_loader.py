@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import Any, Optional, cast
+from typing import Optional
 
 from attrs import define
 
@@ -12,16 +12,14 @@ from griptape.utils import import_optional_dependency
 
 @define
 class PdfLoader(BaseFileLoader):
-    def load(self, source: Any, *args, **kwargs) -> TextArtifact:
-        return cast(TextArtifact, super().load(source, *args, **kwargs))
-
     def parse(
         self,
-        source: bytes,
+        data: bytes,
+        *,
         password: Optional[str] = None,
     ) -> ListArtifact:
         pypdf = import_optional_dependency("pypdf")
-        reader = pypdf.PdfReader(BytesIO(source), strict=True, password=password)
+        reader = pypdf.PdfReader(BytesIO(data), strict=True, password=password)
         pages = [TextArtifact(p.extract_text()) for p in reader.pages]
 
         return ListArtifact(pages)

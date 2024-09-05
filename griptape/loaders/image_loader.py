@@ -22,14 +22,15 @@ class ImageLoader(BaseFileLoader[ImageArtifact]):
 
     format: Optional[str] = field(default=None, kw_only=True)
 
-    def parse(self, source: bytes) -> ImageArtifact:
+    def parse(self, data: bytes) -> ImageArtifact:
         pil_image = import_optional_dependency("PIL.Image")
-        image = pil_image.open(BytesIO(source))
+        image = pil_image.open(BytesIO(data))
 
+        # Normalize format only if requested.
         if self.format is not None:
             byte_stream = BytesIO()
             image.save(byte_stream, format=self.format)
             image = pil_image.open(byte_stream)
-            source = byte_stream.getvalue()
+            data = byte_stream.getvalue()
 
-        return ImageArtifact(source, format=image.format.lower(), width=image.width, height=image.height)
+        return ImageArtifact(data, format=image.format.lower(), width=image.width, height=image.height)

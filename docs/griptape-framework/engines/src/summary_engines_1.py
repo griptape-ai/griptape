@@ -10,7 +10,7 @@ engine = PromptSummaryEngine(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"),
 )
 
-artifact = PdfLoader().load(response.content)
+artifact = PdfLoader().parse(response.content)
 chunks = TextChunker().chunk(artifact)
 
 text = "\n\n".join([a.value for a in chunks])

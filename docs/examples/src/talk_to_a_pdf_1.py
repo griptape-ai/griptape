@@ -31,7 +31,7 @@ rag_tool = RagTool(
     rag_engine=engine,
 )
 
-artifacts = PdfLoader().load(response.content)
+artifacts = PdfLoader().parse(response.content)
 chunks = TextChunker().chunk(artifacts)
 
 vector_store.upsert_text_artifacts({namespace: chunks})

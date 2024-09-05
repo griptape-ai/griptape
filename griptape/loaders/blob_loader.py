@@ -8,8 +8,8 @@ from griptape.loaders import BaseFileLoader
 
 @define
 class BlobLoader(BaseFileLoader[BlobArtifact]):
-    def parse(self, source: bytes, *args, **kwargs) -> BlobArtifact:
+    def parse(self, data: bytes) -> BlobArtifact:
         if self.encoding is None:
-            return BlobArtifact(source)
+            return BlobArtifact(data)
         else:
-            return BlobArtifact(source, encoding=self.encoding)
+            return BlobArtifact(data, encoding=self.encoding)

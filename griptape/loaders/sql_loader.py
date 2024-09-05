@@ -14,5 +14,5 @@ class SqlLoader(BaseLoader[str, list[BaseSqlDriver.RowResult], ListArtifact]):
     def fetch(self, source: str) -> list[BaseSqlDriver.RowResult]:
         return self.sql_driver.execute_query(source) or []
 
-    def parse(self, source: list[BaseSqlDriver.RowResult]) -> ListArtifact:
-        return ListArtifact([TextArtifact(row.cells, meta={"row": row_num}) for row_num, row in enumerate(source)])
+    def parse(self, data: list[BaseSqlDriver.RowResult]) -> ListArtifact:
+        return ListArtifact([TextArtifact(row.cells, meta={"row": row_num}) for row_num, row in enumerate(data)])

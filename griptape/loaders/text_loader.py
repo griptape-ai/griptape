@@ -10,8 +10,8 @@ from griptape.loaders import BaseFileLoader
 class TextLoader(BaseFileLoader[TextArtifact]):
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def parse(self, source: str | bytes) -> TextArtifact:
-        if isinstance(source, str):
-            return TextArtifact(source, encoding=self.encoding)
+    def parse(self, data: str | bytes) -> TextArtifact:
+        if isinstance(data, str):
+            return TextArtifact(data, encoding=self.encoding)
         else:
-            return TextArtifact(source.decode(self.encoding), encoding=self.encoding)
+            return TextArtifact(data.decode(self.encoding), encoding=self.encoding)

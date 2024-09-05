@@ -14,9 +14,9 @@ if TYPE_CHECKING:
 
     from griptape.common import Reference
 
-S = TypeVar("S")
-F = TypeVar("F")
-A = TypeVar("A", bound=BaseArtifact)
+S = TypeVar("S")  # Type for the input source
+F = TypeVar("F")  # Type for the fetched data
+A = TypeVar("A", bound=BaseArtifact)  # Type for the returned Artifact
 
 
 @define
@@ -36,7 +36,7 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
     def fetch(self, source: S) -> F: ...
 
     @abstractmethod
-    def parse(self, source: F) -> A: ...
+    def parse(self, data: F) -> A: ...
 
     def load_collection(
         self,
