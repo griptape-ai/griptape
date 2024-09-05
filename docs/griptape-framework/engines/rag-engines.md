@@ -27,14 +27,12 @@ RAG modules are used to implement concrete actions in the RAG pipeline. `RagEngi
 
 - `TranslateQueryRagModule` is for translating the query into another language.
 
-#### Retrieval Modules
-- `TextRetrievalRagModule` is for retrieving text chunks.
-- `TextLoaderRetrievalRagModule` is for retrieving data with text loaders in real time.
+#### Retrieval/Rerank Modules
 - `TextChunksRerankRagModule` is for re-ranking retrieved results.
+- `TextLoaderRetrievalRagModule` is for retrieving data with text loaders in real time.
+- `VectorStoreRetrievalRagModule` is for retrieving text chunks from a vector store.
 
 #### Response Modules
-- `MetadataBeforeResponseRagModule` is for appending metadata.
-- `RulesetsBeforeResponseRagModule` is for appending rulesets.
 - `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
 - `TextChunksResponseRagModule` is for responding with retrieved text chunks.
 - `FootnotePromptResponseRagModule` is for responding with automatic footnotes from text chunk references.
