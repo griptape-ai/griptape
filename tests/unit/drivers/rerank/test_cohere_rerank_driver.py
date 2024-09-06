@@ -23,7 +23,7 @@ class TestCohereRerankDriver:
     @pytest.fixture()
     def mock_empty_client(self, mocker):
         mock_client = mocker.patch("cohere.Client").return_value
-        mock_client.rerank.return_value.results = []
+        mock_client.rerank.side_effect = Exception("Client should not be called")
 
         return mock_client
 
