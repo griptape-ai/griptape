@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `loaders-dataframe` and `loaders-audio` extras as they are no longer needed.
 - **BREKING**: `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`.
 - **BREAKING**: Removed `DataframeLoader`.
+- `LocalFileManagerDriver.workdir` is now optional.
 - `filetype` is now a core dependency.
 - `FileManagerTool` now uses `filetype` for more accurate file type detection.
 - `BaseFileLoader.load_file()` will now either return a `TextArtifact` or a `BlobArtifact` depending on whether `BaseFileManager.encoding` is set.
