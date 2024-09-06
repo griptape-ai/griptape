@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
@@ -11,16 +11,9 @@ if TYPE_CHECKING:
     from griptape.tokenizers import BaseTokenizer
 
 
-def value_to_str(value: Any) -> str:
-    if isinstance(value, dict):
-        return "\n".join(f"{key}: {val}" for key, val in value.items())
-    else:
-        return str(value)
-
-
 @define
 class TextArtifact(BaseArtifact):
-    value: str = field(converter=value_to_str, metadata={"serializable": True})
+    value: str = field(converter=str, metadata={"serializable": True})
     encoding: str = field(default="utf-8", kw_only=True)
     encoding_error_handler: str = field(default="strict", kw_only=True)
     embedding: Optional[list[float]] = field(default=None, kw_only=True)
