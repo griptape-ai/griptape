@@ -15,7 +15,7 @@ from griptape.memory.structure import ConversationMemory
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
     from griptape.memory.structure import BaseConversationMemory
-    from griptape.rules import Rule, Ruleset
+    from griptape.rules import BaseRule, Rule, Ruleset
     from griptape.tasks import BaseTask
 
 
@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
-    rules: list[Rule] = field(factory=list, kw_only=True)
+    rules: list[BaseRule] = field(factory=list, kw_only=True)
     tasks: list[BaseTask] = field(factory=list, kw_only=True)
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
