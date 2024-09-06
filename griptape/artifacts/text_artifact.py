@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
@@ -9,13 +9,6 @@ from griptape.artifacts import BaseArtifact
 if TYPE_CHECKING:
     from griptape.drivers import BaseEmbeddingDriver
     from griptape.tokenizers import BaseTokenizer
-
-
-def value_to_str(value: Any) -> str:
-    if isinstance(value, dict):
-        return "\n".join(f"{key}: {val}" for key, val in value.items())
-    else:
-        return str(value)
 
 
 @define

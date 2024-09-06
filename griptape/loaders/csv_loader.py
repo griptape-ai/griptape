@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Callable, Optional, cast
 
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import CsvRowArtifact
 from griptape.loaders import BaseLoader
 
 if TYPE_CHECKING:
@@ -22,7 +22,7 @@ class CsvLoader(BaseLoader):
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
-    def load(self, source: bytes | str, *args, **kwargs) -> list[TextArtifact]:
+    def load(self, source: bytes | str, *args, **kwargs) -> list[CsvRowArtifact]:
         artifacts = []
 
         if isinstance(source, bytes):
@@ -47,8 +47,8 @@ class CsvLoader(BaseLoader):
         sources: list[bytes | str],
         *args,
         **kwargs,
-    ) -> dict[str, list[TextArtifact]]:
+    ) -> dict[str, list[CsvRowArtifact]]:
         return cast(
-            dict[str, list[TextArtifact]],
+            dict[str, list[CsvRowArtifact]],
             super().load_collection(sources, *args, **kwargs),
         )

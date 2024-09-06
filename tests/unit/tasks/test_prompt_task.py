@@ -114,9 +114,9 @@ class TestPromptTask:
         assert task.input.value[1].width == 100
 
         # default case
-        task = PromptTask({"default": "test"})  # pyright: ignore[reportArgumentType]
+        task = PromptTask({"default": "test"})
 
-        assert task.input.value == "default: test"
+        assert task.input.value == str({"default": "test"})
 
     def test_prompt_stack(self):
         task = PromptTask("{{ test }}", context={"test": "test value"}, rules=[Rule("test rule")])

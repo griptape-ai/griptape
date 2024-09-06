@@ -19,7 +19,7 @@ class SqlLoader(BaseLoader):
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
-    def load(self, source: str, *args, **kwargs) -> list[TextArtifact]:
+    def load(self, source: str, *args, **kwargs) -> list[CsvRowArtifact]:
         rows = self.sql_driver.execute_query(source)
         artifacts = []
 
@@ -34,5 +34,5 @@ class SqlLoader(BaseLoader):
 
         return artifacts
 
-    def load_collection(self, sources: list[str], *args, **kwargs) -> dict[str, list[TextArtifact]]:
-        return cast(dict[str, list[TextArtifact]], super().load_collection(sources, *args, **kwargs))
+    def load_collection(self, sources: list[str], *args, **kwargs) -> dict[str, list[CsvRowArtifact]]:
+        return cast(dict[str, list[CsvRowArtifact]], super().load_collection(sources, *args, **kwargs))
