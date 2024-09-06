@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Missing `maxTokens` inference parameter in `AmazonBedrockPromptDriver`.
 - Incorrect model in `OpenAiDriverConfig`'s `text_to_speech_driver`.
 - Crash when using `CohereRerankDriver` with `CsvRowArtifact`s.
+- Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
 
 ## [0.30.2] - 2024-08-26
