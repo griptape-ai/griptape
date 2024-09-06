@@ -172,6 +172,7 @@ print(type(results[0].value)) # <class 'dict'>
 ```python
 results = CsvLoader().load(Path("people.csv").read_text())
 
+print(type(results)) # <class 'griptape.artifacts.ListArtifact'>
 print(results[0].value) # name: John\nAge: 30
 print(type(results[0].value)) # <class 'str'>
 

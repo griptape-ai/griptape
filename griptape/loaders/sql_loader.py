@@ -15,4 +15,4 @@ class SqlLoader(BaseLoader[str, list[BaseSqlDriver.RowResult], ListArtifact]):
         return self.sql_driver.execute_query(source) or []
 
     def parse(self, data: list[BaseSqlDriver.RowResult]) -> ListArtifact[CsvRowArtifact]:
-        return ListArtifact([CsvRowArtifact(row.cells, meta={"row": row_num}) for row_num, row in enumerate(data)])
+        return ListArtifact([CsvRowArtifact(row.cells, meta={"row_num": row_num}) for row_num, row in enumerate(data)])

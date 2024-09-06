@@ -21,4 +21,4 @@ class CsvLoader(BaseFileLoader[ListArtifact[CsvRowArtifact]]):
     def parse(self, data: bytes) -> ListArtifact[CsvRowArtifact]:
         reader = csv.DictReader(StringIO(data.decode(self.encoding)), delimiter=self.delimiter)
 
-        return ListArtifact([CsvRowArtifact(row, meta={"row": row_num}) for row_num, row in enumerate(reader)])
+        return ListArtifact([CsvRowArtifact(row, meta={"row_num": row_num}) for row_num, row in enumerate(reader)])
