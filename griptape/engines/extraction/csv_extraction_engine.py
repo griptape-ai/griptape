@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import ListArtifact, TextArtifact
+from griptape.artifacts import CsvRowArtifact, ListArtifact, TextArtifact
 from griptape.common import Message, PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
@@ -32,26 +32,27 @@ class CsvExtractionEngine(BaseExtractionEngine):
             self._extract_rec(
                 cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
                 [],
+                rulesets=rulesets,
             ),
             item_separator="\n",
         )
 
-    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[TextArtifact]:
+    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[CsvRowArtifact]:
         rows = []
 
         with io.StringIO(text) as f:
             for row in csv.reader(f):
-                rows.append(TextArtifact(dict(zip(column_names, [x.strip() for x in row]))))
+                rows.append(CsvRowArtifact(dict(zip(column_names, [x.strip() for x in row]))))
 
         return rows
 
     def _extract_rec(
         self,
         artifacts: list[TextArtifact],
-        rows: list[TextArtifact],
+        rows: list[CsvRowArtifact],
         *,
         rulesets: Optional[list[Ruleset]] = None,
-    ) -> list[TextArtifact]:
+    ) -> list[CsvRowArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         system_prompt = self.system_template_generator.render(
             column_names=self.column_names,

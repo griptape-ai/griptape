@@ -36,39 +36,23 @@ audio_artifact = AudioArtifact(
 )
 ```
 
-### Removed `CsvRowArtifact`
+### Changed `CsvRowArtifact.value` from `dict` to `str`.
 
-`CsvRowArtifact` has been removed. Use `TextArtifact` instead.
-
-#### Before
-
-```python
-CsvRowArtifact({"name": "John", "age": 30})
-```
-
-#### After
-```python
-TextArtifact("name: John\nAge: 30")
-```
-
-### `CsvLoader`, `DataframeLoader`, and `SqlLoader` return types 
-
-`CsvLoader`, `DataframeLoader`, and `SqlLoader` now return a tuple of `list[TextArtifact]` instead of `list[CsvRowArtifact]`.
+`CsvRowArtifact`'s `value` is now a `str` instead of a `dict`. Update any logic that expects `dict` to handle `str` instead.
 
 #### Before
 
 ```python
-results = CsvLoader().load(Path("people.csv").read_text())
-
-print(results[0].value) # {"name": "John", "age": 30}
+artifact = CsvRowArtifact({"name": "John", "age": 30})
+print(artifact.value) # {"name": "John", "age": 30}
+print(type(artifact.value)) # <class 'dict'>
 ```
 
 #### After
 ```python
-results = CsvLoader().load(Path("people.csv").read_text())
-
-print(results[0].value) # name: John\nAge: 30
-print(results[0].meta["row"]) # 0
+artifact = CsvRowArtifact({"name": "John", "age": 30})
+print(artifact.value) # name: John\nAge: 30
+print(type(artifact.value)) # <class 'str'>
 ```
 
 ### Moved `ImageArtifact.prompt` and `ImageArtifact.model` to `ImageArtifact.meta`
