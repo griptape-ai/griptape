@@ -5,13 +5,26 @@ search:
 
 ## Overview
 
-Griptape exposes global configuration options to easily customize different parts of the framework.
+Griptape exposes a global singleton, [Defaults](../../reference/griptape/configs/defaults_config.md), which can be used to access and modify the default configurations of the framework.
+
+To update the default configurations, simply update the fields on the `Defaults` object. 
+Framework objects will be created with the currently set default configurations, but you can always override at the individual class level.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/config_defaults.py"
+```
 
 ### Drivers Configs
 
 The [DriversConfig](../../reference/griptape/configs/drivers/drivers_config.md) class allows for the customization of Structures within Griptape, enabling specific settings such as Drivers to be defined for Tasks. 
 
 Griptape provides predefined [DriversConfig](../../reference/griptape/configs/drivers/drivers_config.md)'s for widely used services that provide APIs for most Driver types Griptape offers.
+
+`DriversConfig`s can be used as a Python Context Manager using the `with` statement to temporarily change the default configurations for a block of code.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/drivers_config_with.py"
+```
 
 #### OpenAI
 
