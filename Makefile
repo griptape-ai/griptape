@@ -79,6 +79,10 @@ check/spell:
 docs: ## Build documentation.
 	@poetry run mkdocs build
 
+.PHONY: docs/serve
+docs/serve: ## Server documentation.
+	@poetry run mkdocs serve
+
 .DEFAULT_GOAL := help
 .PHONY: help
 help: ## Print Makefile help text.

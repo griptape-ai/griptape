@@ -74,6 +74,55 @@ This approach ensures that you are informed through clear error messages if you 
 --8<-- "docs/griptape-framework/structures/src/drivers_config_7.py"
 ```
 
+### Overriding Default Configs
+
+While using a Default Driver Config, there may be instances in which you wish to override default drivers in order to mix and match LLM providers as needed. The following example showcases a Default of `OpenAiDriversConfig` with overrides for the `vector_store_driver`:
+
+```python
+import os
+
+from griptape.configs import Defaults
+from griptape.configs.drivers import OpenAiDriversConfig
+from griptape.drivers import AstraDbVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.loaders import WebLoader
+from griptape.structures import Agent
+
+# Astra DB secrets and connection parameters
+api_endpoint = os.environ["ASTRA_DB_API_ENDPOINT"]
+token = os.environ["ASTRA_DB_APPLICATION_TOKEN"]
+astra_db_namespace = os.environ.get("ASTRA_DB_KEYSPACE")  # optional
+TEST_COLLECTION_NAME = "gt_int_test"
+
+embedding_driver = OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"])
+vector_store_driver = AstraDbVectorStoreDriver(
+    embedding_driver=embedding_driver,
+    api_endpoint=api_endpoint,
+    token=token,
+    collection_name=TEST_COLLECTION_NAME,
+    astra_db_namespace=astra_db_namespace,  # optional
+)
+Defaults.drivers_config = OpenAiDriversConfig(
+    embedding_driver=embedding_driver,
+    vector_store_driver=vector_store_driver,
+)
+
+# This agent will be created with all the default drivers from the OpenAI drivers config,
+# and an override for the vector_store_driver to use AstraDbVectorStoreDriver
+openai_agent = Agent()
+
+# Load Artifacts from the web
+artifacts = WebLoader().load("https://www.griptape.ai")
+
+# Upsert Artifacts into the Vector Store Driver
+[vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in artifacts]
+
+results = vector_store_driver.query(query="What is griptape?")
+
+values = [r.to_artifact().value for r in results]
+
+print("\n\n".join(values))
+```
+
 ### Logging Config
 
 Griptape provides a predefined [LoggingConfig](../../reference/griptape/configs/logging/logging_config.md)'s for easily customizing the logging events that the framework emits. In order to customize the logger, the logger can be fetched by using the `Defaults.logging.logger_name`.

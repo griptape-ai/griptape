@@ -203,6 +203,8 @@ Run `make test/unit` to execute the test suite locally.
 
 Run `make docs` to build the documentation locally.
 
+Run `make docs/serve` to serve the documentation locally.
+
 5. **Code Checks:** Griptape a variety of tools to enforce code quality and style. Your code must pass all checks before it can be merged.
 
 Run `make check` to run all code checks locally.
