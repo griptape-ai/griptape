@@ -12,13 +12,11 @@ class ImageArtifact(BlobArtifact):
     """Stores image data.
 
     Attributes:
-        value: The image data.
         format: The format of the image data.
         width: The width of the image.
         height: The height of the image
     """
 
-    value: bytes = field(metadata={"serializable": True})
     format: str = field(kw_only=True, metadata={"serializable": True})
     width: int = field(kw_only=True, metadata={"serializable": True})
     height: int = field(kw_only=True, metadata={"serializable": True})

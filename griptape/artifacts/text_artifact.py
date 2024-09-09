@@ -14,8 +14,6 @@ if TYPE_CHECKING:
 @define
 class TextArtifact(BaseArtifact):
     value: str = field(converter=str, metadata={"serializable": True})
-    encoding: str = field(default="utf-8", kw_only=True)
-    encoding_error_handler: str = field(default="strict", kw_only=True)
     embedding: Optional[list[float]] = field(default=None, kw_only=True)
 
     def __add__(self, other: BaseArtifact) -> TextArtifact:

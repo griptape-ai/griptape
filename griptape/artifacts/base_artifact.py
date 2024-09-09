@@ -24,7 +24,8 @@ class BaseArtifact(SerializableMixin, ABC):
         meta: The metadata associated with the Artifact. Defaults to an empty dictionary.
         name: The name of the Artifact. Defaults to the id.
         value: The value of the Artifact.
-        encoding: The encoding of the Artifact when converting to bytes.
+        encoding: The encoding to use when encoding/decoding the value.
+        encoding_error_handler: The error handler to use when encoding/decoding the value.
     """
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
@@ -36,6 +37,7 @@ class BaseArtifact(SerializableMixin, ABC):
         metadata={"serializable": True},
     )
     value: Any = field()
+    encoding_error_handler: str = field(default="strict", kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
 
     def __str__(self) -> str:
@@ -48,7 +50,7 @@ class BaseArtifact(SerializableMixin, ABC):
         return len(self.value)
 
     def to_bytes(self) -> bytes:
-        return self.to_text().encode(self.encoding)
+        return self.to_text().encode(encoding=self.encoding, errors=self.encoding_error_handler)
 
     @abstractmethod
     def to_text(self) -> str: ...
