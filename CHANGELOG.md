@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BlobArtifact.dir_name`.
 - **BREAKING**: Moved `ImageArtifact.prompt` and `ImageArtifact.model` into `ImageArtifact.meta`.
 - **BREAKING**: `ImageArtifact.to_text()` now returns the base64 encoded image.
+- **BREAKING**: `ImageArtifact.format` is now required.
 - Updated `JsonArtifact` value converter to properly handle more types. 
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - `ImageArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.

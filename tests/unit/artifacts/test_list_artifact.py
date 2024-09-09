@@ -39,7 +39,7 @@ class TestListArtifact:
 
     def test_is_type(self):
         assert ListArtifact([TextArtifact("foo")]).is_type(TextArtifact)
-        assert ListArtifact([ImageArtifact(b"", width=1234, height=1234)]).is_type(ImageArtifact)
+        assert ListArtifact([ImageArtifact(b"", width=1234, height=1234, format="png")]).is_type(ImageArtifact)
 
     def test_has_items(self):
         assert not ListArtifact().has_items()
