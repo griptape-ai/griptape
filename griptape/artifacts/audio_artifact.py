@@ -2,19 +2,17 @@ from __future__ import annotations
 
 from attrs import define, field
 
-from griptape.artifacts import BaseArtifact
+from griptape.artifacts import BlobArtifact
 
 
 @define
-class AudioArtifact(BaseArtifact):
+class AudioArtifact(BlobArtifact):
     """Stores audio data.
 
     Attributes:
-        value: The audio data.
         format: The audio format, e.g. "wav" or "mp3".
     """
 
-    value: bytes = field(metadata={"serializable": True})
     format: str = field(kw_only=True, metadata={"serializable": True})
 
     @property

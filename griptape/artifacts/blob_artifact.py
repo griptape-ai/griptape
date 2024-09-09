@@ -13,13 +13,9 @@ class BlobArtifact(BaseArtifact):
 
     Attributes:
         value: The binary data.
-        encoding: The encoding to use when converting the binary data to text.
-        encoding_error_handler: The error handler to use when converting the binary data to text.
     """
 
     value: bytes = field(converter=lambda value: BlobArtifact.value_to_bytes(value), metadata={"serializable": True})
-    encoding: str = field(default="utf-8", kw_only=True)
-    encoding_error_handler: str = field(default="strict", kw_only=True)
 
     @property
     def mime_type(self) -> str:
