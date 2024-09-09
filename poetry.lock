@@ -2,13 +2,13 @@
 
 [[package]]
 name = "accelerate"
-version = "0.34.0"
+version = "0.34.2"
 description = "Accelerate"
 optional = true
 python-versions = ">=3.8.0"
 files = [
-    {file = "accelerate-0.34.0-py3-none-any.whl", hash = "sha256:0161fd3f975dd99b5cdb967bb6942bc986d9da466397742008a73290dcb73408"},
-    {file = "accelerate-0.34.0.tar.gz", hash = "sha256:437a93f0cb15a7768483833975b5c781f61e31a203439948f1c6b0217e1f74d5"},
+    {file = "accelerate-0.34.2-py3-none-any.whl", hash = "sha256:d69159e2c4e4a473d14443b27d2d732929254e826b3ab4813b3785b5ac616c7c"},
+    {file = "accelerate-0.34.2.tar.gz", hash = "sha256:98c1ebe1f5a45c0a3af02dc60b5bb8b7d58d60c3326a326a06ce6d956b18ca5b"},
 ]
 
 [package.dependencies]
@@ -349,17 +349,17 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.35.12"
+version = "1.35.14"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3-1.35.12-py3-none-any.whl", hash = "sha256:acaa7c75cbf483605e3c46e9ac03043a4cf5e9866940122d68b06d1defe00774"},
-    {file = "boto3-1.35.12.tar.gz", hash = "sha256:b32faab174f6f9b75fada27bcf054ab3e8846bd410ed9817d0b511109326b6b1"},
+    {file = "boto3-1.35.14-py3-none-any.whl", hash = "sha256:c3e138e9041d59cd34cdc28a587dfdc899dba02ea26ebc3e10fb4bc88e5cf31b"},
+    {file = "boto3-1.35.14.tar.gz", hash = "sha256:7bc78d7140c353b10a637927fe4bc4c4d95a464d1b8f515d5844def2ee52cbd5"},
 ]
 
 [package.dependencies]
-botocore = ">=1.35.12,<1.36.0"
+botocore = ">=1.35.14,<1.36.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.10.0,<0.11.0"
 
@@ -780,13 +780,13 @@ xray = ["mypy-boto3-xray (>=1.35.0,<1.36.0)"]
 
 [[package]]
 name = "botocore"
-version = "1.35.12"
+version = "1.35.14"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore-1.35.12-py3-none-any.whl", hash = "sha256:cb787030415438ea6ff8381f8acd8b1107593d5ebea457fd843a5e36ba19e9a4"},
-    {file = "botocore-1.35.12.tar.gz", hash = "sha256:a8f8230032d090225a93763675a73c208d121bb63ed99f41ee6ad3d51b74b80d"},
+    {file = "botocore-1.35.14-py3-none-any.whl", hash = "sha256:24823135232f88266b66ae8e1d0f3d40872c14cd976781f7fe52b8f0d79035a0"},
+    {file = "botocore-1.35.14.tar.gz", hash = "sha256:8515a2fc7ca5bcf0b10016ba05ccf2d642b7cb77d8773026ff2fa5aa3bf38d2e"},
 ]
 
 [package.dependencies]
@@ -3697,13 +3697,13 @@ files = [
 
 [[package]]
 name = "ollama"
-version = "0.3.2"
+version = "0.3.3"
 description = "The official Python client for Ollama."
 optional = true
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "ollama-0.3.2-py3-none-any.whl", hash = "sha256:ed2a6f752bd91c49b477d84a259c5657785d7777689d4a27ffe0a4d5b5dd3cae"},
-    {file = "ollama-0.3.2.tar.gz", hash = "sha256:7deb3287cdefa1c39cc046163096f8597b83f59ca31a1f8ae78e71eccb7af95f"},
+    {file = "ollama-0.3.3-py3-none-any.whl", hash = "sha256:ca6242ce78ab34758082b7392df3f9f6c2cb1d070a9dede1a4c545c929e16dba"},
+    {file = "ollama-0.3.3.tar.gz", hash = "sha256:f90a6d61803117f40b0e8ff17465cab5e1eb24758a473cfe8101aff38bc13b51"},
 ]
 
 [package.dependencies]
@@ -3711,13 +3711,13 @@ httpx = ">=0.27.0,<0.28.0"
 
 [[package]]
 name = "openai"
-version = "1.43.0"
+version = "1.44.0"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.7.1"
 files = [
-    {file = "openai-1.43.0-py3-none-any.whl", hash = "sha256:1a748c2728edd3a738a72a0212ba866f4fdbe39c9ae03813508b267d45104abe"},
-    {file = "openai-1.43.0.tar.gz", hash = "sha256:e607aff9fc3e28eade107e5edd8ca95a910a4b12589336d3cbb6bfe2ac306b3c"},
+    {file = "openai-1.44.0-py3-none-any.whl", hash = "sha256:99a12bbda15f9c632ee911851e101669a82ee34992fbfd658a9db27d90dc0a9c"},
+    {file = "openai-1.44.0.tar.gz", hash = "sha256:acde74598976ec85bc477e9abb94eeb17f6efd998914d5685eeb46a69116894a"},
 ]
 
 [package.dependencies]
