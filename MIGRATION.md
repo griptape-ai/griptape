@@ -36,6 +36,26 @@ audio_artifact = AudioArtifact(
 )
 ```
 
+### `ImageArtifact.format` is now required
+
+`ImageArtifact.format` is now a required parameter. Update any code that does not provide a `format` parameter.
+
+#### Before
+
+```python
+image_artifact = ImageArtifact(
+    b"image_data"
+)
+```
+
+#### After
+```python
+image_artifact = ImageArtifact(
+    b"image_data",
+    format="jpeg"
+)
+```
+
 ### Changed `CsvRowArtifact.value` from `dict` to `str`.
 
 `CsvRowArtifact`'s `value` is now a `str` instead of a `dict`. Update any logic that expects `dict` to handle `str` instead.
