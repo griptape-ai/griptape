@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Parameter `meta: dict` on `BaseEvent`.
+- `AzureOpenAiTextToSpeechDriver`.
 
 ### Changed
 - **BREAKING**: Drivers, Loaders, and Engines now raise exceptions rather than returning `ErrorArtifacts`.
