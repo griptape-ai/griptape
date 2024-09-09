@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Parameter `meta: dict` on `BaseEvent`.
 - `AzureOpenAiTextToSpeechDriver`.
+- Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
 
 ### Changed
 - **BREAKING**: Drivers, Loaders, and Engines now raise exceptions rather than returning `ErrorArtifacts`.
