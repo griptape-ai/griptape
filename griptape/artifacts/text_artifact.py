@@ -31,11 +31,12 @@ class TextArtifact(BaseArtifact):
         return str(self.value).encode(encoding=self.encoding, errors=self.encoding_error_handler)
 
     def generate_embedding(self, driver: BaseEmbeddingDriver) -> list[float]:
+        embedding = driver.embed_string(str(self.value))
+
         if self.embedding is None:
             self.embedding = []
-
         self.embedding.clear()
-        self.embedding.extend(driver.embed_string(str(self.value)))
+        self.embedding.extend(embedding)
 
         return self.embedding
 
