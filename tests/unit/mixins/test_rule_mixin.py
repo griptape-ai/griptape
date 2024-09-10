@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.mixins import RuleMixin
+from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask

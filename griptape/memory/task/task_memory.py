@@ -7,7 +7,7 @@ from attrs import Attribute, Factory, define, field
 from griptape.artifacts import BaseArtifact, BlobArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
-from griptape.mixins import ActivityMixin
+from griptape.mixins.activity_mixin import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.memory.task.storage import BaseArtifactStorage

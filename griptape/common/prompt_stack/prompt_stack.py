@@ -22,7 +22,7 @@ from griptape.common import (
     Message,
     TextMessageContent,
 )
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool

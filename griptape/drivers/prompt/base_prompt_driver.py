@@ -17,7 +17,8 @@ from griptape.common import (
     observable,
 )
 from griptape.events import CompletionChunkEvent, EventBus, FinishPromptEvent, StartPromptEvent
-from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
+from griptape.mixins.exponential_backoff_mixin import ExponentialBackoffMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from collections.abc import Iterator

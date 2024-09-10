@@ -4,7 +4,7 @@ from typing import Optional
 
 from attrs import define, field
 
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 
 @define

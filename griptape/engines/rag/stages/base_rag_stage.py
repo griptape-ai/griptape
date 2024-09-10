@@ -5,7 +5,7 @@ from attrs import define
 
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import BaseRagModule
-from griptape.mixins import FuturesExecutorMixin
+from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 
 
 @define(kw_only=True)

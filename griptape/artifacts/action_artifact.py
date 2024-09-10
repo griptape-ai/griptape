@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attrs import define, field
 
 from griptape.artifacts import BaseArtifact
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.common import ToolAction

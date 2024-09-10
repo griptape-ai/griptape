@@ -8,7 +8,7 @@ from attrs import define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.configs import Defaults
-from griptape.mixins import RuleMixin
+from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
