@@ -25,9 +25,6 @@ class TextArtifact(BaseArtifact):
     def to_text(self) -> str:
         return self.value
 
-    def to_bytes(self) -> bytes:
-        return str(self.value).encode(encoding=self.encoding, errors=self.encoding_error_handler)
-
     def generate_embedding(self, driver: BaseEmbeddingDriver) -> list[float]:
         embedding = driver.embed_string(str(self.value))
 

@@ -12,6 +12,9 @@ class TestBlobArtifact:
     def test_to_text(self):
         assert BlobArtifact(b"foobar", name="foobar.txt").to_text() == "foobar"
 
+    def test_to_bytes(self):
+        assert BlobArtifact(b"foo").to_bytes() == b"foo"
+
     def test_to_text_encoding(self):
         assert (
             BlobArtifact("ß".encode("ascii", errors="backslashreplace"), name="foobar.txt", encoding="ascii").to_text()
@@ -49,6 +52,13 @@ class TestBlobArtifact:
 
     def test_name(self):
         assert BlobArtifact(b"foo", name="bar").name == "bar"
+
+    def test_mime_type(self):
+        assert BlobArtifact(b"foo").mime_type == "application/octet-stream"
+
+    def test___add__(self):
+        with pytest.raises(TypeError):
+            BlobArtifact(b"foo") + BlobArtifact(b"bar")
 
     def test___bool__(self):
         assert not bool(BlobArtifact(b""))
