@@ -23,7 +23,7 @@ class ImageArtifact(BlobArtifact):
 
     @property
     def base64(self) -> str:
-        return base64.b64encode(self.value).decode("utf-8")
+        return base64.b64encode(self.value).decode(self.encoding)
 
     @property
     def mime_type(self) -> str:
