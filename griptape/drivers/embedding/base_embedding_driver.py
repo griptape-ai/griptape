@@ -7,7 +7,8 @@ import numpy as np
 from attrs import define, field
 
 from griptape.chunkers import BaseChunker, TextChunker
-from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
+from griptape.mixins.exponential_backoff_mixin import ExponentialBackoffMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import TextArtifact

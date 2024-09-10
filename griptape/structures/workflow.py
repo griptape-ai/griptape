@@ -9,7 +9,7 @@ from graphlib import TopologicalSorter
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
 from griptape.memory.structure import Run
-from griptape.mixins import FuturesExecutorMixin
+from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.structures import Structure
 
 if TYPE_CHECKING:

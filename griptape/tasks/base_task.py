@@ -11,7 +11,7 @@ from attrs import Factory, define, field
 from griptape.artifacts import ErrorArtifact
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
-from griptape.mixins import FuturesExecutorMixin
+from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact

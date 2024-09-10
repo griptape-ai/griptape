@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:

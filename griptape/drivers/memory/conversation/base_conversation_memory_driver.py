@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any
 
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.memory.structure import Run

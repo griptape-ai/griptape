@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional, Union
 
 from attrs import Factory, define, field
 
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.common import BaseDeltaMessageContent, BaseMessageContent

@@ -25,7 +25,7 @@ class BaseSchema(Schema):
         """
         from marshmallow import post_load
 
-        from griptape.mixins import SerializableMixin
+        from griptape.mixins.serializable_mixin import SerializableMixin
 
         class SubSchema(cls):
             @post_load

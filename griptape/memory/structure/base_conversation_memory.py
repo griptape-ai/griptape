@@ -7,7 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.common import PromptStack
 from griptape.configs import Defaults
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import dict_merge
 
 if TYPE_CHECKING:

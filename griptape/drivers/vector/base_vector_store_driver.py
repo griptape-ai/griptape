@@ -9,7 +9,8 @@ from attrs import define, field
 
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
-from griptape.mixins import FuturesExecutorMixin, SerializableMixin
+from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseEmbeddingDriver

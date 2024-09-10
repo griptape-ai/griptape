@@ -1,6 +1,6 @@
 from attrs import define
 
-from griptape.mixins import BlobArtifactFileOutputMixin
+from griptape.mixins.media_artifact_file_output_mixin import BlobArtifactFileOutputMixin
 from griptape.tools import BaseTool
 
 

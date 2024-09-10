@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define
 
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import ImageArtifact

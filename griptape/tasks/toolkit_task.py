@@ -8,7 +8,7 @@ from attrs import Attribute, Factory, define, field
 from griptape import utils
 from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack, ToolAction
-from griptape.mixins import ActionsSubtaskOriginMixin
+from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask, PromptTask
 from griptape.utils import J2
 

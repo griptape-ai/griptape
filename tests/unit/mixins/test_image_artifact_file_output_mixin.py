@@ -4,7 +4,7 @@ import tempfile
 import pytest
 
 from griptape.artifacts import ImageArtifact
-from griptape.mixins import BlobArtifactFileOutputMixin
+from griptape.mixins.media_artifact_file_output_mixin import BlobArtifactFileOutputMixin
 
 
 class TestMediaArtifactFileOutputMixin:
