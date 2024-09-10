@@ -34,7 +34,7 @@ class BooleanArtifact(BaseArtifact):
         raise ValueError("Cannot add BooleanArtifact with other artifacts")
 
     def __eq__(self, value: object) -> bool:
-        return self.value is value
+        return self.value == value
 
     def to_text(self) -> str:
         return str(self.value).lower()
