@@ -7,13 +7,6 @@ from attrs import define, field
 from griptape.artifacts import BaseArtifact
 
 
-def value_to_bytes(value: Any) -> bytes:
-    if isinstance(value, bytes):
-        return value
-    else:
-        return str(value).encode()
-
-
 @define
 class BlobArtifact(BaseArtifact):
     """Stores arbitrary binary data.
@@ -30,10 +23,6 @@ class BlobArtifact(BaseArtifact):
     @property
     def base64(self) -> str:
         return base64.b64encode(self.value).decode(self.encoding)
-
-    @property
-    def mime_type(self) -> str:
-        return "application/octet-stream"
 
     @property
     def mime_type(self) -> str:

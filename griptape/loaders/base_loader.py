@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 from attrs import define, field
 
+from griptape.artifacts import BaseArtifact
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.utils.futures import execute_futures_dict
 from griptape.utils.hash import bytes_to_hash, str_to_hash
