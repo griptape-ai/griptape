@@ -56,9 +56,9 @@ image_artifact = ImageArtifact(
 )
 ```
 
-### Changed `CsvRowArtifact.value` from `dict` to `str`.
+### Removed `CsvRowArtifact`
 
-`CsvRowArtifact`'s `value` is now a `str` instead of a `dict`. Update any logic that expects `dict` to handle `str` instead.
+`CsvRowArtifact` has been removed. Use `TextArtifact` instead.
 
 #### Before
 
@@ -70,11 +70,45 @@ print(type(artifact.value)) # <class 'dict'>
 
 #### After
 ```python
-artifact = CsvRowArtifact({"name": "John", "age": 30})
-print(artifact.value) # name: John\nAge: 30
+artifact = TextArtifact("name: John\nage: 30")
+print(artifact.value) # name: John\nage: 30
 print(type(artifact.value)) # <class 'str'>
 ```
 
+If you require storing a dictionary as an Artifact, you can use `GenericArtifact` instead.
+
+### `CsvLoader`, `DataframeLoader`, and `SqlLoader` return types 
+
+`CsvLoader`, `DataframeLoader`, and `SqlLoader` now return a `list[TextArtifact]` instead of `list[CsvRowArtifact]`.
+
+If you require a dictionary, set a custom `formatter_fn` and then parse the text to a dictionary. 
+
+#### Before
+
+```python
+results = CsvLoader().load(Path("people.csv").read_text())
+
+print(results[0].value) # {"name": "John", "age": 30}
+print(type(results[0].value)) # <class 'dict'>
+```
+
+#### After
+```python
+results = CsvLoader().load(Path("people.csv").read_text())
+
+print(results[0].value) # name: John\nAge: 30
+print(type(results[0].value)) # <class 'str'>
+
+# Customize formatter_fn
+results = CsvLoader(formatter_fn=lambda x: json.dumps(x)).load(Path("people.csv").read_text())
+print(results[0].value) # {"name": "John", "age": 30}
+print(type(results[0].value)) # <class 'str'>
+
+dict_results = [json.loads(result.value) for result in results]
+print(dict_results[0]) # {"name": "John", "age": 30}
+print(type(dict_results[0])) # <class 'dict'>
+```
+ 
 ### Moved `ImageArtifact.prompt` and `ImageArtifact.model` to `ImageArtifact.meta`
 
 `ImageArtifact.prompt` and `ImageArtifact.model` have been moved to `ImageArtifact.meta`.
