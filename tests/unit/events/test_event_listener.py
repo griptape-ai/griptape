@@ -94,8 +94,8 @@ class TestEventListener:
         mock1 = Mock()
         mock2 = Mock()
         # duplicate event listeners will only get added once
-        event_listener_1 = EventBus.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
-        EventBus.add_event_listener(EventListener(mock1, event_types=[StartPromptEvent]))
+        event_listener_1 = EventBus.add_event_listener(EventListener(mock1, id="1", event_types=[StartPromptEvent]))
+        EventBus.add_event_listener(EventListener(mock1, id="1", event_types=[StartPromptEvent]))
 
         event_listener_3 = EventBus.add_event_listener(EventListener(mock1, event_types=[FinishPromptEvent]))
         event_listener_4 = EventBus.add_event_listener(EventListener(mock2, event_types=[StartPromptEvent]))
