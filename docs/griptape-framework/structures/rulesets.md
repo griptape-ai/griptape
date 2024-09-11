@@ -5,8 +5,66 @@ search:
 
 ## Overview
 
-A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define rules for [Structures](../structures/agents.md) and [Tasks](../structures/tasks.md).
-Rulesets can be used to shape personality, format output, restrict topics, and more. 
+A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define [Rule](../../reference/griptape/rules/base_rule.md)s for [Structures](../structures/agents.md) and [Tasks](../structures/tasks.md). Griptape places Rules into the LLM's system prompt for strong control over the output.
+
+## Types of Rules
+
+### Rule
+
+[Rule](../../reference/griptape/rules/base_rule.md)s shape the LLM's behavior by defining specific guidelines or instructions for how it should interpret and respond to inputs. Rules can be used to modify language style, tone, or even behavior based on what you define.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/basic_rule.py"
+```
+
+```
+[09/10/24 14:41:52] INFO     PromptTask b7b23a88ea9e4cd0befb7e7a4ed596b0
+                             Input: Hi there! How are you?
+                    INFO     PromptTask b7b23a88ea9e4cd0befb7e7a4ed596b0
+                             Output: Ahoy, matey! I be doing just fine, thank ye fer askin'. How be the winds blowin' in yer sails today?
+```
+
+### Json Schema
+
+[JsonSchemaRule](../../reference/griptape/rules/json_schema_rule.md)s defines a structured format for the LLM's output by providing a JSON schema.
+This is particularly useful when you need the LLM to return well-formed data, such as JSON objects, with specific fields and data types.
+
+!!! warning
+  `JsonSchemaRule` may break [ToolkitTask](../structures/tasks.md#toolkittask) which relies on a specific [output token](https://github.com/griptape-ai/griptape/blob/e6a04c7b88cf9fa5d6bcf4c833ffebfab89a3258/griptape/tasks/toolkit_task.py#L28).
+
+
+```python
+--8<-- "docs/griptape-framework/structures/src/json_schema_rule.py"
+```
+
+```
+[09/10/24 14:44:53] INFO     PromptTask fb26dd41803443c0b51c3d861626e07a
+                             Input: What is the sentiment of this message?: 'I am so happy!'
+[09/10/24 14:44:54] INFO     PromptTask fb26dd41803443c0b51c3d861626e07a
+                             Output: {
+                               "answer": "The sentiment of the message is positive.",
+                               "relevant_emojis": ["😊", "😃"]
+                             }
+```
+
+Although Griptape leverages the `schema` library, you're free to use any JSON schema generation library to define your schema!
+
+For example, using `pydantic`:
+
+```python
+--8<-- "docs/griptape-framework/structures/src/json_schema_rule_pydantic.py"
+```
+
+```
+[09/11/24 09:45:58] INFO     PromptTask eae43f52829c4289a6cca9ee7950e075
+                             Input: What is the sentiment of this message?: 'I am so happy!'
+                    INFO     PromptTask eae43f52829c4289a6cca9ee7950e075
+                             Output: {
+                               "answer": "The sentiment of the message is positive.",
+                               "relevant_emojis": ["😊", "😄"]
+                             }
+answer='The sentiment of the message is positive.' relevant_emojis=['😊', '😄']
+```
 
 ## Structure
 
