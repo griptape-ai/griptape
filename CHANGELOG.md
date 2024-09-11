@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `BaseArtifact.to_bytes()` method to convert an Artifact value to bytes.
+- `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 strings.
 
 ### Changed
 - **BREAKING**: Changed `CsvRowArtifact.value` from `dict` to `str`.
@@ -17,7 +18,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `AudioArtifact.media_type`.
 - **BREAKING**: Removed `BlobArtifact.dir_name`.
 - **BREAKING**: Moved `ImageArtifact.prompt` and `ImageArtifact.model` into `ImageArtifact.meta`.
-- **BREAKING**: `ImageArtifact.to_text()` now returns the base64 encoded image.
 - **BREAKING**: `ImageArtifact.format` is now required.
 - Updated `JsonArtifact` value converter to properly handle more types. 
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.

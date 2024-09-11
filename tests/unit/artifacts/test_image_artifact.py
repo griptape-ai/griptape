@@ -15,7 +15,7 @@ class TestImageArtifact:
         )
 
     def test_to_text(self, image_artifact: ImageArtifact):
-        assert image_artifact.to_text() == "c29tZSBiaW5hcnkgcG5nIGltYWdlIGRhdGE="
+        assert image_artifact.to_text() == "Image, format: png, size: 26 bytes"
 
     def test_to_dict(self, image_artifact: ImageArtifact):
         image_dict = image_artifact.to_dict()

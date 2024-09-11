@@ -59,7 +59,7 @@ class TestBaseArtifact:
         artifact = BaseArtifact.from_dict(dict_value)
 
         assert isinstance(artifact, ImageArtifact)
-        assert artifact.to_text() == "aW1hZ2UgZGF0YQ=="
+        assert artifact.to_text() == "Image, format: png, size: 10 bytes"
         assert artifact.value == b"image data"
 
     def test_unsupported_from_dict(self):
