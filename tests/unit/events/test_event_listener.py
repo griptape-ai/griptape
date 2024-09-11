@@ -137,10 +137,19 @@ class TestEventListener:
         mock_event_listener_driver.publish_event.assert_called_once_with({"event": mock_event.to_dict()}, flush=False)
 
     def test_context_manager(self):
-        EventBus.add_event_listeners([EventListener()])
-        last_event_listeners = EventBus.event_listeners
+        e1 = EventListener()
+        EventBus.add_event_listeners([e1])
 
-        with EventListener() as e:
-            assert EventBus.event_listeners == [e]
+        with EventListener() as e2:
+            assert EventBus.event_listeners == [e1, e2]
 
-        assert EventBus.event_listeners == last_event_listeners
+        assert EventBus.event_listeners == [e1]
+
+    def test_context_manager_multiple(self):
+        e1 = EventListener()
+        EventBus.add_event_listener(e1)
+
+        with EventListener() as e2, EventListener() as e3:
+            assert EventBus.event_listeners == [e1, e2, e3]
+
+        assert EventBus.event_listeners == [e1]

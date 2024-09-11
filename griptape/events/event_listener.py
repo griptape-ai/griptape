@@ -21,17 +21,14 @@ class EventListener:
     def __enter__(self) -> EventListener:
         from griptape.events import EventBus
 
-        self._last_event_listeners = [*EventBus.event_listeners]
-
-        EventBus.set_event_listeners([self])
+        EventBus.add_event_listener(self)
 
         return self
 
     def __exit__(self, type, value, traceback) -> None:  # noqa: ANN001, A002
         from griptape.events import EventBus
 
-        if self._last_event_listeners is not None:
-            EventBus.set_event_listeners(self._last_event_listeners)
+        EventBus.remove_event_listener(self)
 
         self._last_event_listeners = None
 
