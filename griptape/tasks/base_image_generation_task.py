@@ -10,7 +10,7 @@ from attrs import Attribute, define, field
 
 from griptape.configs import Defaults
 from griptape.loaders import ImageLoader
-from griptape.mixins.media_artifact_file_output_mixin import BlobArtifactFileOutputMixin
+from griptape.mixins.artifact_file_output_mixin import ArtifactFileOutputMixin
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTask

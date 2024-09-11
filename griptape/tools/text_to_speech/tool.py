@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 from attrs import define, field
 from schema import Literal, Schema
 
-from griptape.mixins.media_artifact_file_output_mixin import BlobArtifactFileOutputMixin
+from griptape.mixins.artifact_file_output_mixin import ArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
