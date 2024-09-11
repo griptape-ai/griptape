@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
-- `BaseArtifact.to_bytes()` method to convert an Artifact to bytes.
+- `BaseArtifact.to_bytes()` method to convert an Artifact value to bytes.
 
 ### Changed
 - **BREAKING**: Changed `CsvRowArtifact.value` from `dict` to `str`.
