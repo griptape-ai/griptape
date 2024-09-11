@@ -43,6 +43,10 @@ class _EventBus(SingletonMixin):
         for event_listener in self._event_listeners:
             event_listener.publish_event(event, flush=flush)
 
+    def set_event_listeners(self, event_listeners: list[EventListener]) -> None:
+        with self._thread_lock:
+            self._event_listeners = event_listeners
+
     def clear_event_listeners(self) -> None:
         with self._thread_lock:
             self._event_listeners.clear()

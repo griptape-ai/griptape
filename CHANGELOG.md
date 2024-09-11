@@ -14,8 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parameter `meta: dict` on `BaseEvent`.
 - `AzureOpenAiTextToSpeechDriver`.
 - Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
-- `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
 - Ability to use Drivers Configs as Context Managers for temporarily setting the default Drivers.
+- `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
 - `LocalStructureRunDriver.event_listeners` for adding Event Listeners to a local Structure run.
 
 ### Changed

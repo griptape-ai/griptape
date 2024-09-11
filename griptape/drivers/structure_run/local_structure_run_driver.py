@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import os
-from contextlib import ExitStack
 from typing import TYPE_CHECKING, Callable
 
 from attrs import define, field
 
 from griptape.artifacts import BaseArtifact, InfoArtifact
 from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver
+from griptape.events import EventBus
 
 if TYPE_CHECKING:
     from griptape.events import EventListener
@@ -27,15 +27,18 @@ class LocalStructureRunDriver(BaseStructureRunDriver):
     event_listeners: list[EventListener] = field(factory=list, kw_only=True)
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact:
+        # Save the current environment and event listeners so we can restore them after running the structure.
         old_env = os.environ.copy()
+        old_event_listeners = EventBus.event_listeners.copy()
+        EventBus.clear_event_listeners()
+
         try:
             os.environ.update(self.env)
+            EventBus.set_event_listeners(self.event_listeners)
 
-            with ExitStack() as stack:
-                for event_listener in self.event_listeners:
-                    stack.enter_context(event_listener)
-                structure_factory_fn = self.structure_factory_fn().run(*[arg.value for arg in args])
+            structure_factory_fn = self.structure_factory_fn().run(*[arg.value for arg in args])
         finally:
+            EventBus.set_event_listeners(old_event_listeners)
             os.environ.clear()
             os.environ.update(old_env)
 

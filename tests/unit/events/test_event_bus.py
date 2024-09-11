@@ -36,6 +36,11 @@ class TestEventBus:
     def test_remove_unknown_event_listener(self):
         EventBus.remove_event_listener(EventListener())
 
+    def test_set_event_listeners(self):
+        listeners = [EventListener(), EventListener()]
+        EventBus.set_event_listeners(listeners)
+        assert EventBus.event_listeners == listeners
+
     def test_publish_event(self):
         # Given
         mock_handler = Mock()
