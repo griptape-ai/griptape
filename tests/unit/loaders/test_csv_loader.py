@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from griptape.loaders.csv_loader import CsvLoader
@@ -55,3 +57,12 @@ class TestCsvLoader:
 
         assert collection[loader.to_key(sources[1])][0].value == "Bar: bar1\nFoo: foo1"
         assert collection[loader.to_key(sources[1])][0].embedding == [0, 1]
+
+    def test_formatter_fn(self, loader, create_source):
+        loader.formatter_fn = lambda value: json.dumps(value)
+        source = create_source("test-1.csv")
+
+        artifacts = loader.load(source)
+
+        assert len(artifacts) == 10
+        assert artifacts[0].value == '{"Foo": "foo1", "Bar": "bar1"}'

@@ -27,7 +27,6 @@ class TestSqlTool:
 
             assert len(result.value) == 1
             assert result.value[0].value == "id: 1\nname: Alice\nage: 25\ncity: New York"
-            assert result.value[0].meta["row_num"] == 0
 
     def test_execute_query_description(self, driver):
         client = SqlTool(

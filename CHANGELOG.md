@@ -7,11 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Added
-- `BaseArtifact.to_bytes()` method to convert an Artifact value to bytes.
+- `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
 - `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 strings.
+- `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
 
 ### Changed
-- **BREAKING**: Changed `CsvRowArtifact.value` from `dict` to `str`.
+- **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
 - **BREAKING**: Removed `MediaArtifact`, use `ImageArtifact` or `AudioArtifact` instead.
 - **BREAKING**: `CsvLoader`, `DataframeLoader`, and `SqlLoader` now return `list[TextArtifact]`.
 - **BREAKING**: Removed `ImageArtifact.media_type`.
@@ -22,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `JsonArtifact` value converter to properly handle more types. 
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - `ImageArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
-- Passing a dictionary as the value to `CsvRowArtifact` will convert to a key-value formatted string. 
 - Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
 - Generic type support to `ListArtifact`.
 - Iteration support to `ListArtifact`.

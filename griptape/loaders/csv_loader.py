@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import csv
 from io import StringIO
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, Callable, Optional, cast
 
 from attrs import define, field
 
-from griptape.artifacts import CsvRowArtifact
+from griptape.artifacts import TextArtifact
 from griptape.loaders import BaseLoader
 
 if TYPE_CHECKING:
@@ -18,8 +18,11 @@ class CsvLoader(BaseLoader):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     delimiter: str = field(default=",", kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
+    formatter_fn: Callable[[dict], str] = field(
+        default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
+    )
 
-    def load(self, source: bytes | str, *args, **kwargs) -> list[CsvRowArtifact]:
+    def load(self, source: bytes | str, *args, **kwargs) -> list[TextArtifact]:
         artifacts = []
 
         if isinstance(source, bytes):
@@ -28,7 +31,7 @@ class CsvLoader(BaseLoader):
             raise ValueError(f"Unsupported source type: {type(source)}")
 
         reader = csv.DictReader(StringIO(source), delimiter=self.delimiter)
-        chunks = [CsvRowArtifact(row, meta={"row_num": row_num}) for row_num, row in enumerate(reader)]
+        chunks = [TextArtifact(self.formatter_fn(row)) for row in reader]
 
         if self.embedding_driver:
             for chunk in chunks:
@@ -44,8 +47,8 @@ class CsvLoader(BaseLoader):
         sources: list[bytes | str],
         *args,
         **kwargs,
-    ) -> dict[str, list[CsvRowArtifact]]:
+    ) -> dict[str, list[TextArtifact]]:
         return cast(
-            dict[str, list[CsvRowArtifact]],
+            dict[str, list[TextArtifact]],
             super().load_collection(sources, *args, **kwargs),
         )
