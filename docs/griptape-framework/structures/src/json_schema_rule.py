@@ -1,3 +1,5 @@
+import json
+
 import schema
 
 from griptape.rules.json_schema_rule import JsonSchemaRule
@@ -11,4 +13,6 @@ agent = Agent(
     ]
 )
 
-agent.run("What is the sentiment of this message?: 'I am so happy!'")
+output = agent.run("What is the sentiment of this message?: 'I am so happy!'").output
+
+print(json.dumps(json.loads(output.value), indent=2))

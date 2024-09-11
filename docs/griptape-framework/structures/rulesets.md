@@ -47,6 +47,25 @@ This is particularly useful when you need the LLM to return well-formed data, su
                              }
 ```
 
+Although Griptape leverages the `schema` library, you're free to use any JSON schema generation library to define your schema!
+
+For example, using `pydantic`:
+
+```python
+--8<-- "docs/griptape-framework/structures/src/json_schema_rule_pydantic.py"
+```
+
+```
+[09/11/24 09:45:58] INFO     PromptTask eae43f52829c4289a6cca9ee7950e075
+                             Input: What is the sentiment of this message?: 'I am so happy!'
+                    INFO     PromptTask eae43f52829c4289a6cca9ee7950e075
+                             Output: {
+                               "answer": "The sentiment of the message is positive.",
+                               "relevant_emojis": ["😊", "😄"]
+                             }
+answer='The sentiment of the message is positive.' relevant_emojis=['😊', '😄']
+```
+
 ## Structure
 
 ### Rulesets
