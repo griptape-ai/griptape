@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `JsonArtifact` value converter to properly handle more types. 
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - `ImageArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
-- Passing a dictionary as the value to `TextArtifact` will convert to a key-value formatted string. 
+- Passing a dictionary as the value to `CsvRowArtifact` will convert to a key-value formatted string. 
 - Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
 - Generic type support to `ListArtifact`.
 - Iteration support to `ListArtifact`.
