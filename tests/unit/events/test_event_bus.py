@@ -33,11 +33,6 @@ class TestEventBus:
 
         assert len(EventBus.event_listeners) == 0
 
-    def test_set_event_listeners(self):
-        listeners = [EventListener(), EventListener()]
-        EventBus.set_event_listeners(listeners)
-        assert EventBus.event_listeners == listeners
-
     def test_remove_unknown_event_listener(self):
         EventBus.remove_event_listener(EventListener())
 

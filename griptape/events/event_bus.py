@@ -34,11 +34,6 @@ class _EventBus(SingletonMixin):
 
         return event_listener
 
-    def set_event_listeners(self, event_listeners: list[EventListener]) -> list[EventListener]:
-        self._event_listeners = event_listeners
-
-        return self._event_listeners
-
     def remove_event_listener(self, event_listener: EventListener) -> None:
         with self._thread_lock:
             if event_listener in self._event_listeners:
