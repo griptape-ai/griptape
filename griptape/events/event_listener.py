@@ -16,6 +16,22 @@ class EventListener:
     event_types: Optional[list[type[BaseEvent]]] = field(default=None, kw_only=True)
     driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
 
+    _last_event_listeners: Optional[list[EventListener]] = field(default=None)
+
+    def __enter__(self) -> EventListener:
+        from griptape.events import EventBus
+
+        EventBus.add_event_listener(self)
+
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:  # noqa: ANN001, A002
+        from griptape.events import EventBus
+
+        EventBus.remove_event_listener(self)
+
+        self._last_event_listeners = None
+
     def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
         event_types = self.event_types
 
