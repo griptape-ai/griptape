@@ -50,7 +50,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
         status = result["status"]
 
         wait_attempts = 0
-        while status in ("QUEUED", "RUNNING") and wait_attempts < self.structure_run_max_wait_time_attempts:
+        while status in ("QUEUED", "STARTING", "RUNNING") and wait_attempts < self.structure_run_max_wait_time_attempts:
             # wait
             time.sleep(self.structure_run_wait_time_interval)
             wait_attempts += 1
