@@ -10,6 +10,7 @@ from griptape.drivers import (
     AzureOpenAiEmbeddingDriver,
     AzureOpenAiImageGenerationDriver,
     AzureOpenAiImageQueryDriver,
+    AzureOpenAiTextToSpeechDriver,
     LocalVectorStoreDriver,
 )
 from griptape.utils.decorators import lazy_property
@@ -91,4 +92,14 @@ class AzureOpenAiDriversConfig(DriversConfig):
                 azure_ad_token=self.azure_ad_token,
                 azure_ad_token_provider=self.azure_ad_token_provider,
             )
+        )
+
+    @lazy_property()
+    def text_to_speech_driver(self) -> AzureOpenAiTextToSpeechDriver:
+        return AzureOpenAiTextToSpeechDriver(
+            model="tts",
+            azure_endpoint=self.azure_endpoint,
+            api_key=self.api_key,
+            azure_ad_token=self.azure_ad_token,
+            azure_ad_token_provider=self.azure_ad_token_provider,
         )
