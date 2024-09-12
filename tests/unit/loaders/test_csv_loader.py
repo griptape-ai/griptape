@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from griptape.loaders.csv_loader import CsvLoader
