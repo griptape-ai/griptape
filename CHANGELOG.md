@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
-- `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 strings.
+- `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 string.
 - `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
 
 ### Changed
