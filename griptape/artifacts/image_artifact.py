@@ -10,7 +10,7 @@ class ImageArtifact(BlobArtifact):
     """Stores image data.
 
     Attributes:
-        format: The format of the image data.
+        format: The format of the image data. Used when building the MIME type.
         width: The width of the image.
         height: The height of the image
     """
