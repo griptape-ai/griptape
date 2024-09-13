@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import csv
 import io
-from typing import TYPE_CHECKING, Any, Callable, Optional, cast
+from typing import TYPE_CHECKING, Callable, Optional, cast
 
 from attrs import Factory, define, field
 
@@ -20,7 +20,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
     column_names: list[str] = field(default=Factory(list), kw_only=True)
     system_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/system.j2")), kw_only=True)
     user_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/user.j2")), kw_only=True)
-    formatter_fn: Callable[[Any], str] = field(
+    formatter_fn: Callable[[dict], str] = field(
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
