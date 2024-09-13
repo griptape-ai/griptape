@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Callable, Optional, cast
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import CsvRowArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.common import Message, PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
@@ -40,7 +40,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
             item_separator="\n",
         )
 
-    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[CsvRowArtifact]:
+    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[TextArtifact]:
         rows = []
 
         with io.StringIO(text) as f:
@@ -52,10 +52,10 @@ class CsvExtractionEngine(BaseExtractionEngine):
     def _extract_rec(
         self,
         artifacts: list[TextArtifact],
-        rows: list[CsvRowArtifact],
+        rows: list[TextArtifact],
         *,
         rulesets: Optional[list[Ruleset]] = None,
-    ) -> list[CsvRowArtifact]:
+    ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         system_prompt = self.system_template_generator.render(
             column_names=self.column_names,

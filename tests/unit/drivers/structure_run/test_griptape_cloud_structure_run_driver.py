@@ -15,15 +15,18 @@ class TestGriptapeCloudStructureRunDriver:
         from griptape.drivers import GriptapeCloudStructureRunDriver
 
         mock_response = mocker.Mock()
-        mock_response.json.return_value = {
-            "description": "fizz buzz",
-            "output": TextArtifact("foo bar").to_dict(),
-            "status": "SUCCEEDED",
-        }
+        mock_response.json.side_effect = [
+            {"description": "fizz buzz", "status": "RUNNING"},
+            {"description": "fizz buzz", "output": TextArtifact("foo bar").to_dict(), "status": "SUCCEEDED"},
+        ]
         mocker.patch("requests.get", return_value=mock_response)
 
         return GriptapeCloudStructureRunDriver(
-            base_url="https://cloud-foo.griptape.ai", api_key="foo bar", structure_id="1", env={"key": "value"}
+            base_url="https://cloud-foo.griptape.ai",
+            api_key="foo bar",
+            structure_id="1",
+            env={"key": "value"},
+            structure_run_wait_time_interval=0,
         )
 
     def test_run(self, driver, mock_requests_post):

@@ -5,11 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
 ### Added
-- `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
-- `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 string.
-- `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
 - `BaseFileLoader` for Loaders that load from a path.
 - `BaseLoader.fetch()` method for fetching data from a source.
 - `BaseLoader.parse()` method for parsing fetched data.
@@ -17,6 +13,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseWebScraperDriver.extract_page()` method for extracting data from an already scraped web page.
 - `TextLoaderRetrievalRagModule.chunker` for specifying the chunking strategy.
 - `file_utils.get_mime_type` utility for getting the MIME type of a file.
+
+### Changed
+- **BREAKING**: Removed `BaseFileManager.default_loader` and `BaseFileManager.loaders`.
+- **BREAKING**: Loaders no longer chunk data, use a Chunker to chunk the data.
+- **BREAKING**: Removed `fileutils.load_file` and `fileutils.load_files`.
+- **BREAKING**: Removed `loaders-dataframe` and `loaders-audio` extras as they are no longer needed.
+- **BREKING**: `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`.
+- **BREAKING**: Removed `DataframeLoader`.
+- `LocalFileManagerDriver.workdir` is now optional.
+- `filetype` is now a core dependency.
+- `FileManagerTool` now uses `filetype` for more accurate file type detection.
+- `BaseFileLoader.load_file()` will now either return a `TextArtifact` or a `BlobArtifact` depending on whether `BaseFileManager.encoding` is set.
+
+## [0.32.0] - 2024-09-17
+
+### Added
+- `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
+- `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 string.
+- `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
+- `AzureOpenAiTextToSpeechDriver`.
+- `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
+- Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
+- Ability to use Drivers Configs as Context Managers for temporarily setting the default Drivers.
+- Generic type support to `ListArtifact`.
+- Iteration support to `ListArtifact`.
+
 
 ### Changed
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
@@ -28,22 +50,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BlobArtifact.dir_name`.
 - **BREAKING**: Moved `ImageArtifact.prompt` and `ImageArtifact.model` into `ImageArtifact.meta`.
 - **BREAKING**: `ImageArtifact.format` is now required.
-- **BREAKING**: Removed `BaseFileManager.default_loader` and `BaseFileManager.loaders`.
-- **BREAKING**: Loaders no longer chunk data, use a Chunker to chunk the data.
-- **BREAKING**: Removed `fileutils.load_file` and `fileutils.load_files`.
-- **BREAKING**: Removed `loaders-dataframe` and `loaders-audio` extras as they are no longer needed.
-- **BREKING**: `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`.
-- **BREAKING**: Removed `DataframeLoader`.
-- `LocalFileManagerDriver.workdir` is now optional.
-- `filetype` is now a core dependency.
-- `FileManagerTool` now uses `filetype` for more accurate file type detection.
-- `BaseFileLoader.load_file()` will now either return a `TextArtifact` or a `BlobArtifact` depending on whether `BaseFileManager.encoding` is set.
+- **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module.
 - Updated `JsonArtifact` value converter to properly handle more types. 
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - `ImageArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
-- Generic type support to `ListArtifact`.
-- Iteration support to `ListArtifact`.
+
+### Fixed
+- Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
 ## [0.31.0] - 2024-09-03
 
