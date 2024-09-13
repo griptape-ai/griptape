@@ -76,5 +76,5 @@ class TestLeonardoImageGenerationDriver:
         assert image_artifact.mime_type == "image/png"
         assert image_artifact.width == 512
         assert image_artifact.height == 512
-        assert image_artifact.model == "test_model_id"
-        assert image_artifact.prompt == "test_prompt"
+        assert image_artifact.meta["model"] == "test_model_id"
+        assert image_artifact.meta["prompt"] == "test_prompt"

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Sequence
-from typing import Any, Literal, Union, _SpecialForm, get_args, get_origin
+from typing import Any, Literal, TypeVar, Union, _SpecialForm, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
@@ -55,6 +55,10 @@ class BaseSchema(Schema):
         from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
         field_class, args, optional = cls._get_field_type_info(field_type)
+
+        # Resolve TypeVars to their bound type
+        if isinstance(field_class, TypeVar):
+            field_class = field_class.__bound__
 
         if attrs.has(field_class):
             if ABC in field_class.__bases__:

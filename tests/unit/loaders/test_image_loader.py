@@ -18,23 +18,22 @@ class TestImageLoader:
         return bytes_from_resource_path
 
     @pytest.mark.parametrize(
-        ("resource_path", "suffix", "mime_type"),
+        ("resource_path", "mime_type"),
         [
-            ("small.png", ".png", "image/png"),
-            ("small.jpg", ".jpeg", "image/jpeg"),
-            ("small.webp", ".webp", "image/webp"),
-            ("small.bmp", ".bmp", "image/bmp"),
-            ("small.gif", ".gif", "image/gif"),
-            ("small.tiff", ".tiff", "image/tiff"),
+            ("small.png", "image/png"),
+            ("small.jpg", "image/jpeg"),
+            ("small.webp", "image/webp"),
+            ("small.bmp", "image/bmp"),
+            ("small.gif", "image/gif"),
+            ("small.tiff", "image/tiff"),
         ],
     )
-    def test_load(self, resource_path, suffix, mime_type, loader, create_source):
+    def test_load(self, resource_path, mime_type, loader, create_source):
         source = create_source(resource_path)
 
         artifact = loader.load(source)
 
         assert isinstance(artifact, ImageArtifact)
-        assert artifact.name.endswith(suffix)
         assert artifact.height == 32
         assert artifact.width == 32
         assert artifact.mime_type == mime_type
@@ -49,7 +48,6 @@ class TestImageLoader:
         artifact = png_loader.load(source)
 
         assert isinstance(artifact, ImageArtifact)
-        assert artifact.name.endswith(".png")
         assert artifact.height == 32
         assert artifact.width == 32
         assert artifact.mime_type == "image/png"
@@ -68,7 +66,6 @@ class TestImageLoader:
         for key in keys:
             artifact = collection[key]
             assert isinstance(artifact, ImageArtifact)
-            assert artifact.name.endswith(".png")
             assert artifact.height == 32
             assert artifact.width == 32
             assert artifact.mime_type == "image/png"

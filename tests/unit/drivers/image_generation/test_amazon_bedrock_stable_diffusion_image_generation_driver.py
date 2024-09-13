@@ -60,5 +60,5 @@ class TestAmazonBedrockImageGenerationDriver:
         assert image_artifact.mime_type == "image/png"
         assert image_artifact.width == 512
         assert image_artifact.height == 512
-        assert image_artifact.model == "stability.stable-diffusion-xl-v1"
-        assert image_artifact.prompt == "test prompt"
+        assert image_artifact.meta["model"] == "stability.stable-diffusion-xl-v1"
+        assert image_artifact.meta["prompt"] == "test prompt"

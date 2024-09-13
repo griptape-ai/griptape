@@ -151,6 +151,5 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
             format="png",
             width=image_dimensions[0],
             height=image_dimensions[1],
-            model=self.model,
-            prompt=prompt,
+            meta={"model": self.model, "prompt": prompt},
         )

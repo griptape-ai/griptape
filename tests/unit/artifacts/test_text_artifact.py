@@ -18,6 +18,11 @@ class TestTextArtifact:
     def test_to_dict(self):
         assert TextArtifact("foobar").to_dict()["value"] == "foobar"
 
+    def test_to_bytes(self):
+        artifact = TextArtifact("foobar")
+
+        assert artifact.to_bytes() == b"foobar"
+
     def test_from_dict(self):
         assert BaseArtifact.from_dict(TextArtifact("foobar").to_dict()).value == "foobar"
 

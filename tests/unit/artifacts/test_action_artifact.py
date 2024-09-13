@@ -11,10 +11,6 @@ class TestActionArtifact:
     def action(self) -> ToolAction:
         return ToolAction(tag="TestTag", name="TestName", path="TestPath", input={"foo": "bar"})
 
-    def test___add__(self, action):
-        with pytest.raises(NotImplementedError):
-            ActionArtifact(action) + ActionArtifact(action)
-
     def test_to_text(self, action):
         assert ActionArtifact(action).to_text() == json.dumps(action.to_dict())
 

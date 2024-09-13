@@ -1,6 +1,7 @@
 import pytest
 
-from griptape.artifacts import BlobArtifact, CsvRowArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import BlobArtifact, ListArtifact, TextArtifact
+from griptape.artifacts.image_artifact import ImageArtifact
 
 
 class TestListArtifact:
@@ -23,6 +24,12 @@ class TestListArtifact:
         assert artifact.value[0].value == "foo"
         assert artifact.value[1].value == "bar"
 
+    def test___iter__(self):
+        assert [a.value for a in ListArtifact([TextArtifact("foo"), TextArtifact("bar")])] == ["foo", "bar"]
+
+    def test_type_var(self):
+        assert ListArtifact[TextArtifact]([TextArtifact("foo")]).value[0].value == "foo"
+
     def test_validate_value(self):
         with pytest.raises(ValueError):
             ListArtifact([TextArtifact("foo"), BlobArtifact(b"bar")], validate_uniform_types=True)
@@ -32,8 +39,7 @@ class TestListArtifact:
 
     def test_is_type(self):
         assert ListArtifact([TextArtifact("foo")]).is_type(TextArtifact)
-        assert ListArtifact([CsvRowArtifact({"foo": "bar"})]).is_type(TextArtifact)
-        assert ListArtifact([CsvRowArtifact({"foo": "bar"})]).is_type(CsvRowArtifact)
+        assert ListArtifact([ImageArtifact(b"", width=1234, height=1234, format="png")]).is_type(ImageArtifact)
 
     def test_has_items(self):
         assert not ListArtifact().has_items()

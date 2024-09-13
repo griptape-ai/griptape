@@ -84,7 +84,11 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
             subtask.after_run()
 
             if isinstance(subtask.output, ListArtifact):
-                self.output = subtask.output[0]
+                first_artifact = subtask.output[0]
+                if isinstance(first_artifact, BaseArtifact):
+                    self.output = first_artifact
+                else:
+                    raise ValueError(f"Output is not an Artifact: {type(first_artifact)}")
             else:
                 self.output = InfoArtifact("No tool output")
         except Exception as e:
