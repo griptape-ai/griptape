@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class BaseArtifact(SerializableMixin, ABC):
     """Serves as the base class for all Artifacts.
 
-    Artifacts are used to store data that can be provided as input to, or received as output from, a language model (LLM).
+    Artifacts are used to encapsulate data and enhance it with metadata.
 
     Attributes:
         id: The unique identifier of the Artifact. Defaults to a random UUID.

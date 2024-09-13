@@ -250,13 +250,13 @@ files = [
 
 [[package]]
 name = "astrapy"
-version = "1.4.1"
+version = "1.4.2"
 description = "AstraPy is a Pythonic SDK for DataStax Astra and its Data API"
 optional = true
 python-versions = "<4.0.0,>=3.8.0"
 files = [
-    {file = "astrapy-1.4.1-py3-none-any.whl", hash = "sha256:f2f6ca3a19cfab9422f306b3941401079fb940e286f3d17c776b71ff76eb9f73"},
-    {file = "astrapy-1.4.1.tar.gz", hash = "sha256:ea4ed0ec44f9d7281d034c9bd829b0db844438424d492c9c27136456d1a82719"},
+    {file = "astrapy-1.4.2-py3-none-any.whl", hash = "sha256:e8b595377c6448ae675823b614b24520fbdb35572c260b6ed23383da6391478e"},
+    {file = "astrapy-1.4.2.tar.gz", hash = "sha256:8fd3d2acaf439c5069d74e3d76e8a3e976120896d87cc2b05a6af51d528c6094"},
 ]
 
 [package.dependencies]
@@ -265,7 +265,7 @@ deprecation = ">=2.1.0,<2.2.0"
 httpx = {version = ">=0.25.2,<1", extras = ["http2"]}
 pymongo = ">=3"
 toml = ">=0.10.2,<0.11.0"
-uuid6 = ">=2024.1.12,<2024.2.0"
+uuid6 = ">=2024.1.12"
 
 [[package]]
 name = "async-timeout"
@@ -349,17 +349,17 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.35.14"
+version = "1.35.19"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3-1.35.14-py3-none-any.whl", hash = "sha256:c3e138e9041d59cd34cdc28a587dfdc899dba02ea26ebc3e10fb4bc88e5cf31b"},
-    {file = "boto3-1.35.14.tar.gz", hash = "sha256:7bc78d7140c353b10a637927fe4bc4c4d95a464d1b8f515d5844def2ee52cbd5"},
+    {file = "boto3-1.35.19-py3-none-any.whl", hash = "sha256:84b3fe1727945bc3cada832d969ddb3dc0d08fce1677064ca8bdc13a89c1a143"},
+    {file = "boto3-1.35.19.tar.gz", hash = "sha256:9979fe674780a0b7100eae9156d74ee374cd1638a9f61c77277e3ce712f3e496"},
 ]
 
 [package.dependencies]
-botocore = ">=1.35.14,<1.36.0"
+botocore = ">=1.35.19,<1.36.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.10.0,<0.11.0"
 
@@ -368,13 +368,13 @@ crt = ["botocore[crt] (>=1.21.0,<2.0a0)"]
 
 [[package]]
 name = "boto3-stubs"
-version = "1.35.14"
-description = "Type annotations for boto3 1.35.14 generated with mypy-boto3-builder 8.0.1"
+version = "1.35.19"
+description = "Type annotations for boto3 1.35.19 generated with mypy-boto3-builder 8.0.1"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3_stubs-1.35.14-py3-none-any.whl", hash = "sha256:c9b3c92b5b9b1278ca03bbb942075c5f9378f4bd26d7bce3ab1068246b088928"},
-    {file = "boto3_stubs-1.35.14.tar.gz", hash = "sha256:cfa0d7189862cbd02c6cef1c6ce597728340056687547e8a2c50d2033bf979b6"},
+    {file = "boto3_stubs-1.35.19-py3-none-any.whl", hash = "sha256:6adace32995ae7b88675cf0bbde3b4f31876cbf57520db1ec1f392ac32660b4c"},
+    {file = "boto3_stubs-1.35.19.tar.gz", hash = "sha256:c5842cd82d4a1570613f178831c2b6d1b60f511b87f56cc014f2a216c03ecf5a"},
 ]
 
 [package.dependencies]
@@ -430,7 +430,7 @@ bedrock-agent = ["mypy-boto3-bedrock-agent (>=1.35.0,<1.36.0)"]
 bedrock-agent-runtime = ["mypy-boto3-bedrock-agent-runtime (>=1.35.0,<1.36.0)"]
 bedrock-runtime = ["mypy-boto3-bedrock-runtime (>=1.35.0,<1.36.0)"]
 billingconductor = ["mypy-boto3-billingconductor (>=1.35.0,<1.36.0)"]
-boto3 = ["boto3 (==1.35.14)", "botocore (==1.35.14)"]
+boto3 = ["boto3 (==1.35.19)", "botocore (==1.35.19)"]
 braket = ["mypy-boto3-braket (>=1.35.0,<1.36.0)"]
 budgets = ["mypy-boto3-budgets (>=1.35.0,<1.36.0)"]
 ce = ["mypy-boto3-ce (>=1.35.0,<1.36.0)"]
@@ -780,13 +780,13 @@ xray = ["mypy-boto3-xray (>=1.35.0,<1.36.0)"]
 
 [[package]]
 name = "botocore"
-version = "1.35.14"
+version = "1.35.19"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore-1.35.14-py3-none-any.whl", hash = "sha256:24823135232f88266b66ae8e1d0f3d40872c14cd976781f7fe52b8f0d79035a0"},
-    {file = "botocore-1.35.14.tar.gz", hash = "sha256:8515a2fc7ca5bcf0b10016ba05ccf2d642b7cb77d8773026ff2fa5aa3bf38d2e"},
+    {file = "botocore-1.35.19-py3-none-any.whl", hash = "sha256:c83f7f0cacfe7c19b109b363ebfa8736e570d24922f16ed371681f58ebab44a9"},
+    {file = "botocore-1.35.19.tar.gz", hash = "sha256:42d6d8db7250cbd7899f786f9861e02cab17dc238f64d6acb976098ed9809625"},
 ]
 
 [package.dependencies]
@@ -798,7 +798,7 @@ urllib3 = [
 ]
 
 [package.extras]
-crt = ["awscrt (==0.21.2)"]
+crt = ["awscrt (==0.21.5)"]
 
 [[package]]
 name = "botocore-stubs"
@@ -1107,13 +1107,13 @@ colorama = {version = "*", markers = "platform_system == \"Windows\""}
 
 [[package]]
 name = "cohere"
-version = "5.9.1"
+version = "5.9.2"
 description = ""
 optional = true
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "cohere-5.9.1-py3-none-any.whl", hash = "sha256:8e1e1dde0e1a5ee5a3f22b890e0c927989f9326bab57b6b4be812a40e2565c3a"},
-    {file = "cohere-5.9.1.tar.gz", hash = "sha256:de9a828b91481882bf554e94a61ccc52843a09fbc58f53b8e1fa940b17ce1dc9"},
+    {file = "cohere-5.9.2-py3-none-any.whl", hash = "sha256:169ee06b0a54f8a913d42b19123bd72c1a72833275d544a52606d307f5547a7b"},
+    {file = "cohere-5.9.2.tar.gz", hash = "sha256:1860c527b2a8a5593873a342b0bf572220b6db7966c0782076b3f2740ab3d94d"},
 ]
 
 [package.dependencies]
@@ -1474,13 +1474,13 @@ lxml = ["lxml (>=5.2.2)"]
 
 [[package]]
 name = "elevenlabs"
-version = "1.7.0"
+version = "1.8.1"
 description = ""
 optional = true
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "elevenlabs-1.7.0-py3-none-any.whl", hash = "sha256:fbdde75ba0a9d904427f7c14297dd6a2c4f64ae1d34ea3a08c022cdac5be6688"},
-    {file = "elevenlabs-1.7.0.tar.gz", hash = "sha256:42ca044778d7f0bfd23da82c9a32d539877118e6ba2e4f89343b6f41bbc3516a"},
+    {file = "elevenlabs-1.8.1-py3-none-any.whl", hash = "sha256:d9a2a62963b008f4b8f52326984b1cf35fd455ebbe24ff136cb3009908e1185d"},
+    {file = "elevenlabs-1.8.1.tar.gz", hash = "sha256:a6309fc7ca91d379dfbec3fddeb5a6b755847c25fa935f936654d55a95d7b9a9"},
 ]
 
 [package.dependencies]
@@ -1775,20 +1775,20 @@ dev = ["flake8", "markdown", "twine", "wheel"]
 
 [[package]]
 name = "google-ai-generativelanguage"
-version = "0.6.6"
+version = "0.6.9"
 description = "Google Ai Generativelanguage API client library"
 optional = true
 python-versions = ">=3.7"
 files = [
-    {file = "google-ai-generativelanguage-0.6.6.tar.gz", hash = "sha256:1739f035caeeeca5c28f887405eec8690f3372daf79fecf26454a97a4f1733a8"},
-    {file = "google_ai_generativelanguage-0.6.6-py3-none-any.whl", hash = "sha256:59297737931f073d55ce1268dcc6d95111ee62850349d2b6cde942b16a4fca5c"},
+    {file = "google_ai_generativelanguage-0.6.9-py3-none-any.whl", hash = "sha256:50360cd80015d1a8cc70952e98560f32fa06ddee2e8e9f4b4b98e431dc561e0b"},
+    {file = "google_ai_generativelanguage-0.6.9.tar.gz", hash = "sha256:899f1d3a06efa9739f1cd9d2788070178db33c89d4a76f2e8f4da76f649155fa"},
 ]
 
 [package.dependencies]
 google-api-core = {version = ">=1.34.1,<2.0.dev0 || >=2.11.dev0,<3.0.0dev", extras = ["grpc"]}
 google-auth = ">=2.14.1,<2.24.0 || >2.24.0,<2.25.0 || >2.25.0,<3.0.0dev"
 proto-plus = ">=1.22.3,<2.0.0dev"
-protobuf = ">=3.19.5,<3.20.0 || >3.20.0,<3.20.1 || >3.20.1,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<5.0.0dev"
+protobuf = ">=3.20.2,<4.21.0 || >4.21.0,<4.21.1 || >4.21.1,<4.21.2 || >4.21.2,<4.21.3 || >4.21.3,<4.21.4 || >4.21.4,<4.21.5 || >4.21.5,<6.0.0dev"
 
 [[package]]
 name = "google-api-core"
@@ -1879,16 +1879,16 @@ httplib2 = ">=0.19.0"
 
 [[package]]
 name = "google-generativeai"
-version = "0.7.2"
+version = "0.8.1"
 description = "Google Generative AI High level API client library and tools."
 optional = true
 python-versions = ">=3.9"
 files = [
-    {file = "google_generativeai-0.7.2-py3-none-any.whl", hash = "sha256:3117d1ebc92ee77710d4bc25ab4763492fddce9b6332eb25d124cf5d8b78b339"},
+    {file = "google_generativeai-0.8.1-py3-none-any.whl", hash = "sha256:b031877f24d51af0945207657c085896a0a886eceec7a1cb7029327b0aa6e2f6"},
 ]
 
 [package.dependencies]
-google-ai-generativelanguage = "0.6.6"
+google-ai-generativelanguage = "0.6.9"
 google-api-core = "*"
 google-api-python-client = "*"
 google-auth = ">=2.15.0"
@@ -2270,13 +2270,13 @@ files = [
 
 [[package]]
 name = "huggingface-hub"
-version = "0.24.6"
+version = "0.24.7"
 description = "Client library to download and publish models, datasets and other repos on the huggingface.co hub"
 optional = true
 python-versions = ">=3.8.0"
 files = [
-    {file = "huggingface_hub-0.24.6-py3-none-any.whl", hash = "sha256:a990f3232aa985fe749bc9474060cbad75e8b2f115f6665a9fda5b9c97818970"},
-    {file = "huggingface_hub-0.24.6.tar.gz", hash = "sha256:cc2579e761d070713eaa9c323e3debe39d5b464ae3a7261c39a9195b27bb8000"},
+    {file = "huggingface_hub-0.24.7-py3-none-any.whl", hash = "sha256:a212c555324c8a7b1ffdd07266bb7e7d69ca71aa238d27b7842d65e9a26ac3e5"},
+    {file = "huggingface_hub-0.24.7.tar.gz", hash = "sha256:0ad8fb756e2831da0ac0491175b960f341fe06ebcf80ed6f8728313f95fc0207"},
 ]
 
 [package.dependencies]
@@ -2905,13 +2905,13 @@ files = [
 
 [[package]]
 name = "marqo"
-version = "3.7.0"
+version = "3.8.0"
 description = "Tensor search for humans"
 optional = true
 python-versions = ">=3"
 files = [
-    {file = "marqo-3.7.0-py3-none-any.whl", hash = "sha256:6f1ff86c3faadb31415bd1adf3e805b2927588c1a5756eeea8fb63097bf94c8a"},
-    {file = "marqo-3.7.0.tar.gz", hash = "sha256:d144cf69a41932fc664f04fc994b8c050998bd730b988e1d3fbe6bd20d9c820e"},
+    {file = "marqo-3.8.0-py3-none-any.whl", hash = "sha256:6b3ac5d5b308aa771798c3bbf95ad42dc6bb73e34701ba9073f9c4eaf4a5ac8a"},
+    {file = "marqo-3.8.0.tar.gz", hash = "sha256:89f36227c54ad0e60a638c524e9864211a3aa7898bec3d6bc2473a748fe7c8b3"},
 ]
 
 [package.dependencies]
@@ -3179,18 +3179,23 @@ mkdocstrings = ">=0.25"
 
 [[package]]
 name = "mongomock"
-version = "4.1.2"
+version = "4.2.0.post1"
 description = "Fake pymongo stub for testing simple MongoDB-dependent code"
 optional = false
 python-versions = "*"
 files = [
-    {file = "mongomock-4.1.2-py2.py3-none-any.whl", hash = "sha256:08a24938a05c80c69b6b8b19a09888d38d8c6e7328547f94d46cadb7f47209f2"},
-    {file = "mongomock-4.1.2.tar.gz", hash = "sha256:f06cd62afb8ae3ef63ba31349abd220a657ef0dd4f0243a29587c5213f931b7d"},
+    {file = "mongomock-4.2.0.post1-py2.py3-none-any.whl", hash = "sha256:ff78f1944bf0cdcfc291ece198357db805c2f0db39e814bcef8a43c9f53e8a81"},
+    {file = "mongomock-4.2.0.post1.tar.gz", hash = "sha256:9241d2cec7274b9736dbe8edacb19528ff66af3b3779b324d79ecc4201227f31"},
 ]
 
 [package.dependencies]
 packaging = "*"
+pytz = "*"
 sentinels = "*"
+
+[package.extras]
+pyexecjs = ["pyexecjs"]
+pymongo = ["pymongo"]
 
 [[package]]
 name = "more-itertools"
@@ -3711,13 +3716,13 @@ httpx = ">=0.27.0,<0.28.0"
 
 [[package]]
 name = "openai"
-version = "1.44.0"
+version = "1.45.1"
 description = "The official Python library for the openai API"
 optional = false
 python-versions = ">=3.7.1"
 files = [
-    {file = "openai-1.44.0-py3-none-any.whl", hash = "sha256:99a12bbda15f9c632ee911851e101669a82ee34992fbfd658a9db27d90dc0a9c"},
-    {file = "openai-1.44.0.tar.gz", hash = "sha256:acde74598976ec85bc477e9abb94eeb17f6efd998914d5685eeb46a69116894a"},
+    {file = "openai-1.45.1-py3-none-any.whl", hash = "sha256:4a6cce402aec803ae57ae7eff4b5b94bf6c0e1703a8d85541c27243c2adeadf8"},
+    {file = "openai-1.45.1.tar.gz", hash = "sha256:f79e384916b219ab2f028bbf9c778e81291c61eb0645ccfa1828a4b18b55d534"},
 ]
 
 [package.dependencies]
@@ -3982,12 +3987,12 @@ files = [
 
 [[package]]
 name = "pgvector"
-version = "0.3.2"
+version = "0.3.3"
 description = "pgvector support for Python"
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "pgvector-0.3.2-py2.py3-none-any.whl", hash = "sha256:a44541c75a7340993b2840015820a910e5d7625d2ddd1235c1ee659732531bf6"},
+    {file = "pgvector-0.3.3-py2.py3-none-any.whl", hash = "sha256:2c14c9a5219ccf3757cda493dc756506992afad6233dafcecb6d8ab08155f177"},
 ]
 
 [package.dependencies]
@@ -4145,23 +4150,23 @@ type = ["mypy (>=1.8)"]
 
 [[package]]
 name = "playwright"
-version = "1.46.0"
+version = "1.47.0"
 description = "A high-level API to automate web browsers"
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "playwright-1.46.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:fa60b95c16f6ce954636229a6c9dd885485326bca52d5ba20d02c0bc731a2bbb"},
-    {file = "playwright-1.46.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:73dcfc24834f4d004bc862ed0d74b4c1406793a8164734238ad035356fddc8ac"},
-    {file = "playwright-1.46.0-py3-none-macosx_11_0_universal2.whl", hash = "sha256:f5acfec1dbdc84d02dc696a17a344227e66c91413eab2036428dab405f195b82"},
-    {file = "playwright-1.46.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:3b418509f45879f1403d070858657a39bd0b333b23d92c37355682b671726df9"},
-    {file = "playwright-1.46.0-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:23580f6a3f99757bb9779d29be37144cb9328cd9bafa178e6db5b3ab4b7faf4c"},
-    {file = "playwright-1.46.0-py3-none-win32.whl", hash = "sha256:85f44dd32a23d02850f0ff4dafe51580e5199531fff5121a62489d9838707782"},
-    {file = "playwright-1.46.0-py3-none-win_amd64.whl", hash = "sha256:f14a7fd7e24e954eec6ce61d787d499e41937ade811a0818e9a088aabe28ebb6"},
+    {file = "playwright-1.47.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:f205df24edb925db1a4ab62f1ab0da06f14bb69e382efecfb0deedc4c7f4b8cd"},
+    {file = "playwright-1.47.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:7fc820faf6885f69a52ba4ec94124e575d3c4a4003bf29200029b4a4f2b2d0ab"},
+    {file = "playwright-1.47.0-py3-none-macosx_11_0_universal2.whl", hash = "sha256:8e212dc472ff19c7d46ed7e900191c7a786ce697556ac3f1615986ec3aa00341"},
+    {file = "playwright-1.47.0-py3-none-manylinux1_x86_64.whl", hash = "sha256:a1935672531963e4b2a321de5aa59b982fb92463ee6e1032dd7326378e462955"},
+    {file = "playwright-1.47.0-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e0a1b61473d6f7f39c5d77d4800b3cbefecb03344c90b98f3fbcae63294ad249"},
+    {file = "playwright-1.47.0-py3-none-win32.whl", hash = "sha256:1b977ed81f6bba5582617684a21adab9bad5676d90a357ebf892db7bdf4a9974"},
+    {file = "playwright-1.47.0-py3-none-win_amd64.whl", hash = "sha256:0ec1056042d2e86088795a503347407570bffa32cbe20748e5d4c93dba085280"},
 ]
 
 [package.dependencies]
 greenlet = "3.0.3"
-pyee = "11.1.0"
+pyee = "12.0.0"
 
 [[package]]
 name = "pluggy"
@@ -4592,13 +4597,13 @@ typing-extensions = ">=4.6.0,<4.7.0 || >4.7.0"
 
 [[package]]
 name = "pyee"
-version = "11.1.0"
+version = "12.0.0"
 description = "A rough port of Node.js's EventEmitter to Python with a few tricks of its own"
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "pyee-11.1.0-py3-none-any.whl", hash = "sha256:5d346a7d0f861a4b2e6c47960295bd895f816725b27d656181947346be98d7c1"},
-    {file = "pyee-11.1.0.tar.gz", hash = "sha256:b53af98f6990c810edd9b56b87791021a8f54fd13db4edd1142438d44ba2263f"},
+    {file = "pyee-12.0.0-py3-none-any.whl", hash = "sha256:7b14b74320600049ccc7d0e0b1becd3b4bd0a03c745758225e31a59f4095c990"},
+    {file = "pyee-12.0.0.tar.gz", hash = "sha256:c480603f4aa2927d4766eb41fa82793fe60a82cbfdb8d688e0d08c55a534e145"},
 ]
 
 [package.dependencies]
@@ -4809,13 +4814,13 @@ image = ["Pillow (>=8.0.0)"]
 
 [[package]]
 name = "pyright"
-version = "1.1.379"
+version = "1.1.380"
 description = "Command line wrapper for pyright"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pyright-1.1.379-py3-none-any.whl", hash = "sha256:01954811ac71db8646f50de1577576dc275ffb891a9e7324350e676cf6df323f"},
-    {file = "pyright-1.1.379.tar.gz", hash = "sha256:6f426cb6443786fa966b930c23ad1941c8cb9fe672e4589daea8d80bb34193ea"},
+    {file = "pyright-1.1.380-py3-none-any.whl", hash = "sha256:a6404392053d8848bacc7aebcbd9d318bb46baf1a1a000359305481920f43879"},
+    {file = "pyright-1.1.380.tar.gz", hash = "sha256:e6ceb1a5f7e9f03106e0aa1d6fbb4d97735a5e7ffb59f3de6b2db590baf935b2"},
 ]
 
 [package.dependencies]
@@ -4827,13 +4832,13 @@ dev = ["twine (>=3.4.1)"]
 
 [[package]]
 name = "pytest"
-version = "8.3.2"
+version = "8.3.3"
 description = "pytest: simple powerful testing with Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "pytest-8.3.2-py3-none-any.whl", hash = "sha256:4ba08f9ae7dcf84ded419494d229b48d0903ea6407b030eaec46df5e6a73bba5"},
-    {file = "pytest-8.3.2.tar.gz", hash = "sha256:c132345d12ce551242c87269de812483f5bcc87cdbb4722e48487ba194f9fdce"},
+    {file = "pytest-8.3.3-py3-none-any.whl", hash = "sha256:a6853c7375b2663155079443d2e45de913a911a11d669df02a50814944db57b2"},
+    {file = "pytest-8.3.3.tar.gz", hash = "sha256:70b98107bd648308a7952b06e6ca9a50bc660be218d53c257cc1fc94fda10181"},
 ]
 
 [package.dependencies]
@@ -4953,7 +4958,7 @@ six = ">=1.5"
 name = "pytz"
 version = "2024.1"
 description = "World timezone definitions, modern and historical"
-optional = true
+optional = false
 python-versions = "*"
 files = [
     {file = "pytz-2024.1-py2.py3-none-any.whl", hash = "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"},
@@ -5292,13 +5297,13 @@ idna2008 = ["idna"]
 
 [[package]]
 name = "rich"
-version = "13.8.0"
+version = "13.8.1"
 description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
 optional = false
 python-versions = ">=3.7.0"
 files = [
-    {file = "rich-13.8.0-py3-none-any.whl", hash = "sha256:2e85306a063b9492dffc86278197a60cbece75bcb766022f3436f567cae11bdc"},
-    {file = "rich-13.8.0.tar.gz", hash = "sha256:a5ac1f1cd448ade0d59cc3356f7db7a7ccda2c8cbae9c7a90c28ff463d3e91f4"},
+    {file = "rich-13.8.1-py3-none-any.whl", hash = "sha256:1760a3c0848469b97b558fc61c85233e3dafb69c7a071b4d60c38099d3cd4c06"},
+    {file = "rich-13.8.1.tar.gz", hash = "sha256:8260cda28e3db6bf04d2d1ef4dbc03ba80a824c88b0e7668a0f23126a424844a"},
 ]
 
 [package.dependencies]
@@ -5324,29 +5329,29 @@ pyasn1 = ">=0.1.3"
 
 [[package]]
 name = "ruff"
-version = "0.6.4"
+version = "0.6.5"
 description = "An extremely fast Python linter and code formatter, written in Rust."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "ruff-0.6.4-py3-none-linux_armv6l.whl", hash = "sha256:c4b153fc152af51855458e79e835fb6b933032921756cec9af7d0ba2aa01a258"},
-    {file = "ruff-0.6.4-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:bedff9e4f004dad5f7f76a9d39c4ca98af526c9b1695068198b3bda8c085ef60"},
-    {file = "ruff-0.6.4-py3-none-macosx_11_0_arm64.whl", hash = "sha256:d02a4127a86de23002e694d7ff19f905c51e338c72d8e09b56bfb60e1681724f"},
-    {file = "ruff-0.6.4-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:7862f42fc1a4aca1ea3ffe8a11f67819d183a5693b228f0bb3a531f5e40336fc"},
-    {file = "ruff-0.6.4-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:eebe4ff1967c838a1a9618a5a59a3b0a00406f8d7eefee97c70411fefc353617"},
-    {file = "ruff-0.6.4-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:932063a03bac394866683e15710c25b8690ccdca1cf192b9a98260332ca93408"},
-    {file = "ruff-0.6.4-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:50e30b437cebef547bd5c3edf9ce81343e5dd7c737cb36ccb4fe83573f3d392e"},
-    {file = "ruff-0.6.4-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:c44536df7b93a587de690e124b89bd47306fddd59398a0fb12afd6133c7b3818"},
-    {file = "ruff-0.6.4-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:0ea086601b22dc5e7693a78f3fcfc460cceabfdf3bdc36dc898792aba48fbad6"},
-    {file = "ruff-0.6.4-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0b52387d3289ccd227b62102c24714ed75fbba0b16ecc69a923a37e3b5e0aaaa"},
-    {file = "ruff-0.6.4-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:0308610470fcc82969082fc83c76c0d362f562e2f0cdab0586516f03a4e06ec6"},
-    {file = "ruff-0.6.4-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:803b96dea21795a6c9d5bfa9e96127cc9c31a1987802ca68f35e5c95aed3fc0d"},
-    {file = "ruff-0.6.4-py3-none-musllinux_1_2_i686.whl", hash = "sha256:66dbfea86b663baab8fcae56c59f190caba9398df1488164e2df53e216248baa"},
-    {file = "ruff-0.6.4-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:34d5efad480193c046c86608dbba2bccdc1c5fd11950fb271f8086e0c763a5d1"},
-    {file = "ruff-0.6.4-py3-none-win32.whl", hash = "sha256:f0f8968feea5ce3777c0d8365653d5e91c40c31a81d95824ba61d871a11b8523"},
-    {file = "ruff-0.6.4-py3-none-win_amd64.whl", hash = "sha256:549daccee5227282289390b0222d0fbee0275d1db6d514550d65420053021a58"},
-    {file = "ruff-0.6.4-py3-none-win_arm64.whl", hash = "sha256:ac4b75e898ed189b3708c9ab3fc70b79a433219e1e87193b4f2b77251d058d14"},
-    {file = "ruff-0.6.4.tar.gz", hash = "sha256:ac3b5bfbee99973f80aa1b7cbd1c9cbce200883bdd067300c22a6cc1c7fba212"},
+    {file = "ruff-0.6.5-py3-none-linux_armv6l.whl", hash = "sha256:7e4e308f16e07c95fc7753fc1aaac690a323b2bb9f4ec5e844a97bb7fbebd748"},
+    {file = "ruff-0.6.5-py3-none-macosx_10_12_x86_64.whl", hash = "sha256:932cd69eefe4daf8c7d92bd6689f7e8182571cb934ea720af218929da7bd7d69"},
+    {file = "ruff-0.6.5-py3-none-macosx_11_0_arm64.whl", hash = "sha256:3a8d42d11fff8d3143ff4da41742a98f8f233bf8890e9fe23077826818f8d680"},
+    {file = "ruff-0.6.5-py3-none-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a50af6e828ee692fb10ff2dfe53f05caecf077f4210fae9677e06a808275754f"},
+    {file = "ruff-0.6.5-py3-none-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:794ada3400a0d0b89e3015f1a7e01f4c97320ac665b7bc3ade24b50b54cb2972"},
+    {file = "ruff-0.6.5-py3-none-manylinux_2_17_i686.manylinux2014_i686.whl", hash = "sha256:381413ec47f71ce1d1c614f7779d88886f406f1fd53d289c77e4e533dc6ea200"},
+    {file = "ruff-0.6.5-py3-none-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:52e75a82bbc9b42e63c08d22ad0ac525117e72aee9729a069d7c4f235fc4d276"},
+    {file = "ruff-0.6.5-py3-none-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:09c72a833fd3551135ceddcba5ebdb68ff89225d30758027280968c9acdc7810"},
+    {file = "ruff-0.6.5-py3-none-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:800c50371bdcb99b3c1551d5691e14d16d6f07063a518770254227f7f6e8c178"},
+    {file = "ruff-0.6.5-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8e25ddd9cd63ba1f3bd51c1f09903904a6adf8429df34f17d728a8fa11174253"},
+    {file = "ruff-0.6.5-py3-none-musllinux_1_2_aarch64.whl", hash = "sha256:7291e64d7129f24d1b0c947ec3ec4c0076e958d1475c61202497c6aced35dd19"},
+    {file = "ruff-0.6.5-py3-none-musllinux_1_2_armv7l.whl", hash = "sha256:9ad7dfbd138d09d9a7e6931e6a7e797651ce29becd688be8a0d4d5f8177b4b0c"},
+    {file = "ruff-0.6.5-py3-none-musllinux_1_2_i686.whl", hash = "sha256:005256d977021790cc52aa23d78f06bb5090dc0bfbd42de46d49c201533982ae"},
+    {file = "ruff-0.6.5-py3-none-musllinux_1_2_x86_64.whl", hash = "sha256:482c1e6bfeb615eafc5899127b805d28e387bd87db38b2c0c41d271f5e58d8cc"},
+    {file = "ruff-0.6.5-py3-none-win32.whl", hash = "sha256:cf4d3fa53644137f6a4a27a2b397381d16454a1566ae5335855c187fbf67e4f5"},
+    {file = "ruff-0.6.5-py3-none-win_amd64.whl", hash = "sha256:3e42a57b58e3612051a636bc1ac4e6b838679530235520e8f095f7c44f706ff9"},
+    {file = "ruff-0.6.5-py3-none-win_arm64.whl", hash = "sha256:51935067740773afdf97493ba9b8231279e9beef0f2a8079188c4776c25688e0"},
+    {file = "ruff-0.6.5.tar.gz", hash = "sha256:4d32d87fab433c0cf285c3683dd4dae63be05fd7a1d65b3f5bf7cdd05a6b96fb"},
 ]
 
 [[package]]
@@ -6259,13 +6264,13 @@ telegram = ["requests"]
 
 [[package]]
 name = "trafilatura"
-version = "1.12.1"
+version = "1.12.2"
 description = "Python package and command-line tool designed to gather text on the Web, includes all necessary discovery and text processing components to perform web crawling, downloads, scraping, and extraction of main texts, metadata and comments."
 optional = true
 python-versions = ">=3.6"
 files = [
-    {file = "trafilatura-1.12.1-py3-none-any.whl", hash = "sha256:1906f2fd8b93b6869cc2325fabb38bc22ca134b980658de72f54c3f0226b557a"},
-    {file = "trafilatura-1.12.1.tar.gz", hash = "sha256:89891db646dd84d98fb34a2faed7ba84c22e5490007b587d0599036d35164760"},
+    {file = "trafilatura-1.12.2-py3-none-any.whl", hash = "sha256:6df5b666f625c9579a50d7cc715005f450fa75606696aceab73eeda0a76dbe96"},
+    {file = "trafilatura-1.12.2.tar.gz", hash = "sha256:4c9cb1434f7e13ef0b16cb44ee1d44e84523ec7268940b9559c374e7effc9a96"},
 ]
 
 [package.dependencies]
@@ -6278,7 +6283,7 @@ lxml = {version = ">=5.2.2", markers = "platform_system != \"Darwin\" or python_
 urllib3 = {version = ">=1.26,<3", markers = "python_version >= \"3.7\""}
 
 [package.extras]
-all = ["brotli", "cchardet (>=2.1.7)", "faust-cchardet (>=2.1.19)", "htmldate[speed] (>=1.8.1)", "py3langid (>=0.2.2)", "pycurl (>=7.45.3)", "zstandard (>=0.20.0)"]
+all = ["brotli", "cchardet (>=2.1.7)", "faust-cchardet (>=2.1.19)", "htmldate[speed] (>=1.8.1)", "py3langid (>=0.2.2)", "pycurl (>=7.45.3)", "urllib3[socks]", "zstandard (>=0.20.0)"]
 gui = ["Gooey (>=1.0.1)"]
 
 [[package]]
