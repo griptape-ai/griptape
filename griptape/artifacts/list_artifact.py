@@ -18,6 +18,18 @@ class ListArtifact(BaseArtifact, Generic[T]):
     item_separator: str = field(default="\n\n", kw_only=True, metadata={"serializable": True})
     validate_uniform_types: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
+    def __getitem__(self, key: int) -> T:
+        return self.value[key]
+
+    def __bool__(self) -> bool:
+        return len(self) > 0
+
+    def __add__(self, other: BaseArtifact) -> ListArtifact[T]:
+        return ListArtifact(self.value + other.value)
+
+    def __iter__(self) -> Iterator[T]:
+        return iter(self.value)
+
     @value.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_value(self, _: Attribute, value: list[T]) -> None:
         if self.validate_uniform_types and len(value) > 0:

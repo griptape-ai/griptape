@@ -60,8 +60,10 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
             format="png",
             width=self.image_width,
             height=self.image_height,
-            model=self.model,
-            prompt=", ".join(prompts),
+            meta={
+                "model": self.model,
+                "prompt": ", ".join(prompts),
+            },
         )
 
     def try_image_variation(
@@ -87,8 +89,10 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
             format="png",
             width=self.image_width,
             height=self.image_height,
-            model=self.model,
-            prompt=", ".join(prompts),
+            meta={
+                "model": self.model,
+                "prompt": ", ".join(prompts),
+            },
         )
 
     def try_image_outpainting(

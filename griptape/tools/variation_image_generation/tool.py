@@ -51,9 +51,6 @@ class VariationImageGenerationTool(BaseImageGenerationTool):
 
         image_artifact = self.image_loader.load(Path(image_file).read_bytes())
 
-        if isinstance(image_artifact, ErrorArtifact):
-            return image_artifact
-
         return self._generate_variation(prompt, negative_prompt, image_artifact)
 
     @activity(

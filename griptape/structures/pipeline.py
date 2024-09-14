@@ -6,7 +6,6 @@ from attrs import define
 
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
-from griptape.memory.structure import Run
 from griptape.structures import Structure
 
 if TYPE_CHECKING:
@@ -25,7 +24,7 @@ class Pipeline(Structure):
             self.output_task.child_ids.append(task.id)
             task.parent_ids.append(self.output_task.id)
 
-        self.tasks.append(task)
+        self._tasks.append(task)
 
         return task
 
@@ -45,18 +44,13 @@ class Pipeline(Structure):
         parent_task.child_ids.append(task.id)
 
         parent_index = self.tasks.index(parent_task)
-        self.tasks.insert(parent_index + 1, task)
+        self._tasks.insert(parent_index + 1, task)
 
         return task
 
     @observable
     def try_run(self, *args) -> Pipeline:
         self.__run_from_task(self.input_task)
-
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
-
-            self.conversation_memory.add_run(run)
 
         return self
 

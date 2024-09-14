@@ -3,20 +3,24 @@ from __future__ import annotations
 import io
 from typing import TYPE_CHECKING, Any
 
-from attrs import Factory, define, field
+from attrs import define, field
 from schema import Literal, Schema
 
 from griptape.artifacts import BlobArtifact, ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.tools import BaseAwsTool
-from griptape.utils.decorators import activity
+from griptape.utils.decorators import activity, lazy_property
 
 if TYPE_CHECKING:
-    from mypy_boto3_s3 import Client
+    from mypy_boto3_s3 import S3Client
 
 
 @define
 class AwsS3Tool(BaseAwsTool):
-    s3_client: Client = field(default=Factory(lambda self: self.session.client("s3"), takes_self=True), kw_only=True)
+    _client: S3Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> S3Client:
+        return self.session.client("s3")
 
     @activity(
         config={
@@ -33,7 +37,7 @@ class AwsS3Tool(BaseAwsTool):
     )
     def get_bucket_acl(self, params: dict) -> TextArtifact | ErrorArtifact:
         try:
-            acl = self.s3_client.get_bucket_acl(Bucket=params["values"]["bucket_name"])
+            acl = self.client.get_bucket_acl(Bucket=params["values"]["bucket_name"])
             return TextArtifact(acl)
         except Exception as e:
             return ErrorArtifact(f"error getting bucket acl: {e}")
@@ -48,7 +52,7 @@ class AwsS3Tool(BaseAwsTool):
     )
     def get_bucket_policy(self, params: dict) -> TextArtifact | ErrorArtifact:
         try:
-            policy = self.s3_client.get_bucket_policy(Bucket=params["values"]["bucket_name"])
+            policy = self.client.get_bucket_policy(Bucket=params["values"]["bucket_name"])
             return TextArtifact(policy)
         except Exception as e:
             return ErrorArtifact(f"error getting bucket policy: {e}")
@@ -66,7 +70,7 @@ class AwsS3Tool(BaseAwsTool):
     )
     def get_object_acl(self, params: dict) -> TextArtifact | ErrorArtifact:
         try:
-            acl = self.s3_client.get_object_acl(
+            acl = self.client.get_object_acl(
                 Bucket=params["values"]["bucket_name"],
                 Key=params["values"]["object_key"],
             )
@@ -77,7 +81,7 @@ class AwsS3Tool(BaseAwsTool):
     @activity(config={"description": "Can be used to list all AWS S3 buckets."})
     def list_s3_buckets(self, _: dict) -> ListArtifact | ErrorArtifact:
         try:
-            buckets = self.s3_client.list_buckets()
+            buckets = self.client.list_buckets()
 
             return ListArtifact([TextArtifact(str(b)) for b in buckets["Buckets"]])
         except Exception as e:
@@ -91,7 +95,7 @@ class AwsS3Tool(BaseAwsTool):
     )
     def list_objects(self, params: dict) -> ListArtifact | ErrorArtifact:
         try:
-            objects = self.s3_client.list_objects_v2(Bucket=params["values"]["bucket_name"])
+            objects = self.client.list_objects_v2(Bucket=params["values"]["bucket_name"])
 
             if "Contents" not in objects:
                 return ErrorArtifact("no objects found in the bucket")
@@ -192,7 +196,7 @@ class AwsS3Tool(BaseAwsTool):
         artifacts = []
         for object_info in objects:
             try:
-                obj = self.s3_client.get_object(Bucket=object_info["bucket_name"], Key=object_info["object_key"])
+                obj = self.client.get_object(Bucket=object_info["bucket_name"], Key=object_info["object_key"])
 
                 content = obj["Body"].read()
                 artifacts.append(BlobArtifact(content, name=object_info["object_key"]))
@@ -203,9 +207,9 @@ class AwsS3Tool(BaseAwsTool):
         return ListArtifact(artifacts)
 
     def _upload_object(self, bucket_name: str, object_name: str, value: Any) -> None:
-        self.s3_client.create_bucket(Bucket=bucket_name)
+        self.client.create_bucket(Bucket=bucket_name)
 
-        self.s3_client.upload_fileobj(
+        self.client.upload_fileobj(
             Fileobj=io.BytesIO(value.encode() if isinstance(value, str) else value),
             Bucket=bucket_name,
             Key=object_name,

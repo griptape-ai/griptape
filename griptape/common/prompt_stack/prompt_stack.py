@@ -7,7 +7,6 @@ from attrs import define, field
 from griptape.artifacts import (
     ActionArtifact,
     BaseArtifact,
-    ErrorArtifact,
     GenericArtifact,
     ImageArtifact,
     ListArtifact,
@@ -22,7 +21,7 @@ from griptape.common import (
     Message,
     TextMessageContent,
 )
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.tools import BaseTool
@@ -70,8 +69,6 @@ class PromptStack(SerializableMixin):
             return [ImageMessageContent(artifact)]
         elif isinstance(artifact, GenericArtifact):
             return [GenericMessageContent(artifact)]
-        elif isinstance(artifact, ErrorArtifact):
-            return [TextMessageContent(TextArtifact(artifact.to_text()))]
         elif isinstance(artifact, ActionArtifact):
             action = artifact.value
             output = action.output
@@ -81,6 +78,7 @@ class PromptStack(SerializableMixin):
                 return [ActionResultMessageContent(output, action=action)]
         elif isinstance(artifact, ListArtifact):
             processed_contents = [self.__to_message_content(artifact) for artifact in artifact.value]
+
             return [sub_content for processed_content in processed_contents for sub_content in processed_content]
         else:
-            raise ValueError(f"Unsupported artifact type: {type(artifact)}")
+            return [TextMessageContent(TextArtifact(artifact.to_text()))]

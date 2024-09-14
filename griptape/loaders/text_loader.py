@@ -1,11 +1,10 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Union, cast
+from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.chunkers import TextChunker
 from griptape.loaders import BaseTextLoader
 from griptape.tokenizers import OpenAiTokenizer
@@ -36,14 +35,11 @@ class TextLoader(BaseTextLoader):
     embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def load(self, source: bytes | str, *args, **kwargs) -> ErrorArtifact | list[TextArtifact]:
+    def load(self, source: bytes | str, *args, **kwargs) -> list[TextArtifact]:
         if isinstance(source, bytes):
-            try:
-                source = source.decode(encoding=self.encoding)
-            except UnicodeDecodeError:
-                return ErrorArtifact(f"Failed to decode bytes to string using encoding: {self.encoding}")
+            source = source.decode(encoding=self.encoding)
         elif isinstance(source, (bytearray, memoryview)):
-            return ErrorArtifact(f"Unsupported source type: {type(source)}")
+            raise ValueError(f"Unsupported source type: {type(source)}")
 
         return self._text_to_artifacts(source)
 
@@ -52,8 +48,8 @@ class TextLoader(BaseTextLoader):
         sources: list[bytes | str],
         *args,
         **kwargs,
-    ) -> dict[str, ErrorArtifact | list[TextArtifact]]:
+    ) -> dict[str, list[TextArtifact]]:
         return cast(
-            dict[str, Union[ErrorArtifact, list[TextArtifact]]],
+            dict[str, list[TextArtifact]],
             super().load_collection(sources, *args, **kwargs),
         )

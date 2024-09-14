@@ -7,7 +7,7 @@ from attrs import Factory, define, field
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.configs import Defaults
 from griptape.engines.rag.modules import BaseResponseRagModule
-from griptape.mixins import RuleMixin
+from griptape.mixins.rule_mixin import RuleMixin
 from griptape.utils import J2
 
 if TYPE_CHECKING:

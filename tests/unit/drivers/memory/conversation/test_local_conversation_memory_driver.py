@@ -1,5 +1,6 @@
 import contextlib
 import os
+from pathlib import Path
 
 import pytest
 
@@ -21,26 +22,23 @@ class TestLocalConversationMemoryDriver:
         self.__delete_file(self.MEMORY_FILE_PATH)
 
     def test_store(self):
-        memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
-        memory = ConversationMemory(driver=memory_driver, autoload=False)
+        memory_driver = LocalConversationMemoryDriver(persist_file=self.MEMORY_FILE_PATH)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver, autoload=False)
         pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
 
-        try:
-            with open(self.MEMORY_FILE_PATH):
-                raise AssertionError()
-        except FileNotFoundError:
-            assert True
+        assert not os.path.exists(self.MEMORY_FILE_PATH)
 
         pipeline.run()
 
-        with open(self.MEMORY_FILE_PATH):
-            assert True
+        assert os.path.exists(self.MEMORY_FILE_PATH)
 
     def test_load(self):
-        memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
-        memory = ConversationMemory(driver=memory_driver, autoload=False, max_runs=5)
+        memory_driver = LocalConversationMemoryDriver(persist_file=self.MEMORY_FILE_PATH)
+        memory = ConversationMemory(
+            conversation_memory_driver=memory_driver, autoload=False, max_runs=5, meta={"foo": "bar"}
+        )
         pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -48,17 +46,25 @@ class TestLocalConversationMemoryDriver:
         pipeline.run()
         pipeline.run()
 
-        new_memory = memory_driver.load()
+        runs, metadata = memory_driver.load()
 
-        assert new_memory.type == "ConversationMemory"
-        assert len(new_memory.runs) == 2
-        assert new_memory.runs[0].input.value == "test"
-        assert new_memory.runs[0].output.value == "mock output"
-        assert new_memory.max_runs == 5
+        assert len(runs) == 2
+        assert runs[0].input.value == "test"
+        assert runs[0].output.value == "mock output"
+        assert metadata == {"foo": "bar"}
+
+        runs[0].input.value = "new test"
+
+    def test_load_bad_data(self):
+        Path(self.MEMORY_FILE_PATH).write_text("bad data")
+        memory_driver = LocalConversationMemoryDriver(persist_file=self.MEMORY_FILE_PATH)
+
+        with pytest.raises(ValueError, match="Unable to load data from test_memory.json"):
+            ConversationMemory(conversation_memory_driver=memory_driver)
 
     def test_autoload(self):
-        memory_driver = LocalConversationMemoryDriver(file_path=self.MEMORY_FILE_PATH)
-        memory = ConversationMemory(driver=memory_driver)
+        memory_driver = LocalConversationMemoryDriver(persist_file=self.MEMORY_FILE_PATH)
+        memory = ConversationMemory(conversation_memory_driver=memory_driver, autoload=False)
         pipeline = Pipeline(conversation_memory=memory)
 
         pipeline.add_task(PromptTask("test"))
@@ -66,13 +72,13 @@ class TestLocalConversationMemoryDriver:
         pipeline.run()
         pipeline.run()
 
-        autoloaded_memory = ConversationMemory(driver=memory_driver)
+        autoloaded_memory = ConversationMemory(conversation_memory_driver=memory_driver)
 
         assert autoloaded_memory.type == "ConversationMemory"
         assert len(autoloaded_memory.runs) == 2
         assert autoloaded_memory.runs[0].input.value == "test"
         assert autoloaded_memory.runs[0].output.value == "mock output"
 
-    def __delete_file(self, file_path) -> None:
+    def __delete_file(self, persist_file) -> None:
         with contextlib.suppress(FileNotFoundError):
-            os.remove(file_path)
+            os.remove(persist_file)

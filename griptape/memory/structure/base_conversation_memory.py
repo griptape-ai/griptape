@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
 from griptape.common import PromptStack
 from griptape.configs import Defaults
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.utils import dict_merge
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
@@ -16,22 +17,20 @@ if TYPE_CHECKING:
 
 @define
 class BaseConversationMemory(SerializableMixin, ABC):
-    driver: Optional[BaseConversationMemoryDriver] = field(
+    conversation_memory_driver: BaseConversationMemoryDriver = field(
         default=Factory(lambda: Defaults.drivers_config.conversation_memory_driver), kw_only=True
     )
-    prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
-    )
     runs: list[Run] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    meta: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
     autoload: bool = field(default=True, kw_only=True)
     autoprune: bool = field(default=True, kw_only=True)
     max_runs: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
-        if self.driver and self.autoload:
-            memory = self.driver.load()
-            if memory is not None:
-                [self.add_run(r) for r in memory.runs]
+        if self.autoload:
+            runs, meta = self.conversation_memory_driver.load()
+            self.runs.extend(runs)
+            self.meta = dict_merge(self.meta, meta)
 
     def before_add_run(self) -> None:
         pass
@@ -44,8 +43,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
         return self
 
     def after_add_run(self) -> None:
-        if self.driver:
-            self.driver.store(self)
+        self.conversation_memory_driver.store(self.runs, self.meta)
 
     @abstractmethod
     def try_add_run(self, run: Run) -> None: ...
@@ -53,13 +51,16 @@ class BaseConversationMemory(SerializableMixin, ABC):
     @abstractmethod
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack: ...
 
-    def add_to_prompt_stack(self, prompt_stack: PromptStack, index: Optional[int] = None) -> PromptStack:
+    def add_to_prompt_stack(
+        self, prompt_driver: BasePromptDriver, prompt_stack: PromptStack, index: Optional[int] = None
+    ) -> PromptStack:
         """Add the Conversation Memory runs to the Prompt Stack by modifying the messages in place.
 
         If autoprune is enabled, this will fit as many Conversation Memory runs into the Prompt Stack
         as possible without exceeding the token limit.
 
         Args:
+            prompt_driver: The Prompt Driver to use for token counting.
             prompt_stack: The Prompt Stack to add the Conversation Memory to.
             index: Optional index to insert the Conversation Memory runs at.
                    Defaults to appending to the end of the Prompt Stack.
@@ -82,8 +83,8 @@ class BaseConversationMemory(SerializableMixin, ABC):
                 temp_stack.messages.extend(memory_inputs)
 
                 # Convert the Prompt Stack into tokens left.
-                tokens_left = self.prompt_driver.tokenizer.count_input_tokens_left(
-                    self.prompt_driver.prompt_stack_to_string(temp_stack),
+                tokens_left = prompt_driver.tokenizer.count_input_tokens_left(
+                    prompt_driver.prompt_stack_to_string(temp_stack),
                 )
                 if tokens_left > 0:
                     # There are still tokens left, no need to prune.

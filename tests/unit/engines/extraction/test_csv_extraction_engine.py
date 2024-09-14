@@ -12,11 +12,11 @@ class TestCsvExtractionEngine:
         result = engine.extract_text("foo")
 
         assert len(result.value) == 1
-        assert result.value[0].value == {"test1": "mock output"}
+        assert result.value[0].value == "test1: mock output"
 
     def test_text_to_csv_rows(self, engine):
         result = engine.text_to_csv_rows("foo,bar\nbaz,maz", ["test1", "test2"])
 
         assert len(result) == 2
-        assert result[0].value == {"test1": "foo", "test2": "bar"}
-        assert result[1].value == {"test1": "baz", "test2": "maz"}
+        assert result[0].value == "test1: foo\ntest2: bar"
+        assert result[1].value == "test1: baz\ntest2: maz"

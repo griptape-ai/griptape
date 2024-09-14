@@ -36,7 +36,10 @@ class TestAzureOpenAiDriversConfig:
                 "user": "",
                 "use_native_tools": True,
             },
-            "conversation_memory_driver": None,
+            "conversation_memory_driver": {
+                "type": "LocalConversationMemoryDriver",
+                "persist_file": None,
+            },
             "embedding_driver": {
                 "base_url": None,
                 "model": "text-embedding-3-small",
@@ -82,6 +85,16 @@ class TestAzureOpenAiDriversConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
+            "text_to_speech_driver": {
+                "base_url": None,
+                "format": "mp3",
+                "model": "tts",
+                "api_version": "2024-07-01-preview",
+                "azure_deployment": "tts",
+                "azure_endpoint": "http://localhost:8080",
+                "organization": None,
+                "type": "AzureOpenAiTextToSpeechDriver",
+                "voice": "alloy",
+            },
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }

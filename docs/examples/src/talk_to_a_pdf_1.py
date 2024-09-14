@@ -1,6 +1,5 @@
 import requests
 
-from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import LocalVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRetrievalRagModule
@@ -32,8 +31,6 @@ rag_tool = RagTool(
 )
 
 artifacts = PdfLoader().load(response.content)
-if isinstance(artifacts, ErrorArtifact):
-    raise Exception(artifacts.value)
 
 vector_store.upsert_text_artifacts({namespace: artifacts})
 

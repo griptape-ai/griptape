@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 import uuid
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.artifacts.base_artifact import BaseArtifact
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
+
+if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact
 
 
-@define
+@define(kw_only=True)
 class Run(SerializableMixin):
-    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
-    input: BaseArtifact = field(kw_only=True, metadata={"serializable": True})
-    output: BaseArtifact = field(kw_only=True, metadata={"serializable": True})
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), metadata={"serializable": True})
+    meta: Optional[dict] = field(default=None, metadata={"serializable": True})
+    input: BaseArtifact = field(metadata={"serializable": True})
+    output: BaseArtifact = field(metadata={"serializable": True})

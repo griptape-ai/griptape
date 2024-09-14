@@ -5,12 +5,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Added
-- `BaseConversationMemory.prompt_driver` for use with autopruning. 
-- Generic type support to `ListArtifact`.
-- Iteration support to `ListArtifact`.
+
+## Added
+- `Workflow.input_tasks` and `Workflow.output_tasks` to access the input and output tasks of a Workflow.
+- Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more complex declarative Structure definitions.
+- `TavilyWebSearchDriver` to integrate Tavily's web search capabilities.
+- `ExaWebSearchDriver` to integrate Exa's web search capabilities.
+- `Workflow.outputs` to access the outputs of a Workflow.
 
 ### Changed
+- **BREAKING**: Renamed parameters on several classes to `client`:
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockTitanEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockImageGenerationDriver`.
+  - `bedrock_client` on `AmazonBedrockImageQueryDriver`.
+  - `bedrock_client` on `AmazonBedrockPromptDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartEmbeddingDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartPromptDriver`.
+  - `sqs_client` on `AmazonSqsEventListenerDriver`.
+  - `iotdata_client` on `AwsIotCoreEventListenerDriver`.
+  - `s3_client` on `AmazonS3FileManagerDriver`.
+  - `s3_client` on `AwsS3Tool`.
+  - `iam_client` on `AwsIamTool`.
+  - `pusher_client` on `PusherEventListenerDriver`.
+  - `mq` on `MarqoVectorStoreDriver`.
+  - `model_client` on `GooglePromptDriver`.
+  - `model_client` on `GoogleTokenizer`.
+- **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
+- Several places where API clients are initialized are now lazy loaded.
+- `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
+- **BREAKING**: Update `pypdf` dependency to `^5.0.1`.
+- **BREAKING**: Update `redis` dependency to `^5.1.0`.
+- `MarkdownifyWebScraperDriver.DEFAULT_EXCLUDE_TAGS` now includes media/blob-like HTML tags
 - **BREAKING**: Split `BaseExtractionEngine.extract` into `extract_text` and `extract_artifacts` for consistency with `BaseSummaryEngine`.
 - **BREAKING**: `BaseExtractionEngine` no longer catches exceptions and returns `ErrorArtifact`s.
 - **BREAKING**: `JsonExtractionEngine.template_schema` is now required.
@@ -19,7 +46,77 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CsvExtractionEngine.extract_artifacts` now returns a `ListArtifact[CsvRowArtifact]`.
 
 ### Fixed
-- Parsing streaming response with some OpenAi compatible services.
+- Anthropic native Tool calling
+
+## [0.32.0] - 2024-09-17
+
+### Added
+- `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
+- `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 string.
+- `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
+- `AzureOpenAiTextToSpeechDriver`.
+- `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
+- Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
+- Ability to use Drivers Configs as Context Managers for temporarily setting the default Drivers.
+- Generic type support to `ListArtifact`.
+- Iteration support to `ListArtifact`.
+
+
+### Changed
+- **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
+- **BREAKING**: Removed `MediaArtifact`, use `ImageArtifact` or `AudioArtifact` instead.
+- **BREAKING**: `CsvLoader`, `DataframeLoader`, and `SqlLoader` now return `list[TextArtifact]`.
+- **BREAKING**: Removed `ImageArtifact.media_type`.
+- **BREAKING**: Removed `AudioArtifact.media_type`.
+- **BREAKING**: Removed `BlobArtifact.dir_name`.
+- **BREAKING**: Moved `ImageArtifact.prompt` and `ImageArtifact.model` into `ImageArtifact.meta`.
+- **BREAKING**: `ImageArtifact.format` is now required.
+- **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module.
+- Updated `JsonArtifact` value converter to properly handle more types. 
+- `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
+- `ImageArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
+- Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
+
+### Fixed
+- Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
+
+## [0.31.0] - 2024-09-03
+
+**Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.
+
+### Added
+- Parameter `meta: dict` on `BaseEvent`.
+- `AzureOpenAiTextToSpeechDriver`.
+- Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
+- `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
+- Ability to use Drivers Configs as Context Managers for temporarily setting the default Drivers.
+
+### Changed
+- **BREAKING**: Drivers, Loaders, and Engines now raise exceptions rather than returning `ErrorArtifacts`.
+- **BREAKING**: Parameter `driver` on `BaseConversationMemory` renamed to `conversation_memory_driver`.
+- **BREAKING**: `BaseConversationMemory.add_to_prompt_stack` now takes a `prompt_driver` parameter.
+- **BREAKING**: `BaseConversationMemoryDriver.load` now returns `tuple[list[Run], dict]`. This represents the runs and metadata.
+- **BREAKING**: `BaseConversationMemoryDriver.store` now takes `runs: list[Run]` and `metadata: dict` as input.
+- **BREAKING**: Parameter `file_path` on `LocalConversationMemoryDriver` renamed to `persist_file` and is now type `Optional[str]`.
+- **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module. 
+- `Defaults.drivers_config.conversation_memory_driver` now defaults to `LocalConversationMemoryDriver` instead of `None`.
+- `CsvRowArtifact.to_text()` now includes the header.
+
+### Fixed
+- Parsing streaming response with some OpenAI compatible services.
+- Issue in `PromptSummaryEngine` if there are no artifacts during recursive summarization.
+- Issue in `GooglePromptDriver` using Tools with no schema.
+- Missing `maxTokens` inference parameter in `AmazonBedrockPromptDriver`.
+- Incorrect model in `OpenAiDriverConfig`'s `text_to_speech_driver`.
+- Crash when using `CohereRerankDriver` with `CsvRowArtifact`s.
+- Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
+
+
+## [0.30.2] - 2024-08-26
+
+### Fixed
+- Ensure thread safety when publishing events by adding a thread lock to batch operations in `BaseEventListenerDriver`. 
+- `FileManagerTool` failing to save Artifacts created by `ExtractionTool` with a `CsvExtractionEngine`.
 
 ## [0.30.1] - 2024-08-21
 

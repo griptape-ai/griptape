@@ -8,7 +8,8 @@ from attrs import define, field
 from griptape.events import EventBus
 from griptape.events.finish_text_to_speech_event import FinishTextToSpeechEvent
 from griptape.events.start_text_to_speech_event import StartTextToSpeechEvent
-from griptape.mixins import ExponentialBackoffMixin, SerializableMixin
+from griptape.mixins.exponential_backoff_mixin import ExponentialBackoffMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts.audio_artifact import AudioArtifact

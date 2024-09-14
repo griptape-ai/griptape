@@ -59,8 +59,8 @@ class TestInpaintingImageGenerationTool:
             engine=image_generation_engine, output_file=outfile, image_loader=image_loader
         )
 
-        image_generator.engine.run.return_value = Mock(  # pyright: ignore[reportFunctionMemberAccess]
-            value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
+        image_generator.engine.run.return_value = ImageArtifact(  # pyright: ignore[reportFunctionMemberAccess]
+            value=b"image data", format="png", width=512, height=512
         )
 
         image_artifact = image_generator.image_inpainting_from_file(
@@ -83,8 +83,8 @@ class TestInpaintingImageGenerationTool:
         memory.load_artifacts = Mock(return_value=[image_artifact])
         image_generator.find_input_memory = Mock(return_value=memory)
 
-        image_generator.engine.run.return_value = Mock(  # pyright: ignore[reportFunctionMemberAccess]
-            value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
+        image_generator.engine.run.return_value = ImageArtifact(  # pyright: ignore[reportFunctionMemberAccess]
+            value=b"image data", format="png", width=512, height=512
         )
 
         image_artifact = image_generator.image_inpainting_from_memory(

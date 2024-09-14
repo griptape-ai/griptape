@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import uuid
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 from urllib.parse import urljoin
 
 import requests
@@ -10,9 +10,10 @@ from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import BaseArtifact
 from griptape.drivers import BaseConversationMemoryDriver
+from griptape.utils import dict_merge
 
 if TYPE_CHECKING:
-    from griptape.memory.structure import BaseConversationMemory
+    from griptape.memory.structure import Run
 
 
 @define(kw_only=True)
@@ -55,26 +56,38 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
             raise ValueError(f"{self.__class__.__name__} requires an API key")
         return value
 
-    def store(self, memory: BaseConversationMemory) -> None:
-        # serliaze the run artifacts to json strings
-        messages = [{"input": run.input.to_json(), "output": run.output.to_json()} for run in memory.runs]
+    def store(self, runs: list[Run], metadata: dict[str, Any]) -> None:
+        # serialize the run artifacts to json strings
+        messages = [
+            dict_merge(
+                {
+                    "input": run.input.to_json(),
+                    "output": run.output.to_json(),
+                    "metadata": {"run_id": run.id},
+                },
+                run.meta,
+            )
+            for run in runs
+        ]
 
-        # serialize the metadata to a json string
-        # remove runs because they are already stored as Messages
-        metadata = memory.to_dict()
-        del metadata["runs"]
+        body = dict_merge(
+            {
+                "messages": messages,
+            },
+            metadata,
+        )
 
         # patch the Thread with the new messages and metadata
         # all old Messages are replaced with the new ones
         response = requests.patch(
             self._get_url(f"/threads/{self.thread_id}"),
-            json={"messages": messages, "metadata": metadata},
+            json=body,
             headers=self.headers,
         )
         response.raise_for_status()
 
-    def load(self) -> BaseConversationMemory:
-        from griptape.memory.structure import BaseConversationMemory, ConversationMemory, Run
+    def load(self) -> tuple[list[Run], dict[str, Any]]:
+        from griptape.memory.structure import Run
 
         # get the Messages from the Thread
         messages_response = requests.get(self._get_url(f"/threads/{self.thread_id}/messages"), headers=self.headers)
@@ -86,33 +99,16 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         thread_response.raise_for_status()
         thread_response = thread_response.json()
 
-        messages = messages_response.get("messages", [])
-
         runs = [
             Run(
-                id=m["message_id"],
+                id=m["metadata"].pop("run_id"),
+                meta=m["metadata"],
                 input=BaseArtifact.from_json(m["input"]),
                 output=BaseArtifact.from_json(m["output"]),
             )
-            for m in messages
+            for m in messages_response.get("messages", [])
         ]
-        metadata = thread_response.get("metadata")
-
-        # the metadata will contain the serialized
-        # ConversationMemory object with the runs removed
-        # autoload=False to prevent recursively loading the memory
-        if metadata is not None and metadata != {}:
-            memory = BaseConversationMemory.from_dict(
-                {
-                    **metadata,
-                    "runs": [run.to_dict() for run in runs],
-                    "autoload": False,
-                }
-            )
-            memory.driver = self
-            return memory
-        # no metadata found, return a new ConversationMemory object
-        return ConversationMemory(runs=runs, autoload=False, driver=self)
+        return runs, thread_response.get("metadata", {})
 
     def _get_thread_id(self) -> str:
         res = requests.post(self._get_url("/threads"), json={"name": uuid.uuid4().hex}, headers=self.headers)

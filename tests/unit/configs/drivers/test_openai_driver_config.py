@@ -28,7 +28,10 @@ class TestOpenAiDriversConfig:
                 "user": "",
                 "use_native_tools": True,
             },
-            "conversation_memory_driver": None,
+            "conversation_memory_driver": {
+                "type": "LocalConversationMemoryDriver",
+                "persist_file": None,
+            },
             "embedding_driver": {
                 "base_url": None,
                 "model": "text-embedding-3-small",
@@ -69,7 +72,7 @@ class TestOpenAiDriversConfig:
                 "api_version": None,
                 "base_url": None,
                 "format": "mp3",
-                "model": "tts",
+                "model": "tts-1",
                 "organization": None,
                 "voice": "alloy",
             },

@@ -99,6 +99,8 @@ from .web_scraper.proxy_web_scraper_driver import ProxyWebScraperDriver
 from .web_search.base_web_search_driver import BaseWebSearchDriver
 from .web_search.google_web_search_driver import GoogleWebSearchDriver
 from .web_search.duck_duck_go_web_search_driver import DuckDuckGoWebSearchDriver
+from .web_search.exa_web_search_driver import ExaWebSearchDriver
+from .web_search.tavily_web_search_driver import TavilyWebSearchDriver
 
 from .event_listener.base_event_listener_driver import BaseEventListenerDriver
 from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
@@ -118,6 +120,7 @@ from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
 from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
 from .text_to_speech.elevenlabs_text_to_speech_driver import ElevenLabsTextToSpeechDriver
 from .text_to_speech.openai_text_to_speech_driver import OpenAiTextToSpeechDriver
+from .text_to_speech.azure_openai_text_to_speech_driver import AzureOpenAiTextToSpeechDriver
 
 from .structure_run.base_structure_run_driver import BaseStructureRunDriver
 from .structure_run.griptape_cloud_structure_run_driver import GriptapeCloudStructureRunDriver
@@ -212,6 +215,8 @@ __all__ = [
     "BaseWebSearchDriver",
     "GoogleWebSearchDriver",
     "DuckDuckGoWebSearchDriver",
+    "ExaWebSearchDriver",
+    "TavilyWebSearchDriver",
     "BaseEventListenerDriver",
     "AmazonSqsEventListenerDriver",
     "WebhookEventListenerDriver",
@@ -227,6 +232,7 @@ __all__ = [
     "DummyTextToSpeechDriver",
     "ElevenLabsTextToSpeechDriver",
     "OpenAiTextToSpeechDriver",
+    "AzureOpenAiTextToSpeechDriver",
     "BaseStructureRunDriver",
     "GriptapeCloudStructureRunDriver",
     "LocalStructureRunDriver",

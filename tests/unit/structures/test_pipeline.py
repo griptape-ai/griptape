@@ -203,6 +203,22 @@ class TestPipeline:
         assert len(second_task.parents) == 1
         assert len(second_task.children) == 0
 
+    def test_nested_tasks(self):
+        pipeline = Pipeline(
+            tasks=[
+                [
+                    PromptTask("parent", id=f"parent_{i}"),
+                    PromptTask("child", id=f"child_{i}", parent_ids=[f"parent_{i}"]),
+                    PromptTask("grandchild", id=f"grandchild_{i}", parent_ids=[f"child_{i}"]),
+                ]
+                for i in range(3)
+            ]
+        )
+
+        pipeline.run()
+        assert pipeline.output_task.id == "grandchild_2"
+        assert len(pipeline.tasks) == 9
+
     def test_insert_task_in_middle(self):
         first_task = PromptTask("test1", id="test1")
         second_task = PromptTask("test2", id="test2")
@@ -351,7 +367,8 @@ class TestPipeline:
         pipeline = Pipeline(tasks=[waiting_task, error_artifact_task, end_task])
         pipeline.run()
 
-        assert pipeline.output is None
+        with pytest.raises(ValueError, match="Structure's output Task has no output. Run"):
+            assert pipeline.output
 
     def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
@@ -374,7 +391,7 @@ class TestPipeline:
         pipeline = Pipeline()
 
         pipeline + task
-        pipeline.tasks.append(task)
+        pipeline._tasks.append(task)
 
         with pytest.raises(ValueError, match=f"Duplicate task with id {task.id} found."):
             pipeline.run()

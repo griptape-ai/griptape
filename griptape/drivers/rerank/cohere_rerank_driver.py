@@ -24,13 +24,17 @@ class CohereRerankDriver(BaseRerankDriver):
     )
 
     def run(self, query: str, artifacts: list[TextArtifact]) -> list[TextArtifact]:
-        artifacts_dict = {str(hash(a.value)): a for a in artifacts}
-        response = self.client.rerank(
-            model=self.model,
-            query=query,
-            documents=[a.value for a in artifacts_dict.values()],
-            return_documents=True,
-            top_n=self.top_n,
-        )
+        # Cohere errors out if passed "empty" documents or no documents at all
+        artifacts_dict = {str(hash(a.to_text())): a for a in artifacts if a}
 
-        return [artifacts_dict[str(hash(r.document.text))] for r in response.results]
+        if artifacts_dict:
+            response = self.client.rerank(
+                model=self.model,
+                query=query,
+                documents=[a.to_text() for a in artifacts_dict.values()],
+                return_documents=True,
+                top_n=self.top_n,
+            )
+            return [artifacts_dict[str(hash(r.document.text))] for r in response.results]
+        else:
+            return []

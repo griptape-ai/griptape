@@ -13,14 +13,13 @@ class TestAudioLoader:
     def create_source(self, bytes_from_resource_path):
         return bytes_from_resource_path
 
-    @pytest.mark.parametrize(("resource_path", "suffix", "mime_type"), [("sentences.wav", ".wav", "audio/wav")])
-    def test_load(self, resource_path, suffix, mime_type, loader, create_source):
+    @pytest.mark.parametrize(("resource_path", "mime_type"), [("sentences.wav", "audio/wav")])
+    def test_load(self, resource_path, mime_type, loader, create_source):
         source = create_source(resource_path)
 
         artifact = loader.load(source)
 
         assert isinstance(artifact, AudioArtifact)
-        assert artifact.name.endswith(suffix)
         assert artifact.mime_type == mime_type
         assert len(artifact.value) > 0
 
@@ -35,6 +34,5 @@ class TestAudioLoader:
         for key in collection:
             artifact = collection[key]
             assert isinstance(artifact, AudioArtifact)
-            assert artifact.name.endswith(".wav")
             assert artifact.mime_type == "audio/wav"
             assert len(artifact.value) > 0

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import csv
 import io
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, Callable, Optional, cast
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import CsvRowArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.common import Message, PromptStack
 from griptape.engines import BaseExtractionEngine
 from griptape.utils import J2
@@ -20,6 +20,9 @@ class CsvExtractionEngine(BaseExtractionEngine):
     column_names: list[str] = field(kw_only=True)
     system_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/system.j2")), kw_only=True)
     user_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/user.j2")), kw_only=True)
+    formatter_fn: Callable[[dict], str] = field(
+        default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
+    )
 
     def extract_artifacts(
         self,
@@ -27,7 +30,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
         *,
         rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
-    ) -> ListArtifact[CsvRowArtifact]:
+    ) -> ListArtifact[TextArtifact]:
         return ListArtifact(
             self._extract_rec(
                 cast(list[TextArtifact], artifacts.value),
@@ -37,22 +40,22 @@ class CsvExtractionEngine(BaseExtractionEngine):
             item_separator="\n",
         )
 
-    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[CsvRowArtifact]:
+    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[TextArtifact]:
         rows = []
 
         with io.StringIO(text) as f:
             for row in csv.reader(f):
-                rows.append(CsvRowArtifact(dict(zip(column_names, [x.strip() for x in row]))))
+                rows.append(TextArtifact(self.formatter_fn(dict(zip(column_names, [x.strip() for x in row])))))
 
         return rows
 
     def _extract_rec(
         self,
         artifacts: list[TextArtifact],
-        rows: list[CsvRowArtifact],
+        rows: list[TextArtifact],
         *,
         rulesets: Optional[list[Ruleset]] = None,
-    ) -> list[CsvRowArtifact]:
+    ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         system_prompt = self.system_template_generator.render(
             column_names=self.column_names,

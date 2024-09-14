@@ -1,6 +1,5 @@
 import os
 
-from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.drivers import MongoDbAtlasVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 
@@ -27,9 +26,6 @@ vector_store_driver = MongoDbAtlasVectorStoreDriver(
 
 # Load Artifacts from the web
 artifacts = WebLoader(max_tokens=200).load("https://www.griptape.ai")
-
-if isinstance(artifacts, ErrorArtifact):
-    raise Exception(artifacts.value)
 
 # Upsert Artifacts into the Vector Store Driver
 vector_store_driver.upsert_text_artifacts(

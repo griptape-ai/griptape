@@ -5,29 +5,39 @@ from griptape.artifacts import InfoArtifact, TextArtifact
 
 class TestGriptapeCloudStructureRunDriver:
     @pytest.fixture()
-    def driver(self, mocker):
+    def mock_requests_post(self, mocker):
+        mock_response = mocker.Mock()
+        mock_response.json.return_value = {"structure_run_id": 1}
+        return mocker.patch("requests.post", return_value=mock_response)
+
+    @pytest.fixture()
+    def driver(self, mocker, mock_requests_post):
         from griptape.drivers import GriptapeCloudStructureRunDriver
 
         mock_response = mocker.Mock()
-        mock_response.json.return_value = {"structure_run_id": 1}
-        mocker.patch("requests.post", return_value=mock_response)
-
-        mock_response = mocker.Mock()
-        mock_response.json.return_value = {
-            "description": "fizz buzz",
-            "output": TextArtifact("foo bar").to_dict(),
-            "status": "SUCCEEDED",
-        }
+        mock_response.json.side_effect = [
+            {"description": "fizz buzz", "status": "RUNNING"},
+            {"description": "fizz buzz", "output": TextArtifact("foo bar").to_dict(), "status": "SUCCEEDED"},
+        ]
         mocker.patch("requests.get", return_value=mock_response)
 
         return GriptapeCloudStructureRunDriver(
-            base_url="https://cloud-foo.griptape.ai", api_key="foo bar", structure_id="1", env={"key": "value"}
+            base_url="https://cloud-foo.griptape.ai",
+            api_key="foo bar",
+            structure_id="1",
+            env={"key": "value"},
+            structure_run_wait_time_interval=0,
         )
 
-    def test_run(self, driver):
+    def test_run(self, driver, mock_requests_post):
         result = driver.run(TextArtifact("foo bar"))
         assert isinstance(result, TextArtifact)
         assert result.value == "foo bar"
+        mock_requests_post.assert_called_once_with(
+            "https://cloud-foo.griptape.ai/api/structures/1/runs",
+            json={"args": ["foo bar"], "env_vars": [{"name": "key", "value": "value", "source": "manual"}]},
+            headers={"Authorization": "Bearer foo bar"},
+        )
 
     def test_async_run(self, driver):
         driver.async_run = True

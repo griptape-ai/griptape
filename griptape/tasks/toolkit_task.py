@@ -8,7 +8,7 @@ from attrs import Attribute, Factory, define, field
 from griptape import utils
 from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack, ToolAction
-from griptape.mixins import ActionsSubtaskOriginMixin
+from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask, PromptTask
 from griptape.utils import J2
 
@@ -115,7 +115,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         if memory:
             # inserting at index 1 to place memory right after system prompt
-            memory.add_to_prompt_stack(stack, 1)
+            memory.add_to_prompt_stack(self.prompt_driver, stack, 1)
 
         return stack
 

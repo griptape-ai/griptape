@@ -8,7 +8,7 @@ from attrs import Factory, define, field
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
 from griptape.configs import Defaults
-from griptape.mixins import RuleMixin
+from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
 from griptape.utils import J2
 
@@ -58,7 +58,7 @@ class PromptTask(RuleMixin, BaseTask):
 
         if memory is not None:
             # insert memory into the stack right before the user messages
-            memory.add_to_prompt_stack(stack, 1 if system_template else 0)
+            memory.add_to_prompt_stack(self.prompt_driver, stack, 1 if system_template else 0)
 
         return stack
 

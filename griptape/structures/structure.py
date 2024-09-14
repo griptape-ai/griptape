@@ -10,12 +10,12 @@ from griptape.common import observable
 from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRunEvent
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
-from griptape.memory.structure import ConversationMemory
+from griptape.memory.structure import ConversationMemory, Run
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
     from griptape.memory.structure import BaseConversationMemory
-    from griptape.rules import Rule, Ruleset
+    from griptape.rules import BaseRule, Rule, Ruleset
     from griptape.tasks import BaseTask
 
 
@@ -23,8 +23,8 @@ if TYPE_CHECKING:
 class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
-    rules: list[Rule] = field(factory=list, kw_only=True)
-    tasks: list[BaseTask] = field(factory=list, kw_only=True)
+    rules: list[BaseRule] = field(factory=list, kw_only=True)
+    _tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True, alias="tasks")
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
@@ -54,12 +54,23 @@ class Structure(ABC):
             raise ValueError("can't have both rules and rulesets specified")
 
     def __attrs_post_init__(self) -> None:
-        tasks = self.tasks.copy()
-        self.tasks.clear()
+        tasks = self._tasks.copy()
+        self._tasks.clear()
         self.add_tasks(*tasks)
 
-    def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
-        return self.add_tasks(*other) if isinstance(other, list) else self + [other]
+    def __add__(self, other: BaseTask | list[BaseTask | list[BaseTask]]) -> list[BaseTask]:
+        return self.add_tasks(*other) if isinstance(other, list) else self.add_tasks(other)
+
+    @property
+    def tasks(self) -> list[BaseTask]:
+        tasks = []
+
+        for task in self._tasks:
+            if isinstance(task, list):
+                tasks.extend(task)
+            else:
+                tasks.append(task)
+        return tasks
 
     @property
     def execution_args(self) -> tuple:
@@ -74,8 +85,10 @@ class Structure(ABC):
         return self.tasks[-1] if self.tasks else None
 
     @property
-    def output(self) -> Optional[BaseArtifact]:
-        return self.output_task.output if self.output_task is not None else None
+    def output(self) -> BaseArtifact:
+        if self.output_task.output is None:
+            raise ValueError("Structure's output Task has no output. Run the Structure to generate output.")
+        return self.output_task.output
 
     @property
     def finished_tasks(self) -> list[BaseTask]:
@@ -98,8 +111,14 @@ class Structure(ABC):
                 return task
         return None
 
-    def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
-        return [self.add_task(s) for s in tasks]
+    def add_tasks(self, *tasks: BaseTask | list[BaseTask]) -> list[BaseTask]:
+        added_tasks = []
+        for task in tasks:
+            if isinstance(task, list):
+                added_tasks.extend(self.add_tasks(*task))
+            else:
+                added_tasks.append(self.add_task(task))
+        return added_tasks
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}
@@ -146,6 +165,11 @@ class Structure(ABC):
 
     @observable
     def after_run(self) -> None:
+        if self.conversation_memory and self.output_task.output is not None:
+            run = Run(input=self.input_task.input, output=self.output_task.output)
+
+            self.conversation_memory.add_run(run)
+
         EventBus.publish_event(
             FinishStructureRunEvent(
                 structure_id=self.id,

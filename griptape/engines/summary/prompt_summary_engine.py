@@ -60,6 +60,11 @@ class PromptSummaryEngine(BaseSummaryEngine):
         summary: Optional[str] = None,
         rulesets: Optional[list[Ruleset]] = None,
     ) -> TextArtifact:
+        if not artifacts:
+            if summary is None:
+                raise ValueError("No artifacts to summarize")
+            return TextArtifact(summary)
+
         artifacts_text = self.chunk_joiner.join([a.to_text() for a in artifacts])
 
         system_prompt = self.system_template_generator.render(

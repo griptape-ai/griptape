@@ -8,7 +8,7 @@ from attrs import define, field
 
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact
-from griptape.mixins import ActionsSubtaskOriginMixin
+from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask, PromptTask
 from griptape.utils import J2
 
@@ -88,7 +88,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
                 if isinstance(first_artifact, BaseArtifact):
                     self.output = first_artifact
                 else:
-                    self.output = ErrorArtifact(f"Output is not an Artifact: {type(subtask.output[0])}")
+                    raise ValueError(f"Output is not an Artifact: {type(first_artifact)}")
             else:
                 self.output = InfoArtifact("No tool output")
         except Exception as e:

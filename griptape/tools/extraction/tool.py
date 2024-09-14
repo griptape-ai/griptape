@@ -6,7 +6,7 @@ from attrs import define, field
 from schema import Literal, Or, Schema
 
 from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
-from griptape.mixins import RuleMixin
+from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 

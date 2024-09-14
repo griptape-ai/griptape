@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 from attrs import define, field
 from schema import Literal, Schema
 
-from griptape.mixins import BlobArtifactFileOutputMixin
+from griptape.mixins.artifact_file_output_mixin import ArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 
 @define
-class TextToSpeechTool(BlobArtifactFileOutputMixin, BaseTool):
+class TextToSpeechTool(ArtifactFileOutputMixin, BaseTool):
     """A tool that can be used to generate speech from input text.
 
     Attributes:
