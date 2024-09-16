@@ -3,11 +3,11 @@ from __future__ import annotations
 import imaplib
 from typing import Optional
 
-from attrs import astuple, define, field
+from attrs import Factory, astuple, define, field
 
 from griptape.artifacts import ListArtifact, TextArtifact
+from griptape.drivers import BaseParserDriver, MailparserParserDriver
 from griptape.loaders import BaseLoader
-from griptape.utils import import_optional_dependency
 
 
 @define
@@ -31,8 +31,11 @@ class EmailLoader(BaseLoader["EmailLoader.EmailQuery", list[bytes], ListArtifact
     imap_url: str = field(kw_only=True)
     username: str = field(kw_only=True)
     password: str = field(kw_only=True)
+    parser_driver: BaseParserDriver[ListArtifact[TextArtifact]] = field(
+        default=Factory(lambda: MailparserParserDriver()), kw_only=True
+    )
 
-    def fetch(self, source: EmailLoader.EmailQuery) -> list[bytes]:
+    def fetch(self, source: EmailLoader.EmailQuery) -> tuple[list[bytes], dict]:
         label, key, search_criteria, max_count = astuple(source)
 
         mail_bytes = []
@@ -62,20 +65,10 @@ class EmailLoader(BaseLoader["EmailLoader.EmailQuery", list[bytes], ListArtifact
 
             client.close()
 
-        return mail_bytes
+        return mail_bytes, {}
 
-    def parse(self, data: list[bytes]) -> ListArtifact[TextArtifact]:
-        mailparser = import_optional_dependency("mailparser")
-        artifacts = []
-        for byte in data:
-            message = mailparser.parse_from_bytes(byte)
-
-            # Note: mailparser only populates the text_plain field
-            # if the message content type is explicitly set to 'text/plain'.
-            if message.text_plain:
-                artifacts.append(TextArtifact("\n".join(message.text_plain)))
-
-        return ListArtifact(artifacts)
+    def parse(self, data: list[bytes], meta: dict) -> ListArtifact[TextArtifact]:
+        return self.parser_driver.parse(data, meta)
 
     def _count_messages(self, message_numbers: bytes) -> int:
         return len(list(filter(None, message_numbers.decode().split(" "))))

@@ -15,6 +15,7 @@ class PdfLoader(BaseFileLoader):
     def parse(
         self,
         data: bytes,
+        meta: dict,
         *,
         password: Optional[str] = None,
     ) -> ListArtifact:

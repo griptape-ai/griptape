@@ -31,22 +31,22 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
     reference: Optional[Reference] = field(default=None, kw_only=True)
 
     def load(self, source: S) -> A:
-        data = self.fetch(source)
+        data, meta = self.fetch(source)
 
-        artifact = self.parse(data)
+        artifact = self.parse(data, meta)
 
         artifact.reference = self.reference
 
         return artifact
 
     @abstractmethod
-    def fetch(self, source: S) -> F:
+    def fetch(self, source: S) -> tuple[F, dict]:
         """Fetches data from the source."""
 
     ...
 
     @abstractmethod
-    def parse(self, data: F) -> A:
+    def parse(self, data: F, meta: dict) -> A:
         """Parses the fetched data and returns an Artifact."""
 
     ...

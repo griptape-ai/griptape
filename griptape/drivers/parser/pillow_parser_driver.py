@@ -6,23 +6,15 @@ from typing import Optional
 from attrs import define, field
 
 from griptape.artifacts import ImageArtifact
-from griptape.loaders import BaseFileLoader
+from griptape.drivers import BaseParserDriver
 from griptape.utils import import_optional_dependency
 
 
 @define
-class ImageLoader(BaseFileLoader[ImageArtifact]):
-    """Loads images into image artifacts.
-
-    Attributes:
-        format: If provided, attempts to ensure image artifacts are in this format when loaded.
-                For example, when set to 'PNG', loading image.jpg will return an ImageArtifact containing the image
-                    bytes in PNG format.
-    """
-
+class PillowParserDriver(BaseParserDriver[ImageArtifact]):
     format: Optional[str] = field(default=None, kw_only=True)
 
-    def parse(self, data: bytes, meta: dict) -> ImageArtifact:
+    def try_parse(self, data: bytes, meta: dict) -> ImageArtifact:
         pil_image = import_optional_dependency("PIL.Image")
         image = pil_image.open(BytesIO(data))
 

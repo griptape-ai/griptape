@@ -150,10 +150,9 @@ drivers-image-generation-huggingface = [
     "pillow",
 ]
 
-loaders-pdf = ["pypdf"]
-loaders-image = ["pillow"]
-loaders-email = ["mail-parser"]
-loaders-sql = ["sqlalchemy"]
+drivers-parser-mailparser = ["mail-parser"]
+drivers-parser-pillow = ["pillow"]
+drivers-parser-pypdf = ["pypdf"]
 
 all = [
     # drivers

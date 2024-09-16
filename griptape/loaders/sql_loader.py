@@ -16,8 +16,8 @@ class SqlLoader(BaseLoader[str, list[BaseSqlDriver.RowResult], ListArtifact[Text
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
-    def fetch(self, source: str) -> list[BaseSqlDriver.RowResult]:
-        return self.sql_driver.execute_query(source) or []
+    def fetch(self, source: str) -> tuple[list[BaseSqlDriver.RowResult], dict]:
+        return self.sql_driver.execute_query(source) or [], {}
 
-    def parse(self, data: list[BaseSqlDriver.RowResult]) -> ListArtifact[TextArtifact]:
+    def parse(self, data: list[BaseSqlDriver.RowResult], meta: dict) -> ListArtifact[TextArtifact]:
         return ListArtifact([TextArtifact(self.formatter_fn(row.cells)) for row in data])

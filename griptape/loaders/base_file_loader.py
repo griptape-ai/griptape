@@ -21,9 +21,9 @@ class BaseFileLoader(BaseLoader[Union[str, PathLike], bytes, A], ABC):
     )
     encoding: str = field(default="utf-8", kw_only=True)
 
-    def fetch(self, source: str | PathLike) -> bytes:
+    def fetch(self, source: str | PathLike) -> tuple[bytes, dict]:
         data = self.file_manager_driver.load_file(str(source)).value
         if isinstance(data, str):
-            return data.encode(self.encoding)
+            return data.encode(self.encoding), {}
         else:
-            return data
+            return data, {}

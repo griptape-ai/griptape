@@ -14,8 +14,8 @@ class WebLoader(BaseLoader[str, str, TextArtifact]):
         kw_only=True,
     )
 
-    def fetch(self, source: str) -> str:
-        return self.web_scraper_driver.fetch_url(source)
+    def fetch(self, source: str) -> tuple[str, dict]:
+        return self.web_scraper_driver.fetch_url(source), {}
 
-    def parse(self, data: str) -> TextArtifact:
+    def parse(self, data: str, meta: dict) -> TextArtifact:
         return self.web_scraper_driver.extract_page(data)

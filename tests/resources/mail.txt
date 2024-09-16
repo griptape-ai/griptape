@@ -1,0 +1,16 @@
+From: john.doe@example.com
+To: jane.smith@example.com
+Subject: Meeting Reminder
+Date: Tue, 17 Sep 2024 10:00:00 -0500
+Message-ID: <1234567890@example.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+
+Hi Jane,
+
+Just a reminder about the meeting scheduled for tomorrow at 3 PM. Please let me know if you need to reschedule.
+
+Looking forward to your confirmation.
+
+Best regards,
+John Doe

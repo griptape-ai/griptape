@@ -11,5 +11,5 @@ from griptape.loaders.base_file_loader import BaseFileLoader
 class AudioLoader(BaseFileLoader[AudioArtifact]):
     """Loads audio content into audio artifacts."""
 
-    def parse(self, data: bytes) -> AudioArtifact:
+    def parse(self, data: bytes, meta: dict) -> AudioArtifact:
         return AudioArtifact(data, format=filetype.guess(data).extension)

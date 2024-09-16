@@ -6994,6 +6994,9 @@ drivers-memory-conversation-redis = ["redis"]
 drivers-observability-datadog = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
 drivers-observability-griptape-cloud = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
 drivers-observability-opentelemetry = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
+drivers-parser-mailparser = ["mail-parser"]
+drivers-parser-pillow = ["pillow"]
+drivers-parser-pypdf = ["pypdf"]
 drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 drivers-prompt-anthropic = ["anthropic"]
@@ -7019,12 +7022,8 @@ drivers-vector-redis = ["redis"]
 drivers-web-scraper-markdownify = ["beautifulsoup4", "markdownify", "playwright"]
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-search-duckduckgo = ["duckduckgo-search"]
-loaders-email = ["mail-parser"]
-loaders-image = ["pillow"]
-loaders-pdf = ["pypdf"]
-loaders-sql = ["sqlalchemy"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "bb4af9c531d0029cb1baeca3a2e94566aaf6d7cb701a6dc07f5e9983bffd1285"
+content-hash = "4a6f828d876a37d1083279cab0be8a6420f57e2b33d5f3719e333e29ada416d0"

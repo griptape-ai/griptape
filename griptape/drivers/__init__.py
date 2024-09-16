@@ -134,6 +134,15 @@ from .observability.open_telemetry_observability_driver import OpenTelemetryObse
 from .observability.griptape_cloud_observability_driver import GriptapeCloudObservabilityDriver
 from .observability.datadog_observability_driver import DatadogObservabilityDriver
 
+from .parser.base_parser_driver import BaseParserDriver
+from .parser.pypdf_parser_driver import PyPdfParserDriver
+from .parser.csv_parser_driver import CsvParserDriver
+from .parser.pillow_parser_driver import PillowParserDriver
+from .parser.mailparser_parser_driver import MailparserParserDriver
+from .parser.text_parser_driver import TextParserDriver
+from .parser.audio_parser_driver import AudioParserDriver
+
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -240,4 +249,11 @@ __all__ = [
     "OpenTelemetryObservabilityDriver",
     "GriptapeCloudObservabilityDriver",
     "DatadogObservabilityDriver",
+    "BaseParserDriver",
+    "PyPdfParserDriver",
+    "CsvParserDriver",
+    "PillowParserDriver",
+    "MailparserParserDriver",
+    "TextParserDriver",
+    "AudioParserDriver",
 ]
