@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 @define
 class DuckDuckGoWebSearchDriver(BaseWebSearchDriver):
+    language: str = field(default="en", kw_only=True)
+    country: str = field(default="us", kw_only=True)
     client: DDGS = field(default=Factory(lambda: import_optional_dependency("duckduckgo_search").DDGS()), kw_only=True)
 
     def search(self, query: str, **kwargs) -> ListArtifact:

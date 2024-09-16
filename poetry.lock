@@ -5968,6 +5968,22 @@ mpmath = ">=1.1.0,<1.4"
 dev = ["hypothesis (>=6.70.0)", "pytest (>=7.1.0)"]
 
 [[package]]
+name = "tavily-python"
+version = "0.4.0"
+description = "Python wrapper for the Tavily API"
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "tavily_python-0.4.0-py3-none-any.whl", hash = "sha256:b3fd0d7102bb34f0dfb0fd24378e2029504a9836ffe7f07c013824105d9f6a5a"},
+    {file = "tavily_python-0.4.0.tar.gz", hash = "sha256:e4517041dd135f171858d7e65a7cae085597871bbdc1a13d27990acb536e55c3"},
+]
+
+[package.dependencies]
+httpx = "*"
+requests = "*"
+tiktoken = ">=0.5.1"
+
+[[package]]
 name = "tenacity"
 version = "8.5.0"
 description = "Retry code until it succeeds"
@@ -7008,4 +7024,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "ad31933841926602b18aea04927c1f86d6825d8891495210a28dc1732768499e"
+content-hash = "b4eb8dfb8315329a3a1e9be7a2337e46628721e7f3da12a52873dd376680d7ac"
