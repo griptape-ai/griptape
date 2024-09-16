@@ -13,6 +13,6 @@ engine = PromptSummaryEngine(
 artifact = PdfLoader().parse(response.content)
 chunks = TextChunker().chunk(artifact)
 
-text = "\n\n".join([a.value for a in chunks])
+text = "\n\n".join([chunk.value for chunk in chunks])
 
 engine.summarize_text(text)

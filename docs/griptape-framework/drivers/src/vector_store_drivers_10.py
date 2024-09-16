@@ -30,7 +30,7 @@ vector_store_driver.client.recreate_collection(
 )
 
 # Upsert Artifacts into the Vector Store Driver
-[vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in chunks]
+[vector_store_driver.upsert_text_artifact(chunk, namespace="griptape") for chunk in chunks]
 
 results = vector_store_driver.query(query="What is griptape?")
 
