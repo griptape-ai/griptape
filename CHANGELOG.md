@@ -6,10 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.32.0] - 2024-09-17
+
 ### Added
 - `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
 - `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 string.
 - `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
+- `AzureOpenAiTextToSpeechDriver`.
+- `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
+- Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
+- Ability to use Drivers Configs as Context Managers for temporarily setting the default Drivers.
+- Generic type support to `ListArtifact`.
+- Iteration support to `ListArtifact`.
+
 
 ### Changed
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
@@ -20,12 +29,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BlobArtifact.dir_name`.
 - **BREAKING**: Moved `ImageArtifact.prompt` and `ImageArtifact.model` into `ImageArtifact.meta`.
 - **BREAKING**: `ImageArtifact.format` is now required.
+- **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module.
 - Updated `JsonArtifact` value converter to properly handle more types. 
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - `ImageArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
-- Generic type support to `ListArtifact`.
-- Iteration support to `ListArtifact`.
+
+### Fixed
+- Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
 ## [0.31.0] - 2024-09-03
 
@@ -33,10 +44,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Parameter `meta: dict` on `BaseEvent`.
-- `AzureOpenAiTextToSpeechDriver`.
-- Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
-- `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
-- Ability to use Drivers Configs as Context Managers for temporarily setting the default Drivers.
 
 ### Changed
 - **BREAKING**: Drivers, Loaders, and Engines now raise exceptions rather than returning `ErrorArtifacts`.
@@ -45,7 +52,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseConversationMemoryDriver.load` now returns `tuple[list[Run], dict]`. This represents the runs and metadata.
 - **BREAKING**: `BaseConversationMemoryDriver.store` now takes `runs: list[Run]` and `metadata: dict` as input.
 - **BREAKING**: Parameter `file_path` on `LocalConversationMemoryDriver` renamed to `persist_file` and is now type `Optional[str]`.
-- **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module. 
 - `Defaults.drivers_config.conversation_memory_driver` now defaults to `LocalConversationMemoryDriver` instead of `None`.
 - `CsvRowArtifact.to_text()` now includes the header.
 
@@ -56,7 +62,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Missing `maxTokens` inference parameter in `AmazonBedrockPromptDriver`.
 - Incorrect model in `OpenAiDriverConfig`'s `text_to_speech_driver`.
 - Crash when using `CohereRerankDriver` with `CsvRowArtifact`s.
-- Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
 
 ## [0.30.2] - 2024-08-26
