@@ -4,6 +4,7 @@ import json
 from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
+from tavily import InvalidAPIKeyError, MissingAPIKeyError, UsageLimitExceededError
 
 from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.drivers import BaseWebSearchDriver
@@ -33,5 +34,11 @@ class TavilyWebSearchDriver(BaseWebSearchDriver):
                     for result in results
                 ]
             )
+        except MissingAPIKeyError as exc:
+            raise ValueError("API Key is missing, Please provide a valid Tavily API Key.") from exc
+        except UsageLimitExceededError as exc:
+            raise ValueError("Usage Limit Exceeded, Please try again later.") from exc
+        except InvalidAPIKeyError as exc:
+            raise ValueError("Invalid API Key, Please provide a valid Tavily API Key.") from exc
         except Exception as e:
-            raise Exception(f"Error searching '{query}' with Tavily: {e}") from e
+            raise ValueError(f"An error occurred while searching for {query} using Tavily: {e}") from e

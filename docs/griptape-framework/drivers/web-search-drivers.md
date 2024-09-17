@@ -9,7 +9,7 @@ Web Search Drivers can be used to search for links from a search query. They are
 
 * `search()` searches the web and returns a [ListArtifact](../../reference/griptape/artifacts/list_artifact.md) that contains JSON-serializable [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s with the search results.
 
-You can use Web Search Drivers with structures:
+You can use Web Search Drivers with [Structures](../structures/agents.md):
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_5.py"
@@ -76,9 +76,7 @@ Example of using `DuckDuckGoWebSearchDriver` directly:
 
 ### Tavily
 !!! info
-    This driver requires the `drivers-web-search-tavily` [extra](../index.md#extras), and a Tavily [API-KEY](https://app.tavily.com).
-
-The [TavilyWebSearchDriver](../../reference/griptape/drivers/web_search/tavily_web_search_driver.md) uses the [tavily-python](https://github.com/tavily-ai/tavily-python) SDK for web searching.
+    This driver requires the `drivers-web-search-tavily` [extra](../index.md#extras), and a Tavily [api key](https://app.tavily.com).
 
 Example of using `TavilyWebSearchDriver` directly:
 

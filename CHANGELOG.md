@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
 - `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 string.
 - `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
+- `TavilyWebSearchDriver` to utilize Tavily web search SDK.
 
 ### Changed
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
@@ -26,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
 - Generic type support to `ListArtifact`.
 - Iteration support to `ListArtifact`.
+- Moved `language` and `country` from `BaseWebSearchDriver` to `DuckDuckGoWebSearchDriver` and `GoogleWebSearchDriver`
 
 ## [0.31.0] - 2024-09-03
 

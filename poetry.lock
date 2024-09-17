@@ -5969,13 +5969,13 @@ dev = ["hypothesis (>=6.70.0)", "pytest (>=7.1.0)"]
 
 [[package]]
 name = "tavily-python"
-version = "0.4.0"
+version = "0.5.0"
 description = "Python wrapper for the Tavily API"
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "tavily_python-0.4.0-py3-none-any.whl", hash = "sha256:b3fd0d7102bb34f0dfb0fd24378e2029504a9836ffe7f07c013824105d9f6a5a"},
-    {file = "tavily_python-0.4.0.tar.gz", hash = "sha256:e4517041dd135f171858d7e65a7cae085597871bbdc1a13d27990acb536e55c3"},
+    {file = "tavily_python-0.5.0-py3-none-any.whl", hash = "sha256:e874f6a04a56cdda80a505fe0b4f5d61d25372bd52a83e6773926fb297dcaa29"},
+    {file = "tavily_python-0.5.0.tar.gz", hash = "sha256:2c60b88203b630e1b37fc711913a1090ced6719b3f21089f25ec06e9e1602822"},
 ]
 
 [package.dependencies]
@@ -7014,6 +7014,7 @@ drivers-vector-redis = ["redis"]
 drivers-web-scraper-markdownify = ["beautifulsoup4", "markdownify", "playwright"]
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-search-duckduckgo = ["duckduckgo-search"]
+drivers-web-search-tavily = ["tavily-python"]
 loaders-audio = ["filetype"]
 loaders-dataframe = ["pandas"]
 loaders-email = ["mail-parser"]
@@ -7024,4 +7025,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b4eb8dfb8315329a3a1e9be7a2337e46628721e7f3da12a52873dd376680d7ac"
+content-hash = "74bd0a96152a8bcbd00605bb33e8d7d35bfaac42b51ff8989fbd2431fe72cfa3"
