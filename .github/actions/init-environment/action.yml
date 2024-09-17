@@ -6,7 +6,8 @@ runs:
       - name: Checkout actions
         uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - id: setup-python
+        name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
