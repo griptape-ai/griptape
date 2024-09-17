@@ -22,6 +22,12 @@ You can connect to your personal or company Confluence by providing a URL, [Atla
 
 You can specify a [Structure](../structures/create-structure.md) to run as a Data Source as long as your Structure returns a [`TextArtifact` or `ListArtifact` from the Griptape Framework](../../griptape-framework/data/artifacts.md). You can use this as a way to build custom Data Sources.
 
-## Other Data Source Types
+### Other Data Source Types
 
 If you do not see a Data Source configuration you'd wish to use, you can submit a request via [Discord](https://discord.gg/gnWRz88eym) or `hello@griptape.ai`.
+
+## Adding Structure as Transform to Data Source (Experimental)
+
+When creating any Data Source, you can optionally specify a [Structure](../structures/create-structure.md) to run as a transform step of your data ingetstion before loading into the vector store. Ensure the Structure you select to run as a transform is configured to take in a `ListArtifact` as its first positional argument and returns either a `TextArtifact` or `ListArtifact`. 
+
+Take a look at the [Find and Replace Sample Structure](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape-find-replace-transform) for more details on how to implement this for your own Structure.
