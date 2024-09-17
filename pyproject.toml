@@ -188,6 +188,7 @@ all = [
     "pusher",
     "ollama",
     "duckduckgo-search",
+    "tavily-python",
     "opentelemetry-sdk",
     "opentelemetry-api",
     "opentelemetry-instrumentation",

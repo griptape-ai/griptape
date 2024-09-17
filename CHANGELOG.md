@@ -27,7 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
 - Generic type support to `ListArtifact`.
 - Iteration support to `ListArtifact`.
-- Moved `language` and `country` from `BaseWebSearchDriver` to `DuckDuckGoWebSearchDriver` and `GoogleWebSearchDriver`
 
 ## [0.31.0] - 2024-09-03
 

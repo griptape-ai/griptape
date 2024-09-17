@@ -43,5 +43,5 @@ class TestTavilyWebSearchDriver:
         assert output[0]["content"] == "baz"
 
     def test_search_raises_error(self, driver_with_error):
-        with pytest.raises(Exception, match="Error searching 'test' with Tavily: test_error"):
+        with pytest.raises(Exception, match="An error occurred while searching for test using Tavily: test_error"):
             driver_with_error.search("test")
