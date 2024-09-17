@@ -30,7 +30,7 @@ A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define [Ru
 This is particularly useful when you need the LLM to return well-formed data, such as JSON objects, with specific fields and data types.
 
 !!! warning
-  `JsonSchemaRule` may break [ToolkitTask](../structures/tasks.md#toolkittask) which relies on a specific [output token](https://github.com/griptape-ai/griptape/blob/e6a04c7b88cf9fa5d6bcf4c833ffebfab89a3258/griptape/tasks/toolkit_task.py#L28).
+    `JsonSchemaRule` may break [ToolkitTask](../structures/tasks.md#toolkit) which relies on a specific [output token](https://github.com/griptape-ai/griptape/blob/e6a04c7b88cf9fa5d6bcf4c833ffebfab89a3258/griptape/tasks/toolkit_task.py#L28).
 
 
 ```python
