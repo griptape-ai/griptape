@@ -1,5 +1,4 @@
 import base64
-import os
 
 import pytest
 
@@ -12,6 +11,9 @@ class TestBlobArtifact:
 
     def test_to_text(self):
         assert BlobArtifact(b"foobar", name="foobar.txt").to_text() == "foobar"
+
+    def test_to_bytes(self):
+        assert BlobArtifact(b"foo").to_bytes() == b"foo"
 
     def test_to_text_encoding(self):
         assert (
@@ -30,36 +32,33 @@ class TestBlobArtifact:
         )
 
     def test_to_dict(self):
-        assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").to_dict()["name"] == "foobar.txt"
-
-    def test_full_path_with_path(self):
-        assert BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo").full_path == os.path.normpath(
-            "foo/foobar.txt"
-        )
-
-    def test_full_path_without_path(self):
-        assert BlobArtifact(b"foobar", name="foobar.txt").full_path == "foobar.txt"
+        assert BlobArtifact(b"foobar", name="foobar.txt").to_dict()["name"] == "foobar.txt"
 
     def test_serialization(self):
-        artifact = BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo")
+        artifact = BlobArtifact(b"foobar", name="foobar.txt")
         artifact_dict = artifact.to_dict()
 
         assert artifact_dict["name"] == "foobar.txt"
-        assert artifact_dict["dir_name"] == "foo"
         assert base64.b64decode(artifact_dict["value"]) == b"foobar"
 
     def test_deserialization(self):
-        artifact = BlobArtifact(b"foobar", name="foobar.txt", dir_name="foo")
+        artifact = BlobArtifact(b"foobar", name="foobar.txt")
         artifact_dict = artifact.to_dict()
         deserialized_artifact = BaseArtifact.from_dict(artifact_dict)
 
         assert isinstance(deserialized_artifact, BlobArtifact)
         assert deserialized_artifact.name == "foobar.txt"
-        assert deserialized_artifact.dir_name == "foo"
         assert deserialized_artifact.value == b"foobar"
 
     def test_name(self):
         assert BlobArtifact(b"foo", name="bar").name == "bar"
+
+    def test_mime_type(self):
+        assert BlobArtifact(b"foo").mime_type == "application/octet-stream"
+
+    def test___add__(self):
+        with pytest.raises(TypeError):
+            BlobArtifact(b"foo") + BlobArtifact(b"bar")
 
     def test___bool__(self):
         assert not bool(BlobArtifact(b""))

@@ -10,6 +10,7 @@ class TestBooleanArtifact:
         assert BooleanArtifact.parse_bool("false").value is False
         assert BooleanArtifact.parse_bool("True").value is True
         assert BooleanArtifact.parse_bool("False").value is False
+        assert BooleanArtifact.parse_bool(True).value is True
 
         with pytest.raises(ValueError):
             BooleanArtifact.parse_bool("foo")
@@ -35,3 +36,13 @@ class TestBooleanArtifact:
         assert BooleanArtifact([]).value is False
         assert BooleanArtifact(False).value is False
         assert BooleanArtifact(True).value is True
+
+    def test_to_text(self):
+        assert BooleanArtifact(True).to_text() == "true"
+        assert BooleanArtifact(False).to_text() == "false"
+
+    def test__eq__(self):
+        assert BooleanArtifact(True) == BooleanArtifact(True)
+        assert BooleanArtifact(False) == BooleanArtifact(False)
+        assert BooleanArtifact(True) != BooleanArtifact(False)
+        assert BooleanArtifact(False) != BooleanArtifact(True)

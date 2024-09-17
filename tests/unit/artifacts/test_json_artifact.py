@@ -1,8 +1,6 @@
 import json
 
-import pytest
-
-from griptape.artifacts import JsonArtifact, TextArtifact
+from griptape.artifacts import JsonArtifact
 
 
 class TestJsonArtifact:
@@ -14,11 +12,11 @@ class TestJsonArtifact:
         assert JsonArtifact({"foo": None}).value == json.loads(json.dumps({"foo": None}))
         assert JsonArtifact([{"foo": {"bar": "baz"}}]).value == json.loads(json.dumps([{"foo": {"bar": "baz"}}]))
         assert JsonArtifact(None).value == json.loads(json.dumps(None))
-        assert JsonArtifact("foo").value == json.loads(json.dumps("foo"))
-
-    def test___add__(self):
-        with pytest.raises(NotImplementedError):
-            JsonArtifact({"foo": "bar"}) + TextArtifact("invalid json")
+        assert JsonArtifact('"foo"').value == "foo"
+        assert JsonArtifact("true").value is True
+        assert JsonArtifact("false").value is False
+        assert JsonArtifact("123").value == 123
+        assert JsonArtifact("123.4").value == 123.4
 
     def test_to_text(self):
         assert JsonArtifact({"foo": "bar"}).to_text() == json.dumps({"foo": "bar"})
