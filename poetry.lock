@@ -1502,6 +1502,22 @@ files = [
 ]
 
 [[package]]
+name = "exa-py"
+version = "1.1.4"
+description = "Python SDK for Exa API."
+optional = false
+python-versions = "*"
+files = [
+    {file = "exa_py-1.1.4-py3-none-any.whl", hash = "sha256:487923f568670bb40a2d9b97b6bedf4e5fecba2957779d318f8bfbb17817ddc3"},
+    {file = "exa_py-1.1.4.tar.gz", hash = "sha256:78d85b3cbaf850a4629967be3c362aee4b99e9d4e93d8c11799a992fd1eba68c"},
+]
+
+[package.dependencies]
+openai = ">=1.10.0"
+requests = "*"
+typing-extensions = "*"
+
+[[package]]
 name = "exceptiongroup"
 version = "1.2.2"
 description = "Backport of PEP 654 (exception groups)"
@@ -7013,4 +7029,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "e951b9aff748e3891f504bacac4bdc86843303f9d74de37949690ede153c1cb2"
+content-hash = "a1370e2e050723406a5fea9028cb09a574130c27c6a46034278f4560af425d61"
