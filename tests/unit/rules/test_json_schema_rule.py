@@ -23,7 +23,7 @@ class TestJsonSchemaRule:
         rule = JsonSchemaRule(json_schema)
         assert (
             rule.to_text()
-            == f"You must respond with a JSON object that successfully validates against the following schema: {json.dumps(json_schema)}"
+            == f"Output valid JSON that matches this schema: {json.dumps(json_schema)}\nNo markdown, code snippets, code blocks, or backticks."
         )
 
     def test___str__(self):
