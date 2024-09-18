@@ -4,7 +4,6 @@ import json
 from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
-from tavily import InvalidAPIKeyError, MissingAPIKeyError, UsageLimitExceededError
 
 from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.drivers import BaseWebSearchDriver
@@ -21,24 +20,14 @@ class TavilyWebSearchDriver(BaseWebSearchDriver):
         default=Factory(lambda self: import_optional_dependency("tavily").TavilyClient(self.api_key), takes_self=True),
         kw_only=True,
     )
+    params: dict = field(default=Factory(dict), kw_only=True, metadata={"serializable": True})
 
     def search(self, query: str, **kwargs) -> ListArtifact:
-        try:
-            response = self.client.search(query, max_results=self.results_count, **kwargs)
-            results = response["results"]
-            return ListArtifact(
-                [
-                    TextArtifact(
-                        json.dumps({"title": result["title"], "url": result["url"], "content": result["content"]})
-                    )
-                    for result in results
-                ]
-            )
-        except MissingAPIKeyError as exc:
-            raise ValueError("API Key is missing, Please provide a valid Tavily API Key.") from exc
-        except UsageLimitExceededError as exc:
-            raise ValueError("Usage Limit Exceeded, Please try again later.") from exc
-        except InvalidAPIKeyError as exc:
-            raise ValueError("Invalid API Key, Please provide a valid Tavily API Key.") from exc
-        except Exception as e:
-            raise ValueError(f"An error occurred while searching for {query} using Tavily: {e}") from e
+        response = self.client.search(query, max_results=self.results_count, **self.params, **kwargs)
+        results = response["results"]
+        return ListArtifact(
+            [
+                TextArtifact(json.dumps({"title": result["title"], "url": result["url"], "content": result["content"]}))
+                for result in results
+            ]
+        )
