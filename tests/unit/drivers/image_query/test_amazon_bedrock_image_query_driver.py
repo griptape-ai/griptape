@@ -9,13 +9,13 @@ from griptape.drivers import AmazonBedrockImageQueryDriver
 
 class TestAmazonBedrockImageQueryDriver:
     @pytest.fixture()
-    def bedrock_client(self, mocker):
+    def client(self, mocker):
         return Mock()
 
     @pytest.fixture()
-    def session(self, bedrock_client):
+    def session(self, client):
         session = Mock()
-        session.client.return_value = bedrock_client
+        session.client.return_value = client
 
         return session
 
@@ -35,7 +35,7 @@ class TestAmazonBedrockImageQueryDriver:
         assert image_query_driver
 
     def test_try_query(self, image_query_driver):
-        image_query_driver.bedrock_client.invoke_model.return_value = {"body": io.BytesIO(b"""{"content": []}""")}
+        image_query_driver.client.invoke_model.return_value = {"body": io.BytesIO(b"""{"content": []}""")}
 
         text_artifact = image_query_driver.try_query(
             "Prompt String", [ImageArtifact(value=b"test-data", width=100, height=100, format="png")]
@@ -44,7 +44,7 @@ class TestAmazonBedrockImageQueryDriver:
         assert text_artifact.value == "content"
 
     def test_try_query_no_body(self, image_query_driver):
-        image_query_driver.bedrock_client.invoke_model.return_value = {"body": io.BytesIO(b"")}
+        image_query_driver.client.invoke_model.return_value = {"body": io.BytesIO(b"")}
 
         with pytest.raises(ValueError):
             image_query_driver.try_query(

@@ -8,6 +8,7 @@ from attrs import Factory, define, field
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers.amazon_bedrock_tokenizer import AmazonBedrockTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
@@ -23,7 +24,7 @@ class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
         model: Embedding model name. Defaults to DEFAULT_MODEL.
         tokenizer: Optionally provide custom `BedrockTitanTokenizer`.
         session: Optionally provide custom `boto3.Session`.
-        bedrock_client: Optionally provide custom `bedrock-runtime` client.
+        client: Optionally provide custom `bedrock-runtime` client.
     """
 
     DEFAULT_MODEL = "amazon.titan-embed-text-v1"
@@ -34,15 +35,16 @@ class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    bedrock_client: Any = field(
-        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True),
-        kw_only=True,
-    )
+    _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> Any:
+        return self.session.client("bedrock-runtime")
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         payload = {"inputText": chunk}
 
-        response = self.bedrock_client.invoke_model(
+        response = self.client.invoke_model(
             body=json.dumps(payload),
             modelId=self.model,
             accept="application/json",

@@ -36,7 +36,9 @@ class TestPgVectorVectorStoreDriver:
 
     def test_initialize_accepts_engine(self, embedding_driver):
         engine: Any = create_engine(self.connection_string)
-        PgVectorVectorStoreDriver(embedding_driver=embedding_driver, engine=engine, table_name=self.table_name)
+        PgVectorVectorStoreDriver(
+            embedding_driver=embedding_driver, sqlalchemy_engine=engine, table_name=self.table_name
+        )
 
     def test_initialize_accepts_connection_string(self, embedding_driver):
         PgVectorVectorStoreDriver(
@@ -48,7 +50,7 @@ class TestPgVectorVectorStoreDriver:
         mock_session.merge.return_value = Mock(id=test_id)
 
         driver = PgVectorVectorStoreDriver(
-            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+            embedding_driver=MockEmbeddingDriver(), sqlalchemy_engine=mock_engine, table_name=self.table_name
         )
 
         returned_id = driver.upsert_vector([1.0, 2.0, 3.0])
@@ -65,7 +67,7 @@ class TestPgVectorVectorStoreDriver:
         mock_session.get.return_value = Mock(id=test_id, vector=test_vec, namespace=test_namespace, meta=test_meta)
 
         driver = PgVectorVectorStoreDriver(
-            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+            embedding_driver=MockEmbeddingDriver(), sqlalchemy_engine=mock_engine, table_name=self.table_name
         )
 
         entry = driver.load_entry(vector_id=test_id)
@@ -88,7 +90,7 @@ class TestPgVectorVectorStoreDriver:
         mock_session.query.return_value = mock_query
 
         driver = PgVectorVectorStoreDriver(
-            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+            embedding_driver=MockEmbeddingDriver(), sqlalchemy_engine=mock_engine, table_name=self.table_name
         )
 
         entries = driver.load_entries()
@@ -104,7 +106,7 @@ class TestPgVectorVectorStoreDriver:
 
     def test_query_invalid_distance_metric(self, mock_engine):
         driver = PgVectorVectorStoreDriver(
-            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+            embedding_driver=MockEmbeddingDriver(), sqlalchemy_engine=mock_engine, table_name=self.table_name
         )
 
         with pytest.raises(ValueError):
@@ -122,7 +124,7 @@ class TestPgVectorVectorStoreDriver:
         mock_session.query().order_by().limit().all.return_value = test_result
 
         driver = PgVectorVectorStoreDriver(
-            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+            embedding_driver=MockEmbeddingDriver(), sqlalchemy_engine=mock_engine, table_name=self.table_name
         )
 
         result = driver.query("some query", include_vectors=True)
@@ -147,7 +149,7 @@ class TestPgVectorVectorStoreDriver:
         mock_session.query().order_by().filter_by().limit().all.return_value = test_result
 
         driver = PgVectorVectorStoreDriver(
-            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+            embedding_driver=MockEmbeddingDriver(), sqlalchemy_engine=mock_engine, table_name=self.table_name
         )
 
         result = driver.query("some query", include_vectors=True, filter={"namespace": test_namespaces[0]})

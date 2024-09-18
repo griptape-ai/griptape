@@ -31,6 +31,7 @@ from griptape.common import (
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -44,10 +45,6 @@ if TYPE_CHECKING:
 @define
 class AmazonBedrockPromptDriver(BasePromptDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    bedrock_client: Any = field(
-        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True),
-        kw_only=True,
-    )
     additional_model_request_fields: dict = field(default=Factory(dict), kw_only=True)
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True),
@@ -55,10 +52,15 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
+    _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> Any:
+        return self.session.client("bedrock-runtime")
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        response = self.bedrock_client.converse(**self._base_params(prompt_stack))
+        response = self.client.converse(**self._base_params(prompt_stack))
 
         usage = response["usage"]
         output_message = response["output"]["message"]
@@ -71,7 +73,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        response = self.bedrock_client.converse_stream(**self._base_params(prompt_stack))
+        response = self.client.converse_stream(**self._base_params(prompt_stack))
 
         stream = response.get("stream")
         if stream is not None:

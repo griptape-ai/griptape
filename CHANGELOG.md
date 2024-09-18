@@ -6,6 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver` to `client`.
+- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockTitanEmbeddingDriver` to `client`.
+- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockImageGenerationDriver` to `client`.
+- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockImageQueryDriver` to `client`.
+- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockPromptDriver` to `client`.
+- **BREAKING**: Renamed parameter `sagemaker_client` on `AmazonSageMakerJumpstartEmbeddingDriver` to `client`.
+- **BREAKING**: Renamed parameter `sagemaker_client` on `AmazonSageMakerJumpstartPromptDriver` to `client`.
+- **BREAKING**: Renamed parameter `sqs_client` on `AmazonSqsEventListenerDriver` to `client`.
+- **BREAKING**: Renamed parameter `iotdata_client` on `AwsIotCoreEventListenerDriver` to `client`.
+- **BREAKING**: Renamed parameter `s3_client` on `AmazonS3FileManagerDriver` to `client`.
+- **BREAKING**: Renamed parameter `s3_client` on `AwsS3Tool` to `client`.
+- **BREAKING**: Renamed parameter `pusher_client` on `PusherEventListenerDriver` to `client`.
+- **BREAKING**: Renamed parameter `mq` on `MarqoVectorStoreDriver` to `client`.
+- **BREAKING**: Renamed parameter `model_client` on `GooglePromptDriver` to `client`.
+- **BREAKING**: Renamed parameter `model_client` on `GoogleTokenizer` to `client`.
+- **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `text_generation_pipeline`.
+- **BREAKING**: Renamed parameter `engine` on `PgVectorVectorStoreDriver` to `sqlalchemy_engine`.
+- Several places where API clients are initialized are now lazy loaded.
+
+
 ## [0.32.0] - 2024-09-17
 
 ### Added

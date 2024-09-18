@@ -7,6 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.drivers import BaseMultiModelImageQueryDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
@@ -17,15 +18,16 @@ if TYPE_CHECKING:
 @define
 class AmazonBedrockImageQueryDriver(BaseMultiModelImageQueryDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    bedrock_client: Any = field(
-        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True),
-        kw_only=True,
-    )
+    _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> Any:
+        return self.session.client("bedrock-runtime")
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
         payload = self.image_query_model_driver.image_query_request_parameters(query, images, self.max_tokens)
 
-        response = self.bedrock_client.invoke_model(
+        response = self.client.invoke_model(
             modelId=self.model,
             contentType="application/json",
             accept="application/json",

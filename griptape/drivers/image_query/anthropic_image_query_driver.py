@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from typing import Any, Optional
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseImageQueryDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 
 @define
@@ -21,13 +22,11 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
 
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    client: Any = field(
-        default=Factory(
-            lambda self: import_optional_dependency("anthropic").Anthropic(api_key=self.api_key),
-            takes_self=True,
-        ),
-        kw_only=True,
-    )
+    _client: Any = field(default=None, kw_only=True, metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> Any:
+        return import_optional_dependency("anthropic").Anthropic(api_key=self.api_key)
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:
         if self.max_tokens is None:

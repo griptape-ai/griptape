@@ -86,7 +86,7 @@ class TestMarqoVectorStorageDriver:
             api_key="foobar",
             url="http://localhost:8000",
             index="test",
-            mq=mock_marqo,
+            client=mock_marqo,
             embedding_driver=MockEmbeddingDriver(),
         )
 
