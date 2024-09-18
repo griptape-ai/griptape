@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.mixins import FuturesExecutorMixin
+from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 
 if TYPE_CHECKING:
     from griptape.events import BaseEvent

@@ -10,19 +10,19 @@ from attrs import Attribute, define, field
 
 from griptape.configs import Defaults
 from griptape.loaders import ImageLoader
-from griptape.mixins import BlobArtifactFileOutputMixin, RuleMixin
+from griptape.mixins.artifact_file_output_mixin import ArtifactFileOutputMixin
+from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTask
 
 if TYPE_CHECKING:
-    from griptape.artifacts import MediaArtifact
-
+    from griptape.artifacts import ImageArtifact
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, ABC):
+class BaseImageGenerationTask(ArtifactFileOutputMixin, RuleMixin, BaseTask, ABC):
     """Provides a base class for image generation-related tasks.
 
     Attributes:
@@ -64,6 +64,6 @@ class BaseImageGenerationTask(BlobArtifactFileOutputMixin, RuleMixin, BaseTask, 
 
         return task_rulesets
 
-    def _read_from_file(self, path: str) -> MediaArtifact:
+    def _read_from_file(self, path: str) -> ImageArtifact:
         logger.info("Reading image from %s", os.path.abspath(path))
         return ImageLoader().load(Path(path).read_bytes())

@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Sequence
 
 from attrs import define, field
 
 if TYPE_CHECKING:
-    from griptape.rules import Rule
+    from griptape.rules import BaseRule
 
 
 @define
 class Ruleset:
     name: str = field()
-    rules: list[Rule] = field()
+    rules: Sequence[BaseRule] = field()

@@ -73,6 +73,15 @@ Handler 1 <class 'griptape.events.finish_structure_run_event.FinishStructureRunE
 Handler 2 <class 'griptape.events.finish_structure_run_event.FinishStructureRunEvent'>
 ```
 
+## Context Managers
+
+You can also use [EventListener](../../reference/griptape/events/event_listener.md)s as a Python Context Manager.
+The `EventListener` will automatically be added and removed from the [EventBus](../../reference/griptape/events/event_bus.md) when entering and exiting the context.
+
+```python
+--8<-- "docs/griptape-framework/misc/src/events_context.py"
+```
+
 ## Streaming
 
 

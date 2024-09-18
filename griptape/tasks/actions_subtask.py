@@ -13,7 +13,7 @@ from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, List
 from griptape.common import ToolAction
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishActionsSubtaskEvent, StartActionsSubtaskEvent
-from griptape.mixins import ActionsSubtaskOriginMixin
+from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
 from griptape.utils import remove_null_values_in_dict_recursively
 

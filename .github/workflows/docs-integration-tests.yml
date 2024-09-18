@@ -85,6 +85,8 @@ jobs:
       AZURE_OPENAI_API_KEY_2: ${{ secrets.INTEG_AZURE_OPENAI_API_KEY_2 }}
       AZURE_OPENAI_ENDPOINT_3: ${{ secrets.INTEG_AZURE_OPENAI_ENDPOINT_3 }}
       AZURE_OPENAI_API_KEY_3: ${{ secrets.INTEG_AZURE_OPENAI_API_KEY_3 }}
+      AZURE_OPENAI_ENDPOINT_4: ${{ secrets.INTEG_AZURE_OPENAI_ENDPOINT_4 }}
+      AZURE_OPENAI_API_KEY_4: ${{ secrets.INTEG_AZURE_OPENAI_API_KEY_4 }}
       AZURE_OPENAI_35_TURBO_16K_DEPLOYMENT_ID: ${{ secrets.INTEG_OPENAI_35_TURBO_16K_DEPLOYMENT_ID }}
       AZURE_OPENAI_35_TURBO_DEPLOYMENT_ID: ${{ secrets.INTEG_OPENAI_35_TURBO_DEPLOYMENT_ID }}
       AZURE_OPENAI_DAVINCI_DEPLOYMENT_ID: ${{ secrets.INTEG_OPENAI_DAVINCI_DEPLOYMENT_ID }}
@@ -137,7 +139,7 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run integration tests

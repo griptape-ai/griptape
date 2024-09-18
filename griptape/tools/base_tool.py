@@ -16,7 +16,7 @@ from schema import Literal, Or, Schema
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
 from griptape.common import observable
-from griptape.mixins import ActivityMixin
+from griptape.mixins.activity_mixin import ActivityMixin
 
 if TYPE_CHECKING:
     from griptape.common import ToolAction

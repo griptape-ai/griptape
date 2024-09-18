@@ -5,15 +5,20 @@ from typing import TYPE_CHECKING
 from attrs import define, field
 
 from griptape.artifacts import BaseArtifact
-from griptape.mixins import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.common import ToolAction
 
 
 @define()
-class ActionArtifact(BaseArtifact, SerializableMixin):
+class ActionArtifact(BaseArtifact):
+    """Represents the LLM taking an action to use a Tool.
+
+    Attributes:
+        value: The Action to take. Currently only supports ToolAction.
+    """
+
     value: ToolAction = field(metadata={"serializable": True})
 
-    def __add__(self, other: BaseArtifact) -> ActionArtifact:
-        raise NotImplementedError
+    def to_text(self) -> str:
+        return str(self.value)

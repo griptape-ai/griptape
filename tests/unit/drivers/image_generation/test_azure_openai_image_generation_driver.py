@@ -28,7 +28,10 @@ class TestAzureOpenAiImageGenerationDriver:
     def test_init_requires_endpoint(self):
         with pytest.raises(TypeError):
             AzureOpenAiImageGenerationDriver(
-                model="dall-e-3", client=Mock(), azure_deployment="dalle-deployment", image_size="512x512"
+                model="dall-e-3",
+                client=Mock(),
+                azure_deployment="dalle-deployment",
+                image_size="512x512",
             )  # pyright: ignore[reportCallIssues]
 
     def test_try_text_to_image(self, driver):
@@ -40,5 +43,5 @@ class TestAzureOpenAiImageGenerationDriver:
         assert image_artifact.mime_type == "image/png"
         assert image_artifact.width == 512
         assert image_artifact.height == 512
-        assert image_artifact.model == "dall-e-3"
-        assert image_artifact.prompt == "test prompt"
+        assert image_artifact.meta["model"] == "dall-e-3"
+        assert image_artifact.meta["prompt"] == "test prompt"

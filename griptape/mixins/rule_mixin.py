@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, define, field
 
-from griptape.rules import Rule, Ruleset
+from griptape.rules import BaseRule, Ruleset
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
@@ -16,7 +16,7 @@ class RuleMixin:
     ADDITIONAL_RULESET_NAME = "Additional Ruleset"
 
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
-    rules: list[Rule] = field(factory=list, kw_only=True)
+    rules: list[BaseRule] = field(factory=list, kw_only=True)
     structure: Optional[Structure] = field(default=None, kw_only=True)
 
     @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
@@ -28,7 +28,7 @@ class RuleMixin:
             raise ValueError("Can't have both rulesets and rules specified.")
 
     @rules.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_rules(self, _: Attribute, rules: list[Rule]) -> None:
+    def validate_rules(self, _: Attribute, rules: list[BaseRule]) -> None:
         if not rules:
             return
 

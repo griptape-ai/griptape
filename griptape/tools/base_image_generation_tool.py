@@ -1,11 +1,11 @@
 from attrs import define
 
-from griptape.mixins import BlobArtifactFileOutputMixin
+from griptape.mixins.artifact_file_output_mixin import ArtifactFileOutputMixin
 from griptape.tools import BaseTool
 
 
 @define
-class BaseImageGenerationTool(BlobArtifactFileOutputMixin, BaseTool):
+class BaseImageGenerationTool(ArtifactFileOutputMixin, BaseTool):
     """A base class for tools that generate images from text prompts."""
 
     PROMPT_DESCRIPTION = "Features and qualities to include in the generated image, descriptive and succinct."

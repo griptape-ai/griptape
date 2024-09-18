@@ -1,6 +1,7 @@
 import pytest
 
 from griptape.configs.drivers import DriversConfig
+from tests.mocks.mock_drivers_config import MockDriversConfig
 
 
 class TestDriversConfig:
@@ -40,6 +41,16 @@ class TestDriversConfig:
         config.prompt_driver.max_tokens = 10
 
         assert config.prompt_driver.max_tokens == 10
+
+    def test_context_manager(self):
+        from griptape.configs import Defaults
+
+        old_drivers_config = Defaults.drivers_config
+
+        with MockDriversConfig() as config:
+            assert Defaults.drivers_config == config
+
+        assert Defaults.drivers_config == old_drivers_config
 
     @pytest.mark.skip_mock_config()
     def test_lazy_init(self):

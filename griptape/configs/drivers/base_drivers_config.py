@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
@@ -47,6 +47,25 @@ class BaseDriversConfig(ABC, SerializableMixin):
     _audio_transcription_driver: BaseAudioTranscriptionDriver = field(
         default=None, kw_only=True, metadata={"serializable": True}, alias="audio_transcription_driver"
     )
+
+    _last_drivers_config: Optional[BaseDriversConfig] = field(default=None)
+
+    def __enter__(self) -> BaseDriversConfig:
+        from griptape.configs import Defaults
+
+        self._last_drivers_config = Defaults.drivers_config
+
+        Defaults.drivers_config = self
+
+        return self
+
+    def __exit__(self, type, value, traceback) -> None:  # noqa: ANN001, A002
+        from griptape.configs import Defaults
+
+        if self._last_drivers_config is not None:
+            Defaults.drivers_config = self._last_drivers_config
+
+        self._last_drivers_config = None
 
     @lazy_property()
     @abstractmethod

@@ -22,7 +22,7 @@ Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) 
 
 ## SQL
 
-Can be used to load data from a SQL database into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
+Can be used to load data from a SQL database into [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s:
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_2.py"
@@ -30,7 +30,7 @@ Can be used to load data from a SQL database into [CsvRowArtifact](../../referen
 
 ## CSV
 
-Can be used to load CSV files into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
+Can be used to load CSV files into [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s:
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_3.py"
@@ -42,7 +42,7 @@ Can be used to load CSV files into [CsvRowArtifact](../../reference/griptape/art
 !!! info
     This driver requires the `loaders-dataframe` [extra](../index.md#extras).
 
-Can be used to load [pandas](https://pandas.pydata.org/) [DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)s into [CsvRowArtifact](../../reference/griptape/artifacts/csv_row_artifact.md)s:
+Can be used to load [pandas](https://pandas.pydata.org/) [DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)s into [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s:
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_4.py"

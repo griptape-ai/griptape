@@ -1,6 +1,6 @@
 from abc import ABC
 
-from griptape.mixins import SerializableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 
 class BaseAction(SerializableMixin, ABC): ...

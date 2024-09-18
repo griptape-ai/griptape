@@ -85,6 +85,16 @@ class TestAzureOpenAiDriversConfig:
                 },
                 "type": "LocalVectorStoreDriver",
             },
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
+            "text_to_speech_driver": {
+                "base_url": None,
+                "format": "mp3",
+                "model": "tts",
+                "api_version": "2024-07-01-preview",
+                "azure_deployment": "tts",
+                "azure_endpoint": "http://localhost:8080",
+                "organization": None,
+                "type": "AzureOpenAiTextToSpeechDriver",
+                "voice": "alloy",
+            },
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }
