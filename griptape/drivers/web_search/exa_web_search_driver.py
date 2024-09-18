@@ -23,13 +23,11 @@ class ExaWebSearchDriver(BaseWebSearchDriver):
 
     def search(self, query: str, **kwargs) -> ListArtifact:
         try:
-            results = self.client.search_and_contents(
-                query, text=True, highlights=True, num_results=2, **kwargs, type="neural", use_autoprompt=True
-            )
+            results = self.client.search_and_contents(query, num_results=2, **kwargs, type="neural")
             return ListArtifact(
                 [
                     TextArtifact(
-                        json.dumps({"title": result.title, "url": result.url, "description": result.author}),
+                        json.dumps({"title": result.title, "url": result.url}),
                     )
                     for result in results.results
                 ],
