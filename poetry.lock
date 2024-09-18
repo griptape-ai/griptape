@@ -5976,7 +5976,7 @@ dev = ["hypothesis (>=6.70.0)", "pytest (>=7.1.0)"]
 name = "tavily-python"
 version = "0.5.0"
 description = "Python wrapper for the Tavily API"
-optional = false
+optional = true
 python-versions = ">=3.6"
 files = [
     {file = "tavily_python-0.5.0-py3-none-any.whl", hash = "sha256:e874f6a04a56cdda80a505fe0b4f5d61d25372bd52a83e6773926fb297dcaa29"},
@@ -7030,4 +7030,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "58da9722849dab030d6d0ec0552d19301536cd98b3d61f42ed50a265fbee6e09"
+content-hash = "00a7d4fdda71cde55ff41591835f8c079f8997aabf6c1eeb6fb155af794f7547"
