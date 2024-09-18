@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -20,7 +20,7 @@ class TavilyWebSearchDriver(BaseWebSearchDriver):
         default=Factory(lambda self: import_optional_dependency("tavily").TavilyClient(self.api_key), takes_self=True),
         kw_only=True,
     )
-    params: dict = field(default=Factory(dict), kw_only=True, metadata={"serializable": True})
+    params: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def search(self, query: str, **kwargs) -> ListArtifact:
         response = self.client.search(query, max_results=self.results_count, **self.params, **kwargs)
