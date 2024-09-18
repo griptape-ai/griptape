@@ -5,14 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Added
+- `TavilyWebSearchDriver` to utilize Tavily web search SDK.
 ## [0.32.0] - 2024-09-17
 
 ### Added
 - `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
 - `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 string.
 - `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
-- `TavilyWebSearchDriver` to utilize Tavily web search SDK.
 - `AzureOpenAiTextToSpeechDriver`.
 - `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
 - Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
