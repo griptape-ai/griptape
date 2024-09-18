@@ -23,7 +23,9 @@ class ExaWebSearchDriver(BaseWebSearchDriver):
 
     def search(self, query: str, **kwargs) -> ListArtifact:
         try:
-            results = self.client.search(query, num_results=self.results_count, **kwargs)
+            results = self.client.search_and_contents(
+                query, text=True, highlights=True, num_results=2, **kwargs, type="neural", use_autoprompt=True
+            )
             return ListArtifact(
                 [
                     TextArtifact(
