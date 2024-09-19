@@ -1457,7 +1457,7 @@ files = [
 name = "duckduckgo-search"
 version = "6.2.12"
 description = "Search for words, documents, images, news, maps and text translation using the DuckDuckGo.com search engine."
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "duckduckgo_search-6.2.12-py3-none-any.whl", hash = "sha256:0d379c1f845b632a41553efb13d571788f19ad289229e641a27b5710d92097a6"},
@@ -4235,7 +4235,7 @@ virtualenv = ">=20.10.0"
 name = "primp"
 version = "0.6.2"
 description = "HTTP client that can impersonate web browsers, mimicking their headers and `TLS/JA3/JA4/HTTP2` fingerprints"
-optional = false
+optional = true
 python-versions = ">=3.8"
 files = [
     {file = "primp-0.6.2-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:4a35d441462a55d9a9525bf170e2ffd2fcb3db6039b23e802859fa22c18cdd51"},
@@ -7018,4 +7018,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "61a7864db54fad19a71ca8a70e848709b45fe95828b0b36426fd1bc932f6189b"
+content-hash = "73313f20ff340b64fb247bba78104a80e20d59d8079861b67131f2d1bc1fe972"
