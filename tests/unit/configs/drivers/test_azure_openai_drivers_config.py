@@ -95,6 +95,8 @@ class TestAzureOpenAiDriversConfig:
                 "organization": None,
                 "type": "AzureOpenAiTextToSpeechDriver",
                 "voice": "alloy",
+                "speed": 1.0,
+                "max_characters": 4096,
             },
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
             "ruleset_driver": {

@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Callable
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.engines import TextToSpeechEngine
 from griptape.tasks.base_audio_generation_task import BaseAudioGenerationTask
 from griptape.utils import J2
@@ -34,10 +34,11 @@ class TextToSpeechTask(BaseAudioGenerationTask):
     def input(self, value: TextArtifact) -> None:
         self._input = value
 
-    def run(self) -> AudioArtifact:
-        audio_artifact = self.text_to_speech_engine.run(prompts=[self.input.to_text()], rulesets=self.rulesets)
+    def run(self) -> ListArtifact[AudioArtifact]:
+        audio_artifacts = self.text_to_speech_engine.run(prompts=[self.input.to_text()], rulesets=self.rulesets)
 
         if self.output_dir or self.output_file:
-            self._write_to_file(audio_artifact)
+            for audio_artifact in audio_artifacts:
+                self._write_to_file(audio_artifact)
 
-        return audio_artifact
+        return ListArtifact(audio_artifacts)

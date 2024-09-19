@@ -18,18 +18,21 @@ if TYPE_CHECKING:
 @define
 class BaseTextToSpeechDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     model: str = field(kw_only=True, metadata={"serializable": True})
+    max_characters: int = field(kw_only=True, metadata={"serializable": True})
 
-    def before_run(self, prompts: list[str]) -> None:
-        EventBus.publish_event(StartTextToSpeechEvent(prompts=prompts))
+    def before_run(self, prompt: str) -> None:
+        if len(prompt) > self.max_characters:
+            raise ValueError(f"Prompt exceeds maximum character limit of {self.max_characters}")
+        EventBus.publish_event(StartTextToSpeechEvent(prompt=prompt))
 
     def after_run(self) -> None:
         EventBus.publish_event(FinishTextToSpeechEvent())
 
-    def run_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
+    def run_text_to_audio(self, prompt: str) -> AudioArtifact:
         for attempt in self.retrying():
             with attempt:
-                self.before_run(prompts)
-                result = self.try_text_to_audio(prompts)
+                self.before_run(prompt)
+                result = self.try_text_to_audio(prompt)
                 self.after_run()
 
                 return result
@@ -38,4 +41,4 @@ class BaseTextToSpeechDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             raise Exception("Failed to run text to audio generation")
 
     @abstractmethod
-    def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact: ...
+    def try_text_to_audio(self, prompt: str) -> AudioArtifact: ...

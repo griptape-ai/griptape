@@ -25,17 +25,17 @@ class TestTextToSpeechTool:
     def test_text_to_speech(self, text_to_speech_client) -> None:
         text_to_speech_client.engine.run.return_value = Mock(value=b"audio data", format="mp3")
 
-        audio_artifact = text_to_speech_client.text_to_speech(params={"values": {"text": "say this!"}})
+        list_audio_artifact = text_to_speech_client.text_to_speech(params={"values": {"text": "say this!"}})
 
-        assert audio_artifact
+        assert list_audio_artifact
 
     def test_text_to_speech_with_outfile(self, text_to_speech_engine) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.mp3"
         text_to_speech_client = TextToSpeechTool(engine=text_to_speech_engine, output_file=outfile)
 
-        text_to_speech_client.engine.run.return_value = AudioArtifact(value=b"audio data", format="mp3")  # pyright: ignore[reportFunctionMemberAccess]
+        text_to_speech_client.engine.run.return_value = [AudioArtifact(value=b"audio data", format="mp3")]  # pyright: ignore[reportFunctionMemberAccess]
 
-        audio_artifact = text_to_speech_client.text_to_speech(params={"values": {"text": "say this!"}})
+        list_audio_artifact = text_to_speech_client.text_to_speech(params={"values": {"text": "say this!"}})
 
-        assert audio_artifact
+        assert list_audio_artifact
         assert os.path.exists(outfile)
