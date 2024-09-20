@@ -26,6 +26,14 @@ class Workflow(Structure, FuturesExecutorMixin):
     def output_task(self) -> Optional[BaseTask]:
         return self.order_tasks()[-1] if self.tasks else None
 
+    @property
+    def input_tasks(self) -> list[BaseTask]:
+        return [task for task in self.tasks if not task.parents]
+
+    @property
+    def output_tasks(self) -> list[BaseTask]:
+        return [task for task in self.tasks if not task.children]
+
     def add_task(self, task: BaseTask) -> BaseTask:
         if (existing_task := self.try_find_task(task.id)) is not None:
             return existing_task
