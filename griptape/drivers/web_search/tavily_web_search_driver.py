@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import JsonArtifact, ListArtifact
+from griptape.artifacts import JsonArtifact, ListArtifact, TextArtifact
 from griptape.drivers import BaseWebSearchDriver
 from griptape.utils import import_optional_dependency
 
@@ -24,4 +24,4 @@ class TavilyWebSearchDriver(BaseWebSearchDriver):
     def search(self, query: str, **kwargs) -> ListArtifact:
         response = self.client.search(query, max_results=self.results_count, **self.params, **kwargs)
         results = response["results"]
-        return ListArtifact([JsonArtifact(result, encoding="utf-8") for result in results])
+        return ListArtifact([TextArtifact(JsonArtifact(result)) for result in results])
