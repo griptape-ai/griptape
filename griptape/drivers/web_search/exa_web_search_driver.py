@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -16,19 +16,21 @@ if TYPE_CHECKING:
 @define
 class ExaWebSearchDriver(BaseWebSearchDriver):
     api_key: str = field(kw_only=True)
-    params: dict[str, Any] = field(default=Factory(dict), kw_only=True)
     client: Exa = field(
         default=Factory(lambda self: import_optional_dependency("exa_py.api").Exa(self.api_key), takes_self=True),
         kw_only=True,
     )
+    params: dict = field(default=Factory(dict), kw_only=True, metadata={"serializable": True})
 
     def search(self, query: str, **kwargs) -> ListArtifact:
         try:
-            results = self.client.search_and_contents(query, **self.params, **kwargs)
+            results = self.client.search_and_contents(
+                query=query, num_results=self.results_count, highlights=True, **self.params, **kwargs
+            )
             return ListArtifact(
                 [
                     TextArtifact(
-                        json.dumps({"title": result.title, "url": result.url}),
+                        json.dumps({"title": result.title, "url": result.url, "description": result.highlights}),
                     )
                     for result in results.results
                 ],
