@@ -110,14 +110,14 @@ Example Event body:
 
 ### User Events
 
-User Events are any Events emitted by your Structure code to the Events API. The recommended approach for emitting those Events is to make use of the
+`USER` Events are any Events emitted by your Structure code to the Events API. The recommended approach for emitting those Events is to make use of the
 [Griptape Cloud Event Listener Driver](../../griptape-framework/drivers/event-listener-drivers.md#griptape-cloud) in the Griptape framework.
 
 For a full example of Structure code that makes use of that driver, refer to the [Managed Structure Template](https://github.com/griptape-ai/managed-structure-template/blob/main/structure.py).
 
 #### Structure Run Output
 
-In order for Griptape Cloud to populate the `output` field for your Structure Run, there needs to be a `USER` Event of type `FinishStructureRunEvent`.
+In order for Griptape Cloud to populate the `output` field for your Structure Run, you must send a `USER` Event of type `FinishStructureRunEvent`.
 
 By using the Griptape Cloud Event Listener Driver and an [Event Bus](../../griptape-framework/misc/events.md) that emits that Event type in your Structure code, the Cloud will automatically populate your Structure Run's output.
 
