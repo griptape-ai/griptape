@@ -762,6 +762,26 @@ class TestWorkflow:
 
         assert workflow.output is not None
 
+    def test_nested_tasks(self):
+        parent = PromptTask("parent")
+        child = PromptTask("child")
+        grandchild = PromptTask("grandchild")
+        workflow = Workflow(
+            tasks=[
+                [parent, child, grandchild],
+            ]
+        )
+
+        workflow + parent
+        parent.add_child(child)
+        child.add_child(grandchild)
+
+        workflow.run()
+
+        assert parent.state == BaseTask.State.FINISHED
+        assert child.state == BaseTask.State.FINISHED
+        assert grandchild.state == BaseTask.State.FINISHED
+
     @staticmethod
     def _validate_topology_1(workflow) -> None:
         assert len(workflow.tasks) == 4

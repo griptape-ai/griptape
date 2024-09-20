@@ -40,7 +40,7 @@ class Workflow(Structure, FuturesExecutorMixin):
 
         task.preprocess(self)
 
-        self.tasks.append(task)
+        self._tasks.append(task)
 
         return task
 
@@ -90,7 +90,7 @@ class Workflow(Structure, FuturesExecutorMixin):
         last_parent_index = self.__link_task_to_parents(task, parent_tasks)
 
         # Insert the new task once, just after the last parent task
-        self.tasks.insert(last_parent_index + 1, task)
+        self._tasks.insert(last_parent_index + 1, task)
 
         return task
 

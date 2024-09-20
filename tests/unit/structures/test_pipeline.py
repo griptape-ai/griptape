@@ -374,7 +374,7 @@ class TestPipeline:
         pipeline = Pipeline()
 
         pipeline + task
-        pipeline.tasks.append(task)
+        pipeline._tasks.append(task)
 
         with pytest.raises(ValueError, match=f"Duplicate task with id {task.id} found."):
             pipeline.run()
