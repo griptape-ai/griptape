@@ -4,6 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    versioning-strategy: increase-if-necessary
     groups:
       dependencies:
         dependency-type: "production"
@@ -15,6 +16,9 @@ updates:
         update-types:
         - "minor"
         - "patch"
+    allow:
+      - dependency-type: production
+      - dependency-type: development
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

@@ -27,7 +27,7 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
             the browser has emitted the "load" event.
     """
 
-    DEFAULT_EXCLUDE_TAGS = ["script", "style", "head"]
+    DEFAULT_EXCLUDE_TAGS = ["script", "style", "head", "audio", "img", "picture", "source", "video"]
 
     include_links: bool = field(default=True, kw_only=True)
     exclude_tags: list[str] = field(

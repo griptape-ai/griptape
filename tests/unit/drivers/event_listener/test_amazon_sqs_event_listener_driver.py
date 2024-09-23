@@ -1,6 +1,6 @@
 import boto3
 import pytest
-from moto import mock_sqs
+from moto import mock_aws
 
 from griptape.drivers.event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
 from tests.mocks.mock_event import MockEvent
@@ -14,7 +14,7 @@ class TestAmazonSqsEventListenerDriver:
 
     @pytest.fixture()
     def driver(self):
-        mock = mock_sqs()
+        mock = mock_aws()
         mock.start()
 
         session = boto3.Session(region_name="us-east-1")

@@ -26,6 +26,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `FileManagerTool` now uses `filetype` for more accurate file type detection.
 - `BaseFileLoader.load_file()` will now either return a `TextArtifact` or a `BlobArtifact` depending on whether `BaseFileManager.encoding` is set.
 
+## Added
+- `Workflow.input_tasks` and `Workflow.output_tasks` to access the input and output tasks of a Workflow.
+- Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more complex declarative Structure definitions.
+- `TavilyWebSearchDriver` to integrate Tavily's web search capabilities.
+- `ExaWebSearchDriver` to integrate Exa's web search capabilities.
+- `Workflow.outputs` to access the outputs of a Workflow.
+
+### Changed
+- **BREAKING**: Renamed parameters on several classes to `client`:
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockTitanEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockImageGenerationDriver`.
+  - `bedrock_client` on `AmazonBedrockImageQueryDriver`.
+  - `bedrock_client` on `AmazonBedrockPromptDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartEmbeddingDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartPromptDriver`.
+  - `sqs_client` on `AmazonSqsEventListenerDriver`.
+  - `iotdata_client` on `AwsIotCoreEventListenerDriver`.
+  - `s3_client` on `AmazonS3FileManagerDriver`.
+  - `s3_client` on `AwsS3Tool`.
+  - `iam_client` on `AwsIamTool`.
+  - `pusher_client` on `PusherEventListenerDriver`.
+  - `mq` on `MarqoVectorStoreDriver`.
+  - `model_client` on `GooglePromptDriver`.
+  - `model_client` on `GoogleTokenizer`.
+- **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
+- Several places where API clients are initialized are now lazy loaded.
+- `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
+- **BREAKING**: Update `pypdf` dependency to `^5.0.1`.
+- **BREAKING**: Update `redis` dependency to `^5.1.0`.
+- **BREAKING**: Remove `torch` extra from `transformers` dependency. This must be installed separately.
+- `MarkdownifyWebScraperDriver.DEFAULT_EXCLUDE_TAGS` now includes media/blob-like HTML tags
+
+### Fixed
+- Anthropic native Tool calling
+
 ## [0.32.0] - 2024-09-17
 
 ### Added

@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, NoReturn, Optional
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import marqo
@@ -21,20 +22,18 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     Attributes:
         api_key: The API key for the Marqo API.
         url: The URL to the Marqo API.
-        mq: An optional Marqo client. Defaults to a new client with the given URL and API key.
+        client: An optional Marqo client. Defaults to a new client with the given URL and API key.
         index: The name of the index to use.
     """
 
     api_key: str = field(kw_only=True, metadata={"serializable": True})
     url: str = field(kw_only=True, metadata={"serializable": True})
-    mq: Optional[marqo.Client] = field(
-        default=Factory(
-            lambda self: import_optional_dependency("marqo").Client(self.url, api_key=self.api_key),
-            takes_self=True,
-        ),
-        kw_only=True,
-    )
     index: str = field(kw_only=True, metadata={"serializable": True})
+    _client: marqo.Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> marqo.Client:
+        return import_optional_dependency("marqo").Client(self.url, api_key=self.api_key)
 
     def upsert_text(
         self,
@@ -65,7 +64,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         if namespace:
             doc["namespace"] = namespace
 
-        response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description"])
+        response = self.client.index(self.index).add_documents([doc], tensor_fields=["Description"])
         if isinstance(response, dict) and "items" in response and response["items"]:
             return response["items"][0]["_id"]
         else:
@@ -102,7 +101,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             "namespace": namespace,
         }
 
-        response = self.mq.index(self.index).add_documents([doc], tensor_fields=["Description", "artifact"])
+        response = self.client.index(self.index).add_documents([doc], tensor_fields=["Description", "artifact"])
         if isinstance(response, dict) and "items" in response and response["items"]:
             return response["items"][0]["_id"]
         else:
@@ -118,7 +117,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             The loaded Entry if found, otherwise None.
         """
-        result = self.mq.index(self.index).get_document(document_id=vector_id, expose_facets=True)
+        result = self.client.index(self.index).get_document(document_id=vector_id, expose_facets=True)
 
         if result and "_tensor_facets" in result and len(result["_tensor_facets"]) > 0:
             return BaseVectorStoreDriver.Entry(
@@ -141,15 +140,15 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         filter_string = f"namespace:{namespace}" if namespace else None
 
         if filter_string is not None:
-            results = self.mq.index(self.index).search("", limit=10000, filter_string=filter_string)
+            results = self.client.index(self.index).search("", limit=10000, filter_string=filter_string)
         else:
-            results = self.mq.index(self.index).search("", limit=10000)
+            results = self.client.index(self.index).search("", limit=10000)
 
         # get all _id's from search results
         ids = [r["_id"] for r in results["hits"]]
 
         # get documents corresponding to the ids
-        documents = self.mq.index(self.index).get_documents(document_ids=ids, expose_facets=True)
+        documents = self.client.index(self.index).get_documents(document_ids=ids, expose_facets=True)
 
         # for each document, if it's found, create an Entry object
         entries = []
@@ -195,11 +194,12 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             "filter_string": f"namespace:{namespace}" if namespace else None,
         } | kwargs
 
-        results = self.mq.index(self.index).search(query, **params)
+        results = self.client.index(self.index).search(query, **params)
 
         if include_vectors:
             results["hits"] = [
-                {**r, **self.mq.index(self.index).get_document(r["_id"], expose_facets=True)} for r in results["hits"]
+                {**r, **self.client.index(self.index).get_document(r["_id"], expose_facets=True)}
+                for r in results["hits"]
             ]
 
         return [
@@ -218,7 +218,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         Args:
             name: The name of the index to delete.
         """
-        return self.mq.delete_index(name)
+        return self.client.delete_index(name)
 
     def get_indexes(self) -> list[str]:
         """Get a list of all indexes in the Marqo client.
@@ -226,7 +226,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             The list of all indexes.
         """
-        return [index["index"] for index in self.mq.get_indexes()["results"]]
+        return [index["index"] for index in self.client.get_indexes()["results"]]
 
     def upsert_vector(
         self,

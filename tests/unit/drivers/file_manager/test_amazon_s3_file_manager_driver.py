@@ -3,7 +3,7 @@ import tempfile
 
 import boto3
 import pytest
-from moto import mock_s3
+from moto import mock_aws
 
 from griptape.artifacts import InfoArtifact, TextArtifact
 from griptape.artifacts.blob_artifact import BlobArtifact
@@ -18,7 +18,7 @@ class TestAmazonS3FileManagerDriver:
 
     @pytest.fixture()
     def session(self):
-        mock = mock_s3()
+        mock = mock_aws()
         mock.start()
         yield boto3.Session(region_name="us-east-1")
         mock.stop()
