@@ -30,12 +30,12 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     create_engine_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     table_name: str = field(kw_only=True, metadata={"serializable": True})
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
-    _sqlalchemy_engine: sqlalchemy.Engine = field(default=None, kw_only=True, metadata={"serializable": False})
+    _engine: sqlalchemy.Engine = field(default=None, kw_only=True, alias="engine", metadata={"serializable": False})
 
     @connection_string.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_connection_string(self, _: Attribute, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
-        if self._sqlalchemy_engine is not None:
+        if self._engine is not None:
             return
 
         # If an engine is not provided, a connection string is required.
@@ -46,7 +46,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError("The connection string must describe a Postgres database connection")
 
     @lazy_property()
-    def sqlalchemy_engine(self) -> sqlalchemy.Engine:
+    def engine(self) -> sqlalchemy.Engine:
         return import_optional_dependency("sqlalchemy").create_engine(
             self.connection_string, **self.create_engine_params
         )
@@ -62,15 +62,15 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         sqlalchemy_sql = import_optional_dependency("sqlalchemy.sql")
 
         if install_uuid_extension:
-            with self.sqlalchemy_engine.begin() as conn:
+            with self.engine.begin() as conn:
                 conn.execute(sqlalchemy_sql.text('CREATE EXTENSION IF NOT EXISTS "uuid-ossp";'))
 
         if install_vector_extension:
-            with self.sqlalchemy_engine.begin() as conn:
+            with self.engine.begin() as conn:
                 conn.execute(sqlalchemy_sql.text('CREATE EXTENSION IF NOT EXISTS "vector";'))
 
         if create_schema:
-            self._model.metadata.create_all(self.sqlalchemy_engine)
+            self._model.metadata.create_all(self.engine)
 
     def upsert_vector(
         self,
@@ -84,7 +84,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         """Inserts or updates a vector in the collection."""
         sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
 
-        with sqlalchemy_orm.Session(self.sqlalchemy_engine) as session:
+        with sqlalchemy_orm.Session(self.engine) as session:
             obj = self._model(id=vector_id, vector=vector, namespace=namespace, meta=meta, **kwargs)
 
             obj = session.merge(obj)
@@ -96,7 +96,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
         sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
 
-        with sqlalchemy_orm.Session(self.sqlalchemy_engine) as session:
+        with sqlalchemy_orm.Session(self.engine) as session:
             result = session.get(self._model, vector_id)
 
             return BaseVectorStoreDriver.Entry(
@@ -110,7 +110,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         """Retrieves all vector entries from the collection, optionally filtering to only those that match the provided namespace."""
         sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
 
-        with sqlalchemy_orm.Session(self.sqlalchemy_engine) as session:
+        with sqlalchemy_orm.Session(self.engine) as session:
             query = session.query(self._model)
             if namespace:
                 query = query.filter_by(namespace=namespace)
@@ -151,7 +151,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
         op = distance_metrics[distance_metric]
 
-        with sqlalchemy_orm.Session(self.sqlalchemy_engine) as session:
+        with sqlalchemy_orm.Session(self.engine) as session:
             vector = self.embedding_driver.embed_string(query)
 
             # The query should return both the vector and the distance metric score.

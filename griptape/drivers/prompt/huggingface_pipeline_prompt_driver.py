@@ -14,7 +14,7 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from transformers import TextGenerationPipeline
+    from transformers import Pipeline
 
 
 @define
@@ -36,14 +36,13 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
-    _text_generation_pipeline: TextGenerationPipeline = field(
-        default=None, kw_only=True, alias="text_generation_pipeline", metadata={"serializable": False}
-    )
+    pipeline_task: str = field(default="text-generation", kw_only=True, metadata={"serializable": True})
+    _pipeline: Pipeline = field(default=None, kw_only=True, alias="pipeline", metadata={"serializable": False})
 
     @lazy_property()
-    def text_generation_pipeline(self) -> TextGenerationPipeline:
+    def pipeline(self) -> Pipeline:
         return import_optional_dependency("transformers").pipeline(
-            "text-generation",
+            task=self.pipeline_task,
             model=self.model,
             max_new_tokens=self.max_tokens,
             tokenizer=self.tokenizer.tokenizer,
@@ -53,7 +52,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
-        result = self.text_generation_pipeline(
+        result = self.pipeline(
             messages,
             max_new_tokens=self.max_tokens,
             temperature=self.temperature,

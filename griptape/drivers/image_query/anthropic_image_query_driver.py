@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
@@ -8,6 +8,9 @@ from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers import BaseImageQueryDriver
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
+
+if TYPE_CHECKING:
+    from anthropic import Anthropic
 
 
 @define
@@ -22,10 +25,10 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
 
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    _client: Any = field(default=None, kw_only=True, metadata={"serializable": False})
+    _client: Anthropic = field(default=None, kw_only=True, metadata={"serializable": False})
 
     @lazy_property()
-    def client(self) -> Any:
+    def client(self) -> Anthropic:
         return import_optional_dependency("anthropic").Anthropic(api_key=self.api_key)
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:

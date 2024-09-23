@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
@@ -12,6 +12,7 @@ from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
+    from mypy_boto3_bedrock import BedrockClient
 
 
 @define
@@ -31,10 +32,10 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
     image_width: int = field(default=512, kw_only=True, metadata={"serializable": True})
     image_height: int = field(default=512, kw_only=True, metadata={"serializable": True})
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: BedrockClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
-    def client(self) -> Any:
+    def client(self) -> BedrockClient:
         return self.session.client("bedrock-runtime")
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:

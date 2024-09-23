@@ -7,23 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 
 ### Changed
-- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver` to `client`.
-- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockTitanEmbeddingDriver` to `client`.
-- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockImageGenerationDriver` to `client`.
-- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockImageQueryDriver` to `client`.
-- **BREAKING**: Renamed parameter `bedrock_client` on `AmazonBedrockPromptDriver` to `client`.
-- **BREAKING**: Renamed parameter `sagemaker_client` on `AmazonSageMakerJumpstartEmbeddingDriver` to `client`.
-- **BREAKING**: Renamed parameter `sagemaker_client` on `AmazonSageMakerJumpstartPromptDriver` to `client`.
-- **BREAKING**: Renamed parameter `sqs_client` on `AmazonSqsEventListenerDriver` to `client`.
-- **BREAKING**: Renamed parameter `iotdata_client` on `AwsIotCoreEventListenerDriver` to `client`.
-- **BREAKING**: Renamed parameter `s3_client` on `AmazonS3FileManagerDriver` to `client`.
-- **BREAKING**: Renamed parameter `s3_client` on `AwsS3Tool` to `client`.
-- **BREAKING**: Renamed parameter `pusher_client` on `PusherEventListenerDriver` to `client`.
-- **BREAKING**: Renamed parameter `mq` on `MarqoVectorStoreDriver` to `client`.
-- **BREAKING**: Renamed parameter `model_client` on `GooglePromptDriver` to `client`.
-- **BREAKING**: Renamed parameter `model_client` on `GoogleTokenizer` to `client`.
-- **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `text_generation_pipeline`.
-- **BREAKING**: Renamed parameter `engine` on `PgVectorVectorStoreDriver` to `sqlalchemy_engine`.
+- **BREAKING**: Renamed parameters on several classes to `client`:
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockTitanEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockImageGenerationDriver`.
+  - `bedrock_client` on `AmazonBedrockImageQueryDriver`.
+  - `bedrock_client` on `AmazonBedrockPromptDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartEmbeddingDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartPromptDriver`.
+  - `sqs_client` on `AmazonSqsEventListenerDriver`.
+  - `AwsIotCoreEventListenerDriver`.
+  - `s3_client` on `AmazonS3FileManagerDriver`.
+  - `s3_client` on `AwsS3Tool`.
+  - `pusher_client` on `PusherEventListenerDriver`.
+  - `mq` on `MarqoVectorStoreDriver`.
+  - `model_client` on `GooglePromptDriver`.
+  - `model_client` on `GoogleTokenizer`.
+- **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
 - Several places where API clients are initialized are now lazy loaded.
 
 

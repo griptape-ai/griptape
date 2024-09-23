@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
@@ -11,6 +11,7 @@ from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
+    from mypy_boto3_sagemaker import SageMakerClient
 
 
 @define
@@ -19,10 +20,10 @@ class AmazonSageMakerJumpstartEmbeddingDriver(BaseEmbeddingDriver):
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
     inference_component_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: SageMakerClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
-    def client(self) -> Any:
+    def client(self) -> SageMakerClient:
         return self.session.client("sagemaker-runtime")
 
     def try_embed_chunk(self, chunk: str) -> list[float]:

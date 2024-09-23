@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, Factory, define, field
 
@@ -11,6 +11,7 @@ from .base_file_manager_driver import BaseFileManagerDriver
 
 if TYPE_CHECKING:
     import boto3
+    from mypy_boto3_s3 import S3Client
 
 
 @define
@@ -28,10 +29,10 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     bucket: str = field(kw_only=True)
     workdir: str = field(default="/", kw_only=True)
-    _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: S3Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
-    def client(self) -> Any:
+    def client(self) -> S3Client:
         return self.session.client("s3")
 
     @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]

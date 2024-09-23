@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -11,6 +11,7 @@ from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
+    from mypy_boto3_bedrock import BedrockClient
 
     from griptape.artifacts import ImageArtifact, TextArtifact
 
@@ -18,10 +19,10 @@ if TYPE_CHECKING:
 @define
 class AmazonBedrockImageQueryDriver(BaseMultiModelImageQueryDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: BedrockClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
-    def client(self) -> Any:
+    def client(self) -> BedrockClient:
         return self.session.client("bedrock-runtime")
 
     def try_query(self, query: str, images: list[ImageArtifact]) -> TextArtifact:

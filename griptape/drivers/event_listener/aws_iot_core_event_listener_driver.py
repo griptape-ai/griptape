@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -11,6 +11,7 @@ from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
+    from mypy_boto3_iot_data import IoTDataPlaneClient
 
 
 @define
@@ -18,10 +19,10 @@ class AwsIotCoreEventListenerDriver(BaseEventListenerDriver):
     iot_endpoint: str = field(kw_only=True)
     topic: str = field(kw_only=True)
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: IoTDataPlaneClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
-    def client(self) -> Any:
+    def client(self) -> IoTDataPlaneClient:
         return self.session.client("iot-data")
 
     def try_publish_event_payload(self, event_payload: dict) -> None:
