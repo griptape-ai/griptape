@@ -165,6 +165,13 @@ class BaseSchema(Schema):
                 if is_dependency_installed("google.generativeai")
                 else Any,
                 "boto3": import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any,
+                "Anthropic": import_optional_dependency("anthropic").Anthropic
+                if is_dependency_installed("anthropic")
+                else Any,
+                "BedrockClient": import_optional_dependency("mypy_boto3_bedrock").BedrockClient
+                if is_dependency_installed("mypy_boto3_bedrock")
+                else Any,
+                "voyageai": import_optional_dependency("voyageai") if is_dependency_installed("voyageai") else Any,
             },
         )
 

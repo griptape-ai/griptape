@@ -6,6 +6,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Added
+- Parameter `pipeline_task` on `HuggingFacePipelinePromptDriver` for creating different types of `Pipeline`s.
+
+### Changed
+- **BREAKING**: Renamed parameters on several classes to `client`:
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockTitanEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockImageGenerationDriver`.
+  - `bedrock_client` on `AmazonBedrockImageQueryDriver`.
+  - `bedrock_client` on `AmazonBedrockPromptDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartEmbeddingDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartPromptDriver`.
+  - `sqs_client` on `AmazonSqsEventListenerDriver`.
+  - `iotdata_client` on `AwsIotCoreEventListenerDriver`.
+  - `s3_client` on `AmazonS3FileManagerDriver`.
+  - `s3_client` on `AwsS3Tool`.
+  - `iam_client` on `AwsIamTool`.
+  - `pusher_client` on `PusherEventListenerDriver`.
+  - `mq` on `MarqoVectorStoreDriver`.
+  - `model_client` on `GooglePromptDriver`.
+  - `model_client` on `GoogleTokenizer`.
+- **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
+- Several places where API clients are initialized are now lazy loaded.
+
+
 ## [0.32.0] - 2024-09-17
 
 ### Added

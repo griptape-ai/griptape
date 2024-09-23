@@ -6,6 +6,7 @@ import openai
 from attrs import Factory, define, field
 
 from griptape.drivers import OpenAiChatPromptDriver
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from griptape.common import PromptStack
@@ -37,20 +38,19 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
         metadata={"serializable": False},
     )
     api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
-    client: openai.AzureOpenAI = field(
-        default=Factory(
-            lambda self: openai.AzureOpenAI(
-                organization=self.organization,
-                api_key=self.api_key,
-                api_version=self.api_version,
-                azure_endpoint=self.azure_endpoint,
-                azure_deployment=self.azure_deployment,
-                azure_ad_token=self.azure_ad_token,
-                azure_ad_token_provider=self.azure_ad_token_provider,
-            ),
-            takes_self=True,
-        ),
-    )
+    _client: openai.AzureOpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> openai.AzureOpenAI:
+        return openai.AzureOpenAI(
+            organization=self.organization,
+            api_key=self.api_key,
+            api_version=self.api_version,
+            azure_endpoint=self.azure_endpoint,
+            azure_deployment=self.azure_deployment,
+            azure_ad_token=self.azure_ad_token,
+            azure_ad_token_provider=self.azure_ad_token_provider,
+        )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = super()._base_params(prompt_stack)

@@ -380,10 +380,14 @@ files = [
 [package.dependencies]
 botocore-stubs = "*"
 mypy-boto3-bedrock = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"bedrock\""}
+mypy-boto3-dynamodb = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"dynamodb\""}
 mypy-boto3-iam = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"iam\""}
+mypy-boto3-iot-data = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"iot-data\""}
 mypy-boto3-opensearch = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"opensearch\""}
+mypy-boto3-redshift-data = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"redshift-data\""}
 mypy-boto3-s3 = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"s3\""}
 mypy-boto3-sagemaker = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"sagemaker\""}
+mypy-boto3-sqs = {version = ">=1.35.0,<1.36.0", optional = true, markers = "extra == \"sqs\""}
 types-s3transfer = "*"
 typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
 
@@ -3388,6 +3392,20 @@ files = [
 typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
 
 [[package]]
+name = "mypy-boto3-dynamodb"
+version = "1.35.24"
+description = "Type annotations for boto3.DynamoDB 1.35.24 service generated with mypy-boto3-builder 8.1.1"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "mypy_boto3_dynamodb-1.35.24-py3-none-any.whl", hash = "sha256:022859543c5314f14fb03ef4e445e34b97b9bc0cecb003c14c10943a2eaa3ff7"},
+    {file = "mypy_boto3_dynamodb-1.35.24.tar.gz", hash = "sha256:55bf897a1d0e354579edb05001f4bc4f472b9452badd9db24876c31bdf3f72a1"},
+]
+
+[package.dependencies]
+typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
+
+[[package]]
 name = "mypy-boto3-iam"
 version = "1.35.0"
 description = "Type annotations for boto3.IAM 1.35.0 service generated with mypy-boto3-builder 7.26.0"
@@ -3402,6 +3420,20 @@ files = [
 typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
 
 [[package]]
+name = "mypy-boto3-iot-data"
+version = "1.35.0"
+description = "Type annotations for boto3.IoTDataPlane 1.35.0 service generated with mypy-boto3-builder 7.26.0"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "mypy_boto3_iot_data-1.35.0-py3-none-any.whl", hash = "sha256:1f442679a71f22a82b0436ee4f71c06104a9ed722aa71c6800fd93bd345cfc03"},
+    {file = "mypy_boto3_iot_data-1.35.0.tar.gz", hash = "sha256:e83cbbd948bc388ed139d2820442af1d319ca37dce708df44295c4acfcfb30f8"},
+]
+
+[package.dependencies]
+typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
+
+[[package]]
 name = "mypy-boto3-opensearch"
 version = "1.35.0"
 description = "Type annotations for boto3.OpenSearchService 1.35.0 service generated with mypy-boto3-builder 7.26.0"
@@ -3410,6 +3442,20 @@ python-versions = ">=3.8"
 files = [
     {file = "mypy_boto3_opensearch-1.35.0-py3-none-any.whl", hash = "sha256:c03c99e6423e6161ac069b36b57bd58d7f8e8bc2cc2edab468b22a19e5136f63"},
     {file = "mypy_boto3_opensearch-1.35.0.tar.gz", hash = "sha256:0102d4e28af87e55cbc53ad9272d171c89fd3054539a01e35168cbcee3f6a570"},
+]
+
+[package.dependencies]
+typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
+
+[[package]]
+name = "mypy-boto3-redshift-data"
+version = "1.35.10"
+description = "Type annotations for boto3.RedshiftDataAPIService 1.35.10 service generated with mypy-boto3-builder 7.26.1"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "mypy_boto3_redshift_data-1.35.10-py3-none-any.whl", hash = "sha256:1d37d8453c4f3e6b688703a91316729ee2dcaec101326c4f58658d8526d5fc09"},
+    {file = "mypy_boto3_redshift_data-1.35.10.tar.gz", hash = "sha256:2cfe518ef3027c2b050facffd2621924458ddf2fb3df9699cdba33e8a6859594"},
 ]
 
 [package.dependencies]
@@ -3438,6 +3484,20 @@ python-versions = ">=3.8"
 files = [
     {file = "mypy_boto3_sagemaker-1.35.0-py3-none-any.whl", hash = "sha256:cca21f0f8fb505a0530fb5650ab9ad2dba421bfdec8a6a12b39b3b230e15b059"},
     {file = "mypy_boto3_sagemaker-1.35.0.tar.gz", hash = "sha256:b6a6809f221fbe8c27195877333b88804fd0f258fea10e89bc544bb25bb0ec0b"},
+]
+
+[package.dependencies]
+typing-extensions = {version = ">=4.1.0", markers = "python_version < \"3.12\""}
+
+[[package]]
+name = "mypy-boto3-sqs"
+version = "1.35.0"
+description = "Type annotations for boto3.SQS 1.35.0 service generated with mypy-boto3-builder 7.26.0"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "mypy_boto3_sqs-1.35.0-py3-none-any.whl", hash = "sha256:9fd6e622ed231c06f7542ba6f8f0eea92046cace24defa95d0d0ce04e7caee0c"},
+    {file = "mypy_boto3_sqs-1.35.0.tar.gz", hash = "sha256:61752f1c2bf2efa3815f64d43c25b4a39dbdbd9e472ae48aa18d7c6d2a7a6eb8"},
 ]
 
 [package.dependencies]
@@ -6391,6 +6451,11 @@ files = [
     {file = "triton-3.0.0-1-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:34e509deb77f1c067d8640725ef00c5cbfcb2052a1a3cb6a6d343841f92624eb"},
     {file = "triton-3.0.0-1-cp38-cp38-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:bcbf3b1c48af6a28011a5c40a5b3b9b5330530c3827716b5fbf6d7adcc1e53e9"},
     {file = "triton-3.0.0-1-cp39-cp39-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:6e5727202f7078c56f91ff13ad0c1abab14a0e7f2c87e91b12b6f64f3e8ae609"},
+    {file = "triton-3.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:39b052da883351fdf6be3d93cedae6db3b8e3988d3b09ed221bccecfa9612230"},
+    {file = "triton-3.0.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:cd34f19a8582af96e6291d4afce25dac08cb2a5d218c599163761e8e0827208e"},
+    {file = "triton-3.0.0-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0d5e10de8c011adeb7c878c6ce0dd6073b14367749e34467f1cff2bde1b78253"},
+    {file = "triton-3.0.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e8903767951bf86ec960b4fe4e21bc970055afc65e9d57e916d79ae3c93665e3"},
+    {file = "triton-3.0.0-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:41004fb1ae9a53fcb3e970745feb87f0e3c94c6ce1ba86e95fa3b8537894bef7"},
 ]
 
 [package.dependencies]
@@ -7024,4 +7089,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "bb4af9c531d0029cb1baeca3a2e94566aaf6d7cb701a6dc07f5e9983bffd1285"
+content-hash = "96cb1c9cb807d112d5b6fdae19b99fad98de4f82ab73ae8b24d313dd5d7ff773"

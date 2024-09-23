@@ -26,6 +26,7 @@ from griptape.common import (
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
 from griptape.utils import import_optional_dependency, remove_key_in_dict_recursively
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -44,17 +45,13 @@ class GooglePromptDriver(BasePromptDriver):
     Attributes:
         api_key: Google API key.
         model: Google model name.
-        model_client: Custom `GenerativeModel` client.
+        client: Custom `GenerativeModel` client.
         top_p: Optional value for top_p.
         top_k: Optional value for top_k.
     """
 
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    model_client: GenerativeModel = field(
-        default=Factory(lambda self: self._default_model_client(), takes_self=True),
-        kw_only=True,
-    )
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: GoogleTokenizer(api_key=self.api_key, model=self.model), takes_self=True),
         kw_only=True,
@@ -63,11 +60,19 @@ class GooglePromptDriver(BasePromptDriver):
     top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
+    _client: GenerativeModel = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> GenerativeModel:
+        genai = import_optional_dependency("google.generativeai")
+        genai.configure(api_key=self.api_key)
+
+        return genai.GenerativeModel(self.model)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self.__to_google_messages(prompt_stack)
-        response: GenerateContentResponse = self.model_client.generate_content(
+        response: GenerateContentResponse = self.client.generate_content(
             messages,
             **self._base_params(prompt_stack),
         )
@@ -86,7 +91,7 @@ class GooglePromptDriver(BasePromptDriver):
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         messages = self.__to_google_messages(prompt_stack)
-        response: GenerateContentResponse = self.model_client.generate_content(
+        response: GenerateContentResponse = self.client.generate_content(
             messages,
             **self._base_params(prompt_stack),
             stream=True,
@@ -119,7 +124,7 @@ class GooglePromptDriver(BasePromptDriver):
 
         system_messages = prompt_stack.system_messages
         if system_messages:
-            self.model_client._system_instruction = types.ContentDict(
+            self.client._system_instruction = types.ContentDict(
                 role="system",
                 parts=[protos.Part(text=system_message.to_text()) for system_message in system_messages],
             )
@@ -145,12 +150,6 @@ class GooglePromptDriver(BasePromptDriver):
                 else {}
             ),
         }
-
-    def _default_model_client(self) -> GenerativeModel:
-        genai = import_optional_dependency("google.generativeai")
-        genai.configure(api_key=self.api_key)
-
-        return genai.GenerativeModel(self.model)
 
     def __to_google_messages(self, prompt_stack: PromptStack) -> ContentsType:
         types = import_optional_dependency("google.generativeai.types")

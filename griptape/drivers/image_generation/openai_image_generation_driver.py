@@ -4,10 +4,11 @@ import base64
 from typing import TYPE_CHECKING, Literal, Optional, Union, cast
 
 import openai
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers import BaseImageGenerationDriver
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from openai.types.images_response import ImagesResponse
@@ -38,12 +39,6 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
-    client: openai.OpenAI = field(
-        default=Factory(
-            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
-            takes_self=True,
-        ),
-    )
     style: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     quality: Union[Literal["standard"], Literal["hd"]] = field(
         default="standard",
@@ -58,6 +53,11 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         Literal["1792x1024"],
     ] = field(default="1024x1024", kw_only=True, metadata={"serializable": True})
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True, metadata={"serializable": True})
+    _client: openai.OpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> openai.OpenAI:
+        return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         prompt = ", ".join(prompts)
