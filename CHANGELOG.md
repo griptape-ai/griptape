@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## Unreleased
 ### Added
 - `Workflow.input_tasks` and `Workflow.output_tasks` to access the input and output tasks of a Workflow.
-- Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more declarative Structure definitions.
+- Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more complex declarative Structure definitions.
 
 
 ## Added

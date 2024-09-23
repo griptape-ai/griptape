@@ -763,24 +763,22 @@ class TestWorkflow:
         assert workflow.output is not None
 
     def test_nested_tasks(self):
-        parent = PromptTask("parent")
-        child = PromptTask("child")
-        grandchild = PromptTask("grandchild")
         workflow = Workflow(
             tasks=[
-                [parent, child, grandchild],
-            ]
+                [
+                    PromptTask("parent", id=f"parent_{i}"),
+                    PromptTask("child", id=f"child_{i}", parent_ids=[f"parent_{i}"]),
+                    PromptTask("grandchild", id=f"grandchild_{i}", parent_ids=[f"child_{i}"]),
+                ]
+                for i in range(3)
+            ],
         )
-
-        workflow + parent
-        parent.add_child(child)
-        child.add_child(grandchild)
 
         workflow.run()
 
-        assert parent.state == BaseTask.State.FINISHED
-        assert child.state == BaseTask.State.FINISHED
-        assert grandchild.state == BaseTask.State.FINISHED
+        output_ids = [task.id for task in workflow.output_tasks]
+        assert output_ids == ["grandchild_0", "grandchild_1", "grandchild_2"]
+        assert len(workflow.tasks) == 9
 
     def test_output_tasks(self):
         parent = PromptTask("parent")
