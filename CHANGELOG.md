@@ -6,9 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- Introduced `TavilyWebSearchDriver` to integrate Tavily's web search capabilities:
-  - Supports configurable search parameters
-  - Returns search results as structured artifacts
+- `TavilyWebSearchDriver` to integrate Tavily's web search capabilities.
 ## [0.32.0] - 2024-09-17
 
 ### Added
