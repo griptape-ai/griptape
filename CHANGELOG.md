@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Added
+- Parameter `pipeline_task` on `HuggingFacePipelinePromptDriver` for creating different types of `Pipeline`s.
+
 ### Changed
 - **BREAKING**: Renamed parameters on several classes to `client`:
   - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
