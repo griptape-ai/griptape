@@ -72,10 +72,6 @@ class Structure(ABC):
                 tasks.append(task)
         return tasks
 
-    @tasks.setter
-    def tasks(self, value: list[BaseTask | list[BaseTask]]) -> None:
-        self._tasks = value
-
     @property
     def execution_args(self) -> tuple:
         return self._execution_args
