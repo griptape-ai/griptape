@@ -4,10 +4,11 @@ import io
 from typing import Optional
 
 import openai
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.artifacts import AudioArtifact, TextArtifact
 from griptape.drivers import BaseAudioTranscriptionDriver
+from griptape.utils.decorators import lazy_property
 
 
 @define
@@ -17,12 +18,11 @@ class OpenAiAudioTranscriptionDriver(BaseAudioTranscriptionDriver):
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
-    client: openai.OpenAI = field(
-        default=Factory(
-            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
-            takes_self=True,
-        ),
-    )
+    _client: openai.OpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> openai.OpenAI:
+        return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
     def try_run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:
         additional_params = {}

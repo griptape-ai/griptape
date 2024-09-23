@@ -9,9 +9,10 @@ from attrs import Attribute, Factory, define, field
 
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
-    from sqlalchemy.engine import Engine
+    import sqlalchemy
 
 
 @define
@@ -27,14 +28,14 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
     connection_string: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     create_engine_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
-    engine: Optional[Engine] = field(default=None, kw_only=True)
     table_name: str = field(kw_only=True, metadata={"serializable": True})
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
+    _engine: sqlalchemy.Engine = field(default=None, kw_only=True, alias="engine", metadata={"serializable": False})
 
     @connection_string.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_connection_string(self, _: Attribute, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
-        if self.engine is not None:
+        if self._engine is not None:
             return
 
         # If an engine is not provided, a connection string is required.
@@ -44,22 +45,11 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         if not connection_string.startswith("postgresql://"):
             raise ValueError("The connection string must describe a Postgres database connection")
 
-    @engine.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_engine(self, _: Attribute, engine: Optional[Engine]) -> None:
-        # If a connection string is provided, an engine does not need to be provided.
-        if self.connection_string is not None:
-            return
-
-        # If a connection string is not provided, an engine is required.
-        if engine is None:
-            raise ValueError("An engine or connection string is required")
-
-    def __attrs_post_init__(self) -> None:
-        if self.engine is None:
-            if self.connection_string is None:
-                raise ValueError("An engine or connection string is required")
-            sqlalchemy = import_optional_dependency("sqlalchemy")
-            self.engine = sqlalchemy.create_engine(self.connection_string, **self.create_engine_params)
+    @lazy_property()
+    def engine(self) -> sqlalchemy.Engine:
+        return import_optional_dependency("sqlalchemy").create_engine(
+            self.connection_string, **self.create_engine_params
+        )
 
     def setup(
         self,

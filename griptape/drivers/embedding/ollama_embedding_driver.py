@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from ollama import Client
@@ -23,10 +24,11 @@ class OllamaEmbeddingDriver(BaseEmbeddingDriver):
 
     model: str = field(kw_only=True, metadata={"serializable": True})
     host: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    client: Client = field(
-        default=Factory(lambda self: import_optional_dependency("ollama").Client(host=self.host), takes_self=True),
-        kw_only=True,
-    )
+    _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> Client:
+        return import_optional_dependency("ollama").Client(host=self.host)
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         return list(self.client.embeddings(model=self.model, prompt=chunk)["embedding"])
