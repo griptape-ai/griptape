@@ -171,6 +171,7 @@ class BaseSchema(Schema):
                 "BedrockClient": import_optional_dependency("mypy_boto3_bedrock").BedrockClient
                 if is_dependency_installed("mypy_boto3_bedrock")
                 else Any,
+                "voyageai": import_optional_dependency("voyageai") if is_dependency_installed("voyageai") else Any,
             },
         )
 
