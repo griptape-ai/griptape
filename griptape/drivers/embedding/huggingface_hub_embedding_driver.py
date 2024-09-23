@@ -23,7 +23,7 @@ class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
     """
 
     api_token: str = field(kw_only=True, metadata={"serializable": True})
-    _client: InferenceClient = field(default=None, kw_only=True, metadata={"serializable": False})
+    _client: InferenceClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> InferenceClient:

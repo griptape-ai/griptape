@@ -61,7 +61,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     vector_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     content_payload_key: str = field(default=CONTENT_PAYLOAD_KEY, kw_only=True, metadata={"serializable": True})
-    _client: QdrantClient = field(default=None, kw_only=True, metadata={"serializable": False})
+    _client: QdrantClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> QdrantClient:

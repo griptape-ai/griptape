@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
@@ -8,6 +8,9 @@ from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import VoyageAiTokenizer
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
+
+if TYPE_CHECKING:
+    import voyageai
 
 
 @define
@@ -31,7 +34,7 @@ class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
         kw_only=True,
     )
     input_type: str = field(default="document", kw_only=True, metadata={"serializable": True})
-    _client: Any = field(default=None, kw_only=True, metadata={"serializable": False})
+    _client: voyageai.Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Any:

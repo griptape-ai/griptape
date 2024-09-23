@@ -11,15 +11,15 @@ from griptape.tools import BaseAwsTool
 from griptape.utils.decorators import activity, lazy_property
 
 if TYPE_CHECKING:
-    from mypy_boto3_s3 import Client
+    from mypy_boto3_s3 import S3Client
 
 
 @define
 class AwsS3Tool(BaseAwsTool):
-    _client: Client = field(default=None, kw_only=True)
+    _client: S3Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
-    def client(self) -> Client:
+    def client(self) -> S3Client:
         return self.session.client("s3")
 
     @activity(

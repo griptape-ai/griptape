@@ -25,7 +25,7 @@ class AnthropicImageQueryDriver(BaseImageQueryDriver):
 
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    _client: Anthropic = field(default=None, kw_only=True, metadata={"serializable": False})
+    _client: Anthropic = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Anthropic:

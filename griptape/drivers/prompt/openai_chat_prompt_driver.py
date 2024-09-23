@@ -83,7 +83,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
-    _client: openai.OpenAI = field(default=None, kw_only=True, metadata={"serializable": False})
+    _client: openai.OpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> openai.OpenAI:

@@ -21,7 +21,7 @@ class PusherEventListenerDriver(BaseEventListenerDriver):
     channel: str = field(kw_only=True, metadata={"serializable": True})
     event_name: str = field(kw_only=True, metadata={"serializable": True})
     ssl: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    _client: Pusher = field(default=None, kw_only=True, metadata={"serializable": False})
+    _client: Pusher = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Pusher:

@@ -38,7 +38,7 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
         metadata={"serializable": False},
     )
     api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
-    _client: openai.AzureOpenAI = field(default=None, kw_only=True, metadata={"serializable": False})
+    _client: openai.AzureOpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> openai.AzureOpenAI:
