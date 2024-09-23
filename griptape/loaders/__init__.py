@@ -9,6 +9,7 @@ from .dataframe_loader import DataFrameLoader
 from .email_loader import EmailLoader
 from .image_loader import ImageLoader
 from .audio_loader import AudioLoader
+from .video_loader import VideoLoader
 from .blob_loader import BlobLoader
 
 
@@ -24,5 +25,6 @@ __all__ = [
     "EmailLoader",
     "ImageLoader",
     "AudioLoader",
+    "VideoLoader",
     "BlobLoader",
 ]

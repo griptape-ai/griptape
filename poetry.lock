@@ -2592,6 +2592,25 @@ doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linke
 test = ["pyfakefs", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [[package]]
+name = "lumaai"
+version = "1.0.2"
+description = "The official Python library for the lumaai API"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "lumaai-1.0.2-py3-none-any.whl", hash = "sha256:f4ad8d21e41ac74f71b01bd48b0b45121f5cb1f38fe6bda1bb4ad6f5bd4cc57e"},
+    {file = "lumaai-1.0.2.tar.gz", hash = "sha256:ed33b5f18fce989b73b1681723695c330a44d583c0dd0a46f419c4958925077d"},
+]
+
+[package.dependencies]
+anyio = ">=3.5.0,<5"
+distro = ">=1.7.0,<2"
+httpx = ">=0.23.0,<1"
+pydantic = ">=1.9.0,<3"
+sniffio = "*"
+typing-extensions = ">=4.7,<5"
+
+[[package]]
 name = "lxml"
 version = "5.3.0"
 description = "Powerful and Pythonic XML processing library combining libxml2/libxslt with the ElementTree API."
@@ -7013,4 +7032,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "e951b9aff748e3891f504bacac4bdc86843303f9d74de37949690ede153c1cb2"
+content-hash = "4b127d5930cbe2eaa6f00d5b15abb31c723444e706ed4ec7a41957244aabb918"

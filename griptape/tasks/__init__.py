@@ -19,6 +19,8 @@ from .base_audio_generation_task import BaseAudioGenerationTask
 from .text_to_speech_task import TextToSpeechTask
 from .structure_run_task import StructureRunTask
 from .audio_transcription_task import AudioTranscriptionTask
+from .base_video_generation_task import BaseVideoGenerationTask
+from .prompt_video_generation_task import PromptVideoGenerationTask
 
 __all__ = [
     "BaseTask",
@@ -42,4 +44,6 @@ __all__ = [
     "TextToSpeechTask",
     "StructureRunTask",
     "AudioTranscriptionTask",
+    "BaseVideoGenerationTask",
+    "PromptVideoGenerationTask",
 ]
