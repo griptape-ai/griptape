@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `iotdata_client` on `AwsIotCoreEventListenerDriver`.
   - `s3_client` on `AmazonS3FileManagerDriver`.
   - `s3_client` on `AwsS3Tool`.
+  - `iam_client` on `AwsIamTool`.
   - `pusher_client` on `PusherEventListenerDriver`.
   - `mq` on `MarqoVectorStoreDriver`.
   - `model_client` on `GooglePromptDriver`.
