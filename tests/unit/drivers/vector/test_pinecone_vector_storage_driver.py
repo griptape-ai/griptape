@@ -7,7 +7,7 @@ from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 class TestPineconeVectorStorageDriver:
     @pytest.fixture(autouse=True)
-    def mock_index(self, mocker):
+    def mock_client(self, mocker):
         # Create a fake response
         fake_query_response = {
             "matches": [{"id": "foo", "values": [0, 1, 0], "score": 42, "metadata": {"foo": "bar"}}],
@@ -20,16 +20,19 @@ class TestPineconeVectorStorageDriver:
         mock_index.query.return_value = fake_query_response
         mock_index.create_index.return_value = None
 
-        return mock_index
+        # Return the mock index when the Pinecone client is called
+        mock_client.Index.return_value = mock_index
+
+        return mock_client
 
     @pytest.fixture()
-    def driver(self, mock_index):
+    def driver(self, mock_client):
         return PineconeVectorStoreDriver(
             api_key="foobar",
             index_name="test",
             environment="test",
             embedding_driver=MockEmbeddingDriver(),
-            index=mock_index,
+            client=mock_client,
         )
 
     def test_upsert_text_artifact(self, driver):
