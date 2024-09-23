@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `sagemaker_client` on `AmazonSageMakerJumpstartEmbeddingDriver`.
   - `sagemaker_client` on `AmazonSageMakerJumpstartPromptDriver`.
   - `sqs_client` on `AmazonSqsEventListenerDriver`.
-  - `AwsIotCoreEventListenerDriver`.
+  - `iotdata_client` on `AwsIotCoreEventListenerDriver`.
   - `s3_client` on `AmazonS3FileManagerDriver`.
   - `s3_client` on `AwsS3Tool`.
   - `pusher_client` on `PusherEventListenerDriver`.
