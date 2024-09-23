@@ -782,6 +782,38 @@ class TestWorkflow:
         assert child.state == BaseTask.State.FINISHED
         assert grandchild.state == BaseTask.State.FINISHED
 
+    def test_output_tasks(self):
+        parent = PromptTask("parent")
+        child = PromptTask("child")
+        grandchild = PromptTask("grandchild")
+        workflow = Workflow(
+            tasks=[
+                [parent, child, grandchild],
+            ]
+        )
+
+        workflow + parent
+        parent.add_child(child)
+        child.add_child(grandchild)
+
+        assert workflow.output_tasks == [grandchild]
+
+    def test_input_tasks(self):
+        parent = PromptTask("parent")
+        child = PromptTask("child")
+        grandchild = PromptTask("grandchild")
+        workflow = Workflow(
+            tasks=[
+                [parent, child, grandchild],
+            ]
+        )
+
+        workflow + parent
+        parent.add_child(child)
+        child.add_child(grandchild)
+
+        assert workflow.input_tasks == [parent]
+
     @staticmethod
     def _validate_topology_1(workflow) -> None:
         assert len(workflow.tasks) == 4
