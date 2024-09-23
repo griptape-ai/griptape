@@ -134,6 +134,9 @@ from .observability.open_telemetry_observability_driver import OpenTelemetryObse
 from .observability.griptape_cloud_observability_driver import GriptapeCloudObservabilityDriver
 from .observability.datadog_observability_driver import DatadogObservabilityDriver
 
+from .video_generation.base_video_generation_driver import BaseVideoGenerationDriver
+from .video_generation.dream_machine_video_generation_driver import DreamMachineVideoGenerationDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -240,4 +243,6 @@ __all__ = [
     "OpenTelemetryObservabilityDriver",
     "GriptapeCloudObservabilityDriver",
     "DatadogObservabilityDriver",
+    "DreamMachineVideoGenerationDriver",
+    "BaseVideoGenerationDriver",
 ]

@@ -16,7 +16,7 @@ class BlobArtifact(BaseArtifact):
     """
 
     value: bytes = field(
-        converter=lambda value: value if isinstance(value, bytes) else str(value).encode(),
+        converter=lambda value: value if isinstance(value, bytes) else bytes(value),
         metadata={"serializable": True},
     )
 
