@@ -4793,17 +4793,17 @@ diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
 name = "pypdf"
-version = "3.17.4"
+version = "5.0.0"
 description = "A pure-python PDF library capable of splitting, merging, cropping, and transforming PDF files"
 optional = true
 python-versions = ">=3.6"
 files = [
-    {file = "pypdf-3.17.4-py3-none-any.whl", hash = "sha256:6aa0f61b33779b64486de3f42835d3668badd48dac4a536aeb87da187a5eacd2"},
-    {file = "pypdf-3.17.4.tar.gz", hash = "sha256:ec96e2e4fc9648ac609d19c00d41e9d606e0ae2ce5a0bbe7691426f5f157166a"},
+    {file = "pypdf-5.0.0-py3-none-any.whl", hash = "sha256:67603e2e96cdf70e676564520933c017d450f16075b9966be5fee128812ace8c"},
+    {file = "pypdf-5.0.0.tar.gz", hash = "sha256:5c536ec0f7af8e2f80eb32806964652a562b9abc5477b3c195e2b842725ce55b"},
 ]
 
 [package.dependencies]
-typing_extensions = {version = ">=3.7.4.3", markers = "python_version < \"3.10\""}
+typing_extensions = {version = ">=4.0", markers = "python_version < \"3.11\""}
 
 [package.extras]
 crypto = ["PyCryptodome", "cryptography"]
@@ -7013,4 +7013,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "73313f20ff340b64fb247bba78104a80e20d59d8079861b67131f2d1bc1fe972"
+content-hash = "ca4d21c4950ed36354650afb64daaa80e4fded67c05c73f576833cccba13363e"
