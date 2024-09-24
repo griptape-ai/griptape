@@ -31,7 +31,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
     @lazy_property()
     def index(self) -> pinecone.Index:
-        return self.client.get_index(self.index_name)
+        return self.client.Index(self.index_name)
 
     def upsert_vector(
         self,
