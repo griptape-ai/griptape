@@ -780,6 +780,19 @@ class TestWorkflow:
         assert output_ids == ["grandchild_0", "grandchild_1", "grandchild_2"]
         assert len(workflow.tasks) == 9
 
+    def test_nested_tasks_property(self):
+        workflow = Workflow()
+        workflow._tasks = [
+            [
+                PromptTask("parent", id=f"parent_{i}"),
+                PromptTask("child", id=f"child_{i}", parent_ids=[f"parent_{i}"]),
+                PromptTask("grandchild", id=f"grandchild_{i}", parent_ids=[f"child_{i}"]),
+            ]
+            for i in range(3)
+        ]
+
+        assert len(workflow.tasks) == 9
+
     def test_output_tasks(self):
         parent = PromptTask("parent")
         child = PromptTask("child")
