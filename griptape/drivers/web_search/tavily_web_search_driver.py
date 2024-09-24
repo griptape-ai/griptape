@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
-from tavily import BadRequestError
 
 from griptape.artifacts import JsonArtifact, ListArtifact
 from griptape.drivers import BaseWebSearchDriver
@@ -27,6 +26,4 @@ class TavilyWebSearchDriver(BaseWebSearchDriver):
     def search(self, query: str, **kwargs) -> ListArtifact:
         response = self.client.search(query, max_results=self.results_count, **self.params, **kwargs)
         results = response.get("results", [])
-        if not results:
-            raise BadRequestError("No results found or the response structure is invalid.")
         return ListArtifact([(JsonArtifact(result)) for result in results])
