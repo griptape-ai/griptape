@@ -4,12 +4,11 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional, Callable
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
-from griptape.common import Message
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin

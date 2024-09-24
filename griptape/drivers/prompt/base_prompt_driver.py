@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, Callable, Any
+from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
 
@@ -70,7 +70,11 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             with attempt:
                 self.before_run(prompt_stack)
 
-                result = self.__process_stream(self.input_transformer(prompt_stack)) if self.stream else self.__process_run(self.input_transformer(prompt_stack))
+                result = (
+                    self.__process_stream(self.input_transformer(prompt_stack))
+                    if self.stream
+                    else self.__process_run(self.input_transformer(prompt_stack))
+                )
 
                 self.after_run(result)
 
