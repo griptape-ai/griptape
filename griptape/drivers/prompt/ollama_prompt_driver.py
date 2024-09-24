@@ -22,6 +22,7 @@ from griptape.common import (
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import SimpleTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from ollama import Client
@@ -40,10 +41,6 @@ class OllamaPromptDriver(BasePromptDriver):
 
     model: str = field(kw_only=True, metadata={"serializable": True})
     host: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    client: Client = field(
-        default=Factory(lambda self: import_optional_dependency("ollama").Client(host=self.host), takes_self=True),
-        kw_only=True,
-    )
     tokenizer: BaseTokenizer = field(
         default=Factory(
             lambda self: SimpleTokenizer(
@@ -67,6 +64,11 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> Client:
+        return import_optional_dependency("ollama").Client(host=self.host)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:

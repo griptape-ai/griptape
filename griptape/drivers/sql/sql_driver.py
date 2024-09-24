@@ -6,6 +6,7 @@ from attrs import define, field
 
 from griptape.drivers import BaseSqlDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from sqlalchemy.engine import Engine
@@ -15,12 +16,11 @@ if TYPE_CHECKING:
 class SqlDriver(BaseSqlDriver):
     engine_url: str = field(kw_only=True)
     create_engine_params: dict = field(factory=dict, kw_only=True)
-    engine: Engine = field(init=False)
+    _engine: Engine = field(default=None, kw_only=True, alias="engine", metadata={"serializable": False})
 
-    def __attrs_post_init__(self) -> None:
-        sqlalchemy = import_optional_dependency("sqlalchemy")
-
-        self.engine = sqlalchemy.create_engine(self.engine_url, **self.create_engine_params)
+    @lazy_property()
+    def engine(self) -> Engine:
+        return import_optional_dependency("sqlalchemy").create_engine(self.engine_url, **self.create_engine_params)
 
     def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
         rows = self.execute_query_raw(query)

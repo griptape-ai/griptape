@@ -9,7 +9,6 @@ from griptape.utils import import_optional_dependency, str_to_hash
 
 if TYPE_CHECKING:
     from boto3 import Session
-    from opensearchpy import OpenSearch
 
 
 @define
@@ -31,19 +30,6 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
                 self.session.get_credentials(),
                 self.session.region_name,
                 self.service,
-            ),
-            takes_self=True,
-        ),
-    )
-
-    client: OpenSearch = field(
-        default=Factory(
-            lambda self: import_optional_dependency("opensearchpy").OpenSearch(
-                hosts=[{"host": self.host, "port": self.port}],
-                http_auth=self.http_auth,
-                use_ssl=self.use_ssl,
-                verify_certs=self.verify_certs,
-                connection_class=import_optional_dependency("opensearchpy").RequestsHttpConnection,
             ),
             takes_self=True,
         ),

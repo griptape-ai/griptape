@@ -2,12 +2,17 @@ from __future__ import annotations
 
 import logging
 import uuid
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
+
+if TYPE_CHECKING:
+    from qdrant_client import QdrantClient
+
 
 DEFAULT_DISTANCE = "Cosine"
 CONTENT_PAYLOAD_KEY = "data"
@@ -56,9 +61,11 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     vector_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     content_payload_key: str = field(default=CONTENT_PAYLOAD_KEY, kw_only=True, metadata={"serializable": True})
+    _client: QdrantClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
-    def __attrs_post_init__(self) -> None:
-        self.client = import_optional_dependency("qdrant_client").QdrantClient(
+    @lazy_property()
+    def client(self) -> QdrantClient:
+        return import_optional_dependency("qdrant_client").QdrantClient(
             location=self.location,
             url=self.url,
             host=self.host,
