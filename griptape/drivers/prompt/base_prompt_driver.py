@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Optional, Callable, Any
 
 from attrs import Factory, define, field
 
@@ -48,6 +48,8 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    input_transformer: Callable[[PromptStack], PromptStack] = field(default=lambda p: p, kw_only=True)
+    output_transformer: Callable[[Message], Message] = field(default=lambda m: m, kw_only=True)
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         EventBus.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
@@ -68,11 +70,11 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             with attempt:
                 self.before_run(prompt_stack)
 
-                result = self.__process_stream(prompt_stack) if self.stream else self.__process_run(prompt_stack)
+                result = self.__process_stream(self.input_transformer(prompt_stack)) if self.stream else self.__process_run(self.input_transformer(prompt_stack))
 
                 self.after_run(result)
 
-                return result
+                return self.output_transformer(result)
         else:
             raise Exception("prompt driver failed after all retry attempts")
 

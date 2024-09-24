@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Callable
 
 from attrs import Attribute, Factory, define, field
 
@@ -35,6 +35,7 @@ class Structure(ABC):
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True)
+    output_transformer: Callable[[Optional[BaseArtifact]], Any] = field(default=lambda a: a, kw_only=True)
     _execution_args: tuple = ()
 
     @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
@@ -75,7 +76,9 @@ class Structure(ABC):
 
     @property
     def output(self) -> Optional[BaseArtifact]:
-        return self.output_task.output if self.output_task is not None else None
+        if self.output_task is None:
+            return None
+        return self.output_transformer(self.output_task.output)
 
     @property
     def finished_tasks(self) -> list[BaseTask]:

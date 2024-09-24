@@ -4,11 +4,12 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Callable
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
+from griptape.common import Message
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
@@ -37,6 +38,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
+    output_transformer: Callable[[BaseArtifact], BaseArtifact] = field(default=lambda a: a, kw_only=True)
 
     def __rshift__(self, other: BaseTask) -> BaseTask:
         self.add_child(other)
@@ -175,7 +177,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
         finally:
             self.state = BaseTask.State.FINISHED
 
-        return self.output
+        return self.output_transformer(self.output)
 
     def can_execute(self) -> bool:
         return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)
