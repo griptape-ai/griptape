@@ -1,5 +1,3 @@
-import json
-
 import pytest
 
 from griptape.artifacts import ListArtifact
@@ -25,7 +23,7 @@ class TestTavilyWebSearchDriver:
     def test_search_returns_results(self, driver, mock_tavily_client):
         results = driver.search("test")
         assert isinstance(results, ListArtifact)
-        output = [json.loads(result.value) for result in results]
+        output = [result.value for result in results]
         assert len(output) == 2
         assert output[0]["title"] == "foo"
         assert output[0]["url"] == "bar"
@@ -50,7 +48,7 @@ class TestTavilyWebSearchDriver:
         results = driver.search("test", additional_param="extra")
 
         assert isinstance(results, ListArtifact)
-        output = json.loads(results[0].value)
+        output = results[0].value
         assert output["title"] == "custom"
         assert output["url"] == "custom_url"
         assert output["content"] == "custom_content"
