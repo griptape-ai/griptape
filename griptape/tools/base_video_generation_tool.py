@@ -8,4 +8,4 @@ from griptape.tools import BaseTool
 class BaseVideoGenerationTool(ArtifactFileOutputMixin, BaseTool):
     """A base class for tools that generate videos from text prompts."""
 
-    prompt_description = "Features and qualities to include in the generated video, descriptive and succinct."
+    PROMPT_DESCRIPTION = "Features and qualities to include in the generated video, descriptive and succinct."
