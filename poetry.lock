@@ -6050,6 +6050,22 @@ mpmath = ">=1.1.0,<1.4"
 dev = ["hypothesis (>=6.70.0)", "pytest (>=7.1.0)"]
 
 [[package]]
+name = "tavily-python"
+version = "0.5.0"
+description = "Python wrapper for the Tavily API"
+optional = true
+python-versions = ">=3.6"
+files = [
+    {file = "tavily_python-0.5.0-py3-none-any.whl", hash = "sha256:e874f6a04a56cdda80a505fe0b4f5d61d25372bd52a83e6773926fb297dcaa29"},
+    {file = "tavily_python-0.5.0.tar.gz", hash = "sha256:2c60b88203b630e1b37fc711913a1090ced6719b3f21089f25ec06e9e1602822"},
+]
+
+[package.dependencies]
+httpx = "*"
+requests = "*"
+tiktoken = ">=0.5.1"
+
+[[package]]
 name = "tenacity"
 version = "8.5.0"
 description = "Retry code until it succeeds"
@@ -7038,7 +7054,7 @@ doc = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linke
 test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", "jaraco.test", "more-itertools", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [extras]
-all = ["accelerate", "anthropic", "astrapy", "beautifulsoup4", "boto3", "cohere", "diffusers", "duckduckgo-search", "elevenlabs", "filetype", "google-generativeai", "lumaai", "mail-parser", "markdownify", "marqo", "ollama", "opensearch-py", "opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pusher", "pymongo", "pypdf", "qdrant-client", "redis", "sentencepiece", "snowflake-sqlalchemy", "sqlalchemy", "torch", "trafilatura", "transformers", "voyageai"]
+all = ["accelerate", "anthropic", "astrapy", "beautifulsoup4", "boto3", "cohere", "diffusers", "duckduckgo-search", "elevenlabs", "filetype", "google-generativeai", "mail-parser", "markdownify", "marqo", "ollama", "opensearch-py", "opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk", "pandas", "pgvector", "pillow", "pinecone-client", "playwright", "psycopg2-binary", "pusher", "pymongo", "pypdf", "qdrant-client", "redis", "sentencepiece", "snowflake-sqlalchemy", "sqlalchemy", "tavily-python", "torch", "trafilatura", "transformers", "voyageai"]
 drivers-embedding-amazon-bedrock = ["boto3"]
 drivers-embedding-amazon-sagemaker = ["boto3"]
 drivers-embedding-cohere = ["cohere"]
@@ -7081,6 +7097,7 @@ drivers-video-generation-lumaai = ["lumaai"]
 drivers-web-scraper-markdownify = ["beautifulsoup4", "markdownify", "playwright"]
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-search-duckduckgo = ["duckduckgo-search"]
+drivers-web-search-tavily = ["tavily-python"]
 loaders-audio = ["filetype"]
 loaders-dataframe = ["pandas"]
 loaders-email = ["mail-parser"]
@@ -7091,4 +7108,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "7567f22be1307390e4b68d3dc78b5e86d4abd706f0cd497151c356e9474156f1"
+content-hash = "310d1144f8393faf5b82f05e89270e930f8e25eb9d2036d5e1ca11a9b60cdc67"
