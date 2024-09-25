@@ -47,7 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Iteration support to `ListArtifact`.
 
 
-
 ### Changed
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
 - **BREAKING**: Removed `MediaArtifact`, use `ImageArtifact` or `AudioArtifact` instead.
