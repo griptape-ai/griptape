@@ -37,3 +37,7 @@ class TestTextLoader:
         artifact = collection[key]
 
         assert artifact.encoding == loader.encoding
+
+    def test_load_deprecated_bytes(self, loader):
+        with pytest.warns(DeprecationWarning):
+            loader.load(b"test.txt")

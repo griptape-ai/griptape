@@ -42,7 +42,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Loaders no longer chunk data, use a Chunker to chunk the data.
 - **BREAKING**: Removed `fileutils.load_file` and `fileutils.load_files`.
 - **BREAKING**: Removed `loaders-dataframe` and `loaders-audio` extras as they are no longer needed.
-- **BREKING**: `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`.
+- **BREKING**: `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`. Passing `bytes` is still supported but deprecated.
 - **BREAKING**: Removed `DataframeLoader`.
 - `LocalFileManagerDriver.workdir` is now optional.
 - `filetype` is now a core dependency.
