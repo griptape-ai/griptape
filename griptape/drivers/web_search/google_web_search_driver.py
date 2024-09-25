@@ -13,6 +13,8 @@ from griptape.drivers import BaseWebSearchDriver
 class GoogleWebSearchDriver(BaseWebSearchDriver):
     api_key: str = field(kw_only=True)
     search_id: str = field(kw_only=True)
+    language: str = field(default="en", kw_only=True)
+    country: str = field(default="us", kw_only=True)
 
     def search(self, query: str, **kwargs) -> ListArtifact:
         return ListArtifact([TextArtifact(json.dumps(result)) for result in self._search_google(query, **kwargs)])
