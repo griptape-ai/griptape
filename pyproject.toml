@@ -198,6 +198,7 @@ all = [
     "sentencepiece",
     "torch",
     "pillow",
+    "lumaai",
 
     # loaders
     "pandas",
