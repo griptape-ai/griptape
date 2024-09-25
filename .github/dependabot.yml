@@ -15,6 +15,9 @@ updates:
         update-types:
         - "minor"
         - "patch"
+    allow:
+      - dependency-type: production
+      - dependency-type: development
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

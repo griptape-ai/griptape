@@ -3,12 +3,14 @@ from __future__ import annotations
 import time
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Attribute, Factory, define, field
+from attrs import Attribute, define, field
 
 from griptape.drivers import BaseSqlDriver
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
+    from mypy_boto3_redshift_data import RedshiftDataAPIServiceClient
 
 
 @define
@@ -20,10 +22,13 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
     db_user: Optional[str] = field(default=None, kw_only=True)
     database_credentials_secret_arn: Optional[str] = field(default=None, kw_only=True)
     wait_for_query_completion_sec: float = field(default=0.3, kw_only=True)
-    client: Any = field(
-        default=Factory(lambda self: self.session.client("redshift-data"), takes_self=True),
-        kw_only=True,
+    _client: RedshiftDataAPIServiceClient = field(
+        default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
+
+    @lazy_property()
+    def client(self) -> RedshiftDataAPIServiceClient:
+        return self.session.client("redshift-data")
 
     @workgroup_name.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_params(self, _: Attribute, workgroup_name: Optional[str]) -> None:

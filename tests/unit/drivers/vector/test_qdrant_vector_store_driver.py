@@ -37,30 +37,6 @@ class TestQdrantVectorStoreDriver:
             embedding_driver=embedding_driver,
         )
 
-    def test_attrs_post_init(self, driver):
-        with patch("griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency") as mock_import:
-            mock_qdrant_client = MagicMock()
-            mock_import.return_value.QdrantClient.return_value = mock_qdrant_client
-
-            driver.__attrs_post_init__()
-
-            mock_import.assert_called_once_with("qdrant_client")
-            mock_import.return_value.QdrantClient.assert_called_once_with(
-                location=driver.location,
-                url=driver.url,
-                host=driver.host,
-                path=driver.path,
-                port=driver.port,
-                prefer_grpc=driver.prefer_grpc,
-                grpc_port=driver.grpc_port,
-                api_key=driver.api_key,
-                https=driver.https,
-                prefix=driver.prefix,
-                force_disable_check_same_thread=driver.force_disable_check_same_thread,
-                timeout=driver.timeout,
-            )
-            assert driver.client == mock_qdrant_client
-
     def test_delete_vector(self, driver):
         vector_id = "test_vector_id"
 
