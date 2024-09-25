@@ -2601,7 +2601,7 @@ test = ["pyfakefs", "pytest (>=6,!=8.1.*)", "pytest-checkdocs (>=2.4)", "pytest-
 name = "lumaai"
 version = "1.0.2"
 description = "The official Python library for the lumaai API"
-optional = false
+optional = true
 python-versions = ">=3.7"
 files = [
     {file = "lumaai-1.0.2-py3-none-any.whl", hash = "sha256:f4ad8d21e41ac74f71b01bd48b0b45121f5cb1f38fe6bda1bb4ad6f5bd4cc57e"},
@@ -7077,6 +7077,7 @@ drivers-vector-pgvector = ["pgvector", "psycopg2-binary", "sqlalchemy"]
 drivers-vector-pinecone = ["pinecone-client"]
 drivers-vector-qdrant = ["qdrant-client"]
 drivers-vector-redis = ["redis"]
+drivers-video-generation-lumaai = ["lumaai"]
 drivers-web-scraper-markdownify = ["beautifulsoup4", "markdownify", "playwright"]
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-search-duckduckgo = ["duckduckgo-search"]
@@ -7090,4 +7091,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a4f364ca3d2f79ac32769429cacaad01536986e5acb3394e6c52d43f72463b28"
+content-hash = "39503b6d79d07d33afb15bfb2ea88f1d2f525d1a85cc06db4917ad864ee9f98c"
