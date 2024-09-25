@@ -6,6 +6,7 @@ from attrs import define, field
 
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency, str_to_hash
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import pinecone
@@ -17,16 +18,20 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     index_name: str = field(kw_only=True, metadata={"serializable": True})
     environment: str = field(kw_only=True, metadata={"serializable": True})
     project_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    index: pinecone.Index = field(init=False)
+    _client: pinecone.Pinecone = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _index: pinecone.Index = field(default=None, kw_only=True, alias="index", metadata={"serializable": False})
 
-    def __attrs_post_init__(self) -> None:
-        pinecone = import_optional_dependency("pinecone").Pinecone(
+    @lazy_property()
+    def client(self) -> pinecone.Pinecone:
+        return import_optional_dependency("pinecone").Pinecone(
             api_key=self.api_key,
             environment=self.environment,
             project_name=self.project_name,
         )
 
-        self.index = pinecone.Index(self.index_name)
+    @lazy_property()
+    def index(self) -> pinecone.Index:
+        return self.client.Index(self.index_name)
 
     def upsert_vector(
         self,

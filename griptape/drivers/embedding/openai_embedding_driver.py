@@ -7,6 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
+from griptape.utils.decorators import lazy_property
 
 
 @define
@@ -33,16 +34,15 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    client: openai.OpenAI = field(
-        default=Factory(
-            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
-            takes_self=True,
-        ),
-    )
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
+    _client: openai.OpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> openai.OpenAI:
+        return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         # Address a performance issue in older ada models

@@ -9,6 +9,7 @@ from griptape.common import DeltaMessage, Message, PromptStack, TextMessageConte
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -35,23 +36,24 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
-    pipe: TextGenerationPipeline = field(
-        default=Factory(
-            lambda self: import_optional_dependency("transformers").pipeline(
-                "text-generation",
-                model=self.model,
-                max_new_tokens=self.max_tokens,
-                tokenizer=self.tokenizer.tokenizer,
-            ),
-            takes_self=True,
-        ),
+    _pipeline: TextGenerationPipeline = field(
+        default=None, kw_only=True, alias="pipeline", metadata={"serializable": False}
     )
+
+    @lazy_property()
+    def pipeline(self) -> TextGenerationPipeline:
+        return import_optional_dependency("transformers").pipeline(
+            task="text-generation",
+            model=self.model,
+            max_new_tokens=self.max_tokens,
+            tokenizer=self.tokenizer.tokenizer,
+        )
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
-        result = self.pipe(
+        result = self.pipeline(
             messages,
             max_new_tokens=self.max_tokens,
             temperature=self.temperature,

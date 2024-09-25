@@ -6,10 +6,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## Added
+- Parameter `pipeline_task` on `HuggingFacePipelinePromptDriver` for creating different types of `Pipeline`s.
+
+### Changed
+- **BREAKING**: Renamed parameters on several classes to `client`:
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockTitanEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockImageGenerationDriver`.
+  - `bedrock_client` on `AmazonBedrockImageQueryDriver`.
+  - `bedrock_client` on `AmazonBedrockPromptDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartEmbeddingDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartPromptDriver`.
+  - `sqs_client` on `AmazonSqsEventListenerDriver`.
+  - `iotdata_client` on `AwsIotCoreEventListenerDriver`.
+  - `s3_client` on `AmazonS3FileManagerDriver`.
+  - `s3_client` on `AwsS3Tool`.
+  - `iam_client` on `AwsIamTool`.
+  - `pusher_client` on `PusherEventListenerDriver`.
+  - `mq` on `MarqoVectorStoreDriver`.
+  - `model_client` on `GooglePromptDriver`.
+  - `model_client` on `GoogleTokenizer`.
+- **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
+- Several places where API clients are initialized are now lazy loaded.
+
+
+## [0.32.0] - 2024-09-17
+
 ### Added
 - `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
 - `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 string.
 - `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
+- `AzureOpenAiTextToSpeechDriver`.
+- `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
+- Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
+- Ability to use Drivers Configs as Context Managers for temporarily setting the default Drivers.
+- Generic type support to `ListArtifact`.
+- Iteration support to `ListArtifact`.
+
 
 ### Changed
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
@@ -20,12 +55,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `BlobArtifact.dir_name`.
 - **BREAKING**: Moved `ImageArtifact.prompt` and `ImageArtifact.model` into `ImageArtifact.meta`.
 - **BREAKING**: `ImageArtifact.format` is now required.
+- **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module.
 - Updated `JsonArtifact` value converter to properly handle more types. 
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - `ImageArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
-- Generic type support to `ListArtifact`.
-- Iteration support to `ListArtifact`.
+
+### Fixed
+- Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
 ## [0.31.0] - 2024-09-03
 

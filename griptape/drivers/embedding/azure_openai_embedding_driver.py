@@ -7,6 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.drivers import OpenAiEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
+from griptape.utils.decorators import lazy_property
 
 
 @define
@@ -40,17 +41,16 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    client: openai.AzureOpenAI = field(
-        default=Factory(
-            lambda self: openai.AzureOpenAI(
-                organization=self.organization,
-                api_key=self.api_key,
-                api_version=self.api_version,
-                azure_endpoint=self.azure_endpoint,
-                azure_deployment=self.azure_deployment,
-                azure_ad_token=self.azure_ad_token,
-                azure_ad_token_provider=self.azure_ad_token_provider,
-            ),
-            takes_self=True,
-        ),
-    )
+    _client: openai.AzureOpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> openai.AzureOpenAI:
+        return openai.AzureOpenAI(
+            organization=self.organization,
+            api_key=self.api_key,
+            api_version=self.api_version,
+            azure_endpoint=self.azure_endpoint,
+            azure_deployment=self.azure_deployment,
+            azure_ad_token=self.azure_ad_token,
+            azure_ad_token_provider=self.azure_ad_token_provider,
+        )

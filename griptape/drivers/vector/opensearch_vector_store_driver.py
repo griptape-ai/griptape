@@ -3,11 +3,12 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, NoReturn, Optional
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape import utils
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from opensearchpy import OpenSearch
@@ -32,19 +33,19 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
     use_ssl: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     verify_certs: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     index_name: str = field(kw_only=True, metadata={"serializable": True})
+    _client: OpenSearch = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
-    client: OpenSearch = field(
-        default=Factory(
-            lambda self: import_optional_dependency("opensearchpy").OpenSearch(
-                hosts=[{"host": self.host, "port": self.port}],
-                http_auth=self.http_auth,
-                use_ssl=self.use_ssl,
-                verify_certs=self.verify_certs,
-                connection_class=import_optional_dependency("opensearchpy").RequestsHttpConnection,
-            ),
-            takes_self=True,
-        ),
-    )
+    @lazy_property()
+    def client(self) -> OpenSearch:
+        opensearchpy = import_optional_dependency("opensearchpy")
+
+        return opensearchpy.OpenSearch(
+            hosts=[{"host": self.host, "port": self.port}],
+            http_auth=self.http_auth,
+            use_ssl=self.use_ssl,
+            verify_certs=self.verify_certs,
+            connection_class=opensearchpy.RequestsHttpConnection,
+        )
 
     def upsert_vector(
         self,

@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from pymongo import MongoClient
@@ -37,12 +38,11 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         kw_only=True,
         metadata={"serializable": True},
     )  # https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-stage/#fields
-    client: MongoClient = field(
-        default=Factory(
-            lambda self: import_optional_dependency("pymongo").MongoClient(self.connection_string),
-            takes_self=True,
-        ),
-    )
+    _client: MongoClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> MongoClient:
+        return import_optional_dependency("pymongo").MongoClient(self.connection_string)
 
     def get_collection(self) -> Collection:
         """Returns the MongoDB Collection instance for the specified database and collection name."""

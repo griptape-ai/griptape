@@ -32,6 +32,7 @@ from griptape.common import (
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -54,13 +55,6 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    client: Client = field(
-        default=Factory(
-            lambda self: import_optional_dependency("anthropic").Anthropic(api_key=self.api_key),
-            takes_self=True,
-        ),
-        kw_only=True,
-    )
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True),
         kw_only=True,
@@ -70,6 +64,11 @@ class AnthropicPromptDriver(BasePromptDriver):
     tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
+    _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> Client:
+        return import_optional_dependency("anthropic").Anthropic(api_key=self.api_key)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
