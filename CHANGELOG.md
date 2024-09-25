@@ -8,8 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Added
 - Parameter `pipeline_task` on `HuggingFacePipelinePromptDriver` for creating different types of `Pipeline`s.
-
 - `TavilyWebSearchDriver` to integrate Tavily's web search capabilities.
+- `ExaWebSearchDriver` to integrate Exa's web search capabilities.
+
 ### Changed
 - **BREAKING**: Renamed parameters on several classes to `client`:
   - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
@@ -31,7 +32,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `model_client` on `GoogleTokenizer`.
 - **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
 - Several places where API clients are initialized are now lazy loaded.
-
 
 ## [0.32.0] - 2024-09-17
 

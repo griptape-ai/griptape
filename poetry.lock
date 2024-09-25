@@ -1511,7 +1511,7 @@ files = [
 name = "exa-py"
 version = "1.1.4"
 description = "Python SDK for Exa API."
-optional = false
+optional = true
 python-versions = "*"
 files = [
     {file = "exa_py-1.1.4-py3-none-any.whl", hash = "sha256:487923f568670bb40a2d9b97b6bedf4e5fecba2957779d318f8bfbb17817ddc3"},
@@ -7093,6 +7093,7 @@ drivers-vector-redis = ["redis"]
 drivers-web-scraper-markdownify = ["beautifulsoup4", "markdownify", "playwright"]
 drivers-web-scraper-trafilatura = ["trafilatura"]
 drivers-web-search-duckduckgo = ["duckduckgo-search"]
+drivers-web-search-exa = ["exa-py"]
 drivers-web-search-tavily = ["tavily-python"]
 loaders-audio = ["filetype"]
 loaders-dataframe = ["pandas"]
@@ -7104,4 +7105,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "be9b7f80af60a6a322ae5c24150c5f51481226297081a8aa2b2e6547fd95a1dc"
+content-hash = "1942eee986ec29d41a8a24b4b25fd831d49e53f5ccaf6a187acb8aa7146576a1"

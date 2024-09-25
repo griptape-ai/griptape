@@ -72,7 +72,7 @@ pypdf = {version = "^3.9", optional = true}
 pillow = {version = "^10.2.0", optional = true}
 mail-parser = {version = "^3.15.0", optional = true}
 filetype = {version = "^1.2", optional = true}
-exa-py = "^1.1.4"
+exa-py = {version = "^1.1.4", optional = true}
 
 
 [tool.poetry.extras]
@@ -115,6 +115,7 @@ drivers-web-scraper-markdownify = ["playwright", "beautifulsoup4", "markdownify"
 
 drivers-web-search-duckduckgo = ["duckduckgo-search"]
 drivers-web-search-tavily = ["tavily-python"]
+drivers-web-search-exa = ["exa-py"]
 
 drivers-event-listener-amazon-sqs = ["boto3"]
 drivers-event-listener-amazon-iot = ["boto3"]
