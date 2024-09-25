@@ -16,6 +16,8 @@ if TYPE_CHECKING:
 
 @define
 class DuckDuckGoWebSearchDriver(BaseWebSearchDriver):
+    language: str = field(default="en", kw_only=True)
+    country: str = field(default="us", kw_only=True)
     _client: DDGS = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
