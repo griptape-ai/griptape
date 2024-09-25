@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Attribute, define, field
 
 if TYPE_CHECKING:
-    from griptape.artifacts import BaseArtifact
+    from griptape.artifacts import BaseArtifact, VideoArtifact
 
 
 @define(slots=False)
@@ -36,6 +36,19 @@ class ArtifactFileOutputMixin:
             outfile = self.output_file
         elif self.output_dir:
             outfile = os.path.join(self.output_dir, artifact.name)
+        else:
+            raise ValueError("No output_file or output_dir specified.")
+
+        if os.path.dirname(outfile):
+            os.makedirs(os.path.dirname(outfile), exist_ok=True)
+
+        Path(outfile).write_bytes(artifact.to_bytes())
+
+    def save_video_artifact(self, artifact: VideoArtifact) -> None:
+        if self.output_file:
+            outfile = self.output_file
+        elif self.output_dir:
+            outfile = os.path.join(self.output_dir, artifact.name + ".mp4")
         else:
             raise ValueError("No output_file or output_dir specified.")
 

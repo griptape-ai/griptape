@@ -54,6 +54,6 @@ class PromptVideoGenerationTask(BaseVideoGenerationTask):
         video_artifact = self.video_generation_driver.try_text_to_video(prompt=self.input.to_text())
 
         if self.output_dir or self.output_file:
-            self.save_artifact(video_artifact)
+            self.save_video_artifact(video_artifact)
 
         return video_artifact

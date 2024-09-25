@@ -41,6 +41,6 @@ class PromptVideoGenerationTool(BaseVideoGenerationTool):
         output_artifact = self.driver.try_text_to_video(prompt)
 
         if self.output_dir or self.output_file:
-            self._write_to_file(output_artifact)
+            self.save_video_artifact(output_artifact)
 
         return output_artifact
