@@ -85,8 +85,10 @@ class Structure(ABC):
         return self.tasks[-1] if self.tasks else None
 
     @property
-    def output(self) -> Optional[BaseArtifact]:
-        return self.output_task.output if self.output_task is not None else None
+    def output(self) -> BaseArtifact:
+        if self.output_task.output is None:
+            raise ValueError("Structure's output Task has no output. Run the Structure to generate output.")
+        return self.output_task.output
 
     @property
     def finished_tasks(self) -> list[BaseTask]:

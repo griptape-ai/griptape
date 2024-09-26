@@ -114,8 +114,8 @@ class Workflow(Structure, FuturesExecutorMixin):
 
                     break
 
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
+        if self.conversation_memory and self.output_task.output is not None:
+            run = Run(input=self.input_task.input, output=self.output_task.output)
 
             self.conversation_memory.add_run(run)
 
