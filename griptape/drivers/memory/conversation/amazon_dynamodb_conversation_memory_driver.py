@@ -7,9 +7,11 @@ from attrs import Factory, define, field
 
 from griptape.drivers import BaseConversationMemoryDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
+    from mypy_boto3_dynamodb.service_resource import Table
 
     from griptape.memory.structure import Run
 
@@ -23,11 +25,11 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
     partition_key_value: str = field(kw_only=True, metadata={"serializable": True})
     sort_key: Optional[str] = field(default=None, metadata={"serializable": True})
     sort_key_value: Optional[str | int] = field(default=None, metadata={"serializable": True})
+    _table: Table = field(default=None, kw_only=True, alias="table", metadata={"serializable": False})
 
-    table: Any = field(init=False)
-
-    def __attrs_post_init__(self) -> None:
-        self.table = self.session.resource("dynamodb").Table(self.table_name)
+    @lazy_property()
+    def table(self) -> Table:
+        return self.session.resource("dynamodb").Table(self.table_name)
 
     def store(self, runs: list[Run], metadata: dict) -> None:
         self.table.update_item(

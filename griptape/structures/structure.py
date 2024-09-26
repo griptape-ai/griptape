@@ -24,7 +24,7 @@ class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[BaseRule] = field(factory=list, kw_only=True)
-    tasks: list[BaseTask] = field(factory=list, kw_only=True)
+    _tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True, alias="tasks")
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
@@ -54,12 +54,23 @@ class Structure(ABC):
             raise ValueError("can't have both rules and rulesets specified")
 
     def __attrs_post_init__(self) -> None:
-        tasks = self.tasks.copy()
-        self.tasks.clear()
+        tasks = self._tasks.copy()
+        self._tasks.clear()
         self.add_tasks(*tasks)
 
-    def __add__(self, other: BaseTask | list[BaseTask]) -> list[BaseTask]:
-        return self.add_tasks(*other) if isinstance(other, list) else self + [other]
+    def __add__(self, other: BaseTask | list[BaseTask | list[BaseTask]]) -> list[BaseTask]:
+        return self.add_tasks(*other) if isinstance(other, list) else self.add_tasks(other)
+
+    @property
+    def tasks(self) -> list[BaseTask]:
+        tasks = []
+
+        for task in self._tasks:
+            if isinstance(task, list):
+                tasks.extend(task)
+            else:
+                tasks.append(task)
+        return tasks
 
     @property
     def execution_args(self) -> tuple:
@@ -98,8 +109,14 @@ class Structure(ABC):
                 return task
         return None
 
-    def add_tasks(self, *tasks: BaseTask) -> list[BaseTask]:
-        return [self.add_task(s) for s in tasks]
+    def add_tasks(self, *tasks: BaseTask | list[BaseTask]) -> list[BaseTask]:
+        added_tasks = []
+        for task in tasks:
+            if isinstance(task, list):
+                added_tasks.extend(self.add_tasks(*task))
+            else:
+                added_tasks.append(self.add_task(task))
+        return added_tasks
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         return {"args": self.execution_args, "structure": self}

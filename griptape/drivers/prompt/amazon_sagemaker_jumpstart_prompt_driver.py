@@ -10,6 +10,7 @@ from griptape.common import DeltaMessage, Message, PromptStack, TextMessageConte
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -22,10 +23,6 @@ if TYPE_CHECKING:
 @define
 class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
-    sagemaker_client: Any = field(
-        default=Factory(lambda self: self.session.client("sagemaker-runtime"), takes_self=True),
-        kw_only=True,
-    )
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
     inference_component_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -38,6 +35,11 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> Any:
+        return self.session.client("sagemaker-runtime")
 
     @stream.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_stream(self, _: Attribute, stream: bool) -> None:  # noqa: FBT001
@@ -51,7 +53,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             "parameters": {**self._base_params(prompt_stack)},
         }
 
-        response = self.sagemaker_client.invoke_endpoint(
+        response = self.client.invoke_endpoint(
             EndpointName=self.endpoint,
             ContentType="application/json",
             Body=json.dumps(payload),

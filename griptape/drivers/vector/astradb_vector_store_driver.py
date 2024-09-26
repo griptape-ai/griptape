@@ -6,10 +6,11 @@ from attrs import define, field
 
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
-    from astrapy import Collection
-    from astrapy.authentication import TokenProvider
+    import astrapy
+    import astrapy.authentication
 
 
 @define
@@ -26,32 +27,36 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
             It can be omitted for production Astra DB targets. See `astrapy.constants.Environment` for allowed values.
         astra_db_namespace: optional specification of the namespace (in the Astra database) for the data.
             *Note*: not to be confused with the "namespace" mentioned elsewhere, which is a grouping within this vector store.
+        caller_name: the name of the caller for the Astra DB client. Defaults to "griptape".
+        client: an instance of `astrapy.DataAPIClient` for the Astra DB.
+        collection: an instance of `astrapy.Collection` for the Astra DB.
     """
 
     api_endpoint: str = field(kw_only=True, metadata={"serializable": True})
-    token: Optional[str | TokenProvider] = field(kw_only=True, default=None, metadata={"serializable": False})
+    token: Optional[str | astrapy.authentication.TokenProvider] = field(
+        kw_only=True, default=None, metadata={"serializable": False}
+    )
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
     environment: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
     astra_db_namespace: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    caller_name: str = field(default="griptape", kw_only=True, metadata={"serializable": False})
+    _client: astrapy.DataAPIClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _collection: astrapy.Collection = field(
+        default=None, kw_only=True, alias="collection", metadata={"serializable": False}
+    )
 
-    collection: Collection = field(init=False)
-
-    def __attrs_post_init__(self) -> None:
-        astrapy = import_optional_dependency("astrapy")
-        self.collection = (
-            astrapy.DataAPIClient(
-                caller_name="griptape",
-                environment=self.environment,
-            )
-            .get_database(
-                self.api_endpoint,
-                token=self.token,
-                namespace=self.astra_db_namespace,
-            )
-            .get_collection(
-                name=self.collection_name,
-            )
+    @lazy_property()
+    def client(self) -> astrapy.DataAPIClient:
+        return import_optional_dependency("astrapy").DataAPIClient(
+            caller_name=self.caller_name,
+            environment=self.environment,
         )
+
+    @lazy_property()
+    def collection(self) -> astrapy.Collection:
+        return self.client.get_database(
+            self.api_endpoint, token=self.token, namespace=self.astra_db_namespace
+        ).get_collection(self.collection_name)
 
     def delete_vector(self, vector_id: str) -> None:
         """Delete a vector from Astra DB store.

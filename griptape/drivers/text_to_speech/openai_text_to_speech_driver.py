@@ -3,10 +3,11 @@ from __future__ import annotations
 from typing import Literal, Optional
 
 import openai
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.drivers import BaseTextToSpeechDriver
+from griptape.utils.decorators import lazy_property
 
 
 @define
@@ -23,12 +24,15 @@ class OpenAiTextToSpeechDriver(BaseTextToSpeechDriver):
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True)
     organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
-    client: openai.OpenAI = field(
-        default=Factory(
-            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
-            takes_self=True,
-        ),
-    )
+    _client: openai.OpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> openai.OpenAI:
+        return openai.OpenAI(
+            api_key=self.api_key,
+            base_url=self.base_url,
+            organization=self.organization,
+        )
 
     def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
         response = self.client.audio.speech.create(

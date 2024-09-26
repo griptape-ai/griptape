@@ -2,10 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from huggingface_hub import InferenceClient
@@ -22,16 +23,14 @@ class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
     """
 
     api_token: str = field(kw_only=True, metadata={"serializable": True})
-    client: InferenceClient = field(
-        default=Factory(
-            lambda self: import_optional_dependency("huggingface_hub").InferenceClient(
-                model=self.model,
-                token=self.api_token,
-            ),
-            takes_self=True,
-        ),
-        kw_only=True,
-    )
+    _client: InferenceClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> InferenceClient:
+        return import_optional_dependency("huggingface_hub").InferenceClient(
+            model=self.model,
+            token=self.api_token,
+        )
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         response = self.client.feature_extraction(chunk)

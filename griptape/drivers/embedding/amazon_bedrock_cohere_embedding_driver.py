@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers.amazon_bedrock_tokenizer import AmazonBedrockTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
+    from mypy_boto3_bedrock import BedrockClient
 
     from griptape.tokenizers.base_tokenizer import BaseTokenizer
 
@@ -26,7 +28,7 @@ class AmazonBedrockCohereEmbeddingDriver(BaseEmbeddingDriver):
             `search_query` when querying your vector DB to find relevant documents.
         session: Optionally provide custom `boto3.Session`.
         tokenizer: Optionally provide custom `BedrockCohereTokenizer`.
-        bedrock_client: Optionally provide custom `bedrock-runtime` client.
+        client: Optionally provide custom `bedrock-runtime` client.
     """
 
     DEFAULT_MODEL = "cohere.embed-english-v3"
@@ -38,15 +40,16 @@ class AmazonBedrockCohereEmbeddingDriver(BaseEmbeddingDriver):
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    bedrock_client: Any = field(
-        default=Factory(lambda self: self.session.client("bedrock-runtime"), takes_self=True),
-        kw_only=True,
-    )
+    _client: BedrockClient = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> BedrockClient:
+        return self.session.client("bedrock-runtime")
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         payload = {"input_type": self.input_type, "texts": [chunk]}
 
-        response = self.bedrock_client.invoke_model(
+        response = self.client.invoke_model(
             body=json.dumps(payload),
             modelId=self.model,
             accept="*/*",

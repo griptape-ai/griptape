@@ -1,4 +1,5 @@
 site_name: Griptape Docs
+site_url: !ENV READTHEDOCS_CANONICAL_URL
 hooks:
   - docs/plugins/swagger_ui_plugin.py
 strict: true
