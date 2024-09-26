@@ -1,6 +1,8 @@
 # Running a Structure
 
-Once your Structure is created and deployed, you can run your Structure one of three ways outlined below. You view the output of any of your runs, no matter how you created them, in the `Runs` tab of your Structure.
+Once your Structure is created and deployed, you can run your Structure one of three ways outlined below. You may view the details of any of your runs, no matter how you created them, in the `Runs` tab of your Structure.
+
+To learn more about Structure Run details and output, look at the [Structure Run Events](./structure-run-events.md) documentation.
 
 ## From the Cloud Console
 
@@ -8,14 +10,14 @@ In the cloud console, click on the name of the Structure you wish to run and the
 
 When passing arguments through the cloud console, pass each new argument on a new line. For example if your local code is ran with the inputs `-i input_file.txt` then the arguments you would pass in the cloud would be:
 
-```
+```bash
 -i
 input_file.txt
 ```
 
 ## From the API
 
-You can run your Structure via the API using CURL or any other code that can make HTTP requests. You will need a [Griptape Cloud API Key](https://cloud.griptape.ai/configuration/api-keys) and the `Structure Invocation URL` which is located on the `Config` tab of your Structure. 
+You can run your Structure via the API using cURL or any other code that can make HTTP requests. You will need a [Griptape Cloud API Key](https://cloud.griptape.ai/configuration/api-keys) and the `Structure Invocation URL` which is located on the `Config` tab of your Structure.
 
 The example below will kick off a run with the args you pass as a json object.
 
