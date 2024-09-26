@@ -35,6 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `model_client` on `GoogleTokenizer`.
 - **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
 - Several places where API clients are initialized are now lazy loaded.
+- `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
 
 
 ## [0.32.0] - 2024-09-17

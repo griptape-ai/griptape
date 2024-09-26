@@ -8,7 +8,6 @@ from graphlib import TopologicalSorter
 
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
-from griptape.memory.structure import Run
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.structures import Structure
 
@@ -113,11 +112,6 @@ class Workflow(Structure, FuturesExecutorMixin):
                     exit_loop = True
 
                     break
-
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
-
-            self.conversation_memory.add_run(run)
 
         return self
 

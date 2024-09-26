@@ -752,7 +752,8 @@ class TestWorkflow:
         workflow = Workflow(tasks=[waiting_task, error_artifact_task, end_task])
         workflow.run()
 
-        assert workflow.output is None
+        with pytest.raises(ValueError, match="Structure's output Task has no output. Run"):
+            assert workflow.output
 
     def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")

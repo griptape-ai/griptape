@@ -367,7 +367,8 @@ class TestPipeline:
         pipeline = Pipeline(tasks=[waiting_task, error_artifact_task, end_task])
         pipeline.run()
 
-        assert pipeline.output is None
+        with pytest.raises(ValueError, match="Structure's output Task has no output. Run"):
+            assert pipeline.output
 
     def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
