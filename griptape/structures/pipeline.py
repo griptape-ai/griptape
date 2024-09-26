@@ -25,7 +25,7 @@ class Pipeline(Structure):
             self.output_task.child_ids.append(task.id)
             task.parent_ids.append(self.output_task.id)
 
-        self.tasks.append(task)
+        self._tasks.append(task)
 
         return task
 
@@ -45,7 +45,7 @@ class Pipeline(Structure):
         parent_task.child_ids.append(task.id)
 
         parent_index = self.tasks.index(parent_task)
-        self.tasks.insert(parent_index + 1, task)
+        self._tasks.insert(parent_index + 1, task)
 
         return task
 

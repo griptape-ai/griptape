@@ -762,6 +762,69 @@ class TestWorkflow:
 
         assert workflow.output is not None
 
+    def test_nested_tasks(self):
+        workflow = Workflow(
+            tasks=[
+                [
+                    PromptTask("parent", id=f"parent_{i}"),
+                    PromptTask("child", id=f"child_{i}", parent_ids=[f"parent_{i}"]),
+                    PromptTask("grandchild", id=f"grandchild_{i}", parent_ids=[f"child_{i}"]),
+                ]
+                for i in range(3)
+            ],
+        )
+
+        workflow.run()
+
+        output_ids = [task.id for task in workflow.output_tasks]
+        assert output_ids == ["grandchild_0", "grandchild_1", "grandchild_2"]
+        assert len(workflow.tasks) == 9
+
+    def test_nested_tasks_property(self):
+        workflow = Workflow()
+        workflow._tasks = [
+            [
+                PromptTask("parent", id=f"parent_{i}"),
+                PromptTask("child", id=f"child_{i}", parent_ids=[f"parent_{i}"]),
+                PromptTask("grandchild", id=f"grandchild_{i}", parent_ids=[f"child_{i}"]),
+            ]
+            for i in range(3)
+        ]
+
+        assert len(workflow.tasks) == 9
+
+    def test_output_tasks(self):
+        parent = PromptTask("parent")
+        child = PromptTask("child")
+        grandchild = PromptTask("grandchild")
+        workflow = Workflow(
+            tasks=[
+                [parent, child, grandchild],
+            ]
+        )
+
+        workflow + parent
+        parent.add_child(child)
+        child.add_child(grandchild)
+
+        assert workflow.output_tasks == [grandchild]
+
+    def test_input_tasks(self):
+        parent = PromptTask("parent")
+        child = PromptTask("child")
+        grandchild = PromptTask("grandchild")
+        workflow = Workflow(
+            tasks=[
+                [parent, child, grandchild],
+            ]
+        )
+
+        workflow + parent
+        parent.add_child(child)
+        child.add_child(grandchild)
+
+        assert workflow.input_tasks == [parent]
+
     @staticmethod
     def _validate_topology_1(workflow) -> None:
         assert len(workflow.tasks) == 4
