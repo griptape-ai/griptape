@@ -10,7 +10,7 @@ from griptape.common import observable
 from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRunEvent
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
-from griptape.memory.structure import ConversationMemory
+from griptape.memory.structure import ConversationMemory, Run
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -165,6 +165,11 @@ class Structure(ABC):
 
     @observable
     def after_run(self) -> None:
+        if self.conversation_memory and self.output_task.output is not None:
+            run = Run(input=self.input_task.input, output=self.output_task.output)
+
+            self.conversation_memory.add_run(run)
+
         EventBus.publish_event(
             FinishStructureRunEvent(
                 structure_id=self.id,

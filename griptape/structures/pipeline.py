@@ -6,7 +6,6 @@ from attrs import define
 
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
-from griptape.memory.structure import Run
 from griptape.structures import Structure
 
 if TYPE_CHECKING:
@@ -52,11 +51,6 @@ class Pipeline(Structure):
     @observable
     def try_run(self, *args) -> Pipeline:
         self.__run_from_task(self.input_task)
-
-        if self.conversation_memory and self.output_task.output is not None:
-            run = Run(input=self.input_task.input, output=self.output_task.output)
-
-            self.conversation_memory.add_run(run)
 
         return self
 

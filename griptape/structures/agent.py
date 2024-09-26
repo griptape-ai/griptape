@@ -7,7 +7,6 @@ from attrs import Attribute, Factory, define, field
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import observable
 from griptape.configs import Defaults
-from griptape.memory.structure import Run
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
 
@@ -76,10 +75,5 @@ class Agent(Structure):
     @observable
     def try_run(self, *args) -> Agent:
         self.task.execute()
-
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
-
-            self.conversation_memory.add_run(run)
 
         return self
