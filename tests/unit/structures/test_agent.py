@@ -133,17 +133,14 @@ class TestAgent:
 
         agent = Agent(prompt_driver=MockPromptDriver())
 
-        try:
+        with pytest.raises(ValueError):
             agent.add_tasks(first_task, second_task)
-            raise AssertionError()
-        except ValueError:
-            assert True
 
-        try:
+        with pytest.raises(ValueError):
             agent + [first_task, second_task]
-            raise AssertionError()
-        except ValueError:
-            assert True
+
+        with pytest.raises(ValueError):
+            agent.add_tasks([first_task, second_task])
 
     def test_prompt_stack_without_memory(self):
         agent = Agent(prompt_driver=MockPromptDriver(), conversation_memory=None, rules=[Rule("test")])

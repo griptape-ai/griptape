@@ -10,6 +10,10 @@ You can [create a Data Source in the Griptape Cloud console](https://cloud.gript
 
 You can scrape and ingest a single, public web page by providing a URL. If you wish to scrape multiple pages, you must create multiple Data Sources. However, you can then add all of the pages to the same Knowledge Base if you wish to access all the pages together.
 
+### Amazon S3
+
+You can connect Amazon S3 buckets, objects, and prefixes by providing their S3 URI(s). Supported file extensions include .pdf, .csv, .md, and most text-based file types.
+
 ### Google Drive
 
 You can ingest documents and spreadsheets stored in a Google Drive account. We support all standard file formats such as text, markdown, spreadsheets, and presentations.

@@ -26,13 +26,21 @@ class Workflow(Structure, FuturesExecutorMixin):
     def output_task(self) -> Optional[BaseTask]:
         return self.order_tasks()[-1] if self.tasks else None
 
+    @property
+    def input_tasks(self) -> list[BaseTask]:
+        return [task for task in self.tasks if not task.parents]
+
+    @property
+    def output_tasks(self) -> list[BaseTask]:
+        return [task for task in self.tasks if not task.children]
+
     def add_task(self, task: BaseTask) -> BaseTask:
         if (existing_task := self.try_find_task(task.id)) is not None:
             return existing_task
 
         task.preprocess(self)
 
-        self.tasks.append(task)
+        self._tasks.append(task)
 
         return task
 
@@ -82,7 +90,7 @@ class Workflow(Structure, FuturesExecutorMixin):
         last_parent_index = self.__link_task_to_parents(task, parent_tasks)
 
         # Insert the new task once, just after the last parent task
-        self.tasks.insert(last_parent_index + 1, task)
+        self._tasks.insert(last_parent_index + 1, task)
 
         return task
 
