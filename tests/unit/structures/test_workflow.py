@@ -826,6 +826,15 @@ class TestWorkflow:
 
         assert workflow.input_tasks == [parent]
 
+    def test_outputs(self):
+        workflow = Workflow(tasks=[PromptTask("parent") for _ in range(3)])
+
+        assert workflow.outputs == []
+
+        workflow.run()
+
+        assert workflow.outputs == ["mock output"] * 3
+
     @staticmethod
     def _validate_topology_1(workflow) -> None:
         assert len(workflow.tasks) == 4
