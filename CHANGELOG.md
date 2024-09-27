@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `loaders-dataframe` and `loaders-audio` extras as they are no longer needed.
 - **BREKING**: `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`. Passing `bytes` is still supported but deprecated.
 - **BREAKING**: Removed `DataframeLoader`.
+- `BaseVectorStoreDriver.upsert_text_artifacts` now returns a list or dictionary of upserted vector ids.
 - `LocalFileManagerDriver.workdir` is now optional.
 - `filetype` is now a core dependency.
 - `FileManagerTool` now uses `filetype` for more accurate file type detection.
