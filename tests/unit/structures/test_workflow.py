@@ -833,7 +833,7 @@ class TestWorkflow:
 
         workflow.run()
 
-        assert workflow.outputs == ["mock output"] * 3
+        assert [output.value for output in workflow.outputs] == ["mock output"] * 3
 
     @staticmethod
     def _validate_topology_1(workflow) -> None:
