@@ -12,6 +12,7 @@ from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.structures import Structure
 
 if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact
     from griptape.tasks import BaseTask
 
 
@@ -32,6 +33,10 @@ class Workflow(Structure, FuturesExecutorMixin):
     @property
     def output_tasks(self) -> list[BaseTask]:
         return [task for task in self.tasks if not task.children]
+
+    @property
+    def outputs(self) -> list[BaseArtifact]:
+        return [task.output.value for task in self.output_tasks if task.output is not None]
 
     def add_task(self, task: BaseTask) -> BaseTask:
         if (existing_task := self.try_find_task(task.id)) is not None:
