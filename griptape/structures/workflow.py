@@ -36,7 +36,7 @@ class Workflow(Structure, FuturesExecutorMixin):
 
     @property
     def outputs(self) -> list[BaseArtifact]:
-        return [task.output.value for task in self.output_tasks if task.output is not None]
+        return [task.output for task in self.output_tasks if task.output is not None]
 
     def add_task(self, task: BaseTask) -> BaseTask:
         if (existing_task := self.try_find_task(task.id)) is not None:
