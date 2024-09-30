@@ -1,6 +1,6 @@
 import boto3
 import pytest
-from moto import mock_dynamodb
+from moto import mock_aws
 
 from griptape.drivers import AmazonDynamoDbConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
@@ -19,7 +19,7 @@ class TestDynamoDbConversationMemoryDriver:
     @pytest.fixture(autouse=True)
     def _run_before_and_after_tests(self):
         mock_aws_credentials()
-        self.mock_dynamodb = mock_dynamodb()
+        self.mock_dynamodb = mock_aws()
         self.mock_dynamodb.start()
 
         dynamodb = boto3.Session(region_name=self.AWS_REGION).client("dynamodb")
