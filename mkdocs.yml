@@ -1,4 +1,5 @@
 site_name: Griptape Docs
+site_url: !ENV READTHEDOCS_CANONICAL_URL
 hooks:
   - docs/plugins/swagger_ui_plugin.py
 strict: true
@@ -87,6 +88,7 @@ nav:
           - Create a Structure: "griptape-cloud/structures/create-structure.md"
           - Structure Config YAML: "griptape-cloud/structures/structure-config.md"
           - Running Your Structure: "griptape-cloud/structures/run-structure.md"
+          - Structure Run Events: "griptape-cloud/structures/structure-run-events.md"
       - Cloud API:
           - API Reference: "griptape-cloud/api/api-reference.md"
   - Framework:

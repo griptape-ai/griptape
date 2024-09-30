@@ -5,15 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-### Added
-- `Workflow.input_tasks` and `Workflow.output_tasks` to access the input and output tasks of a Workflow.
-- Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more complex declarative Structure definitions.
-
 
 ## Added
-- Parameter `pipeline_task` on `HuggingFacePipelinePromptDriver` for creating different types of `Pipeline`s.
+- `Workflow.input_tasks` and `Workflow.output_tasks` to access the input and output tasks of a Workflow.
+- Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more complex declarative Structure definitions.
 - `TavilyWebSearchDriver` to integrate Tavily's web search capabilities.
 - `ExaWebSearchDriver` to integrate Exa's web search capabilities.
+- `Workflow.outputs` to access the outputs of a Workflow.
 
 ### Changed
 - **BREAKING**: Renamed parameters on several classes to `client`:
@@ -36,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `model_client` on `GoogleTokenizer`.
 - **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
 - Several places where API clients are initialized are now lazy loaded.
+- `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
 
 ## [0.32.0] - 2024-09-17
 

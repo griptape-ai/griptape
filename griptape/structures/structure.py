@@ -10,7 +10,7 @@ from griptape.common import observable
 from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRunEvent
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
-from griptape.memory.structure import ConversationMemory
+from griptape.memory.structure import ConversationMemory, Run
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -85,8 +85,10 @@ class Structure(ABC):
         return self.tasks[-1] if self.tasks else None
 
     @property
-    def output(self) -> Optional[BaseArtifact]:
-        return self.output_task.output if self.output_task is not None else None
+    def output(self) -> BaseArtifact:
+        if self.output_task.output is None:
+            raise ValueError("Structure's output Task has no output. Run the Structure to generate output.")
+        return self.output_task.output
 
     @property
     def finished_tasks(self) -> list[BaseTask]:
@@ -163,6 +165,11 @@ class Structure(ABC):
 
     @observable
     def after_run(self) -> None:
+        if self.conversation_memory and self.output_task.output is not None:
+            run = Run(input=self.input_task.input, output=self.output_task.output)
+
+            self.conversation_memory.add_run(run)
+
         EventBus.publish_event(
             FinishStructureRunEvent(
                 structure_id=self.id,

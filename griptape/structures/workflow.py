@@ -8,11 +8,11 @@ from graphlib import TopologicalSorter
 
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
-from griptape.memory.structure import Run
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.structures import Structure
 
 if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact
     from griptape.tasks import BaseTask
 
 
@@ -33,6 +33,10 @@ class Workflow(Structure, FuturesExecutorMixin):
     @property
     def output_tasks(self) -> list[BaseTask]:
         return [task for task in self.tasks if not task.children]
+
+    @property
+    def outputs(self) -> list[BaseArtifact]:
+        return [task.output for task in self.output_tasks if task.output is not None]
 
     def add_task(self, task: BaseTask) -> BaseTask:
         if (existing_task := self.try_find_task(task.id)) is not None:
@@ -113,11 +117,6 @@ class Workflow(Structure, FuturesExecutorMixin):
                     exit_loop = True
 
                     break
-
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
-
-            self.conversation_memory.add_run(run)
 
         return self
 

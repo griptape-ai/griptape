@@ -752,7 +752,8 @@ class TestWorkflow:
         workflow = Workflow(tasks=[waiting_task, error_artifact_task, end_task])
         workflow.run()
 
-        assert workflow.output is None
+        with pytest.raises(ValueError, match="Structure's output Task has no output. Run"):
+            assert workflow.output
 
     def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
@@ -824,6 +825,15 @@ class TestWorkflow:
         child.add_child(grandchild)
 
         assert workflow.input_tasks == [parent]
+
+    def test_outputs(self):
+        workflow = Workflow(tasks=[PromptTask("parent") for _ in range(3)])
+
+        assert workflow.outputs == []
+
+        workflow.run()
+
+        assert [output.value for output in workflow.outputs] == ["mock output"] * 3
 
     @staticmethod
     def _validate_topology_1(workflow) -> None:
