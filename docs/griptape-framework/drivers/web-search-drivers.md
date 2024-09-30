@@ -87,7 +87,7 @@ Example of using `TavilyWebSearchDriver` directly:
 ### Exa 
 !!! info
     This driver requires the `drivers-web-search-exa` [extra](../index.md#extras),
-    and a Exa [api key](https://dashboard.exa.ai/api-keys)
+    and an Exa [api key](https://dashboard.exa.ai/api-keys)
 
 Example of using `ExaWebSearchDriver` directly:
 

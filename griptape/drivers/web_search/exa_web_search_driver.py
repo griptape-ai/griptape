@@ -16,8 +16,10 @@ if TYPE_CHECKING:
 @define
 class ExaWebSearchDriver(BaseWebSearchDriver):
     api_key: str = field(kw_only=True)
-    _client: Exa = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    highlights: bool = field(default=False, kw_only=True)
+    use_auto_prompt: bool = field(default=False, kw_only=True)
     params: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
+    _client: Exa = field(default=None, kw_only=True, alias="client")
 
     @lazy_property()
     def client(self) -> Exa:
@@ -27,8 +29,6 @@ class ExaWebSearchDriver(BaseWebSearchDriver):
         response = self.client.search_and_contents(
             query=query,
             num_results=self.results_count,
-            highlights=True,
-            use_autoprompt=True,
             text=True,
             **self.params,
             **kwargs,
