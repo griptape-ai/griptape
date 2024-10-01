@@ -35,6 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Several places where API clients are initialized are now lazy loaded.
 - `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
 
+### Fixed
+- Anthropic native Tool calling
+
 
 ## [0.32.0] - 2024-09-17
 
