@@ -36,6 +36,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
 - **BREAKING**: Update `pypdf` dependency to `^5.0.1`.
 
+### Fixed
+- Anthropic native Tool calling
+
 
 ## [0.32.0] - 2024-09-17
 
