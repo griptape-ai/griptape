@@ -22,6 +22,9 @@ from .finish_text_to_speech_event import FinishTextToSpeechEvent
 from .base_audio_transcription_event import BaseAudioTranscriptionEvent
 from .start_audio_transcription_event import StartAudioTranscriptionEvent
 from .finish_audio_transcription_event import FinishAudioTranscriptionEvent
+from .base_video_generation_event import BaseVideoGenerationEvent
+from .start_video_generation_event import StartVideoGenerationEvent
+from .finish_video_generation_event import FinishVideoGenerationEvent
 from .event_bus import EventBus
 
 __all__ = [
@@ -49,5 +52,8 @@ __all__ = [
     "BaseAudioTranscriptionEvent",
     "StartAudioTranscriptionEvent",
     "FinishAudioTranscriptionEvent",
+    "BaseVideoGenerationEvent",
+    "StartVideoGenerationEvent",
+    "FinishVideoGenerationEvent",
     "EventBus",
 ]

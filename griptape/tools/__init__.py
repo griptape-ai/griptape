@@ -1,5 +1,6 @@
 from .base_tool import BaseTool
 from .base_image_generation_tool import BaseImageGenerationTool
+from .base_video_generation_tool import BaseVideoGenerationTool
 from .calculator.tool import CalculatorTool
 from .web_search.tool import WebSearchTool
 from .web_scraper.tool import WebScraperTool
@@ -32,10 +33,12 @@ from .audio_transcription.tool import AudioTranscriptionTool
 from .extraction.tool import ExtractionTool
 from .prompt_summary.tool import PromptSummaryTool
 from .query.tool import QueryTool
+from .prompt_video_generation.tool import PromptVideoGenerationTool
 
 __all__ = [
     "BaseTool",
     "BaseImageGenerationTool",
+    "BaseVideoGenerationTool",
     "BaseAwsTool",
     "AwsIamTool",
     "AwsS3Tool",
@@ -68,4 +71,5 @@ __all__ = [
     "ExtractionTool",
     "PromptSummaryTool",
     "QueryTool",
+    "PromptVideoGenerationTool",
 ]

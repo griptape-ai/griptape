@@ -9,6 +9,7 @@ from .list_artifact import ListArtifact
 from .image_artifact import ImageArtifact
 from .audio_artifact import AudioArtifact
 from .action_artifact import ActionArtifact
+from .video_artifact import VideoArtifact
 from .generic_artifact import GenericArtifact
 
 
@@ -24,5 +25,6 @@ __all__ = [
     "ImageArtifact",
     "AudioArtifact",
     "ActionArtifact",
+    "VideoArtifact",
     "GenericArtifact",
 ]
