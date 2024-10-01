@@ -34,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
 - Several places where API clients are initialized are now lazy loaded.
 - `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
+- **BREAKING**: Update `pypdf` dependency to `^5.0.1`.
 
 ### Fixed
 - Anthropic native Tool calling
