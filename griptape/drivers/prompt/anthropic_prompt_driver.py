@@ -127,7 +127,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             return "user"
 
     def __to_anthropic_tools(self, tools: list[BaseTool]) -> list[dict]:
-        return [
+        tool_schemas = [
             {
                 "name": tool.to_native_tool_name(activity),
                 "description": tool.activity_description(activity),
@@ -136,6 +136,13 @@ class AnthropicPromptDriver(BasePromptDriver):
             for tool in tools
             for activity in tool.activities()
         ]
+
+        # Anthropic doesn't support $schema and $id
+        for tool_schema in tool_schemas:
+            del tool_schema["input_schema"]["$schema"]
+            del tool_schema["input_schema"]["$id"]
+
+        return tool_schemas
 
     def __to_anthropic_content(self, message: Message) -> str | list[dict]:
         if message.has_all_content_type(TextMessageContent):
