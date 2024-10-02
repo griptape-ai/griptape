@@ -28,14 +28,18 @@ class TestExaWebSearchDriver:
         assert output[0]["url"] == "bar"
         assert output[0]["highlights"] == "baz"
         assert output[0]["text"] == "qux"
-        mock_exa_client.return_value.search_and_contents.assert_called_once_with(query="test", num_results=5, text=True)
+        mock_exa_client.return_value.search_and_contents.assert_called_once_with(
+            query="test", num_results=5, text=True, highlights=True, use_auto_prompt=True
+        )
 
     def test_search_raises_error(self, driver, mock_exa_client):
         mock_exa_client.return_value.search_and_contents.side_effect = Exception("test_error")
-        driver = ExaWebSearchDriver(api_key="test")
+        driver = ExaWebSearchDriver(api_key="test", highlights=True, use_auto_prompt=True)
         with pytest.raises(Exception, match="test_error"):
             driver.search("test")
-        mock_exa_client.return_value.search_and_contents.assert_called_once_with(query="test", num_results=5, text=True)
+        mock_exa_client.return_value.search_and_contents.assert_called_once_with(
+            query="test", num_results=5, text=True, highlights=True, use_auto_prompt=True
+        )
 
     def test_search_with_params(self, driver, mock_exa_client):
         driver.params = {"custom_param": "value"}
@@ -45,6 +49,8 @@ class TestExaWebSearchDriver:
             query="test",
             num_results=5,
             text=True,
+            highlights=True,
+            use_auto_prompt=True,
             custom_param="value",
             additional_param="extra",
         )

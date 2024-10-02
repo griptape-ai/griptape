@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @define
 class ExaWebSearchDriver(BaseWebSearchDriver):
-    api_key: str = field(kw_only=True)
+    api_key: str = field(kw_only=True, default=None)
     highlights: bool = field(default=False, kw_only=True)
     use_auto_prompt: bool = field(default=False, kw_only=True)
     params: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
@@ -25,8 +25,10 @@ class ExaWebSearchDriver(BaseWebSearchDriver):
     def client(self) -> Exa:
         return import_optional_dependency("exa_py").Exa(api_key=self.api_key)
 
-    def search(self, query: str, **kwargs) -> ListArtifact:
+    def search(self, query: str, **kwargs) -> ListArtifact[JsonArtifact]:
         response = self.client.search_and_contents(
+            highlights=self.highlights,
+            use_auto_prompt=self.use_auto_prompt,
             query=query,
             num_results=self.results_count,
             text=True,
