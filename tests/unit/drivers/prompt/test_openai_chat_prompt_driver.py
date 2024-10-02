@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 
 import pytest
+import schema
 
 from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
@@ -343,10 +344,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert message.value[1].value.path == "test"
         assert message.value[1].value.input == {"foo": "bar"}
 
-    def test_try_run_response_format(self, mock_chat_completion_create, prompt_stack, messages):
+    def test_try_run_response_format_json_object(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, response_format="json_object", use_native_tools=False
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            response_format={"type": "json_object"},
+            use_native_tools=False,
         )
 
         # When
@@ -360,6 +363,51 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             messages=[*messages, {"role": "system", "content": "Provide your response as a valid JSON object."}],
             seed=driver.seed,
             response_format={"type": "json_object"},
+        )
+        assert message.value[0].value == "model-output"
+        assert message.usage.input_tokens == 5
+        assert message.usage.output_tokens == 10
+
+    def test_try_run_response_format_json_schema(self, mock_chat_completion_create, prompt_stack, messages):
+        # Given
+        driver = OpenAiChatPromptDriver(
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "strict": True,
+                    "name": "OutputSchema",
+                    "schema": schema.Schema({"test": str}).json_schema("Output Schema"),
+                },
+            },
+            use_native_tools=False,
+        )
+
+        # When
+        message = driver.try_run(prompt_stack)
+
+        # Then
+        mock_chat_completion_create.assert_called_once_with(
+            model=driver.model,
+            temperature=driver.temperature,
+            user=driver.user,
+            messages=[*messages],
+            seed=driver.seed,
+            response_format={
+                "json_schema": {
+                    "schema": {
+                        "$id": "Output Schema",
+                        "$schema": "http://json-schema.org/draft-07/schema#",
+                        "additionalProperties": False,
+                        "properties": {"test": {"type": "string"}},
+                        "required": ["test"],
+                        "type": "object",
+                    },
+                    "name": "OutputSchema",
+                    "strict": True,
+                },
+                "type": "json_schema",
+            },
         )
         assert message.value[0].value == "model-output"
         assert message.usage.input_tokens == 5

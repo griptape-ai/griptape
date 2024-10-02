@@ -235,7 +235,7 @@ class StructureTester:
             model="gpt-4o",
             azure_deployment=os.environ["AZURE_OPENAI_4_DEPLOYMENT_ID"],
             azure_endpoint=os.environ["AZURE_OPENAI_ENDPOINT_1"],
-            response_format="json_object",
+            response_format={"type": "json_object"},
         )
         output_schema = Schema(
             {
