@@ -58,5 +58,5 @@ class RedisConversationMemoryDriver(BaseConversationMemoryDriver):
     def load(self) -> tuple[list[Run], dict[str, Any]]:
         memory_json = self.client.hget(self.index, self.conversation_id)
         if memory_json is not None:
-            return self._from_params_dict(json.loads(memory_json))
+            return self._from_params_dict(json.loads(memory_json))  # pyright: ignore[reportArgumentType] https://github.com/redis/redis-py/issues/2399
         return [], {}

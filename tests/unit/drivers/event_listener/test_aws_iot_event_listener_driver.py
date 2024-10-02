@@ -1,13 +1,13 @@
 import boto3
 import pytest
-from moto import mock_iotdata
+from moto import mock_aws
 
 from griptape.drivers.event_listener.aws_iot_core_event_listener_driver import AwsIotCoreEventListenerDriver
 from tests.mocks.mock_event import MockEvent
 from tests.utils.aws import mock_aws_credentials
 
 
-@mock_iotdata
+@mock_aws
 class TestAwsIotCoreEventListenerDriver:
     @pytest.fixture(autouse=True)
     def _run_before_and_after_tests(self):
