@@ -83,3 +83,14 @@ Example of using `TavilyWebSearchDriver` directly:
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_4.py"
 ```
+
+### Exa 
+!!! info
+    This driver requires the `drivers-web-search-exa` [extra](../index.md#extras),
+    and an Exa [api key](https://dashboard.exa.ai/api-keys)
+
+Example of using `ExaWebSearchDriver` directly:
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/web_search_drivers_6.py"
+```

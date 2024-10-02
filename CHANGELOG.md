@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Workflow.input_tasks` and `Workflow.output_tasks` to access the input and output tasks of a Workflow.
 - Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more complex declarative Structure definitions.
 - `TavilyWebSearchDriver` to integrate Tavily's web search capabilities.
+- `ExaWebSearchDriver` to integrate Exa's web search capabilities.
 - `Workflow.outputs` to access the outputs of a Workflow.
 
 ### Changed
@@ -40,7 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Anthropic native Tool calling
-
 
 ## [0.32.0] - 2024-09-17
 

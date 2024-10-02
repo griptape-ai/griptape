@@ -123,6 +123,8 @@ jobs:
       QDRANT_CLUSTER_API_KEY: ${{ secrets.INTEG_QDRANT_CLUSTER_API_KEY }}
       ASTRA_DB_API_ENDPOINT: ${{ secrets.INTEG_ASTRA_DB_API_ENDPOINT }}
       ASTRA_DB_APPLICATION_TOKEN: ${{ secrets.INTEG_ASTRA_DB_APPLICATION_TOKEN }}
+      TAVILY_API_KEY: ${{ secrets.INTEG_TAVILY_API_KEY }}
+      EXA_API_KEY: ${{ secrets.INTEG_EXA_API_KEY }}
     services:
       postgres:
         image: ankane/pgvector:v0.5.0

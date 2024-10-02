@@ -99,6 +99,7 @@ from .web_scraper.proxy_web_scraper_driver import ProxyWebScraperDriver
 from .web_search.base_web_search_driver import BaseWebSearchDriver
 from .web_search.google_web_search_driver import GoogleWebSearchDriver
 from .web_search.duck_duck_go_web_search_driver import DuckDuckGoWebSearchDriver
+from .web_search.exa_web_search_driver import ExaWebSearchDriver
 from .web_search.tavily_web_search_driver import TavilyWebSearchDriver
 
 from .event_listener.base_event_listener_driver import BaseEventListenerDriver
@@ -214,6 +215,7 @@ __all__ = [
     "BaseWebSearchDriver",
     "GoogleWebSearchDriver",
     "DuckDuckGoWebSearchDriver",
+    "ExaWebSearchDriver",
     "TavilyWebSearchDriver",
     "BaseEventListenerDriver",
     "AmazonSqsEventListenerDriver",
