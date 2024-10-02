@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
 - **BREAKING**: Update `pypdf` dependency to `^5.0.1`.
 - **BREAKING**: Update `redis` dependency to `^5.1.0`.
+- `MarkdownifyWebScraperDriver.DEFAULT_EXCLUDE_TAGS` now includes media/blob-like HTML tags
 
 ### Fixed
 - Anthropic native Tool calling
