@@ -4,26 +4,24 @@ import uuid
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Attribute, Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.common import observable
 from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRunEvent
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory, Run
+from griptape.mixins.rule_mixin import RuleMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
     from griptape.memory.structure import BaseConversationMemory
-    from griptape.rules import BaseRule, Rule, Ruleset
     from griptape.tasks import BaseTask
 
 
 @define
-class Structure(ABC):
+class Structure(ABC, RuleMixin):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    rulesets: list[Ruleset] = field(factory=list, kw_only=True)
-    rules: list[BaseRule] = field(factory=list, kw_only=True)
     _tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True, alias="tasks")
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
@@ -36,22 +34,6 @@ class Structure(ABC):
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True)
     _execution_args: tuple = ()
-
-    @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_rulesets(self, _: Attribute, rulesets: list[Ruleset]) -> None:
-        if not rulesets:
-            return
-
-        if self.rules:
-            raise ValueError("can't have both rulesets and rules specified")
-
-    @rules.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_rules(self, _: Attribute, rules: list[Rule]) -> None:
-        if not rules:
-            return
-
-        if self.rulesets:
-            raise ValueError("can't have both rules and rulesets specified")
 
     def __attrs_post_init__(self) -> None:
         tasks = self._tasks.copy()

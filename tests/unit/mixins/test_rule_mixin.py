@@ -1,5 +1,3 @@
-import pytest
-
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
@@ -23,8 +21,13 @@ class TestRuleMixin:
         assert mixin.rulesets == [ruleset]
 
     def test_rules_and_rulesets(self):
-        with pytest.raises(ValueError):
-            RuleMixin(rules=[Rule("foo")], rulesets=[Ruleset("bar", [Rule("baz")])])
+        mixin = RuleMixin(rules=[Rule("foo")], rulesets=[Ruleset("bar", [Rule("baz")])])
+
+        assert mixin.rules == [Rule("foo")]
+        assert mixin.rulesets[0].name == "bar"
+        assert mixin.rulesets[0].rules == [Rule("baz")]
+        assert mixin.rulesets[1].name == "Default Ruleset"
+        assert mixin.rulesets[1].rules == [Rule("foo")]
 
     def test_inherits_structure_rulesets(self):
         # Tests that a task using the mixin inherits rulesets from its structure.
@@ -35,4 +38,4 @@ class TestRuleMixin:
         task = PromptTask(rulesets=[ruleset2])
         agent.add_task(task)
 
-        assert task.all_rulesets == [ruleset1, ruleset2]
+        assert task.rulesets == [ruleset1, ruleset2]

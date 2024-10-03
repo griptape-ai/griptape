@@ -66,7 +66,7 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
         output_image_artifact = self.image_generation_engine.run(
             prompts=[prompt_artifact.to_text()],
             image=image_artifact,
-            rulesets=self.all_rulesets,
+            rulesets=self.rulesets,
             negative_rulesets=self.negative_rulesets,
         )
 
