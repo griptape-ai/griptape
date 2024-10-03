@@ -191,11 +191,8 @@ class BaseTask(FuturesExecutorMixin, ABC):
 
     @property
     def full_context(self) -> dict[str, Any]:
+        context = self.context
         if self.structure is not None:
-            structure_context = self.structure.context(self)
+            context.update(self.structure.context(self))
 
-            structure_context.update(self.context)
-
-            return structure_context
-        else:
-            return {}
+        return context

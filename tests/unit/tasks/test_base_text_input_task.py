@@ -30,6 +30,11 @@ class TestBaseTextInputTask:
         parent = MockTextInputTask("parent")
         subtask = MockTextInputTask("test", context={"foo": "bar"})
         child = MockTextInputTask("child")
+
+        assert parent.full_context == {}
+        assert subtask.full_context == {"foo": "bar"}
+        assert child.full_context == {}
+
         pipeline = Pipeline()
 
         pipeline.add_tasks(parent, subtask, child)

@@ -78,6 +78,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `RuleMixin` no longer prevents setting `rulesets` _and_ `rules` at the same time.
 - `PromptTask` will merge in its Structure's Rulesets and Rules.
 - `PromptTask` not checking whether Structure was set before building Prompt Stack.
+- `BaseTask.full_context` context being empty when not connected to a Structure.
 
 ## [0.32.0] - 2024-09-17
 
