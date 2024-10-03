@@ -17,7 +17,7 @@ class TestExaWebSearchDriver:
         mock_response = mocker.Mock()
         mock_response.results = [self.mock_data(mocker), self.mock_data(mocker)]  # Make sure results is iterable
         mock_exa_client.return_value.search_and_contents.return_value = mock_response
-        return ExaWebSearchDriver(api_key="test", highlights=True, use_auto_prompt=True)
+        return ExaWebSearchDriver(api_key="test", highlights=True, use_autoprompt=True)
 
     def test_search_returns_results(self, driver, mock_exa_client):
         results = driver.search("test")
@@ -29,16 +29,16 @@ class TestExaWebSearchDriver:
         assert output[0]["highlights"] == "baz"
         assert output[0]["text"] == "qux"
         mock_exa_client.return_value.search_and_contents.assert_called_once_with(
-            query="test", num_results=5, text=True, highlights=True, use_auto_prompt=True
+            query="test", num_results=5, text=True, highlights=True, use_autoprompt=True
         )
 
     def test_search_raises_error(self, driver, mock_exa_client):
         mock_exa_client.return_value.search_and_contents.side_effect = Exception("test_error")
-        driver = ExaWebSearchDriver(api_key="test", highlights=True, use_auto_prompt=True)
+        driver = ExaWebSearchDriver(api_key="test", highlights=True, use_autoprompt=True)
         with pytest.raises(Exception, match="test_error"):
             driver.search("test")
         mock_exa_client.return_value.search_and_contents.assert_called_once_with(
-            query="test", num_results=5, text=True, highlights=True, use_auto_prompt=True
+            query="test", num_results=5, text=True, highlights=True, use_autoprompt=True
         )
 
     def test_search_with_params(self, driver, mock_exa_client):
@@ -50,7 +50,7 @@ class TestExaWebSearchDriver:
             num_results=5,
             text=True,
             highlights=True,
-            use_auto_prompt=True,
+            use_autoprompt=True,
             custom_param="value",
             additional_param="extra",
         )
