@@ -3,6 +3,21 @@
 This document provides instructions for migrating your codebase to accommodate breaking changes introduced in new versions of Griptape.
 ## 0.31.X to 0.32.X
 
+### Removed `torch` extra from `transformers` dependency
+
+The `torch` extra has been removed from the `transformers` dependency. If you require `torch`, install it separately.
+
+#### Before
+```bash
+pip install griptape[drivers-prompt-huggingface-hub]
+```
+
+#### After
+```bash
+pip install griptape[drivers-prompt-huggingface-hub]
+pip install torch
+```
+
 ### Removed `MediaArtifact`
 
 `MediaArtifact` has been removed. Use `ImageArtifact` or `AudioArtifact` instead.
