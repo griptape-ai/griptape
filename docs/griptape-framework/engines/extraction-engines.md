@@ -24,7 +24,7 @@ Charlie,40,Texas
 
 ## JSON
 
-The JSON Extraction Engine extracts JSON-formatted content from unstructed text. 
+The JSON Extraction Engine extracts JSON-formatted content from unstructured text. 
 
 
 ```python
