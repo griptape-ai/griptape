@@ -131,8 +131,8 @@ nav:
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
-          - Chunkers: "griptape-framework/data/chunkers.md"
           - Loaders: "griptape-framework/data/loaders.md"
+          - Chunkers: "griptape-framework/data/chunkers.md"
       - Misc:
           - Events: "griptape-framework/misc/events.md"
           - Tokenizers: "griptape-framework/misc/tokenizers.md"
