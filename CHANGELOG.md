@@ -59,6 +59,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Update `redis` dependency to `^5.1.0`.
 - **BREAKING**: Remove `torch` extra from `transformers` dependency. This must be installed separately.
 - `MarkdownifyWebScraperDriver.DEFAULT_EXCLUDE_TAGS` now includes media/blob-like HTML tags
+- **BREAKING**: Split `BaseExtractionEngine.extract` into `extract_text` and `extract_artifacts` for consistency with `BaseSummaryEngine`.
+- **BREAKING**: `BaseExtractionEngine` no longer catches exceptions and returns `ErrorArtifact`s.
+- **BREAKING**: `JsonExtractionEngine.template_schema` is now required.
+- **BREAKING**: `CsvExtractionEngine.column_names` is now required.
+- `JsonExtractionEngine.extract_artifacts` now returns a `ListArtifact[JsonArtifact]`.
+- `CsvExtractionEngine.extract_artifacts` now returns a `ListArtifact[CsvRowArtifact]`.
 
 ### Fixed
 - Anthropic native Tool calling
