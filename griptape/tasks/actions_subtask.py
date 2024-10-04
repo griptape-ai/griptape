@@ -108,7 +108,7 @@ class ActionsSubtask(BaseTask):
 
         parts = [
             f"Subtask {self.id}",
-            *([f"\nThought: {self.thought}"] if self.thought is not None else []),
+            *([f"\nThought: {self.thought}"] if self.thought else []),
             f"\nActions: {self.actions_to_json()}",
         ]
         logger.info("".join(parts))
