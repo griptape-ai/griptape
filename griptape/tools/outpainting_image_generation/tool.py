@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 from attrs import define, field
@@ -51,8 +50,8 @@ class OutpaintingImageGenerationTool(BaseImageGenerationTool):
         image_file = params["values"]["image_file"]
         mask_file = params["values"]["mask_file"]
 
-        input_artifact = self.image_loader.load(Path(image_file).read_bytes())
-        mask_artifact = self.image_loader.load(Path(mask_file).read_bytes())
+        input_artifact = self.image_loader.load(image_file)
+        mask_artifact = self.image_loader.load(mask_file)
 
         return self._generate_outpainting(prompt, negative_prompt, input_artifact, mask_artifact)
 

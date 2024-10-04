@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
 from attrs import define, field
@@ -49,7 +48,7 @@ class VariationImageGenerationTool(BaseImageGenerationTool):
         negative_prompt = params["values"]["negative_prompt"]
         image_file = params["values"]["image_file"]
 
-        image_artifact = self.image_loader.load(Path(image_file).read_bytes())
+        image_artifact = self.image_loader.load(image_file)
 
         return self._generate_variation(prompt, negative_prompt, image_artifact)
 

@@ -51,6 +51,6 @@ class SqlTool(BaseTool):
             return ErrorArtifact(f"error executing query: {e}")
 
         if len(rows) > 0:
-            return ListArtifact(rows)
+            return rows
         else:
             return InfoArtifact("No results found")

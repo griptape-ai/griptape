@@ -1,20 +1,15 @@
 from __future__ import annotations
 
-from typing import cast
-
+import filetype
 from attrs import define
 
 from griptape.artifacts import AudioArtifact
-from griptape.loaders import BaseLoader
-from griptape.utils import import_optional_dependency
+from griptape.loaders.base_file_loader import BaseFileLoader
 
 
 @define
-class AudioLoader(BaseLoader):
+class AudioLoader(BaseFileLoader[AudioArtifact]):
     """Loads audio content into audio artifacts."""
 
-    def load(self, source: bytes, *args, **kwargs) -> AudioArtifact:
-        return AudioArtifact(source, format=import_optional_dependency("filetype").guess(source).extension)
-
-    def load_collection(self, sources: list[bytes], *args, **kwargs) -> dict[str, AudioArtifact]:
-        return cast(dict[str, AudioArtifact], super().load_collection(sources, *args, **kwargs))
+    def parse(self, data: bytes) -> AudioArtifact:
+        return AudioArtifact(data, format=filetype.guess(data).extension)

@@ -27,6 +27,7 @@ numpy = "^1.26.4"
 stringcase = "^1.2.0"
 docker = "^7.1.0"
 requests = "^2.32.0"
+filetype = "^1.2"
 
 # drivers
 cohere = { version = "^5.5.4", optional = true }
@@ -69,7 +70,6 @@ pandas = {version = "^1.3", optional = true}
 pypdf = {version = "^5.0.1", optional = true}
 pillow = {version = "^10.2.0", optional = true}
 mail-parser = {version = "^3.15.0", optional = true}
-filetype = {version = "^1.2", optional = true}
 
 [tool.poetry.extras]
 drivers-prompt-cohere = ["cohere"]
@@ -145,11 +145,9 @@ drivers-observability-datadog = [
 
 drivers-image-generation-huggingface = ["diffusers", "pillow"]
 
-loaders-dataframe = ["pandas"]
 loaders-pdf = ["pypdf"]
 loaders-image = ["pillow"]
 loaders-email = ["mail-parser"]
-loaders-audio = ["filetype"]
 loaders-sql = ["sqlalchemy"]
 
 all = [
@@ -194,7 +192,6 @@ all = [
     "pandas",
     "pypdf",
     "mail-parser",
-    "filetype",
 ]
 
 [tool.poetry.group.test]

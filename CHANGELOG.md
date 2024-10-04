@@ -12,6 +12,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TavilyWebSearchDriver` to integrate Tavily's web search capabilities.
 - `ExaWebSearchDriver` to integrate Exa's web search capabilities.
 - `Workflow.outputs` to access the outputs of a Workflow.
+- `BaseFileLoader` for Loaders that load from a path.
+- `BaseLoader.fetch()` method for fetching data from a source.
+- `BaseLoader.parse()` method for parsing fetched data.
+- `BaseFileManager.encoding` to specify the encoding when loading and saving files.
+- `BaseWebScraperDriver.extract_page()` method for extracting data from an already scraped web page.
+- `TextLoaderRetrievalRagModule.chunker` for specifying the chunking strategy.
+- `file_utils.get_mime_type` utility for getting the MIME type of a file.
 
 ### Changed
 - **BREAKING**: Renamed parameters on several classes to `client`:
@@ -33,7 +40,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `model_client` on `GooglePromptDriver`.
   - `model_client` on `GoogleTokenizer`.
 - **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
+- **BREAKING**: Update `pypdf` dependency to `^5.0.1`.
+- **BREAKING**: Update `redis` dependency to `^5.1.0`.
+- **BREAKING**: Removed `BaseFileManager.default_loader` and `BaseFileManager.loaders`.
+- **BREAKING**: Loaders no longer chunk data, use a Chunker to chunk the data.
+- **BREAKING**: Removed `fileutils.load_file` and `fileutils.load_files`.
+- **BREAKING**: Removed `loaders-dataframe` and `loaders-audio` extras as they are no longer needed.
+- **BREKING**: `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`. Passing `bytes` is still supported but deprecated.
+- **BREAKING**: Removed `DataframeLoader`.
 - Several places where API clients are initialized are now lazy loaded.
+- `BaseVectorStoreDriver.upsert_text_artifacts` now returns a list or dictionary of upserted vector ids.
+- `LocalFileManagerDriver.workdir` is now optional.
+- `filetype` is now a core dependency.
+- `FileManagerTool` now uses `filetype` for more accurate file type detection.
+- `BaseFileLoader.load_file()` will now either return a `TextArtifact` or a `BlobArtifact` depending on whether `BaseFileManager.encoding` is set.
 - `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
 - **BREAKING**: Update `pypdf` dependency to `^5.0.1`.
 - **BREAKING**: Update `redis` dependency to `^5.1.0`.
@@ -59,8 +79,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
+- **BREAKING**: Removed `DataframeLoader`.
 - **BREAKING**: Removed `MediaArtifact`, use `ImageArtifact` or `AudioArtifact` instead.
-- **BREAKING**: `CsvLoader`, `DataframeLoader`, and `SqlLoader` now return `list[TextArtifact]`.
+- **BREAKING**: `CsvLoader` and `SqlLoader` now return `ListArtifact[TextArtifact]`.
 - **BREAKING**: Removed `ImageArtifact.media_type`.
 - **BREAKING**: Removed `AudioArtifact.media_type`.
 - **BREAKING**: Removed `BlobArtifact.dir_name`.

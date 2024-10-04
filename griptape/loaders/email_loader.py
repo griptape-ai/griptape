@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import imaplib
-from typing import Optional, cast
+from typing import Optional
 
 from attrs import astuple, define, field
 
@@ -11,7 +11,7 @@ from griptape.utils import import_optional_dependency
 
 
 @define
-class EmailLoader(BaseLoader):
+class EmailLoader(BaseLoader["EmailLoader.EmailQuery", list[bytes], ListArtifact]):  # pyright: ignore[reportGeneralTypeIssues]
     @define(frozen=True)
     class EmailQuery:
         """An email retrieval query.
@@ -32,11 +32,10 @@ class EmailLoader(BaseLoader):
     username: str = field(kw_only=True)
     password: str = field(kw_only=True)
 
-    def load(self, source: EmailQuery, *args, **kwargs) -> ListArtifact:
-        mailparser = import_optional_dependency("mailparser")
+    def fetch(self, source: EmailLoader.EmailQuery) -> list[bytes]:
         label, key, search_criteria, max_count = astuple(source)
 
-        artifacts = []
+        mail_bytes = []
         with imaplib.IMAP4_SSL(self.imap_url) as client:
             client.login(self.username, self.password)
 
@@ -59,19 +58,24 @@ class EmailLoader(BaseLoader):
                 if data is None or not data or data[0] is None:
                     continue
 
-                message = mailparser.parse_from_bytes(data[0][1])
-
-                # Note: mailparser only populates the text_plain field
-                # if the message content type is explicitly set to 'text/plain'.
-                if message.text_plain:
-                    artifacts.append(TextArtifact("\n".join(message.text_plain)))
+                mail_bytes.append(data[0][1])
 
             client.close()
 
-            return ListArtifact(artifacts)
+        return mail_bytes
+
+    def parse(self, data: list[bytes]) -> ListArtifact[TextArtifact]:
+        mailparser = import_optional_dependency("mailparser")
+        artifacts = []
+        for byte in data:
+            message = mailparser.parse_from_bytes(byte)
+
+            # Note: mailparser only populates the text_plain field
+            # if the message content type is explicitly set to 'text/plain'.
+            if message.text_plain:
+                artifacts.append(TextArtifact("\n".join(message.text_plain)))
+
+        return ListArtifact(artifacts)
 
     def _count_messages(self, message_numbers: bytes) -> int:
         return len(list(filter(None, message_numbers.decode().split(" "))))
-
-    def load_collection(self, sources: list[EmailQuery], *args, **kwargs) -> dict[str, ListArtifact]:
-        return cast(dict[str, ListArtifact], super().load_collection(sources, *args, **kwargs))

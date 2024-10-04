@@ -38,20 +38,8 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
     exclude_ids: list[str] = field(default=Factory(list), kw_only=True)
     timeout: Optional[int] = field(default=None, kw_only=True)
 
-    def scrape_url(self, url: str) -> TextArtifact:
+    def fetch_url(self, url: str) -> str:
         sync_playwright = import_optional_dependency("playwright.sync_api").sync_playwright
-        bs4 = import_optional_dependency("bs4")
-        markdownify = import_optional_dependency("markdownify")
-
-        include_links = self.include_links
-
-        # Custom MarkdownConverter to optionally linked urls. If include_links is False only
-        # the text of the link is returned.
-        class OptionalLinksMarkdownConverter(markdownify.MarkdownConverter):
-            def convert_a(self, el: Any, text: str, convert_as_inline: Any) -> str:
-                if include_links:
-                    return super().convert_a(el, text, convert_as_inline)
-                return text
 
         with sync_playwright() as p, p.chromium.launch(headless=True) as browser:
             page = browser.new_page()
@@ -76,28 +64,43 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
             if not content:
                 raise Exception("can't access URL")
 
-            soup = bs4.BeautifulSoup(content, "html.parser")
+            return content
 
-            # Remove unwanted elements
-            exclude_selector = ",".join(
-                self.exclude_tags + [f".{c}" for c in self.exclude_classes] + [f"#{i}" for i in self.exclude_ids],
-            )
-            if exclude_selector:
-                for s in soup.select(exclude_selector):
-                    s.extract()
+    def extract_page(self, page: str) -> TextArtifact:
+        bs4 = import_optional_dependency("bs4")
+        markdownify = import_optional_dependency("markdownify")
+        include_links = self.include_links
 
-            text = OptionalLinksMarkdownConverter().convert_soup(soup)
+        # Custom MarkdownConverter to optionally linked urls. If include_links is False only
+        # the text of the link is returned.
+        class OptionalLinksMarkdownConverter(markdownify.MarkdownConverter):
+            def convert_a(self, el: Any, text: str, convert_as_inline: Any) -> str:
+                if include_links:
+                    return super().convert_a(el, text, convert_as_inline)
+                return text
 
-            # Remove leading and trailing whitespace from the entire text
-            text = text.strip()
+        soup = bs4.BeautifulSoup(page, "html.parser")
 
-            # Remove trailing whitespace from each line
-            text = re.sub(r"[ \t]+$", "", text, flags=re.MULTILINE)
+        # Remove unwanted elements
+        exclude_selector = ",".join(
+            self.exclude_tags + [f".{c}" for c in self.exclude_classes] + [f"#{i}" for i in self.exclude_ids],
+        )
+        if exclude_selector:
+            for s in soup.select(exclude_selector):
+                s.extract()
 
-            # Indent using 2 spaces instead of tabs
-            text = re.sub(r"(\n?\s*?)\t", r"\1  ", text)
+        text = OptionalLinksMarkdownConverter().convert_soup(soup)
 
-            # Remove triple+ newlines (keep double newlines for paragraphs)
-            text = re.sub(r"\n\n+", "\n\n", text)
+        # Remove leading and trailing whitespace from the entire text
+        text = text.strip()
 
-            return TextArtifact(text)
+        # Remove trailing whitespace from each line
+        text = re.sub(r"[ \t]+$", "", text, flags=re.MULTILINE)
+
+        # Indent using 2 spaces instead of tabs
+        text = re.sub(r"(\n?\s*?)\t", r"\1  ", text)
+
+        # Remove triple+ newlines (keep double newlines for paragraphs)
+        text = re.sub(r"\n\n+", "\n\n", text)
+
+        return TextArtifact(text)

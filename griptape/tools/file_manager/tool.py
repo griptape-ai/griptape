@@ -5,9 +5,12 @@ import os
 from attrs import Factory, define, field
 from schema import Literal, Schema
 
+import griptape.loaders as loaders
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers import BaseFileManagerDriver, LocalFileManagerDriver
+from griptape.loaders.blob_loader import BlobLoader
 from griptape.tools import BaseTool
+from griptape.utils import get_mime_type
 from griptape.utils.decorators import activity
 
 
@@ -20,6 +23,20 @@ class FileManagerTool(BaseTool):
     """
 
     file_manager_driver: BaseFileManagerDriver = field(default=Factory(lambda: LocalFileManagerDriver()), kw_only=True)
+
+    loaders: dict[str, loaders.BaseLoader] = field(
+        default=Factory(
+            lambda self: {
+                "application/pdf": loaders.PdfLoader(file_manager_driver=self.file_manager_driver),
+                "text/csv": loaders.CsvLoader(file_manager_driver=self.file_manager_driver),
+                "text": loaders.TextLoader(file_manager_driver=self.file_manager_driver),
+                "image": loaders.ImageLoader(file_manager_driver=self.file_manager_driver),
+                "application/octet-stream": BlobLoader(file_manager_driver=self.file_manager_driver),
+            },
+            takes_self=True,
+        ),
+        kw_only=True,
+    )
 
     @activity(
         config={
@@ -51,7 +68,11 @@ class FileManagerTool(BaseTool):
         artifacts = []
 
         for path in paths:
-            artifact = self.file_manager_driver.load_file(path)
+            abs_path = os.path.join(self.file_manager_driver.workdir, path)
+            mime_type = get_mime_type(abs_path)
+            loader = next((loader for key, loader in self.loaders.items() if mime_type.startswith(key)))
+
+            artifact = loader.load(path)
             if isinstance(artifact, ListArtifact):
                 artifacts.extend(artifact.value)
             else:

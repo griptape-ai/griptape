@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.common import BaseDeltaMessageContent, BaseMessageContent, TextDeltaMessageContent
 
 if TYPE_CHECKING:
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 @define
 class TextMessageContent(BaseMessageContent):
-    artifact: TextArtifact = field(metadata={"serializable": True})
+    artifact: BaseArtifact = field(metadata={"serializable": True})
 
     @classmethod
     def from_deltas(cls, deltas: Sequence[BaseDeltaMessageContent]) -> TextMessageContent:

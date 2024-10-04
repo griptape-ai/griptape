@@ -1,5 +1,6 @@
 import os
 
+from griptape.chunkers import TextChunker
 from griptape.drivers import (
     AstraDbVectorStoreDriver,
     OpenAiChatPromptDriver,
@@ -43,9 +44,9 @@ engine = RagEngine(
     ),
 )
 
-artifacts = WebLoader(max_tokens=256).load(input_blogpost)
-
-vector_store_driver.upsert_text_artifacts({namespace: artifacts})
+artifacts = WebLoader().load(input_blogpost)
+chunks = TextChunker().chunk(artifacts)
+vector_store_driver.upsert_text_artifacts({namespace: chunks})
 
 rag_tool = RagTool(
     description="A DataStax blog post",

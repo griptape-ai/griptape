@@ -1,5 +1,6 @@
 import os
 
+from griptape.chunkers import TextChunker
 from griptape.drivers import MongoDbAtlasVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 
@@ -25,14 +26,11 @@ vector_store_driver = MongoDbAtlasVectorStoreDriver(
 )
 
 # Load Artifacts from the web
-artifacts = WebLoader(max_tokens=200).load("https://www.griptape.ai")
+artifact = WebLoader().load("https://www.griptape.ai")
+chunks = TextChunker(max_tokens=200).chunk(artifact)
 
 # Upsert Artifacts into the Vector Store Driver
-vector_store_driver.upsert_text_artifacts(
-    {
-        "griptape": artifacts,
-    }
-)
+vector_store_driver.upsert_text_artifacts({"griptape": chunks})
 
 results = vector_store_driver.query(query="What is griptape?")
 

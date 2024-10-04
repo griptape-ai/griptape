@@ -1,5 +1,6 @@
 import os
 
+from griptape.chunkers import TextChunker
 from griptape.drivers import AstraDbVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 
@@ -20,10 +21,11 @@ vector_store_driver = AstraDbVectorStoreDriver(
 )
 
 # Load Artifacts from the web
-artifacts = WebLoader().load("https://www.griptape.ai")
+artifact = WebLoader().load("https://www.griptape.ai")
+chunks = TextChunker().chunk(artifact)
 
 # Upsert Artifacts into the Vector Store Driver
-[vector_store_driver.upsert_text_artifact(a, namespace="griptape") for a in artifacts]
+vector_store_driver.upsert_text_artifacts({"griptape": chunks})
 
 results = vector_store_driver.query(query="What is griptape?")
 
