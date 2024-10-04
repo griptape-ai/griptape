@@ -1,5 +1,0 @@
-version: "v1"
-name: Date Time Tool
-description: Tool that allows LLMs to retrieve the current date & time
-contact_email: hello@griptape.ai
-legal_info_url: https://www.griptape.ai/legal

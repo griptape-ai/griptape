@@ -10,7 +10,6 @@ from abc import ABC
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
 import schema
-import yaml
 from attrs import Attribute, Factory, define, field
 from schema import Literal, Or, Schema
 
@@ -38,7 +37,6 @@ class BaseTool(ActivityMixin, ABC):
         off_prompt: Determines whether tool activity output goes to the output memory.
     """
 
-    MANIFEST_FILE = "manifest.yml"
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
@@ -68,17 +66,8 @@ class BaseTool(ActivityMixin, ABC):
                     raise ValueError(f"memory names have to be unique in activity '{activity_name}' output")
 
     @property
-    def manifest_path(self) -> str:
-        return os.path.join(self.abs_dir_path, self.MANIFEST_FILE)
-
-    @property
     def requirements_path(self) -> str:
         return os.path.join(self.abs_dir_path, self.REQUIREMENTS_FILE)
-
-    @property
-    def manifest(self) -> dict:
-        with open(self.manifest_path) as yaml_file:
-            return yaml.safe_load(yaml_file)
 
     @property
     def abs_file_path(self) -> str:
@@ -173,16 +162,8 @@ class BaseTool(ActivityMixin, ABC):
             return InfoArtifact("Tool returned an empty value")
 
     def validate(self) -> bool:
-        from griptape.utils import ManifestValidator
-
-        if not os.path.exists(self.manifest_path):
-            raise Exception(f"{self.MANIFEST_FILE} not found")
-
         if not os.path.exists(self.requirements_path):
             raise Exception(f"{self.REQUIREMENTS_FILE} not found")
-
-        ManifestValidator().validate(self.manifest)
-
         return True
 
     def tool_dir(self) -> str:
