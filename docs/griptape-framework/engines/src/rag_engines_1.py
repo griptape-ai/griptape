@@ -1,3 +1,4 @@
+from griptape.chunkers import TextChunker
 from griptape.drivers import LocalVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
 from griptape.engines.rag import RagContext, RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, TranslateQueryRagModule, VectorStoreRetrievalRagModule
@@ -8,12 +9,12 @@ from griptape.rules import Rule, Ruleset
 prompt_driver = OpenAiChatPromptDriver(model="gpt-4o", temperature=0)
 
 vector_store = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
-artifacts = WebLoader(max_tokens=500).load("https://www.griptape.ai")
-
+artifact = WebLoader().load("https://www.griptape.ai")
+chunks = TextChunker(max_tokens=500).chunk(artifact)
 
 vector_store.upsert_text_artifacts(
     {
-        "griptape": artifacts,
+        "griptape": chunks,
     }
 )
 

@@ -4,12 +4,13 @@ from unittest.mock import patch
 import pytest
 
 from griptape.artifacts import TextArtifact
+from griptape.drivers import BaseVectorStoreDriver
 
 
-class BaseLocalVectorStoreDriver(ABC):
+class TestBaseVectorStoreDriver(ABC):
     @pytest.fixture()
     @abstractmethod
-    def driver(self): ...
+    def driver(self, *args, **kwargs) -> BaseVectorStoreDriver: ...
 
     def test_upsert(self, driver):
         namespace = driver.upsert_text_artifact(TextArtifact(id="foo1", value="foobar"))

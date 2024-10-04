@@ -9,8 +9,6 @@ engine = PromptSummaryEngine(
     prompt_driver=OpenAiChatPromptDriver(model="gpt-3.5-turbo"),
 )
 
-artifacts = PdfLoader().load(response.content)
+artifact = PdfLoader().parse(response.content)
 
-text = "\n\n".join([a.value for a in artifacts])
-
-engine.summarize_text(text)
+engine.summarize_artifacts(artifact)

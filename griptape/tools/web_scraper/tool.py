@@ -4,6 +4,7 @@ from attrs import Factory, define, field
 from schema import Literal, Schema
 
 from griptape.artifacts import ErrorArtifact, ListArtifact
+from griptape.chunkers import TextChunker
 from griptape.loaders import WebLoader
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
@@ -12,6 +13,7 @@ from griptape.utils.decorators import activity
 @define
 class WebScraperTool(BaseTool):
     web_loader: WebLoader = field(default=Factory(lambda: WebLoader()), kw_only=True)
+    text_chunker: TextChunker = field(default=Factory(lambda: TextChunker()), kw_only=True)
 
     @activity(
         config={
@@ -24,6 +26,8 @@ class WebScraperTool(BaseTool):
 
         try:
             result = self.web_loader.load(url)
-            return ListArtifact(result)
+            chunks = TextChunker().chunk(result)
+
+            return ListArtifact(chunks)
         except Exception as e:
             return ErrorArtifact("Error getting page content: " + str(e))

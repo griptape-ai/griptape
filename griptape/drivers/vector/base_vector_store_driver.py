@@ -43,9 +43,9 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         *,
         meta: Optional[dict] = None,
         **kwargs,
-    ) -> None:
+    ) -> list[str] | dict[str, list[str]]:
         if isinstance(artifacts, list):
-            utils.execute_futures_list(
+            return utils.execute_futures_list(
                 [
                     self.futures_executor.submit(self.upsert_text_artifact, a, namespace=None, meta=meta, **kwargs)
                     for a in artifacts
@@ -65,7 +65,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
                         )
                     )
 
-            utils.execute_futures_list_dict(futures_dict)
+            return utils.execute_futures_list_dict(futures_dict)
 
     def upsert_text_artifact(
         self,
@@ -89,32 +89,20 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
             vector = artifact.embedding or artifact.generate_embedding(self.embedding_driver)
 
-            if isinstance(vector, list):
-                return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
-            else:
-                raise ValueError("Vector must be an instance of 'list'.")
+            return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
 
     def upsert_text(
         self,
         string: str,
         *,
-        vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
+        vector_id: Optional[str] = None,
         **kwargs,
     ) -> str:
-        vector_id = self._get_default_vector_id(string) if vector_id is None else vector_id
-
-        if self.does_entry_exist(vector_id, namespace=namespace):
-            return vector_id
-        else:
-            return self.upsert_vector(
-                self.embedding_driver.embed_string(string),
-                vector_id=vector_id,
-                namespace=namespace,
-                meta=meta or {},
-                **kwargs,
-            )
+        return self.upsert_text_artifact(
+            TextArtifact(string), vector_id=vector_id, namespace=namespace, meta=meta, **kwargs
+        )
 
     def does_entry_exist(self, vector_id: str, *, namespace: Optional[str] = None) -> bool:
         try:

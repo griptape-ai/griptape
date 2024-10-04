@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from griptape.artifacts import TextArtifact
 from griptape.drivers import (
     HuggingFacePipelineImageGenerationDriver,
@@ -11,7 +9,7 @@ from griptape.structures import Pipeline
 from griptape.tasks import VariationImageGenerationTask
 
 prompt_artifact = TextArtifact("landscape photograph, verdant, countryside, 8k")
-input_image_artifact = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
+input_image_artifact = ImageLoader().load("tests/resources/mountain.png")
 
 image_variation_task = VariationImageGenerationTask(
     input=(prompt_artifact, input_image_artifact),

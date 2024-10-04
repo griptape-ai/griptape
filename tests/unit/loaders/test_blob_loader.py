@@ -11,7 +11,7 @@ class TestTextLoader:
         kwargs = {"encoding": encoding} if encoding is not None else {}
         return BlobLoader(**kwargs)
 
-    @pytest.fixture(params=["bytes_from_resource_path", "str_from_resource_path"])
+    @pytest.fixture(params=["path_from_resource_path"])
     def create_source(self, request):
         return request.getfixturevalue(request.param)
 

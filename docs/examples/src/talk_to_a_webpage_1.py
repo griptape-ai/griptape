@@ -1,3 +1,4 @@
+from griptape.chunkers import TextChunker
 from griptape.drivers import LocalVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRetrievalRagModule
@@ -26,8 +27,9 @@ engine = RagEngine(
 )
 
 artifacts = WebLoader().load("https://en.wikipedia.org/wiki/Physics")
+chunks = TextChunker().chunk(artifacts)
 
-vector_store_driver.upsert_text_artifacts({namespace: artifacts})
+vector_store_driver.upsert_text_artifacts({namespace: chunks})
 
 rag_tool = RagTool(
     description="Contains information about physics. " "Use it to answer any physics-related questions.",

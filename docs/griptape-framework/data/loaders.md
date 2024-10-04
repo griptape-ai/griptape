@@ -5,77 +5,49 @@ search:
 
 ## Overview
 
-Loaders are used to load textual data from different sources and chunk it into [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s.
-Each loader can be used to load a single "document" with [load()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load) or
-multiple documents with [load_collection()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load_collection).
-
-## PDF
-
-!!! info
-    This driver requires the `loaders-pdf` [extra](../index.md#extras).
-
-Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) and can be used to load PDFs from a path or from an IO stream:
-
-```python
---8<-- "docs/griptape-framework/data/src/loaders_1.py"
-```
-
-## SQL
-
-Can be used to load data from a SQL database into [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s:
-
-```python
---8<-- "docs/griptape-framework/data/src/loaders_2.py"
-```
-
-## CSV
-
-Can be used to load CSV files into [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s:
-
-```python
---8<-- "docs/griptape-framework/data/src/loaders_3.py"
-```
+Loaders are used to load data from sources and parse it into [Artifact](../../griptape-framework/data/artifacts.md)s.
+Each loader can be used to load a single "source" with [load()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load) or
+multiple sources with [load_collection()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load_collection).
 
 
-## DataFrame
+## File
 
-!!! info
-    This driver requires the `loaders-dataframe` [extra](../index.md#extras).
+The following Loaders load a file using a [FileManagerDriver](../../reference/griptape/drivers/file_manager/base_file_manager_driver.md) and loads the resulting data into an [Artifact](../../griptape-framework/data/artifacts.md) for the respective file type.
 
-Can be used to load [pandas](https://pandas.pydata.org/) [DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html)s into [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s:
+### Text
 
-```python
---8<-- "docs/griptape-framework/data/src/loaders_4.py"
-```
-
-
-## Text
-
-Used to load arbitrary text and text files:
+Loads text files into [TextArtifact](../../griptape-framework/data/artifacts.md#text)s:
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_5.py"
 ```
 
-You can set a custom [tokenizer](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.tokenizer), [max_tokens](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.max_tokens) parameter, and [chunker](../../reference/griptape/loaders/text_loader.md#griptape.loaders.text_loader.TextLoader.chunker).
-
-## Web
+### PDF
 
 !!! info
-    This driver requires the `loaders-web` [extra](../index.md#extras).
+    This driver requires the `loaders-pdf` [extra](../index.md#extras).
 
-Inherits from the [TextLoader](../../reference/griptape/loaders/text_loader.md) and can be used to load web pages:
+Loads PDF files into [ListArtifact](../../griptape-framework/data/artifacts.md#list)s, where each element is a [TextArtifact](../../griptape-framework/data/artifacts.md#text) containing a page of the PDF:
 
 ```python
---8<-- "docs/griptape-framework/data/src/loaders_6.py"
+--8<-- "docs/griptape-framework/data/src/loaders_1.py"
 ```
 
-## Image
+### CSV
+
+Loads CSV files into [ListArtifact](../../griptape-framework/data/artifacts.md#list)s, where each element is a [TextArtifact](../../griptape-framework/data/artifacts.md#text) containing a row of the CSV:
+
+```python
+--8<-- "docs/griptape-framework/data/src/loaders_3.py"
+```
+
+### Image
 
 !!! info
     This driver requires the `loaders-image` [extra](../index.md#extras).
 
-The Image Loader is used to load an image as an [ImageArtifact](./artifacts.md#image). The Loader operates on image bytes that can be sourced from files on disk, downloaded images, or images in memory.
+Loads images into [ImageArtifact](../../griptape-framework/data/artifacts.md#image)s:
+
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_7.py"
@@ -87,27 +59,42 @@ By default, the Image Loader will load images in their native format, but not al
 --8<-- "docs/griptape-framework/data/src/loaders_8.py"
 ```
 
+### Audio
+
+Loads audio files into [AudioArtifact](../../griptape-framework/data/artifacts.md#audio)s:
+
+The Loader will load audio in its native format and populates the resulting Artifact's `format` field by making a best-effort guess of the underlying audio format using the `filetype` package.
+
+```python
+--8<-- "docs/griptape-framework/data/src/loaders_10.py"
+```
+
+## Web
+
+!!! info
+    This driver requires the `loaders-web` [extra](../index.md#extras).
+
+Scrapes web pages using a [WebScraperDriver](../drivers/web-scraper-drivers.md) and loads the resulting text into [TextArtifact](../../griptape-framework/data/artifacts.md#text)s.
+
+```python
+--8<-- "docs/griptape-framework/data/src/loaders_6.py"
+```
+
+## SQL
+
+Loads data from a SQL database using a [SQLDriver](../drivers/sql-drivers.md) and loads the resulting data into [ListArtifact](../../griptape-framework/data/artifacts.md#list)s, where each element is a [CsvRowArtifact](../../griptape-framework/data/artifacts.md#csv) containing a row of the SQL query.
+
+```python
+--8<-- "docs/griptape-framework/data/src/loaders_2.py"
+```
 
 ## Email
 
 !!! info
     This driver requires the `loaders-email` [extra](../index.md#extras).
 
-Can be used to load email from an imap server:
+Loads data from an imap email server into a [ListArtifact](../../reference/griptape/artifacts/list_artifact.md)s, where each element is a [TextArtifact](../../reference/griptape/artifacts/text_artifact.md) containing an email.
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_9.py"
-```
-
-## Audio
-
-!!! info
-    This driver requires the `loaders-audio` [extra](../index.md#extras).
-
-The [Audio Loader](../../reference/griptape/loaders/audio_loader.md) is used to load audio content as an [AudioArtifact](./artifacts.md#audio). The Loader operates on audio bytes that can be sourced from files on disk, downloaded audio, or audio in memory.
-
-The Loader will load audio in its native format and populates the resulting Artifact's `format` field by making a best-effort guess of the underlying audio format using the `filetype` package.
-
-```python
---8<-- "docs/griptape-framework/data/src/loaders_10.py"
 ```

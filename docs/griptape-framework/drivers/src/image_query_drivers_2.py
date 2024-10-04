@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from griptape.drivers import AnthropicImageQueryDriver
 from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
@@ -13,9 +11,9 @@ engine = ImageQueryEngine(
     image_query_driver=driver,
 )
 
-image_artifact1 = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
+image_artifact1 = ImageLoader().load("tests/resources/mountain.png")
 
-image_artifact2 = ImageLoader().load(Path("tests/resources/cow.png").read_bytes())
+image_artifact2 = ImageLoader().load("tests/resources/cow.png")
 
 result = engine.run("Describe the weather in the image", [image_artifact1, image_artifact2])
 

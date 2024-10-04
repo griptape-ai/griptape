@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 from griptape.drivers import AzureOpenAiImageQueryDriver
 from griptape.engines import ImageQueryEngine
@@ -17,6 +16,6 @@ engine = ImageQueryEngine(
     image_query_driver=driver,
 )
 
-image_artifact = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
+image_artifact = ImageLoader().load("tests/resources/mountain.png")
 
 engine.run("Describe the weather in the image", [image_artifact])

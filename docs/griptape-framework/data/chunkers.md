@@ -18,3 +18,7 @@ Here is how to use a chunker:
 ```python
 --8<-- "docs/griptape-framework/data/src/chunkers_1.py"
 ```
+
+The most common use of a Chunker is to split up a long text into smaller chunks for inserting into a Vector Database when doing Retrieval Augmented Generation (RAG).
+
+See [RagEngine](../../griptape-framework/engines/rag-engines.md) for more information on how to use Chunkers in RAG pipelines.
