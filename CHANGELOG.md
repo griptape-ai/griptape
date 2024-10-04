@@ -68,7 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove `manifest.yml` requirements for custom tool creation.
 
 ### Fixed
-- Anthropic native Tool calling
+- Anthropic native Tool calling.
+- Empty `ActionsSubtask.thought` being logged.
 
 ## [0.32.0] - 2024-09-17
 
