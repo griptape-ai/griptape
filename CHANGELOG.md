@@ -49,7 +49,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREKING**: `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`. Passing `bytes` is still supported but deprecated.
 - **BREAKING**: Removed `DataframeLoader`.
 - Several places where API clients are initialized are now lazy loaded.
-- `MarkdownifyWebScraperDriver.DEFAULT_EXCLUDE_TAGS` now includes media/blob-like HTML tags
 - `BaseVectorStoreDriver.upsert_text_artifacts` now returns a list or dictionary of upserted vector ids.
 - `LocalFileManagerDriver.workdir` is now optional.
 - `filetype` is now a core dependency.
