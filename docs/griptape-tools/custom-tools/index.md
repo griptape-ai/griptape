@@ -2,20 +2,18 @@
 
 Building your own tools is easy with Griptape!
 
-To start, create a directory for your tool inside your project. All tool directories should have the following components:
+To start, you can define your tool in a single Python file within your project. All tool files should have the necessary components in one place, keeping things simple.
 
-* `tool.py` file with a tool Python class.
-* `requirements.txt` file with tool Python dependencies.
+* **Optional**: You can include a `requirements.txt` file with Python dependencies if needed. If you do, both the tool file and the `requirements.txt` file must be placed in their own directory together. Griptape will automatically install those dependencies when the tool is loaded.
 
-Let's build a simple random number generator tool! First, create a new directory for your tool `rng_tool`. This is where all tool files will go.
+Let's build a simple random number generator tool! You can define the tool directly in your code.
 
 ## Tool Dependencies
-
-To add Python dependencies for your tool, add a `requirements.txt` file. The tool we are building is pretty simple, so you can leave that file empty.
+If your tool has specific Python dependencies, you can create a requirements.txt file. Although our example is simple and doesn't need it, remember that the requirements.txt file and the tool file must be in a directory together, and Griptape will handle the installation.
 
 ## Tool Implementation
 
-Next, create a `tool.py` file with the following code:
+Here’s an example of the tool implementation in a single file:
 
 ```python
 --8<-- "docs/griptape-tools/custom-tools/src/index_1.py"
