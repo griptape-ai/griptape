@@ -45,7 +45,7 @@ engine = RagEngine(
 )
 
 artifacts = WebLoader().load(input_blogpost)
-chunks = TextChunker().chunk(artifacts)
+chunks = TextChunker(max_tokens=256).chunk(artifacts)
 vector_store_driver.upsert_text_artifacts({namespace: chunks})
 
 rag_tool = RagTool(
