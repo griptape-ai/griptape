@@ -2,7 +2,8 @@ import json
 
 from schema import Literal, Schema
 
-from griptape.artifacts import ErrorArtifact, ListArtifact
+from griptape.artifacts import ListArtifact
+from griptape.chunkers import TextChunker
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.engines import JsonExtractionEngine
 from griptape.loaders import WebLoader
@@ -20,12 +21,11 @@ json_engine = JsonExtractionEngine(
 
 # Load data from the web
 web_data = WebLoader().load("https://en.wikipedia.org/wiki/Large_language_model")
+chunks = TextChunker().chunk(web_data)
 
-if isinstance(web_data, ErrorArtifact):
-    raise Exception(web_data.value)
 
 # Extract data using the engine
-result = json_engine.extract_artifacts(ListArtifact(web_data))
+result = json_engine.extract_artifacts(ListArtifact(chunks))
 
 for artifact in result:
     print(json.dumps(artifact.value, indent=2))
