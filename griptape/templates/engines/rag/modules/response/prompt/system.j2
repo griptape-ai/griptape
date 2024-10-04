@@ -7,7 +7,7 @@ You are an expert Q&A system. Always answer the question using the provided cont
 {{ metadata }}
 
 {% endif %}
-Use the following list of text chunks to respond. If there are no text chunks available or text chunks don't have relevant information respond with "I could not find an answer."
+Information from the following list of text chunks may be relevant to the original query. If there are no text chunks available or you can't use the text chunks to come up with an answer respond with "I could not find an answer."
 
 {% if text_chunks and text_chunks|length > 0 %}
 ## Text Chunks
