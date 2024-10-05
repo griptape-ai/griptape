@@ -7,10 +7,11 @@ import re
 import subprocess
 import sys
 from abc import ABC
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
 import schema
-from attrs import Attribute, Factory, define, field
+from attrs import Attribute, Factory, define, field, fields
 from schema import Literal, Or, Schema
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
@@ -39,13 +40,19 @@ class BaseTool(ActivityMixin, ABC):
 
     REQUIREMENTS_FILE = "requirements.txt"
 
-    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
-    output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
+    name: str = field(
+        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
+    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True, metadata={"Serializable": True})
+    output_memory: Optional[dict[str, list[TaskMemory]]] = field(
+        default=None, kw_only=True, metadata={"Serializable": True}
+    )
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
-    verbose: bool = field(default=False, kw_only=True)
-    off_prompt: bool = field(default=False, kw_only=True)
+    verbose: bool = field(default=False, kw_only=True, metadata={"Serializable": True})
+    off_prompt: bool = field(default=False, kw_only=True, metadata={"Serializable": True})
 
     def __attrs_post_init__(self) -> None:
         if self.install_dependencies_on_init:
@@ -216,3 +223,29 @@ class BaseTool(ActivityMixin, ABC):
             raise ValueError("Activity name can only contain letters, numbers, and underscores.")
 
         return f"{tool_name}_{activity_name}"
+
+    def to_dict(self) -> dict:
+        """Converts attributes with metadata={"serializable": True} into a dictionary."""
+        serialized_data = {}
+
+        # Use the attrs library to access fields with metadata.
+        for _field in fields(self.__class__):
+            if _field.metadata.get("serializable", False):
+                value = getattr(self, _field.name)
+                serialized_data[_field.name] = self._serialize(value)
+
+        return serialized_data
+
+    def _serialize(self, value: Any) -> Any:
+        if hasattr(value, "to_dict"):  # Check if the object has a to_dict method
+            return value.to_dict()
+        elif isinstance(value, (list, tuple)):  # Handle lists or tuples
+            return [self._serialize(item) for item in value]
+        elif isinstance(value, dict):  # Handle dictionaries
+            return {key: self._serialize(val) for key, val in value.items()}
+        elif isinstance(value, Enum):  # Handle Enum types
+            return value.name  # Return the Enum's name as a string
+        elif callable(value):  # Handle functions or methods
+            return "default_function"
+        else:
+            return repr(value)  # Fallback for other non-serializable objects

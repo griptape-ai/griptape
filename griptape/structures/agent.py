@@ -21,12 +21,17 @@ if TYPE_CHECKING:
 class Agent(Structure):
     input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
+        metadata={"serializable": True},
     )
-    stream: bool = field(default=Factory(lambda: Defaults.drivers_config.prompt_driver.stream), kw_only=True)
+    stream: bool = field(
+        default=Factory(lambda: Defaults.drivers_config.prompt_driver.stream),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
+        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True, metadata={"serializable": True}
     )
-    tools: list[BaseTool] = field(factory=list, kw_only=True)
+    tools: list[BaseTool] = field(factory=list, kw_only=True, metadata={"serializable": True})
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
     fail_fast: bool = field(default=False, kw_only=True)
 

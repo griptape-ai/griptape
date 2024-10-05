@@ -21,15 +21,17 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 @define
 class PromptTask(RuleMixin, BaseTask):
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
+        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True, metadata={"serializable": True}
     )
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
         kw_only=True,
+        metadata={"serializable": True},
     )
     _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
+        metadata={"serializable": True},
     )
 
     @property

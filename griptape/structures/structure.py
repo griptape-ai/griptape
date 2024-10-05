@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Attribute, Factory, define, field
+from attrs import Attribute, Factory, define, field, fields
 
 from griptape.common import observable
 from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRunEvent
@@ -24,7 +25,9 @@ class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[BaseRule] = field(factory=list, kw_only=True)
-    _tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True, alias="tasks")
+    _tasks: list[BaseTask | list[BaseTask]] = field(
+        factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
+    )
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
@@ -194,3 +197,27 @@ class Structure(ABC):
 
     @abstractmethod
     def try_run(self, *args) -> Structure: ...
+
+    def to_dict(self) -> dict:
+        """Converts attributes with metadata={"serializable": True} into a dictionary."""
+        serialized_data = {}
+        for _field in fields(self.__class__):
+            if _field.metadata.get("serializable", False):
+                value = getattr(self, _field.name)
+                serialized_data[_field.name] = self._serialize(value)
+
+        return serialized_data
+
+    def _serialize(self, value: Any) -> Any:
+        if hasattr(value, "to_dict"):  # Check if the object has a to_dict method
+            return value.to_dict()
+        elif isinstance(value, (list, tuple)):  # Handle lists or tuples
+            return [self._serialize(item) for item in value]
+        elif isinstance(value, dict):  # Handle dictionaries
+            return {key: self._serialize(val) for key, val in value.items()}
+        elif isinstance(value, Enum):  # Handle Enum types
+            return value.name  # Return the Enum's name as a string
+        elif callable(value):  # Handle functions or methods
+            return "default_function"
+        else:
+            return repr(value)  # Fallback for other non-serializable objects
