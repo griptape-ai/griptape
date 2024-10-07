@@ -124,6 +124,7 @@ class BaseSchema(Schema):
             BaseImageGenerationDriver,
             BaseImageQueryDriver,
             BasePromptDriver,
+            BaseRulesetDriver,
             BaseTextToSpeechDriver,
             BaseVectorStoreDriver,
         )
@@ -145,6 +146,7 @@ class BaseSchema(Schema):
                 "BaseTextToSpeechDriver": BaseTextToSpeechDriver,
                 "BaseAudioTranscriptionDriver": BaseAudioTranscriptionDriver,
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
+                "BaseRulesetDriver": BaseRulesetDriver,
                 "BaseImageGenerationDriver": BaseImageGenerationDriver,
                 "BaseArtifact": BaseArtifact,
                 "PromptStack": PromptStack,
