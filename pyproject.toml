@@ -218,7 +218,7 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.0"
 pyright = "^1.1.376"
-pre-commit = "^3.7.1"
+pre-commit = "^4.0.0"
 boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker", "sqs", "iot-data", "dynamodb", "redshift-data"], version = "^1.34.105"}
 typos = "^1.22.9"
 
