@@ -49,6 +49,11 @@ class TestAnthropicDriversConfig:
                 "type": "LocalConversationMemoryDriver",
                 "persist_file": None,
             },
+            "ruleset_driver": {
+                "type": "LocalRulesetDriver",
+                "raise_not_found": True,
+                "persist_dir": None,
+            },
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
         }

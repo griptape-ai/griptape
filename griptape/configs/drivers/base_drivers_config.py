@@ -16,6 +16,7 @@ if TYPE_CHECKING:
         BaseImageGenerationDriver,
         BaseImageQueryDriver,
         BasePromptDriver,
+        BaseRulesetDriver,
         BaseTextToSpeechDriver,
         BaseVectorStoreDriver,
     )
@@ -46,6 +47,9 @@ class BaseDriversConfig(ABC, SerializableMixin):
     )
     _audio_transcription_driver: BaseAudioTranscriptionDriver = field(
         default=None, kw_only=True, metadata={"serializable": True}, alias="audio_transcription_driver"
+    )
+    _ruleset_driver: BaseRulesetDriver = field(
+        default=None, kw_only=True, metadata={"serializable": True}, alias="ruleset_driver"
     )
 
     _last_drivers_config: Optional[BaseDriversConfig] = field(default=None)
@@ -98,3 +102,7 @@ class BaseDriversConfig(ABC, SerializableMixin):
     @lazy_property()
     @abstractmethod
     def audio_transcription_driver(self) -> BaseAudioTranscriptionDriver: ...
+
+    @lazy_property()
+    @abstractmethod
+    def ruleset_driver(self) -> BaseRulesetDriver: ...

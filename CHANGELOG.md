@@ -19,6 +19,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseWebScraperDriver.extract_page()` method for extracting data from an already scraped web page.
 - `TextLoaderRetrievalRagModule.chunker` for specifying the chunking strategy.
 - `file_utils.get_mime_type` utility for getting the MIME type of a file.
+- `BaseRulesetDriver` for loading a `Ruleset` from an external source.
+  - `LocalRulesetDriver` for loading a `Ruleset` from a local `.json` file.
+  - `GriptapeCloudRulesetDriver` for loading a `Ruleset` resource from Griptape Cloud.
 
 ### Changed
 - **BREAKING**: Renamed parameters on several classes to `client`:
