@@ -5,7 +5,7 @@ import pytest
 from griptape.drivers import GriptapeCloudVectorStoreDriver
 
 
-class TestGriptapeCloudKnowledgeBaseVectorStoreDriver:
+class TestGriptapeCloudVectorStoreDriver:
     test_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
     test_vecs = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
     test_namespaces = [str(uuid.uuid4()), str(uuid.uuid4())]

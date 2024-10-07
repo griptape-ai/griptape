@@ -152,6 +152,21 @@ image_artifact = ImageArtifact(
 print(image_artifact.meta["prompt"], image_artifact.meta["model"]) # Generate an image of a cat, DALL-E
 ```
 
+Renamed `GriptapeCloudKnowledgeBaseVectorStoreDriver` to `GriptapeCloudVectorStoreDriver`.
+
+#### Before
+```python
+from griptape.drivers.griptape_cloud_knowledge_base_vector_store_driver import GriptapeCloudKnowledgeBaseVectorStoreDriver
+
+driver = GriptapeCloudKnowledgeBaseVectorStoreDriver(...)
+```
+
+#### After
+```python
+from griptape.drivers.griptape_cloud_vector_store_driver import GriptapeCloudVectorStoreDriver
+
+driver = GriptapeCloudVectorStoreDriver(...)
+```
 
 ## 0.31.X to 0.32.X
 

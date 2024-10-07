@@ -30,4 +30,4 @@ curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test ques
 
 ## Using the Griptape Framework
 
-You can use the [GriptapeCloudKnowledgeBaseVectorStoreDriver](../../griptape-framework/drivers/vector-store-drivers.md/#griptape-cloud-knowledge-base) to query your Knowledge Base with Griptape and the [GriptapeCloudKnowledgeBaseTool](../../griptape-tools/official-tools/griptape-cloud-knowledge-base-tool.md) to search.
+You can use the [GriptapeCloudVectorStoreDriver](../../griptape-framework/drivers/vector-store-drivers.md/#griptape-cloud-knowledge-base) to query your Knowledge Base with Griptape and the [GriptapeCloudKnowledgeBaseTool](../../griptape-tools/official-tools/griptape-cloud-knowledge-base-tool.md) to search.
