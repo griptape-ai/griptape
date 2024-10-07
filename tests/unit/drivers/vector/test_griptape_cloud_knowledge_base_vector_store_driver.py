@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from griptape.drivers import GriptapeCloudKnowledgeBaseVectorStoreDriver
+from griptape.drivers import GriptapeCloudVectorStoreDriver
 
 
 class TestGriptapeCloudKnowledgeBaseVectorStoreDriver:
@@ -38,7 +38,7 @@ class TestGriptapeCloudKnowledgeBaseVectorStoreDriver:
         mock_response.json.return_value = test_entries
         mocker.patch("requests.post", return_value=mock_response)
 
-        return GriptapeCloudKnowledgeBaseVectorStoreDriver(api_key="foo bar", knowledge_base_id="1")
+        return GriptapeCloudVectorStoreDriver(api_key="foo bar", knowledge_base_id="1")
 
     def test_query(self, driver):
         result = driver.query(
