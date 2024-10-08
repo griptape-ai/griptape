@@ -41,4 +41,9 @@ class TestCohereDriversConfig:
                     "input_type": "search_document",
                 },
             },
+            "ruleset_driver": {
+                "type": "LocalRulesetDriver",
+                "raise_not_found": True,
+                "persist_dir": None,
+            },
         }

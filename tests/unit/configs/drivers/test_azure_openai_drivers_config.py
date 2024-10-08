@@ -97,4 +97,9 @@ class TestAzureOpenAiDriversConfig:
                 "voice": "alloy",
             },
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "ruleset_driver": {
+                "type": "LocalRulesetDriver",
+                "raise_not_found": True,
+                "persist_dir": None,
+            },
         }
