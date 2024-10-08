@@ -6,7 +6,12 @@ from typing import Any, Callable, Optional
 import schema
 from schema import Schema
 
-CONFIG_SCHEMA = Schema({"description": str, schema.Optional("schema"): Schema})
+CONFIG_SCHEMA = Schema(
+    {
+        "description": str,
+        schema.Optional("schema"): lambda data: isinstance(data, (Schema, Callable)),
+    }
+)
 
 
 def activity(config: dict) -> Any:

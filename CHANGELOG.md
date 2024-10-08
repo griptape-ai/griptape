@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `GriptapeCloudRulesetDriver` for loading a `Ruleset` resource from Griptape Cloud.
 - Parameter `alias` on `GriptapeCloudConversationMemoryDriver` for fetching a Thread by alias.
 - Basic support for OpenAi Structured Output via `OpenAiChatPromptDriver.response_format` parameter. 
+- Ability to pass callable to `activity.schema` for dynamic schema generation.
 
 ### Changed
 - **BREAKING**: Renamed parameters on several classes to `client`:
