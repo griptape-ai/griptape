@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @define
-class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
+class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
     """A vector store driver for Griptape Cloud Knowledge Bases.
 
     Attributes:
@@ -84,7 +84,7 @@ class GriptapeCloudKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         namespace: Optional[str] = None,
         include_vectors: Optional[bool] = None,
         distance_metric: Optional[str] = None,
-        # GriptapeCloudKnowledgeBaseVectorStoreDriver-specific params:
+        # GriptapeCloudVectorStoreDriver-specific params:
         filter: Optional[dict] = None,  # noqa: A002
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:

@@ -43,7 +43,7 @@ from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDri
 from .vector.dummy_vector_store_driver import DummyVectorStoreDriver
 from .vector.qdrant_vector_store_driver import QdrantVectorStoreDriver
 from .vector.astradb_vector_store_driver import AstraDbVectorStoreDriver
-from .vector.griptape_cloud_knowledge_base_vector_store_driver import GriptapeCloudKnowledgeBaseVectorStoreDriver
+from .vector.griptape_cloud_vector_store_driver import GriptapeCloudVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -183,7 +183,7 @@ __all__ = [
     "QdrantVectorStoreDriver",
     "AstraDbVectorStoreDriver",
     "DummyVectorStoreDriver",
-    "GriptapeCloudKnowledgeBaseVectorStoreDriver",
+    "GriptapeCloudVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
