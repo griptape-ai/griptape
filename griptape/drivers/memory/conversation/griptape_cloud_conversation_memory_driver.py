@@ -49,6 +49,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         init=False,
     )
+    _thread: Optional[dict] = field(default=None, init=False)
 
     @api_key.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_api_key(self, _: Attribute, value: Optional[str]) -> str:
@@ -59,30 +60,33 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
     @property
     def thread(self) -> dict:
         """Try to get the Thread by ID, alias, or create a new one."""
-        thread = None
-        if self.thread_id is None:
-            self.thread_id = os.getenv("GT_CLOUD_THREAD_ID")
+        if self._thread is None:
+            thread = None
+            if self.thread_id is None:
+                self.thread_id = os.getenv("GT_CLOUD_THREAD_ID")
 
-        if self.thread_id is not None:
-            res = self._call_api("get", f"/threads/{self.thread_id}", raise_for_status=False)
-            if res.status_code == 200:
-                thread = res.json()
+            if self.thread_id is not None:
+                res = self._call_api("get", f"/threads/{self.thread_id}", raise_for_status=False)
+                if res.status_code == 200:
+                    thread = res.json()
 
-        # use name as 'alias' to get thread
-        if thread is None and self.alias is not None:
-            res = self._call_api("get", f"/threads?alias={self.alias}").json()
-            if res.get("threads"):
-                thread = res["threads"][0]
-                self.thread_id = thread.get("thread_id")
+            # use name as 'alias' to get thread
+            if thread is None and self.alias is not None:
+                res = self._call_api("get", f"/threads?alias={self.alias}").json()
+                if res.get("threads"):
+                    thread = res["threads"][0]
+                    self.thread_id = thread.get("thread_id")
 
-        # no thread by name or thread_id
-        if thread is None:
-            data = {"name": uuid.uuid4().hex} if self.alias is None else {"name": self.alias, "alias": self.alias}
-            thread = self._call_api("post", "/threads", data).json()
-            self.thread_id = thread["thread_id"]
-            self.alias = thread.get("alias")
+            # no thread by name or thread_id
+            if thread is None:
+                data = {"name": uuid.uuid4().hex} if self.alias is None else {"name": self.alias, "alias": self.alias}
+                thread = self._call_api("post", "/threads", data).json()
+                self.thread_id = thread["thread_id"]
+                self.alias = thread.get("alias")
 
-        return thread
+            self._thread = thread
+
+        return self._thread  # pyright: ignore[reportReturnType]
 
     def store(self, runs: list[Run], metadata: dict[str, Any]) -> None:
         # serialize the run artifacts to json strings
@@ -109,6 +113,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         # all old Messages are replaced with the new ones
         thread_id = self.thread["thread_id"] if self.thread_id is None else self.thread_id
         self._call_api("patch", f"/threads/{thread_id}", body)
+        self._thread = None
 
     def load(self) -> tuple[list[Run], dict[str, Any]]:
         from griptape.memory.structure import Run
