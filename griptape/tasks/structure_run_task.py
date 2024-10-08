@@ -4,7 +4,8 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.tasks import BaseMultiTextInputTask
+from griptape.artifacts.list_artifact import ListArtifact
+from griptape.tasks.prompt_task import PromptTask
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -12,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @define
-class StructureRunTask(BaseMultiTextInputTask):
+class StructureRunTask(PromptTask):
     """Task to run a Structure.
 
     Attributes:
@@ -22,4 +23,7 @@ class StructureRunTask(BaseMultiTextInputTask):
     driver: BaseStructureRunDriver = field(kw_only=True)
 
     def run(self) -> BaseArtifact:
-        return self.driver.run(*self.input)
+        if isinstance(self.input, ListArtifact):
+            return self.driver.run(*self.input.value)
+        else:
+            return self.driver.run(self.input)

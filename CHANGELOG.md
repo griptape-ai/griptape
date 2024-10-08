@@ -66,6 +66,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseExtractionEngine` no longer catches exceptions and returns `ErrorArtifact`s.
 - **BREAKING**: `JsonExtractionEngine.template_schema` is now required.
 - **BREAKING**: `CsvExtractionEngine.column_names` is now required.
+- `StructureRunTask` now inherits from `PromptTask`.
 - `JsonExtractionEngine.extract_artifacts` now returns a `ListArtifact[JsonArtifact]`.
 - `CsvExtractionEngine.extract_artifacts` now returns a `ListArtifact[CsvRowArtifact]`.
 - Remove `manifest.yml` requirements for custom tool creation.
