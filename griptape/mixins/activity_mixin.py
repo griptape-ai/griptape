@@ -88,8 +88,12 @@ class ActivityMixin:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         if getattr(activity, "config")["schema"] is not None:
-            # Need to deepcopy to avoid modifying the original schema
-            config_schema = deepcopy(getattr(activity, "config")["schema"])
+            config_schema = getattr(activity, "config")["schema"]
+            if isinstance(config_schema, Callable):
+                config_schema = config_schema(self)
+            else:
+                # Need to deepcopy to avoid modifying the original schema
+                config_schema = deepcopy(getattr(activity, "config")["schema"])
             activity_name = self.activity_name(activity)
 
             if self.extra_schema_properties is not None and activity_name in self.extra_schema_properties:

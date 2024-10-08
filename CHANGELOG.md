@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `LocalRulesetDriver` for loading a `Ruleset` from a local `.json` file.
   - `GriptapeCloudRulesetDriver` for loading a `Ruleset` resource from Griptape Cloud.
 - Parameter `alias` on `GriptapeCloudConversationMemoryDriver` for fetching a Thread by alias.
+- Ability to pass callable to `activity.schema` for dynamic schema generation.
 
 ### Changed
 - **BREAKING**: Renamed parameters on several classes to `client`:

@@ -20,6 +20,11 @@ class TestGooglePromptDriver:
             "parameters": {"type": "OBJECT", "properties": {"test": {"type": "STRING"}}, "required": ["test"]},
         },
         {
+            "name": "MockTool_test_callable_schema",
+            "description": "test description",
+            "parameters": {"type": "OBJECT", "properties": {"test": {"type": "STRING"}}, "required": ["test"]},
+        },
+        {
             "name": "MockTool_test_error",
             "description": "test description: foo",
             "parameters": {"type": "OBJECT", "properties": {"test": {"type": "STRING"}}, "required": ["test"]},

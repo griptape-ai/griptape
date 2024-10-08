@@ -24,6 +24,20 @@ class TestOllamaPromptDriver:
         },
         {
             "function": {
+                "description": "test description",
+                "name": "MockTool_test_callable_schema",
+                "parameters": {
+                    "additionalProperties": False,
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
+                    "type": "object",
+                },
+            },
+            "type": "function",
+        },
+        {
+            "function": {
                 "description": "test description: foo",
                 "name": "MockTool_test_error",
                 "parameters": {

@@ -18,6 +18,11 @@ class TestCoherePromptDriver:
             "parameter_definitions": {"test": {"required": True, "type": "string"}},
         },
         {
+            "description": "test description",
+            "name": "MockTool_test_callable_schema",
+            "parameter_definitions": {"test": {"required": True, "type": "string"}},
+        },
+        {
             "description": "test description: foo",
             "name": "MockTool_test_error",
             "parameter_definitions": {"test": {"required": True, "type": "string"}},

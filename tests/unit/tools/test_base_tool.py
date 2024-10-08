@@ -41,6 +41,29 @@ class TestBaseTool:
                 "type": "object",
                 "properties": {
                     "name": {"const": "MockTool"},
+                    "path": {"description": "test description", "const": "test_callable_schema"},
+                    "input": {
+                        "type": "object",
+                        "properties": {
+                            "values": {
+                                "description": "Test input",
+                                "type": "object",
+                                "properties": {"test": {"type": "string"}},
+                                "required": ["test"],
+                                "additionalProperties": False,
+                            }
+                        },
+                        "required": ["values"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["name", "path", "input"],
+                "additionalProperties": False,
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"const": "MockTool"},
                     "path": {"description": "test description: foo", "const": "test_error"},
                     "input": {
                         "type": "object",

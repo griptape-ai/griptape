@@ -30,6 +30,24 @@ class TestAnthropicPromptDriver:
             "name": "MockTool_test",
         },
         {
+            "description": "test description",
+            "input_schema": {
+                "additionalProperties": False,
+                "properties": {
+                    "values": {
+                        "additionalProperties": False,
+                        "description": "Test input",
+                        "properties": {"test": {"type": "string"}},
+                        "required": ["test"],
+                        "type": "object",
+                    }
+                },
+                "required": ["values"],
+                "type": "object",
+            },
+            "name": "MockTool_test_callable_schema",
+        },
+        {
             "description": "test description: foo",
             "input_schema": {
                 "additionalProperties": False,
