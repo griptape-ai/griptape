@@ -8,7 +8,7 @@ import schema
 from attrs import define, field
 from schema import Literal, Schema
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, JsonArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -24,17 +24,14 @@ class RestApiTool(BaseTool):
         request_body_schema: A JSON schema string describing the request body. Recommended for PUT, POST, and PATCH requests.
         request_query_params_schema: A JSON schema string describing the available query parameters.
         request_path_params_schema: A JSON schema string describing the available path parameters. The schema must describe an array of string values.
-        response_body_schema: A JSON schema string describing the response body.
         request_headers: Headers to include in the requests.
     """
 
     base_url: str = field(kw_only=True)
     path: Optional[str] = field(default=None, kw_only=True)
     description: str = field(kw_only=True)
-    request_path_params_schema: Optional[str] = field(default=None, kw_only=True)
-    request_query_params_schema: Optional[str] = field(default=None, kw_only=True)
-    request_body_schema: Optional[str] = field(default=None, kw_only=True)
-    response_body_schema: Optional[str] = field(default=None, kw_only=True)
+    request_query_params_schema: Optional[dict] = field(default=None, kw_only=True)
+    request_body_schema: Optional[dict] = field(default=None, kw_only=True)
     request_headers: Optional[dict[str, str]] = field(default=None, kw_only=True)
 
     @property
@@ -47,11 +44,13 @@ class RestApiTool(BaseTool):
                 """
                 This tool can be used to make a put request to the rest api url: {{ _self.full_url }}
                 This rest api has the following description: {{ _self.description }}
-                {% if _self.request_body_schema %}The request body must follow this JSON schema: {{ _self.request_body_schema }}{% endif %}
-                {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """,
             ),
-            "schema": Schema({Literal("body", description="The request body."): dict}),
+            "schema": lambda _self: Schema(
+                {
+                    Literal("body", description="The request body."): Schema(_self.request_body_schema),
+                }
+            ),
         },
     )
     def put(self, params: dict) -> BaseArtifact:
@@ -66,7 +65,7 @@ class RestApiTool(BaseTool):
         try:
             response = put(url, json=body, timeout=30, headers=self.request_headers)
 
-            return TextArtifact(response.text)
+            return JsonArtifact(response.json(), meta={"status_code": response.status_code})
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
 
@@ -76,15 +75,12 @@ class RestApiTool(BaseTool):
                 """
                 This tool can be used to make a patch request to the rest api url: {{ _self.full_url }}
                 This rest api has the following description: {{ _self.description }}
-                {% if _self.request_path_parameters %}The request path parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
-                {% if _self.request_body_schema %}The request body must follow this JSON schema: {{ _self.request_body_schema }}{% endif %}
-                {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """,
             ),
-            "schema": Schema(
+            "schema": lambda _self: Schema(
                 {
-                    Literal("path_params", description="The request path parameters."): Schema([str]),
-                    Literal("body", description="The request body."): dict,
+                    Literal("path_params", description="The request path parameters."): [str],
+                    Literal("body", description="The request body."): Schema(_self.request_body_schema),
                 },
             ),
         },
@@ -101,7 +97,7 @@ class RestApiTool(BaseTool):
 
         try:
             response = patch(url, json=body, timeout=30, headers=self.request_headers)
-            return TextArtifact(response.text)
+            return JsonArtifact(response.json(), meta={"status_code": response.status_code})
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
 
@@ -111,11 +107,13 @@ class RestApiTool(BaseTool):
                 """
                 This tool can be used to make a post request to the rest api url: {{ _self.full_url }}
                 This rest api has the following description: {{ _self.description }}
-                {% if _self.request_body_schema %}The request body must follow this JSON schema: {{ _self.request_body_schema }}{% endif %}
-                {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """,
             ),
-            "schema": Schema({Literal("body", description="The request body."): dict}),
+            "schema": lambda _self: Schema(
+                {
+                    Literal("body", description="The request body."): schema.Schema(_self.request_body_schema),
+                }
+            ),
         },
     )
     def post(self, params: dict) -> BaseArtifact:
@@ -129,7 +127,7 @@ class RestApiTool(BaseTool):
 
         try:
             response = post(url, json=body, timeout=30, headers=self.request_headers)
-            return TextArtifact(response.text)
+            return JsonArtifact(response.json(), meta={"status_code": response.status_code})
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
 
@@ -139,20 +137,15 @@ class RestApiTool(BaseTool):
                 """
                 This tool can be used to make a get request to the rest api url: {{ _self.full_url }}
                 This rest api has the following description: {{ _self.description }}
-                {% if _self.request_path_parameters %}The request path parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
-                {% if _self.request_query_parameters %}The request query parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
-                {% if _self.response_body_schema %}The response body must follow this JSON schema: {{ _self.response_body_schema }}{% endif %}
                 """,
             ),
-            "schema": schema.Optional(
-                Schema(
-                    {
-                        schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
-                        schema.Optional(Literal("path_params", description="The request path parameters.")): Schema(
-                            [str]
-                        ),
-                    },
-                ),
+            "schema": lambda _self: Schema(
+                {
+                    schema.Optional(Literal("query_params", description="The request query parameters.")): Schema(
+                        _self.request_query_params_schema
+                    ),
+                    schema.Optional(Literal("path_params", description="The request path parameters.")): [str],
+                },
             ),
         },
     )
@@ -172,7 +165,7 @@ class RestApiTool(BaseTool):
 
         try:
             response = get(url, params=query_params, timeout=30, headers=self.request_headers)
-            return TextArtifact(response.text)
+            return JsonArtifact(response.json(), meta={"status_code": response.status_code})
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
 
@@ -182,14 +175,14 @@ class RestApiTool(BaseTool):
                 """
                 This tool can be used to make a delete request to the rest api url: {{ _self.full_url }}
                 This rest api has the following description: {{ _self.description }}
-                {% if _self.request_path_parameters %}The request path parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
-                {% if _self.request_query_parameters %}The request query parameters must follow this JSON schema: {{ _self.request_path_params_schema }}{% endif %}
                 """,
             ),
-            "schema": Schema(
+            "schema": lambda _self: Schema(
                 {
-                    schema.Optional(Literal("query_params", description="The request query parameters.")): dict,
-                    schema.Optional(Literal("path_params", description="The request path parameters.")): Schema([str]),
+                    schema.Optional(Literal("query_params", description="The request query parameters.")): Schema(
+                        _self.request_query_params_schema
+                    ),
+                    schema.Optional(Literal("path_params", description="The request path parameters.")): [str],
                 },
             ),
         },
@@ -207,7 +200,7 @@ class RestApiTool(BaseTool):
 
         try:
             response = delete(url, params=query_params, timeout=30, headers=self.request_headers)
-            return TextArtifact(response.text)
+            return JsonArtifact(response.json(), meta={"status_code": response.status_code})
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
 

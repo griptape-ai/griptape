@@ -1,5 +1,3 @@
-from json import dumps
-
 from griptape.configs import Defaults
 from griptape.configs.drivers import DriversConfig
 from griptape.drivers import OpenAiChatPromptDriver
@@ -15,100 +13,21 @@ Defaults.drivers_config = DriversConfig(
 posts_client = RestApiTool(
     base_url="https://jsonplaceholder.typicode.com",
     path="posts",
-    description="Allows for creating, updating, deleting, patching, and getting posts.",
-    request_body_schema=dumps(
-        {
-            "$schema": "https://json-schema.org/draft/2019-09/schema",
-            "$id": "http://example.com/example.json",
-            "type": "object",
-            "default": {},
-            "title": "Root Schema",
-            "required": ["title", "body", "userId"],
-            "properties": {
-                "title": {
-                    "type": "string",
-                    "default": "",
-                    "title": "The title Schema",
-                },
-                "body": {
-                    "type": "string",
-                    "default": "",
-                    "title": "The body Schema",
-                },
-                "userId": {
-                    "type": "integer",
-                    "default": 0,
-                    "title": "The userId Schema",
-                },
-            },
-        }
-    ),
-    request_query_params_schema=dumps(
-        {
-            "$schema": "https://json-schema.org/draft/2019-09/schema",
-            "$id": "http://example.com/example.json",
-            "type": "object",
-            "default": {},
-            "title": "Root Schema",
-            "required": ["userId"],
-            "properties": {
-                "userId": {
-                    "type": "string",
-                    "default": "",
-                    "title": "The userId Schema",
-                },
-            },
-        }
-    ),
-    request_path_params_schema=dumps(
-        {
-            "$schema": "https://json-schema.org/draft/2019-09/schema",
-            "$id": "http://example.com/example.json",
-            "type": "array",
-            "default": [],
-            "title": "Root Schema",
-            "items": {
-                "anyOf": [
-                    {
-                        "type": "string",
-                        "title": "Post id",
-                    },
-                ]
-            },
-        }
-    ),
-    response_body_schema=dumps(
-        {
-            "$schema": "https://json-schema.org/draft/2019-09/schema",
-            "$id": "http://example.com/example.json",
-            "type": "object",
-            "default": {},
-            "title": "Root Schema",
-            "required": ["id", "title", "body", "userId"],
-            "properties": {
-                "id": {
-                    "type": "integer",
-                    "default": 0,
-                    "title": "The id Schema",
-                },
-                "title": {
-                    "type": "string",
-                    "default": "",
-                    "title": "The title Schema",
-                },
-                "body": {
-                    "type": "string",
-                    "default": "",
-                    "title": "The body Schema",
-                },
-                "userId": {
-                    "type": "integer",
-                    "default": 0,
-                    "title": "The userId Schema",
-                },
-            },
-        }
-    ),
+    description="Allows for creating, updating, deleting, patching, and getting posts. Can also be used to access subresources.",
+    request_body_schema={
+        "title": str,
+        "body": str,
+        "userId": int,
+    },
+)
+
+comments_client = RestApiTool(
+    base_url="https://jsonplaceholder.typicode.com",
+    path="comments",
+    description="Allows for getting comments for a post.",
+    request_query_params_schema={
+        "postId": str,
+    },
 )
 
 pipeline = Pipeline(
@@ -139,6 +58,10 @@ pipeline.add_tasks(
     ToolkitTask(
         "Output the body of all the comments for post 1.",
         tools=[posts_client],
+    ),
+    ToolkitTask(
+        "Get the comments for post 1.",
+        tools=[comments_client],
     ),
 )
 

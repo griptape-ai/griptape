@@ -68,6 +68,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseExtractionEngine` no longer catches exceptions and returns `ErrorArtifact`s.
 - **BREAKING**: `JsonExtractionEngine.template_schema` is now required.
 - **BREAKING**: `CsvExtractionEngine.column_names` is now required.
+- **BREAKING**: `RestApiTool` now returns a `JsonArtifact` instead of a `TextArtifact`.
+- **BREAKING**: Removed `RestApiTool.response_body`, `RestApiTool.request_path_params_schema`.
+- **BREAKING**: Changed `RestApiTool` fields from `str` to `dict`:
+  - `RestApiTool.request_query_params_schema` (`dict`)
+  - `RestApiTool.request_body_schema` (`dict`)
 - `StructureRunTask` now inherits from `PromptTask`.
 - **BREAKING**: Renamed`RuleMixin.all_rulesets` to `RuleMixin.rulesets`.
 - **BREAKING**: Renamed `GriptapeCloudKnowledgeBaseVectorStoreDriver` to `GriptapeCloudVectorStoreDriver`.
@@ -82,6 +87,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PromptTask` will merge in its Structure's Rulesets and Rules.
 - `PromptTask` not checking whether Structure was set before building Prompt Stack.
 - `BaseTask.full_context` context being empty when not connected to a Structure.
+- `RestApiTool` failing with native tool calling due to schemas being in schema description. 
 
 ## [0.32.0] - 2024-09-17
 
