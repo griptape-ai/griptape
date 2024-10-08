@@ -74,7 +74,7 @@ class InpaintingImageGenerationTask(BaseImageGenerationTask):
             prompts=[prompt_artifact.to_text()],
             image=image_artifact,
             mask=mask_artifact,
-            rulesets=self.all_rulesets,
+            rulesets=self.rulesets,
             negative_rulesets=self.negative_rulesets,
         )
 

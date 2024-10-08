@@ -53,7 +53,7 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
     def run(self) -> ImageArtifact:
         image_artifact = self.image_generation_engine.run(
             prompts=[self.input.to_text()],
-            rulesets=self.all_rulesets,
+            rulesets=self.rulesets,
             negative_rulesets=self.negative_rulesets,
         )
 

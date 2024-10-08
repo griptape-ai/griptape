@@ -67,6 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `JsonExtractionEngine.template_schema` is now required.
 - **BREAKING**: `CsvExtractionEngine.column_names` is now required.
 - `StructureRunTask` now inherits from `PromptTask`.
+- **BREAKING**: Renamed`RuleMixin.all_rulesets` to `RuleMixin.rulesets`.
 - `JsonExtractionEngine.extract_artifacts` now returns a `ListArtifact[JsonArtifact]`.
 - `CsvExtractionEngine.extract_artifacts` now returns a `ListArtifact[CsvRowArtifact]`.
 - Remove `manifest.yml` requirements for custom tool creation.
@@ -74,6 +75,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Anthropic native Tool calling.
 - Empty `ActionsSubtask.thought` being logged.
+- `RuleMixin` no longer prevents setting `rulesets` _and_ `rules` at the same time.
+- `PromptTask` will merge in its Structure's Rulesets and Rules.
+- `PromptTask` not checking whether Structure was set before building Prompt Stack.
 
 ## [0.32.0] - 2024-09-17
 

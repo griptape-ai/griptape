@@ -68,7 +68,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     @property
     def prompt_stack(self) -> PromptStack:
         stack = PromptStack(tools=self.tools)
-        memory = self.structure.conversation_memory
+        memory = self.structure.conversation_memory if self.structure is not None else None
 
         stack.add_system_message(self.generate_system_template(self))
 
@@ -113,7 +113,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                     stack.add_assistant_message(self.generate_assistant_subtask_template(s))
                     stack.add_user_message(self.generate_user_subtask_template(s))
 
-        if memory:
+        if memory is not None:
             # inserting at index 1 to place memory right after system prompt
             memory.add_to_prompt_stack(self.prompt_driver, stack, 1)
 
@@ -132,7 +132,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         schema["minItems"] = 1  # The `schema` library doesn't support `minItems` so we must add it manually.
 
         return J2("tasks/toolkit_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
