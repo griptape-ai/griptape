@@ -7,5 +7,5 @@ A Thread can be given an `alias` so it can be referenced by a user-provided uniq
 ```bash
 export GT_CLOUD_API_KEY=<your API key here>
 export ALIAS=<your thread alias>
-curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" https://cloud.griptape.ai/threads?alias=${ALIAS}
+curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" https://cloud.griptape.ai/api/threads?alias=${ALIAS}
 ```
