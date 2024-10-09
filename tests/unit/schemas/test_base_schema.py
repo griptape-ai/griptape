@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import Literal, Optional
+from typing import Union as Union_
 
 import pytest
 from marshmallow import fields
@@ -21,10 +22,13 @@ class TestBaseSchema:
         assert isinstance(schema, BaseSchema)
 
         assert isinstance(schema.fields["foo"], fields.Str)
+        # Check if "bar" is a String that allows None (Optional)
         assert isinstance(schema.fields["bar"], fields.Str)
-        assert schema.fields["bar"].allow_none
+        assert schema.fields["bar"].allow_none is True
+
         assert isinstance(schema.fields["baz"], fields.List)
         assert isinstance(schema.fields["baz"].inner, fields.Int)
+        assert schema.fields["baz"].allow_none is True
 
         with pytest.raises(ValueError):
             BaseSchema.from_attrs_cls(TextLoader)
@@ -58,10 +62,10 @@ class TestBaseSchema:
         assert BaseSchema._get_field_type_info(Optional[str]) == (str, (), True)
         assert BaseSchema._get_field_type_info(Optional[list[str]]) == (list, (str,), True)
 
-        assert BaseSchema._get_field_type_info(Union[str, None]) == (str, (), True)
-        assert BaseSchema._get_field_type_info(Union[list[str], None]) == (list, (str,), True)
+        assert BaseSchema._get_field_type_info(Union_[str, None]) == (str, (), True)
+        assert BaseSchema._get_field_type_info(Union_[list[str], None]) == (list, (str,), True)
 
-        assert BaseSchema._get_field_type_info(Union[str, int]) == (str, (), False)
+        assert BaseSchema._get_field_type_info(Union_[str, int]) == (str, (), False)
 
         assert BaseSchema._get_field_type_info(list) == (list, (), False)
 
@@ -88,7 +92,7 @@ class TestBaseSchema:
             schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3], "zoop": "bop"})
 
     def test_handle_union_in_list(self):
-        field = BaseSchema._get_field_for_type(list[str | list[str]])
+        field = BaseSchema._get_field_for_type(list[Union_[str, list[str]]])
         assert isinstance(field, fields.List)
         assert isinstance(field.inner, Union)
 
@@ -102,7 +106,7 @@ class TestBaseSchema:
 
     def test_handle_union_outside_list(self):
         # Test a Union of str and int
-        field = BaseSchema._get_field_for_type(str | int)
+        field = BaseSchema._get_field_for_type(Union_[str, int])
         assert isinstance(field, Union)
 
         # Check that the union contains both str and int fields

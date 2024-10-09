@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Sequence
-from types import UnionType  # type: ignore[reportAttributeAccessIssue]
 from typing import Any, Literal, TypeVar, _SpecialForm, get_args, get_origin
+from typing import Union as Union_
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
@@ -60,6 +60,9 @@ class BaseSchema(Schema):
 
         field_class, args, optional = cls._get_field_type_info(field_type)
 
+        # Handle Union types (for Python 3.10+ Union | syntax)
+        if cls.is_union_(field_type):
+            return cls._handle_union(field_type, optional=optional)
         # Resolve TypeVars to their bound type
         if isinstance(field_class, TypeVar):
             field_class = field_class.__bound__
@@ -67,16 +70,16 @@ class BaseSchema(Schema):
         elif attrs.has(field_class):
             schema = PolymorphicSchema if ABC in field_class.__bases__ else cls.from_attrs_cls
             return fields.Nested(schema(field_class), allow_none=optional)
-        elif issubclass(field_class, Enum):
+
+        elif isinstance(field_class, type) and issubclass(field_class, Enum):
             return fields.String(allow_none=optional)
+
         elif cls.is_list_sequence(field_class):
             if args:
                 return cls._handle_list(args[0], optional=optional)
             else:
                 raise ValueError(f"Missing type for list field: {field_type}")
-        # Handle Union types (for Python 3.10+ Union | syntax)
-        elif cls.is_union_(field_class):
-            return cls._handle_union(field_type, optional=optional)
+
         field_class = cls.DATACLASS_TYPE_MAPPING.get(field_class)
         if field_class:
             return field_class(allow_none=optional)
@@ -132,7 +135,7 @@ class BaseSchema(Schema):
         args = get_args(field_type)
         optional = False
 
-        if origin is Union:
+        if origin is Union_:
             origin = args[0]
             if len(args) > 1 and args[1] is type(None):
                 optional = True
@@ -243,4 +246,4 @@ class BaseSchema(Schema):
 
     @classmethod
     def is_union_(cls, field_type: type) -> bool:
-        return field_type is UnionType
+        return field_type is Union_ or get_origin(field_type) is Union_
