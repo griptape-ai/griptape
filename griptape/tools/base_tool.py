@@ -40,7 +40,7 @@ class BaseTool(ActivityMixin, ABC):
     REQUIREMENTS_FILE = "requirements.txt"
 
     name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True, metadata={"Serializable": True})
+    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
     output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
     install_dependencies_on_init: bool = field(default=True, kw_only=True)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)

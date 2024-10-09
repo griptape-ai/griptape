@@ -23,10 +23,11 @@ if TYPE_CHECKING:
 class Structure(ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
-    rules: list[BaseRule] = field(factory=list)
+    rules: list[BaseRule] = field(factory=list, kw_only=True)
     _tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True, alias="tasks")
     conversation_memory: Optional[BaseConversationMemory] = field(
-        default=Factory(lambda: ConversationMemory()), kw_only=True
+        default=Factory(lambda: ConversationMemory()),
+        kw_only=True,
     )
     task_memory: TaskMemory = field(
         default=Factory(lambda self: TaskMemory(), takes_self=True),
