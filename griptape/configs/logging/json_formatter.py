@@ -13,5 +13,7 @@ class JsonFormatter(logging.Formatter):
         super().__init__()
 
     def format(self, record: Any) -> str:
-        record.msg = json.dumps(record.msg, indent=self.indent)
+        if isinstance(record.msg, dict):
+            record.msg = json.dumps(record.msg, indent=self.indent)
+
         return super().format(record)
