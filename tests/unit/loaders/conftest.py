@@ -1,4 +1,5 @@
 import os
+from io import BytesIO, StringIO
 from pathlib import Path
 
 import pytest
@@ -14,15 +15,15 @@ def path_from_resource_path():
 
 @pytest.fixture()
 def bytes_from_resource_path(path_from_resource_path):
-    def create_source(resource_path: str) -> bytes:
-        return Path(path_from_resource_path(resource_path)).read_bytes()
+    def create_source(resource_path: str) -> BytesIO:
+        return BytesIO(Path(path_from_resource_path(resource_path)).read_bytes())
 
     return create_source
 
 
 @pytest.fixture()
 def str_from_resource_path(path_from_resource_path):
-    def test_csv_str(resource_path: str) -> str:
-        return Path(path_from_resource_path(resource_path)).read_text()
+    def test_csv_str(resource_path: str) -> StringIO:
+        return StringIO(Path(path_from_resource_path(resource_path)).read_text())
 
     return test_csv_str

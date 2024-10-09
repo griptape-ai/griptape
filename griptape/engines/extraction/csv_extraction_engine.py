@@ -17,23 +17,23 @@ if TYPE_CHECKING:
 
 @define
 class CsvExtractionEngine(BaseExtractionEngine):
-    column_names: list[str] = field(default=Factory(list), kw_only=True)
+    column_names: list[str] = field(kw_only=True)
     system_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/system.j2")), kw_only=True)
     user_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/user.j2")), kw_only=True)
     formatter_fn: Callable[[dict], str] = field(
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
-    def extract(
+    def extract_artifacts(
         self,
-        text: str | ListArtifact,
+        artifacts: ListArtifact[TextArtifact],
         *,
         rulesets: Optional[list[Ruleset]] = None,
         **kwargs,
-    ) -> ListArtifact:
+    ) -> ListArtifact[TextArtifact]:
         return ListArtifact(
             self._extract_rec(
-                cast(list[TextArtifact], text.value) if isinstance(text, ListArtifact) else [TextArtifact(text)],
+                cast(list[TextArtifact], artifacts.value),
                 [],
                 rulesets=rulesets,
             ),

@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
 from griptape.engines import VariationImageGenerationEngine
 from griptape.loaders import ImageLoader
@@ -15,7 +13,7 @@ engine = VariationImageGenerationEngine(
     image_generation_driver=driver,
 )
 
-image_artifact = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
+image_artifact = ImageLoader().load("tests/resources/mountain.png")
 
 engine.run(
     prompts=["A photo of a mountain landscape in winter"],

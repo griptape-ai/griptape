@@ -1,15 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, Factory, define, field
 
+from griptape.utils.decorators import lazy_property
 from griptape.utils.import_utils import import_optional_dependency
 
 from .base_file_manager_driver import BaseFileManagerDriver
 
 if TYPE_CHECKING:
     import boto3
+    from mypy_boto3_s3 import S3Client
 
 
 @define
@@ -21,13 +23,17 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
         bucket: The name of the S3 bucket.
         workdir: The absolute working directory (must start with "/"). List, load, and save
             operations will be performed relative to this directory.
-        s3_client: The S3 client to use for S3 operations.
+        client: The S3 client to use for S3 operations.
     """
 
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     bucket: str = field(kw_only=True)
     workdir: str = field(default="/", kw_only=True)
-    s3_client: Any = field(default=Factory(lambda self: self.session.client("s3"), takes_self=True), kw_only=True)
+    _client: S3Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> S3Client:
+        return self.session.client("s3")
 
     @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_workdir(self, _: Attribute, workdir: str) -> None:
@@ -51,7 +57,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
             raise IsADirectoryError
 
         try:
-            response = self.s3_client.get_object(Bucket=self.bucket, Key=full_key)
+            response = self.client.get_object(Bucket=self.bucket, Key=full_key)
             return response["Body"].read()
         except botocore.exceptions.ClientError as e:
             if e.response["Error"]["Code"] in {"NoSuchKey", "404"}:
@@ -62,7 +68,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
         full_key = self._to_full_key(path)
         if self._is_a_directory(full_key):
             raise IsADirectoryError
-        self.s3_client.put_object(Bucket=self.bucket, Key=full_key, Body=value)
+        self.client.put_object(Bucket=self.bucket, Key=full_key, Body=value)
 
     def _to_full_key(self, path: str) -> str:
         path = path.lstrip("/")
@@ -90,7 +96,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
         if max_items is not None:
             pagination_config["MaxItems"] = max_items
 
-        paginator = self.s3_client.get_paginator("list_objects_v2")
+        paginator = self.client.get_paginator("list_objects_v2")
         pages = paginator.paginate(
             Bucket=self.bucket,
             Prefix=full_key,
@@ -116,7 +122,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
             return True
 
         try:
-            self.s3_client.head_object(Bucket=self.bucket, Key=full_key)
+            self.client.head_object(Bucket=self.bucket, Key=full_key)
         except botocore.exceptions.ClientError as e:
             if e.response["Error"]["Code"] in {"NoSuchKey", "404"}:
                 return len(self._list_files_and_dirs(full_key, max_items=1)) > 0

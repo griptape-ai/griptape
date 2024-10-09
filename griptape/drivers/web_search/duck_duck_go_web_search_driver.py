@@ -3,11 +3,12 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.drivers import BaseWebSearchDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from duckduckgo_search import DDGS
@@ -15,7 +16,13 @@ if TYPE_CHECKING:
 
 @define
 class DuckDuckGoWebSearchDriver(BaseWebSearchDriver):
-    client: DDGS = field(default=Factory(lambda: import_optional_dependency("duckduckgo_search").DDGS()), kw_only=True)
+    language: str = field(default="en", kw_only=True)
+    country: str = field(default="us", kw_only=True)
+    _client: DDGS = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> DDGS:
+        return import_optional_dependency("duckduckgo_search").DDGS()
 
     def search(self, query: str, **kwargs) -> ListArtifact:
         try:

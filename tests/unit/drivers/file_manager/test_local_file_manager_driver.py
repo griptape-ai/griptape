@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from griptape.artifacts import InfoArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import InfoArtifact, TextArtifact
+from griptape.artifacts.blob_artifact import BlobArtifact
 from griptape.drivers import LocalFileManagerDriver
-from griptape.loaders.text_loader import TextLoader
 
 
 class TestLocalFileManagerDriver:
@@ -127,8 +127,7 @@ class TestLocalFileManagerDriver:
     def test_load_file(self, driver: LocalFileManagerDriver):
         artifact = driver.load_file("resources/bitcoin.pdf")
 
-        assert isinstance(artifact, ListArtifact)
-        assert len(artifact.value) == 4
+        assert isinstance(artifact, BlobArtifact)
 
     @pytest.mark.parametrize(
         ("workdir", "path", "expected"),
@@ -155,23 +154,6 @@ class TestLocalFileManagerDriver:
 
         with pytest.raises(expected):
             driver.load_file(path)
-
-    def test_load_file_with_encoding(self, driver: LocalFileManagerDriver):
-        artifact = driver.load_file("resources/test.txt")
-
-        assert isinstance(artifact, ListArtifact)
-        assert len(artifact.value) == 1
-        assert isinstance(artifact.value[0], TextArtifact)
-
-    def test_load_file_with_encoding_failure(self, driver):
-        driver = LocalFileManagerDriver(
-            default_loader=TextLoader(encoding="utf-8"),
-            loaders={},
-            workdir=os.path.normpath(os.path.abspath(os.path.dirname(__file__) + "../../../../")),
-        )
-
-        with pytest.raises(UnicodeDecodeError):
-            driver.load_file("resources/bitcoin.pdf")
 
     @pytest.mark.parametrize(
         ("workdir", "path", "content"),
@@ -224,25 +206,24 @@ class TestLocalFileManagerDriver:
             driver.save_file(path, "foobar")
 
     def test_save_file_with_encoding(self, temp_dir):
-        driver = LocalFileManagerDriver(default_loader=TextLoader(encoding="utf-8"), loaders={}, workdir=temp_dir)
+        driver = LocalFileManagerDriver(encoding="utf-8", workdir=temp_dir)
         result = driver.save_file(os.path.join("test", "foobar.txt"), "foobar")
 
         assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
         assert result.value == "Successfully saved file"
 
     def test_save_and_load_file_with_encoding(self, temp_dir):
-        driver = LocalFileManagerDriver(loaders={"txt": TextLoader(encoding="ascii")}, workdir=temp_dir)
+        driver = LocalFileManagerDriver(encoding="ascii", workdir=temp_dir)
         result = driver.save_file(os.path.join("test", "foobar.txt"), "foobar")
 
         assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
         assert result.value == "Successfully saved file"
 
-        driver = LocalFileManagerDriver(default_loader=TextLoader(encoding="ascii"), loaders={}, workdir=temp_dir)
+        driver = LocalFileManagerDriver(encoding="ascii", workdir=temp_dir)
         result = driver.load_file(os.path.join("test", "foobar.txt"))
 
-        assert isinstance(result, ListArtifact)
-        assert len(result.value) == 1
-        assert isinstance(result.value[0], TextArtifact)
+        assert isinstance(result, TextArtifact)
+        assert result.encoding == "ascii"
 
     def _to_driver_workdir(self, temp_dir, workdir):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.

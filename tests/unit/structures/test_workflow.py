@@ -42,14 +42,14 @@ class TestWorkflow:
         )
 
         assert isinstance(workflow.tasks[0], PromptTask)
-        assert len(workflow.tasks[0].all_rulesets) == 2
-        assert workflow.tasks[0].all_rulesets[0].name == "Foo"
-        assert workflow.tasks[0].all_rulesets[1].name == "Bar"
+        assert len(workflow.tasks[0].rulesets) == 2
+        assert workflow.tasks[0].rulesets[0].name == "Foo"
+        assert workflow.tasks[0].rulesets[1].name == "Bar"
 
         assert isinstance(workflow.tasks[1], PromptTask)
-        assert len(workflow.tasks[1].all_rulesets) == 2
-        assert workflow.tasks[1].all_rulesets[0].name == "Foo"
-        assert workflow.tasks[1].all_rulesets[1].name == "Baz"
+        assert len(workflow.tasks[1].rulesets) == 2
+        assert workflow.tasks[1].rulesets[0].name == "Foo"
+        assert workflow.tasks[1].rulesets[1].name == "Baz"
 
     def test_rules(self):
         workflow = Workflow(rules=[Rule("foo test")])
@@ -57,22 +57,25 @@ class TestWorkflow:
         workflow.add_tasks(PromptTask(rules=[Rule("bar test")]), PromptTask(rules=[Rule("baz test")]))
 
         assert isinstance(workflow.tasks[0], PromptTask)
-        assert len(workflow.tasks[0].all_rulesets) == 2
-        assert workflow.tasks[0].all_rulesets[0].name == "Default Ruleset"
-        assert workflow.tasks[0].all_rulesets[1].name == "Additional Ruleset"
+        assert len(workflow.tasks[0].rulesets) == 1
+        assert workflow.tasks[0].rulesets[0].name == "Default Ruleset"
+        assert len(workflow.tasks[0].rulesets[0].rules) == 2
 
         assert isinstance(workflow.tasks[1], PromptTask)
-        assert len(workflow.tasks[1].all_rulesets) == 2
-        assert workflow.tasks[1].all_rulesets[0].name == "Default Ruleset"
-        assert workflow.tasks[1].all_rulesets[1].name == "Additional Ruleset"
+        assert len(workflow.tasks[1].rulesets) == 1
+        assert workflow.tasks[1].rulesets[0].name == "Default Ruleset"
+        assert len(workflow.tasks[1].rulesets[0].rules) == 2
 
     def test_rules_and_rulesets(self):
-        with pytest.raises(ValueError):
-            Workflow(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
+        workflow = Workflow(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
+        assert len(workflow.rulesets) == 2
+        assert len(workflow.rules) == 1
 
         workflow = Workflow()
-        with pytest.raises(ValueError):
-            workflow.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
+        workflow.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
+        assert isinstance(workflow.tasks[0], PromptTask)
+        assert len(workflow.tasks[0].rulesets) == 2
+        assert len(workflow.tasks[0].rules) == 1
 
     def test_with_no_task_memory(self):
         workflow = Workflow()
@@ -752,7 +755,8 @@ class TestWorkflow:
         workflow = Workflow(tasks=[waiting_task, error_artifact_task, end_task])
         workflow.run()
 
-        assert workflow.output is None
+        with pytest.raises(ValueError, match="Structure's output Task has no output. Run"):
+            assert workflow.output
 
     def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
@@ -761,6 +765,78 @@ class TestWorkflow:
         workflow.run()
 
         assert workflow.output is not None
+
+    def test_nested_tasks(self):
+        workflow = Workflow(
+            tasks=[
+                [
+                    PromptTask("parent", id=f"parent_{i}"),
+                    PromptTask("child", id=f"child_{i}", parent_ids=[f"parent_{i}"]),
+                    PromptTask("grandchild", id=f"grandchild_{i}", parent_ids=[f"child_{i}"]),
+                ]
+                for i in range(3)
+            ],
+        )
+
+        workflow.run()
+
+        output_ids = [task.id for task in workflow.output_tasks]
+        assert output_ids == ["grandchild_0", "grandchild_1", "grandchild_2"]
+        assert len(workflow.tasks) == 9
+
+    def test_nested_tasks_property(self):
+        workflow = Workflow()
+        workflow._tasks = [
+            [
+                PromptTask("parent", id=f"parent_{i}"),
+                PromptTask("child", id=f"child_{i}", parent_ids=[f"parent_{i}"]),
+                PromptTask("grandchild", id=f"grandchild_{i}", parent_ids=[f"child_{i}"]),
+            ]
+            for i in range(3)
+        ]
+
+        assert len(workflow.tasks) == 9
+
+    def test_output_tasks(self):
+        parent = PromptTask("parent")
+        child = PromptTask("child")
+        grandchild = PromptTask("grandchild")
+        workflow = Workflow(
+            tasks=[
+                [parent, child, grandchild],
+            ]
+        )
+
+        workflow + parent
+        parent.add_child(child)
+        child.add_child(grandchild)
+
+        assert workflow.output_tasks == [grandchild]
+
+    def test_input_tasks(self):
+        parent = PromptTask("parent")
+        child = PromptTask("child")
+        grandchild = PromptTask("grandchild")
+        workflow = Workflow(
+            tasks=[
+                [parent, child, grandchild],
+            ]
+        )
+
+        workflow + parent
+        parent.add_child(child)
+        child.add_child(grandchild)
+
+        assert workflow.input_tasks == [parent]
+
+    def test_outputs(self):
+        workflow = Workflow(tasks=[PromptTask("parent") for _ in range(3)])
+
+        assert workflow.outputs == []
+
+        workflow.run()
+
+        assert [output.value for output in workflow.outputs] == ["mock output"] * 3
 
     @staticmethod
     def _validate_topology_1(workflow) -> None:

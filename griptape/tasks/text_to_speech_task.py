@@ -35,7 +35,7 @@ class TextToSpeechTask(BaseAudioGenerationTask):
         self._input = value
 
     def run(self) -> AudioArtifact:
-        audio_artifact = self.text_to_speech_engine.run(prompts=[self.input.to_text()], rulesets=self.all_rulesets)
+        audio_artifact = self.text_to_speech_engine.run(prompts=[self.input.to_text()], rulesets=self.rulesets)
 
         if self.output_dir or self.output_file:
             self._write_to_file(audio_artifact)

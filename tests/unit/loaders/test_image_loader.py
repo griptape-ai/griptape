@@ -13,9 +13,9 @@ class TestImageLoader:
     def png_loader(self):
         return ImageLoader(format="png")
 
-    @pytest.fixture()
-    def create_source(self, bytes_from_resource_path):
-        return bytes_from_resource_path
+    @pytest.fixture(params=["path_from_resource_path"])
+    def create_source(self, request):
+        return request.getfixturevalue(request.param)
 
     @pytest.mark.parametrize(
         ("resource_path", "mime_type"),

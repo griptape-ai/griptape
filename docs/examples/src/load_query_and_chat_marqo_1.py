@@ -1,6 +1,7 @@
 import os
 
 from griptape import utils
+from griptape.chunkers import TextChunker
 from griptape.drivers import MarqoVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
@@ -25,11 +26,12 @@ vector_store_tool = VectorStoreTool(
 
 # Load artifacts from the web
 artifacts = WebLoader().load("https://www.griptape.ai")
+chunks = TextChunker().chunk(artifacts)
 
 # Upsert the artifacts into the vector store
 vector_store.upsert_text_artifacts(
     {
-        namespace: artifacts,
+        namespace: chunks,
     }
 )
 

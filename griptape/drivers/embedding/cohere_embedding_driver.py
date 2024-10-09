@@ -7,6 +7,7 @@ from attrs import Factory, define, field
 from griptape.drivers import BaseEmbeddingDriver
 from griptape.tokenizers import CohereTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from cohere import Client
@@ -27,16 +28,16 @@ class CohereEmbeddingDriver(BaseEmbeddingDriver):
     DEFAULT_MODEL = "models/embedding-001"
 
     api_key: str = field(kw_only=True, metadata={"serializable": False})
-    client: Client = field(
-        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True),
-        kw_only=True,
-    )
+    input_type: str = field(kw_only=True, metadata={"serializable": True})
+    _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
     tokenizer: CohereTokenizer = field(
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
         kw_only=True,
     )
 
-    input_type: str = field(kw_only=True, metadata={"serializable": True})
+    @lazy_property()
+    def client(self) -> Client:
+        return import_optional_dependency("cohere").Client(self.api_key)
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         result = self.client.embed(texts=[chunk], model=self.model, input_type=self.input_type)

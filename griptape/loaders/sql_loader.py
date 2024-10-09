@@ -1,38 +1,23 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional, cast
+from typing import Callable
 
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import ListArtifact, TextArtifact
+from griptape.drivers import BaseSqlDriver
 from griptape.loaders import BaseLoader
-
-if TYPE_CHECKING:
-    from griptape.drivers import BaseEmbeddingDriver, BaseSqlDriver
 
 
 @define
-class SqlLoader(BaseLoader):
+class SqlLoader(BaseLoader[str, list[BaseSqlDriver.RowResult], ListArtifact[TextArtifact]]):
     sql_driver: BaseSqlDriver = field(kw_only=True)
-    embedding_driver: Optional[BaseEmbeddingDriver] = field(default=None, kw_only=True)
     formatter_fn: Callable[[dict], str] = field(
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
-    def load(self, source: str, *args, **kwargs) -> list[TextArtifact]:
-        rows = self.sql_driver.execute_query(source)
-        artifacts = []
+    def fetch(self, source: str) -> list[BaseSqlDriver.RowResult]:
+        return self.sql_driver.execute_query(source) or []
 
-        chunks = [TextArtifact(self.formatter_fn(row.cells)) for row in rows] if rows else []
-
-        if self.embedding_driver:
-            for chunk in chunks:
-                chunk.generate_embedding(self.embedding_driver)
-
-        for chunk in chunks:
-            artifacts.append(chunk)
-
-        return artifacts
-
-    def load_collection(self, sources: list[str], *args, **kwargs) -> dict[str, list[TextArtifact]]:
-        return cast(dict[str, list[TextArtifact]], super().load_collection(sources, *args, **kwargs))
+    def parse(self, data: list[BaseSqlDriver.RowResult]) -> ListArtifact[TextArtifact]:
+        return ListArtifact([TextArtifact(self.formatter_fn(row.cells)) for row in data])

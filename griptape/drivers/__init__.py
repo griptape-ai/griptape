@@ -43,7 +43,7 @@ from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDri
 from .vector.dummy_vector_store_driver import DummyVectorStoreDriver
 from .vector.qdrant_vector_store_driver import QdrantVectorStoreDriver
 from .vector.astradb_vector_store_driver import AstraDbVectorStoreDriver
-from .vector.griptape_cloud_knowledge_base_vector_store_driver import GriptapeCloudKnowledgeBaseVectorStoreDriver
+from .vector.griptape_cloud_vector_store_driver import GriptapeCloudVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -99,6 +99,8 @@ from .web_scraper.proxy_web_scraper_driver import ProxyWebScraperDriver
 from .web_search.base_web_search_driver import BaseWebSearchDriver
 from .web_search.google_web_search_driver import GoogleWebSearchDriver
 from .web_search.duck_duck_go_web_search_driver import DuckDuckGoWebSearchDriver
+from .web_search.exa_web_search_driver import ExaWebSearchDriver
+from .web_search.tavily_web_search_driver import TavilyWebSearchDriver
 
 from .event_listener.base_event_listener_driver import BaseEventListenerDriver
 from .event_listener.amazon_sqs_event_listener_driver import AmazonSqsEventListenerDriver
@@ -113,6 +115,10 @@ from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDrive
 
 from .rerank.base_rerank_driver import BaseRerankDriver
 from .rerank.cohere_rerank_driver import CohereRerankDriver
+
+from .ruleset.base_ruleset_driver import BaseRulesetDriver
+from .ruleset.local_ruleset_driver import LocalRulesetDriver
+from .ruleset.griptape_cloud_ruleset_driver import GriptapeCloudRulesetDriver
 
 from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
 from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
@@ -177,7 +183,7 @@ __all__ = [
     "QdrantVectorStoreDriver",
     "AstraDbVectorStoreDriver",
     "DummyVectorStoreDriver",
-    "GriptapeCloudKnowledgeBaseVectorStoreDriver",
+    "GriptapeCloudVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
@@ -213,6 +219,8 @@ __all__ = [
     "BaseWebSearchDriver",
     "GoogleWebSearchDriver",
     "DuckDuckGoWebSearchDriver",
+    "ExaWebSearchDriver",
+    "TavilyWebSearchDriver",
     "BaseEventListenerDriver",
     "AmazonSqsEventListenerDriver",
     "WebhookEventListenerDriver",
@@ -224,6 +232,9 @@ __all__ = [
     "AmazonS3FileManagerDriver",
     "BaseRerankDriver",
     "CohereRerankDriver",
+    "BaseRulesetDriver",
+    "LocalRulesetDriver",
+    "GriptapeCloudRulesetDriver",
     "BaseTextToSpeechDriver",
     "DummyTextToSpeechDriver",
     "ElevenLabsTextToSpeechDriver",

@@ -6,6 +6,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.33.0] - 2024-10-09
+
+## Added
+- `Workflow.input_tasks` and `Workflow.output_tasks` to access the input and output tasks of a Workflow.
+- Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more complex declarative Structure definitions.
+- `TavilyWebSearchDriver` to integrate Tavily's web search capabilities.
+- `ExaWebSearchDriver` to integrate Exa's web search capabilities.
+- `Workflow.outputs` to access the outputs of a Workflow.
+- `BaseFileLoader` for Loaders that load from a path.
+- `BaseLoader.fetch()` method for fetching data from a source.
+- `BaseLoader.parse()` method for parsing fetched data.
+- `BaseFileManager.encoding` to specify the encoding when loading and saving files.
+- `BaseWebScraperDriver.extract_page()` method for extracting data from an already scraped web page.
+- `TextLoaderRetrievalRagModule.chunker` for specifying the chunking strategy.
+- `file_utils.get_mime_type` utility for getting the MIME type of a file.
+- `BaseRulesetDriver` for loading a `Ruleset` from an external source.
+  - `LocalRulesetDriver` for loading a `Ruleset` from a local `.json` file.
+  - `GriptapeCloudRulesetDriver` for loading a `Ruleset` resource from Griptape Cloud.
+- Parameter `alias` on `GriptapeCloudConversationMemoryDriver` for fetching a Thread by alias.
+- Basic support for OpenAi Structured Output via `OpenAiChatPromptDriver.response_format` parameter. 
+- Ability to pass callable to `activity.schema` for dynamic schema generation.
+
+### Changed
+- **BREAKING**: Renamed parameters on several classes to `client`:
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockTitanEmbeddingDriver`.
+  - `bedrock_client` on `AmazonBedrockImageGenerationDriver`.
+  - `bedrock_client` on `AmazonBedrockImageQueryDriver`.
+  - `bedrock_client` on `AmazonBedrockPromptDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartEmbeddingDriver`.
+  - `sagemaker_client` on `AmazonSageMakerJumpstartPromptDriver`.
+  - `sqs_client` on `AmazonSqsEventListenerDriver`.
+  - `iotdata_client` on `AwsIotCoreEventListenerDriver`.
+  - `s3_client` on `AmazonS3FileManagerDriver`.
+  - `s3_client` on `AwsS3Tool`.
+  - `iam_client` on `AwsIamTool`.
+  - `pusher_client` on `PusherEventListenerDriver`.
+  - `mq` on `MarqoVectorStoreDriver`.
+  - `model_client` on `GooglePromptDriver`.
+  - `model_client` on `GoogleTokenizer`.
+- **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
+- **BREAKING**: Removed `BaseFileManager.default_loader` and `BaseFileManager.loaders`.
+- **BREAKING**: Loaders no longer chunk data, use a Chunker to chunk the data.
+- **BREAKING**: Removed `fileutils.load_file` and `fileutils.load_files`.
+- **BREAKING**: Removed `loaders-dataframe` and `loaders-audio` extras as they are no longer needed.
+- **BREKING**: `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`. Passing `bytes` is still supported but deprecated.
+- **BREAKING**: Removed `DataframeLoader`.
+- **BREAKING**: Update `pypdf` dependency to `^5.0.1`.
+- **BREAKING**: Update `redis` dependency to `^5.1.0`.
+- **BREAKING**: Remove `torch` extra from `transformers` dependency. This must be installed separately.
+- **BREAKING**: Split `BaseExtractionEngine.extract` into `extract_text` and `extract_artifacts` for consistency with `BaseSummaryEngine`.
+- **BREAKING**: `BaseExtractionEngine` no longer catches exceptions and returns `ErrorArtifact`s.
+- **BREAKING**: `JsonExtractionEngine.template_schema` is now required.
+- **BREAKING**: `CsvExtractionEngine.column_names` is now required.
+- **BREAKING**: Renamed`RuleMixin.all_rulesets` to `RuleMixin.rulesets`.
+- **BREAKING**: Renamed `GriptapeCloudKnowledgeBaseVectorStoreDriver` to `GriptapeCloudVectorStoreDriver`.
+- **BREAKING**: `OpenAiChatPromptDriver.response_format` is now a `dict` instead of a `str`.
+- `MarkdownifyWebScraperDriver.DEFAULT_EXCLUDE_TAGS` now includes media/blob-like HTML tags
+- `StructureRunTask` now inherits from `PromptTask`.
+- Several places where API clients are initialized are now lazy loaded.
+- `BaseVectorStoreDriver.upsert_text_artifacts` now returns a list or dictionary of upserted vector ids.
+- `LocalFileManagerDriver.workdir` is now optional.
+- `filetype` is now a core dependency.
+- `FileManagerTool` now uses `filetype` for more accurate file type detection.
+- `BaseFileLoader.load_file()` will now either return a `TextArtifact` or a `BlobArtifact` depending on whether `BaseFileManager.encoding` is set.
+- `Structure.output`'s type is now `BaseArtifact` and raises an exception if the output is `None`.
+- `JsonExtractionEngine.extract_artifacts` now returns a `ListArtifact[JsonArtifact]`.
+- `CsvExtractionEngine.extract_artifacts` now returns a `ListArtifact[CsvRowArtifact]`.
+- Remove `manifest.yml` requirements for custom tool creation.
+
+### Fixed
+- Anthropic native Tool calling.
+- Empty `ActionsSubtask.thought` being logged.
+- `RuleMixin` no longer prevents setting `rulesets` _and_ `rules` at the same time.
+- `PromptTask` will merge in its Structure's Rulesets and Rules.
+- `PromptTask` not checking whether Structure was set before building Prompt Stack.
+- `BaseTask.full_context` context being empty when not connected to a Structure.
+
 ## [0.32.0] - 2024-09-17
 
 ### Added
@@ -22,8 +101,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
+- **BREAKING**: Removed `DataframeLoader`.
 - **BREAKING**: Removed `MediaArtifact`, use `ImageArtifact` or `AudioArtifact` instead.
-- **BREAKING**: `CsvLoader`, `DataframeLoader`, and `SqlLoader` now return `list[TextArtifact]`.
+- **BREAKING**: `CsvLoader` and `SqlLoader` now return `ListArtifact[TextArtifact]`.
 - **BREAKING**: Removed `ImageArtifact.media_type`.
 - **BREAKING**: Removed `AudioArtifact.media_type`.
 - **BREAKING**: Removed `BlobArtifact.dir_name`.
@@ -44,6 +124,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Parameter `meta: dict` on `BaseEvent`.
+- `AzureOpenAiTextToSpeechDriver`.
+- Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
+- `JsonSchemaRule` for instructing the LLM to output a JSON object that conforms to a schema.
+- Ability to use Drivers Configs as Context Managers for temporarily setting the default Drivers.
 
 ### Changed
 - **BREAKING**: Drivers, Loaders, and Engines now raise exceptions rather than returning `ErrorArtifacts`.
@@ -52,6 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseConversationMemoryDriver.load` now returns `tuple[list[Run], dict]`. This represents the runs and metadata.
 - **BREAKING**: `BaseConversationMemoryDriver.store` now takes `runs: list[Run]` and `metadata: dict` as input.
 - **BREAKING**: Parameter `file_path` on `LocalConversationMemoryDriver` renamed to `persist_file` and is now type `Optional[str]`.
+- **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module. 
 - `Defaults.drivers_config.conversation_memory_driver` now defaults to `LocalConversationMemoryDriver` instead of `None`.
 - `CsvRowArtifact.to_text()` now includes the header.
 
@@ -62,6 +147,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Missing `maxTokens` inference parameter in `AmazonBedrockPromptDriver`.
 - Incorrect model in `OpenAiDriverConfig`'s `text_to_speech_driver`.
 - Crash when using `CohereRerankDriver` with `CsvRowArtifact`s.
+- Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
 
 ## [0.30.2] - 2024-08-26

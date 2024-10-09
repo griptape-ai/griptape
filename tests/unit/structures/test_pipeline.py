@@ -45,14 +45,14 @@ class TestPipeline:
         )
 
         assert isinstance(pipeline.tasks[0], PromptTask)
-        assert len(pipeline.tasks[0].all_rulesets) == 2
-        assert pipeline.tasks[0].all_rulesets[0].name == "Foo"
-        assert pipeline.tasks[0].all_rulesets[1].name == "Bar"
+        assert len(pipeline.tasks[0].rulesets) == 2
+        assert pipeline.tasks[0].rulesets[0].name == "Foo"
+        assert pipeline.tasks[0].rulesets[1].name == "Bar"
 
         assert isinstance(pipeline.tasks[1], PromptTask)
-        assert len(pipeline.tasks[1].all_rulesets) == 2
-        assert pipeline.tasks[1].all_rulesets[0].name == "Foo"
-        assert pipeline.tasks[1].all_rulesets[1].name == "Baz"
+        assert len(pipeline.tasks[1].rulesets) == 2
+        assert pipeline.tasks[1].rulesets[0].name == "Foo"
+        assert pipeline.tasks[1].rulesets[1].name == "Baz"
 
     def test_rules(self):
         pipeline = Pipeline(rules=[Rule("foo test")])
@@ -60,21 +60,24 @@ class TestPipeline:
         pipeline.add_tasks(PromptTask(rules=[Rule("bar test")]), PromptTask(rules=[Rule("baz test")]))
 
         assert isinstance(pipeline.tasks[0], PromptTask)
-        assert len(pipeline.tasks[0].all_rulesets) == 2
-        assert pipeline.tasks[0].all_rulesets[0].name == "Default Ruleset"
-        assert pipeline.tasks[0].all_rulesets[1].name == "Additional Ruleset"
+        assert len(pipeline.tasks[0].rulesets) == 1
+        assert pipeline.tasks[0].rulesets[0].name == "Default Ruleset"
+        assert len(pipeline.tasks[0].rulesets[0].rules) == 2
 
         assert isinstance(pipeline.tasks[1], PromptTask)
-        assert pipeline.tasks[1].all_rulesets[0].name == "Default Ruleset"
-        assert pipeline.tasks[1].all_rulesets[1].name == "Additional Ruleset"
+        assert pipeline.tasks[1].rulesets[0].name == "Default Ruleset"
+        assert len(pipeline.tasks[1].rulesets[0].rules) == 2
 
     def test_rules_and_rulesets(self):
-        with pytest.raises(ValueError):
-            Pipeline(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
+        pipeline = Pipeline(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
+        assert len(pipeline.rulesets) == 2
+        assert len(pipeline.rules) == 1
 
         pipeline = Pipeline()
-        with pytest.raises(ValueError):
-            pipeline.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
+        pipeline.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
+        assert isinstance(pipeline.tasks[0], PromptTask)
+        assert len(pipeline.tasks[0].rulesets) == 2
+        assert len(pipeline.tasks[0].rules) == 1
 
     def test_with_no_task_memory(self):
         pipeline = Pipeline()
@@ -202,6 +205,22 @@ class TestPipeline:
         assert len(first_task.children) == 1
         assert len(second_task.parents) == 1
         assert len(second_task.children) == 0
+
+    def test_nested_tasks(self):
+        pipeline = Pipeline(
+            tasks=[
+                [
+                    PromptTask("parent", id=f"parent_{i}"),
+                    PromptTask("child", id=f"child_{i}", parent_ids=[f"parent_{i}"]),
+                    PromptTask("grandchild", id=f"grandchild_{i}", parent_ids=[f"child_{i}"]),
+                ]
+                for i in range(3)
+            ]
+        )
+
+        pipeline.run()
+        assert pipeline.output_task.id == "grandchild_2"
+        assert len(pipeline.tasks) == 9
 
     def test_insert_task_in_middle(self):
         first_task = PromptTask("test1", id="test1")
@@ -351,7 +370,8 @@ class TestPipeline:
         pipeline = Pipeline(tasks=[waiting_task, error_artifact_task, end_task])
         pipeline.run()
 
-        assert pipeline.output is None
+        with pytest.raises(ValueError, match="Structure's output Task has no output. Run"):
+            assert pipeline.output
 
     def test_run_with_error_artifact_no_fail_fast(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
@@ -374,7 +394,7 @@ class TestPipeline:
         pipeline = Pipeline()
 
         pipeline + task
-        pipeline.tasks.append(task)
+        pipeline._tasks.append(task)
 
         with pytest.raises(ValueError, match=f"Duplicate task with id {task.id} found."):
             pipeline.run()

@@ -23,6 +23,7 @@ from griptape.common.prompt_stack.contents.action_call_delta_message_content imp
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, CohereTokenizer
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -45,14 +46,16 @@ class CoherePromptDriver(BasePromptDriver):
 
     api_key: str = field(metadata={"serializable": False})
     model: str = field(metadata={"serializable": True})
-    client: Client = field(
-        default=Factory(lambda self: import_optional_dependency("cohere").Client(self.api_key), takes_self=True),
-    )
+    force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
     )
-    force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
-    use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+
+    @lazy_property()
+    def client(self) -> Client:
+        return import_optional_dependency("cohere").Client(self.api_key)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:

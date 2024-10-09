@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
 from griptape.engines import OutpaintingImageGenerationEngine
 from griptape.loaders import ImageLoader
@@ -18,9 +16,9 @@ engine = OutpaintingImageGenerationEngine(
 )
 
 # Load input image artifacts.
-image_artifact = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
+image_artifact = ImageLoader().load("tests/resources/mountain.png")
 
-mask_artifact = ImageLoader().load(Path("tests/resources/mountain-mask.png").read_bytes())
+mask_artifact = ImageLoader().load("tests/resources/mountain-mask.png")
 
 # Instantiate a pipeline.
 pipeline = Pipeline()

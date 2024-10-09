@@ -83,6 +83,11 @@ class TestOpenAiDriversConfig:
                 "model": "whisper-1",
                 "organization": None,
             },
+            "ruleset_driver": {
+                "type": "LocalRulesetDriver",
+                "raise_not_found": True,
+                "persist_dir": None,
+            },
         }
 
     def test_from_dict(self, config):

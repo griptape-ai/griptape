@@ -9,6 +9,7 @@ from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
 from griptape.configs import Defaults
 from griptape.mixins.rule_mixin import RuleMixin
+from griptape.rules import Ruleset
 from griptape.tasks import BaseTask
 from griptape.utils import J2
 
@@ -33,6 +34,22 @@ class PromptTask(RuleMixin, BaseTask):
     )
 
     @property
+    def rulesets(self) -> list:
+        default_rules = self.rules
+        rulesets = self._rulesets
+
+        if self.structure is not None:
+            if self.structure._rulesets:
+                rulesets = self.structure._rulesets + self._rulesets
+            if self.structure.rules:
+                default_rules = self.structure.rules + self.rules
+
+        if default_rules:
+            rulesets.append(Ruleset(name=self.DEFAULT_RULESET_NAME, rules=default_rules))
+
+        return rulesets
+
+    @property
     def input(self) -> BaseArtifact:
         return self._process_task_input(self._input)
 
@@ -45,7 +62,7 @@ class PromptTask(RuleMixin, BaseTask):
     @property
     def prompt_stack(self) -> PromptStack:
         stack = PromptStack()
-        memory = self.structure.conversation_memory
+        memory = self.structure.conversation_memory if self.structure is not None else None
 
         system_template = self.generate_system_template(self)
         if system_template:
@@ -64,7 +81,7 @@ class PromptTask(RuleMixin, BaseTask):
 
     def default_system_template_generator(self, _: PromptTask) -> str:
         return J2("tasks/prompt_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.all_rulesets),
+            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
         )
 
     def before_run(self) -> None:

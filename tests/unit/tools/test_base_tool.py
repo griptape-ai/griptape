@@ -2,7 +2,6 @@ import inspect
 import os
 
 import pytest
-import yaml
 from schema import Or, Schema, SchemaMissingKeyError
 
 from griptape.common import ToolAction
@@ -20,6 +19,29 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description: foo", "const": "test"},
+                    "input": {
+                        "type": "object",
+                        "properties": {
+                            "values": {
+                                "description": "Test input",
+                                "type": "object",
+                                "properties": {"test": {"type": "string"}},
+                                "required": ["test"],
+                                "additionalProperties": False,
+                            }
+                        },
+                        "required": ["values"],
+                        "additionalProperties": False,
+                    },
+                },
+                "required": ["name", "path", "input"],
+                "additionalProperties": False,
+            },
+            {
+                "type": "object",
+                "properties": {
+                    "name": {"const": "MockTool"},
+                    "path": {"description": "test description", "const": "test_callable_schema"},
                     "input": {
                         "type": "object",
                         "properties": {
@@ -172,15 +194,8 @@ class TestBaseTool:
             .output_memory
         )
 
-    def test_manifest_path(self, tool):
-        assert tool.manifest_path == os.path.join(tool.abs_dir_path, tool.MANIFEST_FILE)
-
     def test_requirements_path(self, tool):
         assert tool.requirements_path == os.path.join(tool.abs_dir_path, tool.REQUIREMENTS_FILE)
-
-    def test_manifest(self, tool):
-        with open(tool.manifest_path) as yaml_file:
-            assert tool.manifest == yaml.safe_load(yaml_file)
 
     def test_abs_file_path(self, tool):
         assert tool.abs_file_path == os.path.abspath(inspect.getfile(tool.__class__))

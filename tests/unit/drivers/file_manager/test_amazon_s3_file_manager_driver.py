@@ -3,11 +3,11 @@ import tempfile
 
 import boto3
 import pytest
-from moto import mock_s3
+from moto import mock_aws
 
-from griptape.artifacts import InfoArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import InfoArtifact, TextArtifact
+from griptape.artifacts.blob_artifact import BlobArtifact
 from griptape.drivers import AmazonS3FileManagerDriver
-from griptape.loaders import TextLoader
 from tests.utils.aws import mock_aws_credentials
 
 
@@ -18,7 +18,7 @@ class TestAmazonS3FileManagerDriver:
 
     @pytest.fixture()
     def session(self):
-        mock = mock_s3()
+        mock = mock_aws()
         mock.start()
         yield boto3.Session(region_name="us-east-1")
         mock.stop()
@@ -154,8 +154,7 @@ class TestAmazonS3FileManagerDriver:
     def test_load_file(self, driver):
         artifact = driver.load_file("resources/bitcoin.pdf")
 
-        assert isinstance(artifact, ListArtifact)
-        assert len(artifact.value) == 4
+        assert isinstance(artifact, BlobArtifact)
 
     @pytest.mark.parametrize(
         ("workdir", "path", "expected"),
@@ -185,9 +184,8 @@ class TestAmazonS3FileManagerDriver:
     def test_load_file_with_encoding(self, driver):
         artifact = driver.load_file("resources/test.txt")
 
-        assert isinstance(artifact, ListArtifact)
-        assert len(artifact.value) == 1
-        assert isinstance(artifact.value[0], TextArtifact)
+        assert isinstance(artifact, BlobArtifact)
+        assert artifact.encoding == "utf-8"
 
     @pytest.mark.parametrize(
         ("workdir", "path", "content"),
@@ -240,9 +238,7 @@ class TestAmazonS3FileManagerDriver:
 
     def test_save_file_with_encoding(self, session, bucket, get_s3_value):
         workdir = "/sub-folder"
-        driver = AmazonS3FileManagerDriver(
-            session=session, bucket=bucket, default_loader=TextLoader(encoding="utf-8"), loaders={}, workdir=workdir
-        )
+        driver = AmazonS3FileManagerDriver(session=session, bucket=bucket, workdir=workdir)
         path = "test/foobar.txt"
 
         result = driver.save_file(path, "foobar")
@@ -253,9 +249,7 @@ class TestAmazonS3FileManagerDriver:
 
     def test_save_and_load_file_with_encoding(self, session, bucket, get_s3_value):
         workdir = "/sub-folder"
-        driver = AmazonS3FileManagerDriver(
-            session=session, bucket=bucket, loaders={"txt": TextLoader(encoding="ascii")}, workdir=workdir
-        )
+        driver = AmazonS3FileManagerDriver(session=session, bucket=bucket, encoding="ascii", workdir=workdir)
         path = "test/foobar.txt"
 
         result = driver.save_file(path, "foobar")
@@ -264,13 +258,10 @@ class TestAmazonS3FileManagerDriver:
         assert get_s3_value(expected_s3_key) == "foobar"
         assert result.value == "Successfully saved file"
 
-        driver = AmazonS3FileManagerDriver(
-            session=session, bucket=bucket, default_loader=TextLoader(encoding="ascii"), loaders={}, workdir=workdir
-        )
+        driver = AmazonS3FileManagerDriver(session=session, bucket=bucket, encoding="ascii", workdir=workdir)
         path = "test/foobar.txt"
 
         result = driver.load_file(path)
 
-        assert isinstance(result, ListArtifact)
-        assert len(result.value) == 1
-        assert isinstance(result.value[0], TextArtifact)
+        assert isinstance(result, TextArtifact)
+        assert result.encoding == "ascii"

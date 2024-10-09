@@ -1,5 +1,6 @@
 import os
 
+from griptape.chunkers import TextChunker
 from griptape.drivers import OpenAiEmbeddingDriver, PgVectorVectorStoreDriver
 from griptape.loaders import WebLoader
 
@@ -22,12 +23,13 @@ vector_store_driver = PgVectorVectorStoreDriver(
 vector_store_driver.setup()
 
 # Load Artifacts from the web
-artifacts = WebLoader().load("https://www.griptape.ai")
+artifact = WebLoader().load("https://www.griptape.ai")
+chunks = TextChunker().chunk(artifact)
 
 # Upsert Artifacts into the Vector Store Driver
 vector_store_driver.upsert_text_artifacts(
     {
-        "griptape": artifacts,
+        "griptape": chunks,
     }
 )
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Optional
 
 import openai
 from attrs import Factory, define, field
@@ -25,6 +25,7 @@ from griptape.common import (
 )
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -55,19 +56,13 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    client: openai.OpenAI = field(
-        default=Factory(
-            lambda self: openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization),
-            takes_self=True,
-        ),
-    )
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
     user: str = field(default="", kw_only=True, metadata={"serializable": True})
-    response_format: Optional[Literal["json_object"]] = field(
+    response_format: Optional[dict] = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
@@ -88,6 +83,15 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    _client: openai.OpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> openai.OpenAI:
+        return openai.OpenAI(
+            base_url=self.base_url,
+            api_key=self.api_key,
+            organization=self.organization,
+        )
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -141,10 +145,13 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
         }
 
-        if self.response_format == "json_object":
-            params["response_format"] = {"type": "json_object"}
-            # JSON mode still requires a system message instructing the LLM to output JSON.
-            prompt_stack.add_system_message("Provide your response as a valid JSON object.")
+        if self.response_format is not None:
+            if self.response_format == {"type": "json_object"}:
+                params["response_format"] = self.response_format
+                # JSON mode still requires a system message instructing the LLM to output JSON.
+                prompt_stack.add_system_message("Provide your response as a valid JSON object.")
+            else:
+                params["response_format"] = self.response_format
 
         messages = self.__to_openai_messages(prompt_stack.messages)
 

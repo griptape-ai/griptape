@@ -88,6 +88,7 @@ nav:
           - Create a Structure: "griptape-cloud/structures/create-structure.md"
           - Structure Config YAML: "griptape-cloud/structures/structure-config.md"
           - Running Your Structure: "griptape-cloud/structures/run-structure.md"
+          - Structure Run Events: "griptape-cloud/structures/structure-run-events.md"
       - Cloud API:
           - API Reference: "griptape-cloud/api/api-reference.md"
   - Framework:
@@ -130,8 +131,8 @@ nav:
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
-          - Chunkers: "griptape-framework/data/chunkers.md"
           - Loaders: "griptape-framework/data/loaders.md"
+          - Chunkers: "griptape-framework/data/chunkers.md"
       - Misc:
           - Events: "griptape-framework/misc/events.md"
           - Tokenizers: "griptape-framework/misc/tokenizers.md"

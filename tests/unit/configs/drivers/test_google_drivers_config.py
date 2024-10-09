@@ -49,6 +49,11 @@ class TestGoogleDriversConfig:
             },
             "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
             "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "ruleset_driver": {
+                "type": "LocalRulesetDriver",
+                "raise_not_found": True,
+                "persist_dir": None,
+            },
         }
 
     def test_from_dict(self, config):

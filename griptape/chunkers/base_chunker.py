@@ -6,6 +6,7 @@ from typing import Optional
 from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import TextArtifact
+from griptape.artifacts.list_artifact import ListArtifact
 from griptape.chunkers import ChunkSeparator
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
@@ -32,8 +33,8 @@ class BaseChunker(ABC):
         if max_tokens < 0:
             raise ValueError("max_tokens must be 0 or greater.")
 
-    def chunk(self, text: TextArtifact | str) -> list[TextArtifact]:
-        text = text.value if isinstance(text, TextArtifact) else text
+    def chunk(self, text: TextArtifact | ListArtifact | str) -> list[TextArtifact]:
+        text = text.to_text() if isinstance(text, (TextArtifact, ListArtifact)) else text
 
         return [TextArtifact(c) for c in self._chunk_recursively(text)]
 

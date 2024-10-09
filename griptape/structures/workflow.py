@@ -8,11 +8,11 @@ from graphlib import TopologicalSorter
 
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
-from griptape.memory.structure import Run
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.structures import Structure
 
 if TYPE_CHECKING:
+    from griptape.artifacts import BaseArtifact
     from griptape.tasks import BaseTask
 
 
@@ -26,13 +26,25 @@ class Workflow(Structure, FuturesExecutorMixin):
     def output_task(self) -> Optional[BaseTask]:
         return self.order_tasks()[-1] if self.tasks else None
 
+    @property
+    def input_tasks(self) -> list[BaseTask]:
+        return [task for task in self.tasks if not task.parents]
+
+    @property
+    def output_tasks(self) -> list[BaseTask]:
+        return [task for task in self.tasks if not task.children]
+
+    @property
+    def outputs(self) -> list[BaseArtifact]:
+        return [task.output for task in self.output_tasks if task.output is not None]
+
     def add_task(self, task: BaseTask) -> BaseTask:
         if (existing_task := self.try_find_task(task.id)) is not None:
             return existing_task
 
         task.preprocess(self)
 
-        self.tasks.append(task)
+        self._tasks.append(task)
 
         return task
 
@@ -82,7 +94,7 @@ class Workflow(Structure, FuturesExecutorMixin):
         last_parent_index = self.__link_task_to_parents(task, parent_tasks)
 
         # Insert the new task once, just after the last parent task
-        self.tasks.insert(last_parent_index + 1, task)
+        self._tasks.insert(last_parent_index + 1, task)
 
         return task
 
@@ -105,11 +117,6 @@ class Workflow(Structure, FuturesExecutorMixin):
                     exit_loop = True
 
                     break
-
-        if self.conversation_memory and self.output is not None:
-            run = Run(input=self.input_task.input, output=self.output)
-
-            self.conversation_memory.add_run(run)
 
         return self
 

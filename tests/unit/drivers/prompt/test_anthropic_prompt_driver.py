@@ -14,8 +14,6 @@ class TestAnthropicPromptDriver:
         {
             "description": "test description: foo",
             "input_schema": {
-                "$id": "Input Schema",
-                "$schema": "http://json-schema.org/draft-07/schema#",
                 "additionalProperties": False,
                 "properties": {
                     "values": {
@@ -32,10 +30,26 @@ class TestAnthropicPromptDriver:
             "name": "MockTool_test",
         },
         {
+            "description": "test description",
+            "input_schema": {
+                "additionalProperties": False,
+                "properties": {
+                    "values": {
+                        "additionalProperties": False,
+                        "description": "Test input",
+                        "properties": {"test": {"type": "string"}},
+                        "required": ["test"],
+                        "type": "object",
+                    }
+                },
+                "required": ["values"],
+                "type": "object",
+            },
+            "name": "MockTool_test_callable_schema",
+        },
+        {
             "description": "test description: foo",
             "input_schema": {
-                "$id": "Input Schema",
-                "$schema": "http://json-schema.org/draft-07/schema#",
                 "additionalProperties": False,
                 "properties": {
                     "values": {
@@ -54,8 +68,6 @@ class TestAnthropicPromptDriver:
         {
             "description": "test description: foo",
             "input_schema": {
-                "$id": "Input Schema",
-                "$schema": "http://json-schema.org/draft-07/schema#",
                 "additionalProperties": False,
                 "properties": {
                     "values": {
@@ -74,8 +86,6 @@ class TestAnthropicPromptDriver:
         {
             "description": "test description",
             "input_schema": {
-                "$id": "Input Schema",
-                "$schema": "http://json-schema.org/draft-07/schema#",
                 "additionalProperties": False,
                 "properties": {},
                 "required": [],
@@ -86,8 +96,6 @@ class TestAnthropicPromptDriver:
         {
             "description": "test description",
             "input_schema": {
-                "$id": "Input Schema",
-                "$schema": "http://json-schema.org/draft-07/schema#",
                 "additionalProperties": False,
                 "properties": {},
                 "required": [],
@@ -98,8 +106,6 @@ class TestAnthropicPromptDriver:
         {
             "description": "test description: foo",
             "input_schema": {
-                "$id": "Input Schema",
-                "$schema": "http://json-schema.org/draft-07/schema#",
                 "additionalProperties": False,
                 "properties": {
                     "values": {
@@ -118,8 +124,6 @@ class TestAnthropicPromptDriver:
         {
             "description": "test description",
             "input_schema": {
-                "$id": "Input Schema",
-                "$schema": "http://json-schema.org/draft-07/schema#",
                 "additionalProperties": False,
                 "properties": {
                     "values": {

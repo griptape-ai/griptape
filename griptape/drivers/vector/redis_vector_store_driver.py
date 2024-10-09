@@ -4,10 +4,11 @@ import json
 from typing import TYPE_CHECKING, NoReturn, Optional
 
 import numpy as np
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.drivers import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency, str_to_hash
+from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     from redis import Redis
@@ -33,19 +34,17 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     db: int = field(kw_only=True, default=0, metadata={"serializable": True})
     password: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     index: str = field(kw_only=True, metadata={"serializable": True})
+    _client: Redis = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
-    client: Redis = field(
-        default=Factory(
-            lambda self: import_optional_dependency("redis").Redis(
-                host=self.host,
-                port=self.port,
-                db=self.db,
-                password=self.password,
-                decode_responses=False,
-            ),
-            takes_self=True,
-        ),
-    )
+    @lazy_property()
+    def client(self) -> Redis:
+        return import_optional_dependency("redis").Redis(
+            host=self.host,
+            port=self.port,
+            db=self.db,
+            password=self.password,
+            decode_responses=False,
+        )
 
     def upsert_vector(
         self,

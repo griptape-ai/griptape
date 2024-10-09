@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from griptape.drivers import OpenAiImageQueryDriver
 from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
@@ -18,7 +16,7 @@ engine = ImageQueryEngine(
 )
 
 # Load the input image artifact.
-image_artifact = ImageLoader().load(Path("tests/resources/mountain.png").read_bytes())
+image_artifact = ImageLoader().load("tests/resources/mountain.png")
 
 # Instantiate a pipeline.
 pipeline = Pipeline()
