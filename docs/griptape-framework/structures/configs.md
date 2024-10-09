@@ -99,7 +99,7 @@ Griptape provides a predefined [LoggingConfig](../../reference/griptape/configs/
 
 #### Debug Logs
 
-Here is an example of how to enable debug logs for the framework:
+You can enable debug logs to view more granular information such as request/response payloads.
 
 ```python
 import logging
@@ -113,9 +113,9 @@ from griptape.tools import CalculatorTool
 
 Defaults.logging_config = LoggingConfig(handlers_formatter=JsonFormatter(), level=logging.DEBUG)
 
-agent = Agent(tools=[CalculatorTool()])
+agent = Agent()
 
-agent.run("What is 4 + 4?")
+agent.run("Hello world!")
 ```
 
 ```
