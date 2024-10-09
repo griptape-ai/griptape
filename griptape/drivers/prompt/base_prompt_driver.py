@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True)
-class BasePromptDriver(ExponentialBackoffMixin, ABC, SerializableMixin):
+class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """Base class for the Prompt Drivers.
 
     Attributes:
