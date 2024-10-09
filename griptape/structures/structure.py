@@ -11,7 +11,6 @@ from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRun
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory, Run
-from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -21,24 +20,20 @@ if TYPE_CHECKING:
 
 
 @define
-class Structure(ABC, SerializableMixin):
-    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
+class Structure(ABC):
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     rulesets: list[Ruleset] = field(factory=list, kw_only=True)
     rules: list[BaseRule] = field(factory=list)
-    _tasks: list[BaseTask | list[BaseTask]] = field(
-        factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
-    )
+    _tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True, alias="tasks")
     conversation_memory: Optional[BaseConversationMemory] = field(
-        default=Factory(lambda: ConversationMemory()),
-        kw_only=True,
-        metadata={"serializable": True},
+        default=Factory(lambda: ConversationMemory()), kw_only=True
     )
     task_memory: TaskMemory = field(
         default=Factory(lambda self: TaskMemory(), takes_self=True),
         kw_only=True,
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
-    fail_fast: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    fail_fast: bool = field(default=True, kw_only=True)
     _execution_args: tuple = ()
 
     @rulesets.validator  # pyright: ignore[reportAttributeAccessIssue]

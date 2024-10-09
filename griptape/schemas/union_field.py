@@ -1,4 +1,4 @@
-from __future__ import annotations  # This helps with type hints for forward declarations
+from __future__ import annotations
 
 import typing as t
 

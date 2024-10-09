@@ -48,7 +48,6 @@ class TestBaseSchema:
         assert isinstance(BaseSchema._get_field_for_type(bool), fields.Bool)
         assert isinstance(BaseSchema._get_field_for_type(tuple), fields.Raw)
         assert isinstance(BaseSchema._get_field_for_type(dict), fields.Dict)
-
         with pytest.raises(ValueError):
             BaseSchema._get_field_for_type(list)
 
@@ -68,6 +67,13 @@ class TestBaseSchema:
 
         assert BaseSchema._get_field_type_info(Literal["foo"]) == (str, (), False)  # pyright: ignore[reportArgumentType]
         assert BaseSchema._get_field_type_info(Literal[5]) == (int, (), False)  # pyright: ignore[reportArgumentType]
+
+    def test_is_list_sequence(self):
+        assert BaseSchema.is_list_sequence(list)
+        assert not BaseSchema.is_list_sequence(tuple)
+        assert not BaseSchema.is_list_sequence(bytes)
+        assert not BaseSchema.is_list_sequence(str)
+        assert not BaseSchema.is_list_sequence(int)
 
     def test_load(self):
         schema = BaseSchema.from_attrs_cls(MockSerializable)()
@@ -93,3 +99,13 @@ class TestBaseSchema:
         candidate_fields = [type(f) for f in union_field._candidate_fields]
         assert fields.Str in candidate_fields
         assert fields.List in candidate_fields
+
+    def test_handle_union_outside_list(self):
+        # Test a Union of str and int
+        field = BaseSchema._get_field_for_type(str | int)
+        assert isinstance(field, MarshmallowUnion)
+
+        # Check that the union contains both str and int fields
+        candidate_fields = [type(f) for f in field._candidate_fields]
+        assert fields.Str in candidate_fields
+        assert fields.Integer in candidate_fields

@@ -6,13 +6,12 @@ from abc import ABC, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Factory, define, field, fields
+from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
-from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -23,21 +22,21 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class BaseTask(FuturesExecutorMixin, SerializableMixin, ABC):
+class BaseTask(FuturesExecutorMixin, ABC):
     class State(Enum):
         PENDING = 1
         EXECUTING = 2
         FINISHED = 3
 
-    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
-    state: State = field(default=State.PENDING, kw_only=True, metadata={"serializable": True})
-    parent_ids: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
-    child_ids: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
+    state: State = field(default=State.PENDING, kw_only=True)
+    parent_ids: list[str] = field(factory=list, kw_only=True)
+    child_ids: list[str] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
-    structure: Optional[Structure] = field(default=None, kw_only=True, metadata={"serializable": True})
+    structure: Optional[Structure] = field(default=None, kw_only=True)
 
-    output: Optional[BaseArtifact] = field(default=None, init=False, metadata={"serializable": True})
-    context: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
+    output: Optional[BaseArtifact] = field(default=None, init=False)
+    context: dict[str, Any] = field(factory=dict, kw_only=True)
 
     def __rshift__(self, other: BaseTask) -> BaseTask:
         self.add_child(other)
@@ -200,29 +199,3 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, ABC):
             return structure_context
         else:
             return {}
-
-    def to_dict(self) -> dict:
-        """Converts attributes with metadata={"serializable": True} into a dictionary."""
-        serialized_data = {}
-
-        # Use the attrs library to access fields with metadata.
-        for _field in fields(self.__class__):
-            if _field.metadata.get("serializable", False):
-                value = getattr(self, _field.name)
-                serialized_data[_field.name] = self._serialize(value)
-
-        return serialized_data
-
-    def _serialize(self, value: Any) -> Any:
-        if hasattr(value, "to_dict"):  # Check if the object has a to_dict method
-            return value.to_dict()
-        elif isinstance(value, (list, tuple)):  # Handle lists or tuples
-            return [self._serialize(item) for item in value]
-        elif isinstance(value, dict):  # Handle dictionaries
-            return {key: self._serialize(val) for key, val in value.items()}
-        elif isinstance(value, Enum):  # Handle Enum types
-            return value.name  # Return the Enum's name as a string
-        elif callable(value):  # Handle functions or methods
-            return "default_function"
-        else:
-            return repr(value)  # Fallback for other non-serializable objects
