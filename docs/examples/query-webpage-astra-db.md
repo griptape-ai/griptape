@@ -10,7 +10,6 @@ _Note:_ Besides the [Astra DB](../griptape-framework/drivers/vector-store-driver
 this example requires the `drivers-web-scraper-trafilatura`
 Griptape extra to be installed as well.
 
-
 ```python
 --8<-- "docs/examples/src/query_webpage_astra_db_1.py"
 ```

@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -8,7 +8,7 @@ search:
 Image Query Drivers are used by [Image Query Engines](../engines/image-query-engines.md) to execute natural language queries on the contents of images. You can specify the provider and model used to query the image by providing the Engine with a particular Image Query Driver.
 
 !!! info
-    All Image Query Drivers default to a `max_tokens` of 256. It is recommended that you set this value to correspond to the desired response length. 
+    All Image Query Drivers default to a `max_tokens` of 256. It is recommended that you set this value to correspond to the desired response length.
 
 ## Image Query Drivers
 
@@ -41,7 +41,7 @@ The [OpenAiVisionImageQueryDriver](../../reference/griptape/drivers/image_query/
 ```
 
 ### Azure OpenAI
-    
+
 !!! info
     In order to use the `gpt-4-vision-preview` model on Azure OpenAI, the `gpt-4` model must be deployed with the version set to `vision-preview`. More information can be found in the [Azure OpenAI documentation](https://learn.microsoft.com/en-us/azure/ai-services/openai/how-to/gpt-with-vision).
 

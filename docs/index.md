@@ -1,6 +1,6 @@
 # Griptape Docs
 
-Welcome to Griptape Docs! This documentation is organized into the following sections: 
+Welcome to Griptape Docs! This documentation is organized into the following sections:
 
 ## Griptape Topic Guides
 

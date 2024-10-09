@@ -7,6 +7,7 @@ You can specify a local working directory and environment variables during tool 
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/computer_tool_1.py"
 ```
+
 ```
 ❮ poetry run python src/docs/task-memory.py
 [08/12/24 15:13:56] INFO     ToolkitTask 203ee958d1934811afe0bb86fb246e86
@@ -44,4 +45,4 @@ You can specify a local working directory and environment variables during tool 
                              file2.txt
 [08/12/24 15:14:00] INFO     ToolkitTask 203ee958d1934811afe0bb86fb246e86
                              Output: file1.txt, file2.txt
-```  
+```

@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -29,7 +29,7 @@ This Model Driver supports negative prompts. When provided (for example, when us
 --8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_2.py"
 ```
 
-#### Titan 
+#### Titan
 
 The [Bedrock Titan Image Generator Model Driver](../../reference/griptape/drivers/image_generation_model/bedrock_titan_image_generation_model_driver.md) provides support for Titan Image Generator models hosted by Amazon Bedrock. This Model Driver supports configurations specific to Titan Image Generator, like quality, seed, and cfg_scale.
 
@@ -78,9 +78,9 @@ The [HuggingFace Pipelines Image Generation Driver](../../reference/griptape/dri
 
 This Driver requires a `model` configuration, specifying the model to use for image generation. The value of the `model` configuration must be one of the following:
 
- - A model name from the HuggingFace Model Hub, like `stabilityai/stable-diffusion-3-medium-diffusers`
- - A path to the directory containing a model on the filesystem, like `./models/stable-diffusion-3/`
- - A path to a file containing a model on the filesystem, like `./models/sd3_medium_incl_clips.safetensors`
+- A model name from the HuggingFace Model Hub, like `stabilityai/stable-diffusion-3-medium-diffusers`
+- A path to the directory containing a model on the filesystem, like `./models/stable-diffusion-3/`
+- A path to a file containing a model on the filesystem, like `./models/sd3_medium_incl_clips.safetensors`
 
 The `device` configuration specifies the hardware device used to run inference. Common values include `cuda` (supporting CUDA-enabled GPUs), `cpu` (supported by a device's CPU), and `mps` (supported by Apple silicon GPUs). For more information, see [HuggingFace's documentation](https://huggingface.co/docs/transformers/en/perf_infer_gpu_one) on GPU inference.
 
