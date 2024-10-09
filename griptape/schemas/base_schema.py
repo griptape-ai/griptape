@@ -3,13 +3,13 @@ from __future__ import annotations
 from abc import ABC
 from collections.abc import Sequence
 from types import UnionType  # type: ignore[reportAttributeAccessIssue]
-from typing import Any, Literal, TypeVar, Union, _SpecialForm, get_args, get_origin
+from typing import Any, Literal, TypeVar, _SpecialForm, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
 
 from griptape.schemas.bytes_field import Bytes
-from griptape.schemas.union_field import MarshmallowUnion
+from griptape.schemas.union_field import Union
 
 
 class BaseSchema(Schema):
@@ -119,7 +119,7 @@ class BaseSchema(Schema):
         if not candidate_fields:
             raise ValueError(f"Unsupported UnionType field: {union_type}")
 
-        return MarshmallowUnion(fields=candidate_fields, allow_none=optional)
+        return Union(fields=candidate_fields, allow_none=optional)
 
     @classmethod
     def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:

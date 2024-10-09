@@ -4,7 +4,7 @@ from .polymorphic_schema import PolymorphicSchema
 
 from .bytes_field import Bytes
 
-from .union_field import MarshmallowUnion
+from .union_field import Union
 
 
-__all__ = ["BaseSchema", "PolymorphicSchema", "Bytes", "MarshmallowUnion"]
+__all__ = ["BaseSchema", "PolymorphicSchema", "Bytes", "Union"]

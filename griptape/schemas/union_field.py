@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import typing as t
+from typing import Any
 
 import marshmallow
 import marshmallow.error_store
@@ -14,13 +14,13 @@ class MarshmallowUnionError(Exception):
 class ExceptionGroupError(MarshmallowUnionError):
     """Collection of possibly multiple exceptions."""
 
-    def __init__(self, msg: str, errors: t.Any) -> None:
+    def __init__(self, msg: str, errors: Any) -> None:
         self.msg = msg
         self.errors = errors
         super().__init__(msg, errors)
 
 
-class MarshmallowUnion(marshmallow.fields.Field):
+class Union(marshmallow.fields.Field):
     """Field that accepts any one of multiple fields.
 
     Each argument will be tried until one succeeds.
@@ -36,13 +36,13 @@ class MarshmallowUnion(marshmallow.fields.Field):
         fields: list[marshmallow.fields.Field],
         *,  # Force reverse_serialize_candidates to be used as a keyword argument
         reverse_serialize_candidates: bool = False,
-        **kwargs: t.Any,
+        **kwargs: Any,
     ) -> None:
         self._candidate_fields = fields
         self._reverse_serialize_candidates = reverse_serialize_candidates
         super().__init__(**kwargs)
 
-    def _serialize(self, value: t.Any, attr: str | None, obj: str, **kwargs: t.Any) -> t.Any:
+    def _serialize(self, value: Any, attr: str | None, obj: str, **kwargs: Any) -> Any:
         """Pulls the value for the given key from the object, applies the field's formatting and returns the result.
 
         Args:
@@ -69,7 +69,7 @@ class MarshmallowUnion(marshmallow.fields.Field):
 
         raise ExceptionGroupError("All serializers raised exceptions.\n", error_store.errors)
 
-    def _deserialize(self, value: t.Any, attr: str | None = None, data: t.Any = None, **kwargs: t.Any) -> t.Any:
+    def _deserialize(self, value: Any, attr: str | None = None, data: Any = None, **kwargs: Any) -> Any:
         """Deserialize ``value``.
 
         Args:
