@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Sequence
+from types import UnionType  # type: ignore[reportAttributeAccessIssue]
 from typing import Any, Literal, TypeVar, Union, _SpecialForm, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
 
 from griptape.schemas.bytes_field import Bytes
+from griptape.schemas.union_field import MarshmallowUnion
 
 
 class BaseSchema(Schema):
@@ -47,33 +49,67 @@ class BaseSchema(Schema):
 
     @classmethod
     def _get_field_for_type(cls, field_type: type) -> fields.Field | fields.Nested:
-        """Generate a marshmallow Field instance from a Python type.
+        """Generate a marshmallow Field instance from a Python type."""
+        from enum import Enum
 
-        Args:
-            field_type: A field type.
-        """
         from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
+        # Resolve the origin type and its arguments (for Unions, Lists, etc.)
         field_class, args, optional = cls._get_field_type_info(field_type)
 
-        # Resolve TypeVars to their bound type
+        # Handle NoneType and TypeVar
+        if field_class is type(None):
+            return fields.Constant(None, allow_none=True)
         if isinstance(field_class, TypeVar):
-            field_class = field_class.__bound__
+            field_class = field_class.__bound__ or field_class
 
+        # Handle Enum types
+        if issubclass(field_class, Enum):
+            return fields.String(allow_none=optional)
+
+        # Handle attrs classes
         if attrs.has(field_class):
-            if ABC in field_class.__bases__:
-                return fields.Nested(PolymorphicSchema(inner_class=field_class), allow_none=optional)
-            else:
-                return fields.Nested(cls.from_attrs_cls(field_class), allow_none=optional)
-        elif cls.is_list_sequence(field_class):
-            if args:
-                return fields.List(cls_or_instance=cls._get_field_for_type(args[0]), allow_none=optional)
-            else:
-                raise ValueError(f"Missing type for list field: {field_type}")
-        else:
-            field_class = cls.DATACLASS_TYPE_MAPPING[field_class]
+            schema = PolymorphicSchema if ABC in field_class.__bases__ else cls.from_attrs_cls
+            return fields.Nested(schema(field_class), allow_none=optional)
 
+        # Handle list sequences
+        if cls.is_list_sequence(field_class):
+            if not args:
+                raise ValueError(f"List must have a type argument: {field_type}")
+            return cls._handle_list(args[0])
+
+        # Handle UnionType (for Python 3.10+ Union | syntax)
+        if isinstance(field_class, UnionType) or get_origin(field_class) is Union:
+            return cls._handle_union(field_type)
+
+        # Handle basic types using DATACLASS_TYPE_MAPPING
+        field_class = cls.DATACLASS_TYPE_MAPPING.get(field_class)
+        if field_class:
             return field_class(allow_none=optional)
+
+        # Unsupported field type
+        raise KeyError(f"Unsupported field type: {field_class}")
+
+    @classmethod
+    def _handle_list(cls, list_arg: type) -> fields.Field:
+        """Handle fields that are lists, including cases with UnionType elements."""
+        # If the argument in the list is a UnionType, handle it as a union within a list
+        if isinstance(list_arg, UnionType) or get_origin(list_arg) is Union:
+            union_field = cls._handle_union(list_arg)
+            return fields.List(union_field)
+
+        # Regular list handling
+        return fields.List(cls._get_field_for_type(list_arg))
+
+    @classmethod
+    def _handle_union(cls, union_type: type) -> fields.Field:
+        """Handle UnionType fields by decomposing them into individual types."""
+        candidate_fields = [cls._get_field_for_type(arg) for arg in get_args(union_type) if arg is not type(None)]
+
+        if not candidate_fields:
+            raise ValueError(f"Unsupported UnionType field: {union_type}")
+
+        return MarshmallowUnion(fields=candidate_fields)
 
     @classmethod
     def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:
@@ -128,8 +164,11 @@ class BaseSchema(Schema):
             BaseVectorStoreDriver,
         )
         from griptape.events import EventListener
-        from griptape.memory.structure import Run
+        from griptape.memory import TaskMemory
+        from griptape.memory.structure import BaseConversationMemory, Run
+        from griptape.rules import BaseRule, Rule, Ruleset
         from griptape.structures import Structure
+        from griptape.tasks.base_task import BaseTask
         from griptape.tokenizers import BaseTokenizer
         from griptape.tools import BaseTool
         from griptape.utils import import_optional_dependency, is_dependency_installed
@@ -147,11 +186,15 @@ class BaseSchema(Schema):
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BaseImageGenerationDriver": BaseImageGenerationDriver,
                 "BaseArtifact": BaseArtifact,
+                "BaseConversationMemory": BaseConversationMemory,
                 "PromptStack": PromptStack,
                 "EventListener": EventListener,
                 "BaseMessageContent": BaseMessageContent,
                 "BaseDeltaMessageContent": BaseDeltaMessageContent,
                 "BaseTool": BaseTool,
+                "BaseTask": BaseTask,
+                "State": BaseTask.State,
+                "TaskMemory": TaskMemory,
                 "Usage": Message.Usage,
                 "Structure": Structure,
                 "BaseTokenizer": BaseTokenizer,
@@ -159,6 +202,9 @@ class BaseSchema(Schema):
                 "Reference": Reference,
                 "Run": Run,
                 "Sequence": Sequence,
+                "BaseRule": BaseRule,
+                "Rule": Rule,
+                "Ruleset": Ruleset,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel

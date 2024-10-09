@@ -26,7 +26,6 @@ class PromptTask(RuleMixin, BaseTask):
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
         kw_only=True,
-        metadata={"serializable": True},
     )
     _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),

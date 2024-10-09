@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
-from attrs import Factory, define, field, fields
+from attrs import Factory, define, field
 
 from griptape.common import (
     ActionCallDeltaMessageContent,
@@ -28,7 +27,7 @@ if TYPE_CHECKING:
 
 
 @define(kw_only=True)
-class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
+class BasePromptDriver(ExponentialBackoffMixin, ABC, SerializableMixin):
     """Base class for the Prompt Drivers.
 
     Attributes:
@@ -156,29 +155,3 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
-
-    def to_dict(self) -> dict:
-        """Converts attributes with metadata={"serializable": True} into a dictionary."""
-        serialized_data = {}
-
-        # Use the attrs library to access fields with metadata.
-        for _field in fields(self.__class__):
-            if _field.metadata.get("serializable", False):
-                value = getattr(self, _field.name)
-                serialized_data[_field.name] = self._serialize(value)
-
-        return serialized_data
-
-    def _serialize(self, value: Any) -> Any:
-        if hasattr(value, "to_dict"):  # Check if the object has a to_dict method
-            return value.to_dict()
-        elif isinstance(value, (list, tuple)):  # Handle lists or tuples
-            return [self._serialize(item) for item in value]
-        elif isinstance(value, dict):  # Handle dictionaries
-            return {key: self._serialize(val) for key, val in value.items()}
-        elif isinstance(value, Enum):  # Handle Enum types
-            return value.name  # Return the Enum's name as a string
-        elif callable(value):  # Handle functions or methods
-            return "default_function"
-        else:
-            return repr(value)  # Fallback for other non-serializable objects

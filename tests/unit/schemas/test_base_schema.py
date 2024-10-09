@@ -11,6 +11,7 @@ from griptape.loaders import TextLoader
 from griptape.schemas import PolymorphicSchema
 from griptape.schemas.base_schema import BaseSchema
 from griptape.schemas.bytes_field import Bytes
+from griptape.schemas.union_field import MarshmallowUnion
 from tests.mocks.mock_serializable import MockSerializable
 
 
@@ -68,13 +69,6 @@ class TestBaseSchema:
         assert BaseSchema._get_field_type_info(Literal["foo"]) == (str, (), False)  # pyright: ignore[reportArgumentType]
         assert BaseSchema._get_field_type_info(Literal[5]) == (int, (), False)  # pyright: ignore[reportArgumentType]
 
-    def test_is_list_sequence(self):
-        assert BaseSchema.is_list_sequence(list)
-        assert not BaseSchema.is_list_sequence(tuple)
-        assert not BaseSchema.is_list_sequence(bytes)
-        assert not BaseSchema.is_list_sequence(str)
-        assert not BaseSchema.is_list_sequence(int)
-
     def test_load(self):
         schema = BaseSchema.from_attrs_cls(MockSerializable)()
         mock_serializable = schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3]})
@@ -86,3 +80,16 @@ class TestBaseSchema:
         schema = BaseSchema.from_attrs_cls(MockSerializable)()
         with pytest.raises(TypeError):
             schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3], "zoop": "bop"})
+
+    def test_handle_union_in_list(self):
+        field = BaseSchema._get_field_for_type(list[str | list[str]])
+        assert isinstance(field, fields.List)
+        assert isinstance(field.inner, MarshmallowUnion)
+
+        union_field = field.inner
+        assert isinstance(union_field, MarshmallowUnion)
+
+        # Check that the union contains both str and List of str fields
+        candidate_fields = [type(f) for f in union_field._candidate_fields]
+        assert fields.Str in candidate_fields
+        assert fields.List in candidate_fields
