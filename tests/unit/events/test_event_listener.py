@@ -121,7 +121,7 @@ class TestEventListener:
         event_listener = EventListener(event_handler, driver=mock_event_listener_driver, event_types=[MockEvent])
         event_listener.publish_event(mock_event)
 
-        mock_event_listener_driver.publish_event.assert_called_once_with(mock_event, flush=False)
+        mock_event_listener_driver.publish_event.assert_called_once_with(mock_event)
 
     def test_publish_transformed_event(self):
         mock_event_listener_driver = Mock()
@@ -134,7 +134,7 @@ class TestEventListener:
         event_listener = EventListener(event_handler, driver=mock_event_listener_driver, event_types=[MockEvent])
         event_listener.publish_event(mock_event)
 
-        mock_event_listener_driver.publish_event.assert_called_once_with({"event": mock_event.to_dict()}, flush=False)
+        mock_event_listener_driver.publish_event.assert_called_once_with({"event": mock_event.to_dict()})
 
     def test_context_manager(self):
         e1 = EventListener()
