@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -15,6 +15,7 @@ You can listen to specific event types:
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_1.py"
 ```
+
 ```
 <class 'griptape.events.start_task_event.StartTaskEvent'>
 [09/08/23 10:51:16] INFO     PromptTask a20c236d1d86480fb14ae976e6cf8983
@@ -84,7 +85,6 @@ The `EventListener` will automatically be added and removed from the [EventBus](
 
 ## Streaming
 
-
 You can use the [CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md) to stream the completion results from Prompt Drivers.
 
 ```python
@@ -97,7 +97,6 @@ You can also use the [Stream](../../reference/griptape/utils/stream.md) utility 
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_4.py"
 ```
-
 
 ## Counting Tokens
 
@@ -132,14 +131,14 @@ To count tokens, you can use Event Listeners and the [TokenCounter](../../refere
 total tokens: 273
 ```
 
-
 ## Inspecting Payloads
 
-You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_event.md) to inspect the Prompt Stack and final prompt string before it is sent to the LLM. 
+You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_event.md) to inspect the Prompt Stack and final prompt string before it is sent to the LLM.
 
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_6.py"
 ```
+
 ```
 ...
 Prompt Stack Messages:

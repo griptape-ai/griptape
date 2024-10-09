@@ -12,20 +12,21 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 1. **Existing Issues:** Please submit pull requests only for existing issues. If you want to add new documentation or fix a documentation issue that hasn't been addressed yet, please first submit an issue. This allows the Griptape team to internally process the request and provide a public response.
 
-2. **Branch:** Submit all pull requests to the `dev` branch. This helps us manage changes and integrate them smoothly.
+1. **Branch:** Submit all pull requests to the `dev` branch. This helps us manage changes and integrate them smoothly.
 
 ## Getting Started
+
 Griptape docs are built using [MkDocs](https://squidfunk.github.io/mkdocs-material/getting-started/). Dependencies are managed using [Poetry](https://python-poetry.org/).
 
 To contribute to Griptape docs, install the `docs` extra with:
 
-```poetry install --with docs```
+`poetry install --with docs`
 
 Then serve the documentation locally with:
 
-```poetry run mkdocs serve```
+`poetry run mkdocs serve`
 
-You should see something similar to the following: 
+You should see something similar to the following:
 
 ```
 INFO     -  Building documentation...

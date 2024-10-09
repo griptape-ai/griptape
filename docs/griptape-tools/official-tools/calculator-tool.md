@@ -5,6 +5,7 @@ This tool enables LLMs to make simple calculations.
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/calculator_tool_1.py"
 ```
+
 ```
 [09/08/23 14:23:51] INFO     Task bbc6002a5e5b4655bb52b6a550a1b2a5              
                              Input: What is 10 raised to the power of 5?        

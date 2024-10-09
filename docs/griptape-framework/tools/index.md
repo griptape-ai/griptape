@@ -1,18 +1,19 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
 
 One of the most powerful features of Griptape is the ability to use tools that can interact with the outside world.
-Many of our [Prompt Drivers](../drivers/prompt-drivers.md) leverage the native function calling built into the LLMs. 
-For LLMs that don't support this, Griptape provides its own implementation using the [ReAct](https://arxiv.org/abs/2210.03629) technique. 
+Many of our [Prompt Drivers](../drivers/prompt-drivers.md) leverage the native function calling built into the LLMs.
+For LLMs that don't support this, Griptape provides its own implementation using the [ReAct](https://arxiv.org/abs/2210.03629) technique.
 
 You can switch between the two strategies by setting `use_native_tools` to `True` (LLM-native tool calling) or `False` (Griptape tool calling) on your [Prompt Driver](../drivers/prompt-drivers.md).
 
 ## Tools
-Here is an example of a Pipeline using Tools: 
+
+Here is an example of a Pipeline using Tools:
 
 ```python
 --8<-- "docs/griptape-framework/tools/src/index_1.py"

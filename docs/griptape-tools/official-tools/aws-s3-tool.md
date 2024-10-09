@@ -5,6 +5,7 @@ This tool enables LLMs to make AWS S3 API requests.
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/aws_s3_tool_1.py"
 ```
+
 ```
 [08/12/24 14:51:36] INFO     ToolkitTask bfc329ebc7d34497b429ab0d18ff7e7b
                              Input: List all my S3 buckets.

@@ -5,6 +5,7 @@ This tool enables LLMs to scrape web pages for full text, summaries, authors, ti
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/web_scraper_tool_1.py"
 ```
+
 ```
 [08/12/24 15:32:08] INFO     ToolkitTask b14a4305365f4b17a4dcf235f84397e2
                              Input: Based on https://www.griptape.ai/, tell me what griptape is

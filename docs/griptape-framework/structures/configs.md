@@ -1,13 +1,13 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
 
 Griptape exposes a global singleton, [Defaults](../../reference/griptape/configs/defaults_config.md), which can be used to access and modify the default configurations of the framework.
 
-To update the default configurations, simply update the fields on the `Defaults` object. 
+To update the default configurations, simply update the fields on the `Defaults` object.
 Framework objects will be created with the currently set default configurations, but you can always override at the individual class level.
 
 ```python
@@ -16,7 +16,7 @@ Framework objects will be created with the currently set default configurations,
 
 ### Drivers Configs
 
-The [DriversConfig](../../reference/griptape/configs/drivers/drivers_config.md) class allows for the customization of Structures within Griptape, enabling specific settings such as Drivers to be defined for Tasks. 
+The [DriversConfig](../../reference/griptape/configs/drivers/drivers_config.md) class allows for the customization of Structures within Griptape, enabling specific settings such as Drivers to be defined for Tasks.
 
 Griptape provides predefined [DriversConfig](../../reference/griptape/configs/drivers/drivers_config.md)'s for widely used services that provide APIs for most Driver types Griptape offers.
 
@@ -43,6 +43,7 @@ The [Azure OpenAI Driver config](../../reference/griptape/configs/drivers/azure_
 ```
 
 #### Amazon Bedrock
+
 The [Amazon Bedrock Driver config](../../reference/griptape/configs/drivers/amazon_bedrock_drivers_config.md) provides default Drivers for Amazon Bedrock's APIs.
 
 ```python
@@ -50,6 +51,7 @@ The [Amazon Bedrock Driver config](../../reference/griptape/configs/drivers/amaz
 ```
 
 #### Google
+
 The [Google Driver config](../../reference/griptape/configs/drivers/google_drivers_config.md) provides default Drivers for Google's Gemini APIs.
 
 ```python
@@ -80,7 +82,7 @@ The [Cohere Driver config](../../reference/griptape/configs/drivers/cohere_drive
 #### Custom
 
 You can create your own [DriversConfig](../../reference/griptape/configs/drivers/drivers_config.md) by overriding relevant Drivers.
-The [DriversConfig](../../reference/griptape/configs/drivers/drivers_config.md) class includes "Dummy" Drivers for all types, which throw a [DummyError](../../reference/griptape/exceptions/dummy_exception.md) if invoked without being overridden. 
+The [DriversConfig](../../reference/griptape/configs/drivers/drivers_config.md) class includes "Dummy" Drivers for all types, which throw a [DummyError](../../reference/griptape/exceptions/dummy_exception.md) if invoked without being overridden.
 This approach ensures that you are informed through clear error messages if you attempt to use Structures without proper Driver configurations.
 
 ```python

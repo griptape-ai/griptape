@@ -3,6 +3,7 @@ The [QueryTool](../../reference/griptape/tools/query/tool.md) enables Agents to 
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/query_tool_1.py"
 ```
+
 ```
 [08/12/24 15:49:23] INFO     ToolkitTask a88abda2e5324bdf81a3e2b99c26b9df
                              Input: Tell me about the architecture as described here: https://neovim.io/doc/user/vim_diff.html

@@ -5,6 +5,7 @@ The [GoogleGmailTool](../../reference/griptape/tools/google_gmail/tool.md) tool 
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/google_gmail_tool_1.py"
 ```
+
 ```
 [10/05/23 13:24:05] INFO     ToolkitTask 1f190f823d584053bfe9942f41b6cb2d       
                              Input: Create a draft email in Gmail to            

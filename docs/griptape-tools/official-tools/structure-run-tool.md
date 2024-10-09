@@ -6,6 +6,7 @@ It requires you to provide a [Structure Run Driver](../../griptape-framework/dri
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/structure_run_tool_1.py"
 ```
+
 ```
 [05/02/24 13:50:03] INFO     ToolkitTask 4e9458375bda4fbcadb77a94624ed64c
                              Input: what is modular RAG?
