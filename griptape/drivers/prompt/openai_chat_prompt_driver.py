@@ -189,6 +189,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         ]
                     ],
                 }
+                # Some OpenAi-compatible services don't accept an empty array for content
+                if not openai_message["content"]:
+                    openai_message["content"] = ""
 
                 # Action calls must be attached to the message, not sent as content.
                 action_call_content = [
