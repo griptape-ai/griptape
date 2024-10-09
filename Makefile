@@ -55,6 +55,7 @@ lint: ## Lint project.
 .PHONY: format
 format: ## Format project.
 	@poetry run ruff format
+	@poetry run mdformat .
 
 .PHONY: check
 check: check/format check/lint check/types check/spell ## Run all checks.
