@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `LocalRulesetDriver` for loading a `Ruleset` from a local `.json` file.
   - `GriptapeCloudRulesetDriver` for loading a `Ruleset` resource from Griptape Cloud.
 - Parameter `alias` on `GriptapeCloudConversationMemoryDriver` for fetching a Thread by alias.
+- Basic support for OpenAi Structured Output via `OpenAiChatPromptDriver.response_format` parameter. 
 
 ### Changed
 - **BREAKING**: Renamed parameters on several classes to `client`:
@@ -61,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `CsvExtractionEngine.column_names` is now required.
 - **BREAKING**: Renamed`RuleMixin.all_rulesets` to `RuleMixin.rulesets`.
 - **BREAKING**: Renamed `GriptapeCloudKnowledgeBaseVectorStoreDriver` to `GriptapeCloudVectorStoreDriver`.
+- **BREAKING**: `OpenAiChatPromptDriver.response_format` is now a `dict` instead of a `str`.
 - `MarkdownifyWebScraperDriver.DEFAULT_EXCLUDE_TAGS` now includes media/blob-like HTML tags
 - `StructureRunTask` now inherits from `PromptTask`.
 - Several places where API clients are initialized are now lazy loaded.

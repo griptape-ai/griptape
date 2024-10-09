@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Optional
 
 import openai
 from attrs import Factory, define, field
@@ -62,7 +62,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     user: str = field(default="", kw_only=True, metadata={"serializable": True})
-    response_format: Optional[Literal["json_object"]] = field(
+    response_format: Optional[dict] = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
@@ -145,10 +145,13 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
         }
 
-        if self.response_format == "json_object":
-            params["response_format"] = {"type": "json_object"}
-            # JSON mode still requires a system message instructing the LLM to output JSON.
-            prompt_stack.add_system_message("Provide your response as a valid JSON object.")
+        if self.response_format is not None:
+            if self.response_format == {"type": "json_object"}:
+                params["response_format"] = self.response_format
+                # JSON mode still requires a system message instructing the LLM to output JSON.
+                prompt_stack.add_system_message("Provide your response as a valid JSON object.")
+            else:
+                params["response_format"] = self.response_format
 
         messages = self.__to_openai_messages(prompt_stack.messages)
 

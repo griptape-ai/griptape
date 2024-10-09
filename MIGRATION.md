@@ -168,6 +168,24 @@ from griptape.drivers.griptape_cloud_vector_store_driver import GriptapeCloudVec
 driver = GriptapeCloudVectorStoreDriver(...)
 ```
 
+### `OpenAiChatPromptDriver.response_format` is now a `dict` instead of a `str`.
+
+`OpenAiChatPromptDriver.response_format` is now structured as the `openai` SDK accepts it.
+
+#### Before
+```python
+driver = OpenAiChatPromptDriver(
+    response_format="json_object"
+)
+```
+
+#### After
+```python
+driver = OpenAiChatPromptDriver(
+    response_format={"type": "json_object"}
+)
+```
+
 ## 0.31.X to 0.32.X
 
 ### Removed `DataframeLoader`
