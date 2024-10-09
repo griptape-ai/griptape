@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.33.0] - 2024-10-09
+
 ## Added
 - `Workflow.input_tasks` and `Workflow.output_tasks` to access the input and output tasks of a Workflow.
 - Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more complex declarative Structure definitions.
@@ -46,8 +48,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `model_client` on `GooglePromptDriver`.
   - `model_client` on `GoogleTokenizer`.
 - **BREAKING**: Renamed parameter `pipe` on `HuggingFacePipelinePromptDriver` to `pipeline`.
-- **BREAKING**: Update `pypdf` dependency to `^5.0.1`.
-- **BREAKING**: Update `redis` dependency to `^5.1.0`.
 - **BREAKING**: Removed `BaseFileManager.default_loader` and `BaseFileManager.loaders`.
 - **BREAKING**: Loaders no longer chunk data, use a Chunker to chunk the data.
 - **BREAKING**: Removed `fileutils.load_file` and `fileutils.load_files`.
