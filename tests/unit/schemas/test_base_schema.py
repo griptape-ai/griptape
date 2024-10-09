@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Literal, Optional, Union
+from typing import Literal, Optional
 
 import pytest
 from marshmallow import fields
@@ -11,6 +11,7 @@ from griptape.loaders import TextLoader
 from griptape.schemas import PolymorphicSchema
 from griptape.schemas.base_schema import BaseSchema
 from griptape.schemas.bytes_field import Bytes
+from griptape.schemas.union_field import Union
 from tests.mocks.mock_serializable import MockSerializable
 
 
@@ -47,7 +48,6 @@ class TestBaseSchema:
         assert isinstance(BaseSchema._get_field_for_type(bool), fields.Bool)
         assert isinstance(BaseSchema._get_field_for_type(tuple), fields.Raw)
         assert isinstance(BaseSchema._get_field_for_type(dict), fields.Dict)
-
         with pytest.raises(ValueError):
             BaseSchema._get_field_for_type(list)
 
@@ -86,3 +86,26 @@ class TestBaseSchema:
         schema = BaseSchema.from_attrs_cls(MockSerializable)()
         with pytest.raises(TypeError):
             schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3], "zoop": "bop"})
+
+    def test_handle_union_in_list(self):
+        field = BaseSchema._get_field_for_type(list[str | list[str]])
+        assert isinstance(field, fields.List)
+        assert isinstance(field.inner, Union)
+
+        union_field = field.inner
+        assert isinstance(union_field, Union)
+
+        # Check that the union contains both str and List of str fields
+        candidate_fields = [type(f) for f in union_field._candidate_fields]
+        assert fields.Str in candidate_fields
+        assert fields.List in candidate_fields
+
+    def test_handle_union_outside_list(self):
+        # Test a Union of str and int
+        field = BaseSchema._get_field_for_type(str | int)
+        assert isinstance(field, Union)
+
+        # Check that the union contains both str and int fields
+        candidate_fields = [type(f) for f in field._candidate_fields]
+        assert fields.Str in candidate_fields
+        assert fields.Integer in candidate_fields
