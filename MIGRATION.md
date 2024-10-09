@@ -1,7 +1,7 @@
 # Migration Guide
 
 This document provides instructions for migrating your codebase to accommodate breaking changes introduced in new versions of Griptape.
-## 0.31.X to 0.32.X
+## 0.32.X to 0.33.X
 
 ### Removed `torch` extra from `transformers` dependency
 
