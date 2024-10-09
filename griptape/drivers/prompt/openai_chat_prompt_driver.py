@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import TYPE_CHECKING, Optional
 
 import openai
@@ -23,6 +24,7 @@ from griptape.common import (
     ToolAction,
     observable,
 )
+from griptape.configs.defaults_config import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 from griptape.utils.decorators import lazy_property
@@ -34,6 +36,9 @@ if TYPE_CHECKING:
     from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
     from griptape.tools import BaseTool
+
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -157,6 +162,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         params["messages"] = messages
 
+        logger.debug(params)
+
         return params
 
     def __to_openai_messages(self, messages: list[Message]) -> list[dict]:
@@ -250,6 +257,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             raise ValueError(f"Unsupported content type: {type(content)}")
 
     def __to_prompt_stack_message_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
+        logger.debug(response.model_dump())
         content = []
 
         if response.content is not None:
