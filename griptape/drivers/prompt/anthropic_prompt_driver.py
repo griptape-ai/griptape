@@ -110,7 +110,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         system_messages = prompt_stack.system_messages
         system_message = system_messages[0].to_text() if system_messages else None
 
-        params = {
+        return {
             "model": self.model,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
@@ -125,9 +125,6 @@ class AnthropicPromptDriver(BasePromptDriver):
             ),
             **({"system": system_message} if system_message else {}),
         }
-        logger.debug(params)
-
-        return params
 
     def __to_anthropic_messages(self, messages: list[Message]) -> list[dict]:
         return [
