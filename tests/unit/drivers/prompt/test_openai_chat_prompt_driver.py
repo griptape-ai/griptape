@@ -38,6 +38,29 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         },
         {
             "function": {
+                "name": "MockTool_test_callable_schema",
+                "description": "test description",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "values": {
+                            "description": "Test input",
+                            "type": "object",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "additionalProperties": False,
+                        }
+                    },
+                    "required": ["values"],
+                    "additionalProperties": False,
+                    "$id": "Parameters Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                },
+            },
+            "type": "function",
+        },
+        {
+            "function": {
                 "description": "test description: foo",
                 "name": "MockTool_test_error",
                 "parameters": {
