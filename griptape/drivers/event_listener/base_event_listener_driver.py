@@ -27,8 +27,13 @@ class BaseEventListenerDriver(FuturesExecutorMixin, ABC):
     def batch(self) -> list[dict]:
         return self._batch
 
-    def publish_event(self, event: BaseEvent | dict, *, flush: bool = False) -> None:
-        self.futures_executor.submit(self._safe_try_publish_event, event, flush=flush)
+    def publish_event(self, event: BaseEvent | dict) -> None:
+        self.futures_executor.submit(self._safe_try_publish_event, event)
+
+    def flush_events(self) -> None:
+        if self.batch:
+            with self.thread_lock:
+                self._flush_events()
 
     @abstractmethod
     def try_publish_event_payload(self, event_payload: dict) -> None: ...
@@ -36,18 +41,21 @@ class BaseEventListenerDriver(FuturesExecutorMixin, ABC):
     @abstractmethod
     def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None: ...
 
-    def _safe_try_publish_event(self, event: BaseEvent | dict, *, flush: bool) -> None:
+    def _safe_try_publish_event(self, event: BaseEvent | dict) -> None:
         try:
             event_payload = event if isinstance(event, dict) else event.to_dict()
 
             if self.batched:
                 with self.thread_lock:
                     self._batch.append(event_payload)
-                    if len(self.batch) >= self.batch_size or flush:
-                        self.try_publish_event_payload_batch(self.batch)
-                        self._batch = []
+                    if len(self.batch) >= self.batch_size:
+                        self._flush_events()
                 return
             else:
                 self.try_publish_event_payload(event_payload)
         except Exception as e:
             logger.error(e)
+
+    def _flush_events(self) -> None:
+        self.try_publish_event_payload_batch(self.batch)
+        self._batch = []

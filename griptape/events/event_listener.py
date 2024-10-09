@@ -39,6 +39,9 @@ class EventListener:
             event_payload = self.handler(event)
             if self.driver is not None:
                 if event_payload is not None and isinstance(event_payload, dict):
-                    self.driver.publish_event(event_payload, flush=flush)
+                    self.driver.publish_event(event_payload)
                 else:
-                    self.driver.publish_event(event, flush=flush)
+                    self.driver.publish_event(event)
+
+        if self.driver is not None and flush:
+            self.driver.flush_events()

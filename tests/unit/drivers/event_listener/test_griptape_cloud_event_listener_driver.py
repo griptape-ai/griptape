@@ -45,7 +45,8 @@ class TestGriptapeCloudEventListenerDriver:
 
     def test_publish_event_without_span_id(self, mock_post, driver):
         event = MockEvent()
-        driver.publish_event(event, flush=True)
+        driver.publish_event(event)
+        driver.flush_events()
 
         mock_post.assert_called_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
@@ -59,7 +60,8 @@ class TestGriptapeCloudEventListenerDriver:
         observability_driver.get_span_id.return_value = "test"
 
         with Observability(observability_driver=observability_driver):
-            driver.publish_event(event, flush=True)
+            driver.publish_event(event)
+        driver.flush_events()
 
         mock_post.assert_called_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",

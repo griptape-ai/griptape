@@ -14,7 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **BREAKING**: `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
 - `_DefaultsConfig.logging_config` and `Defaults.drivers_config` are now lazily instantiated.
+- `BaseEventListener.flush_events()` to flush events from an Event Listener.
+
+### Fixed
+
+- Structures not flushing events when not listening for `FinishStructureRunEvent`.
 
 ## \[0.33.0\] - 2024-10-09
 
