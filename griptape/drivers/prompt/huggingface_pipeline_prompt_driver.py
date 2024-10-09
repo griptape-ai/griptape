@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent, observable
+from griptape.configs import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -15,6 +17,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from transformers import TextGenerationPipeline
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -52,6 +56,12 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
+        logger.debug(
+            (
+                messages,
+                {"max_new_tokens": self.max_tokens, "temperature": self.temperature, "do_sample": True, **self.params},
+            )
+        )
 
         result = self.pipeline(
             messages,
@@ -60,6 +70,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
             do_sample=True,
             **self.params,
         )
+        logger.debug(result)
 
         if isinstance(result, list):
             if len(result) == 1:

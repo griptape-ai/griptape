@@ -100,8 +100,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        result = self.client.chat.completions.create(**self._base_params(prompt_stack))
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        result = self.client.chat.completions.create(**params)
 
+        logger.debug(result.model_dump())
         if len(result.choices) == 1:
             message = result.choices[0].message
 
@@ -118,9 +121,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
+        params = self._base_params(prompt_stack)
+        logger.debug({"stream": True, **params})
+        result = self.client.chat.completions.create(**params, stream=True)
 
         for chunk in result:
+            logger.debug(chunk.model_dump())
             if chunk.usage is not None:
                 yield DeltaMessage(
                     usage=DeltaMessage.Usage(
@@ -161,8 +167,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         messages = self.__to_openai_messages(prompt_stack.messages)
 
         params["messages"] = messages
-
-        logger.debug(params)
 
         return params
 
@@ -257,7 +261,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             raise ValueError(f"Unsupported content type: {type(content)}")
 
     def __to_prompt_stack_message_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
-        logger.debug(response.model_dump())
         content = []
 
         if response.content is not None:

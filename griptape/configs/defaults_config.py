@@ -25,7 +25,7 @@ class _DefaultsConfig(BaseConfig, SingletonMixin):
 
     @lazy_property()
     def drivers_config(self) -> BaseDriversConfig:
-        from .drivers.openai_drivers_config import OpenAiDriversConfig
+        from griptape.configs.drivers.openai_drivers_config import OpenAiDriversConfig
 
         return OpenAiDriversConfig()
 

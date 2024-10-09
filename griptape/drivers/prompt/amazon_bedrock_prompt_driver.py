@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
@@ -28,6 +29,7 @@ from griptape.common import (
     ToolAction,
     observable,
 )
+from griptape.configs import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
@@ -40,6 +42,8 @@ if TYPE_CHECKING:
 
     from griptape.common import PromptStack
     from griptape.tools import BaseTool
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -60,7 +64,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        response = self.client.converse(**self._base_params(prompt_stack))
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        response = self.client.converse(**params)
+        logger.debug(response)
 
         usage = response["usage"]
         output_message = response["output"]["message"]
@@ -73,11 +80,14 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        response = self.client.converse_stream(**self._base_params(prompt_stack))
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        response = self.client.converse_stream(**params)
 
         stream = response.get("stream")
         if stream is not None:
             for event in stream:
+                logger.debug(event)
                 if "contentBlockDelta" in event or "contentBlockStart" in event:
                     yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(event))
                 elif "metadata" in event:
