@@ -1,14 +1,11 @@
 import logging
 
-from griptape.configs.logging import LoggingConfig
+from griptape.configs import Defaults
 
 
 class TestLoggingConfig:
     def test_init(self):
-        config = LoggingConfig(handlers_formatter=logging.Formatter())
-
-        logger = logging.getLogger(config.logger_name)
-        assert logger.level == config.level
-        assert logger.propagate == config.propagate
-        assert logger.handlers == config.handlers
-        assert logger.handlers[0].formatter == config.handlers_formatter
+        logger = logging.getLogger(Defaults.logging_config.logger_name)
+        assert logger.level == logging.INFO
+        assert logger.propagate is False
+        assert len(logger.handlers) == 1

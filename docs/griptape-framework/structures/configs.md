@@ -111,7 +111,9 @@ from griptape.drivers import OpenAiChatPromptDriver
 from griptape.structures import Agent
 from griptape.tools import CalculatorTool
 
-Defaults.logging_config = LoggingConfig(handlers_formatter=JsonFormatter(), level=logging.DEBUG)
+logger = logging.getLogger(Defaults.logging_config.logger_name)
+logger.setLevel(logging.DEBUG)
+logger.handlers[0].setFormatter(JsonFormatter())
 
 agent = Agent()
 
