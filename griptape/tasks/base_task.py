@@ -36,6 +36,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
     child_ids: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True, metadata={"serializable": True})
     structure: Optional[Structure] = field(default=None, kw_only=True)
+    meta: dict[str, Any] = field(factory=dict, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
