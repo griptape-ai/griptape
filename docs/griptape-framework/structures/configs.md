@@ -97,6 +97,82 @@ Griptape provides a predefined [LoggingConfig](../../reference/griptape/configs/
 --8<-- "docs/griptape-framework/structures/src/logging_config.py"
 ```
 
+#### Debug Logs
+
+You can enable debug logs to view more granular information such as request/response payloads.
+
+```python
+import logging
+
+from griptape.configs import Defaults
+from griptape.configs.defaults_config import LoggingConfig
+from griptape.configs.logging import JsonFormatter
+from griptape.drivers import OpenAiChatPromptDriver
+from griptape.structures import Agent
+from griptape.tools import CalculatorTool
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
+logger.setLevel(logging.DEBUG)
+logger.handlers[0].setFormatter(JsonFormatter())
+
+agent = Agent()
+
+agent.run("Hello world!")
+```
+
+```
+[10/09/24 15:30:04] INFO     PromptTask 75ef1747a5824bc8ac838f3081aeb57d
+                             Input: Hello world!
+                    DEBUG    {
+                               "model": "gpt-4o",
+                               "temperature": 0.1,
+                               "user": "",
+                               "seed": null,
+                               "messages": [
+                                 {
+                                   "role": "user",
+                                   "content": "Hello world!"
+                                 }
+                               ]
+                             }
+[10/09/24 15:30:05] DEBUG    {
+                               "id": "chatcmpl-AGZTwg4T4YikR2KjF3AMIRxlIfcKa",
+                               "choices": [
+                                 {
+                                   "finish_reason": "stop",
+                                   "index": 0,
+                                   "logprobs": null,
+                                   "message": {
+                                     "content": "Hello! How can I assist you today?",
+                                     "refusal": null,
+                                     "role": "assistant",
+                                     "function_call": null,
+                                     "tool_calls": null
+                                   }
+                                 }
+                               ],
+                               "created": 1728513004,
+                               "model": "gpt-4o-2024-08-06",
+                               "object": "chat.completion",
+                               "service_tier": null,
+                               "system_fingerprint": "fp_2f406b9113",
+                               "usage": {
+                                 "completion_tokens": 9,
+                                 "prompt_tokens": 10,
+                                 "total_tokens": 19,
+                                 "prompt_tokens_details": {
+                                   "cached_tokens": 0
+                                 },
+                                 "completion_tokens_details": {
+                                   "reasoning_tokens": 0
+                                 }
+                               }
+                             }
+                    INFO     PromptTask 75ef1747a5824bc8ac838f3081aeb57d
+                             Output: Hello! How can I assist you today?
+
+```
+
 ### Loading/Saving Configs
 
 ```python

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent, observable
+from griptape.configs import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -18,6 +20,8 @@ if TYPE_CHECKING:
     import boto3
 
     from griptape.common import PromptStack
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -52,6 +56,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             "inputs": self.prompt_stack_to_string(prompt_stack),
             "parameters": {**self._base_params(prompt_stack)},
         }
+        logger.debug(payload)
 
         response = self.client.invoke_endpoint(
             EndpointName=self.endpoint,
@@ -66,6 +71,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         )
 
         decoded_body = json.loads(response["Body"].read().decode("utf8"))
+        logger.debug(decoded_body)
 
         if isinstance(decoded_body, list):
             if decoded_body:
