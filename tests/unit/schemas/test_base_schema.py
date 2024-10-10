@@ -23,11 +23,13 @@ class TestBaseSchema:
 
         assert isinstance(schema.fields["foo"], fields.Str)
         # Check if "bar" is a String that allows None (Optional)
-        assert isinstance(schema.fields["bar"], fields.Str)
+        assert isinstance(schema.fields["bar"], Union)
+        assert isinstance(schema.fields["bar"]._candidate_fields[0], fields.Str)
         assert schema.fields["bar"].allow_none is True
 
-        assert isinstance(schema.fields["baz"], fields.List)
-        assert isinstance(schema.fields["baz"].inner, fields.Int)
+        assert isinstance(schema.fields["baz"], Union)
+        assert isinstance(schema.fields["baz"]._candidate_fields[0], fields.List)
+        assert isinstance(schema.fields["baz"]._candidate_fields[0].inner, fields.Integer)
         assert schema.fields["baz"].allow_none is True
 
         with pytest.raises(ValueError):

@@ -60,6 +60,8 @@ class BaseSchema(Schema):
 
         field_class, args, optional = cls._get_field_type_info(field_type)
 
+        if field_class is None:
+            return fields.Constant(None, allow_none=True)
         # Handle Union types (for Python 3.10+ Union | syntax)
         if cls.is_union_(field_type):
             return cls._handle_union(field_type, optional=optional)
@@ -118,6 +120,9 @@ class BaseSchema(Schema):
 
         """
         candidate_fields = [cls._get_field_for_type(arg) for arg in get_args(union_type) if arg is not type(None)]
+
+        if any(arg is type(None) for arg in get_args(union_type)):
+            optional = True
 
         if not candidate_fields:
             raise ValueError(f"Unsupported UnionType field: {union_type}")
