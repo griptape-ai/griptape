@@ -60,14 +60,15 @@ class BaseSchema(Schema):
 
         field_class, args, optional = cls._get_field_type_info(field_type)
 
-        if field_class is None:
-            return fields.Constant(None, allow_none=True)
-        # Handle Union types (for Python 3.10+ Union | syntax)
-        if cls.is_union_(field_type):
-            return cls._handle_union(field_type, optional=optional)
-        # Resolve TypeVars to their bound type
+        # Handle TypeVars
         if isinstance(field_class, TypeVar):
             field_class = field_class.__bound__
+
+        if field_class is None:
+            return fields.Constant(None, allow_none=True)
+        # Handle Union types (for Python 3.9+ Union[Type, Type]) syntax.
+        if cls.is_union_(field_type):
+            return cls._handle_union(field_type, optional=optional)
 
         elif attrs.has(field_class):
             schema = PolymorphicSchema if ABC in field_class.__bases__ else cls.from_attrs_cls
@@ -81,11 +82,10 @@ class BaseSchema(Schema):
                 return cls._handle_list(args[0], optional=optional)
             else:
                 raise ValueError(f"Missing type for list field: {field_type}")
-
         field_class = cls.DATACLASS_TYPE_MAPPING.get(field_class)
-        if field_class:
-            return field_class(allow_none=optional)
-        raise ValueError(f"Unsupported field type: {field_type}")
+        if field_class is None:
+            raise ValueError(f"Unsupported field type: {field_type}")
+        return field_class(allow_none=optional)
 
     @classmethod
     def _handle_list(cls, list_arg: type, *, optional: bool) -> fields.Field:
@@ -102,7 +102,11 @@ class BaseSchema(Schema):
         if cls.is_union_(list_arg):
             union_field = cls._handle_union(list_arg, optional=optional)
             return fields.List(cls_or_instance=union_field, allow_none=optional)
-        return fields.List(cls_or_instance=cls._get_field_for_type(list_arg), allow_none=optional)
+        # Ensure cls_or_instance is not None before returning
+        list_field = cls._get_field_for_type(list_arg)
+        if list_field is None:
+            raise ValueError(f"List elements cannot be None: {list_arg}")
+        return fields.List(cls_or_instance=list_field, allow_none=optional)
 
     @classmethod
     def _handle_union(cls, union_type: type, *, optional: bool) -> fields.Field:
