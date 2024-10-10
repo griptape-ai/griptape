@@ -19,6 +19,7 @@ from griptape.events.base_event import BaseEvent
 from griptape.structures import Pipeline
 from griptape.tasks import ActionsSubtask, ToolkitTask
 from tests.mocks.mock_event import MockEvent
+from tests.mocks.mock_event_listener_driver import MockEventListenerDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -153,3 +154,26 @@ class TestEventListener:
             assert EventBus.event_listeners == [e1, e2, e3]
 
         assert EventBus.event_listeners == [e1]
+
+    def test_publish_event_yes_flush(self):
+        mock_event_listener_driver = MockEventListenerDriver()
+        mock_event_listener_driver.flush_events = Mock(side_effect=mock_event_listener_driver.flush_events)
+
+        event_listener = EventListener(driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener.publish_event(MockEvent(), flush=True)
+
+        mock_event_listener_driver.flush_events.assert_called_once()
+        assert mock_event_listener_driver.batch == []
+
+    def test_publish_event_no_flush(self):
+        mock_event_listener_driver = MockEventListenerDriver()
+        mock_event_listener_driver.flush_events = Mock(side_effect=mock_event_listener_driver.flush_events)
+
+        event_listener = EventListener(driver=mock_event_listener_driver, event_types=[MockEvent])
+        mock_event = MockEvent()
+        event_listener.publish_event(mock_event, flush=False)
+
+        mock_event_listener_driver.flush_events.assert_not_called()
+        assert mock_event_listener_driver.batch == [
+            mock_event.to_dict(),
+        ]
