@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
 from griptape.common import DeltaMessage, Message, PromptStack, TextDeltaMessageContent, observable
+from griptape.configs import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -14,6 +16,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from huggingface_hub import InferenceClient
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -52,13 +56,14 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         prompt = self.prompt_stack_to_string(prompt_stack)
+        full_params = {"return_full_text": False, "max_new_tokens": self.max_tokens, **self.params}
+        logger.debug((prompt, full_params))
 
         response = self.client.text_generation(
             prompt,
-            return_full_text=False,
-            max_new_tokens=self.max_tokens,
-            **self.params,
+            **full_params,
         )
+        logger.debug(response)
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
         output_tokens = len(self.tokenizer.tokenizer.encode(response))
 
@@ -71,19 +76,16 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
+        full_params = {"return_full_text": False, "max_new_tokens": self.max_tokens, "stream": True, **self.params}
+        logger.debug((prompt, full_params))
 
-        response = self.client.text_generation(
-            prompt,
-            return_full_text=False,
-            max_new_tokens=self.max_tokens,
-            stream=True,
-            **self.params,
-        )
+        response = self.client.text_generation(prompt, **full_params)
 
         input_tokens = len(self.__prompt_stack_to_tokens(prompt_stack))
 
         full_text = ""
         for token in response:
+            logger.debug(token)
             full_text += token
             yield DeltaMessage(content=TextDeltaMessageContent(token, index=0))
 

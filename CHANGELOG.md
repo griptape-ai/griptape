@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [0.33.0] - 2024-10-09
+### Added
+
+- `griptape.configs.logging.JsonFormatter` for formatting logs as JSON.
+- Request/response debug logging to all Prompt Drivers.
+
+### Changed
+
+- `_DefaultsConfig.logging_config` and `Defaults.drivers_config` are now lazily instantiated.
+
+## \[0.33.0\] - 2024-10-09
 
 ## Added
 

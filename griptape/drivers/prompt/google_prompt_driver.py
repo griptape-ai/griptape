@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import logging
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
@@ -23,6 +24,7 @@ from griptape.common import (
     ToolAction,
     observable,
 )
+from griptape.configs import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
 from griptape.utils import import_optional_dependency, remove_key_in_dict_recursively
@@ -36,6 +38,8 @@ if TYPE_CHECKING:
     from google.generativeai.types import ContentDict, ContentsType, GenerateContentResponse
 
     from griptape.tools import BaseTool
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -72,10 +76,10 @@ class GooglePromptDriver(BasePromptDriver):
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self.__to_google_messages(prompt_stack)
-        response: GenerateContentResponse = self.client.generate_content(
-            messages,
-            **self._base_params(prompt_stack),
-        )
+        params = self._base_params(prompt_stack)
+        logging.debug((messages, params))
+        response: GenerateContentResponse = self.client.generate_content(messages, **params)
+        logging.debug(response.to_dict())
 
         usage_metadata = response.usage_metadata
 
@@ -91,14 +95,16 @@ class GooglePromptDriver(BasePromptDriver):
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         messages = self.__to_google_messages(prompt_stack)
+        params = {**self._base_params(prompt_stack), "stream": True}
+        logging.debug((messages, params))
         response: GenerateContentResponse = self.client.generate_content(
             messages,
-            **self._base_params(prompt_stack),
-            stream=True,
+            **params,
         )
 
         prompt_token_count = None
         for chunk in response:
+            logger.debug(chunk.to_dict())
             usage_metadata = chunk.usage_metadata
 
             content = self.__to_prompt_stack_delta_message_content(chunk.parts[0]) if chunk.parts else None

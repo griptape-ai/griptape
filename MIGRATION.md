@@ -15,6 +15,7 @@ DataframeLoader().load(df)
 ```
 
 #### After
+
 ```python
 # Convert the dataframe to csv bytes and parse it
 CsvLoader().parse(bytes(df.to_csv(line_terminator='\r\n', index=False), encoding='utf-8'))
@@ -25,12 +26,14 @@ CsvLoader().parse(bytes(df.to_csv(line_terminator='\r\n', index=False), encoding
 ### `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`.
 
 #### Before
+
 ```python
 PdfLoader().load(Path("attention.pdf").read_bytes())
 PdfLoader().load_collection([Path("attention.pdf").read_bytes(), Path("CoT.pdf").read_bytes()])
 ```
 
 #### After
+
 ```python
 PdfLoader().load("attention.pdf")
 PdfLoader().load_collection([Path("attention.pdf"), "CoT.pdf"])
@@ -47,7 +50,7 @@ You can now pass the file path directly to the Loader.
 PdfLoader().load(load_file("attention.pdf").read_bytes())
 PdfLoader().load_collection(list(load_files(["attention.pdf", "CoT.pdf"]).values()))
 ```
-    
+
 ```python
 PdfLoader().load("attention.pdf")
 PdfLoader().load_collection(["attention.pdf", "CoT.pdf"])
@@ -69,6 +72,7 @@ vector_store.upsert_text_artifacts(
 ```
 
 #### After
+
 ```python
 artifact = PdfLoader().load("attention.pdf")
 chunks = Chunker().chunk(artifact)
@@ -78,7 +82,6 @@ vector_store.upsert_text_artifacts(
     }
 )
 ```
-
 
 ### Removed `torch` extra from `transformers` dependency
 

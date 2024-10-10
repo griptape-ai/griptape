@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any, Optional
 
@@ -19,10 +20,13 @@ from griptape.common import (
     ToolAction,
     observable,
 )
+from griptape.configs import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import SimpleTokenizer
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 if TYPE_CHECKING:
     from ollama import Client
@@ -72,7 +76,10 @@ class OllamaPromptDriver(BasePromptDriver):
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        response = self.client.chat(**self._base_params(prompt_stack))
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        response = self.client.chat(**params)
+        logger.debug(response)
 
         if isinstance(response, dict):
             return Message(
@@ -84,10 +91,13 @@ class OllamaPromptDriver(BasePromptDriver):
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        stream = self.client.chat(**self._base_params(prompt_stack), stream=True)
+        params = {**self._base_params(prompt_stack), "stream": True}
+        logger.debug(params)
+        stream = self.client.chat(**params)
 
         if isinstance(stream, Iterator):
             for chunk in stream:
+                logger.debug(chunk)
                 yield DeltaMessage(content=TextDeltaMessageContent(chunk["message"]["content"]))
         else:
             raise Exception("invalid model response")
