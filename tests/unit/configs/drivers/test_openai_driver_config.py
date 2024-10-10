@@ -75,6 +75,8 @@ class TestOpenAiDriversConfig:
                 "model": "tts-1",
                 "organization": None,
                 "voice": "alloy",
+                "speed": 1.0,
+                "max_characters": 4096,
             },
             "audio_transcription_driver": {
                 "type": "OpenAiAudioTranscriptionDriver",

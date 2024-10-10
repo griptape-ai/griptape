@@ -5,12 +5,13 @@ from typing import TYPE_CHECKING, Any
 from attrs import define, field
 from schema import Literal, Schema
 
+from griptape.artifacts import ListArtifact
 from griptape.mixins.artifact_file_output_mixin import ArtifactFileOutputMixin
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.artifacts import AudioArtifact, ErrorArtifact
+    from griptape.artifacts import AudioArtifact
     from griptape.engines import TextToSpeechEngine
 
 
@@ -32,12 +33,13 @@ class TextToSpeechTool(ArtifactFileOutputMixin, BaseTool):
             "schema": Schema({Literal("text", description="The literal text to be converted to speech."): str}),
         },
     )
-    def text_to_speech(self, params: dict[str, Any]) -> AudioArtifact | ErrorArtifact:
+    def text_to_speech(self, params: dict[str, Any]) -> ListArtifact[AudioArtifact]:
         text = params["values"]["text"]
 
-        output_artifact = self.engine.run(prompts=[text])
+        output_artifacts = self.engine.run(prompts=[text])
 
         if self.output_dir or self.output_file:
-            self._write_to_file(output_artifact)
+            for audio_artifact in output_artifacts:
+                self._write_to_file(audio_artifact)
 
-        return output_artifact
+        return ListArtifact(output_artifacts)

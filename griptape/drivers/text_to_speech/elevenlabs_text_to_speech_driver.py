@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
-from attrs import define, field
+from attrs import define, field, Factory
 
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.drivers import BaseTextToSpeechDriver
@@ -12,24 +12,47 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     from elevenlabs.client import ElevenLabs
 
+if TYPE_CHECKING:
+    import elevenlabs
+    import elevenlabs.client
+
 
 @define
 class ElevenLabsTextToSpeechDriver(BaseTextToSpeechDriver):
     api_key: str = field(kw_only=True, metadata={"serializable": True})
-    voice: str = field(kw_only=True, metadata={"serializable": True})
+    model: Union[str, elevenlabs.Model] = field(
+        default=None,
+        kw_only=True,
+        metadata={"serializable": True},
+    )
+    client: elevenlabs.client.ElevenLabs = field(
+        default=Factory(
+            lambda self: import_optional_dependency("elevenlabs.client").ElevenLabs(api_key=self.api_key),
+            takes_self=True,
+        ),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
+    voice: Union[str, elevenlabs.Voice] = field(
+        default=None,
+        kw_only=True,
+        metadata={"serializable": True},
+    )
     output_format: str = field(default="mp3_44100_128", kw_only=True, metadata={"serializable": True})
-    _client: ElevenLabs = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    max_characters: int = field(default=10_000, kw_only=True, metadata={"serializable": True})
 
-    @lazy_property()
-    def client(self) -> ElevenLabs:
-        return import_optional_dependency("elevenlabs.client").ElevenLabs(api_key=self.api_key)
+    def try_text_to_audio(self, prompt: str) -> AudioArtifact:
+        kwargs = {}
+        if self.model is not None:
+            kwargs["model"] = self.model
+        if self.voice is not None:
+            kwargs["voice"] = self.voice
+        if self.output_format is not None:
+            kwargs["output_format"] = self.output_format
 
-    def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
         audio = self.client.generate(
-            text=". ".join(prompts),
-            voice=self.voice,
-            model=self.model,
-            output_format=self.output_format,
+            text=prompt,
+            **kwargs,
         )
 
         content = b""
