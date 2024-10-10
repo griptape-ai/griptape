@@ -251,7 +251,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         prompt_stack.add_assistant_message(
             ListArtifact(
                 [
-                    TextArtifact("thought"),
                     ActionArtifact(ToolAction(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
                 ]
             )
@@ -288,7 +287,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             },
             {"role": "assistant", "content": "assistant-input"},
             {
-                "content": [{"text": "thought", "type": "text"}],
+                "content": "",
                 "role": "assistant",
                 "tool_calls": [
                     {

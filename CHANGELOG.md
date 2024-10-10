@@ -97,6 +97,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PromptTask` will merge in its Structure's Rulesets and Rules.
 - `PromptTask` not checking whether Structure was set before building Prompt Stack.
 - `BaseTask.full_context` context being empty when not connected to a Structure.
+- Tool calling when using `OpenAiChatPromptDriver` with Groq.
 
 ## \[0.32.0\] - 2024-09-17
 
