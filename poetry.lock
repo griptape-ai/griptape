@@ -5135,6 +5135,20 @@ files = [
 six = ">=1.5"
 
 [[package]]
+name = "python-statemachine"
+version = "2.3.6"
+description = "Python Finite State Machines made easy."
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "python_statemachine-2.3.6-py3-none-any.whl", hash = "sha256:0001b02cbe2f5b2420c423b5b3e3a33915447ac6d9735219c929e2378d454f5f"},
+    {file = "python_statemachine-2.3.6.tar.gz", hash = "sha256:9cb4040ca7f2158d3cd46f36a77b420b6ef95a90223928a7f3cab232a70bd560"},
+]
+
+[package.extras]
+diagrams = ["pydot (>=2.0.0)"]
+
+[[package]]
 name = "pytz"
 version = "2024.1"
 description = "World timezone definitions, modern and historical"
@@ -7244,4 +7258,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "9070dbccb5849e29328a2e842829ee00882cf61d6546ed493f39135b505c3d67"
+content-hash = "f79d5e0d7268e090e031626fb73d396041ee77985a59449b26a4716eaa9b71c7"

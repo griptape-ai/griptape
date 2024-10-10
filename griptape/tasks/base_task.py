@@ -34,6 +34,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
     child_ids: list[str] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
     structure: Optional[Structure] = field(default=None, kw_only=True)
+    meta: dict[str, Any] = field(factory=dict, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True)
@@ -100,7 +101,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
         if self.id not in parent.child_ids:
             parent.child_ids.append(self.id)
 
-        if self.structure is not None:
+        if self.structure is not None and parent.structure is None:
             self.structure.add_task(parent)
 
         return self
@@ -116,7 +117,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
         if self.id not in child.parent_ids:
             child.parent_ids.append(self.id)
 
-        if self.structure is not None:
+        if self.structure is not None and child.structure is None:
             self.structure.add_task(child)
 
         return self
