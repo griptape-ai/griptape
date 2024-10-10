@@ -2,14 +2,13 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Sequence
-from typing import Any, Literal, TypeVar, _SpecialForm, get_args, get_origin
-from typing import Union as Union_
+from typing import Any, Literal, TypeVar, Union, _SpecialForm, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
 
 from griptape.schemas.bytes_field import Bytes
-from griptape.schemas.union_field import Union
+from griptape.schemas.union_field import UnionField
 
 
 class BaseSchema(Schema):
@@ -131,7 +130,7 @@ class BaseSchema(Schema):
         if not candidate_fields:
             raise ValueError(f"Unsupported UnionType field: {union_type}")
 
-        return Union(fields=candidate_fields, allow_none=optional)
+        return UnionField(fields=candidate_fields, allow_none=optional)
 
     @classmethod
     def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:
@@ -144,7 +143,7 @@ class BaseSchema(Schema):
         args = get_args(field_type)
         optional = False
 
-        if origin is Union_:
+        if origin is Union:
             origin = args[0]
             if len(args) > 1 and args[1] is type(None):
                 optional = True
@@ -186,11 +185,8 @@ class BaseSchema(Schema):
             BaseVectorStoreDriver,
         )
         from griptape.events import EventListener
-        from griptape.memory import TaskMemory
-        from griptape.memory.structure import BaseConversationMemory, Run
-        from griptape.rules import BaseRule, Rule, Ruleset
+        from griptape.memory.structure import Run
         from griptape.structures import Structure
-        from griptape.tasks.base_task import BaseTask
         from griptape.tokenizers import BaseTokenizer
         from griptape.tools import BaseTool
         from griptape.utils import import_optional_dependency, is_dependency_installed
@@ -208,15 +204,11 @@ class BaseSchema(Schema):
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BaseImageGenerationDriver": BaseImageGenerationDriver,
                 "BaseArtifact": BaseArtifact,
-                "BaseConversationMemory": BaseConversationMemory,
                 "PromptStack": PromptStack,
                 "EventListener": EventListener,
                 "BaseMessageContent": BaseMessageContent,
                 "BaseDeltaMessageContent": BaseDeltaMessageContent,
                 "BaseTool": BaseTool,
-                "BaseTask": BaseTask,
-                "State": BaseTask.State,
-                "TaskMemory": TaskMemory,
                 "Usage": Message.Usage,
                 "Structure": Structure,
                 "BaseTokenizer": BaseTokenizer,
@@ -224,9 +216,6 @@ class BaseSchema(Schema):
                 "Reference": Reference,
                 "Run": Run,
                 "Sequence": Sequence,
-                "BaseRule": BaseRule,
-                "Rule": Rule,
-                "Ruleset": Ruleset,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel
@@ -255,4 +244,4 @@ class BaseSchema(Schema):
 
     @classmethod
     def is_union_(cls, field_type: type) -> bool:
-        return field_type is Union_ or get_origin(field_type) is Union_
+        return field_type is Union or get_origin(field_type) is Union

@@ -20,7 +20,7 @@ class ExceptionGroupError(MarshmallowUnionError):
         super().__init__(msg, errors)
 
 
-class Union(marshmallow.fields.Field):
+class UnionField(marshmallow.fields.Field):
     """Field that accepts any one of multiple fields.
 
     Each argument will be tried until one succeeds.

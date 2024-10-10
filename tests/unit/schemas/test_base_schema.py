@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Literal, Optional
-from typing import Union as Union_
+from typing import Literal, Optional, Union
 
 import pytest
 from marshmallow import fields
@@ -12,7 +11,7 @@ from griptape.loaders import TextLoader
 from griptape.schemas import PolymorphicSchema
 from griptape.schemas.base_schema import BaseSchema
 from griptape.schemas.bytes_field import Bytes
-from griptape.schemas.union_field import Union
+from griptape.schemas.union_field import UnionField
 from tests.mocks.mock_serializable import MockSerializable
 
 
@@ -23,11 +22,11 @@ class TestBaseSchema:
 
         assert isinstance(schema.fields["foo"], fields.Str)
         # Check if "bar" is a String that allows None (Optional)
-        assert isinstance(schema.fields["bar"], Union)
+        assert isinstance(schema.fields["bar"], UnionField)
         assert isinstance(schema.fields["bar"]._candidate_fields[0], fields.Str)
         assert schema.fields["bar"].allow_none is True
 
-        assert isinstance(schema.fields["baz"], Union)
+        assert isinstance(schema.fields["baz"], UnionField)
         assert isinstance(schema.fields["baz"]._candidate_fields[0], fields.List)
         assert isinstance(schema.fields["baz"]._candidate_fields[0].inner, fields.Integer)
         assert schema.fields["baz"].allow_none is True
@@ -64,10 +63,10 @@ class TestBaseSchema:
         assert BaseSchema._get_field_type_info(Optional[str]) == (str, (), True)
         assert BaseSchema._get_field_type_info(Optional[list[str]]) == (list, (str,), True)
 
-        assert BaseSchema._get_field_type_info(Union_[str, None]) == (str, (), True)
-        assert BaseSchema._get_field_type_info(Union_[list[str], None]) == (list, (str,), True)
+        assert BaseSchema._get_field_type_info(Union[str, None]) == (str, (), True)
+        assert BaseSchema._get_field_type_info(Union[list[str], None]) == (list, (str,), True)
 
-        assert BaseSchema._get_field_type_info(Union_[str, int]) == (str, (), False)
+        assert BaseSchema._get_field_type_info(Union[str, int]) == (str, (), False)
 
         assert BaseSchema._get_field_type_info(list) == (list, (), False)
 
@@ -94,12 +93,12 @@ class TestBaseSchema:
             schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3], "zoop": "bop"})
 
     def test_handle_union_in_list(self):
-        field = BaseSchema._get_field_for_type(list[Union_[str, list[str]]])
+        field = BaseSchema._get_field_for_type(list[Union[str, list[str]]])
         assert isinstance(field, fields.List)
-        assert isinstance(field.inner, Union)
+        assert isinstance(field.inner, UnionField)
 
         union_field = field.inner
-        assert isinstance(union_field, Union)
+        assert isinstance(union_field, UnionField)
 
         # Check that the union contains both str and List of str fields
         candidate_fields = [type(f) for f in union_field._candidate_fields]
@@ -108,8 +107,8 @@ class TestBaseSchema:
 
     def test_handle_union_outside_list(self):
         # Test a Union of str and int
-        field = BaseSchema._get_field_for_type(Union_[str, int])
-        assert isinstance(field, Union)
+        field = BaseSchema._get_field_for_type(Union[str, int])
+        assert isinstance(field, UnionField)
 
         # Check that the union contains both str and int fields
         candidate_fields = [type(f) for f in field._candidate_fields]
