@@ -9,7 +9,6 @@ class TestBaseEventListenerDriver:
         executor = MagicMock()
         executor.__enter__.return_value = executor
         driver = MockEventListenerDriver(batched=False, futures_executor=executor)
-        driver.try_publish_event_payload = MagicMock(side_effect=driver.try_publish_event_payload)
         mock_event_payload = MockEvent().to_dict()
 
         driver.publish_event(mock_event_payload)
@@ -20,16 +19,15 @@ class TestBaseEventListenerDriver:
         executor = MagicMock()
         executor.__enter__.return_value = executor
         driver = MockEventListenerDriver(batched=True, futures_executor=executor)
-        driver.try_publish_event_payload_batch = MagicMock(side_effect=driver.try_publish_event_payload)
         mock_event_payload = MockEvent().to_dict()
 
+        # Publish 9 events to fill the batch
         mock_event_payloads = [mock_event_payload for _ in range(0, 9)]
         for mock_event_payload in mock_event_payloads:
             driver.publish_event(mock_event_payload)
 
         assert len(driver._batch) == 9
         executor.submit.assert_not_called()
-        driver.try_publish_event_payload_batch.assert_not_called()
 
         # Publish the 10th event to trigger the batch publish
         driver.publish_event(mock_event_payload)
