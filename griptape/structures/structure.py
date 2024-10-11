@@ -24,7 +24,8 @@ class Structure(ABC, RuleMixin):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
     _tasks: list[Union[BaseTask, list[BaseTask]]] = field(factory=list, kw_only=True, alias="tasks")
     conversation_memory: Optional[BaseConversationMemory] = field(
-        default=Factory(lambda: ConversationMemory()), kw_only=True
+        default=Factory(lambda: ConversationMemory()),
+        kw_only=True,
     )
     task_memory: TaskMemory = field(
         default=Factory(lambda self: TaskMemory(), takes_self=True),
