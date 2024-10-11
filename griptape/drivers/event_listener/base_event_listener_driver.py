@@ -38,8 +38,9 @@ class BaseEventListenerDriver(FuturesExecutorMixin, ExponentialBackoffMixin, ABC
             self.futures_executor.submit(self._safe_publish_event_payload, event_payload)
 
     def flush_events(self) -> None:
-        self.futures_executor.submit(self._safe_publish_event_payload_batch, self.batch)
-        self._batch = []
+        if self.batch:
+            self.futures_executor.submit(self._safe_publish_event_payload_batch, self.batch)
+            self._batch = []
 
     @abstractmethod
     def try_publish_event_payload(self, event_payload: dict) -> None: ...

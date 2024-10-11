@@ -43,6 +43,9 @@ class TestBaseEventListenerDriver:
         driver = MockEventListenerDriver(batched=True, futures_executor=executor)
         driver.try_publish_event_payload_batch = MagicMock(side_effect=driver.try_publish_event_payload)
 
+        driver.flush_events()
+        driver.try_publish_event_payload_batch.assert_not_called()
+        assert driver.batch == []
         mock_event_payloads = [MockEvent().to_dict() for _ in range(0, 3)]
         for mock_event_payload in mock_event_payloads:
             driver.publish_event(mock_event_payload)
