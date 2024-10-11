@@ -78,7 +78,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
 
     @property
     def meta_memories(self) -> list[BaseMetaEntry]:
-        if self.structure and self.structure.meta_memory:
+        if self.structure is not None and self.structure.meta_memory:
             if self.max_meta_memory_entries:
                 return self.structure.meta_memory.entries[: self.max_meta_memory_entries]
             else:
@@ -191,11 +191,8 @@ class BaseTask(FuturesExecutorMixin, ABC):
 
     @property
     def full_context(self) -> dict[str, Any]:
-        if self.structure:
-            structure_context = self.structure.context(self)
+        context = self.context
+        if self.structure is not None:
+            context.update(self.structure.context(self))
 
-            structure_context.update(self.context)
-
-            return structure_context
-        else:
-            return {}
+        return context

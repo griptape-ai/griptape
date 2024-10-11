@@ -5,6 +5,7 @@ This tool enables LLMs to search the web.
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/web_search_tool_1.py"
 ```
+
 ```
 [09/08/23 15:37:25] INFO     Task 2cf557f7f7cd4a20a7fa2f0c46af2f71              
                              Input: Tell me how photosynthesis works            

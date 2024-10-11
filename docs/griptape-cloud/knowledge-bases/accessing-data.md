@@ -8,7 +8,7 @@ You can explore your data with a natural language question on the `Test` tab of 
 
 ## From the API
 
-You can enact both `Search` and `Query` via the API by hitting their respective endpoints using a [Griptape Cloud API Key](https://cloud.griptape.ai/configuration/api-keys) and the Knowledge Base ID found on the `Config` tab of your Knowledge Base. 
+You can enact both `Search` and `Query` via the API by hitting their respective endpoints using a [Griptape Cloud API Key](https://cloud.griptape.ai/configuration/api-keys) and the Knowledge Base ID found on the `Config` tab of your Knowledge Base.
 
 The following example commands will send the string `"test question"` and return the results from the Knowledge Base.
 
@@ -30,4 +30,4 @@ curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test ques
 
 ## Using the Griptape Framework
 
-You can use the [GriptapeCloudKnowledgeBaseVectorStoreDriver](../../griptape-framework/drivers/vector-store-drivers.md/#griptape-cloud-knowledge-base) to query your Knowledge Base with Griptape and the [GriptapeCloudKnowledgeBaseTool](../../griptape-tools/official-tools/griptape-cloud-knowledge-base-tool.md) to search.
+You can use the [GriptapeCloudVectorStoreDriver](../../griptape-framework/drivers/vector-store-drivers.md/#griptape-cloud-knowledge-base) to query your Knowledge Base with Griptape and the [GriptapeCloudKnowledgeBaseTool](../../griptape-tools/official-tools/griptape-cloud-knowledge-base-tool.md) to search.

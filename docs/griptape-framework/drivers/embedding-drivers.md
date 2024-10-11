@@ -1,15 +1,16 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
+
 Embeddings in Griptape are multidimensional representations of text data. Embeddings carry semantic information, which makes them useful for extracting relevant chunks from large bodies of text for search and querying.
 
 Griptape provides a way to build Embedding Drivers that are reused in downstream framework components. Every Embedding Driver has two basic methods that can be used to generate embeddings:
 
-* [embed_text_artifact()](../../reference/griptape/drivers/embedding/base_embedding_driver.md#griptape.drivers.embedding.base_embedding_driver.BaseEmbeddingDriver.embed_text_artifact) for [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s.
-* [embed_string()](../../reference/griptape/drivers/embedding/base_embedding_driver.md#griptape.drivers.embedding.base_embedding_driver.BaseEmbeddingDriver.embed_string) for any string.
+- [embed_text_artifact()](../../reference/griptape/drivers/embedding/base_embedding_driver.md#griptape.drivers.embedding.base_embedding_driver.BaseEmbeddingDriver.embed_text_artifact) for [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s.
+- [embed_string()](../../reference/griptape/drivers/embedding/base_embedding_driver.md#griptape.drivers.embedding.base_embedding_driver.BaseEmbeddingDriver.embed_string) for any string.
 
 You can optionally provide a [Tokenizer](../misc/tokenizers.md) via the [tokenizer](../../reference/griptape/drivers/embedding/base_embedding_driver.md#griptape.drivers.embedding.base_embedding_driver.BaseEmbeddingDriver.tokenizer) field to have the Driver automatically chunk the input text to fit into the token limit.
 
@@ -19,10 +20,10 @@ You can optionally provide a [Tokenizer](../misc/tokenizers.md) via the [tokeniz
 
 The [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md) uses the [OpenAI Embeddings API](https://platform.openai.com/docs/guides/embeddings).
 
-
 ```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_1.py"
 ```
+
 ```
 [0.0017853748286142945, 0.006118456833064556, -0.005811543669551611]
 ```
@@ -54,11 +55,13 @@ The [AmazonBedrockTitanEmbeddingDriver](../../reference/griptape/drivers/embeddi
 ```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_3.py"
 ```
+
 ```
 [-0.234375, -0.024902344, -0.14941406]
 ```
 
 ### Google
+
 !!! info
     This driver requires the `drivers-embedding-google` [extra](../index.md#extras).
 
@@ -67,6 +70,7 @@ The [GoogleEmbeddingDriver](../../reference/griptape/drivers/embedding/google_em
 ```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_4.py"
 ```
+
 ```
 [0.0588633, 0.0033929371, -0.072810836]
 ```
@@ -107,6 +111,7 @@ The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/e
 ```
 
 ### VoyageAI
+
 The [VoyageAiEmbeddingDriver](../../reference/griptape/drivers/embedding/voyageai_embedding_driver.md) uses the [VoyageAI Embeddings API](https://www.voyageai.com/).
 
 !!! info
@@ -128,6 +133,7 @@ The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_em
 ```
 
 ### Override Default Structure Embedding Driver
+
 Here is how you can override the Embedding Driver that is used by default in Structures.
 
 ```python

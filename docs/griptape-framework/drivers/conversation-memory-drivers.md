@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -35,8 +35,8 @@ The [AmazonDynamoDbConversationMemoryDriver](../../reference/griptape/drivers/me
 ```python
 --8<-- "docs/griptape-framework/drivers/src/conversation_memory_drivers_2.py"
 ```
-Optional parameters `sort_key` and `sort_key_value` can be supplied for tables with a composite primary key.
 
+Optional parameters `sort_key` and `sort_key_value` can be supplied for tables with a composite primary key.
 
 ### Redis
 
@@ -48,4 +48,3 @@ The [RedisConversationMemoryDriver](../../reference/griptape/drivers/memory/conv
 ```python
 --8<-- "docs/griptape-framework/drivers/src/conversation_memory_drivers_3.py"
 ```
-

@@ -1,4 +1,4 @@
-The Griptape framework provides developers with the ability to create AI systems that operate across two dimensions: **predictability** and **creativity**. 
+The Griptape framework provides developers with the ability to create AI systems that operate across two dimensions: **predictability** and **creativity**.
 
 For **predictability**, Griptape enforces structures like sequential pipelines, DAG-based workflows, and long-term memory. To facilitate creativity, Griptape safely prompts LLMs with tools and short-term memory connecting them to external APIs and data stores. The framework allows developers to transition between those two dimensions effortlessly based on their use case.
 
@@ -7,14 +7,15 @@ Griptape not only helps developers harness the potential of LLMs but also enforc
 Griptape’s design philosophy is based on the following tenets:
 
 1. **Modularity and composability**: All framework primitives are useful and usable on their own in addition to being easy to plug into each other.
-2. **Technology-agnostic**: Griptape is designed to work with any capable LLM, data store, and backend through the abstraction of drivers.
-3. **Keep data off prompt by default**: When working with data through loaders and tools, Griptape aims to keep it off prompt by default, making it easy to work with big data securely and with low latency.
-4. **Minimal prompt engineering**: It’s much easier to reason about code written in Python, not natural languages. Griptape aims to default to Python in most cases unless absolutely necessary.
+1. **Technology-agnostic**: Griptape is designed to work with any capable LLM, data store, and backend through the abstraction of drivers.
+1. **Keep data off prompt by default**: When working with data through loaders and tools, Griptape aims to keep it off prompt by default, making it easy to work with big data securely and with low latency.
+1. **Minimal prompt engineering**: It’s much easier to reason about code written in Python, not natural languages. Griptape aims to default to Python in most cases unless absolutely necessary.
 
 ## Quick Start
 
 ### OpenAI API Key
-First, configure an OpenAI client by [getting an API key](https://platform.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. 
+
+First, configure an OpenAI client by [getting an API key](https://platform.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`.
 By default, Griptape uses [OpenAI Completions API](https://platform.openai.com/docs/guides/completion) to execute LLM prompts, but other LLMs can be configured with the use of [Prompt Drivers](./drivers/prompt-drivers.md).
 
 ### Using pip
@@ -27,13 +28,13 @@ pip install "griptape[all]" -U
 
 ### Using Poetry
 
-To get started with Griptape using Poetry first create a new poetry project from the terminal: 
+To get started with Griptape using Poetry first create a new poetry project from the terminal:
 
 ```
 poetry new griptape-quickstart
 ```
 
-Change your working directory to the new `griptape-quickstart` directory created by Poetry and add the the `griptape` dependency. 
+Change your working directory to the new `griptape-quickstart` directory created by Poetry and add the the `griptape` dependency.
 
 ```
 poetry add "griptape[all]"
@@ -41,33 +42,38 @@ poetry add "griptape[all]"
 
 ### Extras
 
-The `[all]` [extra](https://peps.python.org/pep-0508/#extras) ensures that you have access to the entire range of functionalities that Griptape offers. 
+The `[all]` [extra](https://peps.python.org/pep-0508/#extras) ensures that you have access to the entire range of functionalities that Griptape offers.
 This comprehensive installation is recommended for newcomers to get the complete Griptape experience.
 
 However, if you wish to optimize the installation size or only require specific functionalities, you have two main options:
 
 1. Core Dependencies: These are the foundational dependencies that enable Griptape to function with most of its default settings.
-2. Extras: These are additional, vendor-specific drivers integrated within the Griptape framework. If a particular Driver mandates an extra, it will be explicitly highlighted in the documentation.
+1. Extras: These are additional, vendor-specific drivers integrated within the Griptape framework. If a particular Driver mandates an extra, it will be explicitly highlighted in the documentation.
 
 To install just the core dependencies:
+
 ```
 poetry add griptape
 ```
 
 To install specific extras (e.g., drivers for [AnthropicPromptDriver](./drivers/prompt-drivers.md#anthropic) and [PineconeVectorStoreDriver](./drivers/vector-store-drivers.md#pinecone)):
+
 ```
 poetry add "griptape[drivers-prompt-anthropic,drivers-vector-pinecone]"
 ```
 
 For a comprehensive list of extras, please refer to the `[tool.poetry.extras]` section of Griptape's [pyproject.toml](https://github.com/griptape-ai/griptape/blob/main/pyproject.toml).
 
-## Build a Simple Agent 
-With Griptape, you can create *structures*, such as [Agents](./structures/agents.md), [Pipelines](./structures/pipelines.md), and [Workflows](./structures/workflows.md), that are composed of different types of tasks. First, let's build a simple Agent that we can interact with through a chat based interface. 
+## Build a Simple Agent
+
+With Griptape, you can create *structures*, such as [Agents](./structures/agents.md), [Pipelines](./structures/pipelines.md), and [Workflows](./structures/workflows.md), that are composed of different types of tasks. First, let's build a simple Agent that we can interact with through a chat based interface.
 
 ```python
 --8<-- "docs/griptape-framework/src/index_1.py"
 ```
-Run this script in your IDE and you'll be presented with a `Q:` prompt where you can interact with your model. 
+
+Run this script in your IDE and you'll be presented with a `Q:` prompt where you can interact with your model.
+
 ```
 Q: Write me a haiku about griptape
 processing...
@@ -82,19 +88,22 @@ Skateboard's trusty, silent guide,
 In each ride, we're glued.
 Q:
 ```
-If you want to skip the chat interface and load an initial prompt, you can do so using the `.run()` method: 
+
+If you want to skip the chat interface and load an initial prompt, you can do so using the `.run()` method:
 
 ```python
 --8<-- "docs/griptape-framework/src/index_2.py"
 ```
-Agents on their own are fun, but let's add some capabilities to them using Griptape Tools. 
-### Build a Simple Agent with Tools 
+
+Agents on their own are fun, but let's add some capabilities to them using Griptape Tools.
+
+### Build a Simple Agent with Tools
 
 ```python
 --8<-- "docs/griptape-framework/src/index_3.py"
 ```
-Here is the chain of thought from the Agent. Notice where it realizes it can use the tool you just injected to do the calculation.[^1] 
-[^1]: In some cases a model might be capable of basic arithmetic. For example, gpt-3.5 returns the correct numeric answer but in an odd format.
+
+Here is the chain of thought from the Agent. Notice where it realizes it can use the tool you just injected to do the calculation.[^1]
 
 ```
 [07/23/24 10:47:38] INFO     ToolkitTask 6a51060d1fb74e57840a91aa319f26dc
@@ -200,3 +209,5 @@ Agents are great for getting started, but they are intentionally limited to a si
 [08/12/24 14:50:42] INFO     PromptTask dbbb38f144f445db896dc12854f17ad3
                              Output: El contenido de https://www.griptape.ai ha sido resumido y almacenado en griptape.txt.
 ```
+
+[^1]: In some cases a model might be capable of basic arithmetic. For example, gpt-3.5 returns the correct numeric answer but in an odd format.

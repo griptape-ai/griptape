@@ -14,6 +14,7 @@ from griptape.drivers import (
     DummyTextToSpeechDriver,
     DummyVectorStoreDriver,
     LocalConversationMemoryDriver,
+    LocalRulesetDriver,
 )
 from griptape.utils.decorators import lazy_property
 
@@ -25,6 +26,7 @@ if TYPE_CHECKING:
         BaseImageGenerationDriver,
         BaseImageQueryDriver,
         BasePromptDriver,
+        BaseRulesetDriver,
         BaseTextToSpeechDriver,
         BaseVectorStoreDriver,
     )
@@ -63,3 +65,7 @@ class DriversConfig(BaseDriversConfig):
     @lazy_property()
     def audio_transcription_driver(self) -> BaseAudioTranscriptionDriver:
         return DummyAudioTranscriptionDriver()
+
+    @lazy_property()
+    def ruleset_driver(self) -> BaseRulesetDriver:
+        return LocalRulesetDriver()

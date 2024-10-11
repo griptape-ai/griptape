@@ -5,6 +5,7 @@ This tool enables LLMs to get current date and time.
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/date_time_tool_1.py"
 ```
+
 ```
 [09/11/23 15:26:02] INFO     Task d0bf49dacd8849e695494578a333f6cc              
                              Input: {'description': 'What is the current date   

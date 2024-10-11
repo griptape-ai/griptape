@@ -32,7 +32,7 @@ class TestActivityMixin:
         assert tool.find_activity("test_str_output") is None
 
     def test_activities(self, tool):
-        assert len(tool.activities()) == 7
+        assert len(tool.activities()) == 8
         assert tool.activities()[0] == tool.test
 
     def test_allowlist_and_denylist_validation(self):
@@ -47,7 +47,7 @@ class TestActivityMixin:
     def test_denylist(self):
         tool = MockTool(test_field="hello", test_int=5, denylist=["test"])
 
-        assert len(tool.activities()) == 6
+        assert len(tool.activities()) == 7
 
     def test_invalid_allowlist(self):
         with pytest.raises(ValueError):
@@ -93,6 +93,27 @@ class TestActivityMixin:
                         "optional_property": {"type": "integer"},
                     },
                     "required": ["test", "new_property"],
+                    "additionalProperties": False,
+                    "type": "object",
+                }
+            },
+            "required": ["values"],
+            "additionalProperties": False,
+            "type": "object",
+        }
+
+    def test_callable_schema(self):
+        tool = MockTool(custom_schema={"test": str})
+        schema = tool.activity_schema(tool.test_callable_schema).json_schema("InputSchema")
+
+        assert schema == {
+            "$id": "InputSchema",
+            "$schema": "http://json-schema.org/draft-07/schema#",
+            "properties": {
+                "values": {
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "additionalProperties": False,
                     "type": "object",
                 }

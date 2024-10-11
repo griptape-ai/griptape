@@ -29,9 +29,9 @@ class TestAgent:
         agent.add_task(PromptTask(rulesets=[Ruleset("Bar", [Rule("bar test")])]))
 
         assert isinstance(agent.task, PromptTask)
-        assert len(agent.task.all_rulesets) == 2
-        assert agent.task.all_rulesets[0].name == "Foo"
-        assert agent.task.all_rulesets[1].name == "Bar"
+        assert len(agent.task.rulesets) == 2
+        assert agent.task.rulesets[0].name == "Foo"
+        assert agent.task.rulesets[1].name == "Bar"
 
     def test_rules(self):
         agent = Agent(rules=[Rule("foo test")])
@@ -39,17 +39,22 @@ class TestAgent:
         agent.add_task(PromptTask(rules=[Rule("bar test")]))
 
         assert isinstance(agent.task, PromptTask)
-        assert len(agent.task.all_rulesets) == 2
-        assert agent.task.all_rulesets[0].name == "Default Ruleset"
-        assert agent.task.all_rulesets[1].name == "Additional Ruleset"
+        assert len(agent.task.rulesets) == 1
+        assert agent.task.rulesets[0].name == "Default Ruleset"
+        assert len(agent.task.rulesets[0].rules) == 2
+        assert agent.task.rulesets[0].rules[0].value == "foo test"
+        assert agent.task.rulesets[0].rules[1].value == "bar test"
 
     def test_rules_and_rulesets(self):
-        with pytest.raises(ValueError):
-            Agent(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
+        agent = Agent(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
+        assert len(agent.rulesets) == 2
+        assert len(agent.rules) == 1
 
         agent = Agent()
-        with pytest.raises(ValueError):
-            agent.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
+        agent.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
+        assert isinstance(agent.task, PromptTask)
+        assert len(agent.task.rulesets) == 2
+        assert len(agent.task.rules) == 1
 
     def test_with_task_memory(self):
         agent = Agent(tools=[MockTool(off_prompt=True)])

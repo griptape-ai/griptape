@@ -1,9 +1,9 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
-## Overview 
+## Overview
 
 A [Workflow](../../reference/griptape/structures/workflow.md) is a non-sequential DAG that can be used for complex concurrent scenarios with tasks having multiple inputs.
 
@@ -13,12 +13,13 @@ You can access the final output of the Workflow by using the [output](../../refe
 
 Workflows have access to the following [context](../../reference/griptape/structures/workflow.md#griptape.structures.workflow.Workflow.context) variables in addition to the [base context](./tasks.md#context):
 
-* `parent_outputs`: dictionary containing mapping of parent IDs to their outputs.
-* `parents_output_text`: string containing the concatenated outputs of all parent tasks.
-* `parents`: parent tasks referenceable by IDs.
-* `children`: child tasks referenceable by IDs.
+- `parent_outputs`: dictionary containing mapping of parent IDs to their outputs.
+- `parents_output_text`: string containing the concatenated outputs of all parent tasks.
+- `parents`: parent tasks referenceable by IDs.
+- `children`: child tasks referenceable by IDs.
 
 ## Workflow
+
 Let's build a simple workflow. Let's say, we want to write a story in a fantasy world with some unique characters. We could setup a workflow that generates a world based on some keywords. Then we pass the world description to any number of child tasks that create characters. Finally, the last task pulls in information from all parent tasks and writes up a short story.
 
 ```python
@@ -31,6 +32,7 @@ Note that we use the `StructureVisualizer` to get a visual representation of the
 
 !!! Info
     Output edited for brevity
+
 ```
 [09/08/23 10:26:21] INFO     PromptTask world
                              Input: Create a fictional world based on the following key words fantasy, ocean, tidal lock
@@ -181,6 +183,7 @@ Imperatively insert parallel tasks between a parent and child:
 ```
 
 output:
+
 ```
 [06/18/24 09:52:21] INFO     PromptTask animal
                              Input: Name an animal

@@ -45,14 +45,14 @@ class TestPipeline:
         )
 
         assert isinstance(pipeline.tasks[0], PromptTask)
-        assert len(pipeline.tasks[0].all_rulesets) == 2
-        assert pipeline.tasks[0].all_rulesets[0].name == "Foo"
-        assert pipeline.tasks[0].all_rulesets[1].name == "Bar"
+        assert len(pipeline.tasks[0].rulesets) == 2
+        assert pipeline.tasks[0].rulesets[0].name == "Foo"
+        assert pipeline.tasks[0].rulesets[1].name == "Bar"
 
         assert isinstance(pipeline.tasks[1], PromptTask)
-        assert len(pipeline.tasks[1].all_rulesets) == 2
-        assert pipeline.tasks[1].all_rulesets[0].name == "Foo"
-        assert pipeline.tasks[1].all_rulesets[1].name == "Baz"
+        assert len(pipeline.tasks[1].rulesets) == 2
+        assert pipeline.tasks[1].rulesets[0].name == "Foo"
+        assert pipeline.tasks[1].rulesets[1].name == "Baz"
 
     def test_rules(self):
         pipeline = Pipeline(rules=[Rule("foo test")])
@@ -60,21 +60,24 @@ class TestPipeline:
         pipeline.add_tasks(PromptTask(rules=[Rule("bar test")]), PromptTask(rules=[Rule("baz test")]))
 
         assert isinstance(pipeline.tasks[0], PromptTask)
-        assert len(pipeline.tasks[0].all_rulesets) == 2
-        assert pipeline.tasks[0].all_rulesets[0].name == "Default Ruleset"
-        assert pipeline.tasks[0].all_rulesets[1].name == "Additional Ruleset"
+        assert len(pipeline.tasks[0].rulesets) == 1
+        assert pipeline.tasks[0].rulesets[0].name == "Default Ruleset"
+        assert len(pipeline.tasks[0].rulesets[0].rules) == 2
 
         assert isinstance(pipeline.tasks[1], PromptTask)
-        assert pipeline.tasks[1].all_rulesets[0].name == "Default Ruleset"
-        assert pipeline.tasks[1].all_rulesets[1].name == "Additional Ruleset"
+        assert pipeline.tasks[1].rulesets[0].name == "Default Ruleset"
+        assert len(pipeline.tasks[1].rulesets[0].rules) == 2
 
     def test_rules_and_rulesets(self):
-        with pytest.raises(ValueError):
-            Pipeline(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
+        pipeline = Pipeline(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])])
+        assert len(pipeline.rulesets) == 2
+        assert len(pipeline.rules) == 1
 
         pipeline = Pipeline()
-        with pytest.raises(ValueError):
-            pipeline.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
+        pipeline.add_task(PromptTask(rules=[Rule("foo test")], rulesets=[Ruleset("Bar", [Rule("bar test")])]))
+        assert isinstance(pipeline.tasks[0], PromptTask)
+        assert len(pipeline.tasks[0].rulesets) == 2
+        assert len(pipeline.tasks[0].rules) == 1
 
     def test_with_no_task_memory(self):
         pipeline = Pipeline()

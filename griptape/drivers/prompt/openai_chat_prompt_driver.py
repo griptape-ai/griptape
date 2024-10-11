@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Literal, Optional
+import logging
+from typing import TYPE_CHECKING, Optional
 
 import openai
 from attrs import Factory, define, field
@@ -23,6 +24,7 @@ from griptape.common import (
     ToolAction,
     observable,
 )
+from griptape.configs.defaults_config import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 from griptape.utils.decorators import lazy_property
@@ -34,6 +36,9 @@ if TYPE_CHECKING:
     from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
     from griptape.tools import BaseTool
+
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -62,7 +67,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     user: str = field(default="", kw_only=True, metadata={"serializable": True})
-    response_format: Optional[Literal["json_object"]] = field(
+    response_format: Optional[dict] = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
@@ -95,8 +100,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        result = self.client.chat.completions.create(**self._base_params(prompt_stack))
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        result = self.client.chat.completions.create(**params)
 
+        logger.debug(result.model_dump())
         if len(result.choices) == 1:
             message = result.choices[0].message
 
@@ -113,9 +121,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        result = self.client.chat.completions.create(**self._base_params(prompt_stack), stream=True)
+        params = self._base_params(prompt_stack)
+        logger.debug({"stream": True, **params})
+        result = self.client.chat.completions.create(**params, stream=True)
 
         for chunk in result:
+            logger.debug(chunk.model_dump())
             if chunk.usage is not None:
                 yield DeltaMessage(
                     usage=DeltaMessage.Usage(
@@ -145,10 +156,13 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
         }
 
-        if self.response_format == "json_object":
-            params["response_format"] = {"type": "json_object"}
-            # JSON mode still requires a system message instructing the LLM to output JSON.
-            prompt_stack.add_system_message("Provide your response as a valid JSON object.")
+        if self.response_format is not None:
+            if self.response_format == {"type": "json_object"}:
+                params["response_format"] = self.response_format
+                # JSON mode still requires a system message instructing the LLM to output JSON.
+                prompt_stack.add_system_message("Provide your response as a valid JSON object.")
+            else:
+                params["response_format"] = self.response_format
 
         messages = self.__to_openai_messages(prompt_stack.messages)
 
@@ -186,6 +200,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         ]
                     ],
                 }
+                # Some OpenAi-compatible services don't accept an empty array for content
+                if not openai_message["content"]:
+                    openai_message["content"] = ""
 
                 # Action calls must be attached to the message, not sent as content.
                 action_call_content = [

@@ -2,12 +2,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.mixins.singleton_mixin import SingletonMixin
+from griptape.utils.decorators import lazy_property
 
 from .base_config import BaseConfig
-from .drivers.openai_drivers_config import OpenAiDriversConfig
 from .logging.logging_config import LoggingConfig
 
 if TYPE_CHECKING:
@@ -16,8 +16,18 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class _DefaultsConfig(BaseConfig, SingletonMixin):
-    logging_config: LoggingConfig = field(default=Factory(lambda: LoggingConfig()))
-    drivers_config: BaseDriversConfig = field(default=Factory(lambda: OpenAiDriversConfig()))
+    _logging_config: LoggingConfig = field(default=None)
+    _drivers_config: BaseDriversConfig = field(default=None)
+
+    @lazy_property()
+    def logging_config(self) -> LoggingConfig:
+        return LoggingConfig()
+
+    @lazy_property()
+    def drivers_config(self) -> BaseDriversConfig:
+        from griptape.configs.drivers.openai_drivers_config import OpenAiDriversConfig
+
+        return OpenAiDriversConfig()
 
 
 Defaults = _DefaultsConfig()

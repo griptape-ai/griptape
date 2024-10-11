@@ -10,7 +10,6 @@
 
 Griptape is a modular Python framework for building AI-powered applications that securely connect to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
 
-
 ## 🛠️ Core Components
 
 ### 🏗️ Structures
@@ -68,7 +67,7 @@ Engines wrap Drivers and provide use-case-specific functionality:
 
 Please refer to [Griptape Docs](https://docs.griptape.ai/) for:
 
-- Getting started guides. 
+- Getting started guides.
 - Core concepts and design overviews.
 - Examples.
 - Contribution guidelines.
@@ -103,6 +102,7 @@ agent.run("https://griptape.ai", "griptape.txt")
 ```
 
 And here is the output:
+
 ```
 [08/12/24 14:48:15] INFO     ToolkitTask c90d263ec69046e8b30323c131ae4ba0
                              Input: Load https://griptape.ai, summarize it, and store it in a file called griptape.txt.
@@ -169,9 +169,9 @@ The important thing to note here is that no matter how big the webpage is it can
 
 In the above example, we set [off_prompt](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md#off-prompt) to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
 
-> [!IMPORTANT]  
+> \[!IMPORTANT\]\
 > This example uses Griptape's [ToolkitTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#toolkit-task), which requires a highly capable LLM to function correctly. By default, Griptape uses the [OpenAiChatPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#openai-chat); for another powerful LLM try swapping to the [AnthropicPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#anthropic)!
-If you're using a less powerful LLM, consider using the [ToolTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#tool-task) instead, as the `ToolkitTask` might not work properly or at all.
+> If you're using a less powerful LLM, consider using the [ToolTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#tool-task) instead, as the `ToolkitTask` might not work properly or at all.
 
 [Check out our docs](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
@@ -193,9 +193,9 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 1. **Existing Issues:** Please submit pull requests only for existing issues. If you want to work on new functionality or fix a bug that hasn't been addressed yet, please first submit an issue. This allows the Griptape team to internally process the request and provide a public response.
 
-2. **Branch:** Submit all pull requests to the `dev` branch. This helps us manage changes and integrate them smoothly.
+1. **Branch:** Submit all pull requests to the `dev` branch. This helps us manage changes and integrate them smoothly.
 
-3. **Unit Tests:** Ensure that your pull request passes all existing unit tests. Additionally, if you are introducing new code, please include new unit tests to validate its functionality.
+1. **Unit Tests:** Ensure that your pull request passes all existing unit tests. Additionally, if you are introducing new code, please include new unit tests to validate its functionality.
 
 Run `make test/unit` to execute the test suite locally.
 

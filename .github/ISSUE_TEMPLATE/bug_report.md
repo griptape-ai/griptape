@@ -4,10 +4,9 @@ about: Create a report to help us improve
 title: ''
 labels: bug
 assignees: ''
-
 ---
 
- - [ ] I have read and agree to the [contributing guidelines](https://github.com/griptape-ai/griptape#contributing).
+- [ ] I have read and agree to the [contributing guidelines](https://github.com/griptape-ai/griptape#contributing).
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -22,8 +21,9 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Version [e.g. 0.5.1]
+
+- OS: \[e.g. iOS\]
+- Version \[e.g. 0.5.1\]
 
 **Additional context**
 Add any other context about the problem here.

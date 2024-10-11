@@ -43,7 +43,7 @@ from .vector.azure_mongodb_vector_store_driver import AzureMongoDbVectorStoreDri
 from .vector.dummy_vector_store_driver import DummyVectorStoreDriver
 from .vector.qdrant_vector_store_driver import QdrantVectorStoreDriver
 from .vector.astradb_vector_store_driver import AstraDbVectorStoreDriver
-from .vector.griptape_cloud_knowledge_base_vector_store_driver import GriptapeCloudKnowledgeBaseVectorStoreDriver
+from .vector.griptape_cloud_vector_store_driver import GriptapeCloudVectorStoreDriver
 
 from .sql.base_sql_driver import BaseSqlDriver
 from .sql.amazon_redshift_sql_driver import AmazonRedshiftSqlDriver
@@ -116,6 +116,10 @@ from .file_manager.amazon_s3_file_manager_driver import AmazonS3FileManagerDrive
 from .rerank.base_rerank_driver import BaseRerankDriver
 from .rerank.cohere_rerank_driver import CohereRerankDriver
 
+from .ruleset.base_ruleset_driver import BaseRulesetDriver
+from .ruleset.local_ruleset_driver import LocalRulesetDriver
+from .ruleset.griptape_cloud_ruleset_driver import GriptapeCloudRulesetDriver
+
 from .text_to_speech.base_text_to_speech_driver import BaseTextToSpeechDriver
 from .text_to_speech.dummy_text_to_speech_driver import DummyTextToSpeechDriver
 from .text_to_speech.elevenlabs_text_to_speech_driver import ElevenLabsTextToSpeechDriver
@@ -179,7 +183,7 @@ __all__ = [
     "QdrantVectorStoreDriver",
     "AstraDbVectorStoreDriver",
     "DummyVectorStoreDriver",
-    "GriptapeCloudKnowledgeBaseVectorStoreDriver",
+    "GriptapeCloudVectorStoreDriver",
     "BaseSqlDriver",
     "AmazonRedshiftSqlDriver",
     "SnowflakeSqlDriver",
@@ -228,6 +232,9 @@ __all__ = [
     "AmazonS3FileManagerDriver",
     "BaseRerankDriver",
     "CohereRerankDriver",
+    "BaseRulesetDriver",
+    "LocalRulesetDriver",
+    "GriptapeCloudRulesetDriver",
     "BaseTextToSpeechDriver",
     "DummyTextToSpeechDriver",
     "ElevenLabsTextToSpeechDriver",
