@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Pinned `cohere` at `~5.11.0` to resolve slow dependency resolution.
+- Missing `exa-py` from `all` extra.
 
 ## [0.33.0] - 2024-10-09
 
