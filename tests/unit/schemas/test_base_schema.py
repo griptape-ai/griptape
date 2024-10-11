@@ -80,6 +80,14 @@ class TestBaseSchema:
         assert not BaseSchema.is_list_sequence(str)
         assert not BaseSchema.is_list_sequence(int)
 
+    def test_is_union(self):
+        assert BaseSchema.is_union_(Union[str, int])
+        assert BaseSchema.is_union_(Union[str, Union[int, str]])
+        assert not BaseSchema.is_union_(tuple)
+        assert not BaseSchema.is_union_(bytes)
+        assert not BaseSchema.is_union_(str)
+        assert not BaseSchema.is_union_(int)
+
     def test_load(self):
         schema = BaseSchema.from_attrs_cls(MockSerializable)()
         mock_serializable = schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3]})
