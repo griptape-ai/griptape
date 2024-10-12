@@ -103,7 +103,7 @@ class BaseSchema(Schema):
             return fields.List(cls_or_instance=union_field, allow_none=optional)
         # Ensure cls_or_instance is not None before returning
         list_field = cls._get_field_for_type(list_arg)
-        if list_field is None:
+        if list_field is type(None):
             raise ValueError(f"List elements cannot be None: {list_arg}")
         return fields.List(cls_or_instance=list_field, allow_none=optional)
 

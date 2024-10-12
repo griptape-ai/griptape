@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
+from enum import Enum
 from typing import Literal, Optional, Union
 
 import pytest
@@ -13,6 +14,16 @@ from griptape.schemas.base_schema import BaseSchema
 from griptape.schemas.bytes_field import Bytes
 from griptape.schemas.union_field import UnionField
 from tests.mocks.mock_serializable import MockSerializable
+
+
+class MockEnum(Enum):
+    FOO = ("BAR",)
+    BAZ = ("QUX",)
+    BAR = ("FOO",)
+
+
+class UnsupportedType:
+    pass
 
 
 class TestBaseSchema:
@@ -108,17 +119,34 @@ class TestBaseSchema:
         union_field = field.inner
         assert isinstance(union_field, UnionField)
 
-        # Check that the union contains both str and List of str fields
         candidate_fields = [type(f) for f in union_field._candidate_fields]
         assert fields.Str in candidate_fields
         assert fields.List in candidate_fields
 
     def test_handle_union_outside_list(self):
-        # Test a Union of str and int
         field = BaseSchema._get_field_for_type(Union[str, int])
         assert isinstance(field, UnionField)
 
-        # Check that the union contains both str and int fields
         candidate_fields = [type(f) for f in field._candidate_fields]
         assert fields.Str in candidate_fields
         assert fields.Integer in candidate_fields
+
+    def test_handle_none(self):
+        field = BaseSchema._get_field_for_type(None)
+        assert isinstance(field, fields.Constant)
+        assert field.allow_none is True
+        assert field.constant is None
+
+    def test_handle_enum(self):
+        field = BaseSchema._get_field_for_type(MockEnum)
+        assert isinstance(field, fields.Str)
+
+    def test_handle_optional_enum(self):
+        field = BaseSchema._get_field_for_type(Union[MockEnum, None])
+        assert isinstance(field, UnionField)
+        assert isinstance(field._candidate_fields[0], fields.Str)
+        assert field.allow_none is True
+
+    def test_handle_unsupported_type(self):
+        with pytest.raises(ValueError):
+            BaseSchema._get_field_for_type(UnsupportedType)
