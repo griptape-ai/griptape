@@ -6,10 +6,11 @@ You must use the following format when executing actions:
 Thought: <your step-by-step thought process describing what actions you need to use>
 Actions: <JSON array of actions that MUST follow this schema: {{ actions_schema }}>
 {{ stop_sequence }}: <action outputs>
-...repeat Thought/Actions/{{ stop_sequence }} as many times as you need
-"Thought", "Actions", "{{ stop_sequence }}" must always start on a new line. If {{ stop_sequence }} contains an error, you MUST ALWAYS try to fix the error with another Thought/Actions/{{ stop_sequence }}.
+"Thought", "Actions", "{{ stop_sequence }}" must always start on a new line.
 
 {% endif %}
+Repeat executing actions as many times as you need.
+If an action's output contains an error, you MUST ALWAYS try to fix the error by executing another action. 
 You must use the following format when providing your final answer:
 Answer: <final answer>
 

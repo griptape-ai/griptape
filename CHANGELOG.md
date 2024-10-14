@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTask.add_parent`/`BaseTask.add_child` now only add the parent/child task to the structure if it is not already present.
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - `BaseEventListener` no longer requires a thread lock for batching events.
+- Updated `TookitTask` system prompt to retry/fix actions when using native tool calling.
 
 ### Fixed
 
