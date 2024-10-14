@@ -30,7 +30,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             attempt to retrieve the API key from the environment variable `GT_CLOUD_API_KEY`.
 
     Raises:
-        ValueError: If `api_key` is not provided or if `workdir` does not start with "/"".
+        ValueError: If `api_key` is not provided, if `workdir` does not start with "/"", or if neither or both of `bucket_id` and `bucket_name` are provided.
     """
 
     bucket_id: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_BUCKET_ID")), kw_only=True)
@@ -80,7 +80,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             raise NotADirectoryError
 
         data = {"filter": full_key}
-        # TODO: Pagination
+        # TODO: GTC SDK: Pagination
         list_assets_response = self._call_api(
             "list", f"/buckets/{self.bucket_id}/assets/{full_key}", data, raise_for_status=False
         ).json()
@@ -105,7 +105,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         except ResourceNotFoundError as e:
             raise FileNotFoundError from e
 
-    def try_save_file(self, path: str, value: bytes) -> None:
+    def try_save_file(self, path: str, value: bytes) -> str:
         full_key = self._to_full_key(path)
 
         if self._is_a_directory(full_key):
@@ -114,6 +114,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         blob_client = self._get_blob_client(full_key=full_key)
 
         blob_client.upload_blob(data=value, overwrite=True)
+        return f"buckets/{self.bucket_id}/assets/{full_key}"
 
     def _get_url(self, path: str) -> str:
         path = path.lstrip("/")

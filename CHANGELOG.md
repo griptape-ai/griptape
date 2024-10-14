@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Request/response debug logging to all Prompt Drivers.
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
+- `GriptapeCloudFileManager` for managing files on Griptape Cloud.
 
 ### Changed
 
