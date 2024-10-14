@@ -11,11 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `griptape.configs.logging.JsonFormatter` for formatting logs as JSON.
 - Request/response debug logging to all Prompt Drivers.
+- `BaseEventListener.flush_events()` to flush events from an Event Listener.
+- Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
 
 ### Changed
 
+- **BREAKING**: `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
 - `_DefaultsConfig.logging_config` and `Defaults.drivers_config` are now lazily instantiated.
 - `BaseTask.add_parent`/`BaseTask.add_child` now only add the parent/child task to the structure if it is not already present.
+- `BaseEventListener.flush_events()` to flush events from an Event Listener.
+- `BaseEventListener` no longer requires a thread lock for batching events.
+
+### Fixed
+
+- Structures not flushing events when not listening for `FinishStructureRunEvent`.
 
 ## \[0.33.0\] - 2024-10-09
 

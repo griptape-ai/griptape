@@ -5,32 +5,52 @@ from tests.mocks.mock_event_listener_driver import MockEventListenerDriver
 
 
 class TestBaseEventListenerDriver:
-    def test_publish_event(self):
+    def test_publish_event_no_batched(self):
         executor = MagicMock()
         executor.__enter__.return_value = executor
-        driver = MockEventListenerDriver(futures_executor_fn=lambda: executor)
+        driver = MockEventListenerDriver(batched=False, futures_executor=executor)
+        mock_event_payload = MockEvent().to_dict()
 
-        driver.publish_event(MockEvent().to_dict())
+        driver.publish_event(mock_event_payload)
 
-        executor.submit.assert_called_once()
+        executor.submit.assert_called_once_with(driver._safe_publish_event_payload, mock_event_payload)
 
-    def test__safe_try_publish_event(self):
-        driver = MockEventListenerDriver(batched=False)
+    def test_publish_event_yes_batched(self):
+        executor = MagicMock()
+        executor.__enter__.return_value = executor
+        driver = MockEventListenerDriver(batched=True, futures_executor=executor)
+        mock_event_payload = MockEvent().to_dict()
 
-        for _ in range(4):
-            driver._safe_try_publish_event(MockEvent().to_dict(), flush=False)
-        assert len(driver.batch) == 0
+        # Publish 9 events to fill the batch
+        mock_event_payloads = [mock_event_payload for _ in range(0, 9)]
+        for mock_event_payload in mock_event_payloads:
+            driver.publish_event(mock_event_payload)
 
-    def test__safe_try_publish_event_batch(self):
-        driver = MockEventListenerDriver(batched=True)
+        assert len(driver._batch) == 9
+        executor.submit.assert_not_called()
 
-        for _ in range(0, 3):
-            driver._safe_try_publish_event(MockEvent().to_dict(), flush=False)
+        # Publish the 10th event to trigger the batch publish
+        driver.publish_event(mock_event_payload)
+
+        assert len(driver._batch) == 0
+        executor.submit.assert_called_once_with(
+            driver._safe_publish_event_payload_batch, [*mock_event_payloads, mock_event_payload]
+        )
+
+    def test_flush_events(self):
+        executor = MagicMock()
+        executor.__enter__.return_value = executor
+        driver = MockEventListenerDriver(batched=True, futures_executor=executor)
+        driver.try_publish_event_payload_batch = MagicMock(side_effect=driver.try_publish_event_payload)
+
+        driver.flush_events()
+        driver.try_publish_event_payload_batch.assert_not_called()
+        assert driver.batch == []
+        mock_event_payloads = [MockEvent().to_dict() for _ in range(0, 3)]
+        for mock_event_payload in mock_event_payloads:
+            driver.publish_event(mock_event_payload)
         assert len(driver.batch) == 3
 
-    def test__safe_try_publish_event_batch_flush(self):
-        driver = MockEventListenerDriver(batched=True)
-
-        for _ in range(0, 3):
-            driver._safe_try_publish_event(MockEvent().to_dict(), flush=True)
+        driver.flush_events()
+        executor.submit.assert_called_once_with(driver._safe_publish_event_payload_batch, mock_event_payloads)
         assert len(driver.batch) == 0
