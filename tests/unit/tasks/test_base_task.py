@@ -52,9 +52,8 @@ class TestBaseTask:
 
         parent_3.output = None
         assert child.parent_outputs == {
-            parent_1.id: parent_1.output.to_text(),
-            parent_2.id: parent_2.output.to_text(),
-            parent_3.id: "",
+            parent_1.id: parent_1.output,
+            parent_2.id: parent_2.output,
         }
 
     def test_parents_output(self, task):

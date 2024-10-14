@@ -13,10 +13,11 @@ You can access the final output of the Workflow by using the [output](../../refe
 
 Workflows have access to the following [context](../../reference/griptape/structures/workflow.md#griptape.structures.workflow.Workflow.context) variables in addition to the [base context](./tasks.md#context):
 
-- `parent_outputs`: dictionary containing mapping of parent IDs to their outputs.
+- `task_outputs`: dictionary containing mapping of all task IDs to their outputs.
+- `parent_outputs`: dictionary containing mapping of parent task IDs to their outputs.
 - `parents_output_text`: string containing the concatenated outputs of all parent tasks.
-- `parents`: parent tasks referenceable by IDs.
-- `children`: child tasks referenceable by IDs.
+- `parents`: dictionary containing mapping of parent task IDs to their task objects.
+- `children`: dictionary containing mapping of child task IDs to their task objects.
 
 ## Workflow
 
