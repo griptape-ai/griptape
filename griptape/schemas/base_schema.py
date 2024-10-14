@@ -101,9 +101,8 @@ class BaseSchema(Schema):
         if cls.is_union_(list_arg):
             union_field = cls._handle_union(list_arg, optional=optional)
             return fields.List(cls_or_instance=union_field, allow_none=optional)
-        # Ensure cls_or_instance is not None before returning
         list_field = cls._get_field_for_type(list_arg)
-        if list_field is type(None):
+        if isinstance(list_field, fields.Constant) and list_field.constant is None:
             raise ValueError(f"List elements cannot be None: {list_arg}")
         return fields.List(cls_or_instance=list_field, allow_none=optional)
 
@@ -126,7 +125,6 @@ class BaseSchema(Schema):
 
         if any(arg is type(None) for arg in get_args(union_type)):
             optional = True
-
         if not candidate_fields:
             raise ValueError(f"Unsupported UnionType field: {union_type}")
 

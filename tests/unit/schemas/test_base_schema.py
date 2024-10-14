@@ -150,3 +150,12 @@ class TestBaseSchema:
     def test_handle_unsupported_type(self):
         with pytest.raises(ValueError):
             BaseSchema._get_field_for_type(UnsupportedType)
+
+    def test_handle_none_list_field(self):
+        # Test that _handle_list raises a ValueError for list elements that are None
+        with pytest.raises(ValueError, match="List elements cannot be None: None"):
+            BaseSchema._handle_list(list[None], optional=False)
+
+    def test_handle_union_exception(self):
+        with pytest.raises(ValueError, match="Unsupported UnionType field: <class 'NoneType'>"):
+            BaseSchema._handle_union(Union[None], optional=False)
