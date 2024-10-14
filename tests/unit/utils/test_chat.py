@@ -1,6 +1,8 @@
 import logging
 from unittest.mock import patch
 
+import pytest
+
 from griptape.configs import Defaults
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
@@ -8,8 +10,9 @@ from griptape.utils import Chat
 
 
 class TestConversation:
-    def test_init(self):
-        agent = Agent(conversation_memory=ConversationMemory())
+    @pytest.mark.parametrize("stream", [True, False])
+    def test_init(self, stream):
+        agent = Agent(conversation_memory=ConversationMemory(), stream=stream)
 
         chat = Chat(
             agent,
@@ -19,6 +22,7 @@ class TestConversation:
             intro_text="hello...",
             prompt_prefix="Question: ",
             response_prefix="Answer: ",
+            input_fn=input,
             output_fn=logging.info,
             logger_level=logging.INFO,
         )
@@ -28,6 +32,7 @@ class TestConversation:
         assert chat.intro_text == "hello..."
         assert chat.prompt_prefix == "Question: "
         assert chat.response_prefix == "Answer: "
+        assert callable(chat.input_fn)
         assert callable(chat.output_fn)
         assert chat.logger_level == logging.INFO
 
@@ -46,3 +51,6 @@ class TestConversation:
 
         assert logger.getEffectiveLevel() == logging.DEBUG
         assert mock_input.call_count == 1
+
+    def test_chat_prompt(self):
+        assert Chat.ChatPrompt.prompt_suffix == ""
