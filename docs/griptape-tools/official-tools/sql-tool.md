@@ -5,6 +5,7 @@ This tool enables LLMs to execute SQL statements via [SQLAlchemy](https://www.sq
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/sql_tool_1.py"
 ```
+
 ```
 [08/12/24 14:59:31] INFO     ToolkitTask e302f7315d1a4f939e0125103ff4f09f
                              Input: SELECT * FROM people;

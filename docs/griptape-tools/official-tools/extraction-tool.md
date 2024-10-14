@@ -3,6 +3,7 @@ The [ExractionTool](../../reference/griptape/tools/extraction/tool.md) enables L
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/extraction_tool_1.py"
 ```
+
 ```
 [08/12/24 15:58:03] INFO     ToolkitTask 43b3d209a83c470d8371b7ef4af175b4
                              Input: Load https://griptape.ai and extract key info

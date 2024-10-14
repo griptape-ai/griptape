@@ -5,6 +5,7 @@ This tool enables LLMs to make AWS IAM API requests.
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/aws_iam_tool_1.py"
 ```
+
 ```
 [08/12/24 14:56:59] INFO     ToolkitTask 12345abcd67890efghijk1112131415
                              Input: List all my IAM users

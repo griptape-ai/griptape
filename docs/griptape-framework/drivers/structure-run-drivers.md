@@ -1,9 +1,10 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
+
 Structure Run Drivers can be used to run Griptape Structures in a variety of runtime environments.
 When combined with the [Structure Run Task](../../griptape-framework/structures/tasks.md#structure-run-task) or [Structure Run Tool](../../griptape-tools/official-tools/structure-run-tool.md) you can create complex, multi-agent pipelines that span multiple runtime environments.
 
@@ -20,7 +21,6 @@ The [LocalStructureRunDriver](../../reference/griptape/drivers/structure_run/loc
 ### Griptape Cloud
 
 The [GriptapeCloudStructureRunDriver](../../reference/griptape/drivers/structure_run/griptape_cloud_structure_run_driver.md) is used to run Griptape Structures in the Griptape Cloud.
-
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/structure_run_drivers_2.py"

@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -79,6 +79,7 @@ Here is an example of how the Driver can be used to load and query information i
 ```
 
 The format for creating a vector index should look similar to the following:
+
 ```json
 {
   "fields": [
@@ -95,6 +96,7 @@ The format for creating a vector index should look similar to the following:
   ]
 }
 ```
+
 Replace `path_to_vector` with the expected field name where the vector content will be.
 
 ### Azure MongoDB
@@ -124,6 +126,7 @@ Here is an example of how the Driver can be used to load and query information i
 ```
 
 The format for creating a vector index should be similar to the following:
+
 ```
 FT.CREATE idx:griptape ON hash PREFIX 1 "griptape:" SCHEMA namespace TAG vector VECTOR FLAT 6 TYPE FLOAT32 DIM 1536 DISTANCE_METRIC COSINE
 ```
@@ -142,6 +145,7 @@ Here is an example of how the Driver can be used to load and query information i
 ```
 
 The body mappings for creating a vector index should look similar to the following:
+
 ```json
 {
     "mappings": {
@@ -163,7 +167,7 @@ The [PGVectorVectorStoreDriver](../../reference/griptape/drivers/vector/pgvector
 
 Here is an example of how the Driver can be used to load and query information in a Postgres database:
 
-```python 
+```python
 --8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_9.py"
 ```
 

@@ -5,6 +5,7 @@ The [GoogleDriveTool](../../reference/griptape/tools/google_drive/tool.md) tool 
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/google_drive_tool_1.py"
 ```
+
 ```
 [10/05/23 10:49:14] INFO     ToolkitTask 2ae3bb7e828744f3a2631c29c6fce001       
                              Input: Save the content 'Hi this is Tony' in a file

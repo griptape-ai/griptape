@@ -5,6 +5,7 @@ The [GoogleDocsTool](../../reference/griptape/tools/google_docs/tool.md) tool pr
 ```python
 --8<-- "docs/griptape-tools/official-tools/src/google_docs_tool_1.py"
 ```
+
 ```
 [10/05/23 12:56:19] INFO     ToolkitTask 90721b7478a74618a63d852d35be3b18       
                              Input: Create doc with name 'test_creation' in     

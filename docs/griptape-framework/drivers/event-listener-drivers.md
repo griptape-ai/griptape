@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -54,7 +54,7 @@ The [GriptapeCloudEventListenerDriver](../../reference/griptape/drivers/event_li
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_5.py"
-``` 
+```
 
 ### Webhook Event Listener Driver
 
@@ -63,6 +63,7 @@ The [WebhookEventListenerDriver](../../reference/griptape/drivers/event_listener
 ```python
 --8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_6.py"
 ```
+
 ### Pusher
 
 !!! info

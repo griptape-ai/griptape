@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -8,7 +8,6 @@ search:
 Loaders are used to load data from sources and parse it into [Artifact](../../griptape-framework/data/artifacts.md)s.
 Each loader can be used to load a single "source" with [load()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load) or
 multiple sources with [load_collection()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load_collection).
-
 
 ## File
 
@@ -47,7 +46,6 @@ Loads CSV files into [ListArtifact](../../griptape-framework/data/artifacts.md#l
     This driver requires the `loaders-image` [extra](../index.md#extras).
 
 Loads images into [ImageArtifact](../../griptape-framework/data/artifacts.md#image)s:
-
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_7.py"

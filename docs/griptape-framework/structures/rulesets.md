@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -31,7 +31,6 @@ This is particularly useful when you need the LLM to return well-formed data, su
 
 !!! warning
     `JsonSchemaRule` may break [ToolkitTask](../structures/tasks.md#toolkit) which relies on a specific [output token](https://github.com/griptape-ai/griptape/blob/e6a04c7b88cf9fa5d6bcf4c833ffebfab89a3258/griptape/tasks/toolkit_task.py#L28).
-
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/json_schema_rule.py"
@@ -102,6 +101,7 @@ You can pass [rules](../../reference/griptape/structures/structure.md#griptape.s
 ```python
 --8<-- "docs/griptape-framework/structures/src/rulesets_2.py"
 ```
+
 ```
 [09/29/23 13:31:41] INFO     PromptTask 51c0030b7a854ae5a9bef4595014915c
                              Input: Respond to this question from the user: 'How do I bake a cake?'
@@ -143,6 +143,7 @@ You can pass [rules](../../reference/griptape/mixins/rule_mixin.md#griptape.mixi
 ```python
 --8<-- "docs/griptape-framework/structures/src/rulesets_4.py"
 ```
+
 ```
 [09/25/23 16:29:05] INFO     PromptTask d1cc2c0b780d4b32b6309ceab11173f4
                              Input: How are you?
