@@ -11,11 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `griptape.configs.logging.JsonFormatter` for formatting logs as JSON.
 - Request/response debug logging to all Prompt Drivers.
+- `griptape.schemas.UnionField` for serializing union fields.
 
 ### Changed
 
 - `_DefaultsConfig.logging_config` and `Defaults.drivers_config` are now lazily instantiated.
-
+- `griptape.schemas.BaseSchema` now uses `griptape.schemas.UnionField` for `Union` fields.
 ## \[0.33.0\] - 2024-10-09
 
 ## Added
