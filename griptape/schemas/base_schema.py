@@ -87,39 +87,34 @@ class BaseSchema(Schema):
         return field_class(allow_none=optional)
 
     @classmethod
-    def _handle_list(cls, list_arg: type, *, optional: bool) -> fields.Field:
-        """Handle list fields, including lists with Union types.
+    def _handle_list(cls, list_type: type, *, optional: bool) -> fields.Field:
+        """Handle List Fields, including Union Types.
 
         Args:
-            list_arg: The type of elements in the list.
-            optional: Whether the list can be None.
+            list_type: The List type to handle.
+            optional: Whether the List can be none.
 
         Returns:
             A marshmallow List field.
-
         """
-        if cls.is_union_(list_arg):
-            union_field = cls._handle_union(list_arg, optional=optional)
+        if cls.is_union_(list_type):
+            union_field = cls._handle_union(list_type, optional=optional)
             return fields.List(cls_or_instance=union_field, allow_none=optional)
-        list_field = cls._get_field_for_type(list_arg)
+        list_field = cls._get_field_for_type(list_type)
         if isinstance(list_field, fields.Constant) and list_field.constant is None:
-            raise ValueError(f"List elements cannot be None: {list_arg}")
+            raise ValueError(f"List elements cannot be None: {list_type}")
         return fields.List(cls_or_instance=list_field, allow_none=optional)
 
     @classmethod
     def _handle_union(cls, union_type: type, *, optional: bool) -> fields.Field:
-        """Handle Union type fields by resolving individual types.
+        """Handle Union Fields, including Unions with List Types.
 
         Args:
-                union_type: The Union type.
-                optional: Whether the field can be None.
+            union_type: The Union Type to handle.
+            optional: Whether the Union can be None.
 
         Returns:
-                A marshmallow Union field.
-
-        Raises:
-                ValueError: If no valid types are found in the Union.
-
+            A marshmallow Union field.
         """
         candidate_fields = [cls._get_field_for_type(arg) for arg in get_args(union_type) if arg is not type(None)]
 
