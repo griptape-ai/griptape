@@ -1,4 +1,4 @@
-from attrs import define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.tasks import BaseImageGenerationTask
@@ -6,7 +6,7 @@ from griptape.tasks import BaseImageGenerationTask
 
 @define
 class MockImageGenerationTask(BaseImageGenerationTask):
-    _input: TextArtifact = field(default="input")
+    _input: TextArtifact = field(default=Factory(lambda: TextArtifact("input")))
 
     @property
     def input(self) -> TextArtifact:
@@ -16,5 +16,5 @@ class MockImageGenerationTask(BaseImageGenerationTask):
     def input(self, value: str) -> None:
         self._input = TextArtifact(value)
 
-    def run(self) -> ImageArtifact:
+    def try_run(self) -> ImageArtifact:
         return ImageArtifact(value=b"image data", format="png", width=512, height=512)

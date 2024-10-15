@@ -9,7 +9,7 @@ class TestBaseTextInputTask:
         assert MockTextInputTask("foobar").input.value == "foobar"
 
         task = MockTextInputTask()
-        task.input = "foobar"
+        task._input = "foobar"
         assert task.input.value == "foobar"
 
     def test_artifact_input(self):
@@ -23,7 +23,7 @@ class TestBaseTextInputTask:
         assert MockTextInputTask(lambda _: TextArtifact("foobar")).input.value == "foobar"
 
         task = MockTextInputTask()
-        task.input = lambda _: TextArtifact("foobar")
+        task._input = lambda _: TextArtifact("foobar")
         assert task.input.value == "foobar"
 
     def test_full_context(self):

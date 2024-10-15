@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from attrs import define, field
 
 from griptape.artifacts import BaseArtifact, TextArtifact
@@ -8,9 +10,9 @@ from griptape.tasks import BaseTask
 class MockTask(BaseTask):
     mock_input: str = field(default="foobar")
 
-    @property
+    @cached_property
     def input(self) -> BaseArtifact:
         return TextArtifact(self.mock_input)
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         return self.input

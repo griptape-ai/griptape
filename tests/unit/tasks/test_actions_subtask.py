@@ -173,7 +173,7 @@ class TestActionsSubtask:
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
-        subtask.execute()
+        subtask.run()
 
         assert isinstance(subtask.output, ListArtifact)
         assert isinstance(subtask.output.value[0], TextArtifact)
@@ -188,7 +188,7 @@ class TestActionsSubtask:
         task = ToolkitTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
-        subtask.execute()
+        subtask.run()
 
         assert isinstance(subtask.output, ListArtifact)
         assert isinstance(subtask.output.value[0], ErrorArtifact)

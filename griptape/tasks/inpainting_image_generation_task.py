@@ -59,7 +59,7 @@ class InpaintingImageGenerationTask(BaseImageGenerationTask):
     ) -> None:
         self._input = value
 
-    def run(self) -> ImageArtifact:
+    def try_run(self) -> ImageArtifact:
         prompt_artifact = self.input[0]
 
         image_artifact = self.input[1]
