@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `ToolkitTask` system prompt to retry/fix actions when using native tool calling.
 - `Chat` input now uses a slightly customized version of `Rich.prompt.Prompt` by default.
 - `Chat` output now uses `Rich.print` by default.
+- `Chat.output_fn`'s now takes an optional kwarg parameter, `stream`.
 
 ### Fixed
 
