@@ -61,20 +61,15 @@ class BaseSchema(Schema):
         # Resolve TypeVars to their bound type
         if isinstance(field_class, TypeVar):
             field_class = field_class.__bound__
-
         if field_class is None:
             return fields.Constant(None, allow_none=True)
-
         if cls.is_union(field_type):
             return cls._handle_union(field_type, optional=optional)
-
         elif attrs.has(field_class):
             schema = PolymorphicSchema if ABC in field_class.__bases__ else cls.from_attrs_cls
             return fields.Nested(schema(field_class), allow_none=optional)
-
         elif cls.is_enum(field_type):
             return fields.String(allow_none=optional)
-
         elif cls.is_list_sequence(field_class):
             if args:
                 return cls._handle_list(args[0], optional=optional)
