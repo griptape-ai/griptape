@@ -125,6 +125,7 @@ class Workflow(Structure, FuturesExecutorMixin):
 
         context.update(
             {
+                "task_outputs": self.task_outputs,
                 "parent_outputs": task.parent_outputs,
                 "parents_output_text": task.parents_output_text,
                 "parents": {parent.id: parent for parent in task.parents},
