@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Sequence
+from enum import Enum
 from typing import Any, Literal, TypeVar, Union, _SpecialForm, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
 
 from griptape.schemas.bytes_field import Bytes
-from griptape.schemas.union_field import UnionField
+from griptape.schemas.union_field import Union as UnionField
 
 
 class BaseSchema(Schema):
@@ -53,27 +54,25 @@ class BaseSchema(Schema):
         Args:
             field_type: A field type.
         """
-        from enum import Enum
-
         from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
         field_class, args, optional = cls._get_field_type_info(field_type)
 
-        # Handle TypeVars
+        # Resolve TypeVars to their bound type
         if isinstance(field_class, TypeVar):
             field_class = field_class.__bound__
 
         if field_class is None:
             return fields.Constant(None, allow_none=True)
 
-        if cls.is_union_(field_type):
+        if cls.is_union(field_type):
             return cls._handle_union(field_type, optional=optional)
 
         elif attrs.has(field_class):
             schema = PolymorphicSchema if ABC in field_class.__bases__ else cls.from_attrs_cls
             return fields.Nested(schema(field_class), allow_none=optional)
 
-        elif isinstance(field_class, type) and issubclass(field_class, Enum):
+        elif cls.is_enum(field_type):
             return fields.String(allow_none=optional)
 
         elif cls.is_list_sequence(field_class):
@@ -97,7 +96,7 @@ class BaseSchema(Schema):
         Returns:
             A marshmallow List field.
         """
-        if cls.is_union_(list_type):
+        if cls.is_union(list_type):
             union_field = cls._handle_union(list_type, optional=optional)
             return fields.List(cls_or_instance=union_field, allow_none=optional)
         list_field = cls._get_field_for_type(list_type)
@@ -117,8 +116,8 @@ class BaseSchema(Schema):
             A marshmallow Union field.
         """
         candidate_fields = [cls._get_field_for_type(arg) for arg in get_args(union_type) if arg is not type(None)]
-
-        if any(arg is type(None) for arg in get_args(union_type)):
+        optional_args = [arg is None for arg in get_args(union_type)]
+        if optional_args:
             optional = True
         if not candidate_fields:
             raise ValueError(f"Unsupported UnionType field: {union_type}")
@@ -238,5 +237,9 @@ class BaseSchema(Schema):
             return False
 
     @classmethod
-    def is_union_(cls, field_type: type) -> bool:
+    def is_union(cls, field_type: type) -> bool:
         return field_type is Union or get_origin(field_type) is Union
+
+    @classmethod
+    def is_enum(cls, field_type: type) -> bool:
+        return isinstance(field_type, type) and issubclass(field_type, Enum)

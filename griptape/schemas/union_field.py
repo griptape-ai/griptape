@@ -20,9 +20,10 @@ class ExceptionGroupError(MarshmallowUnionError):
         super().__init__(msg, errors)
 
 
-class UnionField(marshmallow.fields.Field):
+class Union(marshmallow.fields.Field):
     """Field that accepts any one of multiple fields.
 
+    Source: https://github.com/adamboche/python-marshmallow-union
     Each argument will be tried until one succeeds.
 
     Args:
@@ -33,7 +34,7 @@ class UnionField(marshmallow.fields.Field):
     def __init__(
         self,
         fields: list[marshmallow.fields.Field],
-        *,  # Force reverse_serialize_candidates to be used as a keyword argument
+        *,
         reverse_serialize_candidates: bool = False,
         **kwargs: Any,
     ) -> None:

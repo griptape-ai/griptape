@@ -12,7 +12,7 @@ from griptape.loaders import TextLoader
 from griptape.schemas import PolymorphicSchema
 from griptape.schemas.base_schema import BaseSchema
 from griptape.schemas.bytes_field import Bytes
-from griptape.schemas.union_field import UnionField
+from griptape.schemas.union_field import Union as UnionField
 from tests.mocks.mock_serializable import MockSerializable
 
 
@@ -92,12 +92,12 @@ class TestBaseSchema:
         assert not BaseSchema.is_list_sequence(int)
 
     def test_is_union(self):
-        assert BaseSchema.is_union_(Union[str, int])
-        assert BaseSchema.is_union_(Union[str, Union[int, str]])
-        assert not BaseSchema.is_union_(tuple)
-        assert not BaseSchema.is_union_(bytes)
-        assert not BaseSchema.is_union_(str)
-        assert not BaseSchema.is_union_(int)
+        assert BaseSchema.is_union(Union[str, int])
+        assert BaseSchema.is_union(Union[str, Union[int, str]])
+        assert not BaseSchema.is_union(tuple)
+        assert not BaseSchema.is_union(bytes)
+        assert not BaseSchema.is_union(str)
+        assert not BaseSchema.is_union(int)
 
     def test_load(self):
         schema = BaseSchema.from_attrs_cls(MockSerializable)()
@@ -137,6 +137,10 @@ class TestBaseSchema:
         assert field.allow_none is True
         assert field.constant is None
 
+    def test_is_enum(self):
+        result = BaseSchema.is_enum(MockEnum)
+        assert result is True
+
     def test_handle_enum(self):
         field = BaseSchema._get_field_for_type(MockEnum)
         assert isinstance(field, fields.Str)
@@ -159,3 +163,8 @@ class TestBaseSchema:
     def test_handle_union_exception(self):
         with pytest.raises(ValueError, match="Unsupported UnionType field: <class 'NoneType'>"):
             BaseSchema._handle_union(Union[None], optional=False)
+
+    def test_handle_union_optional(self):
+        field = BaseSchema._handle_union(Union[str, None], optional=True)
+        assert isinstance(field, UnionField)
+        assert field.allow_none is True
