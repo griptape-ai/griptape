@@ -19,13 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **BREAKING**: `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
-- **BREAKING**: Parameter `driver` on `EventListener` to `event_listener_driver`.
-- **BREAKING**: Parameter `handler` on `EventListener` default value to `None`.
-- **BREAKING**: `EventListener.handler` return value behavior.
+- **BREAKING**: Removed `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
+- **BREAKING**: Renamed parameter `driver` on `EventListener` to `event_listener_driver`.
+- **BREAKING**: Changed default value of parameter `handler` on `EventListener` to `None`.
+- **BREAKING**: Updated `EventListener.handler` return value behavior.
   - If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
   - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
-- `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
+- Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
 - `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Pipeline.context["parent_output"]` has changed type from `str | None` to `BaseArtifact | None`.
