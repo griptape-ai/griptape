@@ -118,22 +118,30 @@ class TestBaseTask:
         assert EventBus.event_listeners[0].handler.call_count == 2
 
     def test_add_parent(self, task):
-        parent = MockTask("parent foobar", id="parent_foobar")
+        agent = Agent()
+        parent = MockTask("parent foobar", id="parent_foobar", structure=agent)
 
+        result = task.add_parent(parent)
         result = task.add_parent(parent)
 
         assert parent.id in task.parent_ids
         assert task.id in parent.child_ids
         assert result == task
 
-    def test_add_child(self, task):
-        child = MockTask("child foobar", id="child_foobar")
+        assert agent.tasks == [parent]
 
+    def test_add_child(self, task):
+        agent = Agent()
+        child = MockTask("child foobar", id="child_foobar", structure=agent)
+
+        result = task.add_child(child)
         result = task.add_child(child)
 
         assert child.id in task.child_ids
         assert task.id in child.parent_ids
         assert result == task
+
+        assert agent.tasks == [child]
 
     def test_add_parent_bitshift(self, task):
         parent = MockTask("parent foobar", id="parent_foobar")

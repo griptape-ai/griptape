@@ -1,4 +1,5 @@
 import os
+import time
 from unittest.mock import MagicMock, Mock
 
 import pytest
@@ -45,8 +46,10 @@ class TestGriptapeCloudEventListenerDriver:
 
     def test_publish_event_without_span_id(self, mock_post, driver):
         event = MockEvent()
-        driver.publish_event(event, flush=True)
+        driver.publish_event(event)
+        driver.flush_events()
 
+        time.sleep(1)  # Happens asynchronously, so need to wait for it to finish
         mock_post.assert_called_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
             json=[driver._get_event_request(event.to_dict())],
@@ -59,8 +62,10 @@ class TestGriptapeCloudEventListenerDriver:
         observability_driver.get_span_id.return_value = "test"
 
         with Observability(observability_driver=observability_driver):
-            driver.publish_event(event, flush=True)
+            driver.publish_event(event)
+        driver.flush_events()
 
+        time.sleep(1)  # Happens asynchronously, so need to wait for it to finish
         mock_post.assert_called_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
             json=[driver._get_event_request({**event.to_dict(), "span_id": "test"})],
@@ -71,6 +76,7 @@ class TestGriptapeCloudEventListenerDriver:
         event = MockEvent()
         driver.try_publish_event_payload(event.to_dict())
 
+        time.sleep(1)  # Happens asynchronously, so need to wait for it to finish
         mock_post.assert_called_once_with(
             url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
             json=driver._get_event_request(event.to_dict()),
@@ -82,6 +88,7 @@ class TestGriptapeCloudEventListenerDriver:
             event = MockEvent()
             driver.try_publish_event_payload(event.to_dict())
 
+            time.sleep(1)  # Happens asynchronously, so need to wait for it to finish
             mock_post.assert_called_with(
                 url="https://cloud123.griptape.ai/api/structure-runs/bar baz/events",
                 json=driver._get_event_request(event.to_dict()),
