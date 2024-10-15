@@ -4,6 +4,8 @@ import logging
 from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
+from rich import print as rprint
+from rich.prompt import Prompt
 
 from griptape.utils.stream import Stream
 
@@ -13,6 +15,24 @@ if TYPE_CHECKING:
 
 @define
 class Chat:
+    """Utility for running a chat with a Structure.
+
+    Attributes:
+        structure: The Structure to run.
+        exit_keywords: Keywords that will exit the chat.
+        exiting_text: Text to display when exiting the chat.
+        processing_text: Text to display while processing the user's input.
+        intro_text: Text to display when the chat starts.
+        prompt_prefix: Prefix for the user's input.
+        response_prefix: Prefix for the assistant's response.
+        input_fn: Function to get the user's input.
+        output_fn: Function to output text. Takes a `text` argument for the text to output.
+                   Also takes a `stream` argument which will be set to True when streaming Prompt Tasks are present.
+    """
+
+    class ChatPrompt(Prompt):
+        prompt_suffix = ""  # We don't want rich's default prompt suffix
+
     structure: Structure = field()
     exit_keywords: list[str] = field(default=["exit"], kw_only=True)
     exiting_text: str = field(default="Exiting...", kw_only=True)
@@ -20,22 +40,23 @@ class Chat:
     intro_text: Optional[str] = field(default=None, kw_only=True)
     prompt_prefix: str = field(default="User: ", kw_only=True)
     response_prefix: str = field(default="Assistant: ", kw_only=True)
-    output_fn: Callable[[str], None] = field(
+    input_fn: Callable[[str], str] = field(
+        default=Factory(lambda self: self.default_input_fn, takes_self=True), kw_only=True
+    )
+    output_fn: Callable[..., None] = field(
         default=Factory(lambda self: self.default_output_fn, takes_self=True),
         kw_only=True,
     )
     logger_level: int = field(default=logging.ERROR, kw_only=True)
 
-    def default_output_fn(self, text: str) -> None:
-        from griptape.tasks.prompt_task import PromptTask
+    def default_input_fn(self, prompt_prefix: str) -> str:
+        return Chat.ChatPrompt.ask(prompt_prefix)
 
-        streaming_tasks = [
-            task for task in self.structure.tasks if isinstance(task, PromptTask) and task.prompt_driver.stream
-        ]
-        if streaming_tasks:
-            print(text, end="", flush=True)  # noqa: T201
+    def default_output_fn(self, text: str, *, stream: bool = False) -> None:
+        if stream:
+            rprint(text, end="", flush=True)
         else:
-            print(text)  # noqa: T201
+            rprint(text)
 
     def start(self) -> None:
         from griptape.configs import Defaults
@@ -46,23 +67,30 @@ class Chat:
 
         if self.intro_text:
             self.output_fn(self.intro_text)
+
+        has_streaming_tasks = self._has_streaming_tasks()
         while True:
-            question = input(self.prompt_prefix)
+            question = self.input_fn(self.prompt_prefix)
 
             if question.lower() in self.exit_keywords:
                 self.output_fn(self.exiting_text)
                 break
 
-            if Defaults.drivers_config.prompt_driver.stream:
-                self.output_fn(self.processing_text + "\n")
+            if has_streaming_tasks:
+                self.output_fn(self.processing_text)
                 stream = Stream(self.structure).run(question)
                 first_chunk = next(stream)
-                self.output_fn(self.response_prefix + first_chunk.value)
+                self.output_fn(self.response_prefix + first_chunk.value, stream=True)
                 for chunk in stream:
-                    self.output_fn(chunk.value)
+                    self.output_fn(chunk.value, stream=True)
             else:
                 self.output_fn(self.processing_text)
                 self.output_fn(f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}")
 
         # Restore the original logger level
         logging.getLogger(Defaults.logging_config.logger_name).setLevel(old_logger_level)
+
+    def _has_streaming_tasks(self) -> bool:
+        from griptape.tasks.prompt_task import PromptTask
+
+        return any(isinstance(task, PromptTask) and task.prompt_driver.stream for task in self.structure.tasks)

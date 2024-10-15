@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
 - `BaseTask.task_outputs` to get a dictionary of all task outputs. This has been added to `Workflow.context` and `Pipeline.context`.
+- `Chat.input_fn` for customizing the input to the Chat utility.
 
 ### Changed
 
@@ -28,6 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - `BaseEventListener` no longer requires a thread lock for batching events.
 - Updated `ToolkitTask` system prompt to retry/fix actions when using native tool calling.
+- `Chat` input now uses a slightly customized version of `Rich.prompt.Prompt` by default.
+- `Chat` output now uses `Rich.print` by default.
+- `Chat.output_fn`'s now takes an optional kwarg parameter, `stream`.
 
 ### Fixed
 
