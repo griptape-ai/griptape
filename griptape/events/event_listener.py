@@ -1,17 +1,20 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Callable, Generic, Optional, TypeVar
 
 from attrs import define, field
+
+from .base_event import BaseEvent
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseEventListenerDriver
 
-    from .base_event import BaseEvent
+
+T = TypeVar("T", bound=BaseEvent)
 
 
 @define
-class EventListener:
+class EventListener(Generic[T]):
     """An event listener that listens for events and handles them.
 
     Args:
@@ -23,8 +26,8 @@ class EventListener:
         event_listener_driver: The driver that will be used to publish events.
     """
 
-    handler: Optional[Callable[[BaseEvent], Optional[BaseEvent | dict]]] = field(default=None)
-    event_types: Optional[list[type[BaseEvent]]] = field(default=None, kw_only=True)
+    handler: Optional[Callable[[T], Optional[BaseEvent | dict]]] = field(default=None)
+    event_types: Optional[list[type[T]]] = field(default=None, kw_only=True)
     event_listener_driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
 
     _last_event_listeners: Optional[list[EventListener]] = field(default=None)
@@ -43,7 +46,7 @@ class EventListener:
 
         self._last_event_listeners = None
 
-    def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
+    def publish_event(self, event: T, *, flush: bool = False) -> None:
         event_types = self.event_types
 
         if event_types is None or type(event) in event_types:

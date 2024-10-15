@@ -32,7 +32,7 @@ def handler_maybe_drop_events(event: FinishStructureRunEvent) -> Optional[BaseEv
 EventBus.add_event_listeners(
     [
         EventListener(
-            handler_maybe_drop_events,  # pyright: ignore[reportArgumentType]
+            handler_maybe_drop_events,
             event_types=[FinishStructureRunEvent],
             # By default, GriptapeCloudEventListenerDriver uses the api key provided
             # in the GT_CLOUD_API_KEY environment variable.
