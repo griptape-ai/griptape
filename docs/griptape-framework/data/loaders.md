@@ -80,7 +80,7 @@ Scrapes web pages using a [WebScraperDriver](../drivers/web-scraper-drivers.md) 
 
 ## SQL
 
-Loads data from a SQL database using a [SQLDriver](../drivers/sql-drivers.md) and loads the resulting data into [ListArtifact](../../griptape-framework/data/artifacts.md#list)s, where each element is a [CsvRowArtifact](../../griptape-framework/data/artifacts.md#csv) containing a row of the SQL query.
+Loads data from a SQL database using a [SQLDriver](../drivers/sql-drivers.md) and loads the resulting data into [ListArtifact](../../griptape-framework/data/artifacts.md#list)s, where each element is a [TextArtifact](../../griptape-framework/data/artifacts.md#text) containing a row of the SQL query.
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_2.py"
