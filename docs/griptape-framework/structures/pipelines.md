@@ -13,9 +13,10 @@ You can access the final output of the Pipeline by using the [output](../../refe
 
 Pipelines have access to the following [context](../../reference/griptape/structures/pipeline.md#griptape.structures.pipeline.Pipeline.context) variables in addition to the [base context](./tasks.md#context).
 
-- `parent_output`: output from the parent.
-- `parent`: parent task.
-- `child`: child task.
+- `task_outputs`: dictionary containing mapping of all task IDs to their outputs.
+- `parent_output`: output from the parent task if one exists, otherwise `None`.
+- `parent`: parent task if one exists, otherwise `None`.
+- `child`: child task if one exists, otherwise `None`.
 
 ## Pipeline
 

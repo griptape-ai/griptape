@@ -14,10 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `griptape.schemas.UnionField` for serializing union fields.
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
+- `BaseTask.task_outputs` to get a dictionary of all task outputs. This has been added to `Workflow.context` and `Pipeline.context`.
 
 ### Changed
 
 - **BREAKING**: `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
+- `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
+- `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
+- `Pipeline.context["parent_output"]` has changed type from `str | None` to `BaseArtifact | None`.
 - `_DefaultsConfig.logging_config` and `Defaults.drivers_config` are now lazily instantiated.
 - `griptape.schemas.BaseSchema` now uses `griptape.schemas.UnionField` for `Union` fields.
 - `BaseTask.add_parent`/`BaseTask.add_child` now only add the parent/child task to the structure if it is not already present.
