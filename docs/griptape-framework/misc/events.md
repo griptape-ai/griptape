@@ -152,3 +152,23 @@ User: Write me a poem.
 Assistant:
 ...
 ```
+
+## `EventListenerDriver.handler` Return Value Behavior
+
+The value that gets returned from the [`EventListener.handler`](../../reference/griptape/events/event_listener.md#griptape.events.EventListener.handler) will determine what gets sent to the `event_listener_driver`.
+
+### `EventListener.handler` is None
+
+By default, the `EventListener.handler` function is `None`. Any events that the `EventListener` is listening for will get sent to the `event_listener_driver` as-is.
+
+### Return `BaseEvent` or `dict`
+
+You can return a `BaseEvent` or `dict` object from `EventListener.handler`, and it will get sent to the `event_listener_driver`.
+
+### Return `None`
+
+You can return `None` in the handler function to prevent the event from getting sent to the `event_listener_driver`.
+
+```python
+--8<-- "docs/griptape-framework/misc/src/events_no_publish.py"
+```
