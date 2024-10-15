@@ -111,7 +111,7 @@ class TestEventListener:
         EventBus.remove_event_listener(event_listener_5)
         assert len(EventBus.event_listeners) == 0
 
-    def test_publish_event(self):
+    def test_drop_event(self):
         mock_event_listener_driver = Mock()
         mock_event_listener_driver.try_publish_event_payload.return_value = None
 
@@ -119,7 +119,24 @@ class TestEventListener:
             return None
 
         mock_event = MockEvent()
-        event_listener = EventListener(event_handler, driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener = EventListener(
+            event_handler, event_listener_driver=mock_event_listener_driver, event_types=[MockEvent]
+        )
+        event_listener.publish_event(mock_event)
+
+        mock_event_listener_driver.publish_event.assert_not_called()
+
+    def test_publish_event(self):
+        mock_event_listener_driver = Mock()
+        mock_event_listener_driver.try_publish_event_payload.return_value = None
+
+        def event_handler(e: BaseEvent) -> BaseEvent:
+            return e
+
+        mock_event = MockEvent()
+        event_listener = EventListener(
+            event_handler, event_listener_driver=mock_event_listener_driver, event_types=[MockEvent]
+        )
         event_listener.publish_event(mock_event)
 
         mock_event_listener_driver.publish_event.assert_called_once_with(mock_event)
@@ -132,7 +149,9 @@ class TestEventListener:
             return {"event": event.to_dict()}
 
         mock_event = MockEvent()
-        event_listener = EventListener(event_handler, driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener = EventListener(
+            event_handler, event_listener_driver=mock_event_listener_driver, event_types=[MockEvent]
+        )
         event_listener.publish_event(mock_event)
 
         mock_event_listener_driver.publish_event.assert_called_once_with({"event": mock_event.to_dict()})
@@ -141,7 +160,7 @@ class TestEventListener:
         e1 = EventListener()
         EventBus.add_event_listeners([e1])
 
-        with EventListener() as e2:
+        with EventListener(lambda e: e) as e2:
             assert EventBus.event_listeners == [e1, e2]
 
         assert EventBus.event_listeners == [e1]
@@ -150,7 +169,7 @@ class TestEventListener:
         e1 = EventListener()
         EventBus.add_event_listener(e1)
 
-        with EventListener() as e2, EventListener() as e3:
+        with EventListener(lambda e: e) as e2, EventListener(lambda e: e) as e3:
             assert EventBus.event_listeners == [e1, e2, e3]
 
         assert EventBus.event_listeners == [e1]
@@ -159,7 +178,7 @@ class TestEventListener:
         mock_event_listener_driver = MockEventListenerDriver()
         mock_event_listener_driver.flush_events = Mock(side_effect=mock_event_listener_driver.flush_events)
 
-        event_listener = EventListener(driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener = EventListener(event_listener_driver=mock_event_listener_driver, event_types=[MockEvent])
         event_listener.publish_event(MockEvent(), flush=True)
 
         mock_event_listener_driver.flush_events.assert_called_once()
@@ -169,7 +188,7 @@ class TestEventListener:
         mock_event_listener_driver = MockEventListenerDriver()
         mock_event_listener_driver.flush_events = Mock(side_effect=mock_event_listener_driver.flush_events)
 
-        event_listener = EventListener(driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener = EventListener(event_listener_driver=mock_event_listener_driver, event_types=[MockEvent])
         mock_event = MockEvent()
         event_listener.publish_event(mock_event, flush=False)
 

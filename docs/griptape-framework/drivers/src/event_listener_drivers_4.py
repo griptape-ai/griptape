@@ -12,7 +12,7 @@ EventBus.add_event_listeners(
     [
         EventListener(
             event_types=[FinishStructureRunEvent],
-            driver=AwsIotCoreEventListenerDriver(
+            event_listener_driver=AwsIotCoreEventListenerDriver(
                 topic=os.environ["AWS_IOT_CORE_TOPIC"],
                 iot_endpoint=os.environ["AWS_IOT_CORE_ENDPOINT"],
             ),

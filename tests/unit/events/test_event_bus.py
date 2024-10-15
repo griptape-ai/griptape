@@ -10,18 +10,27 @@ class TestEventBus:
 
         assert _EventBus() is _EventBus()
 
-    def test_add_event_listeners(self):
+    def test_add_event_listeners_same(self):
         EventBus.add_event_listeners([EventListener(), EventListener()])
+        assert len(EventBus.event_listeners) == 1
+
+    def test_add_event_listeners(self):
+        EventBus.add_event_listeners([EventListener(handler=lambda e: e), EventListener()])
         assert len(EventBus.event_listeners) == 2
 
     def test_remove_event_listeners(self):
-        listeners = [EventListener(), EventListener()]
+        listeners = [EventListener(handler=lambda e: e), EventListener()]
         EventBus.add_event_listeners(listeners)
         EventBus.remove_event_listeners(listeners)
         assert len(EventBus.event_listeners) == 0
 
-    def test_add_event_listener(self):
+    def test_add_event_listener_same(self):
         EventBus.add_event_listener(EventListener())
+        EventBus.add_event_listener(EventListener())
+        assert len(EventBus.event_listeners) == 1
+
+    def test_add_event_listener(self):
+        EventBus.add_event_listener(EventListener(handler=lambda e: e))
         EventBus.add_event_listener(EventListener())
 
         assert len(EventBus.event_listeners) == 2
