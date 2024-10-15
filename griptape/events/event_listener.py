@@ -17,7 +17,7 @@ T = TypeVar("T", bound=BaseEvent)
 class EventListener(Generic[T]):
     """An event listener that listens for events and handles them.
 
-    Args:
+    Attributes:
         handler: The handler function that will be called when an event is published.
             The handler function should accept an event and return either the event or a dictionary.
             If the handler returns None, the event will not be published.
