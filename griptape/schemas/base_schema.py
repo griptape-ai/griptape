@@ -65,7 +65,7 @@ class BaseSchema(Schema):
 
         if field_class is None:
             return fields.Constant(None, allow_none=True)
-        # Handle Union types (for Python 3.9+ Union[Type, Type]) syntax.
+
         if cls.is_union_(field_type):
             return cls._handle_union(field_type, optional=optional)
 
