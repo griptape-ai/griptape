@@ -12,5 +12,5 @@ class MockTask(BaseTask):
     def input(self) -> BaseArtifact:
         return TextArtifact(self.mock_input)
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         return self.input

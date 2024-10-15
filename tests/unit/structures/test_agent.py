@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import pytest
 
 from griptape.memory import TaskMemory
@@ -296,3 +298,14 @@ class TestAgent:
 
         assert len(deserialized_agent.task_outputs) == 1
         assert deserialized_agent.task_outputs[task.id].value == "mock output"
+
+    def test_runnable_mixin(self):
+        mock_on_before_run = Mock()
+        mock_after_run = Mock()
+        agent = Agent(prompt_driver=MockPromptDriver(), on_before_run=mock_on_before_run, on_after_run=mock_after_run)
+
+        args = "test"
+        agent.run(args)
+
+        mock_on_before_run.assert_called_once_with(agent)
+        mock_after_run.assert_called_once_with(agent)

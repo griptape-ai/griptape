@@ -6,5 +6,5 @@ from griptape.tasks import BaseTextInputTask
 
 @define
 class MockTextInputTask(BaseTextInputTask):
-    def run(self) -> TextArtifact:
+    def try_run(self) -> TextArtifact:
         return TextArtifact(self.input.to_text())
