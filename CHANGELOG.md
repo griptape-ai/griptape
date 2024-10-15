@@ -33,7 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Structures not flushing events when not listening for `FinishStructureRunEvent`.
 
-## \[0.33.0\] - 2024-10-09
+## [0.33.1] - 2024-10-11
+
+### Fixed
+
+- Pinned `cohere` at `~5.11.0` to resolve slow dependency resolution.
+- Missing `exa-py` from `all` extra.
+
+## [0.33.0] - 2024-10-09
 
 ## Added
 
