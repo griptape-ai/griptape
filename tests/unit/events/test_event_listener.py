@@ -111,12 +111,27 @@ class TestEventListener:
         EventBus.remove_event_listener(event_listener_5)
         assert len(EventBus.event_listeners) == 0
 
-    def test_publish_event(self):
+    def test_drop_event(self):
         mock_event_listener_driver = Mock()
         mock_event_listener_driver.try_publish_event_payload.return_value = None
 
         def event_handler(_: BaseEvent) -> None:
             return None
+
+        mock_event = MockEvent()
+        event_listener = EventListener(
+            event_handler, event_listener_driver=mock_event_listener_driver, event_types=[MockEvent]
+        )
+        event_listener.publish_event(mock_event)
+
+        mock_event_listener_driver.publish_event.assert_not_called()
+
+    def test_publish_event(self):
+        mock_event_listener_driver = Mock()
+        mock_event_listener_driver.try_publish_event_payload.return_value = None
+
+        def event_handler(e: BaseEvent) -> BaseEvent:
+            return e
 
         mock_event = MockEvent()
         event_listener = EventListener(
@@ -145,7 +160,7 @@ class TestEventListener:
         e1 = EventListener()
         EventBus.add_event_listeners([e1])
 
-        with EventListener() as e2:
+        with EventListener(lambda e: e) as e2:
             assert EventBus.event_listeners == [e1, e2]
 
         assert EventBus.event_listeners == [e1]
@@ -154,7 +169,7 @@ class TestEventListener:
         e1 = EventListener()
         EventBus.add_event_listener(e1)
 
-        with EventListener() as e2, EventListener() as e3:
+        with EventListener(lambda e: e) as e2, EventListener(lambda e: e) as e3:
             assert EventBus.event_listeners == [e1, e2, e3]
 
         assert EventBus.event_listeners == [e1]

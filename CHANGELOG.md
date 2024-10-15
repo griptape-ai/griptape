@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
 - **BREAKING**: Parameter `driver` on `EventListener` to `event_listener_driver`.
 - **BREAKING**: `EventListener.handler` return value behavior. If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
+- `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
 - `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Pipeline.context["parent_output"]` has changed type from `str | None` to `BaseArtifact | None`.
