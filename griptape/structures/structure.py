@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 @define
 class Structure(ABC, RuleMixin):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    _tasks: list[Union[BaseTask, list[BaseTask]]] = field(factory=list, kw_only=True, alias="tasks")
+    _tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True, alias="tasks")
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
