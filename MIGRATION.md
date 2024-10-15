@@ -2,6 +2,12 @@
 
 This document provides instructions for migrating your codebase to accommodate breaking changes introduced in new versions of Griptape.
 
+## 0.33.X to 0.34.X
+
+### `EventListener.handler` behavior
+
+TODO
+
 ## 0.32.X to 0.33.X
 
 ### Removed `DataframeLoader`

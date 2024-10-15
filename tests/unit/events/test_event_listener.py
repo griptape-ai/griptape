@@ -119,7 +119,9 @@ class TestEventListener:
             return None
 
         mock_event = MockEvent()
-        event_listener = EventListener(event_handler, driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener = EventListener(
+            event_handler, event_listener_driver=mock_event_listener_driver, event_types=[MockEvent]
+        )
         event_listener.publish_event(mock_event)
 
         mock_event_listener_driver.publish_event.assert_called_once_with(mock_event)
@@ -132,7 +134,9 @@ class TestEventListener:
             return {"event": event.to_dict()}
 
         mock_event = MockEvent()
-        event_listener = EventListener(event_handler, driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener = EventListener(
+            event_handler, event_listener_driver=mock_event_listener_driver, event_types=[MockEvent]
+        )
         event_listener.publish_event(mock_event)
 
         mock_event_listener_driver.publish_event.assert_called_once_with({"event": mock_event.to_dict()})
@@ -159,7 +163,7 @@ class TestEventListener:
         mock_event_listener_driver = MockEventListenerDriver()
         mock_event_listener_driver.flush_events = Mock(side_effect=mock_event_listener_driver.flush_events)
 
-        event_listener = EventListener(driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener = EventListener(event_listener_driver=mock_event_listener_driver, event_types=[MockEvent])
         event_listener.publish_event(MockEvent(), flush=True)
 
         mock_event_listener_driver.flush_events.assert_called_once()
@@ -169,7 +173,7 @@ class TestEventListener:
         mock_event_listener_driver = MockEventListenerDriver()
         mock_event_listener_driver.flush_events = Mock(side_effect=mock_event_listener_driver.flush_events)
 
-        event_listener = EventListener(driver=mock_event_listener_driver, event_types=[MockEvent])
+        event_listener = EventListener(event_listener_driver=mock_event_listener_driver, event_types=[MockEvent])
         mock_event = MockEvent()
         event_listener.publish_event(mock_event, flush=False)
 
