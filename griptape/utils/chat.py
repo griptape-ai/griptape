@@ -15,6 +15,21 @@ if TYPE_CHECKING:
 
 @define
 class Chat:
+    """Utility for running a chat with a Structure.
+
+    Attributes:
+        structure: The Structure to run.
+        exit_keywords: Keywords that will exit the chat.
+        exiting_text: Text to display when exiting the chat.
+        processing_text: Text to display while processing the user's input.
+        intro_text: Text to display when the chat starts.
+        prompt_prefix: Prefix for the user's input.
+        response_prefix: Prefix for the assistant's response.
+        input_fn: Function to get the user's input.
+        output_fn: Function to output text. Takes a `text` argument for the text to output.
+                   Also takes a `stream` argument which will be set to True when streaming Prompt Tasks are present.
+    """
+
     class ChatPrompt(Prompt):
         prompt_suffix = ""  # We don't want rich's default prompt suffix
 
