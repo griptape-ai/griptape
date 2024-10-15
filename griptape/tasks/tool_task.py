@@ -60,7 +60,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     def actions_schema(self) -> Schema:
         return self._actions_schema_for_tools([self.tool])
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         result = self.prompt_driver.run(prompt_stack=self.prompt_stack)
 
         if self.prompt_driver.use_native_tools:

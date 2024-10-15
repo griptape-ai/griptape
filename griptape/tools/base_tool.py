@@ -16,6 +16,7 @@ from schema import Literal, Or, Schema
 from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
 from griptape.common import observable
 from griptape.mixins.activity_mixin import ActivityMixin
+from griptape.mixins.runnable_mixin import RunnableMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
@@ -25,7 +26,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseTool(ActivityMixin, SerializableMixin, ABC):
+class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC):
     """Abstract class for all tools to inherit from for.
 
     Attributes:
@@ -112,11 +113,11 @@ class BaseTool(ActivityMixin, SerializableMixin, ABC):
 
         return schemas
 
-    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> BaseArtifact:
+    def run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> BaseArtifact:
         try:
             output = self.before_run(activity, subtask, action)
 
-            output = self.run(activity, subtask, action, output)
+            output = self.try_run(activity, subtask, action, output)
 
             output = self.after_run(activity, subtask, action, output)
         except Exception as e:
@@ -125,10 +126,12 @@ class BaseTool(ActivityMixin, SerializableMixin, ABC):
         return output
 
     def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> Optional[dict]:
+        RunnableMixin.before_run(self)
+
         return action.input
 
     @observable(tags=["Tool.run()"])
-    def run(
+    def try_run(
         self,
         activity: Callable,
         subtask: ActionsSubtask,
@@ -153,6 +156,8 @@ class BaseTool(ActivityMixin, SerializableMixin, ABC):
         action: ToolAction,
         value: BaseArtifact,
     ) -> BaseArtifact:
+        RunnableMixin.after_run(self)
+
         if value:
             if self.output_memory:
                 output_memories = self.output_memory[getattr(activity, "name")] or []

@@ -111,8 +111,8 @@ class TestBaseTask:
 
         assert len(parent.children) == 3
 
-    def test_execute_publish_events(self, task):
-        task.execute()
+    def test_run_publish_events(self, task):
+        task.run()
 
         assert EventBus.event_listeners[0].handler.call_count == 2
 
@@ -191,3 +191,19 @@ class TestBaseTask:
         assert str(workflow.tasks[0].state) == "State.FINISHED"
         assert workflow.tasks[0].id == deserialized_task.id
         assert workflow.tasks[0].output.value == "foobar"
+
+    def test_runnable_mixin(self):
+        mock_on_before_run = Mock()
+        mock_after_run = Mock()
+        task = MockTask("foobar", on_before_run=mock_on_before_run, on_after_run=mock_after_run)
+
+        task.run()
+
+        mock_on_before_run.assert_called_once_with(task)
+        mock_after_run.assert_called_once_with(task)
+
+    def test_full_context(self, task):
+        task.structure = Agent()
+        task.structure._execution_args = ("foo", "bar")
+
+        assert task.full_context == {"args": ("foo", "bar"), "structure": task.structure}
