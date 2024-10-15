@@ -239,3 +239,16 @@ class TestAgent:
     def test_fail_fast(self):
         with pytest.raises(ValueError):
             Agent(prompt_driver=MockPromptDriver(), fail_fast=True)
+
+    def test_task_outputs(self):
+        task = PromptTask("test prompt")
+        agent = Agent(prompt_driver=MockPromptDriver())
+
+        agent.add_task(task)
+
+        assert len(agent.task_outputs) == 1
+        assert agent.task_outputs[task.id] is None
+        agent.run("hello")
+
+        assert len(agent.task_outputs) == 1
+        assert agent.task_outputs[task.id] == task.output

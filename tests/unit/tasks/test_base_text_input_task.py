@@ -44,7 +44,7 @@ class TestBaseTextInputTask:
         context = subtask.full_context
 
         assert context["foo"] == "bar"
-        assert context["parent_output"] == parent.output.to_text()
+        assert context["parent_output"] == parent.output
         assert context["structure"] == pipeline
         assert context["parent"] == parent
         assert context["child"] == child

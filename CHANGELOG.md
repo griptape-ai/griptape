@@ -13,15 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Request/response debug logging to all Prompt Drivers.
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
+- `BaseTask.task_outputs` to get a dictionary of all task outputs. This has been added to `Workflow.context` and `Pipeline.context`.
 - `GriptapeCloudFileManager` for managing files on Griptape Cloud.
 
 ### Changed
 
 - **BREAKING**: `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
+- `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
+- `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
+- `Pipeline.context["parent_output"]` has changed type from `str | None` to `BaseArtifact | None`.
 - `_DefaultsConfig.logging_config` and `Defaults.drivers_config` are now lazily instantiated.
 - `BaseTask.add_parent`/`BaseTask.add_child` now only add the parent/child task to the structure if it is not already present.
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - `BaseEventListener` no longer requires a thread lock for batching events.
+- Updated `ToolkitTask` system prompt to retry/fix actions when using native tool calling.
 
 ### Fixed
 

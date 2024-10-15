@@ -737,13 +737,14 @@ class TestWorkflow:
 
         context = workflow.context(task)
 
-        assert context["parent_outputs"] == {parent.id: ""}
+        assert context["parent_outputs"] == {}
 
         workflow.run()
 
         context = workflow.context(task)
 
-        assert context["parent_outputs"] == {parent.id: parent.output.to_text()}
+        assert context["task_outputs"] == workflow.task_outputs
+        assert context["parent_outputs"] == {parent.id: parent.output}
         assert context["parents_output_text"] == "mock output"
         assert context["structure"] == workflow
         assert context["parents"] == {parent.id: parent}
@@ -966,3 +967,15 @@ class TestWorkflow:
         publish_website = workflow.find_task("publish_website")
         assert publish_website.parent_ids == ["compare_movies"]
         assert publish_website.child_ids == ["summarize_to_slack"]
+
+    def test_task_outputs(self):
+        task = PromptTask("test")
+        workflow = Workflow(tasks=[task])
+
+        assert len(workflow.task_outputs) == 1
+        assert workflow.task_outputs[task.id] is None
+
+        workflow.run()
+
+        assert len(workflow.task_outputs) == 1
+        assert workflow.task_outputs[task.id].value == "mock output"
