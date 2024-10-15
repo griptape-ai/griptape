@@ -63,14 +63,14 @@ class BaseSchema(Schema):
             field_class = field_class.__bound__
         if field_class is None:
             return fields.Constant(None, allow_none=True)
-        if cls.is_union(field_type):
+        if cls._is_union(field_type):
             return cls._handle_union(field_type, optional=optional)
         elif attrs.has(field_class):
             schema = PolymorphicSchema if ABC in field_class.__bases__ else cls.from_attrs_cls
             return fields.Nested(schema(field_class), allow_none=optional)
-        elif cls.is_enum(field_type):
+        elif cls._is_enum(field_type):
             return fields.String(allow_none=optional)
-        elif cls.is_list_sequence(field_class):
+        elif cls._is_list_sequence(field_class):
             if args:
                 return cls._handle_list(args[0], optional=optional)
             else:
@@ -91,7 +91,7 @@ class BaseSchema(Schema):
         Returns:
             A marshmallow List field.
         """
-        if cls.is_union(list_type):
+        if cls._is_union(list_type):
             union_field = cls._handle_union(list_type, optional=optional)
             return fields.List(cls_or_instance=union_field, allow_none=optional)
         list_field = cls._get_field_for_type(list_type)
@@ -222,7 +222,7 @@ class BaseSchema(Schema):
         )
 
     @classmethod
-    def is_list_sequence(cls, field_type: type | _SpecialForm) -> bool:
+    def _is_list_sequence(cls, field_type: type | _SpecialForm) -> bool:
         if isinstance(field_type, type):
             if issubclass(field_type, str) or issubclass(field_type, bytes) or issubclass(field_type, tuple):
                 return False
@@ -232,9 +232,9 @@ class BaseSchema(Schema):
             return False
 
     @classmethod
-    def is_union(cls, field_type: type) -> bool:
+    def _is_union(cls, field_type: type) -> bool:
         return field_type is Union or get_origin(field_type) is Union
 
     @classmethod
-    def is_enum(cls, field_type: type) -> bool:
+    def _is_enum(cls, field_type: type) -> bool:
         return isinstance(field_type, type) and issubclass(field_type, Enum)

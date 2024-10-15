@@ -85,19 +85,19 @@ class TestBaseSchema:
         assert BaseSchema._get_field_type_info(Literal[5]) == (int, (), False)  # pyright: ignore[reportArgumentType]
 
     def test_is_list_sequence(self):
-        assert BaseSchema.is_list_sequence(list)
-        assert not BaseSchema.is_list_sequence(tuple)
-        assert not BaseSchema.is_list_sequence(bytes)
-        assert not BaseSchema.is_list_sequence(str)
-        assert not BaseSchema.is_list_sequence(int)
+        assert BaseSchema._is_list_sequence(list)
+        assert not BaseSchema._is_list_sequence(tuple)
+        assert not BaseSchema._is_list_sequence(bytes)
+        assert not BaseSchema._is_list_sequence(str)
+        assert not BaseSchema._is_list_sequence(int)
 
     def test_is_union(self):
-        assert BaseSchema.is_union(Union[str, int])
-        assert BaseSchema.is_union(Union[str, Union[int, str]])
-        assert not BaseSchema.is_union(tuple)
-        assert not BaseSchema.is_union(bytes)
-        assert not BaseSchema.is_union(str)
-        assert not BaseSchema.is_union(int)
+        assert BaseSchema._is_union(Union[str, int])
+        assert BaseSchema._is_union(Union[str, Union[int, str]])
+        assert not BaseSchema._is_union(tuple)
+        assert not BaseSchema._is_union(bytes)
+        assert not BaseSchema._is_union(str)
+        assert not BaseSchema._is_union(int)
 
     def test_load(self):
         schema = BaseSchema.from_attrs_cls(MockSerializable)()
@@ -138,7 +138,7 @@ class TestBaseSchema:
         assert field.constant is None
 
     def test_is_enum(self):
-        result = BaseSchema.is_enum(MockEnum)
+        result = BaseSchema._is_enum(MockEnum)
         assert result is True
 
     def test_handle_enum(self):
