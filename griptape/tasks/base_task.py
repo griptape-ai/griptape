@@ -100,7 +100,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
         if self.id not in parent.child_ids:
             parent.child_ids.append(self.id)
 
-        if self.structure is not None:
+        if self.structure is not None and parent not in self.structure.tasks:
             self.structure.add_task(parent)
 
         return self
@@ -116,7 +116,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
         if self.id not in child.parent_ids:
             child.parent_ids.append(self.id)
 
-        if self.structure is not None:
+        if self.structure is not None and child not in self.structure.tasks:
             self.structure.add_task(child)
 
         return self
