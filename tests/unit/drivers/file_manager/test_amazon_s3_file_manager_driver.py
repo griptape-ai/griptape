@@ -207,7 +207,7 @@ class TestAmazonS3FileManagerDriver:
         result = driver.save_file(path, content)
 
         assert isinstance(result, InfoArtifact)
-        assert result.value == "Successfully saved file"
+        assert result.value.startswith("Successfully saved file at:")
         expected_s3_key = f"{workdir}/{path}".lstrip("/")
         content_str = content if isinstance(content, str) else content.decode()
         assert get_s3_value(expected_s3_key) == content_str
@@ -245,7 +245,7 @@ class TestAmazonS3FileManagerDriver:
 
         expected_s3_key = f"{workdir}/{path}".lstrip("/")
         assert get_s3_value(expected_s3_key) == "foobar"
-        assert result.value == "Successfully saved file"
+        assert result.value.startswith("Successfully saved file at:")
 
     def test_save_and_load_file_with_encoding(self, session, bucket, get_s3_value):
         workdir = "/sub-folder"
@@ -256,7 +256,7 @@ class TestAmazonS3FileManagerDriver:
 
         expected_s3_key = f"{workdir}/{path}".lstrip("/")
         assert get_s3_value(expected_s3_key) == "foobar"
-        assert result.value == "Successfully saved file"
+        assert result.value.startswith("Successfully saved file at:")
 
         driver = AmazonS3FileManagerDriver(session=session, bucket=bucket, encoding="ascii", workdir=workdir)
         path = "test/foobar.txt"
