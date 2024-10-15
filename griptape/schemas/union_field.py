@@ -27,8 +27,7 @@ class UnionField(marshmallow.fields.Field):
 
     Args:
         fields: The list of candidate fields to try.
-        reverse_serialize_candidates: Whether to try the candidates in reverse order when
-           serializing.
+        reverse_serialize_candidates: Whether to try the candidates in reverse order when serializing.
     """
 
     def __init__(
