@@ -8,14 +8,14 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import ErrorArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
+from griptape.mixins.runnable_mixin import RunnableMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.artifacts import BaseArtifact
     from griptape.memory.meta import BaseMetaEntry
     from griptape.structures import Structure
 
@@ -23,7 +23,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class BaseTask(FuturesExecutorMixin, SerializableMixin, ABC):
+class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"], ABC):
     class State(Enum):
         PENDING = 1
         EXECUTING = 2
@@ -137,6 +137,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, ABC):
         return self.state == BaseTask.State.EXECUTING
 
     def before_run(self) -> None:
+        super().before_run()
         if self.structure is not None:
             EventBus.publish_event(
                 StartTaskEvent(
@@ -148,25 +149,13 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, ABC):
                 ),
             )
 
-    def after_run(self) -> None:
-        if self.structure is not None:
-            EventBus.publish_event(
-                FinishTaskEvent(
-                    task_id=self.id,
-                    task_parent_ids=self.parent_ids,
-                    task_child_ids=self.child_ids,
-                    task_input=self.input,
-                    task_output=self.output,
-                ),
-            )
-
-    def execute(self) -> Optional[BaseArtifact]:
+    def run(self) -> BaseArtifact:
         try:
             self.state = BaseTask.State.EXECUTING
 
             self.before_run()
 
-            self.output = self.run()
+            self.output = self.try_run()
 
             self.after_run()
         except Exception as e:
@@ -178,7 +167,20 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, ABC):
 
         return self.output
 
-    def can_execute(self) -> bool:
+    def after_run(self) -> None:
+        super().after_run()
+        if self.structure is not None:
+            EventBus.publish_event(
+                FinishTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                ),
+            )
+
+    def can_run(self) -> bool:
         return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)
 
     def reset(self) -> BaseTask:
@@ -188,7 +190,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, ABC):
         return self
 
     @abstractmethod
-    def run(self) -> BaseArtifact: ...
+    def try_run(self) -> BaseArtifact: ...
 
     @property
     def full_context(self) -> dict[str, Any]:

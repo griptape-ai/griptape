@@ -165,7 +165,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                 if tool.output_memory is None and tool.off_prompt:
                     tool.output_memory = {getattr(a, "name"): [self.task_memory] for a in tool.activities()}
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         from griptape.tasks import ActionsSubtask
 
         self.subtasks.clear()

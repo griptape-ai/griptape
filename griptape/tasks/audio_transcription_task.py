@@ -18,5 +18,5 @@ class AudioTranscriptionTask(BaseAudioInputTask):
         kw_only=True,
     )
 
-    def run(self) -> TextArtifact:
+    def try_run(self) -> TextArtifact:
         return self.audio_transcription_engine.run(self.input)

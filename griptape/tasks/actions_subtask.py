@@ -113,14 +113,14 @@ class ActionsSubtask(BaseTask):
         ]
         logger.info("".join(parts))
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         try:
             if any(isinstance(a.output, ErrorArtifact) for a in self.actions):
                 errors = [a.output.value for a in self.actions if isinstance(a.output, ErrorArtifact)]
 
                 self.output = ErrorArtifact("\n\n".join(errors))
             else:
-                results = self.execute_actions(self.actions)
+                results = self.run_actions(self.actions)
 
                 actions_output = []
                 for result in results:
@@ -138,13 +138,13 @@ class ActionsSubtask(BaseTask):
         else:
             return ErrorArtifact("no tool output")
 
-    def execute_actions(self, actions: list[ToolAction]) -> list[tuple[str, BaseArtifact]]:
-        return utils.execute_futures_list([self.futures_executor.submit(self.execute_action, a) for a in actions])
+    def run_actions(self, actions: list[ToolAction]) -> list[tuple[str, BaseArtifact]]:
+        return utils.execute_futures_list([self.futures_executor.submit(self.run_action, a) for a in actions])
 
-    def execute_action(self, action: ToolAction) -> tuple[str, BaseArtifact]:
+    def run_action(self, action: ToolAction) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
             if action.path is not None:
-                output = action.tool.execute(getattr(action.tool, action.path), self, action)
+                output = action.tool.run(getattr(action.tool, action.path), self, action)
             else:
                 output = ErrorArtifact("action path not found")
         else:
