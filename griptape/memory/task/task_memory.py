@@ -8,6 +8,7 @@ from griptape.artifacts import BaseArtifact, BlobArtifact, ErrorArtifact, InfoAr
 from griptape.memory.meta import ActionSubtaskMetaEntry
 from griptape.memory.task.storage import BlobArtifactStorage, TextArtifactStorage
 from griptape.mixins.activity_mixin import ActivityMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.memory.task.storage import BaseArtifactStorage
@@ -15,8 +16,12 @@ if TYPE_CHECKING:
 
 
 @define
-class TaskMemory(ActivityMixin):
-    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
+class TaskMemory(ActivityMixin, SerializableMixin):
+    name: str = field(
+        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
     artifact_storages: dict[type, BaseArtifactStorage] = field(
         default=Factory(
             lambda: {
@@ -26,8 +31,10 @@ class TaskMemory(ActivityMixin):
         ),
         kw_only=True,
     )
-    namespace_storage: dict[str, BaseArtifactStorage] = field(factory=dict, kw_only=True)
-    namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True)
+    namespace_storage: dict[str, BaseArtifactStorage] = field(
+        factory=dict, kw_only=True, metadata={"serializable": True}
+    )
+    namespace_metadata: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     @artifact_storages.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_artifact_storages(self, _: Attribute, artifact_storage: dict[type, BaseArtifactStorage]) -> None:

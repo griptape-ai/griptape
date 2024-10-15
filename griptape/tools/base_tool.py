@@ -16,6 +16,7 @@ from schema import Literal, Or, Schema
 from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
 from griptape.common import observable
 from griptape.mixins.activity_mixin import ActivityMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.common import ToolAction
@@ -24,7 +25,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseTool(ActivityMixin, ABC):
+class BaseTool(ActivityMixin, ABC, SerializableMixin):
     """Abstract class for all tools to inherit from for.
 
     Attributes:
@@ -39,13 +40,19 @@ class BaseTool(ActivityMixin, ABC):
 
     REQUIREMENTS_FILE = "requirements.txt"
 
-    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
-    output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
-    install_dependencies_on_init: bool = field(default=True, kw_only=True)
-    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
-    verbose: bool = field(default=False, kw_only=True)
-    off_prompt: bool = field(default=False, kw_only=True)
+    name: str = field(
+        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
+    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True, metadata={"serializable": True})
+    output_memory: Optional[dict[str, list[TaskMemory]]] = field(
+        default=None, kw_only=True, metadata={"serializable": True}
+    )
+    install_dependencies_on_init: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    verbose: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    off_prompt: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
         if self.install_dependencies_on_init:

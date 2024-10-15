@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     ACTION_PATTERN = r"(?s)[^{]*({.*})"
 
-    tool: BaseTool = field(kw_only=True)
+    tool: BaseTool = field(kw_only=True, metadata={"serializable": True})
     subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
 

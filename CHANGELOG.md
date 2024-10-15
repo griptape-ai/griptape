@@ -24,6 +24,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - `BaseEventListener` no longer requires a thread lock for batching events.
 - Updated `ToolkitTask` system prompt to retry/fix actions when using native tool calling.
+- `Structure` now utilizes `SerializableMixin` for serialization.
+- `BaseTask` now utilizes `SerializableMixin` for serialization.
+- `BaseTool` now utilizes `SerializableMixin` for serialization.
+- `TaskMemory` now utilizes `SerializableMixin` for serialization.
 
 ### Fixed
 

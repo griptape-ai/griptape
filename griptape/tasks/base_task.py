@@ -12,6 +12,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -22,21 +23,21 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class BaseTask(FuturesExecutorMixin, ABC):
+class BaseTask(FuturesExecutorMixin, ABC, SerializableMixin):
     class State(Enum):
         PENDING = 1
         EXECUTING = 2
         FINISHED = 3
 
-    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    state: State = field(default=State.PENDING, kw_only=True)
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
+    state: State = field(default=State.PENDING, kw_only=True, metadata={"serializable": True})
     parent_ids: list[str] = field(factory=list, kw_only=True)
     child_ids: list[str] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
     structure: Optional[Structure] = field(default=None, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
-    context: dict[str, Any] = field(factory=dict, kw_only=True)
+    context: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def __rshift__(self, other: BaseTask) -> BaseTask:
         self.add_child(other)
