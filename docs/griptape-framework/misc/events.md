@@ -155,8 +155,7 @@ Assistant:
 
 ## `EventListenerDriver.handler` Return Value Behavior
 
-The value that gets returned from the [`EventListener.handler`](../../reference/griptape/events/event_listener/#griptape.events.event_listener.EventListener.handler) will determine what gets sent to the `event_listener_driver`.
-
+The value that gets returned from the [`EventListener.handler`](../../reference/griptape/events/event_listener.md#griptape.events.EventListener.handler) will determine what gets sent to the `event_listener_driver`.
 ### `EventListener.handler` is None
 
 By default, the `EventListener.handler` function is `None`. Any events that the `EventListener` is listening for will get sent to the `event_listener_driver` as-is.
