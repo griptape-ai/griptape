@@ -89,6 +89,10 @@ nav:
           - Structure Config YAML: "griptape-cloud/structures/structure-config.md"
           - Running Your Structure: "griptape-cloud/structures/run-structure.md"
           - Structure Run Events: "griptape-cloud/structures/structure-run-events.md"
+      - Rules:
+          - Create a Ruleset: "griptape-cloud/rules/rulesets.md"
+      - Threads:
+          - Create a Thread: "griptape-cloud/threads/threads.md"
       - Cloud API:
           - API Reference: "griptape-cloud/api/api-reference.md"
   - Framework:
@@ -128,6 +132,7 @@ nav:
           - Audio Transcription Drivers: "griptape-framework/drivers/audio-transcription-drivers.md"
           - Web Search Drivers: "griptape-framework/drivers/web-search-drivers.md"
           - Observability Drivers: "griptape-framework/drivers/observability-drivers.md"
+          - Ruleset Drivers: "griptape-framework/drivers/ruleset-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"

@@ -70,8 +70,8 @@ class BaseTask(FuturesExecutorMixin, ABC, SerializableMixin):
         raise ValueError("Structure must be set to access children")
 
     @property
-    def parent_outputs(self) -> dict[str, str]:
-        return {parent.id: parent.output.to_text() if parent.output else "" for parent in self.parents}
+    def parent_outputs(self) -> dict[str, BaseArtifact]:
+        return {parent.id: parent.output for parent in self.parents if parent.output}
 
     @property
     def parents_output_text(self) -> str:

@@ -8,7 +8,7 @@ EventBus.add_event_listeners(
     [
         EventListener(
             event_types=[FinishStructureRunEvent],
-            driver=WebhookEventListenerDriver(
+            event_listener_driver=WebhookEventListenerDriver(
                 webhook_url=os.environ["WEBHOOK_URL"],
             ),
         ),

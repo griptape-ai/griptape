@@ -77,6 +77,10 @@ class Structure(ABC, RuleMixin, SerializableMixin):
         return self.output_task.output
 
     @property
+    def task_outputs(self) -> dict[str, Optional[BaseArtifact]]:
+        return {task.id: task.output for task in self.tasks}
+
+    @property
     def finished_tasks(self) -> list[BaseTask]:
         return [s for s in self.tasks if s.is_finished()]
 

@@ -2,7 +2,7 @@ import marshmallow
 import pytest
 from marshmallow import fields
 
-from griptape.schemas.union_field import ExceptionGroupError, UnionField
+from griptape.schemas.union_field import ExceptionGroupError, Union
 
 
 class InvalidType:
@@ -19,7 +19,7 @@ class TestUnionField:
     @pytest.fixture()
     def sample_schema(self):
         class SampleSchema(marshmallow.Schema):
-            name = UnionField(fields=[fields.Integer(), fields.String()])
+            name = Union(fields=[fields.Integer(), fields.String()])
 
         return SampleSchema()
 
@@ -52,7 +52,7 @@ class TestUnionField:
 
     def test_union_field_reverse_serialization(self, sample_schema):
         class ReverseSchema(marshmallow.Schema):
-            value = UnionField(fields=[fields.Integer(), fields.String()], reverse_serialize_candidates=True)
+            value = Union(fields=[fields.Integer(), fields.String()], reverse_serialize_candidates=True)
 
         schema = ReverseSchema()
         input_data = {"value": "Test"}
@@ -61,7 +61,7 @@ class TestUnionField:
 
     def test_union_field_serialize_type_error(self):
         class SampleSchema(marshmallow.Schema):
-            name = UnionField(fields=[fields.Integer(), fields.String()])
+            name = Union(fields=[fields.Integer(), fields.String()])
 
         schema = SampleSchema()
 

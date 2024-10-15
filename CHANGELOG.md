@@ -14,16 +14,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `griptape.schemas.UnionField` for serializing union fields.
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
+- `BaseTask.task_outputs` to get a dictionary of all task outputs. This has been added to `Workflow.context` and `Pipeline.context`.
+- `Chat.input_fn` for customizing the input to the Chat utility.
 
 ### Changed
 
-- **BREAKING**: `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
+- **BREAKING**: Removed `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
+- **BREAKING**: Renamed parameter `driver` on `EventListener` to `event_listener_driver`.
+- **BREAKING**: Changed default value of parameter `handler` on `EventListener` to `None`.
+- **BREAKING**: Updated `EventListener.handler` return value behavior.
+  - If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
+  - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
+- Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
+- `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
+- `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
+- `Pipeline.context["parent_output"]` has changed type from `str | None` to `BaseArtifact | None`.
 - `_DefaultsConfig.logging_config` and `Defaults.drivers_config` are now lazily instantiated.
 - `griptape.schemas.BaseSchema` now uses `griptape.schemas.UnionField` for `Union` fields.
 - `BaseTask.add_parent`/`BaseTask.add_child` now only add the parent/child task to the structure if it is not already present.
 - `BaseEventListener.flush_events()` to flush events from an Event Listener.
 - `BaseEventListener` no longer requires a thread lock for batching events.
 - Updated `ToolkitTask` system prompt to retry/fix actions when using native tool calling.
+- `Chat` input now uses a slightly customized version of `Rich.prompt.Prompt` by default.
+- `Chat` output now uses `Rich.print` by default.
+- `Chat.output_fn`'s now takes an optional kwarg parameter, `stream`.
 - `Structure` now utilizes `SerializableMixin` for serialization.
 - `BaseTask` now utilizes `SerializableMixin` for serialization.
 - `BaseTool` now utilizes `SerializableMixin` for serialization.
@@ -32,6 +46,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Structures not flushing events when not listening for `FinishStructureRunEvent`.
+- `EventListener.event_types` and the argument to `BaseEventListenerDriver.handler` being out of sync.
+
+## \[0.33.1\] - 2024-10-11
+
+### Fixed
+
+- Pinned `cohere` at `~5.11.0` to resolve slow dependency resolution.
+- Missing `exa-py` from `all` extra.
 
 ## \[0.33.0\] - 2024-10-09
 

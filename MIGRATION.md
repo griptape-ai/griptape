@@ -2,6 +2,53 @@
 
 This document provides instructions for migrating your codebase to accommodate breaking changes introduced in new versions of Griptape.
 
+## 0.33.X to 0.34.X
+
+### `EventListener.handler` behavior, `driver` parameter rename
+
+Returning `None` from the `handler` function now causes the event to not be published to the `EventListenerDriver`.
+The `handler` function can now return a `BaseEvent` object.
+
+#### Before
+
+```python
+def handler_fn_return_none(event: BaseEvent) -> Optional[dict]:
+    # This causes the `BaseEvent` object to be passed to the EventListenerDriver
+    return None
+
+def handler_fn_return_dict(event: BaseEvent) -> Optional[dict]:
+    # This causes the returned dictionary to be passed to the EventListenerDriver
+    return {
+        "key": "value
+    }
+
+EventListener(handler=handler_fn_return_none, driver=driver)
+EventListener(handler=handler_fn_return_dict, driver=driver)
+```
+
+#### After
+
+```python
+def handler_fn_return_none(event: BaseEvent) -> Optional[dict | BaseEvent]:
+    # This causes the `BaseEvent` object to NOT get passed to the EventListenerDriver
+    return None
+
+def handler_fn_return_dict(event: BaseEvent) -> Optional[dict | BaseEvent]:
+    # This causes the returned dictionary to be passed to the EventListenerDriver
+    return {
+        "key": "value
+    }
+
+def handler_fn_return_base_event(event: BaseEvent) -> Optional[dict | BaseEvent]:
+    # This causes the returned `BaseEvent` object to be passed to the EventListenerDriver
+    return ChildClassOfBaseEvent()
+
+# `driver` has been renamed to `event_listener_driver`
+EventListener(handler=handler_fn_return_none, event_listener_driver=driver)
+EventListener(handler=handler_fn_return_dict, event_listener_driver=driver)
+EventListener(handler=handler_fn_return_base_event, event_listener_driver=driver)
+```
+
 ## 0.32.X to 0.33.X
 
 ### Removed `DataframeLoader`

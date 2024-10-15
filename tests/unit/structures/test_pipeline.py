@@ -360,7 +360,8 @@ class TestPipeline:
 
         context = pipeline.context(task)
 
-        assert context["parent_output"] == parent.output.to_text()
+        assert context["parent_output"] == parent.output
+        assert context["task_outputs"] == pipeline.task_outputs
         assert context["structure"] == pipeline
         assert context["parent"] == parent
         assert context["child"] == child
@@ -398,3 +399,15 @@ class TestPipeline:
 
         with pytest.raises(ValueError, match=f"Duplicate task with id {task.id} found."):
             pipeline.run()
+
+    def test_task_outputs(self):
+        task = PromptTask("test")
+        pipeline = Pipeline()
+
+        pipeline + [task]
+
+        assert len(pipeline.task_outputs) == 1
+        assert pipeline.task_outputs[task.id] is None
+        pipeline.run()
+        assert len(pipeline.task_outputs) == 1
+        assert pipeline.task_outputs[task.id] == task.output
