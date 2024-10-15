@@ -2,22 +2,27 @@ import marshmallow
 import pytest
 from marshmallow import fields
 
-from griptape.schemas.union_field import UnionField
+from griptape.schemas.union_field import ExceptionGroupError, UnionField
 
 
 class InvalidType:
-    pass
+    """A custom class that will fail when attempting to serialize with Integer or String fields."""
 
+    def __str__(self) -> str:
+        raise TypeError("Cannot serialize InvalidType to string")
 
-@pytest.fixture()
-def sample_schema():
-    class SampleSchema(marshmallow.Schema):
-        name = UnionField(fields=[fields.Integer(), fields.String()])
-
-    return SampleSchema()
+    def __int__(self) -> int:
+        raise ValueError("Cannot serialize InvalidType to int")
 
 
 class TestUnionField:
+    @pytest.fixture()
+    def sample_schema(self):
+        class SampleSchema(marshmallow.Schema):
+            name = UnionField(fields=[fields.Integer(), fields.String()])
+
+        return SampleSchema()
+
     def test_union_field_valid_string(self, sample_schema):
         input_data = {"name": "Alice"}
         result = sample_schema.load(input_data)
@@ -53,3 +58,17 @@ class TestUnionField:
         input_data = {"value": "Test"}
         result = schema.dump(input_data)
         assert result["value"] == "Test"
+
+    def test_union_field_serialize_type_error(self):
+        class SampleSchema(marshmallow.Schema):
+            name = UnionField(fields=[fields.Integer(), fields.String()])
+
+        schema = SampleSchema()
+
+        input_data = {"name": InvalidType()}
+
+        with pytest.raises(ExceptionGroupError) as exc_info:
+            schema.dump(input_data)
+
+        assert "All serializers raised exceptions" in str(exc_info.value)
+        assert len(exc_info.value.errors) > 0

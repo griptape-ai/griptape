@@ -53,7 +53,6 @@ class UnionField(marshmallow.fields.Field):
 
         Raises:
             marshmallow.exceptions.ValidationError: In case of formatting problem
-
         """
         error_store = kwargs.pop("error_store", marshmallow.error_store.ErrorStore())
         fields = (
@@ -65,9 +64,9 @@ class UnionField(marshmallow.fields.Field):
                 # pylint: disable=protected-access
                 return candidate_field._serialize(value, attr, obj, error_store=error_store, **kwargs)
             except (TypeError, ValueError) as e:
-                error_store.store_error({attr: e})
+                error_store.store_error({attr: str(e)})
 
-        raise ExceptionGroupError("All serializers raised exceptions.\n", error_store.errors)
+        raise ExceptionGroupError("All serializers raised exceptions.", error_store.errors)
 
     def _deserialize(self, value: Any, attr: str | None = None, data: Any = None, **kwargs: Any) -> Any:
         """Deserialize ``value``.
