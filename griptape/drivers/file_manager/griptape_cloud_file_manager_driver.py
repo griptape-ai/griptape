@@ -4,7 +4,7 @@ import logging
 import os
 import uuid
 from typing import Optional
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 
 import requests
 from attrs import Attribute, Factory, define, field
@@ -158,4 +158,4 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     def _to_full_key(self, path: str) -> str:
         path = path.lstrip("/")
         full_key = f"{self.workdir}/{path}"
-        return full_key.lstrip("/")
+        return quote(full_key.lstrip("/"), safe='')
