@@ -411,3 +411,44 @@ class TestPipeline:
         pipeline.run()
         assert len(pipeline.task_outputs) == 1
         assert pipeline.task_outputs[task.id] == task.output
+
+    def test_pipeline_to_dict(self):
+        task = PromptTask("test")
+        pipeline = Pipeline()
+        pipeline + [task]
+        expected_pipeline_dict = {
+            "type": pipeline.type,
+            "id": pipeline.id,
+            "tasks": [
+                {
+                    "type": pipeline.tasks[0].type,
+                    "id": pipeline.tasks[0].id,
+                    "state": "State.PENDING",
+                    "context": pipeline.tasks[0].context,
+                }
+            ],
+            "conversation_memory": {
+                "type": pipeline.conversation_memory.type,
+                "runs": pipeline.conversation_memory.runs,
+                "meta": pipeline.conversation_memory.meta,
+                "max_runs": pipeline.conversation_memory.max_runs,
+            },
+            "fail_fast": pipeline.fail_fast,
+        }
+        assert pipeline.to_dict() == expected_pipeline_dict
+
+    def test_pipeline_from_dict(self):
+        task = PromptTask("test")
+        pipeline = Pipeline(tasks=[task])
+
+        serialized_pipeline = pipeline.to_dict()
+        assert isinstance(serialized_pipeline, dict)
+
+        deserialized_pipeline = Pipeline.from_dict(serialized_pipeline)
+        assert isinstance(deserialized_pipeline, Pipeline)
+
+        assert deserialized_pipeline.task_outputs[task.id] is None
+        deserialized_pipeline.run()
+
+        assert len(deserialized_pipeline.task_outputs) == 1
+        assert deserialized_pipeline.task_outputs[task.id].value == "mock output"

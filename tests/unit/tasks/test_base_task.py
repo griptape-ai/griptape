@@ -159,3 +159,7 @@ class TestBaseTask:
         assert child.id in task.child_ids
         assert task.id in child.parent_ids
         assert added_task == child
+
+    def test_base_task_to_dict(self, task):
+        expected_task_dict = {"type": task.type, "id": task.id, "state": str(task.state), "context": task.context}
+        assert expected_task_dict == task.to_dict()

@@ -252,3 +252,44 @@ class TestAgent:
 
         assert len(agent.task_outputs) == 1
         assert agent.task_outputs[task.id] == task.output
+
+    def test_agent_to_dict(self):
+        task = PromptTask("test prompt")
+        agent = Agent(prompt_driver=MockPromptDriver())
+        agent.add_task(task)
+        expected_agent_dict = {
+            "type": "Agent",
+            "id": agent.id,
+            "tasks": [
+                {
+                    "type": agent.tasks[0].type,
+                    "id": agent.tasks[0].id,
+                    "state": "State.PENDING",
+                    "context": agent.tasks[0].context,
+                }
+            ],
+            "conversation_memory": {
+                "type": agent.conversation_memory.type,
+                "runs": agent.conversation_memory.runs,
+                "meta": agent.conversation_memory.meta,
+                "max_runs": agent.conversation_memory.max_runs,
+            },
+        }
+        assert agent.to_dict() == expected_agent_dict
+
+    def test_agent_from_dict(self):
+        task = PromptTask("test prompt")
+        agent = Agent(prompt_driver=MockPromptDriver())
+        agent.add_task(task)
+
+        serialized_agent = agent.to_dict()
+        assert isinstance(serialized_agent, dict)
+
+        deserialized_agent = Agent.from_dict(serialized_agent)
+        assert isinstance(deserialized_agent, Agent)
+
+        assert deserialized_agent.task_outputs[task.id] is None
+        deserialized_agent.run()
+
+        assert len(deserialized_agent.task_outputs) == 1
+        assert deserialized_agent.task_outputs[task.id].value == "mock output"

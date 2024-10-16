@@ -979,3 +979,44 @@ class TestWorkflow:
 
         assert len(workflow.task_outputs) == 1
         assert workflow.task_outputs[task.id].value == "mock output"
+
+    def test_workflow_to_dict(self):
+        task = PromptTask("test")
+        workflow = Workflow(tasks=[task])
+
+        expected_workflow_dict = {
+            "type": workflow.type,
+            "id": workflow.id,
+            "tasks": [
+                {
+                    "type": workflow.tasks[0].type,
+                    "id": workflow.tasks[0].id,
+                    "state": "State.PENDING",
+                    "context": workflow.tasks[0].context,
+                }
+            ],
+            "conversation_memory": {
+                "type": workflow.conversation_memory.type,
+                "runs": workflow.conversation_memory.runs,
+                "meta": workflow.conversation_memory.meta,
+                "max_runs": workflow.conversation_memory.max_runs,
+            },
+            "fail_fast": workflow.fail_fast,
+        }
+        assert workflow.to_dict() == expected_workflow_dict
+
+    def test_workflow_from_dict(self):
+        task = PromptTask("test")
+        workflow = Workflow(tasks=[task])
+
+        serialized_workflow = workflow.to_dict()
+        assert isinstance(serialized_workflow, dict)
+
+        deserialized_workflow = Workflow.from_dict(serialized_workflow)
+        assert isinstance(deserialized_workflow, Workflow)
+
+        assert deserialized_workflow.task_outputs[task.id] is None
+        deserialized_workflow.run()
+
+        assert len(deserialized_workflow.task_outputs) == 1
+        assert deserialized_workflow.task_outputs[task.id].value == "mock output"

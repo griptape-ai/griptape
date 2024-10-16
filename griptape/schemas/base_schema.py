@@ -181,6 +181,7 @@ class BaseSchema(Schema):
         from griptape.tokenizers import BaseTokenizer
         from griptape.tools import BaseTool
         from griptape.utils import import_optional_dependency, is_dependency_installed
+        from tests.mocks.mock_tool.tool import MockTool
 
         attrs.resolve_types(
             attrs_cls,
@@ -213,6 +214,7 @@ class BaseSchema(Schema):
                 "Sequence": Sequence,
                 "BaseConversationMemory": BaseConversationMemory,
                 "BaseArtifactStorage": BaseArtifactStorage,
+                "MockTool": MockTool,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel
