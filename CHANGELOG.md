@@ -38,10 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Chat` input now uses a slightly customized version of `Rich.prompt.Prompt` by default.
 - `Chat` output now uses `Rich.print` by default.
 - `Chat.output_fn`'s now takes an optional kwarg parameter, `stream`.
-- `Structure` now utilizes `SerializableMixin` for serialization.
-- `BaseTask` now utilizes `SerializableMixin` for serialization.
-- `BaseTool` now utilizes `SerializableMixin` for serialization.
-- `TaskMemory` now utilizes `SerializableMixin` for serialization.
+- Implemented `SerializableMixin` in `Structure`, `BaseTask`, `BaseTool`, and `TaskMemory`
 
 ### Fixed
 
