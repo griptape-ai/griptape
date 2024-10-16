@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseTool(ActivityMixin, ABC, SerializableMixin):
+class BaseTool(ActivityMixin, SerializableMixin, ABC):
     """Abstract class for all tools to inherit from for.
 
     Attributes:

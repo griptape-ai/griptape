@@ -23,7 +23,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class BaseTask(FuturesExecutorMixin, ABC, SerializableMixin):
+class BaseTask(FuturesExecutorMixin, SerializableMixin, ABC):
     class State(Enum):
         PENDING = 1
         EXECUTING = 2
