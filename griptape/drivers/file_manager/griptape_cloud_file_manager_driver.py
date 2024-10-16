@@ -123,7 +123,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
                 logger.info(f"Asset '{full_key}' not found, attempting to create")
                 data = {"name": full_key}
                 self._call_api(
-                    method="post", path=f"/buckets/{self.bucket_id}/assets/", json=data, raise_for_status=True
+                    method="put", path=f"/buckets/{self.bucket_id}/assets/", json=data, raise_for_status=True
                 )
             else:
                 raise e
