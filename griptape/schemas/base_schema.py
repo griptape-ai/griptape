@@ -174,7 +174,9 @@ class BaseSchema(Schema):
         )
         from griptape.events import EventListener
         from griptape.memory.structure import Run
+        from griptape.memory.task.task_memory import TaskMemory
         from griptape.structures import Structure
+        from griptape.tasks.base_task import BaseTask
         from griptape.tokenizers import BaseTokenizer
         from griptape.tools import BaseTool
         from griptape.utils import import_optional_dependency, is_dependency_installed
@@ -205,6 +207,8 @@ class BaseSchema(Schema):
                 "Reference": Reference,
                 "Run": Run,
                 "Sequence": Sequence,
+                "TaskMemory": TaskMemory,
+                "State": BaseTask.State,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel

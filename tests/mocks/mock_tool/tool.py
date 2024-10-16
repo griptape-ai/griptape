@@ -12,6 +12,11 @@ class MockTool(BaseTool):
     test_int: int = field(default=5, kw_only=True)
     test_dict: dict = field(factory=dict, kw_only=True)
     custom_schema: dict = field(default=Factory(lambda: {"test": str}), kw_only=True)
+    module_name: str = field(
+        default=Factory(lambda self: self.__class__.__module__, takes_self=True),
+        kw_only=True,
+        metadata={"serializable": False},
+    )
 
     @activity(
         config={
