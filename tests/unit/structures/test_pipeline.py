@@ -423,7 +423,10 @@ class TestPipeline:
                 {
                     "type": pipeline.tasks[0].type,
                     "id": pipeline.tasks[0].id,
-                    "state": "State.PENDING",
+                    "state": str(pipeline.tasks[0].state),
+                    "parent_ids": pipeline.tasks[0].parent_ids,
+                    "child_ids": pipeline.tasks[0].child_ids,
+                    "max_meta_memory_entries": pipeline.tasks[0].max_meta_memory_entries,
                     "context": pipeline.tasks[0].context,
                 }
             ],

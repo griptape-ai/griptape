@@ -264,7 +264,10 @@ class TestAgent:
                 {
                     "type": agent.tasks[0].type,
                     "id": agent.tasks[0].id,
-                    "state": "State.PENDING",
+                    "state": str(agent.tasks[0].state),
+                    "parent_ids": agent.tasks[0].parent_ids,
+                    "child_ids": agent.tasks[0].child_ids,
+                    "max_meta_memory_entries": agent.tasks[0].max_meta_memory_entries,
                     "context": agent.tasks[0].context,
                 }
             ],

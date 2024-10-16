@@ -1,6 +1,8 @@
+import json
 from unittest.mock import Mock
 
 import pytest
+from rich import print_json
 
 from griptape.artifacts import TextArtifact
 from griptape.events import EventBus
@@ -161,5 +163,14 @@ class TestBaseTask:
         assert added_task == child
 
     def test_base_task_to_dict(self, task):
-        expected_task_dict = {"type": task.type, "id": task.id, "state": str(task.state), "context": task.context}
+        print_json(json.dumps(task.to_dict()))
+        expected_task_dict = {
+            "type": task.type,
+            "id": task.id,
+            "state": str(task.state),
+            "parent_ids": task.parent_ids,
+            "child_ids": task.child_ids,
+            "max_meta_memory_entries": task.max_meta_memory_entries,
+            "context": task.context,
+        }
         assert expected_task_dict == task.to_dict()

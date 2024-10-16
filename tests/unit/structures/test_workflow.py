@@ -991,7 +991,10 @@ class TestWorkflow:
                 {
                     "type": workflow.tasks[0].type,
                     "id": workflow.tasks[0].id,
-                    "state": "State.PENDING",
+                    "state": str(workflow.tasks[0].state),
+                    "parent_ids": workflow.tasks[0].parent_ids,
+                    "child_ids": workflow.tasks[0].child_ids,
+                    "max_meta_memory_entries": workflow.tasks[0].max_meta_memory_entries,
                     "context": workflow.tasks[0].context,
                 }
             ],
