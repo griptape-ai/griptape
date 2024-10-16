@@ -54,3 +54,27 @@ class TestBaseEventListenerDriver:
         driver.flush_events()
         executor.submit.assert_called_once_with(driver._safe_publish_event_payload_batch, mock_event_payloads)
         assert len(driver.batch) == 0
+
+    def test__safe_publish_event_payload(self):
+        mock_fn = MagicMock()
+        driver = MockEventListenerDriver(
+            batched=False,
+            try_publish_event_payload_fn=mock_fn,
+        )
+        mock_event_payload = MockEvent().to_dict()
+
+        driver._safe_publish_event_payload(mock_event_payload)
+
+        mock_fn.assert_called_once_with(mock_event_payload)
+
+    def test__safe_publish_event_payload_batch(self):
+        mock_fn = MagicMock()
+        driver = MockEventListenerDriver(
+            batched=True,
+            try_publish_event_payload_batch_fn=mock_fn,
+        )
+        mock_event_payloads = [MockEvent().to_dict() for _ in range(0, 3)]
+
+        driver._safe_publish_event_payload_batch(mock_event_payloads)
+
+        mock_fn.assert_called_once_with(mock_event_payloads)
