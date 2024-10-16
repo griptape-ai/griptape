@@ -84,7 +84,9 @@ class TestBaseEventListenerDriver:
         driver = MockEventListenerDriver(
             batched=False,
             try_publish_event_payload_fn=mock_fn,
-            max_attempts=1,
+            max_attempts=2,
+            max_retry_delay=0.1,
+            min_retry_delay=0.1,
         )
         mock_fn.side_effect = Exception("Test Exception")
         mock_event_payload = MockEvent().to_dict()
@@ -99,7 +101,9 @@ class TestBaseEventListenerDriver:
         driver = MockEventListenerDriver(
             batched=True,
             try_publish_event_payload_batch_fn=mock_fn,
-            max_attempts=1,
+            max_attempts=2,
+            max_retry_delay=0.1,
+            min_retry_delay=0.1,
         )
         mock_fn.side_effect = Exception("Test Exception")
         mock_event_payloads = [MockEvent().to_dict() for _ in range(0, 3)]
