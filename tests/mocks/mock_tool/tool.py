@@ -24,8 +24,8 @@ class MockTool(BaseTool):
             "schema": Schema({Literal("test"): str}, description="Test input"),
         }
     )
-    def test(self, value: dict) -> BaseArtifact:
-        return TextArtifact(f"ack {value['values']['test']}")
+    def test(self, **kwargs) -> BaseArtifact:
+        return TextArtifact(f"ack {kwargs['test']}")
 
     @activity(
         config={
@@ -33,8 +33,8 @@ class MockTool(BaseTool):
             "schema": Schema({Literal("test"): str}, description="Test input"),
         }
     )
-    def test_error(self, value: dict) -> BaseArtifact:
-        return ErrorArtifact(f"error {value['values']['test']}")
+    def test_error(self, params: dict) -> BaseArtifact:
+        return ErrorArtifact(f"error {params['values']['test']}")
 
     @activity(
         config={
@@ -42,8 +42,8 @@ class MockTool(BaseTool):
             "schema": Schema({Literal("test"): str}, description="Test input"),
         }
     )
-    def test_exception(self, value: dict) -> BaseArtifact:
-        raise Exception(f"error {value['values']['test']}")
+    def test_exception(self, params: dict) -> BaseArtifact:
+        raise Exception(f"error {params['values']['test']}")
 
     @activity(
         config={
@@ -51,11 +51,11 @@ class MockTool(BaseTool):
             "schema": Schema({Literal("test"): str}, description="Test input"),
         }
     )
-    def test_str_output(self, value: dict) -> str:
-        return f"ack {value['values']['test']}"
+    def test_str_output(self, params: dict) -> str:
+        return f"ack {params['values']['test']}"
 
     @activity(config={"description": "test description"})
-    def test_no_schema(self, value: dict) -> str:
+    def test_no_schema(self) -> str:
         return "no schema"
 
     @activity(
@@ -68,14 +68,14 @@ class MockTool(BaseTool):
         return TextArtifact("ack")
 
     @activity(config={"description": "test description"})
-    def test_list_output(self, value: dict) -> ListArtifact:
+    def test_list_output(self) -> ListArtifact:
         return ListArtifact([TextArtifact("foo"), TextArtifact("bar")])
 
     @activity(
         config={"description": "test description", "schema": Schema({Literal("test"): str}, description="Test input")}
     )
-    def test_without_default_memory(self, value: dict) -> str:
-        return f"ack {value['values']['test']}"
+    def test_without_default_memory(self, params: dict) -> str:
+        return f"ack {params['values']['test']}"
 
     def foo(self) -> str:
         return "foo"

@@ -9,7 +9,7 @@ from griptape.utils.decorators import activity
 
 class DateTimeTool(BaseTool):
     @activity(config={"description": "Can be used to return current date and time."})
-    def get_current_datetime(self, _: dict) -> BaseArtifact:
+    def get_current_datetime(self) -> BaseArtifact:
         try:
             current_datetime = datetime.now()
 

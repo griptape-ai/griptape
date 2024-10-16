@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import inspect
 from typing import Any, Callable, Optional
 
 import schema
@@ -14,7 +15,7 @@ CONFIG_SCHEMA = Schema(
 )
 
 
-def activity(config: dict) -> Any:
+def activity(config: dict) -> Any:  # noqa: C901
     validated_config = CONFIG_SCHEMA.validate(config)
 
     validated_config.update({k: v for k, v in config.items() if k not in validated_config})
@@ -24,8 +25,28 @@ def activity(config: dict) -> Any:
 
     def decorator(func: Callable) -> Any:
         @functools.wraps(func)
-        def wrapper(self: Any, *args, **kwargs) -> Any:
-            return func(self, *args, **kwargs)
+        def wrapper(self: Any, params: dict) -> Any:
+            func_params = inspect.signature(func).parameters.copy()
+            func_params.pop("self")
+
+            kwarg_var = None
+            for param in func_params.values():
+                if param.kind == inspect.Parameter.VAR_KEYWORD:
+                    kwarg_var = func_params.pop(param.name).name
+                    break
+
+            kwargs = {k: v for k, v in params.get("values", {}).items() if k in func_params or kwarg_var is not None}
+
+            if "params" in func_params or kwarg_var is not None:
+                kwargs["params"] = params
+            if "values" in func_params or kwarg_var is not None:
+                kwargs["values"] = params.get("values")
+
+            for param_name in func_params.keys():  # noqa: SIM118
+                if param_name not in kwargs:
+                    kwargs[param_name] = None
+
+            return func(self, **kwargs)
 
         setattr(wrapper, "name", func.__name__)
         setattr(wrapper, "config", validated_config)
