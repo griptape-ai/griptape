@@ -91,7 +91,8 @@ class TestBaseEventListenerDriver:
 
         driver._safe_publish_event_payload(mock_event_payload)
 
-        assert mock_fn.call_count == MockEventListenerDriver.max_attempts
+        assert mock_fn.call_count == driver.max_attempts
+        mock_fn.assert_called_with(mock_event_payload)
 
     def test__safe_publish_event_payload_batch_error(self):
         mock_fn = MagicMock()
@@ -105,5 +106,5 @@ class TestBaseEventListenerDriver:
 
         driver._safe_publish_event_payload_batch(mock_event_payloads)
 
-        assert mock_fn.call_count == MockEventListenerDriver.max_attempts
-        assert driver.batch == mock_event_payloads
+        assert mock_fn.call_count == driver.max_attempts
+        mock_fn.assert_called_with(mock_event_payloads)
