@@ -25,8 +25,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             retrieve the ID from the environment variable `GT_CLOUD_BUCKET_ID`. If that is not set, a new Bucket will be
             created.
         bucket_name: The name of the new Bucket to be created if `bucket_id` is not set.
-        workdir: The absolute working directory (must start and end with "/"). List, load, and save
-            operations will be performed relative to this directory.
+        workdir: The working directory. List, load, and save operations will be performed relative to this directory.
         base_url: The base URL of the Griptape Cloud API. Defaults to the value of the environment variable
             `GT_CLOUD_BASE_URL` or `https://cloud.griptape.ai`.
         api_key: The API key to use for authenticating with the Griptape Cloud API. If not provided, the driver will
@@ -50,8 +49,8 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
     @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_workdir(self, _: Attribute, workdir: str) -> None:
-        if not workdir.startswith("/"):
-            raise ValueError(f"{self.__class__.__name__} requires Workdir to be an absolute path")
+        if not workdir.endswith("/"):
+            raise ValueError(f"{self.__class__.__name__} requires 'workdir' to be an directory, ending with `/`")
 
     @api_key.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_api_key(self, _: Attribute, value: Optional[str]) -> str:
