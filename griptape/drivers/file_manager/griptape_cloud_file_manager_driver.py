@@ -30,7 +30,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             attempt to retrieve the API key from the environment variable `GT_CLOUD_API_KEY`.
 
     Raises:
-        ValueError: If `api_key` is not provided, if `workdir` does not start with "/"", or if neither or both of `bucket_id` and `bucket_name` are provided.
+        ValueError: If `api_key` is not provided, if `workdir` does not start with "/"", or invalid `bucket_id` and/or `bucket_name` value(s) are provided.
     """
 
     bucket_id: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_BUCKET_ID")), kw_only=True)
@@ -59,7 +59,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     def __attrs_post_init__(self) -> None:
         if self.bucket_id and self.bucket_name:
             raise ValueError("Only one of 'bucket_id' or 'bucket_name' may be provided, not both.")
-        if self.bucket_id:
+        elif self.bucket_id:
             try:
                 self._call_api("get", f"/buckets/{self.bucket_id}").json()
             except requests.exceptions.HTTPError as e:
@@ -68,7 +68,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
                 raise ValueError(f"Unexpected error when retrieving Bucket with ID: {self.bucket_id}") from e
         elif self.bucket_name:
             data = {"name": uuid.uuid4().hex} if self.bucket_name is None else {"name": self.bucket_name}
-            post_bucket_response = self._call_api("post", f"/buckets{self.bucket_id}", data).json()
+            post_bucket_response = self._call_api("post", f"/buckets", data).json()
             self.bucket_id = post_bucket_response["bucket_id"]
         else:
             raise ValueError("Either 'bucket_id' or 'bucket_name' must be provided.")
