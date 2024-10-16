@@ -157,5 +157,5 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
     def _to_full_key(self, path: str) -> str:
         path = path.lstrip("/")
-        full_key = f"{self.workdir}{path}"
+        full_key = f"{self.workdir}/{path}"
         return full_key.lstrip("/")
