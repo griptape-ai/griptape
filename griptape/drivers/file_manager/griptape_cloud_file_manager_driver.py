@@ -49,8 +49,8 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
     @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_workdir(self, _: Attribute, workdir: str) -> None:
-        if not workdir.endswith("/"):
-            raise ValueError(f"{self.__class__.__name__} requires 'workdir' to be an directory, ending with `/`")
+        if not workdir.startswith("/"):
+            raise ValueError(f"{self.__class__.__name__} requires 'workdir' to be an absolute path, starting with `/`")
 
     @api_key.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_api_key(self, _: Attribute, value: Optional[str]) -> str:
@@ -157,5 +157,5 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
     def _to_full_key(self, path: str) -> str:
         path = path.lstrip("/")
-        full_key = f"{self.workdir}/{path}"
+        full_key = f"{self.workdir}{path}"
         return full_key.lstrip("/")
