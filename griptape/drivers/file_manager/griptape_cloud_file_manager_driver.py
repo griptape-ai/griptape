@@ -85,7 +85,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         data = {"filter": full_key}
         # TODO: GTC SDK: Pagination
         list_assets_response = self._call_api(
-            method="list", path=f"/buckets/{self.bucket_id}/assets/", json=data, raise_for_status=False
+            method="list", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=False
         ).json()
 
         return [asset["name"] for asset in list_assets_response.get("assets", [])]
@@ -123,7 +123,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
                 logger.info(f"Asset '{full_key}' not found, attempting to create")
                 data = {"name": full_key}
                 self._call_api(
-                    method="put", path=f"/buckets/{self.bucket_id}/assets/", json=data, raise_for_status=True
+                    method="put", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=True
                 )
             else:
                 raise e
@@ -132,6 +132,13 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
         blob_client.upload_blob(data=value, overwrite=True)
         return f"buckets/{self.bucket_id}/assets/{full_key}"
+
+    def _get_blob_client(self, full_key: str) -> BlobClient:
+        url_response = self._call_api(
+            method="post", path=f"/buckets/{self.bucket_id}/asset-urls/{full_key}", raise_for_status=True
+        ).json()
+        sas_url = url_response["url"]
+        return BlobClient.from_blob_url(blob_url=sas_url)
 
     def _get_url(self, path: str) -> str:
         path = path.lstrip("/")
@@ -144,13 +151,6 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         if raise_for_status:
             res.raise_for_status()
         return res
-
-    def _get_blob_client(self, full_key: str) -> BlobClient:
-        url_response = self._call_api(
-            method="post", path=f"/buckets/{self.bucket_id}/assets/{full_key}/url", raise_for_status=True
-        ).json()
-        sas_url = url_response["url"]
-        return BlobClient.from_blob_url(blob_url=sas_url)
 
     def _is_a_directory(self, path: str) -> bool:
         return path == "" or path.endswith("/")
