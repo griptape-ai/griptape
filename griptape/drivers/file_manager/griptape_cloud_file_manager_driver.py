@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import uuid
 from typing import Optional
@@ -11,6 +12,8 @@ from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob import BlobClient
 
 from .base_file_manager_driver import BaseFileManagerDriver
+
+logger = logging.getLogger(__name__)
 
 
 @define
@@ -70,6 +73,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             data = {"name": uuid.uuid4().hex} if self.bucket_name is None else {"name": self.bucket_name}
             post_bucket_response = self._call_api("post", f"/buckets", data).json()
             self.bucket_id = post_bucket_response["bucket_id"]
+            logger.info(f"Created new Bucket with ID: {self.bucket_id}")
         else:
             raise ValueError("Either 'bucket_id' or 'bucket_name' must be provided.")
 
