@@ -92,3 +92,27 @@ class TestTaskMemory:
         )
 
         assert len(memory.load_artifacts("test")) == 2
+
+    def test_task_memory_to_dict(self, memory):
+        expected_task_memory_dict = {
+            "type": memory.type,
+            "name": memory.name,
+            "namespace_storage": memory.namespace_storage,
+            "namespace_metadata": memory.namespace_metadata,
+        }
+        assert expected_task_memory_dict == memory.to_dict()
+
+    def test_task_memory_from_dict(self, memory):
+        serialized_memory = memory.to_dict()
+        assert isinstance(serialized_memory, dict)
+
+        deserialized_memory = memory.from_dict(serialized_memory)
+        assert isinstance(deserialized_memory, TaskMemory)
+
+        deserialized_memory.process_output(
+            MockTool().test,
+            ActionsSubtask(),
+            ListArtifact([BlobArtifact(b"foo", name="test1"), BlobArtifact(b"foo", name="test2")], name="test"),
+        )
+
+        assert len(deserialized_memory.load_artifacts("test")) == 2

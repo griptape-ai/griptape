@@ -1,8 +1,6 @@
-import json
 from unittest.mock import Mock
 
 import pytest
-from rich import print_json
 
 from griptape.artifacts import TextArtifact
 from griptape.events import EventBus
@@ -123,7 +121,6 @@ class TestBaseTask:
         parent = MockTask("parent foobar", id="parent_foobar", structure=agent)
 
         result = task.add_parent(parent)
-        result = task.add_parent(parent)
 
         assert parent.id in task.parent_ids
         assert task.id in parent.child_ids
@@ -163,7 +160,6 @@ class TestBaseTask:
         assert added_task == child
 
     def test_base_task_to_dict(self, task):
-        print_json(json.dumps(task.to_dict()))
         expected_task_dict = {
             "type": task.type,
             "id": task.id,
@@ -174,3 +170,23 @@ class TestBaseTask:
             "context": task.context,
         }
         assert expected_task_dict == task.to_dict()
+
+    def test_base_task_from_dict(self):
+        task = MockTask("Foobar2", id="Foobar2")
+
+        serialized_task = task.to_dict()
+        assert isinstance(serialized_task, dict)
+
+        deserialized_task = MockTask.from_dict(serialized_task)
+        assert isinstance(deserialized_task, MockTask)
+
+        workflow = Workflow()
+        workflow.add_task(deserialized_task)
+
+        assert workflow.tasks == [deserialized_task]
+
+        workflow.run()
+
+        assert str(workflow.tasks[0].state) == "State.FINISHED"
+        assert workflow.tasks[0].id == deserialized_task.id
+        assert workflow.tasks[0].output.value == "foobar"

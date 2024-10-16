@@ -6,6 +6,7 @@ from schema import Or, Schema, SchemaMissingKeyError
 
 from griptape.common import ToolAction
 from griptape.tasks import ActionsSubtask, ToolkitTask
+from griptape.tools import BaseTool
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -279,3 +280,31 @@ class TestBaseTool:
         tool.name = "MockTool"
         with pytest.raises(ValueError, match="Activity name"):
             tool.to_native_tool_name(tool.test)
+
+    def test_base_tool_to_dict(self, tool):
+        tool = MockTool()
+
+        expected_tool_dict = {
+            "type": tool.type,
+            "name": tool.name,
+            "input_memory": tool.input_memory,
+            "output_memory": tool.output_memory,
+            "install_dependencies_on_init": tool.install_dependencies_on_init,
+            "dependencies_install_directory": tool.dependencies_install_directory,
+            "verbose": tool.verbose,
+            "off_prompt": tool.off_prompt,
+        }
+
+        assert expected_tool_dict == tool.to_dict()
+
+    def test_base_tool_from_dict(self, tool):
+        tool = MockTool()
+        action = ToolAction(input={}, name="", tag="")
+
+        serialized_tool = tool.to_dict()
+        assert isinstance(serialized_tool, dict)
+
+        deserialized_tool = MockTool.from_dict(serialized_tool)
+        assert isinstance(deserialized_tool, BaseTool)
+
+        assert deserialized_tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
