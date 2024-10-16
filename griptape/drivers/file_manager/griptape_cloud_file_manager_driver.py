@@ -133,7 +133,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
     def _get_blob_client(self, full_key: str) -> BlobClient:
         url_response = self._call_api(
-            method="post", path=f"/buckets/{self.bucket_id}/assets/{full_key}/url", raise_for_status=True
+            method="put", path=f"/buckets/{self.bucket_id}/assets/{full_key}/url", raise_for_status=True
         ).json()
         sas_url = url_response["url"]
         return BlobClient.from_blob_url(blob_url=sas_url)
