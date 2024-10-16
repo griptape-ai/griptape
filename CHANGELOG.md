@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Structures not flushing events when not listening for `FinishStructureRunEvent`.
 - `EventListener.event_types` and the argument to `BaseEventListenerDriver.handler` being out of sync.
+- Methods `_safe_publish_event_payload` and `_safe_publish_event_payload_batch` on `BaseEventListenerDriver` not catching exceptions after failed retries.
 
 ## \[0.33.1\] - 2024-10-11
 
