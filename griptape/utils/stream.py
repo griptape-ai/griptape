@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.events import CompletionChunkEvent, EventBus, EventListener, FinishPromptEvent, FinishStructureRunEvent
+from griptape.events import BaseChunkEvent, EventBus, EventListener, FinishPromptEvent, FinishStructureRunEvent
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -54,8 +54,8 @@ class Stream:
                 break
             elif isinstance(event, FinishPromptEvent):
                 yield TextArtifact(value="\n")
-            elif isinstance(event, CompletionChunkEvent):
-                yield TextArtifact(value=event.token)
+            elif isinstance(event, BaseChunkEvent):
+                yield TextArtifact(value=str(event))
         t.join()
 
     def _run_structure(self, *args) -> None:
@@ -64,7 +64,7 @@ class Stream:
 
         stream_event_listener = EventListener(
             handler=event_handler,
-            event_types=[CompletionChunkEvent, FinishPromptEvent, FinishStructureRunEvent],
+            event_types=[BaseChunkEvent, FinishPromptEvent, FinishStructureRunEvent],
         )
         EventBus.add_event_listener(stream_event_listener)
 
