@@ -16,8 +16,6 @@ If an action's output contains an error, you MUST ALWAYS try to fix the error by
 
 Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. Keep using actions until you have your final answer.
 NEVER make up actions, action names, or action paths. NEVER make up facts. NEVER reference tags in other action input values.
-
-Actions might store their output in memory as artifacts (with `memory_name` and `artifact_namespace`). If action output is stored in memory, ALWAYS try to pass it to another action. NEVER make up memory names or artifact namespaces.
 {% if meta_memory %}
 
 {{ meta_memory }}
