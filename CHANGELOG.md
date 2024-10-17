@@ -16,7 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
 - `BaseTask.task_outputs` to get a dictionary of all task outputs. This has been added to `Workflow.context` and `Pipeline.context`.
 - `Chat.input_fn` for customizing the input to the Chat utility.
-- `GriptapeCloudFileManager` for managing files on Griptape Cloud.
+- `GriptapeCloudFileManagerDriver` for managing files on Griptape Cloud.
 - `BaseFileManagerDriver.load_artifact()` & `BaseFileManagerDriver.save_artifact()` for loading & saving artifacts as files.
 
 ### Changed

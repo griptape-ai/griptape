@@ -3,17 +3,20 @@ from __future__ import annotations
 import logging
 import os
 import uuid
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 from urllib.parse import urljoin
 
 import requests
 from attrs import Attribute, Factory, define, field
-from azure.core.exceptions import ResourceNotFoundError
-from azure.storage.blob import BlobClient
 
-from .base_file_manager_driver import BaseFileManagerDriver
+from griptape.drivers import BaseFileManagerDriver
+from griptape.utils import import_optional_dependency
 
 logger = logging.getLogger(__name__)
+
+if TYPE_CHECKING:
+    from azure.core.exceptions import ResourceNotFoundError
+    from azure.storage.blob import BlobClient
 
 
 @define
@@ -108,7 +111,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
         try:
             return blob_client.download_blob().readall()
-        except ResourceNotFoundError as e:
+        except import_optional_dependency("azure.core.exceptions").ResourceNotFoundError as e:
             raise FileNotFoundError from e
 
     def try_save_file(self, path: str, value: bytes) -> str:
@@ -137,7 +140,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             method="post", path=f"/buckets/{self.bucket_id}/asset-urls/{full_key}", raise_for_status=True
         ).json()
         sas_url = url_response["url"]
-        return BlobClient.from_blob_url(blob_url=sas_url)
+        return import_optional_dependency("azure.storage.blob").BlobClient.from_blob_url(blob_url=sas_url)
 
     def _get_url(self, path: str) -> str:
         path = path.lstrip("/")
