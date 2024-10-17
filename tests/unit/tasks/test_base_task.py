@@ -159,7 +159,7 @@ class TestBaseTask:
         assert task.id in child.parent_ids
         assert added_task == child
 
-    def test_base_task_to_dict(self, task):
+    def test_to_dict(self, task):
         expected_task_dict = {
             "type": task.type,
             "id": task.id,
@@ -171,7 +171,7 @@ class TestBaseTask:
         }
         assert expected_task_dict == task.to_dict()
 
-    def test_base_task_from_dict(self):
+    def test_from_dict(self):
         task = MockTask("Foobar2", id="Foobar2")
 
         serialized_task = task.to_dict()

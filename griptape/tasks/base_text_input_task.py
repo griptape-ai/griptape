@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import Callable
+from typing import Callable, Union
 
 from attrs import define, field
 
@@ -19,7 +19,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 class BaseTextInputTask(RuleMixin, BaseTask, ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
-    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(
+    _input: Union[str, TextArtifact, Callable[[BaseTask], TextArtifact]] = field(
         default=DEFAULT_INPUT_TEMPLATE,
         alias="input",
     )

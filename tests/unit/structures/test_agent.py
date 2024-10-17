@@ -253,7 +253,7 @@ class TestAgent:
         assert len(agent.task_outputs) == 1
         assert agent.task_outputs[task.id] == task.output
 
-    def test_agent_to_dict(self):
+    def test_to_dict(self):
         task = PromptTask("test prompt")
         agent = Agent(prompt_driver=MockPromptDriver())
         agent.add_task(task)
@@ -280,7 +280,7 @@ class TestAgent:
         }
         assert agent.to_dict() == expected_agent_dict
 
-    def test_agent_from_dict(self):
+    def test_from_dict(self):
         task = PromptTask("test prompt")
         agent = Agent(prompt_driver=MockPromptDriver())
         agent.add_task(task)

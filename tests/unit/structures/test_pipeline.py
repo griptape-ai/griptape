@@ -412,7 +412,7 @@ class TestPipeline:
         assert len(pipeline.task_outputs) == 1
         assert pipeline.task_outputs[task.id] == task.output
 
-    def test_pipeline_to_dict(self):
+    def test_to_dict(self):
         task = PromptTask("test")
         pipeline = Pipeline()
         pipeline + [task]
@@ -440,7 +440,7 @@ class TestPipeline:
         }
         assert pipeline.to_dict() == expected_pipeline_dict
 
-    def test_pipeline_from_dict(self):
+    def test_from_dict(self):
         task = PromptTask("test")
         pipeline = Pipeline(tasks=[task])
 

@@ -281,7 +281,7 @@ class TestBaseTool:
         with pytest.raises(ValueError, match="Activity name"):
             tool.to_native_tool_name(tool.test)
 
-    def test_base_tool_to_dict(self, tool):
+    def test_to_dict(self, tool):
         tool = MockTool()
 
         expected_tool_dict = {
@@ -297,7 +297,7 @@ class TestBaseTool:
 
         assert expected_tool_dict == tool.to_dict()
 
-    def test_base_tool_from_dict(self, tool):
+    def test_from_dict(self, tool):
         tool = MockTool()
         action = ToolAction(input={}, name="", tag="")
 

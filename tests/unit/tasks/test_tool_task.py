@@ -238,7 +238,7 @@ class TestToolTask:
 
         assert task.actions_schema().json_schema("Actions Schema") == self.TARGET_TOOLS_SCHEMA
 
-    def test_tool_task_to_dict(self):
+    def test_to_dict(self):
         tool = MockTool()
         task = ToolTask("test", tool=tool)
 
@@ -263,7 +263,7 @@ class TestToolTask:
         }
         assert expected_tool_task_dict == task.to_dict()
 
-    def test_tool_task_from_dict(self):
+    def test_from_dict(self):
         tool = MockTool()
         task = ToolTask("test", tool=tool)
 

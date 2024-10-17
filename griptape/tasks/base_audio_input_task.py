@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import Callable
+from typing import Callable, Union
 
 from attrs import define, field
 
@@ -16,7 +16,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 @define
 class BaseAudioInputTask(RuleMixin, BaseTask, ABC):
-    _input: AudioArtifact | Callable[[BaseTask], AudioArtifact] = field(alias="input")
+    _input: Union[AudioArtifact, Callable[[BaseTask], AudioArtifact]] = field(alias="input")
 
     @property
     def input(self) -> AudioArtifact:

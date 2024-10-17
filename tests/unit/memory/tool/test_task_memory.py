@@ -93,7 +93,7 @@ class TestTaskMemory:
 
         assert len(memory.load_artifacts("test")) == 2
 
-    def test_task_memory_to_dict(self, memory):
+    def test_to_dict(self, memory):
         expected_task_memory_dict = {
             "type": memory.type,
             "name": memory.name,
@@ -102,7 +102,7 @@ class TestTaskMemory:
         }
         assert expected_task_memory_dict == memory.to_dict()
 
-    def test_task_memory_from_dict(self, memory):
+    def test_from_dict(self, memory):
         serialized_memory = memory.to_dict()
         assert isinstance(serialized_memory, dict)
 

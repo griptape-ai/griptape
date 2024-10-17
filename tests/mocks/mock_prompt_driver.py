@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Union
 
 from attrs import define, field
 
@@ -29,8 +29,8 @@ if TYPE_CHECKING:
 class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
-    mock_input: str | Callable[[], str] = field(default="mock input", kw_only=True)
-    mock_output: str | Callable[[PromptStack], str] = field(default="mock output", kw_only=True)
+    mock_input: Union[str, Callable[[], str]] = field(default="mock input", kw_only=True)
+    mock_output: Union[str, Callable[[PromptStack], str]] = field(default="mock output", kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
