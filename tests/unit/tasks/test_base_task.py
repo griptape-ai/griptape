@@ -121,6 +121,7 @@ class TestBaseTask:
         parent = MockTask("parent foobar", id="parent_foobar", structure=agent)
 
         result = task.add_parent(parent)
+        result = task.add_parent(parent)
 
         assert parent.id in task.parent_ids
         assert task.id in parent.child_ids
