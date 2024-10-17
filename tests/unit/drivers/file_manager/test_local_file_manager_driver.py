@@ -176,7 +176,7 @@ class TestLocalFileManagerDriver:
         result = driver.save_file(path, content)
 
         assert isinstance(result, InfoArtifact)
-        assert result.value == "Successfully saved file"
+        assert result.value.startswith("Successfully saved file at:")
         content_bytes = content if isinstance(content, str) else content.decode()
         assert Path(driver.workdir, path).read_text() == content_bytes
 
@@ -210,14 +210,14 @@ class TestLocalFileManagerDriver:
         result = driver.save_file(os.path.join("test", "foobar.txt"), "foobar")
 
         assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
-        assert result.value == "Successfully saved file"
+        assert result.value.startswith("Successfully saved file at:")
 
     def test_save_and_load_file_with_encoding(self, temp_dir):
         driver = LocalFileManagerDriver(encoding="ascii", workdir=temp_dir)
         result = driver.save_file(os.path.join("test", "foobar.txt"), "foobar")
 
         assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
-        assert result.value == "Successfully saved file"
+        assert result.value.startswith("Successfully saved file at:")
 
         driver = LocalFileManagerDriver(encoding="ascii", workdir=temp_dir)
         result = driver.load_file(os.path.join("test", "foobar.txt"))
