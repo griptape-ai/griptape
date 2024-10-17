@@ -217,13 +217,12 @@ class ActionsSubtask(BaseTask):
         actions_matches = re.findall(self.ACTIONS_PATTERN, value, re.DOTALL)
         answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
-        if self.thought is None and thought_matches:
+        self.actions = self.__parse_actions(actions_matches)
+
+        if thought_matches:
             self.thought = thought_matches[-1]
 
-        self.__parse_actions(actions_matches)
-
-        # If there are no actions and no output, there may still be an output we can set.
-        if len(self.actions) == 0 and self.output is None:
+        if not self.actions and self.output is None:
             if answer_matches:
                 # A direct answer is provided, set it as the output.
                 self.output = TextArtifact(answer_matches[-1])
@@ -248,25 +247,29 @@ class ActionsSubtask(BaseTask):
             if isinstance(artifact, ActionArtifact)
         ]
 
+        # When parsing from Artifacts we can't determine the thought unless there are also Actions
         if self.actions:
             thoughts = [artifact.value for artifact in artifacts.value if isinstance(artifact, TextArtifact)]
             if thoughts:
                 self.thought = thoughts[0]
         else:
-            self.output = TextArtifact(artifacts.to_text())
+            if self.output is None:
+                self.output = TextArtifact(artifacts.to_text())
 
-    def __parse_actions(self, actions_matches: list[str]) -> None:
+    def __parse_actions(self, actions_matches: list[str]) -> list[ToolAction]:
         if len(actions_matches) == 0:
-            return
+            return []
         try:
             data = actions_matches[-1]
             actions_list: list[dict] = json.loads(data, strict=False)
 
-            self.actions = [self.__process_action_object(action_object) for action_object in actions_list]
+            return [self.__process_action_object(action_object) for action_object in actions_list]
         except json.JSONDecodeError as e:
             logger.exception("Subtask %s\nInvalid actions JSON: %s", self.origin_task.id, e)
 
             self.output = ErrorArtifact(f"Actions JSON decoding error: {e}", exception=e)
+
+            return []
 
     def __process_action_object(self, action_object: dict) -> ToolAction:
         # Load action tag; throw exception if the key is not present
