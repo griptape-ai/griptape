@@ -63,17 +63,24 @@ def _build_kwargs(func: Callable, params: dict) -> dict:
 
     kwarg_var = None
     for param in func_params.values():
+        # if there is a **kwargs parameter, we can safely
+        # pass all the params to the function
         if param.kind == inspect.Parameter.VAR_KEYWORD:
             kwarg_var = func_params.pop(param.name).name
             break
 
+    # only pass the values that are in the function signature
+    # or if there is a **kwargs parameter, pass all the values
     kwargs = {k: v for k, v in params.get("values", {}).items() if k in func_params or kwarg_var is not None}
 
+    # add 'params' and 'values' if they are in the signature
+    # or if there is a **kwargs parameter
     if "params" in func_params or kwarg_var is not None:
         kwargs["params"] = params
     if "values" in func_params or kwarg_var is not None:
         kwargs["values"] = params.get("values")
 
+    # set any missing parameters to None
     for param_name in func_params:
         if param_name not in kwargs:
             kwargs[param_name] = None

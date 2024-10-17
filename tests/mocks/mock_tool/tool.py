@@ -24,8 +24,8 @@ class MockTool(BaseTool):
             "schema": Schema({Literal("test"): str}, description="Test input"),
         }
     )
-    def test(self, **kwargs) -> BaseArtifact:
-        return TextArtifact(f"ack {kwargs['test']}")
+    def test(self, test: str) -> BaseArtifact:
+        return TextArtifact(f"ack {test}")
 
     @activity(
         config={
@@ -76,6 +76,21 @@ class MockTool(BaseTool):
     )
     def test_without_default_memory(self, params: dict) -> str:
         return f"ack {params['values']['test']}"
+
+    @activity(
+        config={"description": "test description", "schema": Schema({Literal("test"): str}, description="Test input")}
+    )
+    def test_with_none_kwarg(self, not_test: None) -> bool:
+        return not_test is None
+
+    @activity(
+        config={
+            "description": "test description",
+            "schema": Schema({Literal("test_kwarg"): str}, description="Test input"),
+        }
+    )
+    def test_with_kwargs_var(self, **kwargs) -> bool:
+        return "test_kwarg" in kwargs
 
     def foo(self) -> str:
         return "foo"

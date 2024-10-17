@@ -308,3 +308,14 @@ class TestBaseTool:
         assert isinstance(deserialized_tool, BaseTool)
 
         assert deserialized_tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
+
+    def test_method_kwarg_injection(self, tool):
+        tool = MockTool()
+
+        assert tool.test_with_none_kwarg() is True
+
+    def test_method_kwargs_var_injection(self, tool):
+        tool = MockTool()
+
+        assert tool.test_with_kwargs_var(test_kwarg="foo") is True
+        assert tool.test_with_kwargs_var() is False
