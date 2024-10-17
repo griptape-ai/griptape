@@ -73,7 +73,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             data = {"name": uuid.uuid4().hex} if self.bucket_name is None else {"name": self.bucket_name}
             post_bucket_response = self._call_api(method="post", path="/buckets", json=data).json()
             self.bucket_id = post_bucket_response["bucket_id"]
-            logger.info(f"Created new Bucket with ID: {self.bucket_id}")
+            logger.info("Created new Bucket with ID: %s", self.bucket_id)
         else:
             raise ValueError("Either 'bucket_id' or 'bucket_name' must be provided.")
 
@@ -119,7 +119,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             self._call_api(method="get", path=f"/buckets/{self.bucket_id}/assets/{full_key}", raise_for_status=True)
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
-                logger.info(f"Asset '{full_key}' not found, attempting to create")
+                logger.info("Asset '%s' not found, attempting to create", full_key)
                 data = {"name": full_key}
                 self._call_api(method="put", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=True)
             else:
