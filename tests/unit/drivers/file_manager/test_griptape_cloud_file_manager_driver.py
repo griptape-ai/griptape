@@ -64,7 +64,10 @@ class TestGriptapeCloudFileManagerDriver:
     def test_instantiate_invalid_work_dir(self):
         from griptape.drivers import GriptapeCloudFileManagerDriver
 
-        with pytest.raises(ValueError, match="GriptapeCloudFileManagerDriver requires Workdir to be an absolute path"):
+        with pytest.raises(
+            ValueError,
+            match="GriptapeCloudFileManagerDriver requires 'workdir' to be an absolute path, starting with `/`",
+        ):
             GriptapeCloudFileManagerDriver(
                 base_url="https://api.griptape.ai", api_key="foo bar", bucket_id="1", workdir="no_slash"
             )
