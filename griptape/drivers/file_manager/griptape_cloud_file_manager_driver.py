@@ -147,7 +147,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     def _call_api(
         self, method: str, path: str, json: Optional[dict] = None, *, raise_for_status: bool = True
     ) -> requests.Response:
-        logger.debug(f"Calling API: {method.upper()} {self._get_url(path)} {json}")
+        logger.info(f"Calling API: {method.upper()} {self._get_url(path)} {json}")
         res = requests.request(method, self._get_url(path), json=json, headers=self.headers)
         if raise_for_status:
             res.raise_for_status()
