@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Union
 
 from attrs import Factory, define, field
 
@@ -29,7 +29,7 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
 
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
-    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(
+    _input: Union[str, TextArtifact, Callable[[BaseTask], TextArtifact]] = field(
         default=DEFAULT_INPUT_TEMPLATE, alias="input"
     )
     image_generation_engine: PromptImageGenerationEngine = field(

@@ -7,7 +7,11 @@ from griptape.drivers import OpenAiChatPromptDriver
 from griptape.memory import TaskMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.schemas import BaseSchema
+from griptape.tasks.base_task import BaseTask
+from griptape.tasks.tool_task import ToolTask
+from griptape.tools.base_tool import BaseTool
 from tests.mocks.mock_serializable import MockSerializable
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestSerializableMixin:
@@ -15,9 +19,18 @@ class TestSerializableMixin:
         assert isinstance(BaseArtifact.get_schema("TextArtifact"), BaseSchema)
         assert isinstance(TextArtifact.get_schema(), BaseSchema)
 
+        assert isinstance(BaseTool.get_schema("MockTool", module_name="tests.mocks.mock_tool.tool"), BaseSchema)
+
     def test_from_dict(self):
         assert isinstance(BaseArtifact.from_dict({"type": "TextArtifact", "value": "foobar"}), TextArtifact)
         assert isinstance(TextArtifact.from_dict({"value": "foobar"}), TextArtifact)
+
+        assert isinstance(
+            BaseTask.from_dict(
+                {"type": "ToolTask", "tool": {"type": "MockTool", "module_name": "tests.mocks.mock_tool.tool"}},
+            ),
+            ToolTask,
+        )
 
     def test_from_json(self):
         assert isinstance(BaseArtifact.from_json('{"type": "TextArtifact", "value": "foobar"}'), TextArtifact)
@@ -55,6 +68,8 @@ class TestSerializableMixin:
 
         with pytest.raises(ValueError):
             MockSerializable._import_cls_rec("griptape.memory.task", "ConversationMemory")
+
+        assert MockSerializable._import_cls_rec("tests.mocks.mock_tool.tool", "MockTool") == MockTool
 
     def test_nested_optional_serializable(self):
         assert MockSerializable(nested=None).to_dict().get("nested") is None

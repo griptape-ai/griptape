@@ -159,3 +159,35 @@ class TestBaseTask:
         assert child.id in task.child_ids
         assert task.id in child.parent_ids
         assert added_task == child
+
+    def test_to_dict(self, task):
+        expected_task_dict = {
+            "type": task.type,
+            "id": task.id,
+            "state": str(task.state),
+            "parent_ids": task.parent_ids,
+            "child_ids": task.child_ids,
+            "max_meta_memory_entries": task.max_meta_memory_entries,
+            "context": task.context,
+        }
+        assert expected_task_dict == task.to_dict()
+
+    def test_from_dict(self):
+        task = MockTask("Foobar2", id="Foobar2")
+
+        serialized_task = task.to_dict()
+        assert isinstance(serialized_task, dict)
+
+        deserialized_task = MockTask.from_dict(serialized_task)
+        assert isinstance(deserialized_task, MockTask)
+
+        workflow = Workflow()
+        workflow.add_task(deserialized_task)
+
+        assert workflow.tasks == [deserialized_task]
+
+        workflow.run()
+
+        assert str(workflow.tasks[0].state) == "State.FINISHED"
+        assert workflow.tasks[0].id == deserialized_task.id
+        assert workflow.tasks[0].output.value == "foobar"

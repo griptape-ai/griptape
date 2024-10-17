@@ -49,15 +49,17 @@ class BaseEventListenerDriver(FuturesExecutorMixin, ExponentialBackoffMixin, ABC
     def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None: ...
 
     def _safe_publish_event_payload(self, event_payload: dict) -> None:
-        for attempt in self.retrying():
-            with attempt:
-                self.try_publish_event_payload(event_payload)
-        else:
-            logger.error("event listener driver failed after all retry attempts")
+        try:
+            for attempt in self.retrying():
+                with attempt:
+                    self.try_publish_event_payload(event_payload)
+        except Exception:
+            logger.warning("Failed to publish event after %s attempts", self.max_attempts, exc_info=True)
 
     def _safe_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None:
-        for attempt in self.retrying():
-            with attempt:
-                self.try_publish_event_payload_batch(event_payload_batch)
-        else:
-            logger.error("event listener driver failed after all retry attempts")
+        try:
+            for attempt in self.retrying():
+                with attempt:
+                    self.try_publish_event_payload_batch(event_payload_batch)
+        except Exception:
+            logger.warning("Failed to publish event batch after %s attempts", self.max_attempts, exc_info=True)

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Union
 
 from attrs import Factory, define, field
 
@@ -32,9 +32,9 @@ class InpaintingImageGenerationTask(BaseImageGenerationTask):
         default=Factory(lambda: InpaintingImageGenerationEngine()),
         kw_only=True,
     )
-    _input: (
-        tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact
-    ) = field(default=None, alias="input")
+    _input: Union[
+        tuple[Union[str, TextArtifact], ImageArtifact, ImageArtifact], Callable[[BaseTask], ListArtifact], ListArtifact
+    ] = field(default=None, alias="input")
 
     @property
     def input(self) -> ListArtifact:

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import Factory, define, field
 
@@ -28,7 +28,7 @@ class PromptTask(RuleMixin, BaseTask):
         default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
         kw_only=True,
     )
-    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
+    _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )

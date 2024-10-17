@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING, Callable, Union
 
 from attrs import Factory, define, field
 
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class TextToSpeechTask(BaseAudioGenerationTask):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
-    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
+    _input: Union[str, TextArtifact, Callable[[BaseTask], TextArtifact]] = field(default=DEFAULT_INPUT_TEMPLATE)
     text_to_speech_engine: TextToSpeechEngine = field(default=Factory(lambda: TextToSpeechEngine()), kw_only=True)
 
     @property

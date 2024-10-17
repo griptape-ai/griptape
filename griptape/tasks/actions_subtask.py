@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import re
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Callable, Optional, Union
 
 import schema
 from attrs import define, field
@@ -33,7 +33,7 @@ class ActionsSubtask(BaseTask):
     thought: Optional[str] = field(default=None, kw_only=True)
     actions: list[ToolAction] = field(factory=list, kw_only=True)
     output: Optional[BaseArtifact] = field(default=None, init=False)
-    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
+    _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )
@@ -197,8 +197,8 @@ class ActionsSubtask(BaseTask):
 
     def _process_task_input(
         self,
-        task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact],
-    ) -> TextArtifact | ListArtifact:
+        task_input: Union[str, tuple, list, BaseArtifact, Callable[[BaseTask], BaseArtifact]],
+    ) -> Union[TextArtifact, ListArtifact]:
         if isinstance(task_input, (TextArtifact, ListArtifact)):
             return task_input
         elif isinstance(task_input, ActionArtifact):

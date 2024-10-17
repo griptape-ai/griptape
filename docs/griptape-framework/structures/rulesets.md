@@ -30,7 +30,7 @@ A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define [Ru
 This is particularly useful when you need the LLM to return well-formed data, such as JSON objects, with specific fields and data types.
 
 !!! warning
-    `JsonSchemaRule` may break [ToolkitTask](../structures/tasks.md#toolkit) which relies on a specific [output token](https://github.com/griptape-ai/griptape/blob/e6a04c7b88cf9fa5d6bcf4c833ffebfab89a3258/griptape/tasks/toolkit_task.py#L28).
+    `JsonSchemaRule` may break [ToolkitTask](../structures/tasks.md#toolkit-task) which relies on a specific [output token](https://github.com/griptape-ai/griptape/blob/e6a04c7b88cf9fa5d6bcf4c833ffebfab89a3258/griptape/tasks/toolkit_task.py#L28).
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/json_schema_rule.py"
@@ -96,7 +96,7 @@ You can define a Ruleset at the Structure level if you need to have certain beha
 
 ### Rules
 
-You can pass [rules](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.rules) directly to the Structure to have a Ruleset created for you.
+You can pass [rules](../../reference/griptape/mixins/rule_mixin/#griptape.mixins.rule_mixin.RuleMixin.rules) directly to the Structure to have a Ruleset created for you.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/rulesets_2.py"

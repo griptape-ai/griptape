@@ -8,7 +8,7 @@ from griptape.structures import Agent
 EventBus.add_event_listeners(
     [
         EventListener(
-            driver=AmazonSqsEventListenerDriver(
+            event_listener_driver=AmazonSqsEventListenerDriver(
                 queue_url=os.environ["AMAZON_SQS_QUEUE_URL"],
             ),
         ),

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import Attribute, Factory, define, field
 
@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 
 @define
 class Agent(Structure):
-    input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
+    input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
     stream: bool = field(default=Factory(lambda: Defaults.drivers_config.prompt_driver.stream), kw_only=True)
