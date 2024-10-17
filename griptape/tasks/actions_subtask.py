@@ -222,9 +222,14 @@ class ActionsSubtask(BaseTask):
 
         self.__parse_actions(actions_matches)
 
-        # If there are no actions to take but an answer is provided, set the answer as the output.
-        if len(self.actions) == 0 and self.output is None and answer_matches:
-            self.output = TextArtifact(answer_matches[-1])
+        # If there are no actions and no output, there may still be an output we can set.
+        if len(self.actions) == 0 and self.output is None:
+            if answer_matches:
+                # A direct answer is provided, set it as the output.
+                self.output = TextArtifact(answer_matches[-1])
+            else:
+                # The LLM failed to follow the ReAct prompt, set the LLM's raw response as the output.
+                self.output = TextArtifact(value)
 
     def __init_from_artifacts(self, artifacts: ListArtifact) -> None:
         """Parses the input Artifacts to extract the thought and actions.
@@ -243,9 +248,12 @@ class ActionsSubtask(BaseTask):
             if isinstance(artifact, ActionArtifact)
         ]
 
-        thoughts = [artifact.value for artifact in artifacts.value if isinstance(artifact, TextArtifact)]
-        if thoughts:
-            self.thought = thoughts[0]
+        if self.actions:
+            thoughts = [artifact.value for artifact in artifacts.value if isinstance(artifact, TextArtifact)]
+            if thoughts:
+                self.thought = thoughts[0]
+        else:
+            self.output = TextArtifact(artifacts.to_text())
 
     def __parse_actions(self, actions_matches: list[str]) -> None:
         if len(actions_matches) == 0:
