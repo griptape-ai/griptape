@@ -79,7 +79,7 @@ class AwsS3Tool(BaseAwsTool):
             return ErrorArtifact(f"error getting object acl: {e}")
 
     @activity(config={"description": "Can be used to list all AWS S3 buckets."})
-    def list_s3_buckets(self, _: dict) -> ListArtifact | ErrorArtifact:
+    def list_s3_buckets(self) -> ListArtifact | ErrorArtifact:
         try:
             buckets = self.client.list_buckets()
 

@@ -46,7 +46,7 @@ class AwsIamTool(BaseAwsTool):
             return ErrorArtifact(f"error returning policy document: {e}")
 
     @activity(config={"description": "Can be used to list AWS MFA Devices"})
-    def list_mfa_devices(self, _: dict) -> ListArtifact | ErrorArtifact:
+    def list_mfa_devices(self) -> ListArtifact | ErrorArtifact:
         try:
             devices = self.client.list_mfa_devices()
             return ListArtifact([TextArtifact(str(d)) for d in devices["MFADevices"]])
@@ -76,7 +76,7 @@ class AwsIamTool(BaseAwsTool):
             return ErrorArtifact(f"error listing iam user policies: {e}")
 
     @activity(config={"description": "Can be used to list AWS IAM users."})
-    def list_users(self, _: dict) -> ListArtifact | ErrorArtifact:
+    def list_users(self) -> ListArtifact | ErrorArtifact:
         try:
             users = self.client.list_users()
             return ListArtifact([TextArtifact(str(u)) for u in users["Users"]])

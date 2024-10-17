@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import functools
+import inspect
 from typing import Any, Callable, Optional
 
 import schema
@@ -24,8 +25,8 @@ def activity(config: dict) -> Any:
 
     def decorator(func: Callable) -> Any:
         @functools.wraps(func)
-        def wrapper(self: Any, *args, **kwargs) -> Any:
-            return func(self, *args, **kwargs)
+        def wrapper(self: Any, params: dict) -> Any:
+            return func(self, **_build_kwargs(func, params))
 
         setattr(wrapper, "name", func.__name__)
         setattr(wrapper, "config", validated_config)
@@ -54,3 +55,34 @@ def lazy_property(attr_name: Optional[str] = None) -> Callable[[Callable[[Any], 
         return lazy_attr
 
     return decorator
+
+
+def _build_kwargs(func: Callable, params: dict) -> dict:
+    func_params = inspect.signature(func).parameters.copy()
+    func_params.pop("self")
+
+    kwarg_var = None
+    for param in func_params.values():
+        # if there is a **kwargs parameter, we can safely
+        # pass all the params to the function
+        if param.kind == inspect.Parameter.VAR_KEYWORD:
+            kwarg_var = func_params.pop(param.name).name
+            break
+
+    # only pass the values that are in the function signature
+    # or if there is a **kwargs parameter, pass all the values
+    kwargs = {k: v for k, v in params.get("values", {}).items() if k in func_params or kwarg_var is not None}
+
+    # add 'params' and 'values' if they are in the signature
+    # or if there is a **kwargs parameter
+    if "params" in func_params or kwarg_var is not None:
+        kwargs["params"] = params
+    if "values" in func_params or kwarg_var is not None:
+        kwargs["values"] = params.get("values")
+
+    # set any missing parameters to None
+    for param_name in func_params:
+        if param_name not in kwargs:
+            kwargs[param_name] = None
+
+    return kwargs
