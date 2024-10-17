@@ -8,6 +8,7 @@ from griptape.common import ToolAction
 from griptape.tasks import ActionsSubtask, ToolkitTask
 from griptape.tools import BaseTool
 from tests.mocks.mock_tool.tool import MockTool
+from tests.mocks.mock_tool_kwargs.tool import MockToolKwargs
 from tests.utils import defaults
 
 
@@ -309,13 +310,8 @@ class TestBaseTool:
 
         assert deserialized_tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
-    def test_method_kwarg_injection(self, tool):
-        tool = MockTool()
-
-        assert tool.test_with_none_kwarg() is True
-
     def test_method_kwargs_var_injection(self, tool):
-        tool = MockTool()
+        tool = MockToolKwargs()
 
-        assert tool.test_with_kwargs_var(test_kwarg="foo") is True
-        assert tool.test_with_kwargs_var() is False
+        params = {"values": {"test_kwarg": "foo", "test_kwarg_kwargs": "bar"}}
+        assert tool.test_with_kwargs(params) == "ack foo"
