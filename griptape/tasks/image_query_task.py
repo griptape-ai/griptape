@@ -64,7 +64,7 @@ class ImageQueryTask(BaseTask):
     ) -> None:
         self._input = value
 
-    def run(self) -> TextArtifact:
+    def try_run(self) -> TextArtifact:
         query = self.input.value[0]
 
         if all(isinstance(artifact, ImageArtifact) for artifact in self.input.value[1:]):

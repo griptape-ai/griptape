@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from functools import cached_property
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import Factory, define, field
@@ -49,13 +50,9 @@ class PromptTask(RuleMixin, BaseTask):
 
         return rulesets
 
-    @property
+    @cached_property
     def input(self) -> BaseArtifact:
         return self._process_task_input(self._input)
-
-    @input.setter
-    def input(self, value: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact]) -> None:
-        self._input = value
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
 
@@ -94,7 +91,7 @@ class PromptTask(RuleMixin, BaseTask):
 
         logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         message = self.prompt_driver.run(self.prompt_stack)
 
         return message.to_artifact()

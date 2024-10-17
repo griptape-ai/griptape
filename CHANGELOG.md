@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
 - `BaseTask.task_outputs` to get a dictionary of all task outputs. This has been added to `Workflow.context` and `Pipeline.context`.
 - `Chat.input_fn` for customizing the input to the Chat utility.
+- `RunnableMixin` which adds `on_before_run` and `on_after_run` hooks.
 
 ### Changed
 
@@ -25,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Updated `EventListener.handler` return value behavior.
   - If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
   - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
+- **BREAKING**: Renamed `BaseTask.run` to `BaseTask.try_run`.
+- **BREAKING**: Renamed `BaseTask.execute` to `BaseTask.run`.
+- **BREAKING**: Renamed `BaseTask.can_execute` to `BaseTool.can_run`.
+- **BREAKING**: Renamed `BaseTool.run` to `BaseTool.try_run`.
+- **BREAKING**: Renamed `BaseTool.execute` to `BaseTool.run`.
 - Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
 - `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
@@ -40,6 +46,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Chat.output_fn`'s now takes an optional kwarg parameter, `stream`.
 - Implemented `SerializableMixin` in `Structure`, `BaseTask`, `BaseTool`, and `TaskMemory`
 - `@activity` decorated functions can now accept kwargs that are defined in the activity schema.
+- `BaseTask.input` is now a `@cached_property` meaning that multiple calls to it will yield the same Artifact.
+- Implemented `RunnableMixin` in `Structure`, `BaseTask`, and `BaseTool`.
 
 ### Fixed
 

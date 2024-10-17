@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
+from functools import cached_property
 from typing import Callable, Union
 
 from attrs import define, field
@@ -18,7 +19,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 class BaseAudioInputTask(RuleMixin, BaseTask, ABC):
     _input: Union[AudioArtifact, Callable[[BaseTask], AudioArtifact]] = field(alias="input")
 
-    @property
+    @cached_property
     def input(self) -> AudioArtifact:
         if isinstance(self._input, AudioArtifact):
             return self._input
@@ -26,10 +27,6 @@ class BaseAudioInputTask(RuleMixin, BaseTask, ABC):
             return self._input(self)
         else:
             raise ValueError("Input must be an AudioArtifact.")
-
-    @input.setter
-    def input(self, value: AudioArtifact | Callable[[BaseTask], AudioArtifact]) -> None:
-        self._input = value
 
     def before_run(self) -> None:
         super().before_run()

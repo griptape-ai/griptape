@@ -1,5 +1,6 @@
 import inspect
 import os
+from unittest.mock import Mock
 
 import pytest
 from schema import Or, Schema, SchemaMissingKeyError
@@ -248,9 +249,9 @@ class TestBaseTool:
         assert MockTool().find_input_memory("foo") is None
         assert MockTool(input_memory=[defaults.text_task_memory("foo")]).find_input_memory("foo") is not None
 
-    def test_execute(self, tool):
+    def test_run(self, tool):
         action = ToolAction(input={}, name="", tag="")
-        assert tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
+        assert tool.run(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_schema(self, tool):
         tool = MockTool()
@@ -308,10 +309,20 @@ class TestBaseTool:
         deserialized_tool = MockTool.from_dict(serialized_tool)
         assert isinstance(deserialized_tool, BaseTool)
 
-        assert deserialized_tool.execute(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
+        assert deserialized_tool.run(tool.test_list_output, ActionsSubtask("foo"), action).to_text() == "foo\n\nbar"
 
     def test_method_kwargs_var_injection(self, tool):
         tool = MockToolKwargs()
 
         params = {"values": {"test_kwarg": "foo", "test_kwarg_kwargs": "bar"}}
         assert tool.test_with_kwargs(params) == "ack foo"
+
+    def test_runnable_mixin(self, tool):
+        mock_on_before_run = Mock()
+        mock_after_run = Mock()
+        tool = MockTool(on_before_run=mock_on_before_run, on_after_run=mock_after_run)
+
+        tool.run(tool.test_list_output, ActionsSubtask("foo"), ToolAction(input={}, name="", tag="")).to_text()
+
+        mock_on_before_run.assert_called_once_with(tool)
+        mock_after_run.assert_called_once_with(tool)

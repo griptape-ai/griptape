@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
+from functools import cached_property
 from typing import Callable, Union
 
 from attrs import define, field
@@ -24,7 +25,7 @@ class BaseTextInputTask(RuleMixin, BaseTask, ABC):
         alias="input",
     )
 
-    @property
+    @cached_property
     def input(self) -> TextArtifact:
         if isinstance(self._input, TextArtifact):
             return self._input
@@ -32,10 +33,6 @@ class BaseTextInputTask(RuleMixin, BaseTask, ABC):
             return self._input(self)
         else:
             return TextArtifact(J2().render_from_string(self._input, **self.full_context))
-
-    @input.setter
-    def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:
-        self._input = value
 
     def before_run(self) -> None:
         super().before_run()
