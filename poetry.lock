@@ -161,13 +161,13 @@ files = [
 
 [[package]]
 name = "anthropic"
-version = "0.35.0"
+version = "0.36.1"
 description = "The official Python library for the anthropic API"
 optional = true
 python-versions = ">=3.7"
 files = [
-    {file = "anthropic-0.35.0-py3-none-any.whl", hash = "sha256:777983989ed9e444eb4a6d92dad84027f14a6639cba6f48772c0078d51959828"},
-    {file = "anthropic-0.35.0.tar.gz", hash = "sha256:d2f998246413c309a7770d1faa617500f505377a04ab45a13a66f8559daf3742"},
+    {file = "anthropic-0.36.1-py3-none-any.whl", hash = "sha256:908968f89ecdf9747c34cf632e2099668ee515a38293d455ef7ad79a3d4f527c"},
+    {file = "anthropic-0.36.1.tar.gz", hash = "sha256:8a343caa335aefc3ce64e2e559c88ca01af409ace5d8c4f83bd0b586315a43a2"},
 ]
 
 [package.dependencies]
@@ -7415,4 +7415,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "a3d496dda28ff7dee5c794cce2c38d849e00487031f9cdfd1dea684ca2c2587f"
+content-hash = "c2fe403590ab36cde82e02b28beed0f35b5fff64e4b648955792739ba3166974"
