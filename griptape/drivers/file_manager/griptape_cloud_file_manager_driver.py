@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import uuid
-from typing import Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 from urllib.parse import urljoin
 
 import requests
@@ -15,7 +15,6 @@ from griptape.utils import import_optional_dependency
 logger = logging.getLogger(__name__)
 
 if TYPE_CHECKING:
-    from azure.core.exceptions import ResourceNotFoundError
     from azure.storage.blob import BlobClient
 
 
