@@ -39,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Chat` output now uses `Rich.print` by default.
 - `Chat.output_fn`'s now takes an optional kwarg parameter, `stream`.
 - Implemented `SerializableMixin` in `Structure`, `BaseTask`, `BaseTool`, and `TaskMemory`
+- `@activity` decorated functions can now accept kwargs that are defined in the activity schema.
 
 ### Fixed
 
