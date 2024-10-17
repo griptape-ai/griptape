@@ -2,7 +2,6 @@ from unittest import mock
 
 import pytest
 import requests
-
 from azure.core.exceptions import ResourceNotFoundError
 
 

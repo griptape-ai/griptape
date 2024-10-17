@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import pytest
 
-from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.drivers import BaseFileManagerDriver
 
 
