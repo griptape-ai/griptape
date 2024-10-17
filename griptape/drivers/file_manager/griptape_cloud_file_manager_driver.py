@@ -61,7 +61,8 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     def __attrs_post_init__(self) -> None:
         if self.bucket_id and self.bucket_name:
             raise ValueError("Only one of 'bucket_id' or 'bucket_name' may be provided, not both.")
-        elif self.bucket_id:
+
+        if self.bucket_id:
             try:
                 self._call_api(method="get", path=f"/buckets/{self.bucket_id}").json()
             except requests.exceptions.HTTPError as e:
@@ -70,7 +71,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
                 raise ValueError(f"Unexpected error when retrieving Bucket with ID: {self.bucket_id}") from e
         elif self.bucket_name:
             data = {"name": uuid.uuid4().hex} if self.bucket_name is None else {"name": self.bucket_name}
-            post_bucket_response = self._call_api(method="post", path=f"/buckets", json=data).json()
+            post_bucket_response = self._call_api(method="post", path="/buckets", json=data).json()
             self.bucket_id = post_bucket_response["bucket_id"]
             logger.info(f"Created new Bucket with ID: {self.bucket_id}")
         else:
@@ -113,18 +114,14 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
         if self._is_a_directory(full_key):
             raise IsADirectoryError
-        
+
         try:
-            self._call_api(
-                method="get", path=f"/buckets/{self.bucket_id}/assets/{full_key}", raise_for_status=True
-            )
+            self._call_api(method="get", path=f"/buckets/{self.bucket_id}/assets/{full_key}", raise_for_status=True)
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 logger.info(f"Asset '{full_key}' not found, attempting to create")
                 data = {"name": full_key}
-                self._call_api(
-                    method="put", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=True
-                )
+                self._call_api(method="put", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=True)
             else:
                 raise e
 
