@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Union
 
 from attrs import Factory, define, field
 
@@ -32,8 +32,8 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
         default=Factory(lambda: VariationImageGenerationEngine()),
         kw_only=True,
     )
-    _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact = field(
-        default=None, alias="input"
+    _input: Union[tuple[Union[str, TextArtifact], ImageArtifact], Callable[[BaseTask], ListArtifact], ListArtifact] = (
+        field(default=None, alias="input")
     )
 
     @property

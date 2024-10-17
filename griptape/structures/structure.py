@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from attrs import Factory, define, field
 
@@ -12,6 +12,7 @@ from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory, Run
 from griptape.mixins.rule_mixin import RuleMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -20,19 +21,22 @@ if TYPE_CHECKING:
 
 
 @define
-class Structure(ABC, RuleMixin):
-    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    _tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True, alias="tasks")
+class Structure(ABC, RuleMixin, SerializableMixin):
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
+    _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
+        factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
+    )
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
+        metadata={"serializable": True},
     )
     task_memory: TaskMemory = field(
         default=Factory(lambda self: TaskMemory(), takes_self=True),
         kw_only=True,
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
-    fail_fast: bool = field(default=True, kw_only=True)
+    fail_fast: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _execution_args: tuple = ()
 
     def __attrs_post_init__(self) -> None:

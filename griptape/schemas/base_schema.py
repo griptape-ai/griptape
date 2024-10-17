@@ -173,8 +173,11 @@ class BaseSchema(Schema):
             BaseVectorStoreDriver,
         )
         from griptape.events import EventListener
-        from griptape.memory.structure import Run
+        from griptape.memory import TaskMemory
+        from griptape.memory.structure import BaseConversationMemory, Run
+        from griptape.memory.task.storage import BaseArtifactStorage
         from griptape.structures import Structure
+        from griptape.tasks import BaseTask
         from griptape.tokenizers import BaseTokenizer
         from griptape.tools import BaseTool
         from griptape.utils import import_optional_dependency, is_dependency_installed
@@ -198,6 +201,7 @@ class BaseSchema(Schema):
                 "BaseMessageContent": BaseMessageContent,
                 "BaseDeltaMessageContent": BaseDeltaMessageContent,
                 "BaseTool": BaseTool,
+                "BaseTask": BaseTask,
                 "Usage": Message.Usage,
                 "Structure": Structure,
                 "BaseTokenizer": BaseTokenizer,
@@ -205,6 +209,10 @@ class BaseSchema(Schema):
                 "Reference": Reference,
                 "Run": Run,
                 "Sequence": Sequence,
+                "TaskMemory": TaskMemory,
+                "State": BaseTask.State,
+                "BaseConversationMemory": BaseConversationMemory,
+                "BaseArtifactStorage": BaseArtifactStorage,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel

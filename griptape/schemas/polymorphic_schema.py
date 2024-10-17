@@ -116,7 +116,7 @@ class PolymorphicSchema(BaseSchema):
         if data_type is None:
             raise ValidationError({self.type_field: ["Missing data for required field."]})
 
-        type_schema = self.inner_class.get_schema(data_type)
+        type_schema = self.inner_class.get_schema(data_type, module_name=data.get("module_name"))
         if not type_schema:
             raise ValidationError({self.type_field: [f"Unsupported value: {data_type}"]})
 
