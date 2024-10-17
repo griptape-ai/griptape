@@ -86,6 +86,18 @@ class TestGriptapeCloudFileManagerDriver:
         mock_response.json.return_value = {"assets": [{"name": "foo/bar.pdf"}, {"name": "foo/baz.pdf"}]}
         mocker.patch("requests.request", return_value=mock_response)
 
+        files = driver.try_list_files("foo/")
+
+        assert len(files) == 2
+        assert files[0] == "foo/bar.pdf"
+        assert files[1] == "foo/baz.pdf"
+
+    def test_try_list_files_postfix(self, mocker, driver):
+        mock_response = mocker.Mock()
+        mock_response.status_code = 200
+        mock_response.json.return_value = {"assets": [{"name": "foo/bar.pdf"}, {"name": "foo/baz.pdf"}]}
+        mocker.patch("requests.request", return_value=mock_response)
+
         files = driver.try_list_files("foo/", ".pdf")
 
         assert len(files) == 2
