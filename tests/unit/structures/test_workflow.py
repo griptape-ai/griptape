@@ -980,7 +980,7 @@ class TestWorkflow:
         assert len(workflow.task_outputs) == 1
         assert workflow.task_outputs[task.id].value == "mock output"
 
-    def test_workflow_to_dict(self):
+    def test_to_dict(self):
         task = PromptTask("test")
         workflow = Workflow(tasks=[task])
 
@@ -1008,7 +1008,7 @@ class TestWorkflow:
         }
         assert workflow.to_dict() == expected_workflow_dict
 
-    def test_workflow_from_dict(self):
+    def test_from_dict(self):
         task = PromptTask("test")
         workflow = Workflow(tasks=[task])
 
