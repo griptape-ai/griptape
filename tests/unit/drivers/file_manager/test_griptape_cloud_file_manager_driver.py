@@ -83,14 +83,14 @@ class TestGriptapeCloudFileManagerDriver:
     def test_try_list_files(self, mocker, driver):
         mock_response = mocker.Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"assets": [{"name": "foo/bar"}, {"name": "foo/baz"}]}
+        mock_response.json.return_value = {"assets": [{"name": "foo/bar.pdf"}, {"name": "foo/baz.pdf"}]}
         mocker.patch("requests.request", return_value=mock_response)
 
-        files = driver.try_list_files("foo/")
+        files = driver.try_list_files("foo/", ".pdf")
 
         assert len(files) == 2
-        assert files[0] == "foo/bar"
-        assert files[1] == "foo/baz"
+        assert files[0] == "foo/bar.pdf"
+        assert files[1] == "foo/baz.pdf"
 
     def test_try_list_files_not_directory(self, mocker, driver):
         mock_response = mocker.Mock()
@@ -129,6 +129,12 @@ class TestGriptapeCloudFileManagerDriver:
         mocker.patch("requests.request", side_effect=requests.exceptions.HTTPError(response=mock.Mock(status_code=404)))
 
         with pytest.raises(FileNotFoundError):
+            driver.try_load_file("foo")
+
+    def test_try_load_file_sas_500(self, mocker, driver):
+        mocker.patch("requests.request", side_effect=requests.exceptions.HTTPError(response=mock.Mock(status_code=500)))
+
+        with pytest.raises(requests.exceptions.HTTPError):
             driver.try_load_file("foo")
 
     def test_try_load_file_blob_404(self, mocker, driver):
