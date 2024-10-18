@@ -29,9 +29,6 @@ A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define [Ru
 [JsonSchemaRule](../../reference/griptape/rules/json_schema_rule.md)s defines a structured format for the LLM's output by providing a JSON schema.
 This is particularly useful when you need the LLM to return well-formed data, such as JSON objects, with specific fields and data types.
 
-!!! warning
-    `JsonSchemaRule` may break [ToolkitTask](../structures/tasks.md#toolkit-task) which relies on a specific [output token](https://github.com/griptape-ai/griptape/blob/e6a04c7b88cf9fa5d6bcf4c833ffebfab89a3258/griptape/tasks/toolkit_task.py#L28).
-
 ```python
 --8<-- "docs/griptape-framework/structures/src/json_schema_rule.py"
 ```
