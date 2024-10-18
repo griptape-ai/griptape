@@ -111,7 +111,7 @@ class TestFileManager:
         )
 
         assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
-        assert result.value == "Successfully saved file"
+        assert result.value.startswith("Successfully saved file at:")
 
     def test_save_content_to_file_with_encoding(self, temp_dir):
         file_manager = FileManagerTool(file_manager_driver=LocalFileManagerDriver(encoding="utf-8", workdir=temp_dir))
@@ -120,7 +120,7 @@ class TestFileManager:
         )
 
         assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
-        assert result.value == "Successfully saved file"
+        assert result.value.startswith("Successfully saved file at:")
 
     def test_save_and_load_content_to_file_with_encoding(self, temp_dir):
         file_manager = FileManagerTool(file_manager_driver=LocalFileManagerDriver(encoding="ascii", workdir=temp_dir))
@@ -129,7 +129,7 @@ class TestFileManager:
         )
 
         assert Path(os.path.join(temp_dir, "test", "foobar.txt")).read_text() == "foobar"
-        assert result.value == "Successfully saved file"
+        assert result.value.startswith("Successfully saved file at:")
 
         file_manager = FileManagerTool(file_manager_driver=LocalFileManagerDriver(encoding="ascii", workdir=temp_dir))
         result = file_manager.load_files_from_disk({"values": {"paths": [os.path.join("test", "foobar.txt")]}})

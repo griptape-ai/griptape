@@ -64,11 +64,12 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
                 raise FileNotFoundError from e
             raise e
 
-    def try_save_file(self, path: str, value: bytes) -> None:
+    def try_save_file(self, path: str, value: bytes) -> str:
         full_key = self._to_full_key(path)
         if self._is_a_directory(full_key):
             raise IsADirectoryError
         self.client.put_object(Bucket=self.bucket, Key=full_key, Body=value)
+        return f"s3://{self.bucket}/{full_key}"
 
     def _to_full_key(self, path: str) -> str:
         path = path.lstrip("/")
