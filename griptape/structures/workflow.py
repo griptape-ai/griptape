@@ -107,8 +107,8 @@ class Workflow(Structure, FuturesExecutorMixin):
             ordered_tasks = self.order_tasks()
 
             for task in ordered_tasks:
-                if task.can_execute():
-                    future = self.futures_executor.submit(task.execute)
+                if task.can_run():
+                    future = self.futures_executor.submit(task.run)
                     futures_list[future] = task
 
             # Wait for all tasks to complete

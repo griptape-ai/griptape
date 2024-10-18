@@ -94,7 +94,7 @@ class PromptTask(RuleMixin, BaseTask):
 
         logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         message = self.prompt_driver.run(self.prompt_stack)
 
         return message.to_artifact()

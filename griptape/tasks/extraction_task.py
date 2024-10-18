@@ -17,5 +17,5 @@ class ExtractionTask(BaseTextInputTask):
     extraction_engine: BaseExtractionEngine = field(kw_only=True)
     args: dict = field(kw_only=True, factory=dict)
 
-    def run(self) -> ListArtifact | ErrorArtifact:
+    def try_run(self) -> ListArtifact | ErrorArtifact:
         return self.extraction_engine.extract_artifacts(ListArtifact([self.input]), rulesets=self.rulesets, **self.args)

@@ -11,7 +11,7 @@ from griptape.tasks import BaseTextInputTask
 class RagTask(BaseTextInputTask):
     rag_engine: RagEngine = field(kw_only=True, default=Factory(lambda: RagEngine()))
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         outputs = self.rag_engine.process_query(self.input.to_text()).outputs
 
         if len(outputs) > 0:
