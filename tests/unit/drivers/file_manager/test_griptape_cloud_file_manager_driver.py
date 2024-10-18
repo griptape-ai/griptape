@@ -27,27 +27,11 @@ class TestGriptapeCloudFileManagerDriver:
 
         GriptapeCloudFileManagerDriver(base_url="https://api.griptape.ai", api_key="foo bar", bucket_id="1")
 
-    def test_instantiate_bucket_name(self, mocker):
+    def test_instantiate_no_bucket_id(self):
         from griptape.drivers import GriptapeCloudFileManagerDriver
 
-        mock_response = mocker.Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"bucket_id": "2"}
-        mocker.patch("requests.request", return_value=mock_response)
-
-        GriptapeCloudFileManagerDriver(api_key="foo bar", bucket_name="foo")
-
-    def test_instantiate_no_bucket_id_or_name(self):
-        from griptape.drivers import GriptapeCloudFileManagerDriver
-
-        with pytest.raises(ValueError, match="Either 'bucket_id' or 'bucket_name' must be provided."):
+        with pytest.raises(ValueError, match="GriptapeCloudFileManagerDriver requires an Bucket ID"):
             GriptapeCloudFileManagerDriver(api_key="foo bar")
-
-    def test_instantiate_both_bucket_id_or_name(self):
-        from griptape.drivers import GriptapeCloudFileManagerDriver
-
-        with pytest.raises(ValueError, match="Only one of 'bucket_id' or 'bucket_name' may be provided, not both."):
-            GriptapeCloudFileManagerDriver(api_key="foo bar", bucket_id="1", bucket_name="foo")
 
     def test_instantiate_bucket_not_found(self, mocker):
         from griptape.drivers import GriptapeCloudFileManagerDriver

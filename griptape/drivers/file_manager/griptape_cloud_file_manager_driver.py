@@ -24,9 +24,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
     Attributes:
         bucket_id: The ID of the Bucket to list, load, and save Assets in. If not provided, the driver will attempt to
-            retrieve the ID from the environment variable `GT_CLOUD_BUCKET_ID`. If that is not set, a new Bucket will be
-            created.
-        bucket_name: The name of the new Bucket to be created if `bucket_id` is not set.
+            retrieve the ID from the environment variable `GT_CLOUD_BUCKET_ID`.
         workdir: The working directory. List, load, and save operations will be performed relative to this directory.
         base_url: The base URL of the Griptape Cloud API. Defaults to the value of the environment variable
             `GT_CLOUD_BASE_URL` or `https://cloud.griptape.ai`.
@@ -38,7 +36,6 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     """
 
     bucket_id: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_BUCKET_ID")), kw_only=True)
-    bucket_name: Optional[str] = field(default=None, kw_only=True)
     workdir: str = field(default="/", kw_only=True)
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
@@ -60,24 +57,19 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             raise ValueError(f"{self.__class__.__name__} requires an API key")
         return value
 
-    def __attrs_post_init__(self) -> None:
-        if self.bucket_id and self.bucket_name:
-            raise ValueError("Only one of 'bucket_id' or 'bucket_name' may be provided, not both.")
+    @bucket_id.validator  # pyright: ignore[reportAttributeAccessIssue]
+    def validate_bucket_id(self, _: Attribute, value: Optional[str]) -> str:
+        if value is None:
+            raise ValueError(f"{self.__class__.__name__} requires an Bucket ID")
+        return value
 
-        if self.bucket_id:
-            try:
-                self._call_api(method="get", path=f"/buckets/{self.bucket_id}").json()
-            except requests.exceptions.HTTPError as e:
-                if e.response.status_code == 404:
-                    raise ValueError(f"No Bucket found with ID: {self.bucket_id}") from e
-                raise ValueError(f"Unexpected error when retrieving Bucket with ID: {self.bucket_id}") from e
-        elif self.bucket_name:
-            data = {"name": uuid.uuid4().hex} if self.bucket_name is None else {"name": self.bucket_name}
-            post_bucket_response = self._call_api(method="post", path="/buckets", json=data).json()
-            self.bucket_id = post_bucket_response["bucket_id"]
-            logger.info("Created new Bucket with ID: %s", self.bucket_id)
-        else:
-            raise ValueError("Either 'bucket_id' or 'bucket_name' must be provided.")
+    def __attrs_post_init__(self) -> None:
+        try:
+            self._call_api(method="get", path=f"/buckets/{self.bucket_id}").json()
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 404:
+                raise ValueError(f"No Bucket found with ID: {self.bucket_id}") from e
+            raise ValueError(f"Unexpected error when retrieving Bucket with ID: {self.bucket_id}") from e
 
     def try_list_files(self, path: str, postfix: str = "") -> list[str]:
         full_key = self._to_full_key(path)
