@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-import uuid
 from typing import TYPE_CHECKING, Optional
 from urllib.parse import urljoin
 
