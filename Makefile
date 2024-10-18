@@ -40,6 +40,10 @@ test: test/unit test/integration
 test/unit: ## Run unit tests.
 	@poetry run pytest -n auto tests/unit
 
+.PHONY: test/unit/%
+test/unit/%: ## Run specific unit tests.
+	@poetry run pytest -n auto tests/unit -k $*
+
 .PHONY: test/unit/coverage
 test/unit/coverage:
 	@poetry run pytest -n auto --cov=griptape tests/unit

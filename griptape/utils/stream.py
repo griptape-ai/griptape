@@ -53,11 +53,11 @@ class Stream:
 
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))
 
-    def run(self, *args) -> Iterator[TextArtifact]:
+    def run(self, *args) -> Iterator[TextArtifact]:  # noqa: C901
         t = Thread(target=self._run_structure, args=args)
         t.start()
 
-        action_str = ": "
+        action_str = ""
         while True:
             event = self._event_queue.get()
             if isinstance(event, FinishStructureRunEvent):
@@ -67,16 +67,21 @@ class Stream:
             elif isinstance(event, TextChunkEvent):
                 yield TextArtifact(value=event.token)
             elif isinstance(event, ActionChunkEvent):
+                header_str = ""
                 if event.tag is not None and event.name is not None and event.path is not None:
-                    yield TextArtifact(value=f"{event.name}.{event.tag}({event.path})")
+                    header_str = f"{event.name}.{event.tag}({event.path})"
                 if event.partial_input is not None:
                     action_str += event.partial_input
                     try:
-                        json.loads(action_str)
-                        yield TextArtifact(value=json.dumps(json.loads(action_str), indent=2))
-                        action_str = ": "
-                    except json.JSONDecodeError:
+                        if header_str:
+                            header_str += ":\n"
+                        yield TextArtifact(value=f"{header_str}{json.dumps(json.loads(action_str), indent=2)}")
+                        action_str = ""
+                    except Exception:
+                        header_str = header_str[:-2]
                         pass
+                if header_str:
+                    yield TextArtifact(value=header_str)
         t.join()
 
     def _run_structure(self, *args) -> None:
