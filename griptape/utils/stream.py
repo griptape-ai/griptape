@@ -53,7 +53,7 @@ class Stream:
 
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))
 
-    def run(self, *args) -> Iterator[TextArtifact]:  # noqa: C901
+    def run(self, *args) -> Iterator[TextArtifact]:
         t = Thread(target=self._run_structure, args=args)
         t.start()
 
@@ -67,21 +67,15 @@ class Stream:
             elif isinstance(event, TextChunkEvent):
                 yield TextArtifact(value=event.token)
             elif isinstance(event, ActionChunkEvent):
-                header_str = ""
                 if event.tag is not None and event.name is not None and event.path is not None:
-                    header_str = f"{event.name}.{event.tag}({event.path})"
+                    yield TextArtifact(f"{event.name}.{event.tag}({event.path})")
                 if event.partial_input is not None:
                     action_str += event.partial_input
                     try:
-                        if header_str:
-                            header_str += ":\n"
-                        yield TextArtifact(value=f"{header_str}{json.dumps(json.loads(action_str), indent=2)}")
+                        yield TextArtifact(json.dumps(json.loads(action_str), indent=2))
                         action_str = ""
                     except Exception:
-                        header_str = header_str[:-2]
                         pass
-                if header_str:
-                    yield TextArtifact(value=header_str)
         t.join()
 
     def _run_structure(self, *args) -> None:
