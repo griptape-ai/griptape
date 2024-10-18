@@ -24,7 +24,7 @@ class TestStream:
             assert chat_stream.structure == agent
             chat_stream_run = chat_stream.run()
             assert isinstance(chat_stream_run, Iterator)
-            assert next(chat_stream_run).value == "MockTool.mock-tag(test)"
+            assert next(chat_stream_run).value == "MockTool.mock-tag (test)"
             assert next(chat_stream_run).value == json.dumps({"values": {"test": "test-value"}}, indent=2)
             next(chat_stream_run)
             assert next(chat_stream_run).value == "Answer: mock output"
