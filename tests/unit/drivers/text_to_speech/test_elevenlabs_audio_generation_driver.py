@@ -16,7 +16,7 @@ class TestElevenLabsTextToSpeechDriver:
     def test_try_text_to_audio(self, driver):
         driver.client.generate.return_value = [b"audio data"]
 
-        audio_artifact = driver.try_text_to_audio(prompts=["test prompt"])
+        audio_artifact = driver.try_text_to_audio(prompt="test prompt")
 
         assert audio_artifact.value == b"audio data"
         assert audio_artifact.format == "mp3"
