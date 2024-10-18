@@ -19,7 +19,6 @@ class TestCompletionChunkEvent:
         assert action_chunk_event.tag == "foo"
         assert action_chunk_event.name == "bar"
         assert action_chunk_event.path == "baz"
-        assert str(action_chunk_event) == "bar.baz (foo) foo bar"
 
     def test_to_dict(self, action_chunk_event):
         assert action_chunk_event.to_dict()["partial_input"] == "foo bar"

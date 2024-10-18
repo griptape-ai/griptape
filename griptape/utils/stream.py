@@ -27,7 +27,7 @@ if TYPE_CHECKING:
 
 @define
 class Stream:
-    """A wrapper for Structures that converts `CompletionChunkEvent`s into an iterator of TextArtifacts.
+    """A wrapper for Structures that converts `BaseChunkEvent`s into an iterator of TextArtifacts.
 
     It achieves this by running the Structure in a separate thread, listening for events from the Structure,
     and yielding those events.
@@ -68,7 +68,7 @@ class Stream:
             elif isinstance(event, FinishPromptEvent):
                 yield TextArtifact(value="\n")
             elif isinstance(event, TextChunkEvent):
-                yield TextArtifact(value=str(event))
+                yield TextArtifact(value=event.token)
             elif isinstance(event, ActionChunkEvent):
                 action_str = action_gen.send(event)
                 if action_str is not None:
