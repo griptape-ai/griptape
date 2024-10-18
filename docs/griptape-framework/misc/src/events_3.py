@@ -9,7 +9,7 @@ def action_chunk_listener(event: ActionChunkEvent) -> None:
     if event.tag is not None and event.name is not None and event.path is not None:
         print(f"{event.name}.{event.tag} ({event.path}) ", end="", flush=True)
     if event.partial_input is not None:
-        print(event.partial_input)
+        print(event.partial_input, end="", flush=True)
 
 
 EventBus.add_event_listeners(

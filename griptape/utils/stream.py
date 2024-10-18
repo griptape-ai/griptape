@@ -68,7 +68,7 @@ class Stream:
                 yield TextArtifact(value=event.token)
             elif isinstance(event, ActionChunkEvent):
                 if event.tag is not None and event.name is not None and event.path is not None:
-                    yield TextArtifact(f"{event.name}.{event.tag}({event.path})")
+                    yield TextArtifact(f"{event.name}.{event.tag} ({event.path})")
                 if event.partial_input is not None:
                     action_str += event.partial_input
                     try:
