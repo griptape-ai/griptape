@@ -3,7 +3,8 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.events import (
-    CompletionChunkEvent,
+    ActionChunkEvent,
+    BaseChunkEvent,
     EventBus,
     EventListener,
     FinishActionsSubtaskEvent,
@@ -14,6 +15,7 @@ from griptape.events import (
     StartPromptEvent,
     StartStructureRunEvent,
     StartTaskEvent,
+    TextChunkEvent,
 )
 from griptape.events.base_event import BaseEvent
 from griptape.structures import Pipeline
@@ -27,7 +29,7 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestEventListener:
     @pytest.fixture()
     def pipeline(self, mock_config):
-        mock_config.drivers_config.prompt_driver = MockPromptDriver(stream=True)
+        mock_config.drivers_config.prompt_driver = MockPromptDriver(stream=True, use_native_tools=True)
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
         pipeline = Pipeline()
@@ -47,8 +49,8 @@ class TestEventListener:
         pipeline.tasks[0].subtasks[0].after_run()
         pipeline.run()
 
-        assert event_handler_1.call_count == 9
-        assert event_handler_2.call_count == 9
+        assert event_handler_1.call_count == 10
+        assert event_handler_2.call_count == 10
 
     def test_typed_listeners(self, pipeline, mock_config):
         start_prompt_event_handler = Mock()
@@ -59,7 +61,9 @@ class TestEventListener:
         finish_subtask_event_handler = Mock()
         start_structure_run_event_handler = Mock()
         finish_structure_run_event_handler = Mock()
-        completion_chunk_handler = Mock()
+        base_chunk_handler = Mock()
+        text_chunk_handler = Mock()
+        action_chunk_handler = Mock()
 
         EventBus.add_event_listeners(
             [
@@ -71,7 +75,9 @@ class TestEventListener:
                 EventListener(finish_subtask_event_handler, event_types=[FinishActionsSubtaskEvent]),
                 EventListener(start_structure_run_event_handler, event_types=[StartStructureRunEvent]),
                 EventListener(finish_structure_run_event_handler, event_types=[FinishStructureRunEvent]),
-                EventListener(completion_chunk_handler, event_types=[CompletionChunkEvent]),
+                EventListener(base_chunk_handler, event_types=[BaseChunkEvent]),
+                EventListener(text_chunk_handler, event_types=[TextChunkEvent]),
+                EventListener(action_chunk_handler, event_types=[ActionChunkEvent]),
             ]
         )
 
@@ -88,7 +94,12 @@ class TestEventListener:
         finish_subtask_event_handler.assert_called_once()
         start_structure_run_event_handler.assert_called_once()
         finish_structure_run_event_handler.assert_called_once()
-        completion_chunk_handler.assert_called_once()
+        assert base_chunk_handler.call_count == 2
+        assert action_chunk_handler.call_count == 2
+
+        pipeline.tasks[0].prompt_driver.use_native_tools = False
+        pipeline.run()
+        text_chunk_handler.assert_called_once()
 
     def test_add_remove_event_listener(self, pipeline):
         EventBus.clear_event_listeners()
