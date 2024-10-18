@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
 - `BaseTask.task_outputs` to get a dictionary of all task outputs. This has been added to `Workflow.context` and `Pipeline.context`.
 - `Chat.input_fn` for customizing the input to the Chat utility.
+- Events `BaseChunkEvent`, `TextChunkEvent`, `ActionChunkEvent`.
 
 ### Changed
 
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed parameter `driver` on `EventListener` to `event_listener_driver`.
 - **BREAKING**: Changed default value of parameter `handler` on `EventListener` to `None`.
 - **BREAKING**: Updated `EventListener.handler` return value behavior.
+- **BREAKING**: Removed `CompletionChunkEvent`.
   - If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
   - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
 - Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.

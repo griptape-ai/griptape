@@ -16,7 +16,13 @@ from griptape.common import (
     TextMessageContent,
     observable,
 )
-from griptape.events import CompletionChunkEvent, EventBus, FinishPromptEvent, StartPromptEvent
+from griptape.events import (
+    ActionChunkEvent,
+    EventBus,
+    FinishPromptEvent,
+    StartPromptEvent,
+    TextChunkEvent,
+)
 from griptape.mixins.exponential_backoff_mixin import ExponentialBackoffMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 
@@ -127,12 +133,17 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 else:
                     delta_contents[content.index] = [content]
                 if isinstance(content, TextDeltaMessageContent):
-                    EventBus.publish_event(CompletionChunkEvent(token=content.text))
+                    EventBus.publish_event(TextChunkEvent(token=content.text, index=content.index))
                 elif isinstance(content, ActionCallDeltaMessageContent):
-                    if content.tag is not None and content.name is not None and content.path is not None:
-                        EventBus.publish_event(CompletionChunkEvent(token=str(content)))
-                    elif content.partial_input is not None:
-                        EventBus.publish_event(CompletionChunkEvent(token=content.partial_input))
+                    EventBus.publish_event(
+                        ActionChunkEvent(
+                            partial_input=content.partial_input,
+                            tag=content.tag,
+                            name=content.name,
+                            path=content.path,
+                            index=content.index,
+                        ),
+                    )
 
         # Build a complete content from the content deltas
         return self.__build_message(list(delta_contents.values()), usage)

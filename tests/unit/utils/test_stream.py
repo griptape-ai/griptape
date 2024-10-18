@@ -4,12 +4,13 @@ import pytest
 
 from griptape.structures import Agent, Pipeline
 from griptape.utils import Stream
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestStream:
     @pytest.fixture(params=[True, False])
     def agent(self, request):
-        return Agent(stream=request.param)
+        return Agent(stream=request.param, tools=[MockTool()])
 
     def test_init(self, agent):
         if agent.stream:
