@@ -1,7 +1,5 @@
-from typing import cast
-
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.events import CompletionChunkEvent, EventBus, EventListener
+from griptape.events import BaseChunkEvent, EventBus, EventListener
 from griptape.structures import Pipeline
 from griptape.tasks import ToolkitTask
 from griptape.tools import PromptSummaryTool, WebScraperTool
@@ -9,9 +7,9 @@ from griptape.tools import PromptSummaryTool, WebScraperTool
 EventBus.add_event_listeners(
     [
         EventListener(
-            lambda e: print(cast(CompletionChunkEvent, e).token, end="", flush=True),
-            event_types=[CompletionChunkEvent],
-        )
+            lambda e: print(str(e), end="", flush=True),
+            event_types=[BaseChunkEvent],
+        ),
     ]
 )
 

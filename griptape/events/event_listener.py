@@ -49,7 +49,7 @@ class EventListener(Generic[T]):
     def publish_event(self, event: T, *, flush: bool = False) -> None:
         event_types = self.event_types
 
-        if event_types is None or type(event) in event_types:
+        if event_types is None or any(isinstance(event, event_type) for event_type in event_types):
             handled_event = event
             if self.handler is not None:
                 handled_event = self.handler(event)

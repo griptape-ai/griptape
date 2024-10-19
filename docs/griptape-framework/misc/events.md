@@ -85,14 +85,20 @@ The `EventListener` will automatically be added and removed from the [EventBus](
 
 ## Streaming
 
-You can use the [CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md) to stream the completion results from Prompt Drivers.
+You can use the [BaseChunkEvent](../../reference/griptape/events/base_chunk_event.md) to stream the completion results from Prompt Drivers.
 
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_3.py"
 ```
 
-You can also use the [Stream](../../reference/griptape/utils/stream.md) utility to automatically wrap
-[CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md)s in a Python iterator.
+You can also use the [TextChunkEvent](../../reference/griptape/events/text_chunk_event.md) and [ActionChunkEvent](../../reference/griptape/events/action_chunk_event.md) to further differentiate the different types of chunks for more customized output.
+
+```python
+--8<-- "docs/griptape-framework/misc/src/events_chunk_stream.py"
+```
+
+If you want Griptape to handle the chunk events for you, use the [Stream](../../reference/griptape/utils/stream.md) utility to automatically wrap
+[BaseChunkEvent](../../reference/griptape/events/base_chunk_event.md)s in a Python iterator.
 
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_4.py"

@@ -4,6 +4,43 @@ This document provides instructions for migrating your codebase to accommodate b
 
 ## 0.33.X to 0.34.X
 
+### Removed `CompletionChunkEvent`
+
+`CompletionChunkEvent` has been removed. There is now `BaseChunkEvent` with children `TextChunkEvent` and `ActionChunkEvent`. `BaseChunkEvent` can be directly replaced wherever `CompletionChunkEvent` was used with no change in behavior.
+
+#### Before
+
+```python
+def handler_fn_stream(event: CompletionChunkEvent) -> None:
+    print(f"CompletionChunkEvent: {event.to_json()}")
+
+def handler_fn_stream_text(event: CompletionChunkEvent) -> None:
+    # This prints out Tool actions with no easy way
+    # to filter them out
+    print(event.token, end="", flush=True)
+
+EventListener(handler=handler_fn_stream, event_types=[CompletionChunkEvent])
+EventListener(handler=handler_fn_stream_text, event_types=[CompletionChunkEvent])
+```
+
+#### After
+
+```python
+def handler_fn_stream(event: BaseChunkEvent) -> None:
+    if isinstance(event, TextChunkEvent):
+        print(f"TextChunkEvent: {event.to_json()}")
+    if isinstance(event, ActionChunkEvent):
+        print(f"ActionChunkEvent: {event.to_json()}")
+
+def handler_fn_stream_text(event: TextChunkEvent) -> None:
+    # This will only be text coming from the
+    # prompt driver, not Tool actions
+    print(event.token, end="", flush=True)
+
+EventListener(handler=handler_fn_stream, event_types=[BaseChunkEvent])
+EventListener(handler=handler_fn_stream_text, event_types=[TextChunkEvent])
+```
+
 ### `EventListener.handler` behavior, `driver` parameter rename
 
 Returning `None` from the `handler` function now causes the event to not be published to the `EventListenerDriver`.
