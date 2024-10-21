@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
@@ -21,7 +21,7 @@ class PusherEventListenerDriver(BaseEventListenerDriver):
     channel: str = field(kw_only=True, metadata={"serializable": True})
     event_name: str = field(kw_only=True, metadata={"serializable": True})
     ssl: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    _client: Pusher = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: Optional[Pusher] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Pusher:

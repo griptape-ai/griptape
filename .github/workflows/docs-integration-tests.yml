@@ -125,6 +125,11 @@ jobs:
       ASTRA_DB_APPLICATION_TOKEN: ${{ secrets.INTEG_ASTRA_DB_APPLICATION_TOKEN }}
       TAVILY_API_KEY: ${{ secrets.INTEG_TAVILY_API_KEY }}
       EXA_API_KEY: ${{ secrets.INTEG_EXA_API_KEY }}
+      AMAZON_S3_BUCKET: ${{ secrets.INTEG_AMAZON_S3_BUCKET }}
+      AMAZON_S3_KEY: ${{ secrets.INTEG_AMAZON_S3_KEY }}
+      GT_CLOUD_BUCKET_ID: ${{ secrets.INTEG_GT_CLOUD_BUCKET_ID }}
+      GT_CLOUD_ASSET_NAME: ${{ secrets.INTEG_GT_CLOUD_ASSET_NAME }}
+      
     services:
       postgres:
         image: ankane/pgvector:v0.5.0

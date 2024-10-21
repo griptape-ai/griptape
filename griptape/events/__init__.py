@@ -10,7 +10,9 @@ from .start_prompt_event import StartPromptEvent
 from .finish_prompt_event import FinishPromptEvent
 from .start_structure_run_event import StartStructureRunEvent
 from .finish_structure_run_event import FinishStructureRunEvent
-from .completion_chunk_event import CompletionChunkEvent
+from .base_chunk_event import BaseChunkEvent
+from .text_chunk_event import TextChunkEvent
+from .action_chunk_event import ActionChunkEvent
 from .event_listener import EventListener
 from .start_image_generation_event import StartImageGenerationEvent
 from .finish_image_generation_event import FinishImageGenerationEvent
@@ -37,7 +39,9 @@ __all__ = [
     "FinishPromptEvent",
     "StartStructureRunEvent",
     "FinishStructureRunEvent",
-    "CompletionChunkEvent",
+    "BaseChunkEvent",
+    "TextChunkEvent",
+    "ActionChunkEvent",
     "EventListener",
     "StartImageGenerationEvent",
     "FinishImageGenerationEvent",
