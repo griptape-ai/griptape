@@ -4,8 +4,8 @@ import pytest
 
 from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.events import (
+    ActionChunkEvent,
     BaseEvent,
-    CompletionChunkEvent,
     FinishActionsSubtaskEvent,
     FinishPromptEvent,
     FinishStructureRunEvent,
@@ -14,6 +14,7 @@ from griptape.events import (
     StartPromptEvent,
     StartStructureRunEvent,
     StartTaskEvent,
+    TextChunkEvent,
 )
 from tests.mocks.mock_event import MockEvent
 
@@ -244,13 +245,36 @@ class TestBaseEvent:
         assert event.output_task_output.value == "bar"
         assert event.meta == {"foo": "bar"}
 
-    def test_completion_chunk_event_from_dict(self):
-        dict_value = {"type": "CompletionChunkEvent", "timestamp": 123.0, "token": "foo", "meta": {}}
+    def test_text_chunk_event_from_dict(self):
+        dict_value = {"type": "TextChunkEvent", "timestamp": 123.0, "token": "foo", "index": 0, "meta": {}}
 
         event = BaseEvent.from_dict(dict_value)
 
-        assert isinstance(event, CompletionChunkEvent)
+        assert isinstance(event, TextChunkEvent)
+        assert event.index == 0
         assert event.token == "foo"
+        assert event.meta == {}
+
+    def test_action_chunk_event_from_dict(self):
+        dict_value = {
+            "type": "ActionChunkEvent",
+            "timestamp": 123.0,
+            "partial_input": "foo",
+            "tag": None,
+            "index": 1,
+            "name": "bar",
+            "path": "foobar",
+            "meta": {},
+        }
+
+        event = BaseEvent.from_dict(dict_value)
+
+        assert isinstance(event, ActionChunkEvent)
+        assert event.partial_input == "foo"
+        assert event.tag is None
+        assert event.index == 1
+        assert event.name == "bar"
+        assert event.path == "foobar"
         assert event.meta == {}
 
     def test_unsupported_from_dict(self):

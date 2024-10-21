@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Chat.input_fn` for customizing the input to the Chat utility.
 - `GriptapeCloudFileManagerDriver` for managing files on Griptape Cloud.
 - `BaseFileManagerDriver.load_artifact()` & `BaseFileManagerDriver.save_artifact()` for loading & saving artifacts as files.
+- Events `BaseChunkEvent`, `TextChunkEvent`, `ActionChunkEvent`.
 
 ### Changed
 
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed parameter `driver` on `EventListener` to `event_listener_driver`.
 - **BREAKING**: Changed default value of parameter `handler` on `EventListener` to `None`.
 - **BREAKING**: Updated `EventListener.handler` return value behavior.
+- **BREAKING**: Removed `CompletionChunkEvent`.
   - If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
   - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
 - Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
@@ -42,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Chat.output_fn`'s now takes an optional kwarg parameter, `stream`.
 - Implemented `SerializableMixin` in `Structure`, `BaseTask`, `BaseTool`, and `TaskMemory`
 - `@activity` decorated functions can now accept kwargs that are defined in the activity schema.
+- `EventListener.event_types` will now listen on child types of any provided type.
 
 ### Fixed
 
