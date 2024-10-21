@@ -224,7 +224,7 @@ class StructureTester:
     structure: Structure = field()
 
     @classmethod
-    def prompt_driver_id_fn(cls, prompt_driver) -> str:
+    def generate_prompt_driver_id(cls, prompt_driver) -> str:
         return f"{prompt_driver.__class__.__name__}-{prompt_driver.model}"
 
     def verify_structure_output(self, structure) -> dict:

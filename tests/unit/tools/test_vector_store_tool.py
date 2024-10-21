@@ -23,12 +23,12 @@ class TestVectorStoreTool:
         assert len(tool1.search({"values": {"query": "test"}})) == 2
         assert len(tool2.search({"values": {"query": "test"}})) == 0
 
-    def test_custom_process_query_output_fn(self):
+    def test_custom_process_query_output(self):
         driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
         tool1 = VectorStoreTool(
             description="Test",
             vector_store_driver=driver,
-            process_query_output_fn=lambda es: ListArtifact([e.vector for e in es]),
+            process_query_output=lambda es: ListArtifact([e.vector for e in es]),
             query_params={"include_vectors": True},
         )
 

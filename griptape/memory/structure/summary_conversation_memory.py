@@ -23,8 +23,8 @@ class SummaryConversationMemory(ConversationMemory):
     )
     summary: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     summary_index: int = field(default=0, kw_only=True, metadata={"serializable": True})
-    summary_template_generator: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
-    summarize_conversation_template_generator: J2 = field(
+    summary_get_template: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
+    summarize_conversation_get_template: J2 = field(
         default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")),
         kw_only=True,
     )
@@ -32,7 +32,7 @@ class SummaryConversationMemory(ConversationMemory):
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
-            stack.add_user_message(self.summary_template_generator.render(summary=self.summary))
+            stack.add_user_message(self.summary_get_template.render(summary=self.summary))
 
         for r in self.unsummarized_runs(last_n):
             stack.add_user_message(r.input)
@@ -66,7 +66,7 @@ class SummaryConversationMemory(ConversationMemory):
     def summarize_runs(self, previous_summary: str | None, runs: list[Run]) -> str | None:
         try:
             if len(runs) > 0:
-                summary = self.summarize_conversation_template_generator.render(summary=previous_summary, runs=runs)
+                summary = self.summarize_conversation_get_template.render(summary=previous_summary, runs=runs)
                 return self.prompt_driver.run(
                     prompt_stack=PromptStack(messages=[Message(summary, role=Message.USER_ROLE)]),
                 ).to_text()

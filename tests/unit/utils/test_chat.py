@@ -21,8 +21,8 @@ class TestConversation:
             intro_text="hello...",
             prompt_prefix="Question: ",
             response_prefix="Answer: ",
-            input_fn=input,
-            output_fn=logging.info,
+            handle_input=input,
+            handle_output=logging.info,
             logger_level=logging.INFO,
         )
         assert chat.structure == agent
@@ -31,8 +31,8 @@ class TestConversation:
         assert chat.intro_text == "hello..."
         assert chat.prompt_prefix == "Question: "
         assert chat.response_prefix == "Answer: "
-        assert callable(chat.input_fn)
-        assert callable(chat.output_fn)
+        assert callable(chat.handle_input)
+        assert callable(chat.handle_output)
         assert chat.logger_level == logging.INFO
 
     @patch("builtins.input", side_effect=["exit"])
@@ -57,16 +57,16 @@ class TestConversation:
     @pytest.mark.parametrize("stream", [True, False])
     @patch("builtins.input", side_effect=["foo", "exit"])
     def test_start(self, mock_input, stream):
-        mock_output_fn = Mock()
+        mock_handle_output = Mock()
         agent = Agent(conversation_memory=ConversationMemory(), stream=stream)
 
-        chat = Chat(agent, intro_text="foo", output_fn=mock_output_fn)
+        chat = Chat(agent, intro_text="foo", handle_output=mock_handle_output)
 
         chat.start()
 
         mock_input.assert_has_calls([call(), call()])
         if stream:
-            mock_output_fn.assert_has_calls(
+            mock_handle_output.assert_has_calls(
                 [
                     call("foo"),
                     call("Thinking..."),
@@ -76,7 +76,7 @@ class TestConversation:
                 ]
             )
         else:
-            mock_output_fn.assert_has_calls(
+            mock_handle_output.assert_has_calls(
                 [
                     call("foo"),
                     call("Thinking..."),

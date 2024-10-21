@@ -7,7 +7,7 @@ class TestCsvExtractionTask:
     @pytest.fixture(
         autouse=True,
         params=StructureTester.CSV_EXTRACTION_TASK_CAPABLE_PROMPT_DRIVERS,
-        ids=StructureTester.prompt_driver_id_fn,
+        ids=StructureTester.generate_prompt_driver_id,
     )
     def structure_tester(self, request):
         from griptape.engines import CsvExtractionEngine

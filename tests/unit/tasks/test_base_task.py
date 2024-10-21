@@ -14,11 +14,11 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestBaseTask:
     @pytest.fixture()
     def task(self):
-        EventBus.add_event_listeners([EventListener(handler=Mock())])
+        EventBus.add_event_listeners([EventListener(on_event=Mock())])
         agent = Agent(
             tools=[MockTool()],
         )
-        EventBus.add_event_listeners([EventListener(handler=Mock())])
+        EventBus.add_event_listeners([EventListener(on_event=Mock())])
 
         agent.add_task(MockTask("foobar", max_meta_memory_entries=2))
 
@@ -114,7 +114,7 @@ class TestBaseTask:
     def test_run_publish_events(self, task):
         task.run()
 
-        assert EventBus.event_listeners[0].handler.call_count == 2
+        assert EventBus.event_listeners[0].on_event.call_count == 2
 
     def test_add_parent(self, task):
         agent = Agent()

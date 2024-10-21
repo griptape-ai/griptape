@@ -10,12 +10,12 @@ from attrs import Factory, define, field
 
 @define(slots=False, kw_only=True)
 class FuturesExecutorMixin(ABC):
-    futures_executor_fn: Callable[[], futures.Executor] = field(
+    create_futures_executor: Callable[[], futures.Executor] = field(
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
     )
 
     futures_executor: Optional[futures.Executor] = field(
-        default=Factory(lambda self: self.futures_executor_fn(), takes_self=True)
+        default=Factory(lambda self: self.create_futures_executor(), takes_self=True)
     )
 
     def __del__(self) -> None:

@@ -25,7 +25,7 @@ class BaseArtifact(SerializableMixin, ABC):
         name: The name of the Artifact. Defaults to the id.
         value: The value of the Artifact.
         encoding: The encoding to use when encoding/decoding the value.
-        encoding_error_handler: The error handler to use when encoding/decoding the value.
+        encoding_error_handler: The error on_event to use when encoding/decoding the value.
     """
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})

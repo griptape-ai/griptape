@@ -18,15 +18,15 @@ class EventListener(Generic[T]):
     """An event listener that listens for events and handles them.
 
     Attributes:
-        handler: The handler function that will be called when an event is published.
-            The handler function should accept an event and return either the event or a dictionary.
-            If the handler returns None, the event will not be published.
+        on_event: The on_event function that will be called when an event is published.
+            The on_event function should accept an event and return either the event or a dictionary.
+            If the on_event returns None, the event will not be published.
         event_types: A list of event types that the event listener should listen for.
             If not provided, the event listener will listen for all event types.
         event_listener_driver: The driver that will be used to publish events.
     """
 
-    handler: Optional[Callable[[T], Optional[BaseEvent | dict]]] = field(default=None)
+    on_event: Optional[Callable[[T], Optional[BaseEvent | dict]]] = field(default=None)
     event_types: Optional[list[type[T]]] = field(default=None, kw_only=True)
     event_listener_driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
 
@@ -47,8 +47,8 @@ class EventListener(Generic[T]):
 
         if event_types is None or any(isinstance(event, event_type) for event_type in event_types):
             handled_event = event
-            if self.handler is not None:
-                handled_event = self.handler(event)
+            if self.on_event is not None:
+                handled_event = self.on_event(event)
 
             if self.event_listener_driver is not None and handled_event is not None:
                 self.event_listener_driver.publish_event(handled_event)

@@ -41,6 +41,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed `BaseTask.can_execute` to `BaseTool.can_run`.
 - **BREAKING**: Renamed `BaseTool.run` to `BaseTool.try_run`.
 - **BREAKING**: Renamed `BaseTool.execute` to `BaseTool.run`.
+- **BREAKING**: Renamed callables throughout the framework for consistency:
+  - Renamed `LocalStructureRunDriver.structure_factory_fn` to `LocalStructureRunDriver.create_structure`.
+  - Renamed `SnowflakeSqlDriver.connection_func` to `SnowflakeSqlDriver.get_connection`.
+  - Renamed `CsvLoader.formatter_fn` to `CsvLoader.format_row`.
+  - Renamed `SqlLoader.formatter_fn` to `SqlLoader.format_row`.
+  - Renamed `CsvExtractionEngine.system_template_generator` to `CsvExtractionEngine.generate_system_template`.
+  - Renamed `CsvExtractionEngine.user_template_generator` to `CsvExtractionEngine.generate_user_template`.
+  - Renamed `JsonExtractionEngine.system_template_generator` to `JsonExtractionEngine.generate_system_template`.
+  - Renamed `JsonExtractionEngine.user_template_generator` to `JsonExtractionEngine.generate_user_template`.
+  - Renamed `PromptResponseRagModule.generate_system_template` to `PromptResponseRagModule.generate_system_template`.
+  - Renamed `PromptTask.generate_system_template` to `PromptTask.generate_system_template`.
+  - Renamed `ToolkitTask.generate_assistant_subtask_template` to `ToolkitTask.generate_assistant_subtask_template`.
+  - Renamed `JsonSchemaRule.template_generator` to `JsonSchemaRule.generate_template`.
+  - Renamed `ToolkitTask.generate_user_subtask_template` to `ToolkitTask.generate_user_subtask_template`.
+  - Renamed `TextLoaderRetrievalRagModule.process_query_output_fn` to `TextLoaderRetrievalRagModule.process_query_output`.
+  - Renamed `FuturesExecutorMixin.futures_executor_fn` to `FuturesExecutorMixin.create_futures_executor`.
+  - Renamed `VectorStoreTool.process_query_output_fn` to `VectorStoreTool.process_query_output`.
+  - Renamed `CodeExecutionTask.run_fn` to `CodeExecutionTask.on_run`.
+  - Renamed `Chat.input_fn` to `Chat.handle_input`.
+  - Renamed `Chat.output_fn` to `Chat.handle_output`.
+  - Renamed `EventListener.handler` to `EventListener.on_event`.
 - Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
 - `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
