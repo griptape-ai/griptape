@@ -8,11 +8,11 @@ gtc_file_manager_driver = GriptapeCloudFileManagerDriver(
 )
 
 # Download File
-file_contents = gtc_file_manager_driver.try_load_file(os.environ["GT_CLOUD_ASSET_NAME"])
+file_contents = gtc_file_manager_driver.load_file(os.environ["GT_CLOUD_ASSET_NAME"])
 
-print(file_contents.decode())
+print(file_contents)
 
 # Upload File
-response = gtc_file_manager_driver.try_save_file(os.environ["GT_CLOUD_ASSET_NAME"], file_contents)
+response = gtc_file_manager_driver.save_file(os.environ["GT_CLOUD_ASSET_NAME"], file_contents)
 
 print(response)

@@ -39,7 +39,7 @@ The [LocalFileManagerDriver](../../reference/griptape/drivers/file_manager/local
 ### Amazon S3
 
 !!! info
-    This driver requires the `drivers-web-search-amazon-s3` [extra](../index.md#extras), and a Tavily [api key](https://app.tavily.com).
+    This driver requires the `drivers-file-manager-amazon-s3` [extra](../index.md#extras).
 
 The [LocalFile ManagerDriver](../../reference/griptape/drivers/file_manager/amazon_s3_file_manager_driver.md) allows you to load and save files sourced from an Amazon S3 bucket.
 
