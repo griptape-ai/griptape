@@ -6,7 +6,7 @@ This document provides instructions for migrating your codebase to accommodate b
 
 ### Removed `CompletionChunkEvent`
 
-`CompletionChunkEvent` has been removed. There is now `BaseChunkEvent` with children `TextChunkEvent` and `ActionChunkEvent`. `BaseChunkEvent` can be directly replaced wherever `CompletionChunkEvent` was used with no change in behavior.
+`CompletionChunkEvent` has been removed. There is now `BaseChunkEvent` with children `TextChunkEvent` and `ActionChunkEvent`. `BaseChunkEvent` can replace `completion_chunk_event.token` by doing `str(base_chunk_event)`.
 
 #### Before
 
@@ -27,10 +27,13 @@ EventListener(handler=handler_fn_stream_text, event_types=[CompletionChunkEvent]
 
 ```python
 def handler_fn_stream(event: BaseChunkEvent) -> None:
+    print(str(e), end="", flush=True)
+    # print out each child event type
     if isinstance(event, TextChunkEvent):
         print(f"TextChunkEvent: {event.to_json()}")
     if isinstance(event, ActionChunkEvent):
         print(f"ActionChunkEvent: {event.to_json()}")
+
 
 def handler_fn_stream_text(event: TextChunkEvent) -> None:
     # This will only be text coming from the
