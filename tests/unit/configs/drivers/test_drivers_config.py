@@ -57,7 +57,7 @@ class TestDriversConfig:
 
         assert Defaults.drivers_config == old_drivers_config
 
-    @pytest.mark.skip_mock_config()
+    @pytest.mark.skip_mock_config
     def test_lazy_init(self):
         from griptape.configs import Defaults
 
