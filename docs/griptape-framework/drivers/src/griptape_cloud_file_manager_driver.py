@@ -13,6 +13,6 @@ file_contents = gtc_file_manager_driver.load_file(os.environ["GT_CLOUD_ASSET_NAM
 print(file_contents)
 
 # Upload File
-response = gtc_file_manager_driver.save_file(os.environ["GT_CLOUD_ASSET_NAME"], file_contents)
+response = gtc_file_manager_driver.save_file(os.environ["GT_CLOUD_ASSET_NAME"], file_contents.value)
 
 print(response)
