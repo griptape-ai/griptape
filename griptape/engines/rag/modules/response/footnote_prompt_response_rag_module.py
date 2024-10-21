@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class FootnotePromptResponseRagModule(PromptResponseRagModule):
-    def default_system_template_generator(self, context: RagContext, artifacts: list[TextArtifact]) -> str:
+    def default_generate_system_template(self, context: RagContext, artifacts: list[TextArtifact]) -> str:
         return J2("engines/rag/modules/response/footnote_prompt/system.j2").render(
             text_chunk_artifacts=artifacts,
             references=utils.references_from_artifacts(artifacts),

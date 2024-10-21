@@ -18,14 +18,14 @@ class TestPipeline:
             time.sleep(2)
             return TextArtifact("done")
 
-        return CodeExecutionTask(run_fn=fn)
+        return CodeExecutionTask(on_run=fn)
 
     @pytest.fixture()
     def error_artifact_task(self):
         def fn(task):
             return ErrorArtifact("error")
 
-        return CodeExecutionTask(run_fn=fn)
+        return CodeExecutionTask(on_run=fn)
 
     def test_init(self):
         pipeline = Pipeline(rulesets=[Ruleset("TestRuleset", [Rule("test")])])

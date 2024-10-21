@@ -12,7 +12,7 @@ from griptape.loaders import BaseLoader
 @define
 class SqlLoader(BaseLoader[str, list[BaseSqlDriver.RowResult], ListArtifact[TextArtifact]]):
     sql_driver: BaseSqlDriver = field(kw_only=True)
-    formatter_fn: Callable[[dict], str] = field(
+    format_row: Callable[[dict], str] = field(
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
@@ -20,4 +20,4 @@ class SqlLoader(BaseLoader[str, list[BaseSqlDriver.RowResult], ListArtifact[Text
         return self.sql_driver.execute_query(source) or []
 
     def parse(self, data: list[BaseSqlDriver.RowResult]) -> ListArtifact[TextArtifact]:
-        return ListArtifact([TextArtifact(self.formatter_fn(row.cells)) for row in data])
+        return ListArtifact([TextArtifact(self.format_row(row.cells)) for row in data])

@@ -15,7 +15,7 @@ pipeline = Pipeline(
         StructureRunTask(
             ("Think of a question related to Retrieval Augmented Generation.",),
             driver=LocalStructureRunDriver(
-                structure_factory_fn=lambda: Agent(
+                create_structure=lambda: Agent(
                     rules=[
                         Rule(
                             value="You are an expert in Retrieval Augmented Generation.",

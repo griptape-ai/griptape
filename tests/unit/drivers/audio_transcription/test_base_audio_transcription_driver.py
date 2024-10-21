@@ -14,7 +14,7 @@ class TestBaseAudioTranscriptionDriver:
 
     def test_run_publish_events(self, driver, mock_config):
         mock_handler = Mock()
-        EventBus.add_event_listener(EventListener(handler=mock_handler))
+        EventBus.add_event_listener(EventListener(on_event=mock_handler))
 
         driver.run(
             AudioArtifact(

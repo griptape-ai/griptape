@@ -52,8 +52,8 @@ def handler_fn_stream_text(event: CompletionChunkEvent) -> None:
     # to filter them out
     print(event.token, end="", flush=True)
 
-EventListener(handler=handler_fn_stream, event_types=[CompletionChunkEvent])
-EventListener(handler=handler_fn_stream_text, event_types=[CompletionChunkEvent])
+EventListener(on_event=handler_fn_stream, event_types=[CompletionChunkEvent])
+EventListener(on_event=handler_fn_stream_text, event_types=[CompletionChunkEvent])
 ```
 
 #### After
@@ -73,14 +73,14 @@ def handler_fn_stream_text(event: TextChunkEvent) -> None:
     # prompt driver, not Tool actions
     print(event.token, end="", flush=True)
 
-EventListener(handler=handler_fn_stream, event_types=[BaseChunkEvent])
-EventListener(handler=handler_fn_stream_text, event_types=[TextChunkEvent])
+EventListener(on_event=handler_fn_stream, event_types=[BaseChunkEvent])
+EventListener(on_event=handler_fn_stream_text, event_types=[TextChunkEvent])
 ```
 
-### `EventListener.handler` behavior, `driver` parameter rename
+### `EventListener.on_event` behavior, `driver` parameter rename
 
-Returning `None` from the `handler` function now causes the event to not be published to the `EventListenerDriver`.
-The `handler` function can now return a `BaseEvent` object.
+Returning `None` from the `on_event` function now causes the event to not be published to the `EventListenerDriver`.
+The `on_event` function can now return a `BaseEvent` object.
 
 #### Before
 
@@ -95,8 +95,8 @@ def handler_fn_return_dict(event: BaseEvent) -> Optional[dict]:
         "key": "value
     }
 
-EventListener(handler=handler_fn_return_none, driver=driver)
-EventListener(handler=handler_fn_return_dict, driver=driver)
+EventListener(on_event=handler_fn_return_none, driver=driver)
+EventListener(on_event=handler_fn_return_dict, driver=driver)
 ```
 
 #### After
@@ -117,9 +117,9 @@ def handler_fn_return_base_event(event: BaseEvent) -> Optional[dict | BaseEvent]
     return ChildClassOfBaseEvent()
 
 # `driver` has been renamed to `event_listener_driver`
-EventListener(handler=handler_fn_return_none, event_listener_driver=driver)
-EventListener(handler=handler_fn_return_dict, event_listener_driver=driver)
-EventListener(handler=handler_fn_return_base_event, event_listener_driver=driver)
+EventListener(on_event=handler_fn_return_none, event_listener_driver=driver)
+EventListener(on_event=handler_fn_return_dict, event_listener_driver=driver)
+EventListener(on_event=handler_fn_return_base_event, event_listener_driver=driver)
 ```
 
 ## 0.32.X to 0.33.X

@@ -112,7 +112,7 @@ team = Pipeline(
                 """Perform a detailed examination of the newest developments in AI as of 2024.
                 Pinpoint major trends, breakthroughs, and their implications for various industries.""",
             ),
-            driver=LocalStructureRunDriver(structure_factory_fn=build_researcher),
+            driver=LocalStructureRunDriver(create_structure=build_researcher),
         ),
         StructureRunTask(
             (
@@ -122,7 +122,7 @@ team = Pipeline(
                 Keep the tone appealing and use simple language to make it less technical.""",
                 "{{parent_output}}",
             ),
-            driver=LocalStructureRunDriver(structure_factory_fn=build_writer),
+            driver=LocalStructureRunDriver(create_structure=build_writer),
         ),
     ],
 )

@@ -25,7 +25,7 @@ class PromptTask(RuleMixin, BaseTask):
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
     )
     generate_system_template: Callable[[PromptTask], str] = field(
-        default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
+        default=Factory(lambda self: self.default_generate_system_template, takes_self=True),
         kw_only=True,
     )
     _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
@@ -79,7 +79,7 @@ class PromptTask(RuleMixin, BaseTask):
 
         return stack
 
-    def default_system_template_generator(self, _: PromptTask) -> str:
+    def default_generate_system_template(self, _: PromptTask) -> str:
         return J2("tasks/prompt_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
         )

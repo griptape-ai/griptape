@@ -20,7 +20,7 @@ class TestPromptResponseRagModule:
         assert module.run(RagContext(query="test")).value == "mock output"
 
     def test_prompt(self, module):
-        system_message = module.default_system_template_generator(
+        system_message = module.default_generate_system_template(
             RagContext(query="test"),
             artifacts=[TextArtifact("*TEXT SEGMENT 1*"), TextArtifact("*TEXT SEGMENT 2*")],
         )

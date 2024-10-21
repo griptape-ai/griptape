@@ -15,7 +15,7 @@ class TestFootnotePromptResponseRagModule:
         assert module.run(RagContext(query="test")).value == "mock output"
 
     def test_prompt(self, module):
-        system_message = module.default_system_template_generator(
+        system_message = module.default_generate_system_template(
             RagContext(query="test", before_query=["*RULESET*", "*META*"]),
             artifacts=[
                 TextArtifact("*TEXT SEGMENT 1*", reference=Reference(title="source 1")),

@@ -159,21 +159,21 @@ Assistant:
 ...
 ```
 
-## `EventListenerDriver.handler` Return Value Behavior
+## `EventListenerDriver.on_event` Return Value Behavior
 
-The value that gets returned from the [`EventListener.handler`](../../reference/griptape/events/event_listener.md#griptape.events.event_listener.EventListener.handler) will determine what gets sent to the `event_listener_driver`.
+The value that gets returned from the [`EventListener.on_event`](../../reference/griptape/events/event_listener.md#griptape.events.event_listener.EventListener.on_event) will determine what gets sent to the `event_listener_driver`.
 
-### `EventListener.handler` is None
+### `EventListener.on_event` is None
 
-By default, the `EventListener.handler` function is `None`. Any events that the `EventListener` is listening for will get sent to the `event_listener_driver` as-is.
+By default, the `EventListener.on_event` function is `None`. Any events that the `EventListener` is listening for will get sent to the `event_listener_driver` as-is.
 
 ### Return `BaseEvent` or `dict`
 
-You can return a `BaseEvent` or `dict` object from `EventListener.handler`, and it will get sent to the `event_listener_driver`.
+You can return a `BaseEvent` or `dict` object from `EventListener.on_event`, and it will get sent to the `event_listener_driver`.
 
 ### Return `None`
 
-You can return `None` in the handler function to prevent the event from getting sent to the `event_listener_driver`.
+You can return `None` in the on_event function to prevent the event from getting sent to the `event_listener_driver`.
 
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_no_publish.py"
