@@ -10,6 +10,7 @@ class TestCompletionChunkEvent:
 
     def test_token(self, text_chunk_event):
         assert text_chunk_event.token == "foo bar"
+        assert str(text_chunk_event) == "foo bar"
 
     def test_to_dict(self, text_chunk_event):
         assert text_chunk_event.to_dict()["token"] == "foo bar"

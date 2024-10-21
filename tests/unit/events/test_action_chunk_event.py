@@ -8,6 +8,7 @@ class TestCompletionChunkEvent:
         {"name": "foo", "tag": None, "path": None, "partial_input": None},
         {"name": "foo", "tag": "bar", "path": None, "partial_input": None},
         {"name": "foo", "tag": "bar", "path": "baz", "partial_input": None},
+        {"name": "foo", "tag": None, "path": "baz", "partial_input": None},
         {"name": "foo", "tag": "bar", "path": "baz", "partial_input": "qux"},
         {"name": None, "tag": None, "path": None, "partial_input": "qux"},
     ]
