@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
   - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
 - **BREAKING**: Moved `griptape.common.observable.observable` to `griptape.common.decorators.observable`.
+- **BREAKING**: `AnthropicDriversConfig` no longer bundles `VoyageAiEmbeddingDriver`.
 - Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
 - `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
