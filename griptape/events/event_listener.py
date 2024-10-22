@@ -32,7 +32,7 @@ class EventListener:
         self._last_event_listeners = None
 
     def __attrs_post_init__(self) -> None:
-        logging.getLogger("griptape").debug(f"EventListener initialized: {self}")
+        logging.getLogger("griptape").info(f"EventListener initialized: {self}")
 
     def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
         event_types = self.event_types
