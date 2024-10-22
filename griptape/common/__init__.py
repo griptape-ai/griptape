@@ -19,7 +19,9 @@ from .prompt_stack.prompt_stack import PromptStack
 
 from .reference import Reference
 
-from .observable import observable, Observable
+from .observable import Observable
+
+from .decorators import observable
 
 __all__ = [
     "BaseMessage",

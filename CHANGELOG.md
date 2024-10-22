@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GriptapeCloudFileManagerDriver` for managing files on Griptape Cloud.
 - `BaseFileManagerDriver.load_artifact()` & `BaseFileManagerDriver.save_artifact()` for loading & saving artifacts as files.
 - Events `BaseChunkEvent`, `TextChunkEvent`, `ActionChunkEvent`.
+- `wrapt` dependency for more robust decorators.
 
 ### Changed
 
@@ -29,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `CompletionChunkEvent`.
   - If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
   - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
+- **BREAKING**: Moved `griptape.common.observable.observable` to `griptape.common.decorators.observable`.
 - Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
 - `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
