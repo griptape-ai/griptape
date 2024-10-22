@@ -5,14 +5,14 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
-from griptape.mixins.singleton_mixin import SingletonMixin
+from griptape.mixins.thread_local_singleton_mixin import ThreadLocalSingletonMixin
 
 if TYPE_CHECKING:
     from griptape.events import BaseEvent, EventListener
 
 
 @define
-class _EventBus(SingletonMixin):
+class _EventBus(ThreadLocalSingletonMixin):
     _event_listeners: list[EventListener] = field(factory=list, kw_only=True, alias="_event_listeners")
     _thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()), alias="_thread_lock")
 
