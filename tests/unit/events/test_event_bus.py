@@ -1,3 +1,4 @@
+import threading
 from unittest.mock import Mock
 
 from griptape.events import EventBus, EventListener
@@ -48,3 +49,30 @@ class TestEventBus:
 
         # Then
         mock_handler.assert_called_once_with(mock_event)
+
+    def test_thread_locality(self):
+        from griptape.events.event_bus import _EventBus
+
+        def thread_routine(thread_results, index):
+            # Each thread gets its own _EventBus instance
+            bus = _EventBus()
+            bus.add_event_listener(EventListener())
+            thread_results[index] = bus
+
+        thread_results = [None, None]
+
+        thread1 = threading.Thread(target=thread_routine, args=(thread_results, 0))
+        thread2 = threading.Thread(target=thread_routine, args=(thread_results, 1))
+
+        thread1.start()
+        thread2.start()
+
+        thread1.join()
+        thread2.join()
+
+        assert thread_results[0] is not None
+        assert thread_results[1] is not None
+        # Check that each thread has its own instance of _EventBus
+        assert thread_results[0] is not thread_results[1]
+        # Ensure that changes in one thread don't affect the other
+        assert thread_results[0].event_listeners is not thread_results[1].event_listeners
