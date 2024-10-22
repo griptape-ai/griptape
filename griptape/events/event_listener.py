@@ -16,6 +16,7 @@ class EventListener:
     handler: Callable[[BaseEvent], Optional[dict]] = field(default=Factory(lambda: lambda event: event.to_dict()))
     event_types: Optional[list[type[BaseEvent]]] = field(default=None, kw_only=True)
     driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
+    is_thread_local: bool = False  # This attribute tracks if the listener is thread-local
 
     def __enter__(self) -> EventListener:
         from griptape.events import EventBus
