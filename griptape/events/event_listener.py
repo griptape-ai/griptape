@@ -29,8 +29,6 @@ class EventListener:
 
         EventBus.remove_event_listener(self)
 
-        self._last_event_listeners = None
-
     def __attrs_post_init__(self) -> None:
         logging.getLogger("griptape").info(f"EventListener initialized: {self}")
 
