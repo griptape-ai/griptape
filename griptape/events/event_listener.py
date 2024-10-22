@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
@@ -16,8 +17,6 @@ class EventListener:
     event_types: Optional[list[type[BaseEvent]]] = field(default=None, kw_only=True)
     driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
 
-    _last_event_listeners: Optional[list[EventListener]] = field(default=None)
-
     def __enter__(self) -> EventListener:
         from griptape.events import EventBus
 
@@ -31,6 +30,9 @@ class EventListener:
         EventBus.remove_event_listener(self)
 
         self._last_event_listeners = None
+
+    def __attrs_post_init__(self) -> None:
+        logging.getLogger("griptape").debug(f"EventListener initialized: {self}")
 
     def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
         event_types = self.event_types
