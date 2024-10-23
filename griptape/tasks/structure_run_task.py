@@ -22,7 +22,7 @@ class StructureRunTask(PromptTask):
 
     driver: BaseStructureRunDriver = field(kw_only=True)
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         if isinstance(self.input, ListArtifact):
             return self.driver.run(*self.input.value)
         else:

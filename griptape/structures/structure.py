@@ -12,6 +12,7 @@ from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory, Run
 from griptape.mixins.rule_mixin import RuleMixin
+from griptape.mixins.runnable_mixin import RunnableMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
@@ -21,7 +22,7 @@ if TYPE_CHECKING:
 
 
 @define
-class Structure(ABC, RuleMixin, SerializableMixin):
+class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
     _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
@@ -139,6 +140,7 @@ class Structure(ABC, RuleMixin, SerializableMixin):
 
     @observable
     def before_run(self, args: Any) -> None:
+        super().before_run(args)
         self._execution_args = args
 
         [task.reset() for task in self.tasks]
@@ -155,6 +157,7 @@ class Structure(ABC, RuleMixin, SerializableMixin):
 
     @observable
     def after_run(self) -> None:
+        super().after_run()
         if self.conversation_memory and self.output_task.output is not None:
             run = Run(input=self.input_task.input, output=self.output_task.output)
 

@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseFileManagerDriver.load_artifact()` & `BaseFileManagerDriver.save_artifact()` for loading & saving artifacts as files.
 - Events `BaseChunkEvent`, `TextChunkEvent`, `ActionChunkEvent`.
 - `wrapt` dependency for more robust decorators.
+- `RunnableMixin` which adds `on_before_run` and `on_after_run` hooks.
 
 ### Changed
 
@@ -32,6 +33,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
 - **BREAKING**: Moved `griptape.common.observable.observable` to `griptape.common.decorators.observable`.
 - **BREAKING**: `AnthropicDriversConfig` no longer bundles `VoyageAiEmbeddingDriver`.
+- **BREAKING**: Renamed `BaseTask.run` to `BaseTask.try_run`.
+- **BREAKING**: Renamed `BaseTask.execute` to `BaseTask.run`.
+- **BREAKING**: Renamed `BaseTask.can_execute` to `BaseTool.can_run`.
+- **BREAKING**: Renamed `BaseTool.run` to `BaseTool.try_run`.
+- **BREAKING**: Renamed `BaseTool.execute` to `BaseTool.run`.
 - Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
 - `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
@@ -50,6 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `ToolkitTask` system prompt to no longer mention `memory_name` and `artifact_namespace`.
 - Models in `ToolkitTask` with native tool calling no longer need to provide their final answer as `Answer:`.
 - `EventListener.event_types` will now listen on child types of any provided type.
+- Implemented `RunnableMixin` in `Structure`, `BaseTask`, and `BaseTool`.
 
 ### Fixed
 

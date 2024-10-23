@@ -74,6 +74,6 @@ class Agent(Structure):
 
     @observable
     def try_run(self, *args) -> Agent:
-        self.task.execute()
+        self.task.run()
 
         return self
