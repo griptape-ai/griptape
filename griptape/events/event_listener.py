@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextvars
 from typing import TYPE_CHECKING, Callable, Generic, Optional, TypeVar
 
 from attrs import define, field
@@ -11,6 +12,10 @@ if TYPE_CHECKING:
 
 
 T = TypeVar("T", bound=BaseEvent)
+
+_active_listeners: contextvars.ContextVar[list[EventListener]] = contextvars.ContextVar(
+    "active_event_listeners", default=[]
+)
 
 
 @define
@@ -33,18 +38,17 @@ class EventListener(Generic[T]):
     _last_event_listeners: Optional[list[EventListener]] = field(default=None)
 
     def __enter__(self) -> EventListener:
-        from griptape.events import EventBus
-
-        EventBus.add_event_listener(self)
-
+        # Add this listener to the active listeners stack
+        listeners = _active_listeners.get()
+        _active_listeners.set(listeners + [self])
         return self
 
     def __exit__(self, type, value, traceback) -> None:  # noqa: ANN001, A002
-        from griptape.events import EventBus
-
-        EventBus.remove_event_listener(self)
-
-        self._last_event_listeners = None
+        # Remove this listener from the active listeners stack
+        listeners = _active_listeners.get()
+        if self in listeners:
+            listeners.remove(self)
+            _active_listeners.set(listeners)
 
     def publish_event(self, event: T, *, flush: bool = False) -> None:
         event_types = self.event_types

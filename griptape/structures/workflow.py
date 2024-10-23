@@ -10,6 +10,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.structures import Structure
+from griptape.utils.decorators import with_context
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -108,7 +109,7 @@ class Workflow(Structure, FuturesExecutorMixin):
 
             for task in ordered_tasks:
                 if task.can_execute():
-                    future = self.futures_executor.submit(task.execute)
+                    future = self.futures_executor.submit(with_context(task.execute))
                     futures_list[future] = task
 
             # Wait for all tasks to complete

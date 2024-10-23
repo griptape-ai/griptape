@@ -7,6 +7,8 @@ from attrs import Factory, define, field
 
 from griptape.mixins.singleton_mixin import SingletonMixin
 
+from .event_listener import _active_listeners
+
 if TYPE_CHECKING:
     from griptape.events import BaseEvent, EventListener
 
@@ -18,7 +20,11 @@ class _EventBus(SingletonMixin):
 
     @property
     def event_listeners(self) -> list[EventListener]:
-        return self._event_listeners
+        # Check if there are active listeners in the context
+        active_listeners = _active_listeners.get()
+
+        # Use active listeners if any exist, otherwise use global listeners
+        return active_listeners if active_listeners else self._event_listeners
 
     def add_event_listeners(self, event_listeners: list[EventListener]) -> list[EventListener]:
         return [self.add_event_listener(event_listener) for event_listener in event_listeners]
@@ -40,7 +46,7 @@ class _EventBus(SingletonMixin):
                 self._event_listeners.remove(event_listener)
 
     def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
-        for event_listener in self._event_listeners:
+        for event_listener in self.event_listeners:
             event_listener.publish_event(event, flush=flush)
 
     def clear_event_listeners(self) -> None:
