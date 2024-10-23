@@ -22,7 +22,7 @@ agent = Agent()
 
 #### After
 
-````python
+```python
 from griptape.configs import Defaults
 from griptape.configs.drivers import AnthropicDriversConfig
 from griptape.drivers import VoyageAiEmbeddingDriver, LocalVectorStoreDriver
@@ -55,7 +55,7 @@ def handler_fn_stream_text(event: CompletionChunkEvent) -> None:
 
 EventListener(handler=handler_fn_stream, event_types=[CompletionChunkEvent])
 EventListener(handler=handler_fn_stream_text, event_types=[CompletionChunkEvent])
-````
+```
 
 #### After
 
