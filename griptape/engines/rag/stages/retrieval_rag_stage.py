@@ -9,6 +9,7 @@ from attrs import define, field
 from griptape import utils
 from griptape.artifacts import TextArtifact
 from griptape.engines.rag.stages import BaseRagStage
+from griptape.utils import with_contextvars
 
 if TYPE_CHECKING:
     from griptape.engines.rag import RagContext
@@ -36,7 +37,7 @@ class RetrievalRagStage(BaseRagStage):
         logging.info("RetrievalRagStage: running %s retrieval modules in parallel", len(self.retrieval_modules))
 
         results = utils.execute_futures_list(
-            [self.futures_executor.submit(r.run, context) for r in self.retrieval_modules]
+            [self.futures_executor.submit(with_contextvars(r.run), context) for r in self.retrieval_modules]
         )
 
         # flatten the list of lists

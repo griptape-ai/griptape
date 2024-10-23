@@ -7,6 +7,7 @@ from attrs import define, field
 
 from griptape.artifacts import BaseArtifact
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
+from griptape.utils import with_contextvars
 from griptape.utils.futures import execute_futures_dict
 from griptape.utils.hash import bytes_to_hash, str_to_hash
 
@@ -61,7 +62,10 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
         sources_by_key = {self.to_key(source): source for source in sources}
 
         return execute_futures_dict(
-            {key: self.futures_executor.submit(self.load, source) for key, source in sources_by_key.items()},
+            {
+                key: self.futures_executor.submit(with_contextvars(self.load), source)
+                for key, source in sources_by_key.items()
+            },
         )
 
     def to_key(self, source: S) -> str:

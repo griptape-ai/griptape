@@ -8,6 +8,7 @@ from attrs import Factory, define, field
 
 from griptape.mixins.exponential_backoff_mixin import ExponentialBackoffMixin
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
+from griptape.utils import with_contextvars
 
 if TYPE_CHECKING:
     from griptape.events import BaseEvent
@@ -32,14 +33,14 @@ class BaseEventListenerDriver(FuturesExecutorMixin, ExponentialBackoffMixin, ABC
         if self.batched:
             self._batch.append(event_payload)
             if len(self.batch) >= self.batch_size:
-                self.futures_executor.submit(self._safe_publish_event_payload_batch, self.batch)
+                self.futures_executor.submit(with_contextvars(self._safe_publish_event_payload_batch), self.batch)
                 self._batch = []
         else:
-            self.futures_executor.submit(self._safe_publish_event_payload, event_payload)
+            self.futures_executor.submit(with_contextvars(self._safe_publish_event_payload), event_payload)
 
     def flush_events(self) -> None:
         if self.batch:
-            self.futures_executor.submit(self._safe_publish_event_payload_batch, self.batch)
+            self.futures_executor.submit(with_contextvars(self._safe_publish_event_payload_batch), self.batch)
             self._batch = []
 
     @abstractmethod

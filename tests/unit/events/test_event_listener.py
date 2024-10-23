@@ -185,6 +185,18 @@ class TestEventListener:
 
         assert EventBus.event_listeners == [e1]
 
+    def test_context_manager_nested(self):
+        e1 = EventListener()
+        EventBus.add_event_listener(e1)
+
+        with EventListener(lambda e: e) as e2:
+            assert EventBus.event_listeners == [e1, e2]
+            with EventListener(lambda e: e) as e3:
+                assert EventBus.event_listeners == [e1, e2, e3]
+            assert EventBus.event_listeners == [e1, e2]
+
+        assert EventBus.event_listeners == [e1]
+
     def test_publish_event_yes_flush(self):
         mock_event_listener_driver = MockEventListenerDriver()
         mock_event_listener_driver.flush_events = Mock(side_effect=mock_event_listener_driver.flush_events)

@@ -15,7 +15,7 @@ from griptape.configs import Defaults
 from griptape.events import EventBus, FinishActionsSubtaskEvent, StartActionsSubtaskEvent
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
-from griptape.utils import remove_null_values_in_dict_recursively
+from griptape.utils import remove_null_values_in_dict_recursively, with_contextvars
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
@@ -139,7 +139,9 @@ class ActionsSubtask(BaseTask):
             return ErrorArtifact("no tool output")
 
     def run_actions(self, actions: list[ToolAction]) -> list[tuple[str, BaseArtifact]]:
-        return utils.execute_futures_list([self.futures_executor.submit(self.run_action, a) for a in actions])
+        return utils.execute_futures_list(
+            [self.futures_executor.submit(with_contextvars(self.run_action), a) for a in actions]
+        )
 
     def run_action(self, action: ToolAction) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
