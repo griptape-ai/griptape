@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextvars
 from typing import TYPE_CHECKING, Callable, Optional
 
 from attrs import Factory, define, field
@@ -8,6 +9,10 @@ if TYPE_CHECKING:
     from griptape.drivers import BaseEventListenerDriver
 
     from .base_event import BaseEvent
+
+_active_listeners: contextvars.ContextVar[list[EventListener]] = contextvars.ContextVar(
+    "active_event_listeners", default=[]
+)
 
 
 @define
@@ -19,18 +24,17 @@ class EventListener:
     _last_event_listeners: Optional[list[EventListener]] = field(default=None)
 
     def __enter__(self) -> EventListener:
-        from griptape.events import EventBus
-
-        EventBus.add_event_listener(self)
-
+        # Add this listener to the active listeners stack
+        listeners = _active_listeners.get()
+        _active_listeners.set(listeners + [self])
         return self
 
-    def __exit__(self, type, value, traceback) -> None:  # noqa: ANN001, A002
-        from griptape.events import EventBus
-
-        EventBus.remove_event_listener(self)
-
-        self._last_event_listeners = None
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        # Remove this listener from the active listeners stack
+        listeners = _active_listeners.get()
+        if self in listeners:
+            listeners.remove(self)
+            _active_listeners.set(listeners)
 
     def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
         event_types = self.event_types

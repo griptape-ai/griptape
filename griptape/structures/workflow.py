@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import concurrent.futures as futures
+import contextvars
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define
@@ -96,7 +97,8 @@ class Workflow(Structure, FuturesExecutorMixin):
 
             for task in ordered_tasks:
                 if task.can_execute():
-                    future = self.futures_executor.submit(task.execute)
+                    ctx = contextvars.copy_context()
+                    future = self.futures_executor.submit(ctx.run, task.execute)
                     futures_list[future] = task
 
             # Wait for all tasks to complete
