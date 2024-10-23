@@ -64,7 +64,6 @@ The [Anthropic Driver config](../../reference/griptape/configs/drivers/anthropic
 
 !!! info
     Anthropic does not provide an embeddings API which means you will need to use another service for embeddings.
-    The `AnthropicDriversConfig` defaults to using `VoyageAiEmbeddingDriver` which integrates with [VoyageAI](https://www.voyageai.com/), the service used in Anthropic's [embeddings documentation](https://docs.anthropic.com/claude/docs/embeddings).
     To override the default embedding driver, see: [Override Default Structure Embedding Driver](../drivers/embedding-drivers.md#override-default-structure-embedding-driver).
 
 ```python

@@ -2,6 +2,40 @@
 
 This document provides instructions for migrating your codebase to accommodate breaking changes introduced in new versions of Griptape.
 
+## 0.34.X to 0.35.X
+
+### `AnthropicDriversConfig` Embedding Driver
+
+`AnthropicDriversConfig` no longer bundles `VoyageAiEmbeddingDriver`. If you rely on embeddings when using Anthropic, you must specify an Embedding Driver yourself.
+
+#### Before
+
+```python
+from griptape.configs import Defaults
+from griptape.configs.drivers import AnthropicDriversConfig
+from griptape.structures import Agent
+
+Defaults.drivers_config = AnthropicDriversConfig()
+
+agent = Agent()
+```
+
+#### After
+
+```python
+from griptape.configs import Defaults
+from griptape.configs.drivers import AnthropicDriversConfig
+from griptape.drivers import VoyageAiEmbeddingDriver, LocalVectorStoreDriver
+
+Defaults.drivers_config = AnthropicDriversConfig(
+    embedding_driver=VoyageAiEmbeddingDriver(),
+    vector_store_driver=LocalVectorStoreDriver(
+        embedding_driver=VoyageAiEmbeddingDriver()
+    )
+)
+```
+
+
 ## 0.33.X to 0.34.X
 
 ### Removed `CompletionChunkEvent`

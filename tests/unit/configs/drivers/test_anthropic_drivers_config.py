@@ -33,16 +33,12 @@ class TestAnthropicDriversConfig:
                 "max_tokens": 256,
             },
             "embedding_driver": {
-                "type": "VoyageAiEmbeddingDriver",
-                "model": "voyage-large-2",
-                "input_type": "document",
+                "type": "DummyEmbeddingDriver",
             },
             "vector_store_driver": {
-                "type": "LocalVectorStoreDriver",
+                "type": "DummyVectorStoreDriver",
                 "embedding_driver": {
-                    "type": "VoyageAiEmbeddingDriver",
-                    "model": "voyage-large-2",
-                    "input_type": "document",
+                    "type": "DummyEmbeddingDriver",
                 },
             },
             "conversation_memory_driver": {
