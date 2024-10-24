@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `ToolkitTask` system prompt to no longer mention `memory_name` and `artifact_namespace`.
 - Models in `ToolkitTask` with native tool calling no longer need to provide their final answer as `Answer:`.
 - `EventListener.event_types` will now listen on child types of any provided type.
+- Only install Tool dependencies if the Tool provides a `requirements.txt` and the dependencies are not already met.
 
 ### Fixed
 

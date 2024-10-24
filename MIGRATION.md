@@ -35,7 +35,6 @@ Defaults.drivers_config = AnthropicDriversConfig(
 )
 ```
 
-
 ## 0.33.X to 0.34.X
 
 ### Removed `CompletionChunkEvent`
