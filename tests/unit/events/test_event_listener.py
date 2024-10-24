@@ -42,7 +42,7 @@ class TestEventListener:
         event_handler_1 = Mock()
         event_handler_2 = Mock()
 
-        EventBus.add_event_listeners([EventListener(handler=event_handler_1), EventListener(handler=event_handler_2)])
+        EventBus.add_event_listeners([EventListener(on_event=event_handler_1), EventListener(on_event=event_handler_2)])
 
         # can't mock subtask events, so must manually call
         pipeline.tasks[0].subtasks[0].before_run()

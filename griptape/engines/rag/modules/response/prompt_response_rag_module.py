@@ -22,7 +22,7 @@ class PromptResponseRagModule(BaseResponseRagModule, RuleMixin):
     answer_token_offset: int = field(default=400)
     metadata: Optional[str] = field(default=None)
     generate_system_template: Callable[[RagContext, list[TextArtifact]], str] = field(
-        default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
+        default=Factory(lambda self: self.default_generate_system_template, takes_self=True),
     )
 
     def run(self, context: RagContext) -> BaseArtifact:
@@ -53,7 +53,7 @@ class PromptResponseRagModule(BaseResponseRagModule, RuleMixin):
         else:
             raise ValueError("Prompt driver did not return a TextArtifact")
 
-    def default_system_template_generator(self, context: RagContext, artifacts: list[TextArtifact]) -> str:
+    def default_generate_system_template(self, context: RagContext, artifacts: list[TextArtifact]) -> str:
         params: dict[str, Any] = {"text_chunks": [c.to_text() for c in artifacts]}
 
         if len(self.rulesets) > 0:

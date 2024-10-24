@@ -32,11 +32,11 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionsSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
-        default=Factory(lambda self: self.default_assistant_subtask_template_generator, takes_self=True),
+        default=Factory(lambda self: self.default_generate_assistant_subtask_template, takes_self=True),
         kw_only=True,
     )
     generate_user_subtask_template: Callable[[ActionsSubtask], str] = field(
-        default=Factory(lambda self: self.default_user_subtask_template_generator, takes_self=True),
+        default=Factory(lambda self: self.default_generate_user_subtask_template, takes_self=True),
         kw_only=True,
     )
     response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
@@ -127,7 +127,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         return self
 
-    def default_system_template_generator(self, _: PromptTask) -> str:
+    def default_generate_system_template(self, _: PromptTask) -> str:
         schema = self.actions_schema().json_schema("Actions Schema")
         schema["minItems"] = 1  # The `schema` library doesn't support `minItems` so we must add it manually.
 
@@ -140,13 +140,13 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stop_sequence=self.response_stop_sequence,
         )
 
-    def default_assistant_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
+    def default_generate_assistant_subtask_template(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/assistant_subtask.j2").render(
             stop_sequence=self.response_stop_sequence,
             subtask=subtask,
         )
 
-    def default_user_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
+    def default_generate_user_subtask_template(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
             stop_sequence=self.response_stop_sequence,
             subtask=subtask,

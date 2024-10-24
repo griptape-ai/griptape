@@ -28,13 +28,13 @@ joke_coordinator = Pipeline(
     tasks=[
         StructureRunTask(
             driver=LocalStructureRunDriver(
-                structure_factory_fn=build_joke_teller,
+                create_structure=build_joke_teller,
             ),
         ),
         StructureRunTask(
             ("Rewrite this joke: {{ parent_output }}",),
             driver=LocalStructureRunDriver(
-                structure_factory_fn=build_joke_rewriter,
+                create_structure=build_joke_rewriter,
             ),
         ),
     ]

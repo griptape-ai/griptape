@@ -7,4 +7,4 @@ class TestFuturesExecutorMixin:
     def test_futures_executor(self):
         executor = futures.ThreadPoolExecutor()
 
-        assert MockFuturesExecutor(futures_executor_fn=lambda: executor).futures_executor == executor
+        assert MockFuturesExecutor(create_futures_executor=lambda: executor).futures_executor == executor

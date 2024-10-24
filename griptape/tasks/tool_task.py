@@ -49,7 +49,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
 
         return self
 
-    def default_system_template_generator(self, _: PromptTask) -> str:
+    def default_generate_system_template(self, _: PromptTask) -> str:
         return J2("tasks/tool_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
             action_schema=utils.minify_json(json.dumps(self.tool.schema())),

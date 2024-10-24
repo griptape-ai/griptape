@@ -14,7 +14,7 @@ from griptape.loaders import BaseFileLoader
 class CsvLoader(BaseFileLoader[ListArtifact[TextArtifact]]):
     delimiter: str = field(default=",", kw_only=True)
     encoding: str = field(default="utf-8", kw_only=True)
-    formatter_fn: Callable[[dict], str] = field(
+    format_row: Callable[[dict], str] = field(
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
@@ -22,5 +22,5 @@ class CsvLoader(BaseFileLoader[ListArtifact[TextArtifact]]):
         reader = csv.DictReader(StringIO(data.decode(self.encoding)), delimiter=self.delimiter)
 
         return ListArtifact(
-            [TextArtifact(self.formatter_fn(row), meta={"row_num": row_num}) for row_num, row in enumerate(reader)]
+            [TextArtifact(self.format_row(row), meta={"row_num": row_num}) for row_num, row in enumerate(reader)]
         )

@@ -9,7 +9,7 @@ from tests.mocks.mock_prompt_driver import MockPromptDriver
 class TestLocalStructureRunDriver:
     def test_run(self):
         pipeline = Pipeline()
-        driver = LocalStructureRunDriver(structure_factory_fn=lambda: Agent())
+        driver = LocalStructureRunDriver(create_structure=lambda: Agent())
 
         task = StructureRunTask(driver=driver)
 
@@ -22,7 +22,7 @@ class TestLocalStructureRunDriver:
 
         mock_config.drivers_config.prompt_driver = MockPromptDriver(mock_output=lambda _: os.environ["KEY"])
         agent = Agent()
-        driver = LocalStructureRunDriver(structure_factory_fn=lambda: agent, env={"KEY": "value"})
+        driver = LocalStructureRunDriver(create_structure=lambda: agent, env={"KEY": "value"})
         task = StructureRunTask(driver=driver)
 
         pipeline.add_task(task)

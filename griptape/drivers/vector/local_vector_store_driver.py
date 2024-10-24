@@ -19,7 +19,7 @@ from griptape.drivers import BaseVectorStoreDriver
 class LocalVectorStoreDriver(BaseVectorStoreDriver):
     entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict)
     persist_file: Optional[str] = field(default=None)
-    relatedness_fn: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)))
+    calculate_relatedness: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)))
     thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
 
     def __attrs_post_init__(self) -> None:
@@ -95,7 +95,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
             entries = self.entries
 
         entries_and_relatednesses = [
-            (entry, self.relatedness_fn(query_embedding, entry.vector)) for entry in list(entries.values())
+            (entry, self.calculate_relatedness(query_embedding, entry.vector)) for entry in list(entries.values())
         ]
 
         entries_and_relatednesses.sort(key=operator.itemgetter(1), reverse=True)

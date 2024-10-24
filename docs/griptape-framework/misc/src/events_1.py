@@ -12,14 +12,14 @@ from griptape.events import (
 from griptape.structures import Agent
 
 
-def handler(event: BaseEvent) -> None:
+def on_event(event: BaseEvent) -> None:
     print(event.__class__)
 
 
 EventBus.add_event_listeners(
     [
         EventListener(
-            handler,
+            on_event,
             event_types=[
                 StartTaskEvent,
                 FinishTaskEvent,

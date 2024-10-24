@@ -21,7 +21,7 @@ class VectorStoreTool(BaseTool):
         description: LLM-friendly vector DB description.
         vector_store_driver: `BaseVectorStoreDriver`.
         query_params: Optional dictionary of vector store driver query parameters.
-        process_query_output_fn: Optional lambda for processing vector store driver query output `Entry`s.
+        process_query_output: Optional lambda for processing vector store driver query output `Entry`s.
     """
 
     DEFAULT_TOP_N = 5
@@ -29,7 +29,7 @@ class VectorStoreTool(BaseTool):
     description: str = field()
     vector_store_driver: BaseVectorStoreDriver = field()
     query_params: dict[str, Any] = field(factory=dict)
-    process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], BaseArtifact] = field(
+    process_query_output: Callable[[list[BaseVectorStoreDriver.Entry]], BaseArtifact] = field(
         default=Factory(lambda: lambda es: ListArtifact([e.to_artifact() for e in es])),
     )
 
@@ -50,6 +50,6 @@ class VectorStoreTool(BaseTool):
         query = params["values"]["query"]
 
         try:
-            return self.process_query_output_fn(self.vector_store_driver.query(query, **self.query_params))
+            return self.process_query_output(self.vector_store_driver.query(query, **self.query_params))
         except Exception as e:
             return ErrorArtifact(f"error querying vector store: {e}")

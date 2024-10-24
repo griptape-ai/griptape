@@ -21,10 +21,8 @@ class JsonExtractionEngine(BaseExtractionEngine):
     JSON_PATTERN = r"(?s)[^\[]*(\[.*\])"
 
     template_schema: dict = field(kw_only=True)
-    system_template_generator: J2 = field(
-        default=Factory(lambda: J2("engines/extraction/json/system.j2")), kw_only=True
-    )
-    user_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/json/user.j2")), kw_only=True)
+    generate_system_template: J2 = field(default=Factory(lambda: J2("engines/extraction/json/system.j2")), kw_only=True)
+    generate_user_template: J2 = field(default=Factory(lambda: J2("engines/extraction/json/user.j2")), kw_only=True)
 
     def extract_artifacts(
         self,
@@ -54,11 +52,11 @@ class JsonExtractionEngine(BaseExtractionEngine):
         rulesets: Optional[list[Ruleset]] = None,
     ) -> list[JsonArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
-        system_prompt = self.system_template_generator.render(
+        system_prompt = self.generate_system_template.render(
             json_template_schema=json.dumps(self.template_schema),
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
-        user_prompt = self.user_template_generator.render(
+        user_prompt = self.generate_user_template.render(
             text=artifacts_text,
         )
 
@@ -82,7 +80,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
             return extractions
         else:
             chunks = self.chunker.chunk(artifacts_text)
-            partial_text = self.user_template_generator.render(
+            partial_text = self.generate_user_template.render(
                 text=chunks[0].value,
             )
 

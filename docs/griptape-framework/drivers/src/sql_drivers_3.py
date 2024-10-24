@@ -17,6 +17,6 @@ def get_snowflake_connection() -> SnowflakeConnection:
     )
 
 
-driver = SnowflakeSqlDriver(connection_func=get_snowflake_connection)
+driver = SnowflakeSqlDriver(get_connection=get_snowflake_connection)
 
 driver.execute_query("select * from people;")

@@ -63,32 +63,32 @@ class TestSnowflakeSqlDriver:
         def get_connection():
             return mock_snowflake_connection
 
-        return SnowflakeSqlDriver(connection_func=get_connection, engine=mock_snowflake_engine)
+        return SnowflakeSqlDriver(get_connection=get_connection, engine=mock_snowflake_engine)
 
-    def test_connection_function_wrong_return_type(self):
+    def test_get_connectiontion_wrong_return_type(self):
         def get_connection() -> Any:
             return object
 
         with pytest.raises(ValueError):
-            SnowflakeSqlDriver(connection_func=get_connection)
+            SnowflakeSqlDriver(get_connection=get_connection)
 
     def test_connection_validation_no_schema(self, mock_snowflake_connection_no_schema):
         def get_connection():
             return mock_snowflake_connection_no_schema
 
         with pytest.raises(ValueError):
-            SnowflakeSqlDriver(connection_func=get_connection)
+            SnowflakeSqlDriver(get_connection=get_connection)
 
     def test_connection_validation_no_database(self, mock_snowflake_connection_no_database):
         def get_connection():
             return mock_snowflake_connection_no_database
 
         with pytest.raises(ValueError):
-            SnowflakeSqlDriver(connection_func=get_connection)
+            SnowflakeSqlDriver(get_connection=get_connection)
 
     def test_engine_url_validation_wrong_engine(self, mock_snowflake_connection):
         with pytest.raises(ValueError):
-            SnowflakeSqlDriver(connection_func=mock_snowflake_connection, engine=create_engine("sqlite:///:memory:"))
+            SnowflakeSqlDriver(get_connection=mock_snowflake_connection, engine=create_engine("sqlite:///:memory:"))
 
     def test_execute_query(self, driver):
         assert driver.execute_query("query") == [

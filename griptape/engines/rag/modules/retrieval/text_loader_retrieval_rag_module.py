@@ -25,7 +25,7 @@ class TextLoaderRetrievalRagModule(BaseRetrievalRagModule):
     vector_store_driver: BaseVectorStoreDriver = field()
     source: Any = field()
     query_params: dict[str, Any] = field(factory=dict)
-    process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], Sequence[TextArtifact]] = field(
+    process_query_output: Callable[[list[BaseVectorStoreDriver.Entry]], Sequence[TextArtifact]] = field(
         default=Factory(lambda: lambda es: [e.to_artifact() for e in es]),
     )
 
@@ -43,4 +43,4 @@ class TextLoaderRetrievalRagModule(BaseRetrievalRagModule):
 
         self.vector_store_driver.upsert_text_artifacts({namespace: chunks})
 
-        return self.process_query_output_fn(self.vector_store_driver.query(context.query, **query_params))
+        return self.process_query_output(self.vector_store_driver.query(context.query, **query_params))
