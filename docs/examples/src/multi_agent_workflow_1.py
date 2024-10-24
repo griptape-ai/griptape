@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 
 from griptape.drivers import GoogleWebSearchDriver, LocalStructureRunDriver
 from griptape.rules import Rule, Ruleset
@@ -26,6 +27,7 @@ WRITERS = [
 
 def build_researcher() -> Agent:
     """Builds a Researcher Structure."""
+    load_dotenv()
     return Agent(
         id="researcher",
         tools=[
