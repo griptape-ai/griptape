@@ -1,5 +1,4 @@
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
-from griptape.engines import InpaintingImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tools import InpaintingImageGenerationTool
 
@@ -9,14 +8,9 @@ driver = AmazonBedrockImageGenerationDriver(
     model="stability.stable-diffusion-xl-v0",
 )
 
-# Create an engine configured to use the driver.
-engine = InpaintingImageGenerationEngine(
-    image_generation_driver=driver,
-)
-
 # Create a tool configured to use the engine.
 tool = InpaintingImageGenerationTool(
-    engine=engine,
+    image_generation_driver=driver,
 )
 
 # Create an agent and provide the tool to it.

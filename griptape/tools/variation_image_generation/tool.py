@@ -12,7 +12,7 @@ from griptape.utils.decorators import activity
 from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
 
 if TYPE_CHECKING:
-    from griptape.engines import VariationImageGenerationEngine
+    from griptape.drivers import BaseImageGenerationDriver
 
 
 @define
@@ -20,12 +20,12 @@ class VariationImageGenerationTool(BaseImageGenerationTool):
     """A tool that can be used to generate prompted variations of an image.
 
     Attributes:
-        engine: The variation image generation engine used to generate the image.
+        image_generation_driver: The image generation driver used to generate the image.
         output_dir: If provided, the generated image will be written to disk in output_dir.
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    engine: VariationImageGenerationEngine = field(kw_only=True)
+    image_generation_driver: BaseImageGenerationDriver = field(kw_only=True)
     image_loader: ImageLoader = field(default=ImageLoader(), kw_only=True)
 
     @activity(
@@ -86,7 +86,9 @@ class VariationImageGenerationTool(BaseImageGenerationTool):
     def _generate_variation(
         self, prompt: str, negative_prompt: str, image_artifact: ImageArtifact
     ) -> ImageArtifact | ErrorArtifact:
-        output_artifact = self.engine.run(prompts=[prompt], negative_prompts=[negative_prompt], image=image_artifact)
+        output_artifact = self.image_generation_driver.run_image_variation(
+            prompts=[prompt], negative_prompts=[negative_prompt], image=image_artifact
+        )
 
         if self.output_dir or self.output_file:
             self._write_to_file(output_artifact)

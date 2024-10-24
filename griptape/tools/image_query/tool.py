@@ -12,12 +12,12 @@ from griptape.utils import load_artifact_from_memory
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.engines import ImageQueryEngine
+    from griptape.drivers import BaseImageQueryDriver
 
 
 @define
 class ImageQueryTool(BaseTool):
-    image_query_engine: ImageQueryEngine = field(kw_only=True)
+    image_query_driver: BaseImageQueryDriver = field(kw_only=True)
     image_loader: ImageLoader = field(default=Factory(lambda: ImageLoader()), kw_only=True)
 
     @activity(
@@ -42,7 +42,7 @@ class ImageQueryTool(BaseTool):
         for image_path in image_paths:
             image_artifacts.append(self.image_loader.load(image_path))
 
-        return self.image_query_engine.run(query, image_artifacts)
+        return self.image_query_driver.query(query, image_artifacts)
 
     @activity(
         config={
@@ -94,4 +94,4 @@ class ImageQueryTool(BaseTool):
             except Exception as e:
                 return ErrorArtifact(str(e))
 
-        return self.image_query_engine.run(query, image_artifacts)
+        return self.image_query_driver.query(query, image_artifacts)

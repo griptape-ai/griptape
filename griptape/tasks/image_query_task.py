@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from typing import Callable, Union
+from typing import TYPE_CHECKING, Callable, Union
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
-from griptape.engines import ImageQueryEngine
+from griptape.configs.defaults_config import Defaults
 from griptape.tasks import BaseTask
 from griptape.utils import J2
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseImageQueryDriver
 
 
 @define
@@ -21,10 +24,12 @@ class ImageQueryTask(BaseTask):
     - Callable that returns a tuple of (TextArtifact, list[ImageArtifact]).
 
     Attributes:
-        image_query_engine: The engine used to execute the query.
+        image_query_driver: The driver used to execute the query.
     """
 
-    image_query_engine: ImageQueryEngine = field(default=Factory(lambda: ImageQueryEngine()), kw_only=True)
+    image_query_driver: BaseImageQueryDriver = field(
+        default=Factory(lambda: Defaults.drivers_config.image_query_driver), kw_only=True
+    )
     _input: Union[
         tuple[str, list[ImageArtifact]],
         tuple[TextArtifact, list[ImageArtifact]],
@@ -74,6 +79,6 @@ class ImageQueryTask(BaseTask):
         else:
             raise ValueError("All inputs after the query must be ImageArtifacts.")
 
-        self.output = self.image_query_engine.run(query.value, image_artifacts)
+        self.output = self.image_query_driver.query(query.value, image_artifacts)
 
         return self.output

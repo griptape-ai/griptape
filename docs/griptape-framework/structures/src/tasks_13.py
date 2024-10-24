@@ -1,5 +1,4 @@
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
-from griptape.engines import InpaintingImageGenerationEngine
 from griptape.loaders import ImageLoader
 from griptape.structures import Pipeline
 from griptape.tasks import InpaintingImageGenerationTask
@@ -8,11 +7,6 @@ from griptape.tasks import InpaintingImageGenerationTask
 driver = AmazonBedrockImageGenerationDriver(
     image_generation_model_driver=BedrockStableDiffusionImageGenerationModelDriver(),
     model="stability.stable-diffusion-xl-v0",
-)
-
-# Create an engine configured to use the driver.
-engine = InpaintingImageGenerationEngine(
-    image_generation_driver=driver,
 )
 
 # Load input image artifacts.
@@ -26,7 +20,7 @@ pipeline = Pipeline()
 # Add an InpaintingImageGenerationTask to the pipeline.
 pipeline.add_task(
     InpaintingImageGenerationTask(
-        input=("{{ args[0] }}", image_artifact, mask_artifact), image_generation_engine=engine, output_dir="images/"
+        input=("{{ args[0] }}", image_artifact, mask_artifact), image_generation_driver=driver, output_dir="images/"
     )
 )
 

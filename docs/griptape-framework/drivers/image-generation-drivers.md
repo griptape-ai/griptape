@@ -5,9 +5,9 @@ search:
 
 ## Overview
 
-[Image Generation Drivers](../../reference/griptape/drivers/image_generation/index.md) are used by [image generation Engines](../engines/image-generation-engines.md) to build and execute API calls to image generation models.
+[Image Generation Drivers](../../reference/griptape/drivers/image_generation/index.md) build and execute API calls to image generation models.
 
-Provide a Driver when building an [Engine](../engines/image-generation-engines.md), then pass it to a [Tool](../tools/index.md) for use by an [Agent](../structures/agents.md):
+Provide a Driver to a [Tool](../tools/index.md) for use by an [Agent](../structures/agents.md):
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_1.py"
@@ -23,7 +23,7 @@ The [Amazon Bedrock Image Generation Driver](../../reference/griptape/drivers/im
 
 The [Bedrock Stable Diffusion Model Driver](../../reference/griptape/drivers/image_generation_model/bedrock_stable_diffusion_image_generation_model_driver.md) provides support for Stable Diffusion models hosted by Amazon Bedrock. This Model Driver supports configurations specific to Stable Diffusion, like style presets, clip guidance presets, and sampler.
 
-This Model Driver supports negative prompts. When provided (for example, when used with an [image generation Engine](../engines/image-generation-engines.md) configured with [Negative Rulesets](../engines/image-generation-engines.md#image-generation-engine-rulesets)), the image generation request will include negatively-weighted prompts describing features or characteristics to avoid in the resulting generation.
+This Model Driver supports negative prompts. When provided, the image generation request will include negatively-weighted prompts describing features or characteristics to avoid in the resulting generation.
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_2.py"
@@ -33,7 +33,7 @@ This Model Driver supports negative prompts. When provided (for example, when us
 
 The [Bedrock Titan Image Generator Model Driver](../../reference/griptape/drivers/image_generation_model/bedrock_titan_image_generation_model_driver.md) provides support for Titan Image Generator models hosted by Amazon Bedrock. This Model Driver supports configurations specific to Titan Image Generator, like quality, seed, and cfg_scale.
 
-This Model Driver supports negative prompts. When provided (for example, when used with an [image generation engine](../engines/image-generation-engines.md) configured with [Negative Rulesets](../engines/image-generation-engines.md#image-generation-engine-rulesets)), the image generation request will include negatively-weighted prompts describing features or characteristics to avoid in the resulting generation.
+This Model Driver supports negative prompts. When provided, the image generation request will include negatively-weighted prompts describing features or characteristics to avoid in the resulting generation.
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_3.py"
@@ -53,7 +53,7 @@ The [Leonardo Image Generation Driver](../../reference/griptape/drivers/image_ge
 
 This Driver supports configurations like model selection, image size, specifying a generation seed, and generation steps. For details on supported configuration parameters, see [Leonardo.Ai's image generation documentation](https://docs.leonardo.ai/reference/creategeneration).
 
-This Driver supports negative prompts. When provided (for example, when used with an [image generation engine](../engines/image-generation-engines.md) configured with [Negative Rulesets](../engines/image-generation-engines.md#image-generation-engine-rulesets)), the image generation request will include negatively-weighted prompts describing features or characteristics to avoid in the resulting generation.
+This Driver supports negative prompts. When provided, the image generation request will include negatively-weighted prompts describing features or characteristics to avoid in the resulting generation.
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_5.py"

@@ -10,7 +10,7 @@ from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
     from griptape.artifacts import ErrorArtifact, ImageArtifact
-    from griptape.engines import PromptImageGenerationEngine
+    from griptape.drivers import BaseImageGenerationDriver
 
 
 @define
@@ -18,12 +18,12 @@ class PromptImageGenerationTool(BaseImageGenerationTool):
     """A tool that can be used to generate an image from a text prompt.
 
     Attributes:
-        engine: The prompt image generation engine used to generate the image.
+        image_generation_driver: The image generation driver used to generate the image.
         output_dir: If provided, the generated image will be written to disk in output_dir.
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    engine: PromptImageGenerationEngine = field(kw_only=True)
+    image_generation_driver: BaseImageGenerationDriver = field(kw_only=True)
 
     @activity(
         config={
@@ -40,7 +40,9 @@ class PromptImageGenerationTool(BaseImageGenerationTool):
         prompt = params["values"]["prompt"]
         negative_prompt = params["values"]["negative_prompt"]
 
-        output_artifact = self.engine.run(prompts=[prompt], negative_prompts=[negative_prompt])
+        output_artifact = self.image_generation_driver.run_text_to_image(
+            prompts=[prompt], negative_prompts=[negative_prompt]
+        )
 
         if self.output_dir or self.output_file:
             self._write_to_file(output_artifact)

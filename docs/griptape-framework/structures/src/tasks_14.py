@@ -1,5 +1,4 @@
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
-from griptape.engines import OutpaintingImageGenerationEngine
 from griptape.loaders import ImageLoader
 from griptape.structures import Pipeline
 from griptape.tasks import OutpaintingImageGenerationTask
@@ -10,10 +9,6 @@ driver = AmazonBedrockImageGenerationDriver(
     model="stability.stable-diffusion-xl-v0",
 )
 
-# Create an engine configured to use the driver.
-engine = OutpaintingImageGenerationEngine(
-    image_generation_driver=driver,
-)
 
 # Load input image artifacts.
 image_artifact = ImageLoader().load("tests/resources/mountain.png")
@@ -27,7 +22,7 @@ pipeline = Pipeline()
 pipeline.add_task(
     OutpaintingImageGenerationTask(
         input=("{{ args[0] }}", image_artifact, mask_artifact),
-        image_generation_engine=engine,
+        image_generation_driver=driver,
         output_dir="images/",
     )
 )
