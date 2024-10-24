@@ -7,8 +7,10 @@ import re
 import subprocess
 import sys
 from abc import ABC
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
+import pkg_resources
 import schema
 from attrs import Attribute, Factory, define, field
 from schema import Literal, Or, Schema
@@ -55,7 +57,11 @@ class BaseTool(ActivityMixin, SerializableMixin, ABC):
     off_prompt: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
-        if self.install_dependencies_on_init:
+        if (
+            self.install_dependencies_on_init
+            and self.has_requirements
+            and not self.are_requirements_met(self.requirements_path)
+        ):
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator  # pyright: ignore[reportAttributeAccessIssue]
@@ -83,6 +89,10 @@ class BaseTool(ActivityMixin, SerializableMixin, ABC):
     @property
     def abs_dir_path(self) -> str:
         return os.path.dirname(self.abs_file_path)
+
+    @property
+    def has_requirements(self) -> bool:
+        return os.path.exists(self.requirements_path)
 
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `self.activities`.
@@ -223,3 +233,13 @@ class BaseTool(ActivityMixin, SerializableMixin, ABC):
             raise ValueError("Activity name can only contain letters, numbers, and underscores.")
 
         return f"{tool_name}_{activity_name}"
+
+    def are_requirements_met(self, requirements_path: str) -> bool:
+        requirements = Path(requirements_path).read_text().splitlines()
+
+        try:
+            pkg_resources.require(requirements)
+
+            return True
+        except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
+            return False

@@ -4,7 +4,7 @@ The [PromptSummaryTool](../../reference/griptape/tools/prompt_summary/tool.md) e
 --8<-- "docs/griptape-tools/official-tools/src/prompt_summary_tool_1.py"
 ```
 
-```
+````
 [08/12/24 15:54:46] INFO     ToolkitTask 8be73eb542c44418ba880399044c017a
                              Input: How can I build Neovim from source for MacOS according to this https://github.com/neovim/neovim/blob/master/BUILD.md
 [08/12/24 15:54:47] INFO     Subtask cd362a149e1d400997be93c1342d1663
@@ -103,4 +103,4 @@ The [PromptSummaryTool](../../reference/griptape/tools/prompt_summary/tool.md) e
 
                              By following these steps, you should be able to build and install Neovim from source on macOS. For more detailed instructions and
                              troubleshooting tips, refer to the [BUILD.md](https://github.com/neovim/neovim/blob/master/BUILD.md) file in the Neovim repository.
-```
+````

@@ -1,5 +1,6 @@
 import inspect
 import os
+import tempfile
 
 import pytest
 from schema import Or, Schema, SchemaMissingKeyError
@@ -315,3 +316,31 @@ class TestBaseTool:
 
         params = {"values": {"test_kwarg": "foo", "test_kwarg_kwargs": "bar"}}
         assert tool.test_with_kwargs(params) == "ack foo"
+
+    def test_has_requirements(self, tool):
+        assert tool.has_requirements
+
+        class InlineTool(BaseTool):
+            pass
+
+        assert InlineTool().has_requirements is False
+
+    def test_are_requirements_met(self, tool):
+        assert tool.are_requirements_met(tool.requirements_path)
+
+        class InlineTool(BaseTool):
+            pass
+
+        # Temp file does not work on Github Actions Windows runner.
+        if os.name != "nt":
+            with tempfile.NamedTemporaryFile() as temp:
+                temp.write(b"nonexistent-package==1.0.0\nanother-package==2.0.0")
+                temp.seek(0)
+
+                assert InlineTool().are_requirements_met(temp.name) is False
+
+            with tempfile.NamedTemporaryFile() as temp:
+                temp.write(b"pip")
+                temp.seek(0)
+
+                assert InlineTool().are_requirements_met(temp.name) is True
