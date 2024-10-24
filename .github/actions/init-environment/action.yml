@@ -30,13 +30,26 @@ runs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --with test --with dev --with docs --all-extras
         shell: bash
-
       - name: Activate venv 
         run: |
           source $VENV
           echo PATH=$PATH >> $GITHUB_ENV
         shell: bash
 
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: |
+          version=$(poetry run playwright/ -V | awk '{print $2}' | tr -d '\n')
+          echo "version=$version" >> $GITHUB_OUTPUT
+        shell: bash
+      
+      - uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ${{ matrix.os == 'windows-latest' && '~\\AppData\\Local\\ms-playwright' || '~/.cache/ms-playwright' }}
+          key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
+
       - name: Install playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: playwright install --with-deps
         shell: bash
