@@ -13,7 +13,7 @@ class TestImageQueryTask:
     @pytest.fixture()
     def image_query_driver(self) -> Mock:
         mock = Mock()
-        mock.run.return_value = TextArtifact("image")
+        mock.query.return_value = TextArtifact("image")
 
         return mock
 

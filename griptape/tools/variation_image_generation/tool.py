@@ -86,7 +86,7 @@ class VariationImageGenerationTool(BaseImageGenerationTool):
     def _generate_variation(
         self, prompt: str, negative_prompt: str, image_artifact: ImageArtifact
     ) -> ImageArtifact | ErrorArtifact:
-        output_artifact = self.image_generation_driver.try_image_variation(
+        output_artifact = self.image_generation_driver.run_image_variation(
             prompts=[prompt], negative_prompts=[negative_prompt], image=image_artifact
         )
 

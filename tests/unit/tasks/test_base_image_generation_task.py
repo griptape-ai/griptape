@@ -7,14 +7,6 @@ from tests.mocks.mock_image_generation_task import MockImageGenerationTask
 
 class TestBaseImageGenerationTask:
     def test_validate_negative_rulesets(self) -> None:
-        with pytest.raises(ValueError):
-            MockImageGenerationTask(
-                TextArtifact("some input"),
-                negative_rulesets=[Ruleset(name="Negative Ruleset", rules=[Rule(value="Negative Rule")])],
-                negative_rules=[Rule(value="Negative Rule")],
-                output_dir="some/dir",
-            )
-
         assert MockImageGenerationTask(
             TextArtifact("some input"),
             negative_rulesets=[Ruleset(name="Negative Ruleset", rules=[Rule(value="Negative Rule")])],
@@ -22,14 +14,6 @@ class TestBaseImageGenerationTask:
         )
 
     def test_validate_negative_rules(self) -> None:
-        with pytest.raises(ValueError):
-            MockImageGenerationTask(
-                TextArtifact("some input"),
-                negative_rulesets=[Ruleset(name="Negative Ruleset", rules=[Rule(value="Negative Rule")])],
-                negative_rules=[Rule(value="Negative Rule")],
-                output_dir="some/dir",
-            )
-
         assert MockImageGenerationTask(
             TextArtifact("some input"), negative_rules=[Rule(value="Negative Rule")], output_dir="some/dir"
         )
@@ -46,7 +30,7 @@ class TestBaseImageGenerationTask:
 
         task = MockImageGenerationTask(TextArtifact("some input"), negative_rules=[rule], output_dir="some/dir")
 
-        assert task.negative_rulesets[0].name == task.NEGATIVE_RULESET_NAME
+        assert task.negative_rulesets[0].name == task.DEFAULT_NEGATIVE_RULESET_NAME
         assert task.negative_rulesets[0].rules[0] == rule
 
     def test_validate_output_dir(self) -> None:

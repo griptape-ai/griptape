@@ -361,7 +361,7 @@ This Task is useful for orchestrating multiple specialized Structures in a singl
 
 ## Text to Speech Task
 
-This Task enables Structures to synthesize speech from text using [Text to Speech Engines](../../reference/griptape/engines/audio/text_to_speech_engine.md) and [Text to Speech Drivers](../../reference/griptape/drivers/text_to_speech/index.md).
+This Task enables Structures to synthesize speech from text using [Text to Speech Engines](../../reference/griptape/engines/audio/text_to_speech_driver.md) and [Text to Speech Drivers](../../reference/griptape/drivers/text_to_speech/index.md).
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/tasks_17.py"
