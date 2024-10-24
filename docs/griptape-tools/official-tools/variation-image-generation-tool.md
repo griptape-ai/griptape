@@ -1,4 +1,4 @@
-# Variation Image Generation Engine Tool
+# Variation Image Generation Tool
 
 This Tool allows LLMs to generate variations of an input image from a text prompt. The input image can be provided either by its file path or by its [Task Memory](../../griptape-framework/structures/task-memory.md) reference.
 

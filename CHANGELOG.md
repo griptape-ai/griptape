@@ -31,7 +31,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **BREAKING**: Removed redundant Engines, use their respective Drivers instead.
+  - Removed `ImageQueryEngine`, use `ImageQueryDriver`s instead.
+  - Removed `InpaintingImageGenerationEngine`, use `ImageGenerationDriver`s instead.
+  - Removed `OutpaintingImageGenerationEngine`, use `ImageGenerationDriver`s instead.
+  - Removed `VariationImageGenerationEngine`, use `ImageGenerationDriver`s instead.
+  - Removed `PromptImageGenerationEngine`, use `ImageGenerationDriver`s instead.
+  - Removed `ImageGenerationEngine`, use `ImageGenerationDriver`s instead.
+  - Removed `AudioTranscriptionEngine`, use `AudioTranscriptionDriver`s instead.
+  - Removed `TextToSpeechEngine`, use `TextToSpeechDriver`s instead.
+- **BREAKING**: Tools that previously took Engines now take their respective Drivers.
+  - Updated `AudioTranscriptionTool.engine` to `AudioTranscriptionTool.audio_transcription_driver`.
+  - Updated `TextToSpeechTool.engine` to `TextToSpeechTool.text_to_speech_driver`.
+  - Updated `ImageQueryTool.image_query_engine` to `ImageQueryTool.image_query_driver`.
+  - Updated `InpaintingImageGenerationTool.engine` to `InpaintingImageGenerationTool.image_generation_driver`.
+  - Updated `OutpaintingImageGenerationTool.engine` to `OutpaintingImageGenerationTool.image_generation_driver`.
+  - Updated `VariationImageGenerationTool.engine` to `VariationImageGenerationTool.image_generation_driver`.
+  - Updated `PromptImageGenerationTool.engine` to `PromptImageGenerationTool.image_generation_driver`.
+- **BREAKING**: Tasks that previously took Engines now take their respective Drivers.
+  - Updated `AudioTranscriptionTask.audio_transcription_engine` to `AudioTranscriptionTask.audio_transcription_driver`.
+  - Updated `TextToSpeechTask.text_to_speech_engine` to `TextToSpeechTask.text_to_speech_driver`.
+  - Updated `ImageQueryTask.image_query_engine` to `ImageQueryTask.image_query_driver`.
+  - Updated `InpaintingImageGenerationTask.image_query_engine` to `InpaintingImageGenerationTask.image_generation_driver`.
+  - Updated `OutpaintingImageGenerationTask.image_query_engine` to `OutpaintingImageGenerationTask.image_generation_driver`.
+  - Updated `VariationImageGenerationTask.image_query_engine` to `VariationImageGenerationTask.image_generation_driver`.
+  - Updated `PromptImageGenerationTask.image_query_engine` to `PromptImageGenerationTask.image_generation_driver`.
+- **BREAKING**: Renamed`BaseImageGenerationTask.all_negative_rulesets` to `BaseImageGenerationTask.negative_rulesets`.
 - `AmazonBedrockPromptDriver` not working without setting `max_tokens`.
+- `BaseImageGenerationTask` no longer prevents setting `negative_rulesets` _and_ `negative_rules` at the same time.
 
 ## \[0.34.0\] - 2024-10-29
 

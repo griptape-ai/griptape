@@ -1,7 +1,6 @@
 import boto3
 
 from griptape.drivers import AmazonBedrockImageQueryDriver, BedrockClaudeImageQueryModelDriver
-from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
 
 session = boto3.Session(region_name="us-west-2")
@@ -12,11 +11,9 @@ driver = AmazonBedrockImageQueryDriver(
     session=session,
 )
 
-engine = ImageQueryEngine(image_query_driver=driver)
-
 image_artifact = ImageLoader().load("tests/resources/mountain.png")
 
 
-result = engine.run("Describe the weather in the image", [image_artifact])
+result = driver.query("Describe the weather in the image", [image_artifact])
 
 print(result)

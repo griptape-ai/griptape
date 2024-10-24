@@ -22,6 +22,193 @@ loader = TextLoader()
 data = loader.parse(b"data")
 ```
 
+### Removed `ImageQueryEngine`
+
+`ImageQueryEngine` has been removed. Use `ImageQueryDriver` instead.
+
+#### Before
+
+```python
+from griptape.drivers import OpenAiImageQueryDriver
+from griptape.engines import ImageQueryEngine
+from griptape.loaders import ImageLoader
+
+engine = ImageQueryEngine(
+    image_query_driver=OpenAiImageQueryDriver(model="gpt-4o", max_tokens=256)
+)
+
+image_artifact = ImageLoader().load("mountain.png")
+
+engine.run("Describe the weather in the image", [image_artifact])`
+```
+
+#### After
+
+```python
+from griptape.drivers import OpenAiImageQueryDriver
+from griptape.engines import ImageQueryEngine
+from griptape.loaders import ImageLoader
+
+driver = OpenAiImageQueryDriver(model="gpt-4o", max_tokens=256)
+
+image_artifact = ImageLoader().load("mountain.png")
+
+driver.query("Describe the weather in the image", [image_artifact])`
+```
+
+### Removed `InpaintingImageGenerationEngine`
+
+`InpaintingImageGenerationEngine` has been removed. Use `InpaintingImageGenerationDriver` instead.
+
+#### Before
+
+````python
+from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.engines import InpaintingImageGenerationEngine
+from griptape.loaders import ImageLoader
+
+
+engine = InpaintingImageGenerationEngine(
+    image_generation_driver=OpenAiImageGenerationDriver(),
+)
+
+image_artifact = ImageLoader().load("mountain.png")
+
+mask_artifact = ImageLoader().load("mountain-mask.png")
+
+engine.run(
+    prompts=["A photo of a castle built into the side of a mountain"],
+    image=image_artifact,
+    mask=mask_artifact,
+)```
+
+#### After
+```python
+from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.loaders import ImageLoader
+
+driver = OpenAiImageGenerationDriver()
+
+image_artifact = ImageLoader().load("mountain.png")
+
+mask_artifact = ImageLoader().load("mountain-mask.png")
+
+driver.run_image_inpainting(
+    prompts=["A photo of a castle built into the side of a mountain"],
+    image=image_artifact,
+    mask=mask_artifact,
+)
+````
+
+### Removed `OutpaintingImageGenerationEngine`
+
+`OutpaintingImageGenerationEngine` has been removed. Use `OutpaintingImageGenerationDriver` instead.
+
+#### Before
+
+```python
+from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.engines import OutpaintingImageGenerationEngine
+from griptape.loaders import ImageLoader
+
+engine = OutpaintingImageGenerationEngine(
+    image_generation_driver=OpenAiImageGenerationDriver(),
+)
+
+image_artifact = ImageLoader().load("mountain.png")
+
+engine.run(
+    prompts=["A photo of a castle built into the side of a mountain"],
+    image=image_artifact,
+)
+```
+
+#### After
+
+```python
+from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.loaders import ImageLoader
+
+driver = OpenAiImageGenerationDriver()
+
+image_artifact = ImageLoader().load("mountain.png")
+
+driver.run_image_outpainting(
+    prompts=["A photo of a castle built into the side of a mountain"],
+    image=image_artifact,
+)
+```
+
+### Removed `VariationImageGenerationEngine`
+
+`VariationImageGenerationEngine` has been removed. Use `VariationImageGenerationDriver` instead.
+
+#### Before
+
+```python
+from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.engines import VariationImageGenerationEngine
+from griptape.loaders import ImageLoader
+
+engine = VariationImageGenerationEngine(
+    image_generation_driver=OpenAiImageGenerationDriver(),
+)
+
+image_artifact = ImageLoader().load("mountain.png")
+
+engine.run(
+    prompts=["A photo of a mountain landscape in winter"],
+    image=image_artifact,
+)
+```
+
+#### After
+
+```python
+from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.loaders import ImageLoader
+
+driver = OpenAiImageGenerationDriver()
+
+image_artifact = ImageLoader().load("mountain.png")
+
+driver.run_image_variation(
+    prompts=["A photo of a mountain landscape in winter"],
+    image=image_artifact,
+)
+```
+
+### Removed `PromptImageGenerationEngine`
+
+`PromptImageGenerationEngine` has been removed. Use `PromptImageGenerationDriver` instead.
+
+#### Before
+
+```python
+from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.engines import PromptImageGenerationEngine
+
+engine = PromptImageGenerationEngine(
+    image_generation_driver=OpenAiImageGenerationDriver(),
+)
+
+engine.run(
+    prompts=["A watercolor painting of a dog riding a skateboard"],
+)
+```
+
+#### After
+
+```python
+from griptape.drivers import OpenAiImageGenerationDriver
+
+driver = OpenAiImageGenerationDriver()
+
+driver.run_text_to_image(
+    prompts=["A watercolor painting of a dog riding a skateboard"],
+)
+```
+
 ## 0.33.X to 0.34.X
 
 ### `AnthropicDriversConfig` Embedding Driver
