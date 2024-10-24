@@ -1,5 +1,4 @@
 from griptape.drivers import OpenAiImageQueryDriver
-from griptape.engines import ImageQueryEngine
 from griptape.loaders import ImageLoader
 from griptape.structures import Pipeline
 from griptape.tasks import ImageQueryTask
@@ -10,10 +9,6 @@ driver = OpenAiImageQueryDriver(
     max_tokens=100,
 )
 
-# Create an engine configured to use the driver.
-engine = ImageQueryEngine(
-    image_query_driver=driver,
-)
 
 # Load the input image artifact.
 image_artifact = ImageLoader().load("tests/resources/mountain.png")
@@ -25,7 +20,7 @@ pipeline = Pipeline()
 pipeline.add_task(
     ImageQueryTask(
         input=("{{ args[0] }}", [image_artifact]),
-        image_query_engine=engine,
+        image_query_driver=driver,
     )
 )
 

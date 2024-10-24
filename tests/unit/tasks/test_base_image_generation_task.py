@@ -34,20 +34,20 @@ class TestBaseImageGenerationTask:
             TextArtifact("some input"), negative_rules=[Rule(value="Negative Rule")], output_dir="some/dir"
         )
 
-    def test_all_negative_rulesets_from_rulesets(self) -> None:
+    def test_negative_rulesets_from_rulesets(self) -> None:
         ruleset = Ruleset(name="Negative Ruleset", rules=[Rule(value="Negative Rule")])
 
         task = MockImageGenerationTask(TextArtifact("some input"), negative_rulesets=[ruleset], output_dir="some/dir")
 
-        assert task.all_negative_rulesets[0] == ruleset
+        assert task.negative_rulesets[0] == ruleset
 
-    def test_all_negative_rulesets_from_rules(self) -> None:
+    def test_negative_rulesets_from_rules(self) -> None:
         rule = Rule(value="Negative Rule")
 
         task = MockImageGenerationTask(TextArtifact("some input"), negative_rules=[rule], output_dir="some/dir")
 
-        assert task.all_negative_rulesets[0].name == task.NEGATIVE_RULESET_NAME
-        assert task.all_negative_rulesets[0].rules[0] == rule
+        assert task.negative_rulesets[0].name == task.NEGATIVE_RULESET_NAME
+        assert task.negative_rulesets[0].rules[0] == rule
 
     def test_validate_output_dir(self) -> None:
         with pytest.raises(ValueError):

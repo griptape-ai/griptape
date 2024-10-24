@@ -12,7 +12,7 @@ from griptape.utils.decorators import activity
 from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
 
 if TYPE_CHECKING:
-    from griptape.engines import InpaintingImageGenerationEngine
+    from griptape.drivers import BaseImageGenerationDriver
 
 
 @define
@@ -25,7 +25,7 @@ class InpaintingImageGenerationTool(BaseImageGenerationTool):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    engine: InpaintingImageGenerationEngine = field(kw_only=True)
+    image_generation_driver: BaseImageGenerationDriver = field(kw_only=True)
     image_loader: ImageLoader = field(default=ImageLoader(), kw_only=True)
 
     @activity(
@@ -108,7 +108,7 @@ class InpaintingImageGenerationTool(BaseImageGenerationTool):
     def _generate_inpainting(
         self, prompt: str, negative_prompt: str, image_artifact: ImageArtifact, mask_artifact: ImageArtifact
     ) -> ImageArtifact:
-        output_artifact = self.engine.run(
+        output_artifact = self.image_generation_driver.run_image_inpainting(
             prompts=[prompt], negative_prompts=[negative_prompt], image=image_artifact, mask=mask_artifact
         )
 
