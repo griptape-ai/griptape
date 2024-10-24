@@ -18,7 +18,7 @@ class PromptImageGenerationTool(BaseImageGenerationTool):
     """A tool that can be used to generate an image from a text prompt.
 
     Attributes:
-        engine: The prompt image generation engine used to generate the image.
+        image_generation_driver: The image generation driver used to generate the image.
         output_dir: If provided, the generated image will be written to disk in output_dir.
         output_file: If provided, the generated image will be written to disk as output_file.
     """

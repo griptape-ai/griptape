@@ -19,7 +19,7 @@ class TextToSpeechTool(ArtifactFileOutputMixin, BaseTool):
     """A tool that can be used to generate speech from input text.
 
     Attributes:
-        engine: The text to audio generation engine used to generate the speech audio.
+        text_to_speech_driver: The text to audio generation driver used to generate the speech audio.
         output_dir: If provided, the generated audio will be written to disk in output_dir.
         output_file: If provided, the generated audio will be written to disk as output_file.
     """
