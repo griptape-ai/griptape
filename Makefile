@@ -82,7 +82,7 @@ check/spell:
 	
 .PHONY: docs
 docs: ## Build documentation.
-	@poetry run mkdocs build
+	@poetry run python -m mkdocs build --clean --strict 
 
 .DEFAULT_GOAL := help
 .PHONY: help
