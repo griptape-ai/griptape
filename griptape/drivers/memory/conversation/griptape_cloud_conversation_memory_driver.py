@@ -128,7 +128,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
 
         runs = [
             Run(
-                id=m["metadata"].pop("run_id"),
+                id=m["metadata"].pop("run_id", uuid.uuid4().hex),
                 meta=m["metadata"],
                 input=BaseArtifact.from_json(m["input"]),
                 output=BaseArtifact.from_json(m["output"]),
