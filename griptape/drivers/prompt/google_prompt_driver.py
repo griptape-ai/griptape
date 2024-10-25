@@ -145,6 +145,7 @@ class GooglePromptDriver(BasePromptDriver):
                     "temperature": self.temperature,
                     "top_p": self.top_p,
                     "top_k": self.top_k,
+                    **self.extra_params,
                 },
             ),
             **(

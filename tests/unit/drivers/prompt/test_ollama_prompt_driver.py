@@ -205,7 +205,7 @@ class TestOllamaPromptDriver:
     @pytest.mark.parametrize("use_native_tools", [True])
     def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools):
         # Given
-        driver = OllamaPromptDriver(model="llama")
+        driver = OllamaPromptDriver(model="llama", extra_params={"foo": "bar"})
 
         # When
         message = driver.try_run(prompt_stack)
@@ -220,6 +220,7 @@ class TestOllamaPromptDriver:
                 "num_predict": driver.max_tokens,
             },
             **{"tools": self.OLLAMA_TOOLS} if use_native_tools else {},
+            foo="bar",
         )
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
@@ -256,7 +257,7 @@ class TestOllamaPromptDriver:
             {"role": "user", "content": "user-input", "images": ["aW1hZ2UtZGF0YQ=="]},
             {"role": "assistant", "content": "assistant-input"},
         ]
-        driver = OllamaPromptDriver(model="llama", stream=True)
+        driver = OllamaPromptDriver(model="llama", stream=True, extra_params={"foo": "bar"})
 
         # When
         text_artifact = next(driver.try_stream(prompt_stack))
@@ -267,6 +268,7 @@ class TestOllamaPromptDriver:
             model=driver.model,
             options={"temperature": driver.temperature, "stop": [], "num_predict": driver.max_tokens},
             stream=True,
+            foo="bar",
         )
         if isinstance(text_artifact, TextDeltaMessageContent):
             assert text_artifact.text == "model-output"

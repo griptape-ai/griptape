@@ -136,7 +136,9 @@ class TestCoherePromptDriver:
     @pytest.mark.parametrize("use_native_tools", [True, False])
     def test_try_run(self, mock_client, prompt_stack, use_native_tools):
         # Given
-        driver = CoherePromptDriver(model="command", api_key="api-key", use_native_tools=use_native_tools)
+        driver = CoherePromptDriver(
+            model="command", api_key="api-key", use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+        )
 
         # When
         message = driver.try_run(prompt_stack)
@@ -171,6 +173,7 @@ class TestCoherePromptDriver:
             ],
             stop_sequences=[],
             temperature=0.1,
+            foo="bar",
         )
 
         assert isinstance(message.value[0], TextArtifact)
@@ -187,7 +190,13 @@ class TestCoherePromptDriver:
     @pytest.mark.parametrize("use_native_tools", [True, False])
     def test_try_stream_run(self, mock_stream_client, prompt_stack, use_native_tools):
         # Given
-        driver = CoherePromptDriver(model="command", api_key="api-key", stream=True, use_native_tools=use_native_tools)
+        driver = CoherePromptDriver(
+            model="command",
+            api_key="api-key",
+            stream=True,
+            use_native_tools=use_native_tools,
+            extra_params={"foo": "bar"},
+        )
 
         # When
         stream = driver.try_stream(prompt_stack)
@@ -223,6 +232,7 @@ class TestCoherePromptDriver:
             ],
             stop_sequences=[],
             temperature=0.1,
+            foo="bar",
         )
 
         assert isinstance(event.content, TextDeltaMessageContent)

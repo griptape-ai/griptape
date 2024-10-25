@@ -169,7 +169,12 @@ class TestGooglePromptDriver:
     def test_try_run(self, mock_generative_model, prompt_stack, messages, use_native_tools):
         # Given
         driver = GooglePromptDriver(
-            model="gemini-pro", api_key="api-key", top_p=0.5, top_k=50, use_native_tools=use_native_tools
+            model="gemini-pro",
+            api_key="api-key",
+            top_p=0.5,
+            top_k=50,
+            use_native_tools=use_native_tools,
+            extra_params={"max_output_tokens": 10},
         )
 
         # When
@@ -185,7 +190,9 @@ class TestGooglePromptDriver:
         call_args = mock_generative_model.return_value.generate_content.call_args
         assert messages == call_args.args[0]
         generation_config = call_args.kwargs["generation_config"]
-        assert generation_config == GenerationConfig(temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[])
+        assert generation_config == GenerationConfig(
+            temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[], max_output_tokens=10
+        )
         if use_native_tools:
             tool_declarations = call_args.kwargs["tools"]
             assert [
@@ -206,7 +213,13 @@ class TestGooglePromptDriver:
     def test_try_stream(self, mock_stream_generative_model, prompt_stack, messages, use_native_tools):
         # Given
         driver = GooglePromptDriver(
-            model="gemini-pro", api_key="api-key", stream=True, top_p=0.5, top_k=50, use_native_tools=use_native_tools
+            model="gemini-pro",
+            api_key="api-key",
+            stream=True,
+            top_p=0.5,
+            top_k=50,
+            use_native_tools=use_native_tools,
+            extra_params={"max_output_tokens": 10},
         )
 
         # When
@@ -225,7 +238,7 @@ class TestGooglePromptDriver:
         assert messages == call_args.args[0]
         assert call_args.kwargs["stream"] is True
         assert call_args.kwargs["generation_config"] == GenerationConfig(
-            temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[]
+            temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[], max_output_tokens=10
         )
         if use_native_tools:
             tool_declarations = call_args.kwargs["tools"]

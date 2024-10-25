@@ -27,7 +27,6 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     Attributes:
         api_token: Hugging Face Hub API token.
         use_gpu: Use GPU during model run.
-        params: Custom model run parameters.
         model: Hugging Face Hub model name.
         client: Custom `InferenceApi`.
         tokenizer: Custom `HuggingFaceTokenizer`.
@@ -35,7 +34,6 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
     api_token: str = field(kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
-    params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
@@ -56,7 +54,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         prompt = self.prompt_stack_to_string(prompt_stack)
-        full_params = {"return_full_text": False, "max_new_tokens": self.max_tokens, **self.params}
+        full_params = self._base_params(prompt_stack)
         logger.debug((prompt, full_params))
 
         response = self.client.text_generation(
@@ -76,7 +74,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
-        full_params = {"return_full_text": False, "max_new_tokens": self.max_tokens, "stream": True, **self.params}
+        full_params = {**self._base_params(prompt_stack), "stream": True}
         logger.debug((prompt, full_params))
 
         response = self.client.text_generation(prompt, **full_params)
@@ -94,6 +92,13 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
+
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        return {
+            "return_full_text": False,
+            "max_new_tokens": self.max_tokens,
+            **self.extra_params,
+        }
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []

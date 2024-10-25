@@ -154,6 +154,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
+            **self.extra_params,
         }
 
         if self.response_format is not None:

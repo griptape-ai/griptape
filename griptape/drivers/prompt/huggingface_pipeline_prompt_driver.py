@@ -26,13 +26,11 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     """Hugging Face Pipeline Prompt Driver.
 
     Attributes:
-        params: Custom model run parameters.
         model: Hugging Face Hub model name.
     """
 
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
@@ -56,20 +54,15 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
+        full_params = self._base_params(prompt_stack)
         logger.debug(
             (
                 messages,
-                {"max_new_tokens": self.max_tokens, "temperature": self.temperature, "do_sample": True, **self.params},
+                full_params,
             )
         )
 
-        result = self.pipeline(
-            messages,
-            max_new_tokens=self.max_tokens,
-            temperature=self.temperature,
-            do_sample=True,
-            **self.params,
-        )
+        result = self.pipeline(messages, **full_params)
         logger.debug(result)
 
         if isinstance(result, list):
@@ -95,6 +88,14 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
+
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        return {
+            "max_new_tokens": self.max_tokens,
+            "temperature": self.temperature,
+            "do_sample": True,
+            **self.extra_params,
+        }
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []

@@ -124,6 +124,7 @@ class AnthropicPromptDriver(BasePromptDriver):
                 else {}
             ),
             **({"system": system_message} if system_message else {}),
+            **self.extra_params,
         }
 
     def __to_anthropic_messages(self, messages: list[Message]) -> list[dict]:

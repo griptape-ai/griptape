@@ -33,17 +33,28 @@ class TestHuggingFacePipelinePromptDriver:
         prompt_stack.add_assistant_message("assistant-input")
         return prompt_stack
 
+    @pytest.fixture()
+    def messages(self):
+        return [
+            {"role": "system", "content": "system-input"},
+            {"role": "user", "content": "user-input"},
+            {"role": "assistant", "content": "assistant-input"},
+        ]
+
     def test_init(self):
         assert HuggingFacePipelinePromptDriver(model="gpt2", max_tokens=42)
 
-    def test_try_run(self, prompt_stack):
+    def test_try_run(self, prompt_stack, messages, mock_pipeline):
         # Given
-        driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
+        driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42, extra_params={"foo": "bar"})
 
         # When
         message = driver.try_run(prompt_stack)
 
         # Then
+        mock_pipeline.return_value.assert_called_once_with(
+            messages, max_new_tokens=42, temperature=0.1, do_sample=True, foo="bar"
+        )
         assert message.value == "model-output"
         assert message.usage.input_tokens == 3
         assert message.usage.output_tokens == 3

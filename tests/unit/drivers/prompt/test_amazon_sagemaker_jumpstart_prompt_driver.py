@@ -37,7 +37,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
 
     def test_try_run(self, mock_client):
         # Given
-        driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model")
+        driver = AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="model", extra_params={"foo": "bar"})
         prompt_stack = PromptStack()
         prompt_stack.add_user_message("prompt-stack")
 
@@ -61,6 +61,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
                         "eos_token_id": 1,
                         "stop_strings": [],
                         "return_full_text": False,
+                        "foo": "bar",
                     },
                 }
             ),
@@ -91,6 +92,7 @@ class TestAmazonSageMakerJumpstartPromptDriver:
                         "eos_token_id": 1,
                         "stop_strings": [],
                         "return_full_text": False,
+                        "foo": "bar",
                     },
                 }
             ),

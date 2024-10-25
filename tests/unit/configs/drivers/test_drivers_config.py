@@ -18,6 +18,7 @@ class TestDriversConfig:
                 "max_tokens": None,
                 "stream": False,
                 "use_native_tools": False,
+                "extra_params": {},
             },
             "conversation_memory_driver": {
                 "type": "LocalConversationMemoryDriver",
