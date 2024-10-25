@@ -126,17 +126,15 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         # retrieve the Thread to get the metadata
         thread_response = self._call_api("get", f"/threads/{thread_id}").json()
 
-        runs = []
-        for m in messages_response.get("messages", []):
-            run_id = m["metadata"].pop("run_id", None)
-            run = Run(
-                meta=m["metadata"],
-                input=BaseArtifact.from_json(m["input"]),
-                output=BaseArtifact.from_json(m["output"]),
+        runs = [
+            Run(
+                **({"id": message["metadata"]} if "metadata" in message else {}),
+                meta=message["metadata"],
+                input=BaseArtifact.from_json(message["input"]),
+                output=BaseArtifact.from_json(message["output"]),
             )
-            if run_id is not None:
-                run.id = run_id
-            runs.append(run)
+            for message in messages_response.get("messages", [])
+        ]
 
         return runs, thread_response.get("metadata", {})
 
