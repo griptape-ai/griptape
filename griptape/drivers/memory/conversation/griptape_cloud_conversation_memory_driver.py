@@ -128,7 +128,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
 
         runs = [
             Run(
-                **({"id": message["metadata"]} if "metadata" in message else {}),
+                **({"id": message["metadata"].pop("run_id", None)} if "run_id" in message.get("metadata") else {}),
                 meta=message["metadata"],
                 input=BaseArtifact.from_json(message["input"]),
                 output=BaseArtifact.from_json(message["output"]),
