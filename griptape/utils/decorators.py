@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import contextvars
 import functools
 import inspect
 from typing import Any, Callable, Optional
 
 import schema
+import wrapt
 from schema import Schema
 
 CONFIG_SCHEMA = Schema(
@@ -13,6 +15,16 @@ CONFIG_SCHEMA = Schema(
         schema.Optional("schema"): lambda data: isinstance(data, (Schema, Callable)),
     }
 )
+
+
+def with_context(wrapped: Callable) -> Callable:
+    ctx = contextvars.copy_context()
+
+    @wrapt.decorator
+    def wrapper(wrapped: Callable, instance: Any, args: tuple, kwargs: dict) -> Any:
+        return ctx.run(wrapped, *args, **kwargs)
+
+    return wrapper(wrapped)  # pyright: ignore[reportCallIssue]
 
 
 def activity(config: dict) -> Any:

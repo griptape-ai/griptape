@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseFileManagerDriver.load_artifact()` & `BaseFileManagerDriver.save_artifact()` for loading & saving artifacts as files.
 - Events `BaseChunkEvent`, `TextChunkEvent`, `ActionChunkEvent`.
 - `wrapt` dependency for more robust decorators.
+- `griptape.utils.decorators.with_context` decorator for running functions with the current `contextvars` context.
 
 ### Changed
 
@@ -51,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Models in `ToolkitTask` with native tool calling no longer need to provide their final answer as `Answer:`.
 - `EventListener.event_types` will now listen on child types of any provided type.
 - Only install Tool dependencies if the Tool provides a `requirements.txt` and the dependencies are not already met.
+- Using `EventListener`s as a context manager now sets thread/coroutine-local `EventListener`s on the Event Bus instead of adding/removing them.
 
 ### Fixed
 
@@ -58,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `EventListener.event_types` and the argument to `BaseEventListenerDriver.handler` being out of sync.
 - Models occasionally hallucinating `memory_name` and `artifact_namespace` into Tool schemas when using `ToolkitTask`.
 - Models occasionally providing overly succinct final answers when using `ToolkitTask`.
+- Issues when using `EventListener` as a context manager in a multi-threaded environment.
 
 ## \[0.33.1\] - 2024-10-11
 
