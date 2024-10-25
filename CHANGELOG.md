@@ -58,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `EventListener.event_types` and the argument to `BaseEventListenerDriver.handler` being out of sync.
 - Models occasionally hallucinating `memory_name` and `artifact_namespace` into Tool schemas when using `ToolkitTask`.
 - Models occasionally providing overly succinct final answers when using `ToolkitTask`.
+- Exception getting raised in `FuturesExecutorMixin.__del__`.
 
 ## \[0.33.1\] - 2024-10-11
 

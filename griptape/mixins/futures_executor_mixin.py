@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 from abc import ABC
 from concurrent import futures
 from typing import Callable, Optional
@@ -23,4 +24,6 @@ class FuturesExecutorMixin(ABC):
         if executor is not None:
             self.futures_executor = None
 
-            executor.shutdown(wait=True)
+            with contextlib.suppress(Exception):
+                # don't raise exceptions in __del__
+                executor.shutdown(wait=True)
