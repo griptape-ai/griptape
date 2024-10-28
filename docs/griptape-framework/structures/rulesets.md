@@ -93,7 +93,7 @@ You can define a Ruleset at the Structure level if you need to have certain beha
 
 ### Rules
 
-You can pass [rules](../../reference/griptape/mixins/rule_mixin/#griptape.mixins.rule_mixin.RuleMixin.rules) directly to the Structure to have a Ruleset created for you.
+You can pass [rules](../../reference/griptape/mixins/rule_mixin.md#griptape.mixins.rule_mixin.RuleMixin.rules) directly to the Structure to have a Ruleset created for you.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/rulesets_2.py"
