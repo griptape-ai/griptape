@@ -117,6 +117,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 if prompt_stack.tools and self.use_native_tools
                 else {}
             ),
+            **self.extra_params,
         }
 
     def __to_bedrock_messages(self, messages: list[Message]) -> list[dict]:

@@ -116,6 +116,7 @@ class OllamaPromptDriver(BasePromptDriver):
                 and not self.stream  # Tool calling is only supported when not streaming
                 else {}
             ),
+            **self.extra_params,
         }
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:

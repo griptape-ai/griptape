@@ -128,6 +128,7 @@ class CoherePromptDriver(BasePromptDriver):
                 else {}
             ),
             **({"preamble": preamble} if preamble else {}),
+            **self.extra_params,
         }
 
     def __to_cohere_messages(self, messages: list[Message]) -> list[dict]:

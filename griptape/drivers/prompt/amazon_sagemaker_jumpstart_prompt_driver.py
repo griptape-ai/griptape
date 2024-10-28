@@ -105,6 +105,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
             "eos_token_id": self.tokenizer.tokenizer.eos_token_id,
             "stop_strings": self.tokenizer.stop_sequences,
             "return_full_text": False,
+            **self.extra_params,
         }
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:

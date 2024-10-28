@@ -45,6 +45,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         tokenizer: An instance of `BaseTokenizer` to when calculating tokens.
         stream: Whether to stream the completion or not. `CompletionChunkEvent`s will be published to the `Structure` if one is provided.
         use_native_tools: Whether to use LLM's native function calling capabilities. Must be supported by the model.
+        extra_params: Extra parameters to pass to the model.
     """
 
     temperature: float = field(default=0.1, metadata={"serializable": True})
@@ -54,6 +55,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
         EventBus.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))

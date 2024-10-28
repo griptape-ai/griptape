@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseFileManagerDriver.load_artifact()` & `BaseFileManagerDriver.save_artifact()` for loading & saving artifacts as files.
 - Events `BaseChunkEvent`, `TextChunkEvent`, `ActionChunkEvent`.
 - `wrapt` dependency for more robust decorators.
+- `BasePromptDriver.extra_params` for passing extra parameters not explicitly declared by the Driver.
 
 ### Changed
 
@@ -32,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
 - **BREAKING**: Moved `griptape.common.observable.observable` to `griptape.common.decorators.observable`.
 - **BREAKING**: `AnthropicDriversConfig` no longer bundles `VoyageAiEmbeddingDriver`.
+- **BREAKING**: Removed `HuggingFaceHubPromptDriver.params`, use `HuggingFaceHubPromptDriver.extra_params` instead.
+- **BREAKING**: Removed `HuggingFacePipelinePromptDriver.params`, use `HuggingFacePipelinePromptDriver.extra_params` instead.
 - Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
 - `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
