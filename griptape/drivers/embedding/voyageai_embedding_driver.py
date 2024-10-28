@@ -10,7 +10,7 @@ from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
-    import voyageai
+    from voyageai.client import Client
 
 
 @define
@@ -34,7 +34,7 @@ class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
         kw_only=True,
     )
     input_type: str = field(default="document", kw_only=True, metadata={"serializable": True})
-    _client: voyageai.Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Any:
