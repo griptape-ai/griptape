@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **BREAKING**: Removed `stringcase` and `docker` from core dependencies. `ComputerTool` will now install these on the fly.
 - **BREAKING**: Renamed `BaseTask.State.EXECUTING` to `BaseTask.State.RUNNING`.
 - **BREAKING**: Renamed `BaseTask.is_executing()` to `BaseTask.is_running()`.
 - **BREAKING**: Renamed `Structure.is_executing()` to `Structure.is_running()`.
