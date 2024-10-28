@@ -28,9 +28,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
     def __attrs_post_init__(self) -> None:
         if self.autoload:
-            runs, meta = self.conversation_memory_driver.load()
-            self.runs.extend(runs)
-            self.meta = dict_merge(self.meta, meta)
+            self.load_runs()
 
     def before_add_run(self) -> None:
         pass
@@ -43,6 +41,9 @@ class BaseConversationMemory(SerializableMixin, ABC):
         return self
 
     def after_add_run(self) -> None:
+        if self.max_runs:
+            while len(self.runs) > self.max_runs:
+                self.runs.pop(0)
         self.conversation_memory_driver.store(self.runs, self.meta)
 
     @abstractmethod
@@ -50,6 +51,13 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
     @abstractmethod
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack: ...
+
+    def load_runs(self) -> list[Run]:
+        runs, meta = self.conversation_memory_driver.load()
+        self.runs.extend(runs)
+        self.meta = dict_merge(self.meta, meta)
+
+        return self.runs
 
     def add_to_prompt_stack(
         self, prompt_driver: BasePromptDriver, prompt_stack: PromptStack, index: Optional[int] = None

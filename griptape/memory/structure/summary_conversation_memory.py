@@ -7,7 +7,7 @@ from attrs import Factory, define, field
 
 from griptape.common import Message, PromptStack
 from griptape.configs import Defaults
-from griptape.memory.structure import ConversationMemory
+from griptape.memory.structure.base_conversation_memory import BaseConversationMemory
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 
 @define
-class SummaryConversationMemory(ConversationMemory):
+class SummaryConversationMemory(BaseConversationMemory):
     offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
     prompt_driver: BasePromptDriver = field(
         kw_only=True, default=Factory(lambda: Defaults.drivers_config.prompt_driver)
@@ -54,8 +54,7 @@ class SummaryConversationMemory(ConversationMemory):
             return summary_index_runs
 
     def try_add_run(self, run: Run) -> None:
-        super().try_add_run(run)
-
+        self.runs.append(run)
         unsummarized_runs = self.unsummarized_runs()
         runs_to_summarize = unsummarized_runs[: max(0, len(unsummarized_runs) - self.offset)]
 
