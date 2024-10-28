@@ -8,7 +8,7 @@ from griptape.tokenizers import BaseTokenizer
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:
-    from voyageai import Client
+    from voyageai.client import Client
 
 
 @define()

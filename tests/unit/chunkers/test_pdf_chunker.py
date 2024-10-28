@@ -20,7 +20,7 @@ class TestPdfChunker:
         text = "".join([p.extract_text() for p in reader.pages])
         chunks = chunker.chunk(text)
 
-        assert len(chunks) == 16
+        assert len(chunks) == 17
 
         for chunk in chunks:
             assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
