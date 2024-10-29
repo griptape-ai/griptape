@@ -30,7 +30,7 @@ requests = "^2.32.0"
 filetype = "^1.2"
 
 # drivers
-cohere = { version = "~5.11.2", optional = true }
+cohere = { version = "^5.11.2", optional = true }
 anthropic = { version = "^0.37.1", optional = true }
 transformers = { version = "^4.41.1", optional = true}
 huggingface-hub = { version = "^0.26.2", optional = true }
