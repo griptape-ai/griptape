@@ -26,13 +26,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **BREAKING**: Removed `BaseEventListener.publish_event` `flush` argument. Use `BaseEventListener.flush_events()` instead.
+- **BREAKING**: Removed `BaseEventListenerDriver.publish_event` `flush` argument. Use `BaseEventListenerDriver.flush_events()` instead.
 - **BREAKING**: Renamed parameter `driver` on `EventListener` to `event_listener_driver`.
-- **BREAKING**: Changed default value of parameter `handler` on `EventListener` to `None`.
 - **BREAKING**: Updated `EventListener.handler` return value behavior.
-- **BREAKING**: Removed `CompletionChunkEvent`.
   - If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
   - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
+- **BREAKING**: Removed `CompletionChunkEvent`.
 - **BREAKING**: Moved `griptape.common.observable.observable` to `griptape.common.decorators.observable`.
 - **BREAKING**: `AnthropicDriversConfig` no longer bundles `VoyageAiEmbeddingDriver`.
 - **BREAKING**: Removed `HuggingFaceHubPromptDriver.params`, use `HuggingFaceHubPromptDriver.extra_params` instead.
