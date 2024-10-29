@@ -2,7 +2,7 @@
 
 This document provides instructions for migrating your codebase to accommodate breaking changes introduced in new versions of Griptape.
 
-## 0.34.X to 0.35.X
+## 0.33.X to 0.34.X
 
 ### `AnthropicDriversConfig` Embedding Driver
 
@@ -34,8 +34,6 @@ Defaults.drivers_config = AnthropicDriversConfig(
     )
 )
 ```
-
-## 0.33.X to 0.34.X
 
 ### Removed `CompletionChunkEvent`
 
@@ -120,6 +118,81 @@ def handler_fn_return_base_event(event: BaseEvent) -> Optional[dict | BaseEvent]
 EventListener(handler=handler_fn_return_none, event_listener_driver=driver)
 EventListener(handler=handler_fn_return_dict, event_listener_driver=driver)
 EventListener(handler=handler_fn_return_base_event, event_listener_driver=driver)
+```
+
+### Removed `BaseEventListener.publish_event` `flush` argument.
+
+`BaseEventListenerDriver.publish_event` no longer takes a `flush` argument. If you need to flush the event, call `BaseEventListenerDriver.flush_events` directly.
+
+#### Before
+
+```python
+event_listener_driver.publish_event(event, flush=True)
+```
+
+#### After
+
+```python
+event_listener_driver.publish_event(event)
+event_listener_driver.flush_events()
+```
+
+### Moved `observable` decorator location.
+
+The `observable` decorator has been moved to `griptape.common.decorators`. Update your imports accordingly.
+
+
+#### Before
+
+```python
+from griptape.common.observable import observable
+```
+
+#### After
+
+```python
+from griptape.common.decorators import observable
+```
+
+### Removed `HuggingFacePipelinePromptDriver.params`
+
+`HuggingFacePipelinePromptDriver.params` has been removed. Use `HuggingFacePipelinePromptDriver.extra_params` instead.
+
+#### Before
+
+```python
+driver = HuggingFacePipelinePromptDriver(
+    params={"max_length": 50}
+)
+```
+
+#### After
+
+```python
+driver = HuggingFacePipelinePromptDriver(
+    extra_params={"max_length": 50}
+)
+```
+
+### Renamed `execute` to `run` in several places
+
+`execute` has been renamed to `run` in several places. Update your code accordingly.
+
+
+#### Before
+
+```python
+task = PromptTask()
+if task.can_execute():
+    task.execute()
+```
+
+#### After
+
+```python
+task = PromptTask()
+if task.can_run():
+    task.run()
 ```
 
 ## 0.32.X to 0.33.X
