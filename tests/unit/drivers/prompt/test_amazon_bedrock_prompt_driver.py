@@ -359,7 +359,9 @@ class TestAmazonBedrockPromptDriver:
     @pytest.mark.parametrize("use_native_tools", [True, False])
     def test_try_run(self, mock_converse, prompt_stack, messages, use_native_tools):
         # Given
-        driver = AmazonBedrockPromptDriver(model="ai21.j2", use_native_tools=use_native_tools)
+        driver = AmazonBedrockPromptDriver(
+            model="ai21.j2", use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+        )
 
         # When
         message = driver.try_run(prompt_stack)
@@ -376,6 +378,7 @@ class TestAmazonBedrockPromptDriver:
                 if use_native_tools
                 else {}
             ),
+            foo="bar",
         )
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
@@ -390,7 +393,9 @@ class TestAmazonBedrockPromptDriver:
     @pytest.mark.parametrize("use_native_tools", [True, False])
     def test_try_stream_run(self, mock_converse_stream, prompt_stack, messages, use_native_tools):
         # Given
-        driver = AmazonBedrockPromptDriver(model="ai21.j2", stream=True, use_native_tools=use_native_tools)
+        driver = AmazonBedrockPromptDriver(
+            model="ai21.j2", stream=True, use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+        )
 
         # When
         stream = driver.try_stream(prompt_stack)
@@ -408,6 +413,7 @@ class TestAmazonBedrockPromptDriver:
                 if prompt_stack.tools and use_native_tools
                 else {}
             ),
+            foo="bar",
         )
 
         event = next(stream)

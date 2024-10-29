@@ -73,4 +73,4 @@ class TestImageQueryTask:
 
     def test_bad_run(self, image_query_engine, text_artifact, image_artifact):
         with pytest.raises(ValueError, match="All inputs"):
-            ImageQueryTask(("foo", [image_artifact, text_artifact]), image_query_engine=image_query_engine).run()
+            ImageQueryTask(("foo", [image_artifact, text_artifact]), image_query_engine=image_query_engine).try_run()

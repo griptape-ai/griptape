@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
@@ -20,6 +21,7 @@ from griptape.common import (
     observable,
 )
 from griptape.common.prompt_stack.contents.action_call_delta_message_content import ActionCallDeltaMessageContent
+from griptape.configs import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, CohereTokenizer
 from griptape.utils import import_optional_dependency
@@ -32,6 +34,8 @@ if TYPE_CHECKING:
     from cohere.types import NonStreamedChatResponse
 
     from griptape.tools import BaseTool
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define(kw_only=True)
@@ -59,7 +63,11 @@ class CoherePromptDriver(BasePromptDriver):
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        result = self.client.chat(**self._base_params(prompt_stack))
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+
+        result = self.client.chat(**params)
+        logger.debug(result.model_dump())
         usage = result.meta.tokens
 
         return Message(
@@ -70,9 +78,12 @@ class CoherePromptDriver(BasePromptDriver):
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        result = self.client.chat_stream(**self._base_params(prompt_stack))
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        result = self.client.chat_stream(**params)
 
         for event in result:
+            logger.debug(event.model_dump())
             if event.event_type == "stream-end":
                 usage = event.response.meta.tokens
 
@@ -117,6 +128,7 @@ class CoherePromptDriver(BasePromptDriver):
                 else {}
             ),
             **({"preamble": preamble} if preamble else {}),
+            **self.extra_params,
         }
 
     def __to_cohere_messages(self, messages: list[Message]) -> list[dict]:

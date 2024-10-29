@@ -47,25 +47,40 @@ class TestHuggingFaceHubPromptDriver:
 
     def test_try_run(self, prompt_stack, mock_client):
         # Given
-        driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id")
+        driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id", extra_params={"foo": "bar"})
 
         # When
         message = driver.try_run(prompt_stack)
 
         # Then
+        mock_client.text_generation.assert_called_once_with(
+            "foo\n\nUser: bar",
+            return_full_text=False,
+            max_new_tokens=250,
+            foo="bar",
+        )
         assert message.value == "model-output"
         assert message.usage.input_tokens == 3
         assert message.usage.output_tokens == 3
 
     def test_try_stream(self, prompt_stack, mock_client_stream):
         # Given
-        driver = HuggingFaceHubPromptDriver(api_token="api-token", model="repo-id", stream=True)
+        driver = HuggingFaceHubPromptDriver(
+            api_token="api-token", model="repo-id", stream=True, extra_params={"foo": "bar"}
+        )
 
         # When
         stream = driver.try_stream(prompt_stack)
         event = next(stream)
 
         # Then
+        mock_client_stream.text_generation.assert_called_once_with(
+            "foo\n\nUser: bar",
+            return_full_text=False,
+            max_new_tokens=250,
+            foo="bar",
+            stream=True,
+        )
         assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
 

@@ -22,11 +22,11 @@ class VectorStoreRetrievalRagModule(BaseRetrievalRagModule):
         default=Factory(lambda: Defaults.drivers_config.vector_store_driver)
     )
     query_params: dict[str, Any] = field(factory=dict)
-    process_query_output_fn: Callable[[list[BaseVectorStoreDriver.Entry]], Sequence[TextArtifact]] = field(
+    process_query_output: Callable[[list[BaseVectorStoreDriver.Entry]], Sequence[TextArtifact]] = field(
         default=Factory(lambda: lambda es: [e.to_artifact() for e in es]),
     )
 
     def run(self, context: RagContext) -> Sequence[TextArtifact]:
         query_params = utils.dict_merge(self.query_params, self.get_context_param(context, "query_params"))
 
-        return self.process_query_output_fn(self.vector_store_driver.query(context.query, **query_params))
+        return self.process_query_output(self.vector_store_driver.query(context.query, **query_params))

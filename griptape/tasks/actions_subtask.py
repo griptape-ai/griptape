@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import re
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Callable, Optional, Union
 
 import schema
 from attrs import define, field
@@ -15,7 +15,7 @@ from griptape.configs import Defaults
 from griptape.events import EventBus, FinishActionsSubtaskEvent, StartActionsSubtaskEvent
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
-from griptape.utils import remove_null_values_in_dict_recursively
+from griptape.utils import remove_null_values_in_dict_recursively, with_contextvars
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
@@ -33,7 +33,7 @@ class ActionsSubtask(BaseTask):
     thought: Optional[str] = field(default=None, kw_only=True)
     actions: list[ToolAction] = field(factory=list, kw_only=True)
     output: Optional[BaseArtifact] = field(default=None, init=False)
-    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
+    _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )
@@ -113,14 +113,14 @@ class ActionsSubtask(BaseTask):
         ]
         logger.info("".join(parts))
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         try:
             if any(isinstance(a.output, ErrorArtifact) for a in self.actions):
                 errors = [a.output.value for a in self.actions if isinstance(a.output, ErrorArtifact)]
 
                 self.output = ErrorArtifact("\n\n".join(errors))
             else:
-                results = self.execute_actions(self.actions)
+                results = self.run_actions(self.actions)
 
                 actions_output = []
                 for result in results:
@@ -138,13 +138,15 @@ class ActionsSubtask(BaseTask):
         else:
             return ErrorArtifact("no tool output")
 
-    def execute_actions(self, actions: list[ToolAction]) -> list[tuple[str, BaseArtifact]]:
-        return utils.execute_futures_list([self.futures_executor.submit(self.execute_action, a) for a in actions])
+    def run_actions(self, actions: list[ToolAction]) -> list[tuple[str, BaseArtifact]]:
+        return utils.execute_futures_list(
+            [self.futures_executor.submit(with_contextvars(self.run_action), a) for a in actions]
+        )
 
-    def execute_action(self, action: ToolAction) -> tuple[str, BaseArtifact]:
+    def run_action(self, action: ToolAction) -> tuple[str, BaseArtifact]:
         if action.tool is not None:
             if action.path is not None:
-                output = action.tool.execute(getattr(action.tool, action.path), self, action)
+                output = action.tool.run(getattr(action.tool, action.path), self, action)
             else:
                 output = ErrorArtifact("action path not found")
         else:
@@ -197,8 +199,8 @@ class ActionsSubtask(BaseTask):
 
     def _process_task_input(
         self,
-        task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact],
-    ) -> TextArtifact | ListArtifact:
+        task_input: Union[str, tuple, list, BaseArtifact, Callable[[BaseTask], BaseArtifact]],
+    ) -> Union[TextArtifact, ListArtifact]:
         if isinstance(task_input, (TextArtifact, ListArtifact)):
             return task_input
         elif isinstance(task_input, ActionArtifact):
@@ -217,14 +219,18 @@ class ActionsSubtask(BaseTask):
         actions_matches = re.findall(self.ACTIONS_PATTERN, value, re.DOTALL)
         answer_matches = re.findall(self.ANSWER_PATTERN, value, re.MULTILINE)
 
-        if self.thought is None and thought_matches:
+        self.actions = self.__parse_actions(actions_matches)
+
+        if thought_matches:
             self.thought = thought_matches[-1]
 
-        self.__parse_actions(actions_matches)
-
-        # If there are no actions to take but an answer is provided, set the answer as the output.
-        if len(self.actions) == 0 and self.output is None and answer_matches:
-            self.output = TextArtifact(answer_matches[-1])
+        if not self.actions and self.output is None:
+            if answer_matches:
+                # A direct answer is provided, set it as the output.
+                self.output = TextArtifact(answer_matches[-1])
+            else:
+                # The LLM failed to follow the ReAct prompt, set the LLM's raw response as the output.
+                self.output = TextArtifact(value)
 
     def __init_from_artifacts(self, artifacts: ListArtifact) -> None:
         """Parses the input Artifacts to extract the thought and actions.
@@ -243,22 +249,29 @@ class ActionsSubtask(BaseTask):
             if isinstance(artifact, ActionArtifact)
         ]
 
-        thoughts = [artifact.value for artifact in artifacts.value if isinstance(artifact, TextArtifact)]
-        if thoughts:
-            self.thought = thoughts[0]
+        # When parsing from Artifacts we can't determine the thought unless there are also Actions
+        if self.actions:
+            thoughts = [artifact.value for artifact in artifacts.value if isinstance(artifact, TextArtifact)]
+            if thoughts:
+                self.thought = thoughts[0]
+        else:
+            if self.output is None:
+                self.output = TextArtifact(artifacts.to_text())
 
-    def __parse_actions(self, actions_matches: list[str]) -> None:
+    def __parse_actions(self, actions_matches: list[str]) -> list[ToolAction]:
         if len(actions_matches) == 0:
-            return
+            return []
         try:
             data = actions_matches[-1]
             actions_list: list[dict] = json.loads(data, strict=False)
 
-            self.actions = [self.__process_action_object(action_object) for action_object in actions_list]
+            return [self.__process_action_object(action_object) for action_object in actions_list]
         except json.JSONDecodeError as e:
             logger.exception("Subtask %s\nInvalid actions JSON: %s", self.origin_task.id, e)
 
             self.output = ErrorArtifact(f"Actions JSON decoding error: {e}", exception=e)
+
+            return []
 
     def __process_action_object(self, action_object: dict) -> ToolAction:
         # Load action tag; throw exception if the key is not present

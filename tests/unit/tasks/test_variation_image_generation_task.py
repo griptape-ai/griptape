@@ -43,7 +43,7 @@ class TestVariationImageGenerationTask:
 
     def test_bad_input(self, image_artifact):
         with pytest.raises(ValueError):
-            VariationImageGenerationTask(("foo", "bar")).run()  # pyright: ignore[reportArgumentType]
+            VariationImageGenerationTask(("foo", "bar")).try_run()  # pyright: ignore[reportArgumentType]
 
     def test_config_image_generation_engine(self, text_artifact, image_artifact):
         task = VariationImageGenerationTask((text_artifact, image_artifact))

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 from attrs import Factory, define, field
 
@@ -12,6 +12,8 @@ from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory, Run
 from griptape.mixins.rule_mixin import RuleMixin
+from griptape.mixins.runnable_mixin import RunnableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -20,19 +22,22 @@ if TYPE_CHECKING:
 
 
 @define
-class Structure(ABC, RuleMixin):
-    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    _tasks: list[BaseTask | list[BaseTask]] = field(factory=list, kw_only=True, alias="tasks")
+class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
+    _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
+        factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
+    )
     conversation_memory: Optional[BaseConversationMemory] = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
+        metadata={"serializable": True},
     )
     task_memory: TaskMemory = field(
         default=Factory(lambda self: TaskMemory(), takes_self=True),
         kw_only=True,
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
-    fail_fast: bool = field(default=True, kw_only=True)
+    fail_fast: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _execution_args: tuple = ()
 
     def __attrs_post_init__(self) -> None:
@@ -71,6 +76,10 @@ class Structure(ABC, RuleMixin):
         if self.output_task.output is None:
             raise ValueError("Structure's output Task has no output. Run the Structure to generate output.")
         return self.output_task.output
+
+    @property
+    def task_outputs(self) -> dict[str, Optional[BaseArtifact]]:
+        return {task.id: task.output for task in self.tasks}
 
     @property
     def finished_tasks(self) -> list[BaseTask]:
@@ -131,6 +140,7 @@ class Structure(ABC, RuleMixin):
 
     @observable
     def before_run(self, args: Any) -> None:
+        super().before_run(args)
         self._execution_args = args
 
         [task.reset() for task in self.tasks]
@@ -147,6 +157,7 @@ class Structure(ABC, RuleMixin):
 
     @observable
     def after_run(self) -> None:
+        super().after_run()
         if self.conversation_memory and self.output_task.output is not None:
             run = Run(input=self.input_task.input, output=self.output_task.output)
 

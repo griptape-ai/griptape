@@ -40,6 +40,10 @@ test: test/unit test/integration
 test/unit: ## Run unit tests.
 	@poetry run pytest -n auto tests/unit
 
+.PHONY: test/unit/%
+test/unit/%: ## Run specific unit tests.
+	@poetry run pytest -n auto tests/unit -k $*
+
 .PHONY: test/unit/coverage
 test/unit/coverage:
 	@poetry run pytest -n auto --cov=griptape tests/unit
@@ -55,6 +59,7 @@ lint: ## Lint project.
 .PHONY: format
 format: ## Format project.
 	@poetry run ruff format
+	@poetry run mdformat .
 
 .PHONY: check
 check: check/format check/lint check/types check/spell ## Run all checks.
@@ -77,7 +82,7 @@ check/spell:
 	
 .PHONY: docs
 docs: ## Build documentation.
-	@poetry run mkdocs build
+	@poetry run python -m mkdocs build --clean --strict 
 
 .DEFAULT_GOAL := help
 .PHONY: help

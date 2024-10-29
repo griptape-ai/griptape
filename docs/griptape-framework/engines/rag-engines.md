@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## RAG Engines
@@ -13,7 +13,6 @@ search:
 ### RAG Stages
 
 `RagEngine`s consist of three _stages_: `QueryRagStage`, `RetrievalRagStage`, and `ResponseRagStage`. These stages are always executed sequentially. Each stage comprises multiple _modules_, which are executed in a customized manner. Due to this unique structure, `RagEngines` are not intended to replace [Workflows](../structures/workflows.md) or [Pipelines](../structures/pipelines.md).
-
 
 - `QueryRagStage` is used for modifying user queries.
 - `RetrievalRagStage` is used for retrieving and re-ranking text chunks.
@@ -28,11 +27,13 @@ RAG modules are used to implement concrete actions in the RAG pipeline. `RagEngi
 - `TranslateQueryRagModule` is for translating the query into another language.
 
 #### Retrieval/Rerank Modules
+
 - `TextChunksRerankRagModule` is for re-ranking retrieved results.
 - `TextLoaderRetrievalRagModule` is for retrieving data with text loaders in real time.
 - `VectorStoreRetrievalRagModule` is for retrieving text chunks from a vector store.
 
 #### Response Modules
+
 - `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
 - `TextChunksResponseRagModule` is for responding with retrieved text chunks.
 - `FootnotePromptResponseRagModule` is for responding with automatic footnotes from text chunk references.

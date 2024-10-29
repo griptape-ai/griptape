@@ -8,7 +8,7 @@ EventBus.add_event_listeners(
     [
         EventListener(
             event_types=[FinishStructureRunEvent],
-            driver=PusherEventListenerDriver(
+            event_listener_driver=PusherEventListenerDriver(
                 batched=False,
                 app_id=os.environ["PUSHER_APP_ID"],
                 key=os.environ["PUSHER_KEY"],

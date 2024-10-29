@@ -32,6 +32,15 @@ class TestPromptTask:
         assert isinstance(task.prompt_driver, MockPromptDriver)
 
     def test_input(self):
+        # Structure context
+        pipeline = Pipeline()
+        task = PromptTask()
+        pipeline.add_task(task)
+        pipeline._execution_args = ("foo", "bar")
+        assert task.input.value == "foo"
+        pipeline._execution_args = ("fizz", "buzz")
+        assert task.input.value == "fizz"
+
         # Str
         task = PromptTask("test")
 
@@ -117,6 +126,22 @@ class TestPromptTask:
         task = PromptTask({"default": "test"})
 
         assert task.input.value == str({"default": "test"})
+
+    def test_input_context(self):
+        pipeline = Pipeline(
+            tasks=[
+                PromptTask(
+                    "foo",
+                    prompt_driver=MockPromptDriver(),
+                    on_before_run=lambda task: task.children[0].input,
+                ),
+                PromptTask("{{ parent_output }}", prompt_driver=MockPromptDriver()),
+            ]
+        )
+
+        pipeline.run()
+
+        assert pipeline.tasks[1].input.value == "mock output"
 
     def test_prompt_stack(self):
         task = PromptTask("{{ test }}", context={"test": "test value"}, rules=[Rule("test rule")])

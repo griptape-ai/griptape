@@ -17,14 +17,14 @@ class TestWorkflow:
             time.sleep(2)
             return TextArtifact("done")
 
-        return CodeExecutionTask(run_fn=fn)
+        return CodeExecutionTask(on_run=fn)
 
     @pytest.fixture()
     def error_artifact_task(self):
         def fn(task):
             return ErrorArtifact("error")
 
-        return CodeExecutionTask(run_fn=fn)
+        return CodeExecutionTask(on_run=fn)
 
     def test_init(self):
         workflow = Workflow(rulesets=[Ruleset("TestRuleset", [Rule("test")])])
@@ -737,13 +737,14 @@ class TestWorkflow:
 
         context = workflow.context(task)
 
-        assert context["parent_outputs"] == {parent.id: ""}
+        assert context["parent_outputs"] == {}
 
         workflow.run()
 
         context = workflow.context(task)
 
-        assert context["parent_outputs"] == {parent.id: parent.output.to_text()}
+        assert context["task_outputs"] == workflow.task_outputs
+        assert context["parent_outputs"] == {parent.id: parent.output}
         assert context["parents_output_text"] == "mock output"
         assert context["structure"] == workflow
         assert context["parents"] == {parent.id: parent}
@@ -966,3 +967,59 @@ class TestWorkflow:
         publish_website = workflow.find_task("publish_website")
         assert publish_website.parent_ids == ["compare_movies"]
         assert publish_website.child_ids == ["summarize_to_slack"]
+
+    def test_task_outputs(self):
+        task = PromptTask("test")
+        workflow = Workflow(tasks=[task])
+
+        assert len(workflow.task_outputs) == 1
+        assert workflow.task_outputs[task.id] is None
+
+        workflow.run()
+
+        assert len(workflow.task_outputs) == 1
+        assert workflow.task_outputs[task.id].value == "mock output"
+
+    def test_to_dict(self):
+        task = PromptTask("test")
+        workflow = Workflow(tasks=[task])
+
+        expected_workflow_dict = {
+            "type": workflow.type,
+            "id": workflow.id,
+            "tasks": [
+                {
+                    "type": workflow.tasks[0].type,
+                    "id": workflow.tasks[0].id,
+                    "state": str(workflow.tasks[0].state),
+                    "parent_ids": workflow.tasks[0].parent_ids,
+                    "child_ids": workflow.tasks[0].child_ids,
+                    "max_meta_memory_entries": workflow.tasks[0].max_meta_memory_entries,
+                    "context": workflow.tasks[0].context,
+                }
+            ],
+            "conversation_memory": {
+                "type": workflow.conversation_memory.type,
+                "runs": workflow.conversation_memory.runs,
+                "meta": workflow.conversation_memory.meta,
+                "max_runs": workflow.conversation_memory.max_runs,
+            },
+            "fail_fast": workflow.fail_fast,
+        }
+        assert workflow.to_dict() == expected_workflow_dict
+
+    def test_from_dict(self):
+        task = PromptTask("test")
+        workflow = Workflow(tasks=[task])
+
+        serialized_workflow = workflow.to_dict()
+        assert isinstance(serialized_workflow, dict)
+
+        deserialized_workflow = Workflow.from_dict(serialized_workflow)
+        assert isinstance(deserialized_workflow, Workflow)
+
+        assert deserialized_workflow.task_outputs[task.id] is None
+        deserialized_workflow.run()
+
+        assert len(deserialized_workflow.task_outputs) == 1
+        assert deserialized_workflow.task_outputs[task.id].value == "mock output"

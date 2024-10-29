@@ -59,7 +59,8 @@ class Pipeline(Structure):
 
         context.update(
             {
-                "parent_output": task.parents[0].output.to_text() if task.parents and task.parents[0].output else None,
+                "parent_output": task.parents[0].output if task.parents else None,
+                "task_outputs": self.task_outputs,
                 "parent": task.parents[0] if task.parents else None,
                 "child": task.children[0] if task.children else None,
             },
@@ -71,7 +72,7 @@ class Pipeline(Structure):
         if task is None:
             return
         else:
-            if isinstance(task.execute(), ErrorArtifact) and self.fail_fast:
+            if isinstance(task.run(), ErrorArtifact) and self.fail_fast:
                 return
             else:
                 self.__run_from_task(next(iter(task.children), None))

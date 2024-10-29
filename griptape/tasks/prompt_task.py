@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import Factory, define, field
 
@@ -25,10 +25,10 @@ class PromptTask(RuleMixin, BaseTask):
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
     )
     generate_system_template: Callable[[PromptTask], str] = field(
-        default=Factory(lambda self: self.default_system_template_generator, takes_self=True),
+        default=Factory(lambda self: self.default_generate_system_template, takes_self=True),
         kw_only=True,
     )
-    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
+    _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )
@@ -79,7 +79,7 @@ class PromptTask(RuleMixin, BaseTask):
 
         return stack
 
-    def default_system_template_generator(self, _: PromptTask) -> str:
+    def default_generate_system_template(self, _: PromptTask) -> str:
         return J2("tasks/prompt_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
         )
@@ -94,7 +94,7 @@ class PromptTask(RuleMixin, BaseTask):
 
         logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         message = self.prompt_driver.run(self.prompt_stack)
 
         return message.to_artifact()

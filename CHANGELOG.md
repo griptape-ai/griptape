@@ -1,4 +1,5 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
@@ -6,16 +7,103 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [0.33.1] - 2024-10-11
+### Added
+
+- `griptape.configs.logging.JsonFormatter` for formatting logs as JSON.
+- Request/response debug logging to all Prompt Drivers.
+- `griptape.schemas.UnionField` for serializing union fields.
+- `BaseEventListener.flush_events()` to flush events from an Event Listener.
+- Exponential backoff to `BaseEventListenerDriver` for retrying failed event publishing.
+- `BaseTask.task_outputs` to get a dictionary of all task outputs. This has been added to `Workflow.context` and `Pipeline.context`.
+- `Chat.input_fn` for customizing the input to the Chat utility.
+- `GriptapeCloudFileManagerDriver` for managing files on Griptape Cloud.
+- `BaseFileManagerDriver.load_artifact()` & `BaseFileManagerDriver.save_artifact()` for loading & saving artifacts as files.
+- Events `BaseChunkEvent`, `TextChunkEvent`, `ActionChunkEvent`.
+- `wrapt` dependency for more robust decorators.
+- `BasePromptDriver.extra_params` for passing extra parameters not explicitly declared by the Driver.
+- `RunnableMixin` which adds `on_before_run` and `on_after_run` hooks.
+- `griptape.utils.with_contextvars` utility for running functions with the current `contextvars` context.
+
+### Changed
+
+- **BREAKING**: Removed `BaseEventListenerDriver.publish_event` `flush` argument. Use `BaseEventListenerDriver.flush_events()` instead.
+- **BREAKING**: Renamed parameter `driver` on `EventListener` to `event_listener_driver`.
+- **BREAKING**: Updated `EventListener.handler` return value behavior.
+  - If `EventListener.handler` returns `None`, the event will not be published to the `event_listener_driver`.
+  - If `EventListener.handler` is None, the event will be published to the `event_listener_driver` as-is.
+- **BREAKING**: Removed `CompletionChunkEvent`.
+- **BREAKING**: Moved `griptape.common.observable.observable` to `griptape.common.decorators.observable`.
+- **BREAKING**: `AnthropicDriversConfig` no longer bundles `VoyageAiEmbeddingDriver`.
+- **BREAKING**: Removed `HuggingFaceHubPromptDriver.params`, use `HuggingFaceHubPromptDriver.extra_params` instead.
+- **BREAKING**: Removed `HuggingFacePipelinePromptDriver.params`, use `HuggingFacePipelinePromptDriver.extra_params` instead.
+- **BREAKING**: Renamed `BaseTask.run` to `BaseTask.try_run`.
+- **BREAKING**: Renamed `BaseTask.execute` to `BaseTask.run`.
+- **BREAKING**: Renamed `BaseTask.can_execute` to `BaseTool.can_run`.
+- **BREAKING**: Renamed `BaseTool.run` to `BaseTool.try_run`.
+- **BREAKING**: Renamed `BaseTool.execute` to `BaseTool.run`.
+- **BREAKING**: Renamed callables throughout the framework for consistency:
+  - Renamed `LocalStructureRunDriver.structure_factory_fn` to `LocalStructureRunDriver.create_structure`.
+  - Renamed `SnowflakeSqlDriver.connection_func` to `SnowflakeSqlDriver.get_connection`.
+  - Renamed `CsvLoader.formatter_fn` to `CsvLoader.format_row`.
+  - Renamed `SqlLoader.formatter_fn` to `SqlLoader.format_row`.
+  - Renamed `CsvExtractionEngine.system_template_generator` to `CsvExtractionEngine.generate_system_template`.
+  - Renamed `CsvExtractionEngine.user_template_generator` to `CsvExtractionEngine.generate_user_template`.
+  - Renamed `JsonExtractionEngine.system_template_generator` to `JsonExtractionEngine.generate_system_template`.
+  - Renamed `JsonExtractionEngine.user_template_generator` to `JsonExtractionEngine.generate_user_template`.
+  - Renamed `PromptResponseRagModule.generate_system_template` to `PromptResponseRagModule.generate_system_template`.
+  - Renamed `PromptTask.generate_system_template` to `PromptTask.generate_system_template`.
+  - Renamed `ToolkitTask.generate_assistant_subtask_template` to `ToolkitTask.generate_assistant_subtask_template`.
+  - Renamed `JsonSchemaRule.template_generator` to `JsonSchemaRule.generate_template`.
+  - Renamed `ToolkitTask.generate_user_subtask_template` to `ToolkitTask.generate_user_subtask_template`.
+  - Renamed `TextLoaderRetrievalRagModule.process_query_output_fn` to `TextLoaderRetrievalRagModule.process_query_output`.
+  - Renamed `FuturesExecutorMixin.futures_executor_fn` to `FuturesExecutorMixin.create_futures_executor`.
+  - Renamed `VectorStoreTool.process_query_output_fn` to `VectorStoreTool.process_query_output`.
+  - Renamed `CodeExecutionTask.run_fn` to `CodeExecutionTask.on_run`.
+  - Renamed `Chat.input_fn` to `Chat.handle_input`.
+  - Renamed `Chat.output_fn` to `Chat.handle_output`.
+  - Renamed `EventListener.handler` to `EventListener.on_event`.
+- Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
+- `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
+- `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
+- `Pipeline.context["parent_output"]` has changed type from `str | None` to `BaseArtifact | None`.
+- `_DefaultsConfig.logging_config` and `Defaults.drivers_config` are now lazily instantiated.
+- `griptape.schemas.BaseSchema` now uses `griptape.schemas.UnionField` for `Union` fields.
+- `BaseTask.add_parent`/`BaseTask.add_child` now only add the parent/child task to the structure if it is not already present.
+- `BaseEventListener.flush_events()` to flush events from an Event Listener.
+- `BaseEventListener` no longer requires a thread lock for batching events.
+- Updated `ToolkitTask` system prompt to retry/fix actions when using native tool calling.
+- `Chat` input now uses a slightly customized version of `Rich.prompt.Prompt` by default.
+- `Chat` output now uses `Rich.print` by default.
+- `Chat.output_fn`'s now takes an optional kwarg parameter, `stream`.
+- Implemented `SerializableMixin` in `Structure`, `BaseTask`, `BaseTool`, and `TaskMemory`
+- `@activity` decorated functions can now accept kwargs that are defined in the activity schema.
+- Updated `ToolkitTask` system prompt to no longer mention `memory_name` and `artifact_namespace`.
+- Models in `ToolkitTask` with native tool calling no longer need to provide their final answer as `Answer:`.
+- `EventListener.event_types` will now listen on child types of any provided type.
+- Only install Tool dependencies if the Tool provides a `requirements.txt` and the dependencies are not already met.
+- Implemented `RunnableMixin` in `Structure`, `BaseTask`, and `BaseTool`.
+- `EventBus`'s Event Listeners are now thread/coroutine-local. Event Listeners from the spawning thread will be automatically copied when using concurrent griptape features like Workflows.
+
+### Fixed
+
+- Structures not flushing events when not listening for `FinishStructureRunEvent`.
+- `EventListener.event_types` and the argument to `BaseEventListenerDriver.handler` being out of sync.
+- Models occasionally hallucinating `memory_name` and `artifact_namespace` into Tool schemas when using `ToolkitTask`.
+- Models occasionally providing overly succinct final answers when using `ToolkitTask`.
+- Exception getting raised in `FuturesExecutorMixin.__del__`.
+- Issues when using `EventListener` as a context manager in a multi-threaded environment.
+
+## \[0.33.1\] - 2024-10-11
 
 ### Fixed
 
 - Pinned `cohere` at `~5.11.0` to resolve slow dependency resolution.
 - Missing `exa-py` from `all` extra.
 
-## [0.33.0] - 2024-10-09
+## \[0.33.0\] - 2024-10-09
 
 ## Added
+
 - `Workflow.input_tasks` and `Workflow.output_tasks` to access the input and output tasks of a Workflow.
 - Ability to pass nested list of `Tasks` to `Structure.tasks` allowing for more complex declarative Structure definitions.
 - `TavilyWebSearchDriver` to integrate Tavily's web search capabilities.
@@ -32,10 +120,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `LocalRulesetDriver` for loading a `Ruleset` from a local `.json` file.
   - `GriptapeCloudRulesetDriver` for loading a `Ruleset` resource from Griptape Cloud.
 - Parameter `alias` on `GriptapeCloudConversationMemoryDriver` for fetching a Thread by alias.
-- Basic support for OpenAi Structured Output via `OpenAiChatPromptDriver.response_format` parameter. 
+- Basic support for OpenAi Structured Output via `OpenAiChatPromptDriver.response_format` parameter.
 - Ability to pass callable to `activity.schema` for dynamic schema generation.
 
 ### Changed
+
 - **BREAKING**: Renamed parameters on several classes to `client`:
   - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
   - `bedrock_client` on `AmazonBedrockCohereEmbeddingDriver`.
@@ -85,16 +174,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Remove `manifest.yml` requirements for custom tool creation.
 
 ### Fixed
+
 - Anthropic native Tool calling.
 - Empty `ActionsSubtask.thought` being logged.
 - `RuleMixin` no longer prevents setting `rulesets` _and_ `rules` at the same time.
 - `PromptTask` will merge in its Structure's Rulesets and Rules.
 - `PromptTask` not checking whether Structure was set before building Prompt Stack.
 - `BaseTask.full_context` context being empty when not connected to a Structure.
+- Tool calling when using `OpenAiChatPromptDriver` with Groq.
 
-## [0.32.0] - 2024-09-17
+## \[0.32.0\] - 2024-09-17
 
 ### Added
+
 - `BaseArtifact.to_bytes()` method to convert an Artifact's value to bytes.
 - `BlobArtifact.base64` property for converting a `BlobArtifact`'s value to a base64 string.
 - `CsvLoader`/`SqlLoader`/`DataframeLoader` `formatter_fn` field for customizing how SQL results are formatted into `TextArtifact`s.
@@ -105,8 +197,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Generic type support to `ListArtifact`.
 - Iteration support to `ListArtifact`.
 
-
 ### Changed
+
 - **BREAKING**: Removed `CsvRowArtifact`. Use `TextArtifact` instead.
 - **BREAKING**: Removed `DataframeLoader`.
 - **BREAKING**: Removed `MediaArtifact`, use `ImageArtifact` or `AudioArtifact` instead.
@@ -117,19 +209,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Moved `ImageArtifact.prompt` and `ImageArtifact.model` into `ImageArtifact.meta`.
 - **BREAKING**: `ImageArtifact.format` is now required.
 - **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module.
-- Updated `JsonArtifact` value converter to properly handle more types. 
+- Updated `JsonArtifact` value converter to properly handle more types.
 - `AudioArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - `ImageArtifact` now subclasses `BlobArtifact` instead of `MediaArtifact`.
 - Removed `__add__` method from `BaseArtifact`, implemented it where necessary.
 
 ### Fixed
+
 - Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
-## [0.31.0] - 2024-09-03
+## \[0.31.0\] - 2024-09-03
 
 **Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.
 
 ### Added
+
 - Parameter `meta: dict` on `BaseEvent`.
 - `AzureOpenAiTextToSpeechDriver`.
 - Ability to use Event Listeners as Context Managers for temporarily setting the Event Bus listeners.
@@ -137,17 +231,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to use Drivers Configs as Context Managers for temporarily setting the default Drivers.
 
 ### Changed
+
 - **BREAKING**: Drivers, Loaders, and Engines now raise exceptions rather than returning `ErrorArtifacts`.
 - **BREAKING**: Parameter `driver` on `BaseConversationMemory` renamed to `conversation_memory_driver`.
 - **BREAKING**: `BaseConversationMemory.add_to_prompt_stack` now takes a `prompt_driver` parameter.
 - **BREAKING**: `BaseConversationMemoryDriver.load` now returns `tuple[list[Run], dict]`. This represents the runs and metadata.
 - **BREAKING**: `BaseConversationMemoryDriver.store` now takes `runs: list[Run]` and `metadata: dict` as input.
 - **BREAKING**: Parameter `file_path` on `LocalConversationMemoryDriver` renamed to `persist_file` and is now type `Optional[str]`.
-- **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module. 
+- **BREAKING**: Removed the `__all__` declaration from the `griptape.mixins` module.
 - `Defaults.drivers_config.conversation_memory_driver` now defaults to `LocalConversationMemoryDriver` instead of `None`.
 - `CsvRowArtifact.to_text()` now includes the header.
 
 ### Fixed
+
 - Parsing streaming response with some OpenAI compatible services.
 - Issue in `PromptSummaryEngine` if there are no artifacts during recursive summarization.
 - Issue in `GooglePromptDriver` using Tools with no schema.
@@ -156,22 +252,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash when using `CohereRerankDriver` with `CsvRowArtifact`s.
 - Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
-
-## [0.30.2] - 2024-08-26
+## \[0.30.2\] - 2024-08-26
 
 ### Fixed
-- Ensure thread safety when publishing events by adding a thread lock to batch operations in `BaseEventListenerDriver`. 
+
+- Ensure thread safety when publishing events by adding a thread lock to batch operations in `BaseEventListenerDriver`.
 - `FileManagerTool` failing to save Artifacts created by `ExtractionTool` with a `CsvExtractionEngine`.
 
-## [0.30.1] - 2024-08-21
+## \[0.30.1\] - 2024-08-21
 
 ### Fixed
+
 - `CsvExtractionEngine` not using provided `Ruleset`s.
 - Docs examples for Extraction Engines not properly passing in schemas.
 
-## [0.30.0] - 2024-08-20
+## \[0.30.0\] - 2024-08-20
 
 ### Added
+
 - `AstraDbVectorStoreDriver` to support DataStax Astra DB as a vector store.
 - Ability to set custom schema properties on Tool Activities via `extra_schema_properties`.
 - Parameter `structure` to `BaseTask`.
@@ -185,13 +283,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `QueryTool` for having the LLM query text.
 - Support for bitshift composition in `BaseTask` for adding parent/child tasks.
 - `JsonArtifact` for handling de/seralization of values.
-- `Chat.logger_level` for setting what the `Chat` utility sets the logger level to. 
+- `Chat.logger_level` for setting what the `Chat` utility sets the logger level to.
 - `FuturesExecutorMixin` to DRY up and optimize concurrent code across multiple classes.
 - `utils.execute_futures_list_dict` for executing a dict of lists of futures.
 - `GriptapeCloudConversationMemoryDriver` to store conversation history in Griptape Cloud.
 - `griptape.utils.decorators.lazy_property` for creating lazy properties.
 
 ### Changed
+
 - **BREAKING**: Removed all uses of `EventPublisherMixin` in favor of `EventBus`.
 - **BREAKING**: Removed `EventPublisherMixin`.
 - **BREAKING**: Removed `Pipeline.prompt_driver` and `Workflow.prompt_driver`. Set this via `griptape.configs.Defaults.drivers.prompt_driver` instead. `Agent.prompt_driver` has not been removed.
@@ -203,18 +302,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `RagContext.output` was changed to `RagContext.outputs` to support multiple outputs. All relevant RAG modules were adjusted accordingly.
 - **BREAKING**: Removed before and after response modules from `ResponseRagStage`.
 - **BREAKING**: Moved ruleset and metadata ingestion from standalone modules to `PromptResponseRagModule`.
-- **BREAKING**: Dropped `Client` from all Tool names for better naming consistency. 
-- **BREAKING**: Dropped `_client` suffix from all Tool packages. 
-- **BREAKING**: Added `Tool` suffix to all Tool names for better naming consistency. 
-- **BREAKING**: Removed `TextArtifactStorage.query` and `TextArtifactStorage.summarize`. 
+- **BREAKING**: Dropped `Client` from all Tool names for better naming consistency.
+- **BREAKING**: Dropped `_client` suffix from all Tool packages.
+- **BREAKING**: Added `Tool` suffix to all Tool names for better naming consistency.
+- **BREAKING**: Removed `TextArtifactStorage.query` and `TextArtifactStorage.summarize`.
 - **BREAKING**: Removed `TextArtifactStorage.rag_engine`, and `TextArtifactStorage.retrieval_rag_module_name`.
 - **BREAKING**: Removed `TextArtifactStorage.summary_engine`, `TextArtifactStorage.csv_extraction_engine`, and `TextArtifactStorage.json_extraction_engine`.
 - **BREAKING**: Removed `TaskMemory.summarize_namespace` and `TaskMemory.query_namespace`.
 - **BREAKING**: Removed `Structure.rag_engine`.
 - **BREAKING**: Split `JsonExtractionEngine.template_generator` into `JsonExtractionEngine.system_template_generator` and `JsonExtractionEngine.user_template_generator`.
 - **BREAKING**: Split `CsvExtractionEngine.template_generator` into `CsvExtractionEngine.system_template_generator` and `CsvExtractionEngine.user_template_generator`.
-- **BREAKING**: Changed `JsonExtractionEngine.template_schema` from a `run` argument to a class attribute. 
-- **BREAKING**: Changed `CsvExtractionEngine.column_names` from a `run` argument to a class attribute. 
+- **BREAKING**: Changed `JsonExtractionEngine.template_schema` from a `run` argument to a class attribute.
+- **BREAKING**: Changed `CsvExtractionEngine.column_names` from a `run` argument to a class attribute.
 - **BREAKING**: Removed `JsonExtractionTask`, and `CsvExtractionTask` use `ExtractionTask` instead.
 - **BREAKING**: Removed `TaskMemoryClient`, use `QueryClient`, `ExtractionTool`, or `PromptSummaryTool` instead.
 - **BREAKING**: `BaseTask.add_parent/child` now take a `BaseTask` instead of `str | BaseTask`.
@@ -224,6 +323,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Chat` now sets the `griptape` logger level to `logging.ERROR`, suppressing all logs except for errors.
 
 ### Fixed
+
 - `JsonExtractionEngine` failing to parse json when the LLM outputs more than just the json.
 - Exception when adding `ErrorArtifact`'s to the Prompt Stack.
 - Concurrency bug in `BaseVectorStoreDriver.upsert_text_artifacts`.
@@ -231,23 +331,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Issue with native Tool calling and streaming with `GooglePromptDriver`.
 - Description not being used properly in `StructureRunTool`.
 
-## [0.29.2] - 2024-08-16
+## \[0.29.2\] - 2024-08-16
 
 ### Fixed
+
 - `Workflow` threads not being properly cleaned up after completion.
 - Crash when `ToolAction`s were missing output due to an `ActionsSubtask` exception.
 
-## [0.29.1] - 2024-08-02
+## \[0.29.1\] - 2024-08-02
 
 ### Changed
+
 - Remove `BaseTextArtifact`, revert `CsvRowArtifact` to subclass `TextArtifact`.
 
 ### Fixed
+
 - Missing extra for `drivers-text-to-speech-elevenlabs`.
 
-## [0.29.0] - 2024-07-30
+## \[0.29.0\] - 2024-07-30
 
 ### Added
+
 - Native function calling support to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AnthropicPromptDriver`, `AmazonBedrockPromptDriver`, `GooglePromptDriver`, `OllamaPromptDriver`, and `CoherePromptDriver`.
 - `OllamaEmbeddingDriver` for generating embeddings with Ollama.
 - `GriptapeCloudKnowledgeBaseVectorStoreDriver` to query Griptape Cloud Knowledge Bases.
@@ -269,6 +373,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Optional `params` field to `WebSearch`'s `search` schema that the LLM can be steered into using.
 
 ### Changed
+
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifacts` optional arguments are now keyword-only arguments.
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text_artifact` optional arguments are now keyword-only arguments.
 - **BREAKING**: `BaseVectorStoreDriver.upsert_text` optional arguments are now keyword-only arguments.
@@ -296,23 +401,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TextArtifact` now inherits from `BaseTextArtifact`.
 
 ### Fixed
+
 - Parameter `count` for `QdrantVectorStoreDriver.query` now optional as per documentation.
 - Path issues on Windows with `LocalFileManagerDriver` and `AmazonS3FileManagerDriver`.
 
-## [0.28.2] - 2024-07-12
+## \[0.28.2\] - 2024-07-12
+
 ### Fixed
+
 - Conversation Memory being incorrectly inserted into the `PromptTask.prompt_stack` when no system content is present.
 
-## [0.28.1] - 2024-07-10
+## \[0.28.1\] - 2024-07-10
 
 ### Fixed
+
 - Sending empty system content in `PromptTask`.
 - Throttling issues with `DuckDuckGoWebSearchDriver`.
 
-## [0.28.0] - 2024-07-09
+## \[0.28.0\] - 2024-07-09
+
 ### Added
+
 - `RagEngine` is an abstraction for implementing modular RAG pipelines.
-  - `RagContext` is a container object for passing around RAG context. 
+  - `RagContext` is a container object for passing around RAG context.
   - RAG stages:
     - `QueryRagStage` for parsing and expanding queries.
     - `RetrievalRagStage` for retrieving content.
@@ -353,7 +464,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ImageMessageContent` for storing image content in a `Message`.
 - Support for adding `TextArtifact`s, `ImageArtifact`s, and `ListArtifact`s to `PromptStack`.
 - Support for image inputs to `OpenAiChatPromptDriver`, `AzureOpenAiChatPromptDriver`, `AmazonBedrockPromptDriver`, `AnthropicPromptDriver`, and `GooglePromptDriver`.
-- Input/output token usage metrics to all Prompt Drivers. 
+- Input/output token usage metrics to all Prompt Drivers.
 - `FinishPromptEvent.input_token_count` and `FinishPromptEvent.output_token_count`.
 - Support for storing Artifacts as inputs/outputs in Conversation Memory Runs.
 - `Agent.input` for passing Artifacts as input.
@@ -362,6 +473,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Reference` for supporting artifact citations in loaders and RAG engine modules.
 
 ### Changed
+
 - **BREAKING**: Moved/renamed `griptape.utils.PromptStack` to `griptape.common.PromptStack`.
 - **BREAKING**: Renamed `PromptStack.inputs` to `PromptStack.messages`.
 - **BREAKING**: Moved `PromptStack.USER_ROLE`, `PromptStack.ASSISTANT_ROLE`, and `PromptStack.SYSTEM_ROLE` to `Message`.
@@ -385,28 +497,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default Prompt Driver model in `GoogleStructureConfig` to `gemini-1.5-pro`.
 
 ### Fixed
-- `CoherePromptDriver` to properly handle empty history.
-- `StructureVisualizer.to_url()` by wrapping task IDs in single quotes. 
 
-## [0.27.2] - 2024-06-27
+- `CoherePromptDriver` to properly handle empty history.
+- `StructureVisualizer.to_url()` by wrapping task IDs in single quotes.
+
+## \[0.27.2\] - 2024-06-27
 
 ### Fixed
+
 - Avoid adding duplicate Tokenizer stop sequences in a `ToolkitTask`.
 - Fixed token count calculation in `VectorQueryEngine`.
 
-## [0.27.1] - 2024-06-20
+## \[0.27.1\] - 2024-06-20
 
 ### Added
+
 - Support for Claude 3.5 Sonnet in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver`.
 
 ### Changed
+
 - Base Tool schema so that `input` is optional when no Tool Activity schema is set.
-- Tool Task system prompt for better results with lower-end models. 
+- Tool Task system prompt for better results with lower-end models.
 - Default Prompt Driver model to Claude 3.5 Sonnet in `AnthropicStructureConfig` and `AmazonBedrockStructureConfig.`
 
-## [0.27.0] - 2024-06-19
+## \[0.27.0\] - 2024-06-19
 
 ### Added
+
 - `BaseTask.add_child()` to add a child task to a parent task.
 - `BaseTask.add_children()` to add multiple child tasks to a parent task.
 - `BaseTask.add_parent()` to add a parent task to a child task.
@@ -419,13 +536,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AmazonSageMakerJumpstartEmbeddingDriver.custom_attributes` for setting custom attributes when invoking an endpoint.
 - `ToolkitTask.response_stop_sequence` for overriding the default Chain of Thought stop sequence.
 - `griptape.utils.StructureVisualizer` for visualizing Workflow structures with Mermaid.js
-- `BaseTask.parents_outputs` to get the textual output of all parent tasks. 
+- `BaseTask.parents_outputs` to get the textual output of all parent tasks.
 - `BaseTask.parents_output_text` to get a concatenated string of all parent tasks' outputs.
 - `parents_output_text` to Workflow context.
 - `OllamaPromptModelDriver` for using models with Ollama.
 - Parameter `output` on `Structure` as a convenience for `output_task.output`
 
 ### Changed
+
 - **BREAKING**: `Workflow` no longer modifies task relationships when adding tasks via `tasks` init param, `add_tasks()` or `add_task()`. Previously, adding a task would automatically add the previously added task as its parent. Existing code that relies on this behavior will need to be updated to explicitly add parent/child relationships using the API offered by `BaseTask`.
 - **BREAKING**: Removed `AmazonBedrockPromptDriver.prompt_model_driver` as it is no longer needed with the `AmazonBedrockPromptDriver` Converse API implementation.
 - **BREAKING**: Removed `BedrockClaudePromptModelDriver`.
@@ -463,6 +581,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated template `templates/tasks/tool_task/system.j2`.
 
 ### Fixed
+
 - `Workflow.insert_task()` no longer inserts duplicate tasks when given multiple parent tasks.
 - Performance issue in `OpenAiChatPromptDriver` when extracting unused rate-limiting headers.
 - Streaming not working when using deprecated `Structure.stream` field.
@@ -474,11 +593,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
 - Structure run args not being set immediately.
 - Input and output logging in BaseAudioInputTasks and BaseAudioGenerationTasks
-- Validation of `max_tokens` < 0 on `BaseChunker`
+- Validation of `max_tokens` \< 0 on `BaseChunker`
 
-## [0.26.0] - 2024-06-04
+## \[0.26.0\] - 2024-06-04
 
 ### Added
+
 - `AzureOpenAiStructureConfig` for providing Structures with all Azure OpenAI Driver configuration.
 - `AzureOpenAiVisionImageQueryDriver` to support queries on images using Azure's OpenAI Vision models.
 - `AudioLoader` for loading audio content into an `AudioArtifact`.
@@ -488,10 +608,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PusherEventListenerDriver` to enable sending of framework events over a Pusher WebSocket.
 
 ### Changed
+
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
 - **BREAKING**: `off_prompt` now defaults to `False` on all Tools, making Task Memory something that must be explicitly opted into.
-- **BREAKING**: Removed `StructureConfig.global_drivers`. Pass Drivers directly to the Structure Config instead. 
-- **BREAKING**: Removed `StructureConfig.task_memory` in favor of configuring directly on the Structure.  
+- **BREAKING**: Removed `StructureConfig.global_drivers`. Pass Drivers directly to the Structure Config instead.
+- **BREAKING**: Removed `StructureConfig.task_memory` in favor of configuring directly on the Structure.
 - **BREAKING**: Updated OpenAI-based image query drivers to remove Vision from the name.
 - **BREAKING**: `off_prompt` now defaults to `False` on all Tools, making Task Memory something that must be explicitly opted into.
 - **BREAKING**: `AmazonSageMakerPromptDriver.model` parameter, which gets passed to `SageMakerRuntime.Client.invoke_endpoint` as `EndpointName`, is now renamed to `AmazonSageMakerPromptDriver.endpoint`.
@@ -504,27 +625,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error message to be more helpful when importing optional dependencies.
 
 ### Fixed
-- Extra fields being excluded when using `SerializableMixin.from_dict`.
-- Validation of `max_tokens` < 0 on `BaseChunker`
 
-## [0.25.1] - 2024-05-15
+- Extra fields being excluded when using `SerializableMixin.from_dict`.
+- Validation of `max_tokens` \< 0 on `BaseChunker`
+
+## \[0.25.1\] - 2024-05-15
 
 ### Fixed
+
 - Honor `namespace` in `RedisVectorStoreDriver.query()`.
 - Correctly set the `meta`, `score`, and `vector` fields of query result returned from `RedisVectorStoreDriver.query()`.
 - Standardize behavior between omitted and empty actions list when initializing `ActionsSubtask`.
 
 ### Added
+
 - Optional event batching on Event Listener Drivers.
 - `id` field to all events.
 
 ### Changed
+
 - Default behavior of Event Listener Drivers to batch events.
 - Default behavior of OpenAiStructureConfig to utilize `gpt-4o` for prompt_driver.
 
-## [0.25.0] - 2024-05-06
+## \[0.25.0\] - 2024-05-06
 
 ### Added
+
 - `list_files_from_disk` activity to `FileManager` Tool.
 - Support for Drivers in `EventListener`.
 - `AmazonSqsEventListenerDriver` for sending events to an Amazon SQS queue.
@@ -547,6 +673,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LocalStructureRunDriver` for running Structures in the same run-time environment as the code that is running the Structure.
 
 ### Changed
+
 - **BREAKING**: Secret fields (ex: api_key) removed from serialized Drivers.
 - **BREAKING**: Remove `FileLoader`.
 - **BREAKING**: `CsvLoader` no longer accepts `str` file paths as a source. It will now accept the content of the CSV file as a `str` or `bytes` object.
@@ -561,16 +688,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated `EventListener.handler`'s behavior so that the return value will be passed to the `EventListenerDriver.try_publish_event_payload`'s `event_payload` parameter.
 
 ### Fixed
+
 - Type hint for parameter `azure_ad_token_provider` on Azure OpenAI drivers to `Optional[Callable[[], str]]`.
 - Missing parameters `azure_ad_token` and `azure_ad_token_provider` on the default client for `AzureOpenAiCompletionPromptDriver`.
 
-## [0.24.2] - 2024-04-04
+## \[0.24.2\] - 2024-04-04
 
 - Fixed FileManager.load_files_from_disk schema.
 
-## [0.24.1] - 2024-03-28
+## \[0.24.1\] - 2024-03-28
 
-### Fixed 
+### Fixed
 
 - Fixed boto3 type-checking stub dependency.
 
@@ -578,14 +706,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use `schema` instead of `jsonschema` for JSON validation.
 
-## [0.24.0] - 2024-03-27
+## \[0.24.0\] - 2024-03-27
 
 ### Added
+
 - Every subtask in `ToolkitTask` can now execute multiple actions in parallel.
 - Added `BaseActionSubtaskEvent.subtask_actions`.
 - Support for `text-embedding-3-small` and `text-embedding-3-large` models.
-- `GooglePromptDriver` and `GoogleTokenizer` for use with `gemini-pro`. 
-- `GoogleEmbeddingDriver` for use with `embedding-001`. 
+- `GooglePromptDriver` and `GoogleTokenizer` for use with `gemini-pro`.
+- `GoogleEmbeddingDriver` for use with `embedding-001`.
 - `GoogleStructureConfig` for providing Structures with Google Prompt and Embedding Driver configuration.
 - Support for `claude-3-opus`, `claude-3-sonnet`, and `claude-3-haiku` in `AnthropicPromptDriver`.
 - Support for `anthropic.claude-3-sonnet-20240229-v1:0` and `anthropic.claude-3-haiku-20240307-v1:0` in `BedrockClaudePromptModelDriver`.
@@ -595,14 +724,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseWebScraperDriver` allowing multiple web scraping implementations.
 - `TrafilaturaWebScraperDriver` for scraping text from web pages using trafilatura.
 - `MarkdownifyWebScraperDriver` for scraping text from web pages using playwright and converting to markdown using markdownify.
-- `VoyageAiEmbeddingDriver` for use with VoyageAi's embedding models. 
+- `VoyageAiEmbeddingDriver` for use with VoyageAi's embedding models.
 - `AnthropicStructureConfig` for providing Structures with Anthropic Prompt and VoyageAi Embedding Driver configuration.
 - `QdrantVectorStoreDriver` to integrate with Qdrant vector databases.
 
 ### Fixed
+
 - Improved system prompt in `ToolTask` to support more use cases.
 
 ### Changed
+
 - **BREAKING**: `ActionSubtask` was renamed to `ActionsSubtask`.
 - **BREAKING**: Removed `subtask_action_name`, `subtask_action_path`, and `subtask_action_input` in `BaseActionSubtaskEvent`.
 - **BREAKING**: `OpenAiVisionImageQueryDriver` field `model` no longer defaults to `gpt-4-vision-preview` and must be specified
@@ -614,30 +745,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiVisionImageQueryDriver` now has a required field `max_tokens` that defaults to 256
 - `GriptapeCloudStructureRunDriver` now outputs a `BaseArtifact` instead of a `TextArtifact`
 
-## [0.23.2] - 2024-03-15
+## \[0.23.2\] - 2024-03-15
 
 ### Fixed
+
 - Deprecation warnings not displaying for `Structure.prompt_driver`, `Structure.embedding_driver`, and `Structure.stream`.
 - `DummyException` error message not fully displaying.
 - `StructureConfig.task_memory` not defaulting to using `StructureConfig.global_drivers` by default.
 
-## [0.23.1] - 2024-03-07
+## \[0.23.1\] - 2024-03-07
 
 ### Fixed
-- Action Subtask incorrectly raising an exception for actions without an input. 
-- Incorrect `GriptapeCloudKnowledgeBaseClient`'s API URLs. 
+
+- Action Subtask incorrectly raising an exception for actions without an input.
+- Incorrect `GriptapeCloudKnowledgeBaseClient`'s API URLs.
 - Issue with Tool Task system prompt causing the LLM to generate an invalid action.
 
-## [0.23.0] - 2024-02-26
+## \[0.23.0\] - 2024-02-26
 
-### Added 
+### Added
+
 - Image-to-image generation support for OpenAi Dall-E 2 model.
 - Image tools support loading artifacts from memory.
 - `AzureMongoDbVectorStoreDriver` for using CosmosDB with MongoDB vCore API.
 - `vector_path` field on `MongoDbAtlasVectorStoreDriver`.
 - `LeonardoImageGenerationDriver` supports image to image generation.
-- `OpenAiStructureConfig` for providing Structures with all OpenAi Driver configuration. 
-- `AmazonBedrockStructureConfig` for providing Structures with all Amazon Bedrock Driver configuration. 
+- `OpenAiStructureConfig` for providing Structures with all OpenAi Driver configuration.
+- `AmazonBedrockStructureConfig` for providing Structures with all Amazon Bedrock Driver configuration.
 - `StructureConfig` for building your own Structure configuration.
 - `JsonExtractionTask` for convenience over using `ExtractionTask` with a `JsonExtractionEngine`.
 - `CsvExtractionTask` for convenience over using `ExtractionTask` with a `CsvExtractionEngine`.
@@ -645,11 +779,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ImageQueryTool` allowing an Agent to make queries on images on disk or in Task Memory.
 - `ImageQueryTask` and `ImageQueryEngine`.
 
-### Fixed 
+### Fixed
+
 - `BedrockStableDiffusionImageGenerationModelDriver` request parameters for SDXLv1 (`stability.stable-diffusion-xl-v1`).
 - `BedrockStableDiffusionImageGenerationModelDriver` correctly handles the CONTENT_FILTERED response case.
 
 ### Changed
+
 - **BREAKING**: Make `index_name` on `MongoDbAtlasVectorStoreDriver` a required field.
 - **BREAKING**: Remove `create_index()` from `MarqoVectorStoreDriver`, `OpenSearchVectorStoreDriver`, `PineconeVectorStoreDriver`, `RedisVectorStoreDriver`.
 - **BREAKING**: `ImageLoader().load()` now accepts image bytes instead of a file path.
@@ -664,60 +800,80 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `InpaintingImageGenerationTask.image_generation_engine` now defaults to an `InpaintingImageGenerationEngine` with an Image Generation Driver default of `Structure.config.global_drivers.image_generation_driver`.
 - `OutpaintingImageGenerationTask.image_generation_engine` now defaults to an `OutpaintingImageGenerationEngine` with an Image Generation Driver default of `Structure.config.global_drivers.image_generation_driver`.
 
-## [0.22.3] - 2024-01-22
+## \[0.22.3\] - 2024-01-22
 
 ### Fixed
+
 - `ToolkitTask`'s user subtask prompt occasionally causing the Task to end prematurely.
 
-## [0.22.2] - 2024-01-18
+## \[0.22.2\] - 2024-01-18
 
 ### Fixed
+
 - `ToolkitTask`'s user subtask prompt occasionally causing a loop with Chain of Thought.
 
 ### Security
-- Updated stale dependencies [CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464]
 
-## [0.22.1] - 2024-01-12
+- Updated stale dependencies \[CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464\]
+
+## \[0.22.1\] - 2024-01-12
 
 ### Fixed
+
 - Action Subtasks incorrectly outputting the Task input after failing to follow the ReAct prompt.
 
-## [0.22.0] - 2024-01-11
+## \[0.22.0\] - 2024-01-11
 
 ### Added
-- `PromptImageGenerationEngine` for generating images from text prompts. 
+
+- `PromptImageGenerationEngine` for generating images from text prompts.
+
 - `VariationImageGenerationEngine` for generating variations of an input image according to a text prompt.
-- `InpaintingImageGenerationEngine` for modifying an input image according to a text prompt within the bounds of a mask defined by a mask image. 
+
+- `InpaintingImageGenerationEngine` for modifying an input image according to a text prompt within the bounds of a mask defined by a mask image.
+
 - `OutpaintingImageGenerationEngine` for modifying an input image according to a text prompt outside the bounds of a mask defined by a mask image.
 
 - `PromptImageGenerationClient` for enabling an LLM to use the `PromptImageGenerationEngine`.
+
 - `VariationImageGenerationClient` for enabling an LLM to use the `VariationImageGenerationEngine`.
+
 - `InpaintingImageGenerationClient` for enabling an LLM to use the `InpaintingImageGenerationEngine`.
+
 - `OutpaintingImageGenerationClient` for enabling an LLM to use the `OutpaintingImageGenerationEngine`.
 
 - `OpenAiImageGenerationDriver` for use with OpenAI's image generation models.
+
 - `LeonardoImageGenerationDriver` for use with Leonoaro AI's image generation models.
+
 - `AmazonBedrockImageGenerationDriver` for use with Amazon Bedrock's image generation models; requires a Image Generation Model Driver.
+
 - `BedrockTitanImageGenerationModelDriver` for use with Amazon Bedrock's Titan image generation.
 
 - `ImageArtifact` for storing image data; used heavily by the image Engines, Tasks, and Drivers.
+
 - `ImageLoader` for loading images files into `ImageArtifact`s.
 
 - Support for all Tokenizers in `OpenAiChatPromptDriver`, enabling OpenAI drop-in clients such as Together AI.
+
 - `AmazonSageMakerJumpstartEmbeddingDriver` for using Amazon SageMaker to generate embeddings. Thanks @KaushikIyer16!
+
 - Claude 2.1 support in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver` via `BedrockClaudePromptModelDriver`.
+
 - `CodeExecutionTask` for executing code as a Task without the need for an LLM.
+
 - `BedrockLlamaPromptModelDriver` for using Llama models on Amazon Bedrock.
 
-
 ### Fixed
-- `MongoDbAtlasVectorStore` namespace not being used properly when querying. 
+
+- `MongoDbAtlasVectorStore` namespace not being used properly when querying.
 - Miscellaneous type errors throughout the codebase.
 - Remove unused section from `ToolTask` system prompt template.
 - Structure execution args being cleared after run, preventing inspection of the Structure's `input_task`'s `input`.
 - Unhandled `SqlClient` exception. Thanks @michal-repo!
 
 ### Changed
+
 - **BREAKING**: Rename `input_template` field to `input` in Tasks that take a text input.
 - **BREAKING**: Rename `BedrockTitanEmbeddingDriver` to `AmazonBedrockTitanEmbeddingDriver`.
 - **BREAKING**: Rename `AmazonBedrockStableDiffusionImageGenerationModelDriver` to `BedrockStableDiffusionImageGenerationModelDriver`.

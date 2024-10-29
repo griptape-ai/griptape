@@ -74,6 +74,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             azure_deployment="deployment-id",
             model="gpt-4",
             use_native_tools=use_native_tools,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -86,6 +87,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             messages=messages,
             **{"tools": self.OPENAI_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            foo="bar",
         )
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
@@ -104,6 +106,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model="gpt-4",
             stream=True,
             use_native_tools=use_native_tools,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -118,6 +121,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream=True,
             messages=messages,
             **{"tools": self.OPENAI_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            foo="bar",
         )
 
         assert isinstance(event.content, TextDeltaMessageContent)

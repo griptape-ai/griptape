@@ -128,13 +128,14 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
 
         runs = [
             Run(
-                id=m["metadata"].pop("run_id"),
-                meta=m["metadata"],
-                input=BaseArtifact.from_json(m["input"]),
-                output=BaseArtifact.from_json(m["output"]),
+                **({"id": message["metadata"].pop("run_id", None)} if "run_id" in message.get("metadata") else {}),
+                meta=message["metadata"],
+                input=BaseArtifact.from_json(message["input"]),
+                output=BaseArtifact.from_json(message["output"]),
             )
-            for m in messages_response.get("messages", [])
+            for message in messages_response.get("messages", [])
         ]
+
         return runs, thread_response.get("metadata", {})
 
     def _get_url(self, path: str) -> str:

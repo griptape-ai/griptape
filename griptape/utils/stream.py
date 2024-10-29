@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from queue import Queue
 from threading import Thread
 from typing import TYPE_CHECKING
@@ -7,7 +8,15 @@ from typing import TYPE_CHECKING
 from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.events import CompletionChunkEvent, EventBus, EventListener, FinishPromptEvent, FinishStructureRunEvent
+from griptape.events import (
+    ActionChunkEvent,
+    BaseChunkEvent,
+    EventBus,
+    EventListener,
+    FinishPromptEvent,
+    FinishStructureRunEvent,
+    TextChunkEvent,
+)
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -18,7 +27,7 @@ if TYPE_CHECKING:
 
 @define
 class Stream:
-    """A wrapper for Structures that converts `CompletionChunkEvent`s into an iterator of TextArtifacts.
+    """A wrapper for Structures that converts `BaseChunkEvent`s into an iterator of TextArtifacts.
 
     It achieves this by running the Structure in a separate thread, listening for events from the Structure,
     and yielding those events.
@@ -48,14 +57,25 @@ class Stream:
         t = Thread(target=self._run_structure, args=args)
         t.start()
 
+        action_str = ""
         while True:
             event = self._event_queue.get()
             if isinstance(event, FinishStructureRunEvent):
                 break
             elif isinstance(event, FinishPromptEvent):
                 yield TextArtifact(value="\n")
-            elif isinstance(event, CompletionChunkEvent):
+            elif isinstance(event, TextChunkEvent):
                 yield TextArtifact(value=event.token)
+            elif isinstance(event, ActionChunkEvent):
+                if event.tag is not None and event.name is not None and event.path is not None:
+                    yield TextArtifact(f"{event.name}.{event.tag} ({event.path})")
+                if event.partial_input is not None:
+                    action_str += event.partial_input
+                    try:
+                        yield TextArtifact(json.dumps(json.loads(action_str), indent=2))
+                        action_str = ""
+                    except Exception:
+                        pass
         t.join()
 
     def _run_structure(self, *args) -> None:
@@ -63,8 +83,8 @@ class Stream:
             self._event_queue.put(event)
 
         stream_event_listener = EventListener(
-            handler=event_handler,
-            event_types=[CompletionChunkEvent, FinishPromptEvent, FinishStructureRunEvent],
+            on_event=event_handler,
+            event_types=[BaseChunkEvent, FinishPromptEvent, FinishStructureRunEvent],
         )
         EventBus.add_event_listener(stream_event_listener)
 

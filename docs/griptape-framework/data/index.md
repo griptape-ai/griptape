@@ -1,8 +1,8 @@
 ## Overview
+
 Griptape provides several abstractions for working with data.
 
 ![Data Architecture](../../assets/img/data-architecture.png)
-
 
 [Artifacts](./artifacts.md) are used for passing different types of data, such as text, lists, and blobs, between Griptape components.
 

@@ -11,6 +11,7 @@ from griptape import utils
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.utils import with_contextvars
 
 if TYPE_CHECKING:
     from griptape.drivers import BaseEmbeddingDriver
@@ -47,7 +48,9 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         if isinstance(artifacts, list):
             return utils.execute_futures_list(
                 [
-                    self.futures_executor.submit(self.upsert_text_artifact, a, namespace=None, meta=meta, **kwargs)
+                    self.futures_executor.submit(
+                        with_contextvars(self.upsert_text_artifact), a, namespace=None, meta=meta, **kwargs
+                    )
                     for a in artifacts
                 ],
             )
@@ -61,7 +64,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
                     futures_dict[namespace].append(
                         self.futures_executor.submit(
-                            self.upsert_text_artifact, a, namespace=namespace, meta=meta, **kwargs
+                            with_contextvars(self.upsert_text_artifact), a, namespace=namespace, meta=meta, **kwargs
                         )
                     )
 

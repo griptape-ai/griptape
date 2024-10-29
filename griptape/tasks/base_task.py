@@ -8,13 +8,14 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
-from griptape.artifacts import ErrorArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishTaskEvent, StartTaskEvent
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
+from griptape.mixins.runnable_mixin import RunnableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.artifacts import BaseArtifact
     from griptape.memory.meta import BaseMetaEntry
     from griptape.structures import Structure
 
@@ -22,21 +23,21 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class BaseTask(FuturesExecutorMixin, ABC):
+class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"], ABC):
     class State(Enum):
         PENDING = 1
         EXECUTING = 2
         FINISHED = 3
 
-    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True)
-    state: State = field(default=State.PENDING, kw_only=True)
-    parent_ids: list[str] = field(factory=list, kw_only=True)
-    child_ids: list[str] = field(factory=list, kw_only=True)
-    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
+    state: State = field(default=State.PENDING, kw_only=True, metadata={"serializable": True})
+    parent_ids: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    child_ids: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True, metadata={"serializable": True})
     structure: Optional[Structure] = field(default=None, kw_only=True)
 
     output: Optional[BaseArtifact] = field(default=None, init=False)
-    context: dict[str, Any] = field(factory=dict, kw_only=True)
+    context: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def __rshift__(self, other: BaseTask) -> BaseTask:
         self.add_child(other)
@@ -69,8 +70,8 @@ class BaseTask(FuturesExecutorMixin, ABC):
         raise ValueError("Structure must be set to access children")
 
     @property
-    def parent_outputs(self) -> dict[str, str]:
-        return {parent.id: parent.output.to_text() if parent.output else "" for parent in self.parents}
+    def parent_outputs(self) -> dict[str, BaseArtifact]:
+        return {parent.id: parent.output for parent in self.parents if parent.output}
 
     @property
     def parents_output_text(self) -> str:
@@ -100,7 +101,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
         if self.id not in parent.child_ids:
             parent.child_ids.append(self.id)
 
-        if self.structure is not None:
+        if self.structure is not None and parent not in self.structure.tasks:
             self.structure.add_task(parent)
 
         return self
@@ -116,7 +117,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
         if self.id not in child.parent_ids:
             child.parent_ids.append(self.id)
 
-        if self.structure is not None:
+        if self.structure is not None and child not in self.structure.tasks:
             self.structure.add_task(child)
 
         return self
@@ -136,6 +137,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
         return self.state == BaseTask.State.EXECUTING
 
     def before_run(self) -> None:
+        super().before_run()
         if self.structure is not None:
             EventBus.publish_event(
                 StartTaskEvent(
@@ -147,25 +149,13 @@ class BaseTask(FuturesExecutorMixin, ABC):
                 ),
             )
 
-    def after_run(self) -> None:
-        if self.structure is not None:
-            EventBus.publish_event(
-                FinishTaskEvent(
-                    task_id=self.id,
-                    task_parent_ids=self.parent_ids,
-                    task_child_ids=self.child_ids,
-                    task_input=self.input,
-                    task_output=self.output,
-                ),
-            )
-
-    def execute(self) -> Optional[BaseArtifact]:
+    def run(self) -> BaseArtifact:
         try:
             self.state = BaseTask.State.EXECUTING
 
             self.before_run()
 
-            self.output = self.run()
+            self.output = self.try_run()
 
             self.after_run()
         except Exception as e:
@@ -177,7 +167,20 @@ class BaseTask(FuturesExecutorMixin, ABC):
 
         return self.output
 
-    def can_execute(self) -> bool:
+    def after_run(self) -> None:
+        super().after_run()
+        if self.structure is not None:
+            EventBus.publish_event(
+                FinishTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                ),
+            )
+
+    def can_run(self) -> bool:
         return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)
 
     def reset(self) -> BaseTask:
@@ -187,7 +190,7 @@ class BaseTask(FuturesExecutorMixin, ABC):
         return self
 
     @abstractmethod
-    def run(self) -> BaseArtifact: ...
+    def try_run(self) -> BaseArtifact: ...
 
     @property
     def full_context(self) -> dict[str, Any]:

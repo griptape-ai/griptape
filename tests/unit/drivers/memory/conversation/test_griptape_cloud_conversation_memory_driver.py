@@ -25,7 +25,7 @@ class TestGriptapeCloudConversationMemoryDriver:
                                     "message_id": f"{thread_id}_message",
                                     "input": '{"type": "TextArtifact", "id": "1234", "value": "Hi There, Hello"}',
                                     "output": '{"type": "TextArtifact", "id": "123", "value": "Hello! How can I assist you today?"}',
-                                    "metadata": {"run_id": "1234"},
+                                    "metadata": {"run_id": "1234"} if thread_id != "no_meta" else {},
                                 }
                             ]
                         }
@@ -117,4 +117,10 @@ class TestGriptapeCloudConversationMemoryDriver:
         runs, metadata = driver.load()
         assert len(runs) == 1
         assert runs[0].id == "1234"
+        assert metadata == {"foo": "bar"}
+
+    def test_load_no_message_meta(self, driver):
+        driver.thread_id = "no_meta"
+        runs, metadata = driver.load()
+        assert len(runs) == 1
         assert metadata == {"foo": "bar"}

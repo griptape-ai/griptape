@@ -14,11 +14,11 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestBaseTask:
     @pytest.fixture()
     def task(self):
-        EventBus.add_event_listeners([EventListener(handler=Mock())])
+        EventBus.add_event_listeners([EventListener(on_event=Mock())])
         agent = Agent(
             tools=[MockTool()],
         )
-        EventBus.add_event_listeners([EventListener(handler=Mock())])
+        EventBus.add_event_listeners([EventListener(on_event=Mock())])
 
         agent.add_task(MockTask("foobar", max_meta_memory_entries=2))
 
@@ -52,9 +52,8 @@ class TestBaseTask:
 
         parent_3.output = None
         assert child.parent_outputs == {
-            parent_1.id: parent_1.output.to_text(),
-            parent_2.id: parent_2.output.to_text(),
-            parent_3.id: "",
+            parent_1.id: parent_1.output,
+            parent_2.id: parent_2.output,
         }
 
     def test_parents_output(self, task):
@@ -112,28 +111,36 @@ class TestBaseTask:
 
         assert len(parent.children) == 3
 
-    def test_execute_publish_events(self, task):
-        task.execute()
+    def test_run_publish_events(self, task):
+        task.run()
 
-        assert EventBus.event_listeners[0].handler.call_count == 2
+        assert EventBus.event_listeners[0].on_event.call_count == 2
 
     def test_add_parent(self, task):
-        parent = MockTask("parent foobar", id="parent_foobar")
+        agent = Agent()
+        parent = MockTask("parent foobar", id="parent_foobar", structure=agent)
 
+        result = task.add_parent(parent)
         result = task.add_parent(parent)
 
         assert parent.id in task.parent_ids
         assert task.id in parent.child_ids
         assert result == task
 
-    def test_add_child(self, task):
-        child = MockTask("child foobar", id="child_foobar")
+        assert agent.tasks == [parent]
 
+    def test_add_child(self, task):
+        agent = Agent()
+        child = MockTask("child foobar", id="child_foobar", structure=agent)
+
+        result = task.add_child(child)
         result = task.add_child(child)
 
         assert child.id in task.child_ids
         assert task.id in child.parent_ids
         assert result == task
+
+        assert agent.tasks == [child]
 
     def test_add_parent_bitshift(self, task):
         parent = MockTask("parent foobar", id="parent_foobar")
@@ -152,3 +159,51 @@ class TestBaseTask:
         assert child.id in task.child_ids
         assert task.id in child.parent_ids
         assert added_task == child
+
+    def test_to_dict(self, task):
+        expected_task_dict = {
+            "type": task.type,
+            "id": task.id,
+            "state": str(task.state),
+            "parent_ids": task.parent_ids,
+            "child_ids": task.child_ids,
+            "max_meta_memory_entries": task.max_meta_memory_entries,
+            "context": task.context,
+        }
+        assert expected_task_dict == task.to_dict()
+
+    def test_from_dict(self):
+        task = MockTask("Foobar2", id="Foobar2")
+
+        serialized_task = task.to_dict()
+        assert isinstance(serialized_task, dict)
+
+        deserialized_task = MockTask.from_dict(serialized_task)
+        assert isinstance(deserialized_task, MockTask)
+
+        workflow = Workflow()
+        workflow.add_task(deserialized_task)
+
+        assert workflow.tasks == [deserialized_task]
+
+        workflow.run()
+
+        assert str(workflow.tasks[0].state) == "State.FINISHED"
+        assert workflow.tasks[0].id == deserialized_task.id
+        assert workflow.tasks[0].output.value == "foobar"
+
+    def test_runnable_mixin(self):
+        mock_on_before_run = Mock()
+        mock_after_run = Mock()
+        task = MockTask("foobar", on_before_run=mock_on_before_run, on_after_run=mock_after_run)
+
+        task.run()
+
+        mock_on_before_run.assert_called_once_with(task)
+        mock_after_run.assert_called_once_with(task)
+
+    def test_full_context(self, task):
+        task.structure = Agent()
+        task.structure._execution_args = ("foo", "bar")
+
+        assert task.full_context == {"args": ("foo", "bar"), "structure": task.structure}

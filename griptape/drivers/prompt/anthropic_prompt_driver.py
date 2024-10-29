@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
@@ -29,6 +30,7 @@ from griptape.common import (
     ToolAction,
     observable,
 )
+from griptape.configs import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import AnthropicTokenizer, BaseTokenizer
 from griptape.utils import import_optional_dependency
@@ -41,6 +43,9 @@ if TYPE_CHECKING:
     from anthropic.types import ContentBlock, ContentBlockDeltaEvent, ContentBlockStartEvent
 
     from griptape.tools.base_tool import BaseTool
+
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -72,7 +77,11 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        response = self.client.messages.create(**self._base_params(prompt_stack))
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        response = self.client.messages.create(**params)
+
+        logger.debug(response.model_dump())
 
         return Message(
             content=[self.__to_prompt_stack_message_content(content) for content in response.content],
@@ -82,9 +91,12 @@ class AnthropicPromptDriver(BasePromptDriver):
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        events = self.client.messages.create(**self._base_params(prompt_stack), stream=True)
+        params = {**self._base_params(prompt_stack), "stream": True}
+        logger.debug(params)
+        events = self.client.messages.create(**params)
 
         for event in events:
+            logger.debug(event)
             if event.type == "content_block_delta" or event.type == "content_block_start":
                 yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(event))
             elif event.type == "message_start":
@@ -112,6 +124,7 @@ class AnthropicPromptDriver(BasePromptDriver):
                 else {}
             ),
             **({"system": system_message} if system_message else {}),
+            **self.extra_params,
         }
 
     def __to_anthropic_messages(self, messages: list[Message]) -> list[dict]:

@@ -3,7 +3,7 @@
 Building your own tools is easy with Griptape!
 
 Tools are nothing more than Python classes that inherit from [BaseTool](../../reference/griptape/tools/base_tool.md).
-Each method in the class is decorated with an [activity](../../reference/griptape/utils/decorators.md#griptape.utils.decorators.activity) decorator which informs the LLM how and when it should use that Tool Activity. 
+Each method in the class is decorated with an [activity](../../reference/griptape/utils/decorators.md#griptape.utils.decorators.activity) decorator which informs the LLM how and when it should use that Tool Activity.
 
 ## Random Number Generator Tool
 
@@ -20,7 +20,7 @@ Check out other [Griptape Tools](https://github.com/griptape-ai/griptape/tree/ma
 Each Tool can also have its own dependencies. You can specify them in a `requirements.txt` file in the tool directory and Griptape will install them during Tool execution.
 To start, create a directory for your Tool inside your project. The directory must have the following structure:
 
-* `tool.py` file with a tool Python class.
-* `requirements.txt` file with tool Python dependencies.
+- `tool.py` file with a tool Python class.
+- `requirements.txt` file with tool Python dependencies.
 
 That's it! Import and use your Tool in your project as you would with any other Griptape Tool.

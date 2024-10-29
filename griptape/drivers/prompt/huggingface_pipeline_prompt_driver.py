@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent, observable
+from griptape.configs import Defaults
 from griptape.drivers import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
@@ -16,19 +18,19 @@ if TYPE_CHECKING:
 
     from transformers import TextGenerationPipeline
 
+logger = logging.getLogger(Defaults.logging_config.logger_name)
+
 
 @define
 class HuggingFacePipelinePromptDriver(BasePromptDriver):
     """Hugging Face Pipeline Prompt Driver.
 
     Attributes:
-        params: Custom model run parameters.
         model: Hugging Face Hub model name.
     """
 
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
@@ -52,14 +54,16 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self._prompt_stack_to_messages(prompt_stack)
-
-        result = self.pipeline(
-            messages,
-            max_new_tokens=self.max_tokens,
-            temperature=self.temperature,
-            do_sample=True,
-            **self.params,
+        full_params = self._base_params(prompt_stack)
+        logger.debug(
+            (
+                messages,
+                full_params,
+            )
         )
+
+        result = self.pipeline(messages, **full_params)
+        logger.debug(result)
 
         if isinstance(result, list):
             if len(result) == 1:
@@ -84,6 +88,14 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
+
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        return {
+            "max_new_tokens": self.max_tokens,
+            "temperature": self.temperature,
+            "do_sample": True,
+            **self.extra_params,
+        }
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []

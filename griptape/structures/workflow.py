@@ -10,6 +10,7 @@ from griptape.artifacts import ErrorArtifact
 from griptape.common import observable
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.structures import Structure
+from griptape.utils import with_contextvars
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -107,8 +108,8 @@ class Workflow(Structure, FuturesExecutorMixin):
             ordered_tasks = self.order_tasks()
 
             for task in ordered_tasks:
-                if task.can_execute():
-                    future = self.futures_executor.submit(task.execute)
+                if task.can_run():
+                    future = self.futures_executor.submit(with_contextvars(task.run))
                     futures_list[future] = task
 
             # Wait for all tasks to complete
@@ -125,6 +126,7 @@ class Workflow(Structure, FuturesExecutorMixin):
 
         context.update(
             {
+                "task_outputs": self.task_outputs,
                 "parent_outputs": task.parent_outputs,
                 "parents_output_text": task.parents_output_text,
                 "parents": {parent.id: parent for parent in task.parents},

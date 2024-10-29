@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -60,4 +60,3 @@ You can choose to offset which runs are summarized with the
 ```python
 --8<-- "docs/griptape-framework/structures/src/conversation_memory_5.py"
 ```
-

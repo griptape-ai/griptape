@@ -25,6 +25,7 @@ class TestAnthropicDriversConfig:
                 "top_p": 0.999,
                 "top_k": 250,
                 "use_native_tools": True,
+                "extra_params": {},
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {
@@ -33,16 +34,12 @@ class TestAnthropicDriversConfig:
                 "max_tokens": 256,
             },
             "embedding_driver": {
-                "type": "VoyageAiEmbeddingDriver",
-                "model": "voyage-large-2",
-                "input_type": "document",
+                "type": "DummyEmbeddingDriver",
             },
             "vector_store_driver": {
-                "type": "LocalVectorStoreDriver",
+                "type": "DummyVectorStoreDriver",
                 "embedding_driver": {
-                    "type": "VoyageAiEmbeddingDriver",
-                    "model": "voyage-large-2",
-                    "input_type": "document",
+                    "type": "DummyEmbeddingDriver",
                 },
             },
             "conversation_memory_driver": {

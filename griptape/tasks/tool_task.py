@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     ACTION_PATTERN = r"(?s)[^{]*({.*})"
 
-    tool: BaseTool = field(kw_only=True)
+    tool: BaseTool = field(kw_only=True, metadata={"serializable": True})
     subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
 
@@ -49,7 +49,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
 
         return self
 
-    def default_system_template_generator(self, _: PromptTask) -> str:
+    def default_generate_system_template(self, _: PromptTask) -> str:
         return J2("tasks/tool_task/system.j2").render(
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
             action_schema=utils.minify_json(json.dumps(self.tool.schema())),
@@ -60,7 +60,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     def actions_schema(self) -> Schema:
         return self._actions_schema_for_tools([self.tool])
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         result = self.prompt_driver.run(prompt_stack=self.prompt_stack)
 
         if self.prompt_driver.use_native_tools:

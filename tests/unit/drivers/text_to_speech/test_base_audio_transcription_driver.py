@@ -13,7 +13,7 @@ class TestBaseTextToSpeechDriver:
 
     def test_text_to_audio_publish_events(self, driver):
         mock_handler = Mock()
-        EventBus.add_event_listener(EventListener(handler=mock_handler))
+        EventBus.add_event_listener(EventListener(on_event=mock_handler))
 
         driver.run_text_to_audio(
             ["foo", "bar"],

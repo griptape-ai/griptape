@@ -32,11 +32,11 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionsSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
-        default=Factory(lambda self: self.default_assistant_subtask_template_generator, takes_self=True),
+        default=Factory(lambda self: self.default_generate_assistant_subtask_template, takes_self=True),
         kw_only=True,
     )
     generate_user_subtask_template: Callable[[ActionsSubtask], str] = field(
-        default=Factory(lambda self: self.default_user_subtask_template_generator, takes_self=True),
+        default=Factory(lambda self: self.default_generate_user_subtask_template, takes_self=True),
         kw_only=True,
     )
     response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
@@ -127,7 +127,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
 
         return self
 
-    def default_system_template_generator(self, _: PromptTask) -> str:
+    def default_generate_system_template(self, _: PromptTask) -> str:
         schema = self.actions_schema().json_schema("Actions Schema")
         schema["minItems"] = 1  # The `schema` library doesn't support `minItems` so we must add it manually.
 
@@ -140,13 +140,13 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             stop_sequence=self.response_stop_sequence,
         )
 
-    def default_assistant_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
+    def default_generate_assistant_subtask_template(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/assistant_subtask.j2").render(
             stop_sequence=self.response_stop_sequence,
             subtask=subtask,
         )
 
-    def default_user_subtask_template_generator(self, subtask: ActionsSubtask) -> str:
+    def default_generate_user_subtask_template(self, subtask: ActionsSubtask) -> str:
         return J2("tasks/toolkit_task/user_subtask.j2").render(
             stop_sequence=self.response_stop_sequence,
             subtask=subtask,
@@ -165,7 +165,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                 if tool.output_memory is None and tool.off_prompt:
                     tool.output_memory = {getattr(a, "name"): [self.task_memory] for a in tool.activities()}
 
-    def run(self) -> BaseArtifact:
+    def try_run(self) -> BaseArtifact:
         from griptape.tasks import ActionsSubtask
 
         self.subtasks.clear()
@@ -180,9 +180,6 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
             if subtask.output is None:
                 if len(self.subtasks) >= self.max_subtasks:
                     subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
-                elif not subtask.actions:
-                    # handle case when the LLM failed to follow the ReAct prompt and didn't return a proper action
-                    subtask.output = subtask.input
                 else:
                     subtask.before_run()
                     subtask.run()

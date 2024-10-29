@@ -7,8 +7,10 @@ import re
 import subprocess
 import sys
 from abc import ABC
+from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
+import pkg_resources
 import schema
 from attrs import Attribute, Factory, define, field
 from schema import Literal, Or, Schema
@@ -16,6 +18,8 @@ from schema import Literal, Or, Schema
 from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
 from griptape.common import observable
 from griptape.mixins.activity_mixin import ActivityMixin
+from griptape.mixins.runnable_mixin import RunnableMixin
+from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.common import ToolAction
@@ -24,7 +28,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseTool(ActivityMixin, ABC):
+class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC):
     """Abstract class for all tools to inherit from for.
 
     Attributes:
@@ -39,16 +43,26 @@ class BaseTool(ActivityMixin, ABC):
 
     REQUIREMENTS_FILE = "requirements.txt"
 
-    name: str = field(default=Factory(lambda self: self.__class__.__name__, takes_self=True), kw_only=True)
-    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True)
-    output_memory: Optional[dict[str, list[TaskMemory]]] = field(default=None, kw_only=True)
-    install_dependencies_on_init: bool = field(default=True, kw_only=True)
-    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True)
-    verbose: bool = field(default=False, kw_only=True)
-    off_prompt: bool = field(default=False, kw_only=True)
+    name: str = field(
+        default=Factory(lambda self: self.__class__.__name__, takes_self=True),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
+    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True, metadata={"serializable": True})
+    output_memory: Optional[dict[str, list[TaskMemory]]] = field(
+        default=None, kw_only=True, metadata={"serializable": True}
+    )
+    install_dependencies_on_init: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    verbose: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    off_prompt: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
-        if self.install_dependencies_on_init:
+        if (
+            self.install_dependencies_on_init
+            and self.has_requirements
+            and not self.are_requirements_met(self.requirements_path)
+        ):
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator  # pyright: ignore[reportAttributeAccessIssue]
@@ -76,6 +90,10 @@ class BaseTool(ActivityMixin, ABC):
     @property
     def abs_dir_path(self) -> str:
         return os.path.dirname(self.abs_file_path)
+
+    @property
+    def has_requirements(self) -> bool:
+        return os.path.exists(self.requirements_path)
 
     # This method has to remain a method and can't be decorated with @property because
     # of the max depth recursion issue in `self.activities`.
@@ -105,11 +123,11 @@ class BaseTool(ActivityMixin, ABC):
 
         return schemas
 
-    def execute(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> BaseArtifact:
+    def run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> BaseArtifact:
         try:
             output = self.before_run(activity, subtask, action)
 
-            output = self.run(activity, subtask, action, output)
+            output = self.try_run(activity, subtask, action, output)
 
             output = self.after_run(activity, subtask, action, output)
         except Exception as e:
@@ -118,10 +136,12 @@ class BaseTool(ActivityMixin, ABC):
         return output
 
     def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> Optional[dict]:
+        super().before_run()
+
         return action.input
 
     @observable(tags=["Tool.run()"])
-    def run(
+    def try_run(
         self,
         activity: Callable,
         subtask: ActionsSubtask,
@@ -146,6 +166,8 @@ class BaseTool(ActivityMixin, ABC):
         action: ToolAction,
         value: BaseArtifact,
     ) -> BaseArtifact:
+        super().after_run()
+
         if value:
             if self.output_memory:
                 output_memories = self.output_memory[getattr(activity, "name")] or []
@@ -216,3 +238,13 @@ class BaseTool(ActivityMixin, ABC):
             raise ValueError("Activity name can only contain letters, numbers, and underscores.")
 
         return f"{tool_name}_{activity_name}"
+
+    def are_requirements_met(self, requirements_path: str) -> bool:
+        requirements = Path(requirements_path).read_text().splitlines()
+
+        try:
+            pkg_resources.require(requirements)
+
+            return True
+        except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
+            return False

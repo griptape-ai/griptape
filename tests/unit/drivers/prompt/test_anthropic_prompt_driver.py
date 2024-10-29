@@ -345,7 +345,9 @@ class TestAnthropicPromptDriver:
     @pytest.mark.parametrize("use_native_tools", [True, False])
     def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools):
         # Given
-        driver = AnthropicPromptDriver(model="claude-3-haiku", api_key="api-key", use_native_tools=use_native_tools)
+        driver = AnthropicPromptDriver(
+            model="claude-3-haiku", api_key="api-key", use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+        )
 
         # When
         message = driver.try_run(prompt_stack)
@@ -361,6 +363,7 @@ class TestAnthropicPromptDriver:
             top_k=250,
             **{"system": "system-input"} if prompt_stack.system_messages else {},
             **{"tools": self.ANTHROPIC_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            foo="bar",
         )
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
@@ -376,7 +379,11 @@ class TestAnthropicPromptDriver:
     def test_try_stream_run(self, mock_stream_client, prompt_stack, messages, use_native_tools):
         # Given
         driver = AnthropicPromptDriver(
-            model="claude-3-haiku", api_key="api-key", stream=True, use_native_tools=use_native_tools
+            model="claude-3-haiku",
+            api_key="api-key",
+            stream=True,
+            use_native_tools=use_native_tools,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -395,6 +402,7 @@ class TestAnthropicPromptDriver:
             top_k=250,
             **{"system": "system-input"} if prompt_stack.system_messages else {},
             **{"tools": self.ANTHROPIC_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            foo="bar",
         )
         assert event.usage.input_tokens == 5
 

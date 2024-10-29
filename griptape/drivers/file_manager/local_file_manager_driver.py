@@ -34,12 +34,13 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
             raise IsADirectoryError
         return Path(full_path).read_bytes()
 
-    def try_save_file(self, path: str, value: bytes) -> None:
+    def try_save_file(self, path: str, value: bytes) -> str:
         full_path = self._full_path(path)
         if self._is_dir(full_path):
             raise IsADirectoryError
         os.makedirs(os.path.dirname(full_path), exist_ok=True)
         Path(full_path).write_bytes(value)
+        return full_path
 
     def _full_path(self, path: str) -> str:
         full_path = path if self.workdir is None else os.path.join(self.workdir, path.lstrip("/"))

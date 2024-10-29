@@ -251,7 +251,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         prompt_stack.add_assistant_message(
             ListArtifact(
                 [
-                    TextArtifact("thought"),
                     ActionArtifact(ToolAction(tag="MockTool_test", name="MockTool", path="test", input={"foo": "bar"})),
                 ]
             )
@@ -288,7 +287,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             },
             {"role": "assistant", "content": "assistant-input"},
             {
-                "content": [{"text": "thought", "type": "text"}],
+                "content": "",
                 "role": "assistant",
                 "tool_calls": [
                     {
@@ -344,7 +343,9 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_try_run(self, mock_chat_completion_create, prompt_stack, messages, use_native_tools):
         # Given
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, use_native_tools=use_native_tools
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            use_native_tools=use_native_tools,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -358,6 +359,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             messages=messages,
             seed=driver.seed,
             **{"tools": self.OPENAI_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            foo="bar",
         )
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
@@ -440,7 +442,10 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages, use_native_tools):
         # Given
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL, stream=True, use_native_tools=use_native_tools
+            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            stream=True,
+            use_native_tools=use_native_tools,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -457,6 +462,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             seed=driver.seed,
             stream_options={"include_usage": True},
             **{"tools": self.OPENAI_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            foo="bar",
         )
 
         assert isinstance(event.content, TextDeltaMessageContent)

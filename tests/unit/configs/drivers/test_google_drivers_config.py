@@ -25,6 +25,7 @@ class TestGoogleDriversConfig:
                 "top_k": None,
                 "tool_choice": "auto",
                 "use_native_tools": True,
+                "extra_params": {},
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "image_query_driver": {"type": "DummyImageQueryDriver"},

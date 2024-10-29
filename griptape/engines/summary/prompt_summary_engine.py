@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 class PromptSummaryEngine(BaseSummaryEngine):
     chunk_joiner: str = field(default="\n\n", kw_only=True)
     max_token_multiplier: float = field(default=0.5, kw_only=True)
-    system_template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/system.j2")), kw_only=True)
-    user_template_generator: J2 = field(default=Factory(lambda: J2("engines/summary/user.j2")), kw_only=True)
+    generate_system_template: J2 = field(default=Factory(lambda: J2("engines/summary/system.j2")), kw_only=True)
+    generate_user_template: J2 = field(default=Factory(lambda: J2("engines/summary/user.j2")), kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
     )
@@ -67,12 +67,12 @@ class PromptSummaryEngine(BaseSummaryEngine):
 
         artifacts_text = self.chunk_joiner.join([a.to_text() for a in artifacts])
 
-        system_prompt = self.system_template_generator.render(
+        system_prompt = self.generate_system_template.render(
             summary=summary,
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
 
-        user_prompt = self.user_template_generator.render(text=artifacts_text)
+        user_prompt = self.generate_user_template.render(text=artifacts_text)
 
         if (
             self.prompt_driver.tokenizer.count_input_tokens_left(user_prompt + system_prompt)
@@ -94,7 +94,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
         else:
             chunks = self.chunker.chunk(artifacts_text)
 
-            partial_text = self.user_template_generator.render(text=chunks[0].value)
+            partial_text = self.generate_user_template.render(text=chunks[0].value)
 
             return self.summarize_artifacts_rec(
                 chunks[1:],

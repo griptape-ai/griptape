@@ -22,19 +22,26 @@ class SerializableMixin(Generic[T]):
         kw_only=True,
         metadata={"serializable": True},
     )
+    module_name: str = field(
+        default=Factory(lambda self: self.__class__.__module__, takes_self=True),
+        kw_only=True,
+        metadata={"serializable": False},
+    )
 
     @classmethod
-    def get_schema(cls: type[T], subclass_name: Optional[str] = None) -> Schema:
+    def get_schema(cls: type[T], subclass_name: Optional[str] = None, *, module_name: Optional[str] = None) -> Schema:
         """Generates a Marshmallow schema for the class.
 
         Args:
             subclass_name: An optional subclass name. Required if the class is abstract.
+            module_name: An optional module name. Defaults to the class's module.
         """
         if ABC in cls.__bases__:
             if subclass_name is None:
                 raise ValueError(f"Type field is required for abstract class: {cls.__name__}")
 
-            subclass_cls = cls._import_cls_rec(cls.__module__, subclass_name)
+            module_name = module_name or cls.__module__
+            subclass_cls = cls._import_cls_rec(module_name, subclass_name)
 
             schema_class = BaseSchema.from_attrs_cls(subclass_cls)
         else:
@@ -44,7 +51,7 @@ class SerializableMixin(Generic[T]):
 
     @classmethod
     def from_dict(cls: type[T], data: dict) -> T:
-        return cast(T, cls.get_schema(subclass_name=data.get("type")).load(data))
+        return cast(T, cls.get_schema(subclass_name=data.get("type"), module_name=data.get("module_name")).load(data))
 
     @classmethod
     def from_json(cls: type[T], data: str) -> T:

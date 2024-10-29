@@ -7,13 +7,14 @@ search:
 
 Web Search Drivers can be used to search for links from a search query. They are used by [WebSearch](../../reference/griptape/tools/web_search/tool.md) to provide its functionality. All Web Search Drivers implement the following methods:
 
-* `search()` searches the web and returns a [ListArtifact](../../reference/griptape/artifacts/list_artifact.md) that contains JSON-serializable [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s with the search results.
+- `search()` searches the web and returns a [ListArtifact](../../reference/griptape/artifacts/list_artifact.md) that contains JSON-serializable [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s with the search results.
 
 You can use Web Search Drivers with [Structures](../structures/agents.md):
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_5.py"
 ```
+
 ```
 ToolkitTask 45a53f1024494baab41a1f10a67017b1
     Output: Here are some websites with information about AI
@@ -35,11 +36,13 @@ ToolkitTask 45a53f1024494baab41a1f10a67017b1
       Software](https://clockwise.software/blog/artificial-intelligence
       -framework/)
 ```
+
 Or use them independently:
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_3.py"
 ```
+
 ```
 {"title": "The Top 16 AI Frameworks and Libraries: A Beginner's Guide", "url": "https://www.datacamp.com/blog/top-ai-frameworks-and-libraries", "description": "PyTorch. Torch is an open-source machine learning library known for its dynamic computational graph and is favored by researchers. The framework is excellent for prototyping and experimentation. Moreover, it's empowered by growing community support, with tools like PyTorch being built on the library."}
 
@@ -47,7 +50,6 @@ Or use them independently:
 
 {"title": "The Top 16 AI Frameworks and Libraries | AI Slackers", "url": "https://aislackers.com/the-top-16-ai-frameworks-and-libraries/", "description": "Experiment with different frameworks to find the one that aligns with your needs and goals as a data practitioner. Embrace the world of AI frameworks, and embark on a journey of building smarter software with confidence. Discover the top AI frameworks and libraries like PyTorch, Scikit-Learn, TensorFlow, Keras, LangChain, and more."}
 ```
-
 
 ## Web Search Drivers
 
@@ -75,6 +77,7 @@ Example of using `DuckDuckGoWebSearchDriver` directly:
 ```
 
 ### Tavily
+
 !!! info
     This driver requires the `drivers-web-search-tavily` [extra](../index.md#extras), and a Tavily [api key](https://app.tavily.com).
 
@@ -84,7 +87,8 @@ Example of using `TavilyWebSearchDriver` directly:
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_4.py"
 ```
 
-### Exa 
+### Exa
+
 !!! info
     This driver requires the `drivers-web-search-exa` [extra](../index.md#extras),
     and an Exa [api key](https://dashboard.exa.ai/api-keys)

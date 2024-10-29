@@ -1,22 +1,23 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
 
 A [Task](../../reference/griptape/tasks/index.md) is a purpose-built abstraction for the Large Language Model (LLM). Griptape offers various types of Tasks, each suitable for specific use cases.
 
-
 ## Context
-Tasks that take input have a field [input](../../reference/griptape/tasks/base_text_input_task.md#griptape.tasks.base_text_input_task.BaseTextInputTask.input) which lets you define the Task objective. 
+
+Tasks that take input have a field [input](../../reference/griptape/tasks/base_text_input_task.md#griptape.tasks.base_text_input_task.BaseTextInputTask.input) which lets you define the Task objective.
 Within the [input](../../reference/griptape/tasks/base_text_input_task.md#griptape.tasks.base_text_input_task.BaseTextInputTask.input), you can access the following [context](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.context) variables:
 
-* `args`: an array of arguments passed to the `.run()` method.
-* `structure`: the structure that the task belongs to.
-* user defined context variables
+- `args`: an array of arguments passed to the `.run()` method.
+- `structure`: the structure that the task belongs to.
+- user defined context variables
 
 Additional [context](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.context) variables may be added based on the Structure running the task.
+
 ```python
 --8<-- "docs/griptape-framework/structures/src/tasks_1.py"
 ```
@@ -51,6 +52,28 @@ Additional [context](../../reference/griptape/structures/structure.md#griptape.s
 
                              Remember, baking is all about having fun and enjoying the process. So, put on your favorite tunes, roll up your
                              sleeves, and let's get baking! 🍰🎉
+```
+
+## Hooks
+
+All Tasks implement [RunnableMixin](../../reference/griptape/mixins/runnable_mixin.md) which provides `on_before_run` and `on_after_run` hooks for the Task lifecycle.
+
+These hooks can be used to perform actions before and after the Task is run. For example, you can mask sensitive information before running the Task, and transform the output after the Task is run.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/task_hooks.py"
+```
+
+```
+[10/15/24 15:14:10] INFO     PromptTask 63a0c734059c42808c87dff351adc8ab
+                             Input: Respond to this user: Hello! My favorite color is blue, and my social security number is xxx-xx-xxxx.
+[10/15/24 15:14:11] INFO     PromptTask 63a0c734059c42808c87dff351adc8ab
+                             Output: {
+                               "original_input": "Respond to this user: Hello! My favorite color is blue, and my social security number is 123-45-6789.",
+                               "masked_input": "Respond to this user: Hello! My favorite color is blue, and my social security number is xxx-xx-xxxx.",
+                               "output": "Hello! It's great to hear that your favorite color is blue. However, it's important to keep your personal information, like your
+                             social security number, private and secure. If you have any questions or need assistance, feel free to ask!"
+                             }
 ```
 
 ## Prompt Task
@@ -160,7 +183,7 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
 
 ## Tool Task
 
-Another way to use [Griptape Tools](../../griptape-framework/tools/index.md), is with a [Tool Task](../../reference/griptape/tasks/tool_task.md). 
+Another way to use [Griptape Tools](../../griptape-framework/tools/index.md), is with a [Tool Task](../../reference/griptape/tasks/tool_task.md).
 This Task takes in a single Tool which the LLM will use without Chain of Thought (CoT) reasoning. Because this Task does not use CoT, it is better suited for less capable models.
 
 ```python
@@ -192,12 +215,12 @@ This Task takes in a single Tool which the LLM will use without Chain of Thought
 To extract information from text, use an [ExtractionTask](../../reference/griptape/tasks/extraction_task.md).
 This Task takes an [Extraction Engine](../../griptape-framework/engines/extraction-engines.md), and a set of arguments specific to the Engine.
 
-
 ### CSV Extraction
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/tasks_6.py"
 ```
+
 ```
 [12/19/23 10:33:11] INFO     ExtractionTask e87fb457edf8423ab8a78583badd7a11
                              Input:
@@ -217,6 +240,7 @@ This Task takes an [Extraction Engine](../../griptape-framework/engines/extracti
 ```python
 --8<-- "docs/griptape-framework/structures/src/tasks_7.py"
 ```
+
 ```
 [12/19/23 10:37:41] INFO     ExtractionTask 3315cc77f94943a2a2dceccfe44f6a67
                              Input:
@@ -284,7 +308,7 @@ This task takes a [RAG Engine](../../griptape-framework/engines/rag-engines.md),
 To execute an arbitrary Python function, use the [CodeExecutionTask](../../reference/griptape/tasks/code_execution_task.md).
 This task takes a python function, and authors can elect to return a custom artifact.
 
-```python 
+```python
 --8<-- "docs/griptape-framework/structures/src/tasks_10.py"
 ```
 
@@ -349,6 +373,7 @@ This Task accepts two inputs: a query (represented by either a string or a [Text
 ```
 
 ## Structure Run Task
+
 The [Structure Run Task](../../reference/griptape/tasks/structure_run_task.md) runs another Structure with a given input.
 This Task is useful for orchestrating multiple specialized Structures in a single run. Note that the input to the Task is a tuple of arguments that will be passed to the Structure.
 
@@ -364,7 +389,7 @@ This Task enables Structures to synthesize speech from text using [Text to Speec
 --8<-- "docs/griptape-framework/structures/src/tasks_17.py"
 ```
 
-## Audio Transcription Task 
+## Audio Transcription Task
 
 This Task enables Structures to transcribe speech from text using [Audio Transcription Engines](../../reference/griptape/engines/audio/audio_transcription_engine.md) and [Audio Transcription Drivers](../../reference/griptape/drivers/audio_transcription/index.md).
 

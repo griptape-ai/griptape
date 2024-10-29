@@ -35,6 +35,7 @@ class TestAzureOpenAiDriversConfig:
                 "stream": False,
                 "user": "",
                 "use_native_tools": True,
+                "extra_params": {},
             },
             "conversation_memory_driver": {
                 "type": "LocalConversationMemoryDriver",

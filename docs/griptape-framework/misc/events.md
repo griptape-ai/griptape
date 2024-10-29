@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -15,6 +15,7 @@ You can listen to specific event types:
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_1.py"
 ```
+
 ```
 <class 'griptape.events.start_task_event.StartTaskEvent'>
 [09/08/23 10:51:16] INFO     PromptTask a20c236d1d86480fb14ae976e6cf8983
@@ -84,20 +85,24 @@ The `EventListener` will automatically be added and removed from the [EventBus](
 
 ## Streaming
 
-
-You can use the [CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md) to stream the completion results from Prompt Drivers.
+You can use the [BaseChunkEvent](../../reference/griptape/events/base_chunk_event.md) to stream the completion results from Prompt Drivers.
 
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_3.py"
 ```
 
-You can also use the [Stream](../../reference/griptape/utils/stream.md) utility to automatically wrap
-[CompletionChunkEvent](../../reference/griptape/events/completion_chunk_event.md)s in a Python iterator.
+You can also use the [TextChunkEvent](../../reference/griptape/events/text_chunk_event.md) and [ActionChunkEvent](../../reference/griptape/events/action_chunk_event.md) to further differentiate the different types of chunks for more customized output.
+
+```python
+--8<-- "docs/griptape-framework/misc/src/events_chunk_stream.py"
+```
+
+If you want Griptape to handle the chunk events for you, use the [Stream](../../reference/griptape/utils/stream.md) utility to automatically wrap
+[BaseChunkEvent](../../reference/griptape/events/base_chunk_event.md)s in a Python iterator.
 
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_4.py"
 ```
-
 
 ## Counting Tokens
 
@@ -132,14 +137,14 @@ To count tokens, you can use Event Listeners and the [TokenCounter](../../refere
 total tokens: 273
 ```
 
-
 ## Inspecting Payloads
 
-You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_event.md) to inspect the Prompt Stack and final prompt string before it is sent to the LLM. 
+You can use the [StartPromptEvent](../../reference/griptape/events/start_prompt_event.md) to inspect the Prompt Stack and final prompt string before it is sent to the LLM.
 
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_6.py"
 ```
+
 ```
 ...
 Prompt Stack Messages:
@@ -152,4 +157,24 @@ User: Write me a poem.
 
 Assistant:
 ...
+```
+
+## `EventListenerDriver.on_event` Return Value Behavior
+
+The value that gets returned from the [`EventListener.on_event`](../../reference/griptape/events/event_listener.md#griptape.events.event_listener.EventListener.on_event) will determine what gets sent to the `event_listener_driver`.
+
+### `EventListener.on_event` is None
+
+By default, the `EventListener.on_event` function is `None`. Any events that the `EventListener` is listening for will get sent to the `event_listener_driver` as-is.
+
+### Return `BaseEvent` or `dict`
+
+You can return a `BaseEvent` or `dict` object from `EventListener.on_event`, and it will get sent to the `event_listener_driver`.
+
+### Return `None`
+
+You can return `None` in the on_event function to prevent the event from getting sent to the `event_listener_driver`.
+
+```python
+--8<-- "docs/griptape-framework/misc/src/events_no_publish.py"
 ```

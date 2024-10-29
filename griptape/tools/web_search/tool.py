@@ -30,12 +30,10 @@ class WebSearchTool(BaseTool):
             ),
         },
     )
-    def search(self, props: dict) -> ListArtifact | ErrorArtifact:
-        values = props["values"]
-        query = values["query"]
-        extra_keys = {k: values[k] for k in values.keys() - {"query"}}
+    def search(self, values: dict) -> ListArtifact | ErrorArtifact:
+        query = values.pop("query")
 
         try:
-            return self.web_search_driver.search(query, **extra_keys)
+            return self.web_search_driver.search(query, **values)
         except Exception as e:
             return ErrorArtifact(f"Error searching '{query}' with {self.web_search_driver.__class__.__name__}: {e}")

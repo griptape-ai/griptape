@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import pytest
 
 from griptape.memory import TaskMemory
@@ -239,3 +241,71 @@ class TestAgent:
     def test_fail_fast(self):
         with pytest.raises(ValueError):
             Agent(prompt_driver=MockPromptDriver(), fail_fast=True)
+
+    def test_task_outputs(self):
+        task = PromptTask("test prompt")
+        agent = Agent(prompt_driver=MockPromptDriver())
+
+        agent.add_task(task)
+
+        assert len(agent.task_outputs) == 1
+        assert agent.task_outputs[task.id] is None
+        agent.run("hello")
+
+        assert len(agent.task_outputs) == 1
+        assert agent.task_outputs[task.id] == task.output
+
+    def test_to_dict(self):
+        task = PromptTask("test prompt")
+        agent = Agent(prompt_driver=MockPromptDriver())
+        agent.add_task(task)
+        expected_agent_dict = {
+            "type": "Agent",
+            "id": agent.id,
+            "tasks": [
+                {
+                    "type": agent.tasks[0].type,
+                    "id": agent.tasks[0].id,
+                    "state": str(agent.tasks[0].state),
+                    "parent_ids": agent.tasks[0].parent_ids,
+                    "child_ids": agent.tasks[0].child_ids,
+                    "max_meta_memory_entries": agent.tasks[0].max_meta_memory_entries,
+                    "context": agent.tasks[0].context,
+                }
+            ],
+            "conversation_memory": {
+                "type": agent.conversation_memory.type,
+                "runs": agent.conversation_memory.runs,
+                "meta": agent.conversation_memory.meta,
+                "max_runs": agent.conversation_memory.max_runs,
+            },
+        }
+        assert agent.to_dict() == expected_agent_dict
+
+    def test_from_dict(self):
+        task = PromptTask("test prompt")
+        agent = Agent(prompt_driver=MockPromptDriver())
+        agent.add_task(task)
+
+        serialized_agent = agent.to_dict()
+        assert isinstance(serialized_agent, dict)
+
+        deserialized_agent = Agent.from_dict(serialized_agent)
+        assert isinstance(deserialized_agent, Agent)
+
+        assert deserialized_agent.task_outputs[task.id] is None
+        deserialized_agent.run()
+
+        assert len(deserialized_agent.task_outputs) == 1
+        assert deserialized_agent.task_outputs[task.id].value == "mock output"
+
+    def test_runnable_mixin(self):
+        mock_on_before_run = Mock()
+        mock_after_run = Mock()
+        agent = Agent(prompt_driver=MockPromptDriver(), on_before_run=mock_on_before_run, on_after_run=mock_after_run)
+
+        args = "test"
+        agent.run(args)
+
+        mock_on_before_run.assert_called_once_with(agent)
+        mock_after_run.assert_called_once_with(agent)

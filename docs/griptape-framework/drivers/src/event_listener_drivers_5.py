@@ -8,7 +8,7 @@ EventBus.add_event_listeners(
             event_types=[FinishStructureRunEvent],
             # By default, GriptapeCloudEventListenerDriver uses the api key provided
             # in the GT_CLOUD_API_KEY environment variable.
-            driver=GriptapeCloudEventListenerDriver(),
+            event_listener_driver=GriptapeCloudEventListenerDriver(),
         ),
     ]
 )

@@ -5,7 +5,7 @@ from typing import Optional
 
 from attrs import define, field
 
-from griptape.artifacts import BlobArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, BlobArtifact, InfoArtifact, TextArtifact
 
 
 @define
@@ -42,9 +42,23 @@ class BaseFileManagerDriver(ABC):
         elif isinstance(value, (bytearray, memoryview)):
             raise ValueError(f"Unsupported type: {type(value)}")
 
-        self.try_save_file(path, value)
+        location = self.try_save_file(path, value)
 
-        return InfoArtifact("Successfully saved file")
+        return InfoArtifact(f"Successfully saved file at: {location}")
 
     @abstractmethod
-    def try_save_file(self, path: str, value: bytes) -> None: ...
+    def try_save_file(self, path: str, value: bytes) -> str: ...
+
+    def load_artifact(self, path: str) -> BaseArtifact:
+        response = self.try_load_file(path)
+        return BaseArtifact.from_json(
+            response.decode() if self.encoding is None else response.decode(encoding=self.encoding)
+        )
+
+    def save_artifact(self, path: str, artifact: BaseArtifact) -> InfoArtifact:
+        artifact_json = artifact.to_json()
+        value = artifact_json.encode() if self.encoding is None else artifact_json.encode(encoding=self.encoding)
+
+        location = self.try_save_file(path, value)
+
+        return InfoArtifact(f"Successfully saved artifact at: {location}")

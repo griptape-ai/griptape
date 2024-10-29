@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import Callable, Union
 
 from attrs import Factory, define, field
 
@@ -25,12 +25,12 @@ class ImageQueryTask(BaseTask):
     """
 
     image_query_engine: ImageQueryEngine = field(default=Factory(lambda: ImageQueryEngine()), kw_only=True)
-    _input: (
-        tuple[str, list[ImageArtifact]]
-        | tuple[TextArtifact, list[ImageArtifact]]
-        | Callable[[BaseTask], ListArtifact]
-        | ListArtifact
-    ) = field(default=None, alias="input")
+    _input: Union[
+        tuple[str, list[ImageArtifact]],
+        tuple[TextArtifact, list[ImageArtifact]],
+        Callable[[BaseTask], ListArtifact],
+        ListArtifact,
+    ] = field(default=None, alias="input")
 
     @property
     def input(self) -> ListArtifact:
@@ -55,14 +55,16 @@ class ImageQueryTask(BaseTask):
     def input(
         self,
         value: (
-            tuple[str, list[ImageArtifact]]
-            | tuple[TextArtifact, list[ImageArtifact]]
-            | Callable[[BaseTask], ListArtifact]
+            Union[
+                tuple[str, list[ImageArtifact]],
+                tuple[TextArtifact, list[ImageArtifact]],
+                Callable[[BaseTask], ListArtifact],
+            ]
         ),
     ) -> None:
         self._input = value
 
-    def run(self) -> TextArtifact:
+    def try_run(self) -> TextArtifact:
         query = self.input.value[0]
 
         if all(isinstance(artifact, ImageArtifact) for artifact in self.input.value[1:]):

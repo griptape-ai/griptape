@@ -1,5 +1,7 @@
 import logging
-from unittest.mock import patch
+from unittest.mock import Mock, call, patch
+
+import pytest
 
 from griptape.configs import Defaults
 from griptape.memory.structure import ConversationMemory
@@ -19,7 +21,8 @@ class TestConversation:
             intro_text="hello...",
             prompt_prefix="Question: ",
             response_prefix="Answer: ",
-            output_fn=logging.info,
+            handle_input=input,
+            handle_output=logging.info,
             logger_level=logging.INFO,
         )
         assert chat.structure == agent
@@ -28,11 +31,12 @@ class TestConversation:
         assert chat.intro_text == "hello..."
         assert chat.prompt_prefix == "Question: "
         assert chat.response_prefix == "Answer: "
-        assert callable(chat.output_fn)
+        assert callable(chat.handle_input)
+        assert callable(chat.handle_output)
         assert chat.logger_level == logging.INFO
 
     @patch("builtins.input", side_effect=["exit"])
-    def test_chat_logger_level(self, mock_input):
+    def test_start_chat_logger_level(self, mock_input):
         agent = Agent(conversation_memory=ConversationMemory())
 
         chat = Chat(agent)
@@ -46,3 +50,37 @@ class TestConversation:
 
         assert logger.getEffectiveLevel() == logging.DEBUG
         assert mock_input.call_count == 1
+
+    def test_chat_prompt(self):
+        assert Chat.ChatPrompt.prompt_suffix == ""
+
+    @pytest.mark.parametrize("stream", [True, False])
+    @patch("builtins.input", side_effect=["foo", "exit"])
+    def test_start(self, mock_input, stream):
+        mock_handle_output = Mock()
+        agent = Agent(conversation_memory=ConversationMemory(), stream=stream)
+
+        chat = Chat(agent, intro_text="foo", handle_output=mock_handle_output)
+
+        chat.start()
+
+        mock_input.assert_has_calls([call(), call()])
+        if stream:
+            mock_handle_output.assert_has_calls(
+                [
+                    call("foo"),
+                    call("Thinking..."),
+                    call("Assistant: mock output", stream=True),
+                    call("\n", stream=True),
+                    call("Exiting..."),
+                ]
+            )
+        else:
+            mock_handle_output.assert_has_calls(
+                [
+                    call("foo"),
+                    call("Thinking..."),
+                    call("Assistant: mock output"),
+                    call("Exiting..."),
+                ]
+            )

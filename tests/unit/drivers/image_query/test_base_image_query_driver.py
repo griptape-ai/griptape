@@ -13,7 +13,7 @@ class TestBaseImageQueryDriver:
 
     def test_query_publishes_events(self, driver):
         mock_handler = Mock()
-        EventBus.add_event_listener(EventListener(handler=mock_handler))
+        EventBus.add_event_listener(EventListener(on_event=mock_handler))
 
         driver.query("foo", [])
 

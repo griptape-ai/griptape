@@ -237,3 +237,39 @@ class TestToolTask:
         Agent().add_task(task)
 
         assert task.actions_schema().json_schema("Actions Schema") == self.TARGET_TOOLS_SCHEMA
+
+    def test_to_dict(self):
+        tool = MockTool()
+        task = ToolTask("test", tool=tool)
+
+        expected_tool_task_dict = {
+            "type": task.type,
+            "id": task.id,
+            "state": str(task.state),
+            "parent_ids": task.parent_ids,
+            "child_ids": task.child_ids,
+            "max_meta_memory_entries": task.max_meta_memory_entries,
+            "context": task.context,
+            "tool": {
+                "type": task.tool.type,
+                "name": task.tool.name,
+                "input_memory": task.tool.input_memory,
+                "output_memory": task.tool.output_memory,
+                "install_dependencies_on_init": task.tool.install_dependencies_on_init,
+                "dependencies_install_directory": task.tool.dependencies_install_directory,
+                "verbose": task.tool.verbose,
+                "off_prompt": task.tool.off_prompt,
+            },
+        }
+        assert expected_tool_task_dict == task.to_dict()
+
+    def test_from_dict(self):
+        tool = MockTool()
+        task = ToolTask("test", tool=tool)
+
+        serialized_tool_task = task.to_dict()
+        serialized_tool_task["tool"]["module_name"] = "tests.mocks.mock_tool.tool"
+        assert isinstance(serialized_tool_task, dict)
+
+        deserialized_tool_task = ToolTask.from_dict(serialized_tool_task)
+        assert isinstance(deserialized_tool_task, ToolTask)

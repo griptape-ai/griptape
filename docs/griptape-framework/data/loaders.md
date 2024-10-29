@@ -1,6 +1,6 @@
 ---
 search:
-  boost: 2 
+  boost: 2
 ---
 
 ## Overview
@@ -8,7 +8,6 @@ search:
 Loaders are used to load data from sources and parse it into [Artifact](../../griptape-framework/data/artifacts.md)s.
 Each loader can be used to load a single "source" with [load()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load) or
 multiple sources with [load_collection()](../../reference/griptape/loaders/base_loader.md#griptape.loaders.base_loader.BaseLoader.load_collection).
-
 
 ## File
 
@@ -48,7 +47,6 @@ Loads CSV files into [ListArtifact](../../griptape-framework/data/artifacts.md#l
 
 Loads images into [ImageArtifact](../../griptape-framework/data/artifacts.md#image)s:
 
-
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_7.py"
 ```
@@ -82,7 +80,7 @@ Scrapes web pages using a [WebScraperDriver](../drivers/web-scraper-drivers.md) 
 
 ## SQL
 
-Loads data from a SQL database using a [SQLDriver](../drivers/sql-drivers.md) and loads the resulting data into [ListArtifact](../../griptape-framework/data/artifacts.md#list)s, where each element is a [CsvRowArtifact](../../griptape-framework/data/artifacts.md#csv) containing a row of the SQL query.
+Loads data from a SQL database using a [SQLDriver](../drivers/sql-drivers.md) and loads the resulting data into [ListArtifact](../../griptape-framework/data/artifacts.md#list)s, where each element is a [TextArtifact](../../griptape-framework/data/artifacts.md#text) containing a row of the SQL query.
 
 ```python
 --8<-- "docs/griptape-framework/data/src/loaders_2.py"
