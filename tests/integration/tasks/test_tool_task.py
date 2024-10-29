@@ -5,7 +5,9 @@ from tests.utils.structure_tester import StructureTester
 
 class TestToolTask:
     @pytest.fixture(
-        autouse=True, params=StructureTester.TOOL_TASK_CAPABLE_PROMPT_DRIVERS, ids=StructureTester.prompt_driver_id_fn
+        autouse=True,
+        params=StructureTester.TOOL_TASK_CAPABLE_PROMPT_DRIVERS,
+        ids=StructureTester.generate_prompt_driver_id,
     )
     def structure_tester(self, request):
         from griptape.structures import Agent

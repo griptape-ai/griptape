@@ -14,7 +14,7 @@ pipeline = Pipeline()
 
 pipeline.add_tasks(
     # take the first argument from the pipeline `run` method
-    CodeExecutionTask(run_fn=character_counter),
+    CodeExecutionTask(on_run=character_counter),
     # # take the output from the previous task and insert it into the prompt
     PromptTask("{{args[0]}} using {{ parent_output }} characters"),
 )

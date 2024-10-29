@@ -18,9 +18,9 @@ if TYPE_CHECKING:
 @define
 class CsvExtractionEngine(BaseExtractionEngine):
     column_names: list[str] = field(kw_only=True)
-    system_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/system.j2")), kw_only=True)
-    user_template_generator: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/user.j2")), kw_only=True)
-    formatter_fn: Callable[[dict], str] = field(
+    generate_system_template: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/system.j2")), kw_only=True)
+    generate_user_template: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/user.j2")), kw_only=True)
+    format_row: Callable[[dict], str] = field(
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
@@ -45,7 +45,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
 
         with io.StringIO(text) as f:
             for row in csv.reader(f):
-                rows.append(TextArtifact(self.formatter_fn(dict(zip(column_names, [x.strip() for x in row])))))
+                rows.append(TextArtifact(self.format_row(dict(zip(column_names, [x.strip() for x in row])))))
 
         return rows
 
@@ -57,11 +57,11 @@ class CsvExtractionEngine(BaseExtractionEngine):
         rulesets: Optional[list[Ruleset]] = None,
     ) -> list[TextArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
-        system_prompt = self.system_template_generator.render(
+        system_prompt = self.generate_system_template.render(
             column_names=self.column_names,
             rulesets=J2("rulesets/rulesets.j2").render(rulesets=rulesets),
         )
-        user_prompt = self.user_template_generator.render(
+        user_prompt = self.generate_user_template.render(
             text=artifacts_text,
         )
 
@@ -86,7 +86,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
             return rows
         else:
             chunks = self.chunker.chunk(artifacts_text)
-            partial_text = self.user_template_generator.render(
+            partial_text = self.generate_user_template.render(
                 text=chunks[0].value,
             )
 

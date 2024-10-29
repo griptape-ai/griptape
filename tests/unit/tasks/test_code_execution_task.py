@@ -21,7 +21,7 @@ def deliberate_exception(task: CodeExecutionTask) -> BaseArtifact:
 
 class TestCodeExecutionTask:
     def test_hello_world_fn(self):
-        task = CodeExecutionTask(run_fn=hello_world)
+        task = CodeExecutionTask(on_run=hello_world)
 
         assert task.try_run().value == "Hello World!"
 
@@ -29,13 +29,13 @@ class TestCodeExecutionTask:
     # Overriding the input because we are implementing the task not the Pipeline
     def test_noop_fn(self):
         pipeline = Pipeline()
-        task = CodeExecutionTask("No Op", run_fn=non_outputting)
+        task = CodeExecutionTask("No Op", on_run=non_outputting)
         pipeline.add_task(task)
         temp = task.try_run()
         assert temp.value == "No Op"
 
     def test_error_fn(self):
-        task = CodeExecutionTask(run_fn=deliberate_exception)
+        task = CodeExecutionTask(on_run=deliberate_exception)
 
         with pytest.raises(ValueError):
             task.try_run()

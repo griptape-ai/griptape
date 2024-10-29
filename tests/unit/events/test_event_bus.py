@@ -18,11 +18,11 @@ class TestEventBus:
         assert len(EventBus.event_listeners) == 1
 
     def test_add_event_listeners(self):
-        EventBus.add_event_listeners([EventListener(handler=lambda e: e), EventListener()])
+        EventBus.add_event_listeners([EventListener(on_event=lambda e: e), EventListener()])
         assert len(EventBus.event_listeners) == 2
 
     def test_remove_event_listeners(self):
-        listeners = [EventListener(handler=lambda e: e), EventListener()]
+        listeners = [EventListener(on_event=lambda e: e), EventListener()]
         EventBus.add_event_listeners(listeners)
         EventBus.remove_event_listeners(listeners)
         assert len(EventBus.event_listeners) == 0
@@ -33,7 +33,7 @@ class TestEventBus:
         assert len(EventBus.event_listeners) == 1
 
     def test_add_event_listener(self):
-        EventBus.add_event_listener(EventListener(handler=lambda e: e))
+        EventBus.add_event_listener(EventListener(on_event=lambda e: e))
         EventBus.add_event_listener(EventListener())
 
         assert len(EventBus.event_listeners) == 2
@@ -52,7 +52,7 @@ class TestEventBus:
         # Given
         mock_handler = Mock()
         mock_handler.return_value = None
-        EventBus.add_event_listeners([EventListener(handler=mock_handler)])
+        EventBus.add_event_listeners([EventListener(on_event=mock_handler)])
         mock_event = MockEvent()
 
         # When

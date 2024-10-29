@@ -10,11 +10,11 @@ class TestHuggingFacePipelinePromptDriver:
         return mocker.patch("transformers.pipeline")
 
     @pytest.fixture(autouse=True)
-    def mock_generator(self, mock_pipeline):
-        mock_generator = mock_pipeline.return_value
-        mock_generator.task = "text-generation"
-        mock_generator.return_value = [{"generated_text": [{"content": "model-output"}]}]
-        return mock_generator
+    def mock_provider(self, mock_pipeline):
+        mock_provider = mock_pipeline.return_value
+        mock_provider.task = "text-generation"
+        mock_provider.return_value = [{"generated_text": [{"content": "model-output"}]}]
+        return mock_provider
 
     @pytest.fixture(autouse=True)
     def mock_autotokenizer(self, mocker):
@@ -70,10 +70,10 @@ class TestHuggingFacePipelinePromptDriver:
         assert e.value.args[0] == "streaming is not supported"
 
     @pytest.mark.parametrize("choices", [[], [1, 2]])
-    def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_generator, prompt_stack):
+    def test_try_run_throws_when_multiple_choices_returned(self, choices, mock_provider, prompt_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
-        mock_generator.return_value = choices
+        mock_provider.return_value = choices
 
         # When
         with pytest.raises(Exception) as e:
@@ -82,10 +82,10 @@ class TestHuggingFacePipelinePromptDriver:
         # Then
         assert e.value.args[0] == "completion with more than one choice is not supported yet"
 
-    def test_try_run_throws_when_non_list(self, mock_generator, prompt_stack):
+    def test_try_run_throws_when_non_list(self, mock_provider, prompt_stack):
         # Given
         driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42)
-        mock_generator.return_value = {}
+        mock_provider.return_value = {}
 
         # When
         with pytest.raises(Exception) as e:

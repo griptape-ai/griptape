@@ -57,7 +57,7 @@ class TestBaseEventListenerDriver:
         mock_fn = MagicMock()
         driver = MockEventListenerDriver(
             batched=False,
-            try_publish_event_payload_fn=mock_fn,
+            on_event_payload_publish=mock_fn,
         )
         mock_event_payload = MockEvent().to_dict()
 
@@ -69,7 +69,7 @@ class TestBaseEventListenerDriver:
         mock_fn = MagicMock()
         driver = MockEventListenerDriver(
             batched=True,
-            try_publish_event_payload_batch_fn=mock_fn,
+            on_event_payload_batch_publish=mock_fn,
         )
         mock_event_payloads = [MockEvent().to_dict() for _ in range(0, 3)]
 
@@ -81,7 +81,7 @@ class TestBaseEventListenerDriver:
         mock_fn = MagicMock()
         driver = MockEventListenerDriver(
             batched=False,
-            try_publish_event_payload_fn=mock_fn,
+            on_event_payload_publish=mock_fn,
             max_attempts=2,
             max_retry_delay=0.1,
             min_retry_delay=0.1,
@@ -98,7 +98,7 @@ class TestBaseEventListenerDriver:
         mock_fn = MagicMock()
         driver = MockEventListenerDriver(
             batched=True,
-            try_publish_event_payload_batch_fn=mock_fn,
+            on_event_payload_batch_publish=mock_fn,
             max_attempts=2,
             max_retry_delay=0.1,
             min_retry_delay=0.1,

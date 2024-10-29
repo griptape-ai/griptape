@@ -17,7 +17,7 @@ class TranslateQueryRagModule(BaseQueryRagModule):
     prompt_driver: BasePromptDriver = field()
     language: str = field()
     generate_user_template: Callable[[str, str], str] = field(
-        default=Factory(lambda self: self.default_user_template_generator, takes_self=True),
+        default=Factory(lambda self: self.default_generate_user_template, takes_self=True),
     )
 
     def run(self, context: RagContext) -> RagContext:
@@ -28,5 +28,5 @@ class TranslateQueryRagModule(BaseQueryRagModule):
 
         return context
 
-    def default_user_template_generator(self, query: str, language: str) -> str:
+    def default_generate_user_template(self, query: str, language: str) -> str:
         return J2("engines/rag/modules/query/translate/user.j2").render(query=query, language=language)

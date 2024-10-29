@@ -25,8 +25,8 @@ class Chat:
         intro_text: Text to display when the chat starts.
         prompt_prefix: Prefix for the user's input.
         response_prefix: Prefix for the assistant's response.
-        input_fn: Function to get the user's input.
-        output_fn: Function to output text. Takes a `text` argument for the text to output.
+        handle_input: Function to get the user's input.
+        handle_output: Function to output text. Takes a `text` argument for the text to output.
                    Also takes a `stream` argument which will be set to True when streaming Prompt Tasks are present.
     """
 
@@ -40,19 +40,19 @@ class Chat:
     intro_text: Optional[str] = field(default=None, kw_only=True)
     prompt_prefix: str = field(default="User: ", kw_only=True)
     response_prefix: str = field(default="Assistant: ", kw_only=True)
-    input_fn: Callable[[str], str] = field(
-        default=Factory(lambda self: self.default_input_fn, takes_self=True), kw_only=True
+    handle_input: Callable[[str], str] = field(
+        default=Factory(lambda self: self.default_handle_input, takes_self=True), kw_only=True
     )
-    output_fn: Callable[..., None] = field(
-        default=Factory(lambda self: self.default_output_fn, takes_self=True),
+    handle_output: Callable[..., None] = field(
+        default=Factory(lambda self: self.default_handle_output, takes_self=True),
         kw_only=True,
     )
     logger_level: int = field(default=logging.ERROR, kw_only=True)
 
-    def default_input_fn(self, prompt_prefix: str) -> str:
+    def default_handle_input(self, prompt_prefix: str) -> str:
         return Chat.ChatPrompt.ask(prompt_prefix)
 
-    def default_output_fn(self, text: str, *, stream: bool = False) -> None:
+    def default_handle_output(self, text: str, *, stream: bool = False) -> None:
         if stream:
             rprint(text, end="", flush=True)
         else:
@@ -66,26 +66,26 @@ class Chat:
         logging.getLogger(Defaults.logging_config.logger_name).setLevel(self.logger_level)
 
         if self.intro_text:
-            self.output_fn(self.intro_text)
+            self.handle_output(self.intro_text)
 
         has_streaming_tasks = self._has_streaming_tasks()
         while True:
-            question = self.input_fn(self.prompt_prefix)
+            question = self.handle_input(self.prompt_prefix)
 
             if question.lower() in self.exit_keywords:
-                self.output_fn(self.exiting_text)
+                self.handle_output(self.exiting_text)
                 break
 
             if has_streaming_tasks:
-                self.output_fn(self.processing_text)
+                self.handle_output(self.processing_text)
                 stream = Stream(self.structure).run(question)
                 first_chunk = next(stream)
-                self.output_fn(self.response_prefix + first_chunk.value, stream=True)
+                self.handle_output(self.response_prefix + first_chunk.value, stream=True)
                 for chunk in stream:
-                    self.output_fn(chunk.value, stream=True)
+                    self.handle_output(chunk.value, stream=True)
             else:
-                self.output_fn(self.processing_text)
-                self.output_fn(f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}")
+                self.handle_output(self.processing_text)
+                self.handle_output(f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}")
 
         # Restore the original logger level
         logging.getLogger(Defaults.logging_config.logger_name).setLevel(old_logger_level)

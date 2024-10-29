@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 
 @define
 class CodeExecutionTask(BaseTextInputTask):
-    run_fn: Callable[[CodeExecutionTask], BaseArtifact] = field(kw_only=True)
+    on_run: Callable[[CodeExecutionTask], BaseArtifact] = field(kw_only=True)
 
     def try_run(self) -> BaseArtifact:
-        return self.run_fn(self)
+        return self.on_run(self)

@@ -133,7 +133,7 @@ if __name__ == "__main__":
             ),
             id="research",
             driver=LocalStructureRunDriver(
-                structure_factory_fn=build_researcher,
+                create_structure=build_researcher,
             ),
         ),
     )
@@ -150,7 +150,7 @@ if __name__ == "__main__":
                 {{ parent_outputs["research"] }}""",
                 ),
                 driver=LocalStructureRunDriver(
-                    structure_factory_fn=lambda writer=writer: build_writer(
+                    create_structure=lambda writer=writer: build_writer(
                         role=writer["role"],
                         goal=writer["goal"],
                         backstory=writer["backstory"],
