@@ -54,6 +54,28 @@ Additional [context](../../reference/griptape/structures/structure.md#griptape.s
                              sleeves, and let's get baking! 🍰🎉
 ```
 
+## Hooks
+
+All Tasks implement [RunnableMixin](../../reference/griptape/mixins/runnable_mixin.md) which provides `on_before_run` and `on_after_run` hooks for the Task lifecycle.
+
+These hooks can be used to perform actions before and after the Task is run. For example, you can mask sensitive information before running the Task, and transform the output after the Task is run.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/task_hooks.py"
+```
+
+```
+[10/15/24 15:14:10] INFO     PromptTask 63a0c734059c42808c87dff351adc8ab
+                             Input: Respond to this user: Hello! My favorite color is blue, and my social security number is xxx-xx-xxxx.
+[10/15/24 15:14:11] INFO     PromptTask 63a0c734059c42808c87dff351adc8ab
+                             Output: {
+                               "original_input": "Respond to this user: Hello! My favorite color is blue, and my social security number is 123-45-6789.",
+                               "masked_input": "Respond to this user: Hello! My favorite color is blue, and my social security number is xxx-xx-xxxx.",
+                               "output": "Hello! It's great to hear that your favorite color is blue. However, it's important to keep your personal information, like your
+                             social security number, private and secure. If you have any questions or need assistance, feel free to ask!"
+                             }
+```
+
 ## Prompt Task
 
 For general purpose prompting, use the [PromptTask](../../reference/griptape/tasks/prompt_task.md):

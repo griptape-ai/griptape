@@ -43,10 +43,10 @@ class TestInpaintingImageGenerationTask:
 
     def test_bad_input(self, image_artifact):
         with pytest.raises(ValueError):
-            InpaintingImageGenerationTask(("foo", "bar", image_artifact)).run()  # pyright: ignore[reportArgumentType]
+            InpaintingImageGenerationTask(("foo", "bar", image_artifact)).try_run()  # pyright: ignore[reportArgumentType]
 
         with pytest.raises(ValueError):
-            InpaintingImageGenerationTask(("foo", image_artifact, "baz")).run()  # pyright: ignore[reportArgumentType]
+            InpaintingImageGenerationTask(("foo", image_artifact, "baz")).try_run()  # pyright: ignore[reportArgumentType]
 
     def test_config_image_generation_engine(self, text_artifact, image_artifact):
         task = InpaintingImageGenerationTask((text_artifact, image_artifact, image_artifact))

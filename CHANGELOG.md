@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Events `BaseChunkEvent`, `TextChunkEvent`, `ActionChunkEvent`.
 - `wrapt` dependency for more robust decorators.
 - `BasePromptDriver.extra_params` for passing extra parameters not explicitly declared by the Driver.
+- `RunnableMixin` which adds `on_before_run` and `on_after_run` hooks.
 
 ### Changed
 
@@ -35,6 +36,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: `AnthropicDriversConfig` no longer bundles `VoyageAiEmbeddingDriver`.
 - **BREAKING**: Removed `HuggingFaceHubPromptDriver.params`, use `HuggingFaceHubPromptDriver.extra_params` instead.
 - **BREAKING**: Removed `HuggingFacePipelinePromptDriver.params`, use `HuggingFacePipelinePromptDriver.extra_params` instead.
+- **BREAKING**: Renamed `BaseTask.run` to `BaseTask.try_run`.
+- **BREAKING**: Renamed `BaseTask.execute` to `BaseTask.run`.
+- **BREAKING**: Renamed `BaseTask.can_execute` to `BaseTool.can_run`.
+- **BREAKING**: Renamed `BaseTool.run` to `BaseTool.try_run`.
+- **BREAKING**: Renamed `BaseTool.execute` to `BaseTool.run`.
 - Updated `EventListener.handler` return type to `Optional[BaseEvent | dict]`.
 - `BaseTask.parent_outputs` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
 - `Workflow.context["parent_outputs"]` type has changed from `dict[str, str | None]` to `dict[str, BaseArtifact]`.
@@ -54,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Models in `ToolkitTask` with native tool calling no longer need to provide their final answer as `Answer:`.
 - `EventListener.event_types` will now listen on child types of any provided type.
 - Only install Tool dependencies if the Tool provides a `requirements.txt` and the dependencies are not already met.
+- Implemented `RunnableMixin` in `Structure`, `BaseTask`, and `BaseTool`.
 
 ### Fixed
 

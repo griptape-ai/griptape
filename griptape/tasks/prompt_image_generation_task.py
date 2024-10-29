@@ -50,7 +50,7 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
     def input(self, value: TextArtifact) -> None:
         self._input = value
 
-    def run(self) -> ImageArtifact:
+    def try_run(self) -> ImageArtifact:
         image_artifact = self.image_generation_engine.run(
             prompts=[self.input.to_text()],
             rulesets=self.rulesets,
