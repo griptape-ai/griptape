@@ -30,8 +30,6 @@ class EventListener(Generic[T]):
     event_types: Optional[list[type[T]]] = field(default=None, kw_only=True)
     event_listener_driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
 
-    _last_event_listeners: Optional[list[EventListener]] = field(default=None)
-
     def __enter__(self) -> EventListener:
         from griptape.events import EventBus
 
@@ -43,8 +41,6 @@ class EventListener(Generic[T]):
         from griptape.events import EventBus
 
         EventBus.remove_event_listener(self)
-
-        self._last_event_listeners = None
 
     def publish_event(self, event: T, *, flush: bool = False) -> None:
         event_types = self.event_types

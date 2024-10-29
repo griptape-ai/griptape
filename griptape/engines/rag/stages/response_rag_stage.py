@@ -7,6 +7,7 @@ from attrs import define, field
 
 from griptape import utils
 from griptape.engines.rag.stages import BaseRagStage
+from griptape.utils import with_contextvars
 
 if TYPE_CHECKING:
     from griptape.engines.rag import RagContext
@@ -32,7 +33,7 @@ class ResponseRagStage(BaseRagStage):
         logging.info("ResponseRagStage: running %s retrieval modules in parallel", len(self.response_modules))
 
         results = utils.execute_futures_list(
-            [self.futures_executor.submit(r.run, context) for r in self.response_modules]
+            [self.futures_executor.submit(with_contextvars(r.run), context) for r in self.response_modules]
         )
 
         context.outputs = results

@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import ANY, MagicMock
 
 from tests.mocks.mock_event import MockEvent
 from tests.mocks.mock_event_listener_driver import MockEventListenerDriver
@@ -13,7 +13,7 @@ class TestBaseEventListenerDriver:
 
         driver.publish_event(mock_event_payload)
 
-        executor.submit.assert_called_once_with(driver._safe_publish_event_payload, mock_event_payload)
+        executor.submit.assert_called_once_with(ANY, mock_event_payload)
 
     def test_publish_event_yes_batched(self):
         executor = MagicMock()
@@ -33,9 +33,7 @@ class TestBaseEventListenerDriver:
         driver.publish_event(mock_event_payload)
 
         assert len(driver._batch) == 0
-        executor.submit.assert_called_once_with(
-            driver._safe_publish_event_payload_batch, [*mock_event_payloads, mock_event_payload]
-        )
+        executor.submit.assert_called_once_with(ANY, [*mock_event_payloads, mock_event_payload])
 
     def test_flush_events(self):
         executor = MagicMock()
@@ -52,7 +50,7 @@ class TestBaseEventListenerDriver:
         assert len(driver.batch) == 3
 
         driver.flush_events()
-        executor.submit.assert_called_once_with(driver._safe_publish_event_payload_batch, mock_event_payloads)
+        executor.submit.assert_called_once_with(ANY, mock_event_payloads)
         assert len(driver.batch) == 0
 
     def test__safe_publish_event_payload(self):

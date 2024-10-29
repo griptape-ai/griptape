@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `wrapt` dependency for more robust decorators.
 - `BasePromptDriver.extra_params` for passing extra parameters not explicitly declared by the Driver.
 - `RunnableMixin` which adds `on_before_run` and `on_after_run` hooks.
+- `griptape.utils.with_contextvars` utility for running functions with the current `contextvars` context.
 
 ### Changed
 
@@ -61,6 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `EventListener.event_types` will now listen on child types of any provided type.
 - Only install Tool dependencies if the Tool provides a `requirements.txt` and the dependencies are not already met.
 - Implemented `RunnableMixin` in `Structure`, `BaseTask`, and `BaseTool`.
+- `EventBus`'s Event Listeners are now thread/coroutine-local. Event Listeners from the spawning thread will be automatically copied when using concurrent griptape features like Workflows.
 
 ### Fixed
 
@@ -69,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Models occasionally hallucinating `memory_name` and `artifact_namespace` into Tool schemas when using `ToolkitTask`.
 - Models occasionally providing overly succinct final answers when using `ToolkitTask`.
 - Exception getting raised in `FuturesExecutorMixin.__del__`.
+- Issues when using `EventListener` as a context manager in a multi-threaded environment.
 
 ## \[0.33.1\] - 2024-10-11
 
