@@ -145,6 +145,13 @@ drivers-observability-datadog = [
     "opentelemetry-instrumentation-threading",
     "opentelemetry-exporter-otlp-proto-http",
 ]
+drivers-observability-prometheus = [
+    "opentelemetry-sdk",
+    "opentelemetry-api",
+    "opentelemetry-instrumentation",
+    "opentelemetry-instrumentation-threading",
+    "opentelemetry-exporter-otlp-proto-http",
+]
 
 drivers-image-generation-huggingface = ["diffusers", "pillow"]
 
