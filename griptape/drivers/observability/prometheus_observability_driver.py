@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import os
 from typing import TYPE_CHECKING, Any, Optional
 
-from attrs import Attribute, Factory, define, field
+from attrs import Attribute, define, field
 from prometheus_client import Counter, Histogram
 
 from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
