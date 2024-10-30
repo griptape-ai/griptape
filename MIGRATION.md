@@ -298,82 +298,6 @@ pip install griptape[drivers-prompt-huggingface-hub]
 pip install torch
 ```
 
-### Removed `MediaArtifact`
-
-`MediaArtifact` has been removed. Use `ImageArtifact` or `AudioArtifact` instead.
-
-#### Before
-
-```python
-image_media = MediaArtifact(
-    b"image_data",
-    media_type="image",
-    format="jpeg"
-)
-
-audio_media = MediaArtifact(
-    b"audio_data",
-    media_type="audio",
-    format="wav"
-)
-```
-
-#### After
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data",
-    format="jpeg"
-)
-
-audio_artifact = AudioArtifact(
-    b"audio_data",
-    format="wav"
-)
-```
-
-### `ImageArtifact.format` is now required
-
-`ImageArtifact.format` is now a required parameter. Update any code that does not provide a `format` parameter.
-
-#### Before
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data"
-)
-```
-
-#### After
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data",
-    format="jpeg"
-)
-```
-
-### Removed `CsvRowArtifact`
-
-`CsvRowArtifact` has been removed. Use `TextArtifact` instead.
-
-#### Before
-
-```python
-artifact = CsvRowArtifact({"name": "John", "age": 30})
-print(artifact.value) # {"name": "John", "age": 30}
-print(type(artifact.value)) # <class 'dict'>
-```
-
-#### After
-
-```python
-artifact = TextArtifact("name: John\nage: 30")
-print(artifact.value) # name: John\nage: 30
-print(type(artifact.value)) # <class 'str'>
-```
-
-If you require storing a dictionary as an Artifact, you can use `GenericArtifact` instead.
 
 ### `CsvLoader`, `DataframeLoader`, and `SqlLoader` return types
 
@@ -406,35 +330,6 @@ print(type(results[0].value)) # <class 'str'>
 dict_results = [json.loads(result.value) for result in results]
 print(dict_results[0]) # {"name": "John", "age": 30}
 print(type(dict_results[0])) # <class 'dict'>
-```
-
-### Moved `ImageArtifact.prompt` and `ImageArtifact.model` to `ImageArtifact.meta`
-
-`ImageArtifact.prompt` and `ImageArtifact.model` have been moved to `ImageArtifact.meta`.
-
-#### Before
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data",
-    format="jpeg",
-    prompt="Generate an image of a cat",
-    model="DALL-E"
-)
-
-print(image_artifact.prompt, image_artifact.model) # Generate an image of a cat, DALL-E
-```
-
-#### After
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data",
-    format="jpeg",
-    meta={"prompt": "Generate an image of a cat", "model": "DALL-E"}
-)
-
-print(image_artifact.meta["prompt"], image_artifact.meta["model"]) # Generate an image of a cat, DALL-E
 ```
 
 Renamed `GriptapeCloudKnowledgeBaseVectorStoreDriver` to `GriptapeCloudVectorStoreDriver`.
@@ -476,85 +371,6 @@ driver = OpenAiChatPromptDriver(
 ```
 
 ## 0.31.X to 0.32.X
-
-### Removed `DataframeLoader`
-
-`DataframeLoader` has been removed. Use `CsvLoader.parse` or build `TextArtifact`s from the dataframe instead.
-
-#### Before
-
-```python
-DataframeLoader().load(df)
-```
-
-#### After
-
-```python
-# Convert the dataframe to csv bytes and parse it
-CsvLoader().parse(bytes(df.to_csv(line_terminator='\r\n', index=False), encoding='utf-8'))
-# Or build TextArtifacts from the dataframe
-[TextArtifact(row) for row in source.to_dict(orient="records")]
-```
-
-### `TextLoader`, `PdfLoader`, `ImageLoader`, and `AudioLoader` now take a `str | PathLike` instead of `bytes`.
-
-#### Before
-
-```python
-PdfLoader().load(Path("attention.pdf").read_bytes())
-PdfLoader().load_collection([Path("attention.pdf").read_bytes(), Path("CoT.pdf").read_bytes()])
-```
-
-#### After
-
-```python
-PdfLoader().load("attention.pdf")
-PdfLoader().load_collection([Path("attention.pdf"), "CoT.pdf"])
-```
-
-### Removed `fileutils.load_file` and `fileutils.load_files`
-
-`griptape.utils.file_utils.load_file` and `griptape.utils.file_utils.load_files` have been removed.
-You can now pass the file path directly to the Loader.
-
-#### Before
-
-```python
-PdfLoader().load(load_file("attention.pdf").read_bytes())
-PdfLoader().load_collection(list(load_files(["attention.pdf", "CoT.pdf"]).values()))
-```
-
-```python
-PdfLoader().load("attention.pdf")
-PdfLoader().load_collection(["attention.pdf", "CoT.pdf"])
-```
-
-### Loaders no longer chunk data
-
-Loaders no longer chunk the data after loading it. If you need to chunk the data, use a [Chunker](https://docs.griptape.ai/stable/griptape-framework/data/chunkers/) after loading the data.
-
-#### Before
-
-```python
-chunks = PdfLoader().load("attention.pdf")
-vector_store.upsert_text_artifacts(
-    {
-        "griptape": chunks,
-    }
-)
-```
-
-#### After
-
-```python
-artifact = PdfLoader().load("attention.pdf")
-chunks = Chunker().chunk(artifact)
-vector_store.upsert_text_artifacts(
-    {
-        "griptape": chunks,
-    }
-)
-```
 
 ### Removed `MediaArtifact`
 
