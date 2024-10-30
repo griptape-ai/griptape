@@ -298,82 +298,6 @@ pip install griptape[drivers-prompt-huggingface-hub]
 pip install torch
 ```
 
-### Removed `MediaArtifact`
-
-`MediaArtifact` has been removed. Use `ImageArtifact` or `AudioArtifact` instead.
-
-#### Before
-
-```python
-image_media = MediaArtifact(
-    b"image_data",
-    media_type="image",
-    format="jpeg"
-)
-
-audio_media = MediaArtifact(
-    b"audio_data",
-    media_type="audio",
-    format="wav"
-)
-```
-
-#### After
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data",
-    format="jpeg"
-)
-
-audio_artifact = AudioArtifact(
-    b"audio_data",
-    format="wav"
-)
-```
-
-### `ImageArtifact.format` is now required
-
-`ImageArtifact.format` is now a required parameter. Update any code that does not provide a `format` parameter.
-
-#### Before
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data"
-)
-```
-
-#### After
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data",
-    format="jpeg"
-)
-```
-
-### Removed `CsvRowArtifact`
-
-`CsvRowArtifact` has been removed. Use `TextArtifact` instead.
-
-#### Before
-
-```python
-artifact = CsvRowArtifact({"name": "John", "age": 30})
-print(artifact.value) # {"name": "John", "age": 30}
-print(type(artifact.value)) # <class 'dict'>
-```
-
-#### After
-
-```python
-artifact = TextArtifact("name: John\nage: 30")
-print(artifact.value) # name: John\nage: 30
-print(type(artifact.value)) # <class 'str'>
-```
-
-If you require storing a dictionary as an Artifact, you can use `GenericArtifact` instead.
 
 ### `CsvLoader`, `DataframeLoader`, and `SqlLoader` return types
 
@@ -406,35 +330,6 @@ print(type(results[0].value)) # <class 'str'>
 dict_results = [json.loads(result.value) for result in results]
 print(dict_results[0]) # {"name": "John", "age": 30}
 print(type(dict_results[0])) # <class 'dict'>
-```
-
-### Moved `ImageArtifact.prompt` and `ImageArtifact.model` to `ImageArtifact.meta`
-
-`ImageArtifact.prompt` and `ImageArtifact.model` have been moved to `ImageArtifact.meta`.
-
-#### Before
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data",
-    format="jpeg",
-    prompt="Generate an image of a cat",
-    model="DALL-E"
-)
-
-print(image_artifact.prompt, image_artifact.model) # Generate an image of a cat, DALL-E
-```
-
-#### After
-
-```python
-image_artifact = ImageArtifact(
-    b"image_data",
-    format="jpeg",
-    meta={"prompt": "Generate an image of a cat", "model": "DALL-E"}
-)
-
-print(image_artifact.meta["prompt"], image_artifact.meta["model"]) # Generate an image of a cat, DALL-E
 ```
 
 Renamed `GriptapeCloudKnowledgeBaseVectorStoreDriver` to `GriptapeCloudVectorStoreDriver`.
