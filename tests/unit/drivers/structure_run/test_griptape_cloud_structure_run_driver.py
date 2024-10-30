@@ -24,7 +24,7 @@ class TestGriptapeCloudStructureRunDriver:
         return GriptapeCloudStructureRunDriver(
             base_url="https://cloud-foo.griptape.ai",
             api_key="foo bar",
-            structure_id="1",
+            resource_id="1",
             env={"key": "value"},
             structure_run_wait_time_interval=0,
         )

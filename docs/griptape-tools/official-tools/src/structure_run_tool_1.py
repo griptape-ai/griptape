@@ -6,14 +6,14 @@ from griptape.tools import StructureRunTool
 
 base_url = os.environ["GRIPTAPE_CLOUD_BASE_URL"]
 api_key = os.environ["GRIPTAPE_CLOUD_API_KEY"]
-structure_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
+resource_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
 
 structure_run_tool = StructureRunTool(
     description="RAG Expert Agent - Structure to invoke with natural language queries about the topic of Retrieval Augmented Generation",
     driver=GriptapeCloudStructureRunDriver(
         base_url=base_url,
         api_key=api_key,
-        structure_id=structure_id,
+        resource_id=resource_id,
     ),
 )
 
