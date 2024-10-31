@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- `GriptapeCloudFileManagerDriver.try_save_file` Asset creation utilizes upsert functionality of PUT Asset API.
+
 ## \[0.34.0\] - 2024-10-29
 
 ### Added
