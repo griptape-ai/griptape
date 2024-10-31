@@ -7211,6 +7211,7 @@ drivers-memory-conversation-redis = ["redis"]
 drivers-observability-datadog = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
 drivers-observability-griptape-cloud = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
 drivers-observability-opentelemetry = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
+drivers-observability-prometheus = ["opentelemetry-api", "opentelemetry-exporter-otlp-proto-http", "opentelemetry-instrumentation", "opentelemetry-instrumentation-threading", "opentelemetry-sdk"]
 drivers-prompt-amazon-bedrock = ["anthropic", "boto3"]
 drivers-prompt-amazon-sagemaker = ["boto3", "transformers"]
 drivers-prompt-anthropic = ["anthropic"]
@@ -7246,4 +7247,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "816a925736967c12b42ffddce1e48909348d11e7d341127d5e9e1224b44ba00e"
+content-hash = "83ce2a8a23b6aff56e8a6dc40f848a4693ed3697f8199b33d6afe420b732026d"
