@@ -2,19 +2,15 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 from urllib.parse import urljoin
 
 import requests
 from attrs import Attribute, Factory, define, field
 
 from griptape.drivers import BaseFileManagerDriver
-from griptape.utils import import_optional_dependency
 
 logger = logging.getLogger(__name__)
-
-if TYPE_CHECKING:
-    from azure.storage.blob import BlobClient
 
 
 @define
@@ -79,7 +75,6 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         data = {"prefix": full_key}
         if postfix:
             data["postfix"] = postfix
-        # TODO: GTC SDK: Pagination
         list_assets_response = self._call_api(
             method="list", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=False
         ).json()
@@ -93,16 +88,14 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             raise IsADirectoryError
 
         try:
-            blob_client = self._get_blob_client(full_key=full_key)
+            sas_url, headers = self._get_asset_url(full_key)
+            response = requests.get(sas_url, headers=headers)
+            response.raise_for_status()
+            return response.content
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
                 raise FileNotFoundError from e
             raise e
-
-        try:
-            return blob_client.download_blob().readall()
-        except import_optional_dependency("azure.core.exceptions").ResourceNotFoundError as e:
-            raise FileNotFoundError from e
 
     def try_save_file(self, path: str, value: bytes) -> str:
         full_key = self._to_full_key(path)
@@ -114,23 +107,25 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
             self._call_api(method="get", path=f"/buckets/{self.bucket_id}/assets/{full_key}", raise_for_status=True)
         except requests.exceptions.HTTPError as e:
             if e.response.status_code == 404:
-                logger.info("Asset '%s' not found, attempting to create", full_key)
-                data = {"name": full_key}
-                self._call_api(method="put", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=True)
+                self._call_api(
+                    method="put",
+                    path=f"/buckets/{self.bucket_id}/assets",
+                    json={"name": full_key},
+                    raise_for_status=True,
+                )
             else:
                 raise e
+        sas_url, headers = self._get_asset_url(full_key)
+        response = requests.put(sas_url, data=value, headers=headers)
+        response.raise_for_status()
 
-        blob_client = self._get_blob_client(full_key=full_key)
-
-        blob_client.upload_blob(data=value, overwrite=True)
         return f"buckets/{self.bucket_id}/assets/{full_key}"
 
-    def _get_blob_client(self, full_key: str) -> BlobClient:
+    def _get_asset_url(self, full_key: str) -> tuple[str, dict]:
         url_response = self._call_api(
             method="post", path=f"/buckets/{self.bucket_id}/asset-urls/{full_key}", raise_for_status=True
         ).json()
-        sas_url = url_response["url"]
-        return import_optional_dependency("azure.storage.blob").BlobClient.from_blob_url(blob_url=sas_url)
+        return url_response["url"], url_response.get("headers", {})
 
     def _get_url(self, path: str) -> str:
         path = path.lstrip("/")

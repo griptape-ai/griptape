@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Removed `azure-core` and `azure-storage-blob` dependencies.
+- `GriptapeCloudFileManagerDriver` no longer requires `drivers-file-manager-griptape-cloud` extra.
+
 ## \[0.34.0\] - 2024-10-29
 
 ### Added
