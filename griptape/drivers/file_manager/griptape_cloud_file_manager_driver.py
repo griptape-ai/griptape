@@ -110,15 +110,12 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         if self._is_a_directory(full_key):
             raise IsADirectoryError
 
-        try:
-            self._call_api(method="get", path=f"/buckets/{self.bucket_id}/assets/{full_key}", raise_for_status=True)
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 404:
-                logger.info("Asset '%s' not found, attempting to create", full_key)
-                data = {"name": full_key}
-                self._call_api(method="put", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=True)
-            else:
-                raise e
+        self._call_api(
+            method="put",
+            path=f"/buckets/{self.bucket_id}/assets",
+            json={"name": full_key},
+            raise_for_status=True,
+        )
 
         blob_client = self._get_blob_client(full_key=full_key)
 
