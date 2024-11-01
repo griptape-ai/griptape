@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `WebScraperTool.text_chunker` default value for `max_tokens`.
+
+### Fixed
+
+- `WebScraperTool` not using `text_chunker` override.
+
+## \[0.34.0\] - 2024-10-29
+
+### Added
+
 - `griptape.configs.logging.JsonFormatter` for formatting logs as JSON.
 - Request/response debug logging to all Prompt Drivers.
 - `griptape.schemas.UnionField` for serializing union fields.
