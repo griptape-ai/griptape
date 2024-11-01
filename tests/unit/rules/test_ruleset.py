@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import pytest
@@ -5,7 +6,8 @@ import pytest
 from griptape.drivers import LocalRulesetDriver
 from griptape.rules import Rule, Ruleset
 
-TEST_RULESET_DIR = str(Path("tests/resources/"))
+TEST_RULESET_DIR = str(Path(os.path.dirname(__file__), "../../resources/"))
+TEST_RULESET_NAME = "test_ruleset.json"
 
 
 class TestRuleset:
@@ -21,7 +23,7 @@ class TestRuleset:
 
     def test_from_driver(self, driver):
         ruleset = Ruleset(
-            name="test_ruleset.json",
+            name=TEST_RULESET_NAME,
             rules=[Rule("rule1"), Rule("rule2")],
             meta={"key": "value"},
             ruleset_driver=driver,
