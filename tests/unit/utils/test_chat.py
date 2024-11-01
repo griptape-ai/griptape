@@ -94,3 +94,38 @@ class TestConversation:
                     call("Exiting..."),
                 ]
             )
+
+    @pytest.mark.parametrize("stream", [True, False])
+    @patch("builtins.input", side_effect=["foo", "exit"])
+    def test_start_with_handle_output_kwargs(self, mock_input, stream):
+        mock = Mock()
+
+        def mock_handle_output(text: str, **kwargs):
+            mock(text, stream=kwargs.get("stream", False))
+
+        agent = Agent(conversation_memory=ConversationMemory(), stream=stream)
+
+        chat = Chat(agent, intro_text="foo", handle_output=mock_handle_output)
+
+        chat.start()
+
+        mock_input.assert_has_calls([call(), call()])
+        if stream:
+            mock.assert_has_calls(
+                [
+                    call("foo", stream=False),
+                    call("Thinking...", stream=False),
+                    call("Assistant: mock output", stream=True),
+                    call("\n", stream=True),
+                    call("Exiting...", stream=False),
+                ]
+            )
+        else:
+            mock.assert_has_calls(
+                [
+                    call("foo", stream=False),
+                    call("Thinking...", stream=False),
+                    call("Assistant: mock output", stream=False),
+                    call("Exiting...", stream=False),
+                ]
+            )
