@@ -39,7 +39,6 @@ Defaults.drivers_config = AnthropicDriversConfig(
 
 Many callables have been renamed for consistency. Update your code to use the new names using the [CHANGELOG.md](https://github.com/griptape-ai/griptape/pull/1275/files#diff-06572a96a58dc510037d5efa622f9bec8519bc1beab13c9f251e97e657a9d4ed) as the source of truth.
 
-
 ### Removed `CompletionChunkEvent`
 
 `CompletionChunkEvent` has been removed. There is now `BaseChunkEvent` with children `TextChunkEvent` and `ActionChunkEvent`. `BaseChunkEvent` can replace `completion_chunk_event.token` by doing `str(base_chunk_event)`.
@@ -146,7 +145,6 @@ event_listener_driver.flush_events()
 
 The `observable` decorator has been moved to `griptape.common.decorators`. Update your imports accordingly.
 
-
 #### Before
 
 ```python
@@ -182,7 +180,6 @@ driver = HuggingFacePipelinePromptDriver(
 ### Renamed `execute` to `run` in several places
 
 `execute` has been renamed to `run` in several places. Update your code accordingly.
-
 
 #### Before
 
