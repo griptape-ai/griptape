@@ -19,9 +19,6 @@ Or use them independently as shown below for each driver:
 
 ### Griptape Cloud
 
-!!! info
-    This driver requires the `drivers-file-manager-griptape-cloud` [extra](../index.md#extras).
-
 The [GriptapeCloudFileManagerDriver](../../reference/griptape/drivers/file_manager/griptape_cloud_file_manager_driver.md) allows you to load and save files sourced from Griptape Cloud Asset and Bucket resources.
 
 ```python

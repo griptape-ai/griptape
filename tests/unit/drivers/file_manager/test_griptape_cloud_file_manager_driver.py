@@ -2,7 +2,6 @@ from unittest import mock
 
 import pytest
 import requests
-from azure.core.exceptions import ResourceNotFoundError
 
 
 class TestGriptapeCloudFileManagerDriver:
@@ -98,19 +97,18 @@ class TestGriptapeCloudFileManagerDriver:
             driver.try_list_files("foo")
 
     def test_try_load_file(self, mocker, driver):
-        mock_response = mocker.Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"url": "https://foo.bar"}
-        mocker.patch("requests.request", return_value=mock_response)
+        mock_url_response = mocker.Mock()
+        mock_url_response.status_code = 200
+        mock_url_response.json.return_value = {"url": "https://foo.bar"}
+        mocker.patch("requests.request", return_value=mock_url_response)
 
-        mock_bytes = b"bytes"
-        mock_blob_client = mocker.Mock()
-        mock_blob_client.download_blob.return_value.readall.return_value = mock_bytes
-        mocker.patch("azure.storage.blob.BlobClient.from_blob_url", return_value=mock_blob_client)
+        mock_file_response = mocker.Mock()
+        mock_file_response.status_code = 200
+        mock_file_response.content = b"bytes"
+        mocker.patch("requests.get", return_value=mock_file_response)
 
         response = driver.try_load_file("foo")
-
-        assert response == mock_bytes
+        assert response == b"bytes"
 
     def test_try_load_file_directory(self, mocker, driver):
         mock_response = mocker.Mock()
@@ -121,42 +119,29 @@ class TestGriptapeCloudFileManagerDriver:
         with pytest.raises(IsADirectoryError):
             driver.try_load_file("foo/")
 
-    def test_try_load_file_sas_404(self, mocker, driver):
+    def test_try_load_file_asset_url_404(self, mocker, driver):
         mocker.patch("requests.request", side_effect=requests.exceptions.HTTPError(response=mock.Mock(status_code=404)))
 
         with pytest.raises(FileNotFoundError):
             driver.try_load_file("foo")
 
-    def test_try_load_file_sas_500(self, mocker, driver):
+    def test_try_load_file_asset_url_500(self, mocker, driver):
         mocker.patch("requests.request", side_effect=requests.exceptions.HTTPError(response=mock.Mock(status_code=500)))
 
         with pytest.raises(requests.exceptions.HTTPError):
             driver.try_load_file("foo")
 
-    def test_try_load_file_blob_404(self, mocker, driver):
-        mock_response = mocker.Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"url": "https://foo.bar"}
-        mocker.patch("requests.request", return_value=mock_response)
-
-        mock_blob_client = mocker.Mock()
-        mock_blob_client.download_blob.side_effect = ResourceNotFoundError()
-        mocker.patch("azure.storage.blob.BlobClient.from_blob_url", return_value=mock_blob_client)
-
-        with pytest.raises(FileNotFoundError):
-            driver.try_load_file("foo")
-
     def test_try_save_file(self, mocker, driver):
-        mock_response = mocker.Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"url": "https://foo.bar"}
-        mocker.patch("requests.request", return_value=mock_response)
+        mock_url_response = mocker.Mock()
+        mock_url_response.status_code = 200
+        mock_url_response.json.return_value = {"url": "https://foo.bar"}
+        mocker.patch("requests.request", return_value=mock_url_response)
 
-        mock_blob_client = mocker.Mock()
-        mocker.patch("azure.storage.blob.BlobClient.from_blob_url", return_value=mock_blob_client)
+        mock_put_response = mocker.Mock()
+        mock_put_response.status_code = 200
+        mocker.patch("requests.put", return_value=mock_put_response)
 
         response = driver.try_save_file("foo", b"value")
-
         assert response == "buckets/1/assets/foo"
 
     def test_try_save_file_directory(self, mocker, driver):
@@ -168,20 +153,17 @@ class TestGriptapeCloudFileManagerDriver:
         with pytest.raises(IsADirectoryError):
             driver.try_save_file("foo/", b"value")
 
-    def test_try_save_file_404(self, mocker, driver):
-        mock_response = mocker.Mock()
-        mock_response.json.return_value = {"url": "https://foo.bar"}
-        mock_response.raise_for_status.side_effect = [
-            requests.exceptions.HTTPError(response=mock.Mock(status_code=404)),
-            None,
-            None,
-        ]
-        mocker.patch("requests.request", return_value=mock_response)
+    def test_try_save_file_asset_url_404(self, mocker, driver):
+        mock_create_response = mocker.Mock()
+        mock_create_response.raise_for_status.side_effect = requests.exceptions.HTTPError(
+            response=mock.Mock(status_code=404)
+        )
+        mocker.patch("requests.request", return_value=mock_create_response)
 
         with pytest.raises(requests.exceptions.HTTPError):
             driver.try_save_file("foo", b"value")
 
-    def test_try_save_file_sas_500(self, mocker, driver):
+    def test_try_save_file_asset_url_500(self, mocker, driver):
         mocker.patch("requests.request", side_effect=requests.exceptions.HTTPError(response=mock.Mock(status_code=500)))
 
         with pytest.raises(requests.exceptions.HTTPError):
