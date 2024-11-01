@@ -146,7 +146,7 @@ class TestGriptapeCloudFileManagerDriver:
         with pytest.raises(FileNotFoundError):
             driver.try_load_file("foo")
 
-    def test_try_save_files(self, mocker, driver):
+    def test_try_save_file(self, mocker, driver):
         mock_response = mocker.Mock()
         mock_response.status_code = 200
         mock_response.json.return_value = {"url": "https://foo.bar"}
@@ -168,7 +168,7 @@ class TestGriptapeCloudFileManagerDriver:
         with pytest.raises(IsADirectoryError):
             driver.try_save_file("foo/", b"value")
 
-    def test_try_save_file_sas_404(self, mocker, driver):
+    def test_try_save_file_404(self, mocker, driver):
         mock_response = mocker.Mock()
         mock_response.json.return_value = {"url": "https://foo.bar"}
         mock_response.raise_for_status.side_effect = [
@@ -178,12 +178,8 @@ class TestGriptapeCloudFileManagerDriver:
         ]
         mocker.patch("requests.request", return_value=mock_response)
 
-        mock_blob_client = mocker.Mock()
-        mocker.patch("azure.storage.blob.BlobClient.from_blob_url", return_value=mock_blob_client)
-
-        response = driver.try_save_file("foo", b"value")
-
-        assert response == "buckets/1/assets/foo"
+        with pytest.raises(requests.exceptions.HTTPError):
+            driver.try_save_file("foo", b"value")
 
     def test_try_save_file_sas_500(self, mocker, driver):
         mocker.patch("requests.request", side_effect=requests.exceptions.HTTPError(response=mock.Mock(status_code=500)))
