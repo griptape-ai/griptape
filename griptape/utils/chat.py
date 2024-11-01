@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import logging
 from typing import TYPE_CHECKING, Callable, Optional
 
@@ -66,26 +67,28 @@ class Chat:
         logging.getLogger(Defaults.logging_config.logger_name).setLevel(self.logger_level)
 
         if self.intro_text:
-            self.handle_output(self.intro_text)
+            self._call_handle_output(self.intro_text)
 
         has_streaming_tasks = self._has_streaming_tasks()
         while True:
             question = self.handle_input(self.prompt_prefix)
 
             if question.lower() in self.exit_keywords:
-                self.handle_output(self.exiting_text)
+                self._call_handle_output(self.exiting_text)
                 break
 
             if has_streaming_tasks:
-                self.handle_output(self.processing_text)
+                self._call_handle_output(self.processing_text)
                 stream = Stream(self.structure).run(question)
                 first_chunk = next(stream)
-                self.handle_output(self.response_prefix + first_chunk.value, stream=True)
+                self._call_handle_output(self.response_prefix + first_chunk.value, stream=True)
                 for chunk in stream:
-                    self.handle_output(chunk.value, stream=True)
+                    self._call_handle_output(chunk.value, stream=True)
             else:
-                self.handle_output(self.processing_text)
-                self.handle_output(f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}")
+                self._call_handle_output(self.processing_text)
+                self._call_handle_output(
+                    f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}"
+                )
 
         # Restore the original logger level
         logging.getLogger(Defaults.logging_config.logger_name).setLevel(old_logger_level)
@@ -94,3 +97,18 @@ class Chat:
         from griptape.tasks.prompt_task import PromptTask
 
         return any(isinstance(task, PromptTask) and task.prompt_driver.stream for task in self.structure.tasks)
+
+    def _call_handle_output(self, text: str, *, stream: bool = False) -> None:
+        func_params = inspect.signature(self.handle_output).parameters.copy()
+        has_kwargs = False
+        for param in func_params.values():
+            # if there is a **kwargs parameter, we can safely
+            # pass all the params to the function
+            if param.kind == inspect.Parameter.VAR_KEYWORD:
+                has_kwargs = True
+                break
+
+        if "stream" in func_params or has_kwargs:
+            self.handle_output(text, stream=stream)
+        else:
+            self.handle_output(text)
