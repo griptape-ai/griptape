@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - `WebScraperTool` not using `text_chunker` override.
+- Breaking change in `Chat.handle_output` behavior.
 
 ## \[0.34.0\] - 2024-10-29
 
