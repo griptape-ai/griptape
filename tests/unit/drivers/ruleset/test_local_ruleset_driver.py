@@ -1,10 +1,11 @@
+import os
 from pathlib import Path
 
 import pytest
 
 from griptape.drivers import LocalRulesetDriver
 
-TEST_RULESET_DIR = str(Path("tests/resources/"))
+TEST_RULESET_DIR = str(Path(os.path.dirname(__file__), "../../../resources/"))
 TEST_RULESET_NAME = "test_ruleset.json"
 
 
