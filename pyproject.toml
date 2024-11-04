@@ -211,7 +211,7 @@ mongomock = "^4.1.2"
 twine = "^5.1.1"
 moto = {extras = ["dynamodb", "iotdata", "sqs"], version = "^5.0.16"}
 pytest-xdist = "^3.3.1"
-pytest-cov = "^5.0.0"
+pytest-cov = "^6.0.0"
 pytest-env = "^1.1.1"
 fuzzywuzzy = "^0.18.0"
 pytest-clarity = "^1.0.1"
