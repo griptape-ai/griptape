@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## \[0.34.1\] - 2024-11-05
+
 ### Added
 
 - `WebScraperTool.text_chunker` default value for `max_tokens`.
