@@ -35,3 +35,7 @@ class TestAudioArtifact:
         assert deserialized_artifact.format == "pcm"
         assert deserialized_artifact.meta["model"] == "provider/model"
         assert deserialized_artifact.meta["prompt"] == "two words"
+
+    def test_name(self, audio_artifact):
+        assert audio_artifact.name.startswith("audio_artifact_")
+        assert audio_artifact.name.endswith(audio_artifact.format)
