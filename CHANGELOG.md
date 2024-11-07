@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## \[0.34.2\] - 2024-11-07
+
+### Fixed
+
+- Restore human-friendly default `ImageArtifact` and `AudioArtifact` names with file type extension. 
+
 ## \[0.34.1\] - 2024-11-05
 
 ### Added
