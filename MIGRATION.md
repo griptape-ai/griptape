@@ -2,6 +2,26 @@
 
 This document provides instructions for migrating your codebase to accommodate breaking changes introduced in new versions of Griptape.
 
+## 0.34.X to 1.0.X
+
+### Removed ability to pass `bytes` to `BaseFileLoader.fetch`.
+
+`BaseFileLoader.fetch` no longer accepts `bytes` as an argument. If you need to fetch a file from bytes, use `BaseFileLoader.parse`.
+
+#### Before
+
+```python
+loader = TextLoader()
+data = loader.fetch(b"data")
+```
+
+#### After
+
+```python
+loader = TextLoader()
+data = loader.parse(b"data")
+```
+
 ## 0.33.X to 0.34.X
 
 ### `AnthropicDriversConfig` Embedding Driver
