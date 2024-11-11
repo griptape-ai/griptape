@@ -20,9 +20,8 @@ class CsvExtractionEngine(BaseExtractionEngine):
     column_names: list[str] = field(kw_only=True)
     generate_system_template: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/system.j2")), kw_only=True)
     generate_user_template: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/user.j2")), kw_only=True)
-    format_row: Callable[[dict], str] = field(
-        default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
-    )
+    format_header: Callable[[list[str]], str] = field(default=lambda value: ",".join(value), kw_only=True)
+    format_row: Callable[[dict], str] = field(default=lambda value: ",".join(value.values()), kw_only=True)
 
     def extract_artifacts(
         self,
@@ -34,18 +33,18 @@ class CsvExtractionEngine(BaseExtractionEngine):
         return ListArtifact(
             self._extract_rec(
                 cast(list[TextArtifact], artifacts.value),
-                [],
+                [TextArtifact(self.format_header(self.column_names))],
                 rulesets=rulesets,
             ),
             item_separator="\n",
         )
 
-    def text_to_csv_rows(self, text: str, column_names: list[str]) -> list[TextArtifact]:
+    def text_to_csv_rows(self, text: str) -> list[TextArtifact]:
         rows = []
 
         with io.StringIO(text) as f:
-            for row in csv.reader(f):
-                rows.append(TextArtifact(self.format_row(dict(zip(column_names, [x.strip() for x in row])))))
+            for row in csv.DictReader(f):
+                rows.append(TextArtifact(self.format_row(row)))
 
         return rows
 
@@ -79,7 +78,6 @@ class CsvExtractionEngine(BaseExtractionEngine):
                             ]
                         )
                     ).value,
-                    self.column_names,
                 ),
             )
 
@@ -100,7 +98,6 @@ class CsvExtractionEngine(BaseExtractionEngine):
                             ]
                         )
                     ).value,
-                    self.column_names,
                 ),
             )
 
