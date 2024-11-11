@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import pytest
 
 from griptape.tokenizers import AnthropicTokenizer
@@ -7,6 +9,16 @@ class TestAnthropicTokenizer:
     @pytest.fixture()
     def tokenizer(self, request):
         return AnthropicTokenizer(model=request.param)
+
+    @pytest.fixture(autouse=True)
+    def mock_client(self, mocker):
+        mock_client = mocker.patch("anthropic.Anthropic")
+
+        mock_client.return_value = Mock(
+            beta=Mock(messages=Mock(count_tokens=Mock(return_value=Mock(input_tokens=5, output_tokens=10))))
+        )
+
+        return mock_client
 
     @pytest.mark.parametrize(
         ("tokenizer", "expected"),
