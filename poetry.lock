@@ -5992,16 +5992,6 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
-name = "stringcase"
-version = "1.2.0"
-description = "String case converter."
-optional = false
-python-versions = "*"
-files = [
-    {file = "stringcase-1.2.0.tar.gz", hash = "sha256:48a06980661908efe8d9d34eab2b6c13aefa2163b3ced26972902e3bdfd87008"},
-]
-
-[[package]]
 name = "sympy"
 version = "1.13.1"
 description = "Computer algebra system (CAS) in Python"
@@ -7093,4 +7083,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "ec4a058717301471b98146fbc8476a2582497559c4791a602158e78b5201027d"
+content-hash = "12fa32281c210fcd8ba7bc48e3ba18ec4f36bfc798b81076cc3dc07ac19d8d8e"

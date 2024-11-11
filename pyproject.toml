@@ -24,8 +24,6 @@ schema = "^0.7.7"
 pyyaml = "^6.0.1"
 tenacity = "^8.5.0"
 numpy = "^1.26.4"
-stringcase = "^1.2.0"
-docker = "^7.1.0"
 requests = "^2.32.0"
 filetype = "^1.2"
 

@@ -8,10 +8,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 import docker
-import stringcase
 from attrs import Attribute, Factory, define, field
-from docker.errors import NotFound
-from docker.models.containers import Container
 from schema import Literal, Schema
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
@@ -97,6 +94,8 @@ class ComputerTool(BaseTool):
         return self.execute_command_in_container(command)
 
     def execute_command_in_container(self, command: str) -> BaseArtifact:
+        from docker.models.containers import Container
+
         try:
             binds = {self.local_workdir: {"bind": self.container_workdir, "mode": "rw"}} if self.local_workdir else None
 
@@ -160,12 +159,19 @@ class ComputerTool(BaseTool):
             return None
 
     def image_name(self, tool: BaseTool) -> str:
+        import stringcase  # pyright: ignore[reportMissingImports]
+
         return f"{stringcase.snakecase(tool.name)}_image"
 
     def container_name(self, tool: BaseTool) -> str:
+        import stringcase  # pyright: ignore[reportMissingImports]
+
         return f"{stringcase.snakecase(tool.name)}_container"
 
     def remove_existing_container(self, name: str) -> None:
+        from docker.errors import NotFound
+        from docker.models.containers import Container
+
         try:
             existing_container = self.docker_client.containers.get(name)
             if isinstance(existing_container, Container):
