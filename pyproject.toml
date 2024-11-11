@@ -241,7 +241,7 @@ optional = true
 mkdocs = "^1.5.2"
 mkdocs-material = "^9.2.8"
 mkdocs-glightbox = "^0.4.0"
-mkdocstrings = {extras = ["python"], version = "^0.26.2"}
+mkdocstrings = {extras = ["python"], version = "^0.27.0"}
 mkdocs-gen-files = "^0.5.0"
 mkdocs-literate-nav = "^0.6.0"
 mkdocs-section-index = "^0.3.6"
