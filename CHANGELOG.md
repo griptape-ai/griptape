@@ -9,7 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `GriptapeCloudFileManagerDriver.try_save_file` Asset creation utilizes upsert functionality of PUT Asset API.
 - Removed `azure-core` and `azure-storage-blob` dependencies.
 - `GriptapeCloudFileManagerDriver` no longer requires `drivers-file-manager-griptape-cloud` extra.
 
