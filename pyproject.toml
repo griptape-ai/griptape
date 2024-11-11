@@ -58,8 +58,8 @@ duckduckgo-search = {version = "^6.2.12", optional = true}
 sqlalchemy = {version = "^2.0.31", optional = true}
 opentelemetry-sdk = {version = "^1.25.0", optional = true}
 opentelemetry-api = {version = "^1.25.0", optional = true}
-opentelemetry-instrumentation = {version = "^0.46b0", optional = true}
-opentelemetry-instrumentation-threading = {version = "^0.46b0", optional = true}
+opentelemetry-instrumentation = {version = "^0.49b1", optional = true}
+opentelemetry-instrumentation-threading = {version = "^0.49b1", optional = true}
 opentelemetry-exporter-otlp-proto-http = {version = "^1.25.0", optional = true}
 diffusers = {version = "^0.31.0", optional = true}
 tavily-python = {version = "^0.5.0", optional = true}
@@ -337,6 +337,11 @@ pythonVersion = "3.9"
 reportOptionalMemberAccess = "none"
 reportIncompatibleVariableOverride = "none" # see thread: https://github.com/microsoft/pyright/issues/5933 
 enableExperimentalFeatures = true # https://github.com/microsoft/pyright/issues/7713
+
+[tool.pytest.ini_options]
+markers = [
+    "skip_mock_config"
+]
 
 [tool.pytest_env]
 OPENAI_API_KEY = {value = "api-key", skip_if_set = true}

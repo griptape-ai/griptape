@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.metadata
 import inspect
 import logging
 import os
@@ -10,7 +11,6 @@ from abc import ABC
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
-import pkg_resources
 import schema
 from attrs import Attribute, Factory, define, field
 from schema import Literal, Or, Schema
@@ -243,8 +243,8 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         requirements = Path(requirements_path).read_text().splitlines()
 
         try:
-            pkg_resources.require(requirements)
-
+            for requirement in requirements:
+                importlib.metadata.version(requirement)
             return True
-        except (pkg_resources.DistributionNotFound, pkg_resources.VersionConflict):
+        except importlib.metadata.PackageNotFoundError:
             return False
