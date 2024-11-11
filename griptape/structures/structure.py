@@ -88,8 +88,8 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     def is_finished(self) -> bool:
         return all(s.is_finished() for s in self.tasks)
 
-    def is_executing(self) -> bool:
-        return any(s for s in self.tasks if s.is_executing())
+    def is_running(self) -> bool:
+        return any(s for s in self.tasks if s.is_running())
 
     def find_task(self, task_id: str) -> BaseTask:
         if (task := self.try_find_task(task_id)) is not None:
