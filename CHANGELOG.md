@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **BREAKING**: Renamed `BaseTask.State.EXECUTING` to `BaseTask.State.RUNNING`.
+- **BREAKING**: Renamed `BaseTask.is_executing()` to `BaseTask.is_running()`.
+- **BREAKING**: Renamed `Structure.is_executing()` to `Structure.is_running()`.
 - Removed `azure-core` and `azure-storage-blob` dependencies.
 - `GriptapeCloudFileManagerDriver` no longer requires `drivers-file-manager-griptape-cloud` extra.
 

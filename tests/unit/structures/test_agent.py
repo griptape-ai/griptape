@@ -309,3 +309,14 @@ class TestAgent:
 
         mock_on_before_run.assert_called_once_with(agent)
         mock_after_run.assert_called_once_with(agent)
+
+    def test_is_running(self):
+        task = PromptTask("test prompt")
+        agent = Agent(prompt_driver=MockPromptDriver())
+        agent.add_task(task)
+
+        assert not agent.is_running()
+
+        task.state = BaseTask.State.RUNNING
+
+        assert agent.is_running()
