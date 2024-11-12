@@ -29,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Use of deprecated `pkg_resources` in `BaseTool`.
+- Error when serializing `JsonArtifact`s.
 
 ### Fixed
 

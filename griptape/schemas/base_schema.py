@@ -75,9 +75,8 @@ class BaseSchema(Schema):
                 return cls._handle_list(args[0], optional=optional)
             else:
                 raise ValueError(f"Missing type for list field: {field_type}")
-        field_class = cls.DATACLASS_TYPE_MAPPING.get(field_class)
-        if field_class is None:
-            raise ValueError(f"Unsupported field type: {field_type}")
+        field_class = cls.DATACLASS_TYPE_MAPPING.get(field_class, fields.Raw)
+
         return field_class(allow_none=optional)
 
     @classmethod
