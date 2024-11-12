@@ -152,8 +152,7 @@ class TestBaseSchema:
         assert field.allow_none is True
 
     def test_handle_unsupported_type(self):
-        with pytest.raises(ValueError):
-            BaseSchema._get_field_for_type(UnsupportedType)
+        assert isinstance(BaseSchema._get_field_for_type(UnsupportedType), fields.Raw)
 
     def test_handle_none_list_field(self):
         # Test that _handle_list raises a ValueError for list elements that are None
