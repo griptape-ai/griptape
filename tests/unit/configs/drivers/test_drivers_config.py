@@ -26,7 +26,6 @@ class TestDriversConfig:
             },
             "embedding_driver": {"type": "DummyEmbeddingDriver"},
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-            "image_query_driver": {"type": "DummyImageQueryDriver"},
             "vector_store_driver": {
                 "embedding_driver": {"type": "DummyEmbeddingDriver"},
                 "type": "DummyVectorStoreDriver",
@@ -64,7 +63,6 @@ class TestDriversConfig:
 
         assert Defaults.drivers_config._prompt_driver is None
         assert Defaults.drivers_config._image_generation_driver is None
-        assert Defaults.drivers_config._image_query_driver is None
         assert Defaults.drivers_config._embedding_driver is None
         assert Defaults.drivers_config._vector_store_driver is None
         assert Defaults.drivers_config._conversation_memory_driver is None
@@ -74,7 +72,6 @@ class TestDriversConfig:
 
         assert Defaults.drivers_config.prompt_driver is not None
         assert Defaults.drivers_config.image_generation_driver is not None
-        assert Defaults.drivers_config.image_query_driver is not None
         assert Defaults.drivers_config.embedding_driver is not None
         assert Defaults.drivers_config.vector_store_driver is not None
         assert Defaults.drivers_config.conversation_memory_driver is not None
@@ -84,7 +81,6 @@ class TestDriversConfig:
 
         assert Defaults.drivers_config._prompt_driver is not None
         assert Defaults.drivers_config._image_generation_driver is not None
-        assert Defaults.drivers_config._image_query_driver is not None
         assert Defaults.drivers_config._embedding_driver is not None
         assert Defaults.drivers_config._vector_store_driver is not None
         assert Defaults.drivers_config._conversation_memory_driver is not None

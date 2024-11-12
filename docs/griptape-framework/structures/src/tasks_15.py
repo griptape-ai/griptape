@@ -1,10 +1,10 @@
-from griptape.drivers import OpenAiImageQueryDriver
+from griptape.drivers import OpenAiChatPromptDriver
 from griptape.loaders import ImageLoader
 from griptape.structures import Pipeline
 from griptape.tasks import ImageQueryTask
 
 # Create a driver configured to use OpenAI's GPT-4 Vision model.
-driver = OpenAiImageQueryDriver(
+driver = OpenAiChatPromptDriver(
     model="gpt-4o",
     max_tokens=100,
 )
@@ -20,7 +20,7 @@ pipeline = Pipeline()
 pipeline.add_task(
     ImageQueryTask(
         input=("{{ args[0] }}", [image_artifact]),
-        image_query_driver=driver,
+        prompt_driver=driver,
     )
 )
 

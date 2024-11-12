@@ -165,7 +165,6 @@ class BaseSchema(Schema):
             BaseConversationMemoryDriver,
             BaseEmbeddingDriver,
             BaseImageGenerationDriver,
-            BaseImageQueryDriver,
             BasePromptDriver,
             BaseRulesetDriver,
             BaseTextToSpeechDriver,
@@ -186,7 +185,6 @@ class BaseSchema(Schema):
             localns={
                 "Any": Any,
                 "BasePromptDriver": BasePromptDriver,
-                "BaseImageQueryDriver": BaseImageQueryDriver,
                 "BaseEmbeddingDriver": BaseEmbeddingDriver,
                 "BaseVectorStoreDriver": BaseVectorStoreDriver,
                 "BaseTextToSpeechDriver": BaseTextToSpeechDriver,

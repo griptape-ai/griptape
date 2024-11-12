@@ -1,16 +1,17 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Union
+from typing import TYPE_CHECKING, Callable, Union, cast
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
+from griptape.common import ImageMessageContent, Message, PromptStack, TextMessageContent
 from griptape.configs.defaults_config import Defaults
 from griptape.tasks import BaseTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseImageQueryDriver
+    from griptape.drivers import BasePromptDriver
 
 
 @define
@@ -24,11 +25,11 @@ class ImageQueryTask(BaseTask):
     - Callable that returns a tuple of (TextArtifact, list[ImageArtifact]).
 
     Attributes:
-        image_query_driver: The driver used to execute the query.
+        prompt_driver: The driver used to execute the query.
     """
 
-    image_query_driver: BaseImageQueryDriver = field(
-        default=Factory(lambda: Defaults.drivers_config.image_query_driver), kw_only=True
+    prompt_driver: BasePromptDriver = field(
+        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
     )
     _input: Union[
         tuple[str, list[ImageArtifact]],
@@ -79,6 +80,21 @@ class ImageQueryTask(BaseTask):
         else:
             raise ValueError("All inputs after the query must be ImageArtifacts.")
 
-        self.output = self.image_query_driver.query(query.value, image_artifacts)
+        self.output = cast(
+            TextArtifact,
+            self.prompt_driver.run(
+                PromptStack(
+                    messages=[
+                        Message(
+                            role=Message.USER_ROLE,
+                            content=[
+                                TextMessageContent(TextArtifact(query)),
+                                *[ImageMessageContent(image_artifact) for image_artifact in image_artifacts],
+                            ],
+                        ),
+                    ]
+                )
+            ).to_artifact(),
+        )
 
         return self.output

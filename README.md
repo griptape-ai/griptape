@@ -40,7 +40,6 @@ Drivers facilitate interactions with external resources and services:
 - 🔢 **Embedding Drivers** generate vector embeddings from textual inputs.
 - 💾 **Vector Store Drivers** manage the storage and retrieval of embeddings.
 - 🎨 **Image Generation Drivers** create images from text descriptions.
-- 🔎 **Image Query Drivers** query images from text queries.
 - 💼 **SQL Drivers** interact with SQL databases.
 - 🌐 **Web Scraper Drivers** extract information from web pages.
 - 🧠 **Conversation Memory Drivers** manage the storage and retrieval of conversational data.

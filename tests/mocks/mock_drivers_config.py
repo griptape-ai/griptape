@@ -5,7 +5,6 @@ from griptape.drivers.vector.local_vector_store_driver import LocalVectorStoreDr
 from griptape.utils.decorators import lazy_property
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
-from tests.mocks.mock_image_query_driver import MockImageQueryDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
@@ -18,10 +17,6 @@ class MockDriversConfig(DriversConfig):
     @lazy_property()
     def image_generation_driver(self) -> MockImageGenerationDriver:
         return MockImageGenerationDriver()
-
-    @lazy_property()
-    def image_query_driver(self) -> MockImageQueryDriver:
-        return MockImageQueryDriver()
 
     @lazy_property()
     def embedding_driver(self) -> MockEmbeddingDriver:

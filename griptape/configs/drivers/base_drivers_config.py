@@ -14,7 +14,6 @@ if TYPE_CHECKING:
         BaseConversationMemoryDriver,
         BaseEmbeddingDriver,
         BaseImageGenerationDriver,
-        BaseImageQueryDriver,
         BasePromptDriver,
         BaseRulesetDriver,
         BaseTextToSpeechDriver,
@@ -29,9 +28,6 @@ class BaseDriversConfig(ABC, SerializableMixin):
     )
     _image_generation_driver: BaseImageGenerationDriver = field(
         kw_only=True, default=None, metadata={"serializable": True}, alias="image_generation_driver"
-    )
-    _image_query_driver: BaseImageQueryDriver = field(
-        kw_only=True, default=None, metadata={"serializable": True}, alias="image_query_driver"
     )
     _embedding_driver: BaseEmbeddingDriver = field(
         kw_only=True, default=None, metadata={"serializable": True}, alias="embedding_driver"
@@ -78,10 +74,6 @@ class BaseDriversConfig(ABC, SerializableMixin):
     @lazy_property()
     @abstractmethod
     def image_generation_driver(self) -> BaseImageGenerationDriver: ...
-
-    @lazy_property()
-    @abstractmethod
-    def image_query_driver(self) -> BaseImageQueryDriver: ...
 
     @lazy_property()
     @abstractmethod

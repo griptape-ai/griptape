@@ -6,18 +6,19 @@ from attrs import Factory, define, field
 from schema import Literal, Schema
 
 from griptape.artifacts import BlobArtifact, ErrorArtifact, ImageArtifact, TextArtifact
+from griptape.common import ImageMessageContent, Message, PromptStack, TextMessageContent
 from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils import load_artifact_from_memory
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseImageQueryDriver
+    from griptape.drivers import BasePromptDriver
 
 
 @define
 class ImageQueryTool(BaseTool):
-    image_query_driver: BaseImageQueryDriver = field(kw_only=True)
+    prompt_driver: BasePromptDriver = field(kw_only=True)
     image_loader: ImageLoader = field(default=Factory(lambda: ImageLoader()), kw_only=True)
 
     @activity(
@@ -42,7 +43,22 @@ class ImageQueryTool(BaseTool):
         for image_path in image_paths:
             image_artifacts.append(self.image_loader.load(image_path))
 
-        return self.image_query_driver.query(query, image_artifacts)
+        return cast(
+            TextArtifact,
+            self.prompt_driver.run(
+                PromptStack(
+                    messages=[
+                        Message(
+                            role=Message.USER_ROLE,
+                            content=[
+                                TextMessageContent(TextArtifact(query)),
+                                *[ImageMessageContent(image_artifact) for image_artifact in image_artifacts],
+                            ],
+                        ),
+                    ]
+                )
+            ).to_artifact(),
+        )
 
     @activity(
         config={
@@ -94,4 +110,19 @@ class ImageQueryTool(BaseTool):
             except Exception as e:
                 return ErrorArtifact(str(e))
 
-        return self.image_query_driver.query(query, image_artifacts)
+        return cast(
+            TextArtifact,
+            self.prompt_driver.run(
+                PromptStack(
+                    messages=[
+                        Message(
+                            role=Message.USER_ROLE,
+                            content=[
+                                TextMessageContent(TextArtifact(query)),
+                                *[ImageMessageContent(image_artifact) for image_artifact in image_artifacts],
+                            ],
+                        ),
+                    ]
+                )
+            ).to_artifact(),
+        )
