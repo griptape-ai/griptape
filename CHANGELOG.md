@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed ability to pass bytes to `BaseFileLoader.fetch`.
 - **BREAKING**: Updated `CsvExtractionEngine.format_row` to format rows as comma-separated values instead of newline-separated key-value pairs.
 - Improved `CsvExtractionEngine` prompts.
+- Tweaked `PromptResponseRagModule` system prompt to yield answers more consistently.
 - Removed `azure-core` and `azure-storage-blob` dependencies.
 - `GriptapeCloudFileManagerDriver` no longer requires `drivers-file-manager-griptape-cloud` extra.
 - `TrafilaturaWebScraperDriver` no longer sets `no_ssl` to `True` by default.
