@@ -50,10 +50,8 @@ Drivers facilitate interactions with external resources and services:
 Engines wrap Drivers and provide use-case-specific functionality:
 
 - 📊 **RAG Engine** is an abstraction for implementing modular Retrieval Augmented Generation (RAG) pipelines.
-- 🛠️ **Extraction Engines** extract JSON or CSV data from unstructured text.
-- 📝 **Summary Engines** generate summaries from textual content.
-- 🖼️ **Image Generation Engines** generate images from textual descriptions.
-- 🔎 **Image Query Engines** query images based on textual prompts.
+- 🛠️ **Extraction Engine** extracts JSON or CSV data from unstructured text.
+- 📝 **Summary Engine** generates summaries from textual content.
 
 ### 📦 Additional Components
 

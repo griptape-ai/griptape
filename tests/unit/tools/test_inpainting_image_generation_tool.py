@@ -15,7 +15,7 @@ class TestInpaintingImageGenerationTool:
         return ImageArtifact(value=b"image_data", format="png", width=512, height=512, name="name")
 
     @pytest.fixture()
-    def image_generation_engine(self) -> Mock:
+    def image_generation_driver(self) -> Mock:
         return Mock()
 
     @pytest.fixture()
@@ -26,15 +26,17 @@ class TestInpaintingImageGenerationTool:
         return loader
 
     @pytest.fixture()
-    def image_generator(self, image_generation_engine, image_loader) -> InpaintingImageGenerationTool:
-        return InpaintingImageGenerationTool(engine=image_generation_engine, image_loader=image_loader)
+    def image_generator(self, image_generation_driver, image_loader) -> InpaintingImageGenerationTool:
+        return InpaintingImageGenerationTool(image_generation_driver=image_generation_driver, image_loader=image_loader)
 
-    def test_validate_output_configs(self, image_generation_engine) -> None:
+    def test_validate_output_configs(self, image_generation_driver) -> None:
         with pytest.raises(ValueError):
-            InpaintingImageGenerationTool(engine=image_generation_engine, output_dir="test", output_file="test")
+            InpaintingImageGenerationTool(
+                image_generation_driver=image_generation_driver, output_dir="test", output_file="test"
+            )
 
     def test_image_inpainting(self, image_generator, path_from_resource_path) -> None:
-        image_generator.engine.run.return_value = Mock(
+        image_generator.image_generation_driver.run_image_inpainting.return_value = Mock(
             value=b"image data", format="png", width=512, height=512, model="test model", prompt="test prompt"
         )
 
@@ -52,14 +54,14 @@ class TestInpaintingImageGenerationTool:
         assert image_artifact
 
     def test_image_inpainting_with_outfile(
-        self, image_generation_engine, image_loader, path_from_resource_path
+        self, image_generation_driver, image_loader, path_from_resource_path
     ) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
         image_generator = InpaintingImageGenerationTool(
-            engine=image_generation_engine, output_file=outfile, image_loader=image_loader
+            image_generation_driver=image_generation_driver, output_file=outfile, image_loader=image_loader
         )
 
-        image_generator.engine.run.return_value = ImageArtifact(  # pyright: ignore[reportFunctionMemberAccess]
+        image_generator.image_generation_driver.run_image_inpainting.return_value = ImageArtifact(  # pyright: ignore[reportFunctionMemberAccess]
             value=b"image data", format="png", width=512, height=512
         )
 
@@ -77,13 +79,13 @@ class TestInpaintingImageGenerationTool:
         assert image_artifact
         assert os.path.exists(outfile)
 
-    def test_image_inpainting_from_memory(self, image_generation_engine, image_artifact):
-        image_generator = InpaintingImageGenerationTool(engine=image_generation_engine)
+    def test_image_inpainting_from_memory(self, image_generation_driver, image_artifact):
+        image_generator = InpaintingImageGenerationTool(image_generation_driver=image_generation_driver)
         memory = Mock()
         memory.load_artifacts = Mock(return_value=[image_artifact])
         image_generator.find_input_memory = Mock(return_value=memory)
 
-        image_generator.engine.run.return_value = ImageArtifact(  # pyright: ignore[reportFunctionMemberAccess]
+        image_generator.image_generation_driver.run_image_inpainting.return_value = ImageArtifact(  # pyright: ignore[reportFunctionMemberAccess]
             value=b"image data", format="png", width=512, height=512
         )
 

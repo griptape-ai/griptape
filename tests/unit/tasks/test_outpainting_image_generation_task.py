@@ -4,7 +4,6 @@ import pytest
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
-from griptape.engines import OutpaintingImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, OutpaintingImageGenerationTask
 from tests.mocks.mock_image_generation_driver import MockImageGenerationDriver
@@ -21,7 +20,7 @@ class TestOutpaintingImageGenerationTask:
 
     def test_artifact_inputs(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
         input_tuple = (text_artifact, image_artifact, image_artifact)
-        task = OutpaintingImageGenerationTask(input_tuple, image_generation_engine=Mock())
+        task = OutpaintingImageGenerationTask(input_tuple, image_generation_driver=Mock())
 
         assert task.input.value == list(input_tuple)
 
@@ -31,13 +30,13 @@ class TestOutpaintingImageGenerationTask:
         def callable_input(task: BaseTask) -> ListArtifact:
             return ListArtifact(artifacts)
 
-        task = OutpaintingImageGenerationTask(callable_input, image_generation_engine=Mock())
+        task = OutpaintingImageGenerationTask(callable_input, image_generation_driver=Mock())
 
         assert task.input.value == artifacts
 
     def test_list_input(self, text_artifact: TextArtifact, image_artifact: ImageArtifact):
         artifacts = [text_artifact, image_artifact]
-        task = OutpaintingImageGenerationTask(ListArtifact(artifacts), image_generation_engine=Mock())
+        task = OutpaintingImageGenerationTask(ListArtifact(artifacts), image_generation_driver=Mock())
 
         assert task.input.value == artifacts
 
@@ -48,9 +47,17 @@ class TestOutpaintingImageGenerationTask:
         with pytest.raises(ValueError):
             OutpaintingImageGenerationTask(("foo", image_artifact, "baz")).try_run()  # pyright: ignore[reportArgumentType]
 
-    def test_config_image_generation_engine(self, text_artifact, image_artifact):
+    def test_run(self, text_artifact, image_artifact):
+        mock_driver = MockImageGenerationDriver()
+        task = OutpaintingImageGenerationTask(
+            (text_artifact, image_artifact, image_artifact), image_generation_driver=mock_driver
+        )
+        output = task.run()
+
+        assert output.value == b"mock image"
+
+    def test_config_image_generation_driver(self, text_artifact, image_artifact):
         task = OutpaintingImageGenerationTask((text_artifact, image_artifact, image_artifact))
         Agent().add_task(task)
 
-        assert isinstance(task.image_generation_engine, OutpaintingImageGenerationEngine)
-        assert isinstance(task.image_generation_engine.image_generation_driver, MockImageGenerationDriver)
+        assert isinstance(task.image_generation_driver, MockImageGenerationDriver)

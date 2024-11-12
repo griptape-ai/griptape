@@ -4,7 +4,6 @@ import pytest
 
 from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
-from griptape.engines import ImageQueryEngine
 from griptape.structures import Agent
 from griptape.tasks import BaseTask, ImageQueryTask
 from tests.mocks.mock_image_query_driver import MockImageQueryDriver
@@ -12,9 +11,9 @@ from tests.mocks.mock_image_query_driver import MockImageQueryDriver
 
 class TestImageQueryTask:
     @pytest.fixture()
-    def image_query_engine(self) -> Mock:
+    def image_query_driver(self) -> Mock:
         mock = Mock()
-        mock.run.return_value = TextArtifact("image")
+        mock.query.return_value = TextArtifact("image")
 
         return mock
 
@@ -58,19 +57,18 @@ class TestImageQueryTask:
 
         assert task.input.value == artifacts
 
-    def test_config_image_generation_engine(self, text_artifact, image_artifact):
+    def test_config_image_generation_driver(self, text_artifact, image_artifact):
         task = ImageQueryTask((text_artifact, [image_artifact, image_artifact]))
         Agent().add_task(task)
 
-        assert isinstance(task.image_query_engine, ImageQueryEngine)
-        assert isinstance(task.image_query_engine.image_query_driver, MockImageQueryDriver)
+        assert isinstance(task.image_query_driver, MockImageQueryDriver)
 
-    def test_run(self, image_query_engine, text_artifact, image_artifact):
-        task = ImageQueryTask((text_artifact, [image_artifact, image_artifact]), image_query_engine=image_query_engine)
+    def test_run(self, image_query_driver, text_artifact, image_artifact):
+        task = ImageQueryTask((text_artifact, [image_artifact, image_artifact]), image_query_driver=image_query_driver)
         task.run()
 
         assert task.output.value == "image"
 
-    def test_bad_run(self, image_query_engine, text_artifact, image_artifact):
+    def test_bad_try_run(self, image_query_driver, text_artifact, image_artifact):
         with pytest.raises(ValueError, match="All inputs"):
-            ImageQueryTask(("foo", [image_artifact, text_artifact]), image_query_engine=image_query_engine).try_run()
+            ImageQueryTask(("foo", [image_artifact, text_artifact]), image_query_driver=image_query_driver).try_run()

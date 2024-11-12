@@ -1,5 +1,4 @@
 from griptape.drivers import OpenAiImageGenerationDriver
-from griptape.engines import PromptImageGenerationEngine
 from griptape.structures import Pipeline
 from griptape.tasks import PromptImageGenerationTask
 
@@ -10,10 +9,6 @@ driver = OpenAiImageGenerationDriver(
     style="natural",
 )
 
-# Create an engine configured to use the driver.
-engine = PromptImageGenerationEngine(
-    image_generation_driver=driver,
-)
 
 # Instantiate a pipeline.
 pipeline = Pipeline()
@@ -22,7 +17,7 @@ pipeline = Pipeline()
 pipeline.add_tasks(
     PromptImageGenerationTask(
         input="{{ args[0] }}",
-        image_generation_engine=engine,
+        image_generation_driver=driver,
         output_dir="images/",
     )
 )

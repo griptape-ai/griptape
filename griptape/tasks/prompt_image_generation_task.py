@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import Callable, Union
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.artifacts import ImageArtifact, TextArtifact
-from griptape.engines import PromptImageGenerationEngine
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
@@ -20,7 +19,7 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
     - Callable that returns a TextArtifact.
 
     Attributes:
-        image_generation_engine: The engine used to generate the image.
+        image_generation_driver: The engine used to generate the image.
         negative_rulesets: List of negatively-weighted rulesets applied to the text prompt, if supported by the driver.
         negative_rules: List of negatively-weighted rules applied to the text prompt, if supported by the driver.
         output_dir: If provided, the generated image will be written to disk in output_dir.
@@ -31,10 +30,6 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
 
     _input: Union[str, TextArtifact, Callable[[BaseTask], TextArtifact]] = field(
         default=DEFAULT_INPUT_TEMPLATE, alias="input"
-    )
-    image_generation_engine: PromptImageGenerationEngine = field(
-        default=Factory(lambda: PromptImageGenerationEngine()),
-        kw_only=True,
     )
 
     @property
@@ -51,10 +46,9 @@ class PromptImageGenerationTask(BaseImageGenerationTask):
         self._input = value
 
     def try_run(self) -> ImageArtifact:
-        image_artifact = self.image_generation_engine.run(
-            prompts=[self.input.to_text()],
-            rulesets=self.rulesets,
-            negative_rulesets=self.negative_rulesets,
+        image_artifact = self.image_generation_driver.run_text_to_image(
+            prompts=self._get_prompts(self.input.to_text()),
+            negative_prompts=self._get_negative_prompts(),
         )
 
         if self.output_dir or self.output_file:

@@ -1,5 +1,4 @@
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
-from griptape.engines import PromptImageGenerationEngine, VariationImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tools import PromptImageGenerationTool, VariationImageGenerationTool
 
@@ -11,24 +10,14 @@ driver = AmazonBedrockImageGenerationDriver(
     model="stability.stable-diffusion-xl-v0",
 )
 
-# Create an prompt image generation engine configured to use the driver.
-prompt_engine = PromptImageGenerationEngine(
-    image_generation_driver=driver,
-)
-
-# Create a prompt image generation client configured to use the engine.
+# Create a prompt image generation client configured to use the driver.
 prompt_tool = PromptImageGenerationTool(
-    engine=prompt_engine,
-)
-
-# Create an variation image generation engine configured to use the driver.
-variation_engine = VariationImageGenerationEngine(
     image_generation_driver=driver,
 )
 
-# Create a variation image generation client configured to use the engine.
+# Create a variation image generation client configured to use the driver.
 variation_tool = VariationImageGenerationTool(
-    engine=variation_engine,
+    image_generation_driver=driver,
 )
 
 # Create an agent and provide the tools to it.
