@@ -7,7 +7,6 @@ import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
-import docker
 from attrs import Attribute, Factory, define, field
 from schema import Literal, Schema
 
@@ -151,6 +150,8 @@ class ComputerTool(BaseTool):
                 tempdir.cleanup()
 
     def default_docker_client(self) -> Optional[DockerClient]:
+        import docker
+
         try:
             return docker.from_env()
         except Exception as e:
