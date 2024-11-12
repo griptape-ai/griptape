@@ -362,16 +362,6 @@ The [Outpainting Image Generation Task](../../reference/griptape/tasks/outpainti
 --8<-- "docs/griptape-framework/structures/src/tasks_14.py"
 ```
 
-## Image Query Task
-
-The [Image Query Task](../../reference/griptape/tasks/image_query_task.md) performs a natural language query on one or more input images. This Task uses an [Prompt Driver](../drivers/prompt-drivers.md) to perform the query. The functionality provided by this Task depend on the capabilities of the model provided by the Driver.
-
-This Task accepts two inputs: a query (represented by either a string or a [Text Artifact](../data/artifacts.md#text)) and a list of [Image Artifacts](../data/artifacts.md#image) or a Callable returning these two values.
-
-```python
---8<-- "docs/griptape-framework/structures/src/tasks_15.py"
-```
-
 ## Structure Run Task
 
 The [Structure Run Task](../../reference/griptape/tasks/structure_run_task.md) runs another Structure with a given input.

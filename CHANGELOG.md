@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `TrafilaturaWebScraperDriver.no_ssl` parameter to disable SSL verification. Defaults to `False`.
 - `CsvExtractionEngine.format_header` parameter to format the header row.
+- `PromptStack.from_artifact` factory method for creating a Prompt Stack with a user message from an Artifact.
 
 ### Changed
 
@@ -20,6 +21,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed `Structure.is_executing()` to `Structure.is_running()`.
 - **BREAKING**: Removed ability to pass bytes to `BaseFileLoader.fetch`.
 - **BREAKING**: Updated `CsvExtractionEngine.format_row` to format rows as comma-separated values instead of newline-separated key-value pairs.
+- **BREAKING**: Removed all `ImageQueryDriver`s, use `PromptDriver`s instead.
+- **BREAKING**: Removed `ImageQueryTask`, use `PromptTask` instead.
+- **BREAKING**: Updated `ImageQueryTool.image_query_driver` to `ImageQueryTool.prompt_driver`.
+- `BasePromptDriver.run` can now accept an Artifact in addition to a Prompt Stack.
 - Improved `CsvExtractionEngine` prompts.
 - Tweaked `PromptResponseRagModule` system prompt to yield answers more consistently.
 - Removed `azure-core` and `azure-storage-blob` dependencies.

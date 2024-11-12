@@ -6,7 +6,8 @@ from attrs import Factory, define, field
 from schema import Literal, Schema
 
 from griptape.artifacts import BlobArtifact, ErrorArtifact, ImageArtifact, TextArtifact
-from griptape.common import ImageMessageContent, Message, PromptStack, TextMessageContent
+from griptape.artifacts.list_artifact import ListArtifact
+from griptape.common import PromptStack
 from griptape.loaders import ImageLoader
 from griptape.tools import BaseTool
 from griptape.utils import load_artifact_from_memory
@@ -46,16 +47,8 @@ class ImageQueryTool(BaseTool):
         return cast(
             TextArtifact,
             self.prompt_driver.run(
-                PromptStack(
-                    messages=[
-                        Message(
-                            role=Message.USER_ROLE,
-                            content=[
-                                TextMessageContent(TextArtifact(query)),
-                                *[ImageMessageContent(image_artifact) for image_artifact in image_artifacts],
-                            ],
-                        ),
-                    ]
+                PromptStack.from_artifact(
+                    ListArtifact([TextArtifact(query), *image_artifacts]),
                 )
             ).to_artifact(),
         )
@@ -113,16 +106,8 @@ class ImageQueryTool(BaseTool):
         return cast(
             TextArtifact,
             self.prompt_driver.run(
-                PromptStack(
-                    messages=[
-                        Message(
-                            role=Message.USER_ROLE,
-                            content=[
-                                TextMessageContent(TextArtifact(query)),
-                                *[ImageMessageContent(image_artifact) for image_artifact in image_artifacts],
-                            ],
-                        ),
-                    ]
+                PromptStack.from_artifact(
+                    ListArtifact([TextArtifact(query), *image_artifacts]),
                 )
             ).to_artifact(),
         )
