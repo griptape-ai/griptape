@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - `TrafilaturaWebScraperDriver.no_ssl` parameter to disable SSL verification. Defaults to `False`.
+- `CsvExtractionEngine.format_header` parameter to format the header row.
 
 ### Changed
 
@@ -18,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Renamed `BaseTask.is_executing()` to `BaseTask.is_running()`.
 - **BREAKING**: Renamed `Structure.is_executing()` to `Structure.is_running()`.
 - **BREAKING**: Removed ability to pass bytes to `BaseFileLoader.fetch`.
+- **BREAKING**: Updated `CsvExtractionEngine.format_row` to format rows as comma-separated values instead of newline-separated key-value pairs.
+- Improved `CsvExtractionEngine` prompts.
 - Removed `azure-core` and `azure-storage-blob` dependencies.
 - `GriptapeCloudFileManagerDriver` no longer requires `drivers-file-manager-griptape-cloud` extra.
 - `TrafilaturaWebScraperDriver` no longer sets `no_ssl` to `True` by default.
