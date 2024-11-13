@@ -161,6 +161,7 @@ nav:
           - Image Query: "griptape-tools/official-tools/image-query-tool.md"
           - Text To Speech: "griptape-tools/official-tools/text-to-speech-tool.md"
           - Audio Transcription: "griptape-tools/official-tools/audio-transcription-tool.md"
+          - Griptape Cloud Tool: "griptape-tools/official-tools/griptape-cloud-tool-tool.md"
           - Rag: "griptape-tools/official-tools/rag-tool.md"
           - Extraction: "griptape-tools/official-tools/extraction-tool.md"
           - Query: "griptape-tools/official-tools/query-tool.md"
