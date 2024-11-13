@@ -19,6 +19,12 @@ Or use them independently:
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_2.py"
 ```
 
+You can pass images to the Driver if the model supports it:
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/prompt_driver_images.py"
+```
+
 ## Prompt Drivers
 
 Griptape offers the following Prompt Drivers for interacting with LLMs.
