@@ -22,9 +22,9 @@ loader = TextLoader()
 data = loader.parse(b"data")
 ```
 
-### Removed `ImageQueryEngine`
+### Removed `ImageQueryEngine`, `ImageQueryDriver`
 
-`ImageQueryEngine` has been removed. Use `ImageQueryDriver` instead.
+`ImageQueryEngine` has been removed. Use `PromptDriver` instead.
 
 #### Before
 
@@ -45,15 +45,15 @@ engine.run("Describe the weather in the image", [image_artifact])`
 #### After
 
 ```python
-from griptape.drivers import OpenAiImageQueryDriver
-from griptape.engines import ImageQueryEngine
+from griptape.artifacts import ListArtifact, TextArtifact
+from griptape.drivers import OpenAiChatPromptDriver
 from griptape.loaders import ImageLoader
 
-driver = OpenAiImageQueryDriver(model="gpt-4o", max_tokens=256)
+driver = OpenAiChatPromptDriver(model="gpt-4o", max_tokens=256)
 
-image_artifact = ImageLoader().load("mountain.png")
+image_artifact = ImageLoader().load("./assets/mountain.jpg")
 
-driver.query("Describe the weather in the image", [image_artifact])`
+driver.run(ListArtifact([TextArtifact("Describe the weather in the image"), image_artifact]))
 ```
 
 ### Removed `InpaintingImageGenerationEngine`
@@ -207,6 +207,50 @@ driver = OpenAiImageGenerationDriver()
 driver.run_text_to_image(
     prompts=["A watercolor painting of a dog riding a skateboard"],
 )
+```
+
+### Removed `ImageQueryTask`, use `PromptTask` instead
+
+`ImageQueryTask` has been removed. Use `PromptTask` instead.
+
+#### Before
+
+```python
+from griptape.loaders import ImageLoader
+from griptape.structures import Pipeline
+from griptape.tasks import ImageQueryTask
+
+image_artifact = ImageLoader().load("mountain.png")
+
+pipeline = Pipeline(
+    tasks=[
+        ImageQueryTask(
+            input=("Describe the weather in the image", [image_artifact]),
+        )
+    ]
+)
+
+pipeline.run("Describe the weather in the image")
+```
+
+#### After
+
+```python
+from griptape.loaders import ImageLoader
+from griptape.structures import Pipeline
+from griptape.tasks import PromptTask
+
+image_artifact = ImageLoader().load("mountain.png")
+
+pipeline = Pipeline(
+    tasks=[
+        PromptTask(
+            input=("Describe the weather in the image", image_artifact),
+        )
+    ]
+)
+
+pipeline.run("Describe the weather in the image")
 ```
 
 ## 0.33.X to 0.34.X

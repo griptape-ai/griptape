@@ -12,7 +12,6 @@ class TestCohereDriversConfig:
         assert config.to_dict() == {
             "type": "CohereDriversConfig",
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-            "image_query_driver": {"type": "DummyImageQueryDriver"},
             "conversation_memory_driver": {
                 "type": "LocalConversationMemoryDriver",
                 "persist_file": None,

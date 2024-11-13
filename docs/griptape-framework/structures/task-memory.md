@@ -279,6 +279,7 @@ Today, these include:
 - [ExtractionTool](../../griptape-tools/official-tools/extraction-tool.md)
 - [RagClient](../../griptape-tools/official-tools/rag-tool.md)
 - [FileManagerTool](../../griptape-tools/official-tools/file-manager-tool.md)
+- [ImageQueryTool](../../griptape-tools/official-tools/image-query-tool.md)
 
 ## Task Memory Considerations
 
