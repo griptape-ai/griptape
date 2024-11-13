@@ -181,9 +181,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
                 if len(self.subtasks) >= self.max_subtasks:
                     subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
                 else:
-                    subtask.before_run()
                     subtask.run()
-                    subtask.after_run()
 
                     result = self.prompt_driver.run(self.prompt_stack)
                     subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
