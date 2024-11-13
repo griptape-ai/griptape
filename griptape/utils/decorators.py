@@ -9,6 +9,7 @@ from schema import Schema
 
 CONFIG_SCHEMA = Schema(
     {
+        schema.Optional("name"): str,
         "description": str,
         schema.Optional("schema"): lambda data: isinstance(data, (Schema, Callable)),
     }
@@ -28,7 +29,7 @@ def activity(config: dict) -> Any:
         def wrapper(self: Any, params: dict) -> Any:
             return func(self, **_build_kwargs(func, params))
 
-        setattr(wrapper, "name", func.__name__)
+        setattr(wrapper, "name", validated_config.get("name", func.__name__))
         setattr(wrapper, "config", validated_config)
         setattr(wrapper, "is_activity", True)
 

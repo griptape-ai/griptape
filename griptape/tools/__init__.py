@@ -24,6 +24,7 @@ from .variation_image_generation.tool import VariationImageGenerationTool
 from .inpainting_image_generation.tool import InpaintingImageGenerationTool
 from .outpainting_image_generation.tool import OutpaintingImageGenerationTool
 from .griptape_cloud_knowledge_base.tool import GriptapeCloudKnowledgeBaseTool
+from .griptape_cloud_tool.tool import GriptapeCloudToolTool
 from .structure_run.tool import StructureRunTool
 from .image_query.tool import ImageQueryTool
 from .rag.tool import RagTool
@@ -60,6 +61,7 @@ __all__ = [
     "InpaintingImageGenerationTool",
     "OutpaintingImageGenerationTool",
     "GriptapeCloudKnowledgeBaseTool",
+    "GriptapeCloudToolTool",
     "StructureRunTool",
     "ImageQueryTool",
     "RagTool",

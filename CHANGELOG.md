@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AssistantTask` for running Assistants in Structures.
 - `GriptapeCloudAssistantDriver` for interacting with Griptape Cloud's Assistant API.
 - `OpenAiAssistantDriver` for interacting with OpenAI's Assistant API.
+- `GriptapeCloudToolTool` for running Griptape Cloud hosted Tools.
 
 ### Changed
 
