@@ -14,7 +14,9 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
     """LocalFileManagerDriver can be used to list, load, and save files on the local file system.
 
     Attributes:
-        workdir: The absolute working directory. List, load, and save operations will be performed relative to this directory.
+        workdir: The working directory as an absolute path. List, load, and save operations will be performed relative to this directory.
+                 Defaults to the current working directory.
+                 Setting this to None will disable the working directory and all paths will be treated as absolute paths.
     """
 
     workdir: Optional[str] = field(default=Factory(lambda: os.getcwd()), kw_only=True)
