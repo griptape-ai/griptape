@@ -36,7 +36,7 @@ Tools provide capabilities for LLMs to interact with data and services. Griptape
 
 Drivers facilitate interactions with external resources and services:
 
-- 🗣️ **Prompt Drivers** manage textual interactions with LLMs.
+- 🗣️ **Prompt Drivers** manage textual and image interactions with LLMs.
 - 🔢 **Embedding Drivers** generate vector embeddings from textual inputs.
 - 💾 **Vector Store Drivers** manage the storage and retrieval of embeddings.
 - 🎨 **Image Generation Drivers** create images from text descriptions.
