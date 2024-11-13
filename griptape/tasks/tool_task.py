@@ -79,9 +79,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         try:
             subtask = self.add_subtask(ActionsSubtask(subtask_input))
 
-            subtask.before_run()
             subtask.run()
-            subtask.after_run()
 
             if isinstance(subtask.output, ListArtifact):
                 first_artifact = subtask.output[0]

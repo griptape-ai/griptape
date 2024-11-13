@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- `ActionsSubtask.before_run` and `ActionsSubtask.after_run` being called twice in `ToolkitTask` and `Tooltask`.
+
+## \[0.34.2\] - 2024-11-07
+
+### Fixed
+
+- Restore human-friendly default `ImageArtifact` and `AudioArtifact` names with file type extension.
+
+## \[0.34.1\] - 2024-11-05
+
+### Added
+
+- `WebScraperTool.text_chunker` default value for `max_tokens`.
+
+### Fixed
+
+- `WebScraperTool` not using `text_chunker` override.
+- Breaking change in `Chat.handle_output` behavior.
+
+## \[0.34.0\] - 2024-10-29
+
 ### Added
 
 - `TrafilaturaWebScraperDriver.no_ssl` parameter to disable SSL verification. Defaults to `False`.

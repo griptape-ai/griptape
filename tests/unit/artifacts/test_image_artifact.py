@@ -40,3 +40,7 @@ class TestImageArtifact:
         assert deserialized_artifact.height == 512
         assert deserialized_artifact.meta["model"] == "openai/dalle2"
         assert deserialized_artifact.meta["prompt"] == "a cute cat"
+
+    def test_name(self, image_artifact):
+        assert image_artifact.name.startswith("image_artifact_")
+        assert image_artifact.name.endswith(image_artifact.format)

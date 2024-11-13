@@ -13,7 +13,7 @@ from griptape.utils.decorators import activity
 @define
 class WebScraperTool(BaseTool):
     web_loader: WebLoader = field(default=Factory(lambda: WebLoader()), kw_only=True)
-    text_chunker: TextChunker = field(default=Factory(lambda: TextChunker()), kw_only=True)
+    text_chunker: TextChunker = field(default=Factory(lambda: TextChunker(max_tokens=400)), kw_only=True)
 
     @activity(
         config={
@@ -26,7 +26,7 @@ class WebScraperTool(BaseTool):
 
         try:
             result = self.web_loader.load(url)
-            chunks = TextChunker().chunk(result)
+            chunks = self.text_chunker.chunk(result)
 
             return ListArtifact(chunks)
         except Exception as e:
