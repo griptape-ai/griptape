@@ -1,3 +1,5 @@
+import os
+
 import pytest
 
 from tests.mocks.mock_drivers_config import MockDriversConfig
@@ -27,3 +29,14 @@ def mock_config(request):
     Defaults.drivers_config = MockDriversConfig()
 
     yield Defaults
+
+
+@pytest.fixture(autouse=True)
+def _clear_environment():
+    environment = os.environ.copy()
+
+    os.environ.clear()
+
+    yield
+
+    os.environ.update(environment)
