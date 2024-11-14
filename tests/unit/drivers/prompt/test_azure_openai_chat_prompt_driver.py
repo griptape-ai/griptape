@@ -86,7 +86,13 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             user=driver.user,
             messages=messages,
-            **{"tools": self.OPENAI_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            **{
+                "tools": self.OPENAI_TOOLS,
+                "tool_choice": driver.tool_choice,
+                "parallel_tool_calls": driver.parallel_tool_calls,
+            }
+            if use_native_tools
+            else {},
             foo="bar",
         )
         assert isinstance(message.value[0], TextArtifact)
@@ -120,7 +126,13 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             stream=True,
             messages=messages,
-            **{"tools": self.OPENAI_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            **{
+                "tools": self.OPENAI_TOOLS,
+                "tool_choice": driver.tool_choice,
+                "parallel_tool_calls": driver.parallel_tool_calls,
+            }
+            if use_native_tools
+            else {},
             foo="bar",
         )
 
