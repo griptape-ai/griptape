@@ -67,7 +67,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AmazonBedrockPromptDriver` not working without setting `max_tokens`.
 - `BaseImageGenerationTask` no longer prevents setting `negative_rulesets` _and_ `negative_rules` at the same time.
 
-
 ## \[0.34.3\] - 2024-11-13
 
 ### Fixed
