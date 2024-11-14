@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from typing import Optional
 from urllib.parse import urljoin
 
 import requests
@@ -22,6 +23,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         kw_only=True,
     )
     assistant_id: str = field(kw_only=True)
+    thread_id: Optional[str] = field(default=None, kw_only=True)
     stream: bool = field(default=False, kw_only=True)
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact | InfoArtifact:
