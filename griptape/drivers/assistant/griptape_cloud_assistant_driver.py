@@ -22,8 +22,13 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         kw_only=True,
     )
+    input: Optional[str] = field(default=None, kw_only=True)
     assistant_id: str = field(kw_only=True)
     thread_id: Optional[str] = field(default=None, kw_only=True)
+    ruleset_ids: list[str] = field(factory=list, kw_only=True)
+    additional_ruleset_ids: list[str] = field(factory=list, kw_only=True)
+    knowledge_base_ids: list[str] = field(factory=list, kw_only=True)
+    additional_knowledge_base_ids: list[str] = field(factory=list, kw_only=True)
     stream: bool = field(default=False, kw_only=True)
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact | InfoArtifact:
@@ -31,7 +36,16 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
 
         response = requests.post(
             url,
-            json={"args": [arg.value for arg in args], "stream": self.stream, "thread_id": self.thread_id},
+            json={
+                "args": [arg.value for arg in args],
+                "stream": self.stream,
+                "thread_id": self.thread_id,
+                "input": self.input,
+                "ruleset_ids": self.ruleset_ids,
+                "additional_ruleset_ids": self.additional_ruleset_ids,
+                "knowledge_base_ids": self.knowledge_base_ids,
+                "additional_knowledge_base_ids": self.additional_knowledge_base_ids,
+            },
             headers=self.headers,
         )
         response.raise_for_status()

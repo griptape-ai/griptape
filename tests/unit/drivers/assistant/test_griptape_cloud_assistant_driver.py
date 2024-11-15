@@ -69,7 +69,16 @@ class TestGriptapeCloudAssistantDriver:
         assert result.value == "foo bar"
         mock_requests_post.assert_called_once_with(
             "https://cloud-foo.griptape.ai/api/assistants/1/runs",
-            json={"args": ["foo bar"], "stream": False, "thread_id": None},
+            json={
+                "args": ["foo bar"],
+                "stream": False,
+                "thread_id": None,
+                "input": None,
+                "ruleset_ids": [],
+                "additional_ruleset_ids": [],
+                "knowledge_base_ids": [],
+                "additional_knowledge_base_ids": [],
+            },
             headers={"Authorization": "Bearer foo bar"},
         )
 
@@ -80,6 +89,15 @@ class TestGriptapeCloudAssistantDriver:
         assert result.value == "foo bar"
         mock_requests_post.assert_called_once_with(
             "https://cloud-foo.griptape.ai/api/assistants/1/runs",
-            json={"args": ["foo bar"], "stream": True, "thread_id": None},
+            json={
+                "args": ["foo bar"],
+                "stream": True,
+                "thread_id": None,
+                "input": None,
+                "ruleset_ids": [],
+                "additional_ruleset_ids": [],
+                "knowledge_base_ids": [],
+                "additional_knowledge_base_ids": [],
+            },
             headers={"Authorization": "Bearer foo bar"},
         )
