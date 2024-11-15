@@ -43,6 +43,15 @@ Drivers facilitate interactions with external resources and services:
 - 💼 **SQL Drivers** interact with SQL databases.
 - 🌐 **Web Scraper Drivers** extract information from web pages.
 - 🧠 **Conversation Memory Drivers** manage the storage and retrieval of conversational data.
+- 📡 **Event Listener Drivers** forward framework events to external services.
+- 🏗️ **Structure Run Drivers** execute structures both locally and in the cloud.
+- 🤖 **Assistant Drivers** enable interactions with various "assistant" services.
+- 🗣️ **Text to Speech Drivers** convert text to speech.
+- 🎙️ **Audio Transcription Drivers** convert audio to text.
+- 🔍 **Web Search Drivers** search the web for information.
+- 📈 **Observability Drivers** send trace and event data to observability platforms.
+- 📜 **Ruleset Drivers** load and apply rulesets from external sources.
+- 🗂️ **File Manager Drivers** handle file operations on local and remote storage.
 
 ### 🚂 Engines
 
