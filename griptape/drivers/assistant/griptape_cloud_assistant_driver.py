@@ -31,7 +31,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
 
         response = requests.post(
             url,
-            json={"args": [arg.value for arg in args], "stream": self.stream},
+            json={"args": [arg.value for arg in args], "stream": self.stream, "thread_id": self.thread_id},
             headers=self.headers,
         )
         response.raise_for_status()
