@@ -41,7 +41,6 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     thread_id: Optional[str] = field(kw_only=True)
     assistant_id: str = field(kw_only=True)
-    stream: bool = field(default=False, kw_only=True)
     event_handler: AssistantEventHandler = field(
         default=Factory(lambda: OpenAiAssistantDriver.EventHandler()), kw_only=True, metadata={"serializable": False}
     )
