@@ -15,14 +15,3 @@ class TestAssistantTask:
         pipeline.add_task(task)
 
         assert task.run().to_text() == "mock output"
-
-    def test_run_multiple_inputs(self, mock_config):
-        mock_config.drivers_config.prompt_driver = MockPromptDriver(mock_output="pipeline mock output")
-        pipeline = Pipeline()
-        driver = MockAssistantDriver()
-
-        task = AssistantTask(input=["foo", "bar", "baz"], driver=driver)
-
-        pipeline.add_task(task)
-
-        assert task.run().to_text() == "mock output"

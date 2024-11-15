@@ -4,8 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.artifacts.list_artifact import ListArtifact
-from griptape.tasks.prompt_task import PromptTask
+from griptape.tasks import BaseTextInputTask
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -13,7 +12,7 @@ if TYPE_CHECKING:
 
 
 @define
-class AssistantTask(PromptTask):
+class AssistantTask(BaseTextInputTask):
     """Task to run a AssistantTask.
 
     Attributes:
@@ -23,7 +22,4 @@ class AssistantTask(PromptTask):
     driver: BaseAssistantDriver = field(kw_only=True)
 
     def try_run(self) -> BaseArtifact:
-        if isinstance(self.input, ListArtifact):
-            return self.driver.run(*self.input.value)
-        else:
-            return self.driver.run(self.input)
+        return self.driver.run(self.input)
