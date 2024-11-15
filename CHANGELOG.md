@@ -26,6 +26,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed `ImageQueryTask`, use `PromptTask` instead.
 - **BREAKING**: Updated `ImageQueryTool.image_query_driver` to `ImageQueryTool.prompt_driver`.
 - **BREAKING**: Updated `numpy` to `~2.0.2` and `pandas` to `^2.2`.
+- File Manager Driver path logic has been improved.
+  - `LocalFileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with the current working directory.
+  - `AmazonS3FileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with `/`.
+  - `GriptapeCloudFileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with `/`.
+  - Paths passed to `LocalFileManagerDriver` can now be relative or absolute. Absolute paths will be used as-is.
 - `BasePromptDriver.run` can now accept an Artifact in addition to a Prompt Stack.
 - Improved `CsvExtractionEngine` prompts.
 - Tweaked `PromptResponseRagModule` system prompt to yield answers more consistently.

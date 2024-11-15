@@ -16,6 +16,15 @@ class TestGriptapeCloudFileManagerDriver:
 
         return GriptapeCloudFileManagerDriver(base_url="https://api.griptape.ai", api_key="foo bar", bucket_id="1")
 
+    def test_workdir(self, driver):
+        assert driver.workdir == "/"
+
+        driver.workdir = "/new"
+        assert driver.workdir == "/new"
+
+        driver.workdir = "new"
+        assert driver.workdir == "/new"
+
     def test_instantiate_bucket_id(self, mocker):
         from griptape.drivers import GriptapeCloudFileManagerDriver
 
@@ -53,15 +62,6 @@ class TestGriptapeCloudFileManagerDriver:
 
         with pytest.raises(ValueError, match="GriptapeCloudFileManagerDriver requires an API key"):
             GriptapeCloudFileManagerDriver(bucket_id="1")
-
-    def test_instantiate_invalid_work_dir(self):
-        from griptape.drivers import GriptapeCloudFileManagerDriver
-
-        with pytest.raises(
-            ValueError,
-            match="GriptapeCloudFileManagerDriver requires 'workdir' to be an absolute path, starting with `/`",
-        ):
-            GriptapeCloudFileManagerDriver(api_key="foo bar", bucket_id="1", workdir="no_slash")
 
     def test_try_list_files(self, mocker, driver):
         mock_response = mocker.Mock()

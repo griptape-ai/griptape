@@ -31,7 +31,6 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     """
 
     bucket_id: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_BUCKET_ID")), kw_only=True)
-    workdir: str = field(default="/", kw_only=True)
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
     )
@@ -40,11 +39,18 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         init=False,
     )
+    _workdir: str = field(default="/", kw_only=True, alias="workdir")
 
-    @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_workdir(self, _: Attribute, workdir: str) -> None:
-        if not workdir.startswith("/"):
-            raise ValueError(f"{self.__class__.__name__} requires 'workdir' to be an absolute path, starting with `/`")
+    @property
+    def workdir(self) -> str:
+        if self._workdir.startswith("/"):
+            return self._workdir
+        else:
+            return f"/{self._workdir}"
+
+    @workdir.setter
+    def workdir(self, value: str) -> None:
+        self._workdir = value
 
     @api_key.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_api_key(self, _: Attribute, value: Optional[str]) -> str:

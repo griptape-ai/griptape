@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from attrs import Attribute, Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.utils.decorators import lazy_property
 from griptape.utils.import_utils import import_optional_dependency
@@ -28,17 +28,23 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
 
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     bucket: str = field(kw_only=True)
-    workdir: str = field(default="/", kw_only=True)
+    _workdir: str = field(default="/", kw_only=True, alias="workdir")
     _client: S3Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @property
+    def workdir(self) -> str:
+        if self._workdir.startswith("/"):
+            return self._workdir
+        else:
+            return f"/{self._workdir}"
+
+    @workdir.setter
+    def workdir(self, value: str) -> None:
+        self._workdir = value
 
     @lazy_property()
     def client(self) -> S3Client:
         return self.session.client("s3")
-
-    @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_workdir(self, _: Attribute, workdir: str) -> None:
-        if not workdir.startswith("/"):
-            raise ValueError("Workdir must be an absolute path")
 
     def try_list_files(self, path: str) -> list[str]:
         full_key = self._to_dir_full_key(path)

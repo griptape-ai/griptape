@@ -50,10 +50,6 @@ class TestLocalFileManagerDriver:
     def driver(self, temp_dir):
         return LocalFileManagerDriver(workdir=temp_dir)
 
-    def test_validate_workdir(self):
-        with pytest.raises(ValueError):
-            LocalFileManagerDriver(workdir="foo")
-
     @pytest.mark.parametrize(
         ("workdir", "path", "expected"),
         [
@@ -67,12 +63,12 @@ class TestLocalFileManagerDriver:
             ("/foo/bar", "", ["baz.txt", "baz-empty"]),
             ("/resources", "", ["bitcoin.pdf", "small.png", "test.txt"]),
             # Valid non-empty directories (with trailing slash)
-            ("/", "/", ["foo", "foo.txt", "foo-empty", "resources"]),
+            ("/", "./", ["foo", "foo.txt", "foo-empty", "resources"]),
             ("/", "foo/", ["bar", "bar.txt", "bar-empty"]),
             ("/", "foo/bar/", ["baz.txt", "baz-empty"]),
-            ("/foo", "/", ["bar", "bar.txt", "bar-empty"]),
+            ("/foo", "./", ["bar", "bar.txt", "bar-empty"]),
             ("/foo", "bar/", ["baz.txt", "baz-empty"]),
-            ("/foo/bar", "/", ["baz.txt", "baz-empty"]),
+            ("/foo/bar", "./", ["baz.txt", "baz-empty"]),
             # relative paths
             ("/", ".", ["foo", "foo.txt", "foo-empty", "resources"]),
             ("/", "foo/..", ["foo", "foo.txt", "foo-empty", "resources"]),
@@ -112,9 +108,9 @@ class TestLocalFileManagerDriver:
             ("/", "bitcoin.pdf", FileNotFoundError),
             # # paths to files (not directories)
             ("/", "foo.txt", NotADirectoryError),
-            ("/", "/foo.txt", NotADirectoryError),
+            ("/", "./foo.txt", NotADirectoryError),
             ("/resources", "bitcoin.pdf", NotADirectoryError),
-            ("/resources", "/bitcoin.pdf", NotADirectoryError),
+            ("/resources", "./bitcoin.pdf", NotADirectoryError),
         ],
     )
     def test_list_files_failure(self, workdir, path, expected, temp_dir, driver):
@@ -141,11 +137,11 @@ class TestLocalFileManagerDriver:
             ("/resources", "bitcoin.pdf/", IsADirectoryError),
             # directories -- not files
             ("/", "", IsADirectoryError),
-            ("/", "/", IsADirectoryError),
+            ("/", "./", IsADirectoryError),
             ("/", "resources", IsADirectoryError),
             ("/", "resources/", IsADirectoryError),
             ("/resources", "", IsADirectoryError),
-            ("/resources", "/", IsADirectoryError),
+            ("/resources", "./", IsADirectoryError),
         ],
     )
     def test_load_file_failure(self, workdir, path, expected, temp_dir, driver):
@@ -188,11 +184,11 @@ class TestLocalFileManagerDriver:
             ("/", "/bar/", IsADirectoryError),
             # existing directories
             ("/", "", IsADirectoryError),
-            ("/", "/", IsADirectoryError),
+            ("/", "./", IsADirectoryError),
             ("/", "resources", IsADirectoryError),
             ("/", "resources/", IsADirectoryError),
             ("/resources", "", IsADirectoryError),
-            ("/resources", "/", IsADirectoryError),
+            ("/resources", "./", IsADirectoryError),
             # existing files with trailing slash
             ("/", "resources/bitcoin.pdf/", IsADirectoryError),
             ("/resources", "bitcoin.pdf/", IsADirectoryError),
@@ -224,6 +220,15 @@ class TestLocalFileManagerDriver:
 
         assert isinstance(result, TextArtifact)
         assert result.encoding == "ascii"
+
+    def test_workdir(self, driver, temp_dir):
+        assert driver.workdir == temp_dir
+
+        driver.workdir = "/new"
+        assert driver.workdir == "/new"
+
+        driver.workdir = "new"
+        assert driver.workdir == os.path.join(os.getcwd(), "new")
 
     def _to_driver_workdir(self, temp_dir, workdir):
         # Treat the workdir as an absolute path, but modify it to be relative to the temp_dir.
