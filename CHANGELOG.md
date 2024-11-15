@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Removed all `ImageQueryDriver`s, use `PromptDriver`s instead.
 - **BREAKING**: Removed `ImageQueryTask`, use `PromptTask` instead.
 - **BREAKING**: Updated `ImageQueryTool.image_query_driver` to `ImageQueryTool.prompt_driver`.
+- **BREAKING**: Updated `numpy` to `~2.0.2` and `pandas` to `^2.2`.
 - `BasePromptDriver.run` can now accept an Artifact in addition to a Prompt Stack.
 - Improved `CsvExtractionEngine` prompts.
 - Tweaked `PromptResponseRagModule` system prompt to yield answers more consistently.
