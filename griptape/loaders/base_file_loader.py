@@ -16,7 +16,7 @@ A = TypeVar("A", bound=BaseArtifact)
 @define
 class BaseFileLoader(BaseLoader[Union[str, PathLike], bytes, A], ABC):
     file_manager_driver: BaseFileManagerDriver = field(
-        default=Factory(lambda: LocalFileManagerDriver(workdir=None)),
+        default=Factory(lambda: LocalFileManagerDriver()),
         kw_only=True,
     )
     encoding: str = field(default="utf-8", kw_only=True)

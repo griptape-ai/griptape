@@ -17,8 +17,16 @@ class BaseFileManagerDriver(ABC):
         loaders: Dictionary of file extension specific loaders to use for loading file contents into artifacts.
     """
 
-    workdir: str = field(kw_only=True)
+    _workdir: str = field(kw_only=True, alias="workdir")
     encoding: Optional[str] = field(default=None, kw_only=True)
+
+    @property
+    @abstractmethod
+    def workdir(self) -> str: ...
+
+    @workdir.setter
+    @abstractmethod
+    def workdir(self, value: str) -> None: ...
 
     def list_files(self, path: str) -> TextArtifact:
         entries = self.try_list_files(path)

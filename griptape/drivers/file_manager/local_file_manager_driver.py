@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import Optional
 
-from attrs import Attribute, Factory, define, field
+from attrs import Factory, define, field
 
 from .base_file_manager_driver import BaseFileManagerDriver
 
@@ -19,12 +18,18 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
                  Setting this to None will disable the working directory and all paths will be treated as absolute paths.
     """
 
-    workdir: Optional[str] = field(default=Factory(lambda: os.getcwd()), kw_only=True)
+    _workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True, alias="workdir")
 
-    @workdir.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_workdir(self, _: Attribute, workdir: str) -> None:
-        if self.workdir is not None and not Path(workdir).is_absolute():
-            raise ValueError("Workdir must be an absolute path")
+    @property
+    def workdir(self) -> str:
+        if os.path.isabs(self._workdir):
+            return self._workdir
+        else:
+            return os.path.join(os.getcwd(), self._workdir)
+
+    @workdir.setter
+    def workdir(self, value: str) -> None:
+        self._workdir = value
 
     def try_list_files(self, path: str) -> list[str]:
         full_path = self._full_path(path)
@@ -45,12 +50,12 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
         return full_path
 
     def _full_path(self, path: str) -> str:
-        full_path = path if self.workdir is None else os.path.join(self.workdir, path.lstrip("/"))
+        full_path = path if os.path.isabs(path) else os.path.join(self.workdir, path.lstrip("/"))
         # Need to keep the trailing slash if it was there,
         # because it means the path is a directory.
-        ended_with_slash = path.endswith("/")
+        ended_with_sep = path.endswith("/")
         full_path = os.path.normpath(full_path)
-        if ended_with_slash:
+        if ended_with_sep:
             full_path = full_path.rstrip("/") + "/"
         return full_path
 
