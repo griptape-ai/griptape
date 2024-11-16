@@ -56,6 +56,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         response_format: An optional OpenAi Chat Completion response format. Currently only supports `json_object` which will enable OpenAi's JSON mode.
         seed: An optional OpenAi Chat Completion seed.
         ignored_exception_types: An optional tuple of exception types to ignore. Defaults to OpenAI's known exception types.
+        parallel_tool_calls: A flag to enable parallel tool calls. Defaults to `True`.
     """
 
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -75,6 +76,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    parallel_tool_calls: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
             lambda: (
@@ -147,7 +149,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "user": self.user,
             "seed": self.seed,
             **(
-                {"tools": self.__to_openai_tools(prompt_stack.tools), "tool_choice": self.tool_choice}
+                {
+                    "tools": self.__to_openai_tools(prompt_stack.tools),
+                    "tool_choice": self.tool_choice,
+                    "parallel_tool_calls": self.parallel_tool_calls,
+                }
                 if prompt_stack.tools and self.use_native_tools
                 else {}
             ),

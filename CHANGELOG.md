@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TrafilaturaWebScraperDriver.no_ssl` parameter to disable SSL verification. Defaults to `False`.
 - `CsvExtractionEngine.format_header` parameter to format the header row.
 - `PromptStack.from_artifact` factory method for creating a Prompt Stack with a user message from an Artifact.
+- `OpenAiChatPromptDriver.parallel_tool_calls` parameter for toggling parallel tool calling. Defaults to `True`.
 
 ### Changed
 

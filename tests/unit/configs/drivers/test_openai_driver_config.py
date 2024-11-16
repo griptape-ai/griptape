@@ -20,6 +20,7 @@ class TestOpenAiDriversConfig:
                 "base_url": None,
                 "model": "gpt-4o",
                 "organization": None,
+                "parallel_tool_calls": True,
                 "response_format": None,
                 "seed": None,
                 "temperature": 0.1,
