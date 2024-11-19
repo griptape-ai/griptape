@@ -1,3 +1,5 @@
+from unittest.mock import call
+
 import pytest
 
 from griptape.artifacts import TextArtifact
@@ -12,7 +14,7 @@ class TestGriptapeCloudAssistantDriver:
 
         return mocker.patch("requests.post", return_value=mock_response)
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture()
     def mock_requests_get(self, mocker):
         mock_response = mocker.Mock()
         mock_response.json.return_value = {
@@ -56,6 +58,15 @@ class TestGriptapeCloudAssistantDriver:
         return mocker.patch("requests.get", return_value=mock_response)
 
     @pytest.fixture()
+    def mock_requests_get_empty(self, mocker):
+        mock_response = mocker.Mock()
+        mock_response.json.return_value = {
+            "events": [],
+            "next_offset": 0,
+        }
+        return mocker.patch("requests.get", return_value=mock_response)
+
+    @pytest.fixture()
     def driver(self):
         return GriptapeCloudAssistantDriver(
             base_url="https://cloud-foo.griptape.ai",
@@ -63,7 +74,7 @@ class TestGriptapeCloudAssistantDriver:
             assistant_id="1",
         )
 
-    def test_run(self, driver, mock_requests_post):
+    def test_run(self, driver, mock_requests_post, mock_requests_get):
         result = driver.run(TextArtifact("foo bar"))
         assert isinstance(result, TextArtifact)
         assert result.value == "foo bar"
@@ -82,7 +93,7 @@ class TestGriptapeCloudAssistantDriver:
             headers={"Authorization": "Bearer foo bar"},
         )
 
-    def test_stream_run(self, driver, mock_requests_post):
+    def test_stream_run(self, driver, mock_requests_post, mock_requests_get):
         driver.stream = True
         result = driver.run(TextArtifact("foo bar"))
         assert isinstance(result, TextArtifact)
@@ -101,3 +112,22 @@ class TestGriptapeCloudAssistantDriver:
             },
             headers={"Authorization": "Bearer foo bar"},
         )
+
+    def test_timeout_run(self, driver, mock_requests_get_empty):
+        driver.max_attempts = 1
+        with pytest.raises(TimeoutError):
+            driver.run(TextArtifact("foo bar"))
+
+        expected_calls = [
+            call(
+                "https://cloud-foo.griptape.ai/api/assistant-runs/1/events",
+                params={"offset": 0},
+                headers={"Authorization": "Bearer foo bar"},
+            ),
+            call(
+                "https://cloud-foo.griptape.ai/api/assistant-runs/1/events",
+                params={"offset": 0},
+                headers={"Authorization": "Bearer foo bar"},
+            ),
+        ]
+        mock_requests_get_empty.assert_has_calls(expected_calls)

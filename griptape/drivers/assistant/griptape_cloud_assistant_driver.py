@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from typing import Optional
 from urllib.parse import urljoin
 
@@ -30,6 +31,8 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
     knowledge_base_ids: list[str] = field(factory=list, kw_only=True)
     additional_knowledge_base_ids: list[str] = field(factory=list, kw_only=True)
     stream: bool = field(default=False, kw_only=True)
+    poll_interval: int = field(default=1, kw_only=True)
+    max_attempts: int = field(default=20, kw_only=True)
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact | InfoArtifact:
         url = urljoin(self.base_url.strip("/"), f"/api/assistants/{self.assistant_id}/runs")
@@ -57,16 +60,23 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         url = urljoin(self.base_url.strip("/"), f"/api/assistant-runs/{assistant_run_id}")
 
         events, next_offset = self._get_run_events(url)
-
+        attempts = 0
         output = None
-        while not output:
-            events, next_offset = self._get_run_events(url, offset=next_offset)
+        while not output and attempts < self.max_attempts:
             for event in events:
                 event_origin = event["origin"]
                 if event_origin == "ASSISTANT":
                     EventBus.publish_event(BaseEvent.from_dict(event["payload"]))
                     if event["type"] == "FinishStructureRunEvent":
                         output = BaseArtifact.from_dict(event["payload"]["output_task_output"])
+
+            if not output and not events:
+                time.sleep(self.poll_interval)
+                attempts += 1
+            events, next_offset = self._get_run_events(url, offset=next_offset)
+
+        if not output:
+            raise TimeoutError("The assistant run did not finish in time.")
 
         return output
 
