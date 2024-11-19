@@ -253,31 +253,66 @@ pipeline = Pipeline(
 pipeline.run("Describe the weather in the image")
 ```
 
-### Renamed `StructureRunTask.driver`/`StructureRunTool.driver` to `StructureRunTask.structure_run_driver`/`StructureRunTool.structure_run_driver`
+### Moved Google Tools To Griptape Google Extension
 
-`StructureRunTask.driver` and `StructureRunTool.driver` have been renamed to `StructureRunTask.structure_run_driver` and `StructureRunTool.structure_run_driver` respectively.
+Google tools have been moved to the `griptape-google` extension. Install the extension to use Google tools.
+
+```bash
+poetry add git+https://github.com/griptape-ai/griptape-google.git
+```
 
 #### Before
-
+    
 ```python
-StructureRunTask(
-    driver=LocalStructureRunDriver(),
-)
-StructureRunTool(
-    driver=LocalStructureRunDriver(),
-)
+from griptape.tools import GoogleGmailTool
 ```
 
 #### After
 
 ```python
-StructureRunTask(
-    structure_run_driver=LocalStructureRunDriver(),
-)
-StructureRunTool(
-    structure_run_driver=LocalStructureRunDriver(),
-)
+from griptape.google.tools import GoogleGmailTool
 ```
+
+### Moved AWS Tools To Griptape AWS Extension
+
+AWS tools have been moved to the `griptape-aws` extension. Install the extension to use AWS tools.
+
+```bash
+poetry add git+https://github.com/griptape-ai/griptape-aws.git
+```
+
+#### Before
+
+```python
+from griptape.tools import AwsS3Tool
+```
+
+#### After
+
+```python
+from griptape.aws.tools import AwsS3Tool
+```
+
+### Moved `OpenWeatherTool` To Griptape OpenWeather Extension
+
+`OpenWeatherTool` has been moved to the `griptape-openweather` extension. Install the extension to use the tool.
+
+```bash
+poetry add git+https://github.com/griptape-ai/griptape-open-weather.git
+```
+
+#### Before
+
+```python
+from griptape.tools import OpenWeatherTool
+```
+
+#### After
+
+```python
+from griptape.openweather.tools import OpenWeatherTool
+```
+
 
 ## 0.33.X to 0.34.X
 

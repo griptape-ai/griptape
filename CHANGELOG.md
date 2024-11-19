@@ -34,6 +34,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **BREAKING**: Updated `numpy` to `~2.0.2` and `pandas` to `^2.2`.
 - **BREAKING**: Renamed `StructureRunTask.driver` to `StructureRunTask.structure_run_driver`.
 - **BREAKING**: Renamed `StructureRunTool.driver` to `StructureRunTool.structure_run_driver`.
+- **BREAKING**: Moved the following Google Tools to the [Griptape Google Extension](https://github.com/griptape-ai/griptape-google):
+  - `GoogleCalendarTool`
+  - `GoogleDocsTool`
+  - `GoogleDriveTool`
+  - `GoogleGmailTool`
+- **BREAKING**: Moved the following AWS Tools to the [Griptape AWS Extension](https://github.com/griptape-ai/griptape-google):
+  - `AwsCliTool`
+  - `AwsIamTool`
+  - `AwsPricingTool`
+  - `AwsS3Tool`
+- **BREAKING**: Moved the `OpenWeatherTool` to the [Griptape Open Weather Extension](https://github.com/griptape-ai/griptape-open-weather)
 - File Manager Driver path logic has been improved.
   - `LocalFileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with the current working directory.
   - `AmazonS3FileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with `/`.
