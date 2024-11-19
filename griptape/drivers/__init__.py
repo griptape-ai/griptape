@@ -130,6 +130,10 @@ from .observability.open_telemetry_observability_driver import OpenTelemetryObse
 from .observability.griptape_cloud_observability_driver import GriptapeCloudObservabilityDriver
 from .observability.datadog_observability_driver import DatadogObservabilityDriver
 
+from .assistant.base_assistant_driver import BaseAssistantDriver
+from .assistant.griptape_cloud_assistant_driver import GriptapeCloudAssistantDriver
+from .assistant.openai_assistant_driver import OpenAiAssistantDriver
+
 __all__ = [
     "BasePromptDriver",
     "OpenAiChatPromptDriver",
@@ -233,4 +237,7 @@ __all__ = [
     "OpenTelemetryObservabilityDriver",
     "GriptapeCloudObservabilityDriver",
     "DatadogObservabilityDriver",
+    "BaseAssistantDriver",
+    "GriptapeCloudAssistantDriver",
+    "OpenAiAssistantDriver",
 ]

@@ -371,6 +371,14 @@ This Task is useful for orchestrating multiple specialized Structures in a singl
 --8<-- "docs/griptape-framework/structures/src/tasks_16.py"
 ```
 
+## Assistant Task
+
+The [Assistant Task](../../reference/griptape/tasks/assistant_task.md) enables Structures to interact with various "assistant" services using [Assistant Drivers](../../reference/griptape/drivers/assistant/index.md).
+
+```python
+--8<-- "docs/griptape-framework/structures/src/tasks_assistant.py"
+```
+
 ## Text to Speech Task
 
 This Task enables Structures to synthesize speech from text using [Text to Speech Drivers](../../reference/griptape/drivers/text_to_speech/index.md).

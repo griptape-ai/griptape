@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CsvExtractionEngine.format_header` parameter to format the header row.
 - `PromptStack.from_artifact` factory method for creating a Prompt Stack with a user message from an Artifact.
 - `OpenAiChatPromptDriver.parallel_tool_calls` parameter for toggling parallel tool calling. Defaults to `True`.
+- `AssistantTask` for running Assistants in Structures.
+- `GriptapeCloudAssistantDriver` for interacting with Griptape Cloud's Assistant API.
+- `OpenAiAssistantDriver` for interacting with OpenAI's Assistant API.
 
 ### Changed
 
