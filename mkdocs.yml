@@ -143,8 +143,6 @@ nav:
   - Tools:
       - Overview: "griptape-tools/index.md"
       - Official Tools:
-          - Aws Iam: "griptape-tools/official-tools/aws-iam-tool.md"
-          - Aws S3: "griptape-tools/official-tools/aws-s3-tool.md"
           - Calculator: "griptape-tools/official-tools/calculator-tool.md"
           - Computer: "griptape-tools/official-tools/computer-tool.md"
           - Date Time: "griptape-tools/official-tools/date-time-tool.md"
