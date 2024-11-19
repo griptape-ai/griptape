@@ -8,7 +8,7 @@ from griptape.utils.stream import Stream
 pipeline = Pipeline(
     tasks=[
         AssistantTask(
-            driver=OpenAiAssistantDriver(
+            assistant_driver=OpenAiAssistantDriver(
                 assistant_id=os.environ["OPENAI_ASSISTANT_ID"], thread_id=os.environ["OPENAI_THREAD_ID"]
             ),
         ),

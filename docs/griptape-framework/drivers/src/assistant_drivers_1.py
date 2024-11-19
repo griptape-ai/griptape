@@ -8,7 +8,7 @@ from griptape.utils.stream import Stream
 pipeline = Pipeline(
     tasks=[
         AssistantTask(
-            driver=GriptapeCloudAssistantDriver(
+            assistant_driver=GriptapeCloudAssistantDriver(
                 assistant_id=os.environ["GT_CLOUD_ASSISTANT_ID"],
                 stream=True,
             ),

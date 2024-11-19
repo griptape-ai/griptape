@@ -10,7 +10,7 @@ class TestAssistantTask:
         pipeline = Pipeline()
         driver = MockAssistantDriver()
 
-        task = AssistantTask(driver=driver)
+        task = AssistantTask(assistant_driver=driver)
 
         pipeline.add_task(task)
 

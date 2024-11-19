@@ -13,13 +13,13 @@ if TYPE_CHECKING:
 
 @define
 class AssistantTask(BaseTextInputTask):
-    """Task to run a AssistantTask.
+    """Task to run an Assistant.
 
     Attributes:
-        driver: Driver to run the Structure.
+        assistant_driver: Driver to run the Assistant.
     """
 
-    driver: BaseAssistantDriver = field(kw_only=True)
+    assistant_driver: BaseAssistantDriver = field(kw_only=True)
 
     def try_run(self) -> BaseArtifact:
-        return self.driver.run(self.input)
+        return self.assistant_driver.run(self.input)
