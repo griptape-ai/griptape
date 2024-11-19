@@ -215,11 +215,12 @@ Run `make check` to run all code checks locally.
 
 6. **Changelog:** If your pull request introduces a notable change, please update the [changelog](https://github.com/griptape-ai/griptape/blob/dev/CHANGELOG.md).
 
-### New Griptape Tools
+### Griptape Extensions
 
-Griptape's extensibility allows anyone to develop and distribute tools independently. With rare exceptions for Tools providing broadly applicable functionality, new Griptape Tools should be managed as their own projects and not submitted to the core framework. Pull requests for new tools (unless addressing an [existing issue](https://github.com/griptape-ai/griptape/issues)) will be closed.
+Griptape's extensibility allows anyone to develop and distribute functionality independently. 
+All new integrations, including Tools, Drivers, Tasks, etc., should initially be developed as extensions and then can be upstreamed into Griptape core if discussed and approved.
 
-The [Griptape Tool Template](https://github.com/griptape-ai/tool-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new Tools. In the Template, select **Use this template** then **Create a new repository** to begin a new Tool project.
+The [Griptape Extension Template](https://github.com/griptape-ai/griptape-extension-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new integrations.
 
 ### Dev and Test Dependencies
 
