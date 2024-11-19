@@ -10,7 +10,9 @@ class TestStructureRunTool:
     def client(self):
         agent = Agent()
 
-        return StructureRunTool(description="foo bar", driver=LocalStructureRunDriver(create_structure=lambda: agent))
+        return StructureRunTool(
+            description="foo bar", structure_run_driver=LocalStructureRunDriver(create_structure=lambda: agent)
+        )
 
     def test_run_structure(self, client):
         assert client.run_structure({"values": {"args": "foo bar"}}).value == "mock output"

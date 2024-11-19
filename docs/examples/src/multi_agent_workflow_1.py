@@ -132,7 +132,7 @@ if __name__ == "__main__":
                 Pinpoint major trends, breakthroughs, and their implications for various industries.""",
             ),
             id="research",
-            driver=LocalStructureRunDriver(
+            structure_run_driver=LocalStructureRunDriver(
                 create_structure=build_researcher,
             ),
         ),
@@ -149,7 +149,7 @@ if __name__ == "__main__":
                 Insights:
                 {{ parent_outputs["research"] }}""",
                 ),
-                driver=LocalStructureRunDriver(
+                structure_run_driver=LocalStructureRunDriver(
                     create_structure=lambda writer=writer: build_writer(
                         role=writer["role"],
                         goal=writer["goal"],
