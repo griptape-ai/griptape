@@ -52,12 +52,6 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     def workdir(self, value: str) -> None:
         self._workdir = value
 
-    @api_key.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_api_key(self, _: Attribute, value: Optional[str]) -> str:
-        if value is None:
-            raise ValueError(f"{self.__class__.__name__} requires an API key")
-        return value
-
     @bucket_id.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_bucket_id(self, _: Attribute, value: Optional[str]) -> str:
         if value is None:
