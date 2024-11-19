@@ -253,6 +253,32 @@ pipeline = Pipeline(
 pipeline.run("Describe the weather in the image")
 ```
 
+### Renamed `StructureRunTask.driver`/`StructureRunTool.driver` to `StructureRunTask.structure_run_driver`/`StructureRunTool.structure_run_driver`
+
+`StructureRunTask.driver` and `StructureRunTool.driver` have been renamed to `StructureRunTask.structure_run_driver` and `StructureRunTool.structure_run_driver` respectively.
+
+#### Before
+
+```python
+StructureRunTask(
+    driver=LocalStructureRunDriver(),
+)
+StructureRunTool(
+    driver=LocalStructureRunDriver(),
+)
+```
+
+#### After
+
+```python
+StructureRunTask(
+    structure_run_driver=LocalStructureRunDriver(),
+)
+StructureRunTool(
+    structure_run_driver=LocalStructureRunDriver(),
+)
+```
+
 ### Moved Google Tools To Griptape Google Extension
 
 Google tools have been moved to the `griptape-google` extension. Install the extension to use Google tools.
@@ -262,7 +288,7 @@ poetry add git+https://github.com/griptape-ai/griptape-google.git
 ```
 
 #### Before
-    
+
 ```python
 from griptape.tools import GoogleGmailTool
 ```
@@ -313,6 +339,79 @@ from griptape.tools import OpenWeatherTool
 from griptape.openweather.tools import OpenWeatherTool
 ```
 
+### Removed `GriptapeCloudKnowledgeBaseTool`
+
+`GriptapeCloudKnowledgeBaseTool` has been removed. Build a RAG Engine with a `GriptapeCloudVectorStoreDriver` instead.
+
+#### Before
+
+```python
+import os
+
+from griptape.structures import Agent
+from griptape.tools import GriptapeCloudKnowledgeBaseTool
+
+knowledge_base_client = GriptapeCloudKnowledgeBaseTool(
+    description="Contains information about the company and its operations",
+    api_key=os.environ["GT_CLOUD_API_KEY"],
+    knowledge_base_id=os.environ["GT_CLOUD_KB_ID"],
+)
+
+agent = Agent(
+    tools=[
+        knowledge_base_client,
+    ]
+)
+
+agent.run("What is the company's corporate travel policy?")
+```
+
+#### After
+
+```python
+from __future__ import annotations
+
+import os
+
+from griptape.drivers import GriptapeCloudVectorStoreDriver
+from griptape.engines.rag import RagEngine
+from griptape.engines.rag.modules import (
+    PromptResponseRagModule,
+    VectorStoreRetrievalRagModule,
+)
+from griptape.engines.rag.stages import (
+    ResponseRagStage,
+    RetrievalRagStage,
+)
+from griptape.structures import Agent
+from griptape.tools import RagTool
+
+engine = RagEngine(
+    retrieval_stage=RetrievalRagStage(
+        retrieval_modules=[
+            VectorStoreRetrievalRagModule(
+                vector_store_driver=GriptapeCloudVectorStoreDriver(
+                    api_key=os.environ["GT_CLOUD_API_KEY"],
+                    knowledge_base_id=os.environ["GT_CLOUD_KB_ID"],
+                )
+            )
+        ]
+    ),
+    response_stage=ResponseRagStage(
+        response_modules=[PromptResponseRagModule()],
+    ),
+)
+
+agent = Agent(
+    tools=[
+        RagTool(
+            description="Contains information about the company and its operations",
+            rag_engine=engine,
+        ),
+    ],
+)
+agent.run("What is the company's corporate travel policy?")
+```
 
 ## 0.33.X to 0.34.X
 

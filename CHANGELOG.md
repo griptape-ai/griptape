@@ -45,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `AwsPricingTool`
   - `AwsS3Tool`
 - **BREAKING**: Moved the `OpenWeatherTool` to the [Griptape Open Weather Extension](https://github.com/griptape-ai/griptape-open-weather)
+- **BREAKING**: Removed `GriptapeCloudKnowledgeBaseTool`. Use a RAG Engine with `GriptapeCloudVectorStoreDriver` instead.
 - File Manager Driver path logic has been improved.
   - `LocalFileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with the current working directory.
   - `AmazonS3FileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with `/`.
