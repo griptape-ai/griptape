@@ -253,6 +253,32 @@ pipeline = Pipeline(
 pipeline.run("Describe the weather in the image")
 ```
 
+### Renamed `StructureRunTask.driver`/`StructureRunTool.driver` to `StructureRunTask.structure_run_driver`/`StructureRunTool.structure_run_driver`
+
+`StructureRunTask.driver` and `StructureRunTool.driver` have been renamed to `StructureRunTask.structure_run_driver` and `StructureRunTool.structure_run_driver` respectively.
+
+#### Before
+
+```python
+StructureRunTask(
+    driver=LocalStructureRunDriver(),
+)
+StructureRunTool(
+    driver=LocalStructureRunDriver(),
+)
+```
+
+#### After
+
+```python
+StructureRunTask(
+    structure_run_driver=LocalStructureRunDriver(),
+)
+StructureRunTool(
+    structure_run_driver=LocalStructureRunDriver(),
+)
+```
+
 ## 0.33.X to 0.34.X
 
 ### `AnthropicDriversConfig` Embedding Driver

@@ -10,7 +10,7 @@ structure_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
 
 structure_run_tool = StructureRunTool(
     description="RAG Expert Agent - Structure to invoke with natural language queries about the topic of Retrieval Augmented Generation",
-    driver=GriptapeCloudStructureRunDriver(
+    structure_run_driver=GriptapeCloudStructureRunDriver(
         base_url=base_url,
         api_key=api_key,
         structure_id=structure_id,

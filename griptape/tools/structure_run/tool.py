@@ -19,11 +19,11 @@ class StructureRunTool(BaseTool):
 
     Attributes:
         description: A description of what the Structure does.
-        driver: Driver to run the Structure.
+        structure_run_driver: Driver to run the Structure.
     """
 
     description: str = field(kw_only=True)
-    driver: BaseStructureRunDriver = field(kw_only=True)
+    structure_run_driver: BaseStructureRunDriver = field(kw_only=True)
 
     @activity(
         config={
@@ -40,4 +40,4 @@ class StructureRunTool(BaseTool):
     def run_structure(self, params: dict) -> BaseArtifact:
         args: list[str] = params["values"]["args"]
 
-        return self.driver.run(*[TextArtifact(arg) for arg in args])
+        return self.structure_run_driver.run(*[TextArtifact(arg) for arg in args])
