@@ -21,6 +21,13 @@ class TestGriptapeCloudAssistantDriver:
             "events": [
                 {
                     "origin": "ASSISTANT",
+                    "type": "FooBarEvent",
+                    "payload": {
+                        "type": "FooBarEvent",
+                    },
+                },
+                {
+                    "origin": "ASSISTANT",
                     "type": "FinishStructureRunEvent",
                     "payload": {
                         "type": "FinishStructureRunEvent",
@@ -113,7 +120,14 @@ class TestGriptapeCloudAssistantDriver:
             headers={"Authorization": "Bearer foo bar"},
         )
 
-    def test_timeout_run(self, driver, mock_requests_get_empty):
+    def test_timeout_run(self, driver, mocker):
+        mock_response = mocker.Mock()
+        mock_response.json.return_value = {
+            "events": [],
+            "next_offset": 0,
+        }
+        mock_requests_get_empty = mocker.patch("requests.get", return_value=mock_response)
+
         driver.max_attempts = 1
         with pytest.raises(TimeoutError):
             driver.run(TextArtifact("foo bar"))

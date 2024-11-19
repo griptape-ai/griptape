@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import time
 from typing import Optional
@@ -9,8 +10,11 @@ import requests
 from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact, InfoArtifact
+from griptape.configs.defaults_config import Defaults
 from griptape.drivers import BaseAssistantDriver
 from griptape.events import BaseEvent, EventBus
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -66,9 +70,13 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
             for event in events:
                 event_origin = event["origin"]
                 if event_origin == "ASSISTANT":
-                    EventBus.publish_event(BaseEvent.from_dict(event["payload"]))
+                    event_payload = event["payload"]
+                    try:
+                        EventBus.publish_event(BaseEvent.from_dict(event_payload))
+                    except ValueError as e:
+                        logger.warning("Failed to deserialize event: %s", e)
                     if event["type"] == "FinishStructureRunEvent":
-                        output = BaseArtifact.from_dict(event["payload"]["output_task_output"])
+                        output = BaseArtifact.from_dict(event_payload["output_task_output"])
 
             if not output and not events:
                 time.sleep(self.poll_interval)
