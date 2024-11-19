@@ -74,19 +74,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AmazonBedrockPromptDriver` not working without setting `max_tokens`.
 - `BaseImageGenerationTask` no longer prevents setting `negative_rulesets` _and_ `negative_rules` at the same time.
 
-## \[0.34.3\] - 2024-11-13
+## [0.34.3] - 2024-11-13
 
 ### Fixed
 
 - `ActionsSubtask.before_run` and `ActionsSubtask.after_run` being called twice in `ToolkitTask` and `Tooltask`.
 
-## \[0.34.2\] - 2024-11-07
+## [0.34.2] - 2024-11-07
 
 ### Fixed
 
 - Restore human-friendly default `ImageArtifact` and `AudioArtifact` names with file type extension.
 
-## \[0.34.1\] - 2024-11-05
+## [0.34.1] - 2024-11-05
 
 ### Added
 
@@ -97,7 +97,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `WebScraperTool` not using `text_chunker` override.
 - Breaking change in `Chat.handle_output` behavior.
 
-## \[0.34.0\] - 2024-10-29
+## [0.34.0] - 2024-10-29
 
 ### Added
 
@@ -185,14 +185,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Exception getting raised in `FuturesExecutorMixin.__del__`.
 - Issues when using `EventListener` as a context manager in a multi-threaded environment.
 
-## \[0.33.1\] - 2024-10-11
+## [0.33.1] - 2024-10-11
 
 ### Fixed
 
 - Pinned `cohere` at `~5.11.0` to resolve slow dependency resolution.
 - Missing `exa-py` from `all` extra.
 
-## \[0.33.0\] - 2024-10-09
+## [0.33.0] - 2024-10-09
 
 ## Added
 
@@ -275,7 +275,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseTask.full_context` context being empty when not connected to a Structure.
 - Tool calling when using `OpenAiChatPromptDriver` with Groq.
 
-## \[0.32.0\] - 2024-09-17
+## [0.32.0] - 2024-09-17
 
 ### Added
 
@@ -310,7 +310,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
-## \[0.31.0\] - 2024-09-03
+## [0.31.0] - 2024-09-03
 
 **Note**: This release includes breaking changes. Please refer to the [Migration Guide](./MIGRATION.md#030x-to-031x) for details.
 
@@ -344,21 +344,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash when using `CohereRerankDriver` with `CsvRowArtifact`s.
 - Crash when passing "empty" Artifacts or no Artifacts to `CohereRerankDriver`.
 
-## \[0.30.2\] - 2024-08-26
+## [0.30.2] - 2024-08-26
 
 ### Fixed
 
 - Ensure thread safety when publishing events by adding a thread lock to batch operations in `BaseEventListenerDriver`.
 - `FileManagerTool` failing to save Artifacts created by `ExtractionTool` with a `CsvExtractionEngine`.
 
-## \[0.30.1\] - 2024-08-21
+## [0.30.1] - 2024-08-21
 
 ### Fixed
 
 - `CsvExtractionEngine` not using provided `Ruleset`s.
 - Docs examples for Extraction Engines not properly passing in schemas.
 
-## \[0.30.0\] - 2024-08-20
+## [0.30.0] - 2024-08-20
 
 ### Added
 
@@ -423,14 +423,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Issue with native Tool calling and streaming with `GooglePromptDriver`.
 - Description not being used properly in `StructureRunTool`.
 
-## \[0.29.2\] - 2024-08-16
+## [0.29.2] - 2024-08-16
 
 ### Fixed
 
 - `Workflow` threads not being properly cleaned up after completion.
 - Crash when `ToolAction`s were missing output due to an `ActionsSubtask` exception.
 
-## \[0.29.1\] - 2024-08-02
+## [0.29.1] - 2024-08-02
 
 ### Changed
 
@@ -440,7 +440,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Missing extra for `drivers-text-to-speech-elevenlabs`.
 
-## \[0.29.0\] - 2024-07-30
+## [0.29.0] - 2024-07-30
 
 ### Added
 
@@ -497,20 +497,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parameter `count` for `QdrantVectorStoreDriver.query` now optional as per documentation.
 - Path issues on Windows with `LocalFileManagerDriver` and `AmazonS3FileManagerDriver`.
 
-## \[0.28.2\] - 2024-07-12
+## [0.28.2] - 2024-07-12
 
 ### Fixed
 
 - Conversation Memory being incorrectly inserted into the `PromptTask.prompt_stack` when no system content is present.
 
-## \[0.28.1\] - 2024-07-10
+## [0.28.1] - 2024-07-10
 
 ### Fixed
 
 - Sending empty system content in `PromptTask`.
 - Throttling issues with `DuckDuckGoWebSearchDriver`.
 
-## \[0.28.0\] - 2024-07-09
+## [0.28.0] - 2024-07-09
 
 ### Added
 
@@ -593,14 +593,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CoherePromptDriver` to properly handle empty history.
 - `StructureVisualizer.to_url()` by wrapping task IDs in single quotes.
 
-## \[0.27.2\] - 2024-06-27
+## [0.27.2] - 2024-06-27
 
 ### Fixed
 
 - Avoid adding duplicate Tokenizer stop sequences in a `ToolkitTask`.
 - Fixed token count calculation in `VectorQueryEngine`.
 
-## \[0.27.1\] - 2024-06-20
+## [0.27.1] - 2024-06-20
 
 ### Added
 
@@ -612,7 +612,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tool Task system prompt for better results with lower-end models.
 - Default Prompt Driver model to Claude 3.5 Sonnet in `AnthropicStructureConfig` and `AmazonBedrockStructureConfig.`
 
-## \[0.27.0\] - 2024-06-19
+## [0.27.0] - 2024-06-19
 
 ### Added
 
@@ -685,9 +685,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TextArtifacts` contained in `ListArtifact` returned by `WebSearch.search` to properly formatted stringified JSON.
 - Structure run args not being set immediately.
 - Input and output logging in BaseAudioInputTasks and BaseAudioGenerationTasks
-- Validation of `max_tokens` \< 0 on `BaseChunker`
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
-## \[0.26.0\] - 2024-06-04
+## [0.26.0] - 2024-06-04
 
 ### Added
 
@@ -719,9 +719,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Extra fields being excluded when using `SerializableMixin.from_dict`.
-- Validation of `max_tokens` \< 0 on `BaseChunker`
+- Validation of `max_tokens` < 0 on `BaseChunker`
 
-## \[0.25.1\] - 2024-05-15
+## [0.25.1] - 2024-05-15
 
 ### Fixed
 
@@ -739,7 +739,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default behavior of Event Listener Drivers to batch events.
 - Default behavior of OpenAiStructureConfig to utilize `gpt-4o` for prompt_driver.
 
-## \[0.25.0\] - 2024-05-06
+## [0.25.0] - 2024-05-06
 
 ### Added
 
@@ -784,11 +784,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Type hint for parameter `azure_ad_token_provider` on Azure OpenAI drivers to `Optional[Callable[[], str]]`.
 - Missing parameters `azure_ad_token` and `azure_ad_token_provider` on the default client for `AzureOpenAiCompletionPromptDriver`.
 
-## \[0.24.2\] - 2024-04-04
+## [0.24.2] - 2024-04-04
 
 - Fixed FileManager.load_files_from_disk schema.
 
-## \[0.24.1\] - 2024-03-28
+## [0.24.1] - 2024-03-28
 
 ### Fixed
 
@@ -798,7 +798,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use `schema` instead of `jsonschema` for JSON validation.
 
-## \[0.24.0\] - 2024-03-27
+## [0.24.0] - 2024-03-27
 
 ### Added
 
@@ -837,7 +837,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiVisionImageQueryDriver` now has a required field `max_tokens` that defaults to 256
 - `GriptapeCloudStructureRunDriver` now outputs a `BaseArtifact` instead of a `TextArtifact`
 
-## \[0.23.2\] - 2024-03-15
+## [0.23.2] - 2024-03-15
 
 ### Fixed
 
@@ -845,7 +845,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `DummyException` error message not fully displaying.
 - `StructureConfig.task_memory` not defaulting to using `StructureConfig.global_drivers` by default.
 
-## \[0.23.1\] - 2024-03-07
+## [0.23.1] - 2024-03-07
 
 ### Fixed
 
@@ -853,7 +853,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Incorrect `GriptapeCloudKnowledgeBaseClient`'s API URLs.
 - Issue with Tool Task system prompt causing the LLM to generate an invalid action.
 
-## \[0.23.0\] - 2024-02-26
+## [0.23.0] - 2024-02-26
 
 ### Added
 
@@ -892,13 +892,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `InpaintingImageGenerationTask.image_generation_engine` now defaults to an `InpaintingImageGenerationEngine` with an Image Generation Driver default of `Structure.config.global_drivers.image_generation_driver`.
 - `OutpaintingImageGenerationTask.image_generation_engine` now defaults to an `OutpaintingImageGenerationEngine` with an Image Generation Driver default of `Structure.config.global_drivers.image_generation_driver`.
 
-## \[0.22.3\] - 2024-01-22
+## [0.22.3] - 2024-01-22
 
 ### Fixed
 
 - `ToolkitTask`'s user subtask prompt occasionally causing the Task to end prematurely.
 
-## \[0.22.2\] - 2024-01-18
+## [0.22.2] - 2024-01-18
 
 ### Fixed
 
@@ -906,15 +906,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Updated stale dependencies \[CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464\]
+- Updated stale dependencies [CVE-2023-50447, CVE-2024-22195, and CVE-2023-36464]
 
-## \[0.22.1\] - 2024-01-12
+## [0.22.1] - 2024-01-12
 
 ### Fixed
 
 - Action Subtasks incorrectly outputting the Task input after failing to follow the ReAct prompt.
 
-## \[0.22.0\] - 2024-01-11
+## [0.22.0] - 2024-01-11
 
 ### Added
 
