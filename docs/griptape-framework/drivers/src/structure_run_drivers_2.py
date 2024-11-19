@@ -5,9 +5,9 @@ from griptape.rules import Rule
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
 
-base_url = os.environ["GRIPTAPE_CLOUD_BASE_URL"]
-api_key = os.environ["GRIPTAPE_CLOUD_API_KEY"]
-structure_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
+base_url = os.environ["GT_CLOUD_BASE_URL"]
+api_key = os.environ["GT_CLOUD_API_KEY"]
+structure_id = os.environ["GT_CLOUD_STRUCTURE_ID"]
 
 
 pipeline = Pipeline(
