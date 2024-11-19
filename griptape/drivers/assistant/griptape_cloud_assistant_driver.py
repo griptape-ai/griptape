@@ -61,15 +61,13 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         return self._get_run_result(response_json["assistant_run_id"])
 
     def _get_run_result(self, assistant_run_id: str) -> BaseArtifact | InfoArtifact:
-        url = urljoin(self.base_url.strip("/"), f"/api/assistant-runs/{assistant_run_id}")
-
-        events, next_offset = self._get_run_events(url)
+        events, next_offset = self._get_run_events(assistant_run_id)
         attempts = 0
         output = None
-        while not output and attempts < self.max_attempts:
+
+        while output is None and attempts < self.max_attempts:
             for event in events:
-                event_origin = event["origin"]
-                if event_origin == "ASSISTANT":
+                if event["origin"] == "ASSISTANT":
                     event_payload = event["payload"]
                     try:
                         EventBus.publish_event(BaseEvent.from_dict(event_payload))
@@ -78,18 +76,19 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
                     if event["type"] == "FinishStructureRunEvent":
                         output = BaseArtifact.from_dict(event_payload["output_task_output"])
 
-            if not output and not events:
+            if output is None and not events:
                 time.sleep(self.poll_interval)
                 attempts += 1
-            events, next_offset = self._get_run_events(url, offset=next_offset)
+            events, next_offset = self._get_run_events(assistant_run_id, offset=next_offset)
 
-        if not output:
+        if output is None:
             raise TimeoutError("The assistant run did not finish in time.")
 
         return output
 
-    def _get_run_events(self, assistant_run_url: str, offset: int = 0) -> tuple[list[dict], int]:
-        response = requests.get(f"{assistant_run_url}/events", headers=self.headers, params={"offset": offset})
+    def _get_run_events(self, assistant_run_id: str, offset: int = 0) -> tuple[list[dict], int]:
+        url = urljoin(self.base_url.strip("/"), f"/api/assistant-runs/{assistant_run_id}/events")
+        response = requests.get(url, headers=self.headers, params={"offset": offset})
         response.raise_for_status()
 
         response_json = response.json()
