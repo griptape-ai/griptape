@@ -149,7 +149,6 @@ nav:
           - Email: "griptape-tools/official-tools/email-tool.md"
           - File Manager: "griptape-tools/official-tools/file-manager-tool.md"
           - Structure Run Client: "griptape-tools/official-tools/structure-run-tool.md"
-          - Open Weather: "griptape-tools/official-tools/openweather-tool.md"
           - Rest Api Client: "griptape-tools/official-tools/rest-api-tool.md"
           - Sql: "griptape-tools/official-tools/sql-tool.md"
           - Vector Store Tool: "griptape-tools/official-tools/vector-store-tool.md"
