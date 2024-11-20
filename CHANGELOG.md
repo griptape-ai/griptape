@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Use of deprecated `pkg_resources` in `BaseTool`.
 - Error when serializing `JsonArtifact`s.
+- `GriptapeCloudVectorStoreDriver` not pulling `api_key` from `GT_CLOUD_API_KEY` environment variable.
 
 ### Fixed
 

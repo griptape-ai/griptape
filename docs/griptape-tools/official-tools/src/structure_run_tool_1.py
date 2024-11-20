@@ -4,9 +4,9 @@ from griptape.drivers import GriptapeCloudStructureRunDriver
 from griptape.structures import Agent
 from griptape.tools import StructureRunTool
 
-base_url = os.environ["GRIPTAPE_CLOUD_BASE_URL"]
-api_key = os.environ["GRIPTAPE_CLOUD_API_KEY"]
-structure_id = os.environ["GRIPTAPE_CLOUD_STRUCTURE_ID"]
+base_url = os.environ["GT_CLOUD_BASE_URL"]
+api_key = os.environ["GT_CLOUD_API_KEY"]
+structure_id = os.environ["GT_CLOUD_STRUCTURE_ID"]
 
 structure_run_tool = StructureRunTool(
     description="RAG Expert Agent - Structure to invoke with natural language queries about the topic of Retrieval Augmented Generation",

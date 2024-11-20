@@ -57,12 +57,6 @@ class TestGriptapeCloudFileManagerDriver:
         with pytest.raises(ValueError, match="Unexpected error when retrieving Bucket with ID: 1"):
             return GriptapeCloudFileManagerDriver(api_key="foo bar", bucket_id="1")
 
-    def test_instantiate_no_api_key(self):
-        from griptape.drivers import GriptapeCloudFileManagerDriver
-
-        with pytest.raises(ValueError, match="GriptapeCloudFileManagerDriver requires an API key"):
-            GriptapeCloudFileManagerDriver(bucket_id="1")
-
     def test_try_list_files(self, mocker, driver):
         mock_response = mocker.Mock()
         mock_response.status_code = 200
