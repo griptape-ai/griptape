@@ -52,6 +52,7 @@ Drivers facilitate interactions with external resources and services:
 - 📈 **Observability Drivers** send trace and event data to observability platforms.
 - 📜 **Ruleset Drivers** load and apply rulesets from external sources.
 - 🗂️ **File Manager Drivers** handle file operations on local and remote storage.
+- 🔨 **Tool Drivers** augment Tools with additional functionality.
 
 ### 🚂 Engines
 
@@ -217,7 +218,7 @@ Run `make check` to run all code checks locally.
 
 ### Griptape Extensions
 
-Griptape's extensibility allows anyone to develop and distribute functionality independently. 
+Griptape's extensibility allows anyone to develop and distribute functionality independently.
 All new integrations, including Tools, Drivers, Tasks, etc., should initially be developed as extensions and then can be upstreamed into Griptape core if discussed and approved.
 
 The [Griptape Extension Template](https://github.com/griptape-ai/griptape-extension-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new integrations.

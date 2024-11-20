@@ -2,13 +2,14 @@ from __future__ import annotations
 
 import functools
 import inspect
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, OrderedDict, cast
 
 import schema
 from schema import Schema
 
 CONFIG_SCHEMA = Schema(
     {
+        schema.Optional("name"): str,
         "description": str,
         schema.Optional("schema"): lambda data: isinstance(data, (Schema, Callable)),
     }
@@ -28,7 +29,7 @@ def activity(config: dict) -> Any:
         def wrapper(self: Any, params: dict) -> Any:
             return func(self, **_build_kwargs(func, params))
 
-        setattr(wrapper, "name", func.__name__)
+        setattr(wrapper, "name", validated_config.get("name", func.__name__))
         setattr(wrapper, "config", validated_config)
         setattr(wrapper, "is_activity", True)
 
@@ -58,8 +59,8 @@ def lazy_property(attr_name: Optional[str] = None) -> Callable[[Callable[[Any], 
 
 
 def _build_kwargs(func: Callable, params: dict) -> dict:
-    func_params = inspect.signature(func).parameters.copy()
-    func_params.pop("self")
+    func_params = cast(OrderedDict, inspect.signature(func).parameters.copy())
+    func_params.popitem(last=False)
 
     kwarg_var = None
     for param in func_params.values():

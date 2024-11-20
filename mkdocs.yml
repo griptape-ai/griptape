@@ -131,6 +131,7 @@ nav:
           - Observability Drivers: "griptape-framework/drivers/observability-drivers.md"
           - Ruleset Drivers: "griptape-framework/drivers/ruleset-drivers.md"
           - File Manager Drivers: "griptape-framework/drivers/file-manager-drivers.md"
+          - Tool Drivers: "griptape-framework/drivers/tool-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"

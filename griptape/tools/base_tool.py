@@ -23,6 +23,7 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.common import ToolAction
+    from griptape.drivers import BaseToolDriver
     from griptape.memory import TaskMemory
     from griptape.tasks import ActionsSubtask
 
@@ -56,6 +57,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
     dependencies_install_directory: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     verbose: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     off_prompt: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    tool_driver: BaseToolDriver = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         if (
@@ -64,6 +66,9 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
             and not self.are_requirements_met(self.requirements_path)
         ):
             self.install_dependencies(os.environ.copy())
+
+        if self.tool_driver is not None:
+            self.tool_driver.initialize_tool(self)
 
     @output_memory.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_output_memory(self, _: Attribute, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
