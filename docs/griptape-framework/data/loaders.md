@@ -67,6 +67,15 @@ The Loader will load audio in its native format and populates the resulting Arti
 --8<-- "docs/griptape-framework/data/src/loaders_10.py"
 ```
 
+### JSON
+
+Loads JSON files into [JsonArtifact](../../griptape-framework/data/artifacts.md#json)s:
+
+```python
+
+--8<-- "docs/griptape-framework/data/src/loaders_json.py"
+```
+
 ## Web
 
 !!! info
