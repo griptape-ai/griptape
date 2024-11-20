@@ -413,6 +413,49 @@ agent = Agent(
 agent.run("What is the company's corporate travel policy?")
 ```
 
+### Prompt Task Persist Conversation Memory
+
+`PromptTask`s in a Structure now set their input/output on their own Conversation Memory. By default, the `PromptTask`s will inherit the conversation memory from the Structure.
+
+If you have any Structures that rely on the `PromptTask`s to be stateless, migrate them to set `conversation_memory=None`. 
+
+#### Before
+
+```python
+from griptape.memory.structure import ConversationMemory
+from griptape.structures import Pipeline
+from griptape.tasks import PromptTask
+
+pipeline = Pipeline(
+    conversation_memory=ConversationMemory(),
+    tasks=[
+        PromptTask("Hi my name is Collin"), # Hi Collin
+        PromptTask("What is my name?"), # I'm an LLM and I don't know your name
+    ],
+)
+
+pipeline.run()
+```
+
+#### After
+
+```python
+from griptape.memory.structure import ConversationMemory
+from griptape.structures import Pipeline
+from griptape.tasks import PromptTask
+
+pipeline = Pipeline(
+    conversation_memory=ConversationMemory(),
+    tasks=[
+        PromptTask("Hi my name is Collin"), # Hi Collin
+        PromptTask("What is my name?", conversation_memory=None), # I'm an LLM and I don't know your name
+        PromptTask("What is my name?"), # Your name is Collin
+    ],
+)
+
+pipeline.run()
+```
+
 ## 0.33.X to 0.34.X
 
 ### `AnthropicDriversConfig` Embedding Driver

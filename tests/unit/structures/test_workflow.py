@@ -131,7 +131,7 @@ class TestWorkflow:
         workflow.run()
         workflow.run()
 
-        assert len(workflow.conversation_memory.runs) == 3
+        assert len(workflow.conversation_memory.runs) == 9
 
     def test_tasks_initialization(self):
         first_task = PromptTask(id="test1")
@@ -982,7 +982,7 @@ class TestWorkflow:
 
     def test_to_dict(self):
         task = PromptTask("test")
-        workflow = Workflow(tasks=[task])
+        workflow = Workflow(tasks=[task], conversation_memory=ConversationMemory())
 
         expected_workflow_dict = {
             "type": workflow.type,
