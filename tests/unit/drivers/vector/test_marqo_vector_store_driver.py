@@ -132,7 +132,7 @@ class TestMarqoVectorStorageDriver:
 
         # Assert
         mock_marqo.index().search.assert_called_once_with(
-            "Test query", limit=5, attributes_to_retrieve=["*"], filter_string=None
+            "Test query", limit=5, attributes_to_retrieve=None, filter_string=None
         )
         mock_marqo.index().get_document.assert_called_once_with(
             "5aed93eb-3878-4f12-bc92-0fda01c7d23d", expose_facets=True
