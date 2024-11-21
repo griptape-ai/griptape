@@ -133,8 +133,6 @@ from .observability.datadog_observability_driver import DatadogObservabilityDriv
 from .assistant.base_assistant_driver import BaseAssistantDriver
 from .assistant.griptape_cloud_assistant_driver import GriptapeCloudAssistantDriver
 from .assistant.openai_assistant_driver import OpenAiAssistantDriver
-from .tool.base_tool_driver import BaseToolDriver
-from .tool.griptape_cloud_tool_driver import GriptapeCloudToolDriver
 
 __all__ = [
     "BasePromptDriver",
@@ -242,6 +240,4 @@ __all__ = [
     "BaseAssistantDriver",
     "GriptapeCloudAssistantDriver",
     "OpenAiAssistantDriver",
-    "BaseToolDriver",
-    "GriptapeCloudToolDriver",
 ]
