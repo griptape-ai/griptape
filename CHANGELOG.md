@@ -46,27 +46,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `AwsS3Tool`
 - **BREAKING**: Moved the `OpenWeatherTool` to the [Griptape Open Weather Extension](https://github.com/griptape-ai/griptape-open-weather)
 - **BREAKING**: Removed `GriptapeCloudKnowledgeBaseTool`. Use a RAG Engine with `GriptapeCloudVectorStoreDriver` instead.
-- File Manager Driver path logic has been improved.
-  - `LocalFileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with the current working directory.
-  - `AmazonS3FileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with `/`.
-  - `GriptapeCloudFileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with `/`.
-  - Paths passed to `LocalFileManagerDriver` can now be relative or absolute. Absolute paths will be used as-is.
-- `BasePromptDriver.run` can now accept an Artifact in addition to a Prompt Stack.
-- Improved `CsvExtractionEngine` prompts.
-- Tweaked `PromptResponseRagModule` system prompt to yield answers more consistently.
-- Removed `azure-core` and `azure-storage-blob` dependencies.
-- `GriptapeCloudFileManagerDriver` no longer requires `drivers-file-manager-griptape-cloud` extra.
-- `TrafilaturaWebScraperDriver` no longer sets `no_ssl` to `True` by default.
-
-### Fixed
-
-- Use of deprecated `pkg_resources` in `BaseTool`.
-- Error when serializing `JsonArtifact`s.
-- `GriptapeCloudVectorStoreDriver` not pulling `api_key` from `GT_CLOUD_API_KEY` environment variable.
-- `MarqoVectorStoreDriver.query` failing when `include_metadata` is `True`.
-
-### Fixed
-
 - **BREAKING**: Removed redundant Engines, use their respective Drivers instead.
   - Removed `ImageQueryEngine`, use `ImageQueryDriver`s instead.
   - Removed `InpaintingImageGenerationEngine`, use `ImageGenerationDriver`s instead.
@@ -93,8 +72,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated `VariationImageGenerationTask.image_query_engine` to `VariationImageGenerationTask.image_generation_driver`.
   - Updated `PromptImageGenerationTask.image_query_engine` to `PromptImageGenerationTask.image_generation_driver`.
 - **BREAKING**: Renamed`BaseImageGenerationTask.all_negative_rulesets` to `BaseImageGenerationTask.negative_rulesets`.
+- File Manager Driver path logic has been improved.
+  - `LocalFileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with the current working directory.
+  - `AmazonS3FileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with `/`.
+  - `GriptapeCloudFileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with `/`.
+  - Paths passed to `LocalFileManagerDriver` can now be relative or absolute. Absolute paths will be used as-is.
+- `BasePromptDriver.run` can now accept an Artifact in addition to a Prompt Stack.
+- Improved `CsvExtractionEngine` prompts.
+- Tweaked `PromptResponseRagModule` system prompt to yield answers more consistently.
+- Removed `azure-core` and `azure-storage-blob` dependencies.
+- `GriptapeCloudFileManagerDriver` no longer requires `drivers-file-manager-griptape-cloud` extra.
+- `TrafilaturaWebScraperDriver` no longer sets `no_ssl` to `True` by default.
 - `AmazonBedrockPromptDriver` not working without setting `max_tokens`.
 - `BaseImageGenerationTask` no longer prevents setting `negative_rulesets` _and_ `negative_rules` at the same time.
+
+### Fixed
+
+- Use of deprecated `pkg_resources` in `BaseTool`.
+- Error when serializing `JsonArtifact`s.
+- `GriptapeCloudVectorStoreDriver` not pulling `api_key` from `GT_CLOUD_API_KEY` environment variable.
+- `MarqoVectorStoreDriver.query` failing when `include_metadata` is `True`.
 
 ## [0.34.3] - 2024-11-13
 
