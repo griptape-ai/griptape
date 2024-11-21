@@ -49,7 +49,7 @@ class ActionsSubtask(BaseTask):
 
     @property
     def origin_task(self) -> BaseTask:
-        if self.parent_task_id:
+        if self.structure is not None and self.parent_task_id:
             return self.structure.find_task(self.parent_task_id)
         else:
             raise Exception("ActionSubtask has no parent task.")
@@ -306,25 +306,25 @@ class ActionsSubtask(BaseTask):
 
         action = ToolAction(tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool)
 
-        if action.tool and action.input:
-            self.__validate_action(action)
+        self.__validate_action(action)
 
         return action
 
     def __validate_action(self, action: ToolAction) -> None:
         try:
-            if action.path is not None:
-                activity = getattr(action.tool, action.path)
-            else:
-                raise Exception("ToolAction path not found.")
+            if action.tool is not None:
+                if action.path is not None:
+                    activity = getattr(action.tool, action.path)
+                else:
+                    raise Exception("ToolAction path not found.")
 
-            if activity is not None:
-                activity_schema = action.tool.activity_schema(activity)
-            else:
-                raise Exception("Activity not found.")
+                if activity is not None:
+                    activity_schema = action.tool.activity_schema(activity)
+                else:
+                    raise Exception("Activity not found.")
 
-            if activity_schema:
-                activity_schema.validate(action.input)
+                if activity_schema is not None and action.input is not None:
+                    activity_schema.validate(action.input)
         except schema.SchemaError as e:
             logger.exception("Subtask %s\nInvalid action JSON: %s", self.origin_task.id, e)
 

@@ -44,7 +44,7 @@ class GriptapeCloudRulesetDriver(BaseRulesetDriver):
         init=False,
     )
 
-    @api_key.validator  # pyright: ignore[reportAttributeAccessIssue]
+    @api_key.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_api_key(self, _: Attribute, value: Optional[str]) -> str:
         if value is None:
             raise ValueError(f"{self.__class__.__name__} requires an API key")

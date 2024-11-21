@@ -35,6 +35,6 @@ class CohereRerankDriver(BaseRerankDriver):
                 return_documents=True,
                 top_n=self.top_n,
             )
-            return [artifacts_dict[str(hash(r.document.text))] for r in response.results]
+            return [artifacts_dict[str(hash(r.document.text))] for r in response.results if r.document is not None]
         else:
             return []

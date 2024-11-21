@@ -70,7 +70,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         if self.tool_driver is not None:
             self.tool_driver.initialize_tool(self)
 
-    @output_memory.validator  # pyright: ignore[reportAttributeAccessIssue]
+    @output_memory.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_output_memory(self, _: Attribute, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():

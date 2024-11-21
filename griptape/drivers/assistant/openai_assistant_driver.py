@@ -27,7 +27,7 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
 
         @override
         def on_tool_call_delta(self, delta: ToolCallDelta, snapshot: ToolCall) -> None:
-            if delta.type == "code_interpreter":
+            if delta.type == "code_interpreter" and delta.code_interpreter is not None:
                 if delta.code_interpreter.input:
                     EventBus.publish_event(TextChunkEvent(token=delta.code_interpreter.input))
                 if delta.code_interpreter.outputs:
