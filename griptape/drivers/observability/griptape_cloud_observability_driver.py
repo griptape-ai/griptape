@@ -45,8 +45,8 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
         kw_only=True,
     )
 
-    @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_run_id(self, _: Attribute, structure_run_id: str) -> None:
+    @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_run_id(self, _: Attribute, structure_run_id: Optional[str]) -> None:
         if structure_run_id is None:
             raise ValueError(
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."
@@ -98,6 +98,7 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
                         ],
                     }
                     for span in spans
+                    if span.context is not None
                 ]
                 response = requests.post(url=url, json=payload, headers=self.headers)
                 return (

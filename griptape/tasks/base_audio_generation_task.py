@@ -23,4 +23,9 @@ class BaseAudioGenerationTask(ArtifactFileOutputMixin, RuleMixin, BaseTask, ABC)
     def after_run(self) -> None:
         super().after_run()
 
-        logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
+        logger.info(
+            "%s %s\nOutput: %s",
+            self.__class__.__name__,
+            self.id,
+            self.output.to_text() if self.output is not None else "",
+        )

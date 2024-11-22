@@ -52,7 +52,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     def workdir(self, value: str) -> None:
         self._workdir = value
 
-    @bucket_id.validator  # pyright: ignore[reportAttributeAccessIssue]
+    @bucket_id.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_bucket_id(self, _: Attribute, value: Optional[str]) -> str:
         if value is None:
             raise ValueError(f"{self.__class__.__name__} requires an Bucket ID")

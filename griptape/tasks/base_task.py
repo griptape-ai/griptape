@@ -88,7 +88,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
             return []
 
     def __str__(self) -> str:
-        return str(self.output.value)
+        return str(self.output.value) if self.output is not None else ""
 
     def add_parents(self, parents: list[BaseTask]) -> None:
         for parent in parents:

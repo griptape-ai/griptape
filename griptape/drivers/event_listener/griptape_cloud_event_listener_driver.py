@@ -35,7 +35,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
         default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True
     )
 
-    @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue]
+    @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_run_id(self, _: Attribute, structure_run_id: str) -> None:
         if structure_run_id is None:
             raise ValueError(

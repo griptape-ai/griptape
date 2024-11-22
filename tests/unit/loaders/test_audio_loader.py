@@ -35,3 +35,9 @@ class TestAudioLoader:
             assert isinstance(artifact, AudioArtifact)
             assert artifact.mime_type == "audio/wav"
             assert len(artifact.value) > 0
+
+    def test_unknow_mime_type(self, create_source, loader):
+        source = create_source("bad.asdf")
+
+        with pytest.raises(ValueError, match="Could not determine the file type of the audio data"):
+            loader.load(source)
