@@ -91,6 +91,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error when serializing `JsonArtifact`s.
 - `GriptapeCloudVectorStoreDriver` not pulling `api_key` from `GT_CLOUD_API_KEY` environment variable.
 - `MarqoVectorStoreDriver.query` failing when `include_metadata` is `True`.
+- `with_contextvars` not properly wrapping functions in some cases.
 
 ## [0.34.3] - 2024-11-13
 
