@@ -131,7 +131,6 @@ nav:
           - Observability Drivers: "griptape-framework/drivers/observability-drivers.md"
           - Ruleset Drivers: "griptape-framework/drivers/ruleset-drivers.md"
           - File Manager Drivers: "griptape-framework/drivers/file-manager-drivers.md"
-          - Tool Drivers: "griptape-framework/drivers/tool-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
@@ -161,6 +160,7 @@ nav:
           - Image Query: "griptape-tools/official-tools/image-query-tool.md"
           - Text To Speech: "griptape-tools/official-tools/text-to-speech-tool.md"
           - Audio Transcription: "griptape-tools/official-tools/audio-transcription-tool.md"
+          - Griptape Cloud Tool: "griptape-tools/official-tools/griptape-cloud-tool-tool.md"
           - Rag: "griptape-tools/official-tools/rag-tool.md"
           - Extraction: "griptape-tools/official-tools/extraction-tool.md"
           - Query: "griptape-tools/official-tools/query-tool.md"

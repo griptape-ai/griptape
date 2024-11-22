@@ -4,8 +4,7 @@ import pytest
 import schema
 
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.drivers import GriptapeCloudToolDriver
-from tests.unit.drivers.prompt.test_base_prompt_driver import MockTool
+from griptape.tools import GriptapeCloudToolTool
 
 MOCK_SCHEMA = {
     "openapi": "3.1.0",
@@ -272,7 +271,7 @@ class TestGriptapeCloudToolTool:
         mock_get.return_value.json.return_value = TextArtifact("foo").to_dict()
 
     def test_init(self):
-        tool = MockTool(tool_driver=GriptapeCloudToolDriver(tool_id="tool_id", api_key="foo"))
+        tool = GriptapeCloudToolTool(tool_id="tool_id")
 
         # Define expected activity details for each method
         expected_activities = {
@@ -339,26 +338,26 @@ class TestGriptapeCloudToolTool:
             assert getattr(activity, "is_activity") is True
 
     def test_multiple_init(self, mock_schema):
-        tool_1 = MockTool(tool_driver=GriptapeCloudToolDriver(tool_id="tool_id_1", api_key="foo"))
+        tool_1 = GriptapeCloudToolTool(tool_id="tool_id_1")
         mock_schema["paths"]["/activities/processString"]["post"]["description"] = "new description"
-        tool_2 = MockTool(tool_driver=GriptapeCloudToolDriver(tool_id="tool_id_2", api_key="foo"))
+        tool_2 = GriptapeCloudToolTool(tool_id="tool_id_2")
 
         assert getattr(tool_1, "processString") != getattr(tool_2, "processString")
         assert getattr(tool_1, "processString").config["description"] == "Processes a string input"
         assert getattr(tool_2, "processString").config["description"] == "new description"
 
     def test_run_activity(self):
-        tool = MockTool(tool_driver=GriptapeCloudToolDriver(tool_id="tool_id", api_key="foo"))
+        tool = GriptapeCloudToolTool(tool_id="tool_id")
         response = tool.processString({"text": "foo"})  # pyright: ignore[reportAttributeAccessIssue]
 
         assert response.value == "foo"
 
     def test_name(self):
-        tool = MockTool(tool_driver=GriptapeCloudToolDriver(tool_id="tool_id", api_key="foo"))
+        tool = GriptapeCloudToolTool(tool_id="tool_id")
 
         assert tool.name == "DataProcessor"
 
-        tool = MockTool(tool_driver=GriptapeCloudToolDriver(tool_id="tool_id", api_key="foo"), name="CustomName")
+        tool = GriptapeCloudToolTool(tool_id="tool_id", name="CustomName")
 
         assert tool.name == "CustomName"
 
@@ -368,8 +367,8 @@ class TestGriptapeCloudToolTool:
         return_value = {"type": "FooBarArtifact", "value": "foo"}
         mock_get.return_value.json.return_value = return_value
         mock_get.return_value.text = json.dumps(return_value)
-        tool = MockTool(tool_driver=GriptapeCloudToolDriver(tool_id="tool_id", api_key="foo"))
+        tool = GriptapeCloudToolTool(tool_id="tool_id")
 
-        result = tool.processString({"text": 1})  # pyright: ignore[reportAttributeAccessIssue]
+        result = tool.processString({"text": 1})
         assert isinstance(result, TextArtifact)
         assert result.value == json.dumps(return_value)

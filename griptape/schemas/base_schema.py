@@ -168,7 +168,6 @@ class BaseSchema(Schema):
             BasePromptDriver,
             BaseRulesetDriver,
             BaseTextToSpeechDriver,
-            BaseToolDriver,
             BaseVectorStoreDriver,
         )
         from griptape.events import EventListener
@@ -193,7 +192,6 @@ class BaseSchema(Schema):
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BaseRulesetDriver": BaseRulesetDriver,
                 "BaseImageGenerationDriver": BaseImageGenerationDriver,
-                "BaseToolDriver": BaseToolDriver,
                 "BaseArtifact": BaseArtifact,
                 "PromptStack": PromptStack,
                 "EventListener": EventListener,

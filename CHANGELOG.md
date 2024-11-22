@@ -16,9 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AssistantTask` for running Assistants in Structures.
 - `GriptapeCloudAssistantDriver` for interacting with Griptape Cloud's Assistant API.
 - `OpenAiAssistantDriver` for interacting with OpenAI's Assistant API.
-- New class of Drivers, Tool Drivers, for augmenting Tools with additional functionality.
-- `GriptapeCloudToolDriver` for interacting with Griptape Cloud's Tool API.
-- `BaseTool.tool_driver` for setting a Tool Driver on a Tool. The Tool will call `tool_driver.initialize_tool` after Tool initialization.
+- `GriptapeCloudToolTool` for running Griptape Cloud hosted Tools.
 
 ### Changed
 

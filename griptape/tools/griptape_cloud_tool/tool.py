@@ -1,56 +1,45 @@
 from __future__ import annotations
 
-import os
 from types import MethodType
-from typing import TYPE_CHECKING, Any, Callable
+from typing import Any, Callable
 from urllib.parse import urljoin
 
 import requests
-from attrs import Factory, define, field
+from attrs import define, field
 from schema import Literal, Optional, Schema
 
 from griptape.artifacts import BaseArtifact, TextArtifact
-from griptape.drivers.tool.base_tool_driver import BaseToolDriver
+from griptape.tools.base_griptape_cloud_tool import BaseGriptapeCloudTool
 from griptape.utils.decorators import activity
 
-if TYPE_CHECKING:
-    from griptape.tools.base_tool import BaseTool
 
-
-@define
-class GriptapeCloudToolDriver(BaseToolDriver):
-    """Driver for interacting with tools hosted on the Griptape Cloud.
+@define()
+class GriptapeCloudToolTool(BaseGriptapeCloudTool):
+    """Runs a Griptape Cloud hosted Tool.
 
     Attributes:
-        base_url: Base URL of the Griptape Cloud.
-        api_key: API key for the Griptape Cloud.
-        tool_id: ID of the tool to interact with.
-        headers: Headers to use for requests.
+        tool_id: The ID of the tool to run.
     """
 
-    base_url: str = field(default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")))
-    api_key: str = field(default=Factory(lambda: os.environ["GT_CLOUD_API_KEY"]))
     tool_id: str = field(kw_only=True)
-    headers: dict = field(
-        default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
-        init=False,
-    )
 
-    def initialize_tool(self, tool: BaseTool) -> None:
+    def __attrs_post_init__(self) -> None:
+        self._init_activities()
+
+    def _init_activities(self) -> None:
         schema = self._get_schema()
         tool_name, activity_schemas = self._parse_schema(schema)
 
-        if tool.name == tool.__class__.__name__:
-            tool.name = tool_name
+        if self.name == self.__class__.__name__:
+            self.name = tool_name
 
         for activity_name, (description, activity_schema) in activity_schemas.items():
             activity_handler = self._create_activity_handler(activity_name, description, activity_schema)
 
-            setattr(tool, activity_name, MethodType(activity_handler, self))
+            setattr(self, activity_name, MethodType(activity_handler, self))
 
     def _get_schema(self) -> dict:
-        url = urljoin(self.base_url, f"/api/tools/{self.tool_id}/openapi")
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(urljoin(self.base_url, f"/api/tools/{self.tool_id}/openapi"), headers=self.headers)
 
         response.raise_for_status()
 
@@ -117,7 +106,7 @@ class GriptapeCloudToolDriver(BaseToolDriver):
         """Creates an activity handler method for the tool."""
 
         @activity(config={"name": activity_name, "description": description, "schema": activity_schema})
-        def activity_handler(_: BaseTool, values: dict) -> Any:
+        def activity_handler(self: GriptapeCloudToolTool, values: dict) -> Any:
             return self._run_activity(activity_name, values)
 
         return activity_handler
