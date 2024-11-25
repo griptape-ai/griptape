@@ -28,7 +28,7 @@ class TestFinishActionsSubtaskEvent:
             task_child_ids=subtask.child_ids,
             task_input=subtask.input,
             task_output=subtask.output,
-            subtask_parent_task_id=subtask.parent_task_id,
+            subtask_parent_task_id=subtask.origin_task.id,
             subtask_thought=subtask.thought,
             subtask_actions=subtask.actions_to_dicts(),
         )
