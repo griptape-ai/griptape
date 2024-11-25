@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextvars import ContextVar
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define
 
@@ -14,14 +14,18 @@ if TYPE_CHECKING:
 # Context Vars must be declared at the top module level.
 # Also, in-place modifications do not trigger the context var's `set` method
 # so we must reassign the context var with the new value when adding or removing event listeners.
-_event_listeners: ContextVar[list[EventListener]] = ContextVar("event_listeners", default=[])
+_event_listeners: ContextVar[Optional[list[EventListener]]] = ContextVar("event_listeners", default=None)
 
 
 @define
 class _EventBus(SingletonMixin):
     @property
     def event_listeners(self) -> list[EventListener]:
-        return _event_listeners.get()
+        event_listeners_val = _event_listeners.get()
+        if event_listeners_val is None:
+            event_listeners_val = []
+            _event_listeners.set(event_listeners_val)
+        return event_listeners_val
 
     @event_listeners.setter
     def event_listeners(self, event_listeners: list[EventListener]) -> None:

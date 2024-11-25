@@ -44,7 +44,9 @@ class TestObservability:
     def test_nested_context_manager_raises_exception(self, mock_observability_driver):
         assert observability._global_observability_driver is None
 
-        with pytest.raises(Exception, match="Observability driver already set."), Observability(
-            observability_driver=mock_observability_driver
-        ), Observability(observability_driver=mock_observability_driver):
+        with (
+            pytest.raises(Exception, match="Observability driver already set."),
+            Observability(observability_driver=mock_observability_driver),
+            Observability(observability_driver=mock_observability_driver),
+        ):
             pass

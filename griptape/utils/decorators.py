@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import functools
 import inspect
-from typing import Any, Callable, Optional, OrderedDict, cast
+from collections import OrderedDict
+from typing import Any, Callable, Optional, cast
 
 import schema
 from schema import Schema
