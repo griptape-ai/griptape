@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+
+- `EvalEngine` for evaluating the performance of an LLM's output against a given input.
+
 ## [1.0.0] - 2024-12-09
 
 ### Added
