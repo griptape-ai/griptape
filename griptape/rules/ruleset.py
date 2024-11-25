@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from attrs import Factory, define, field
 
 from griptape.configs import Defaults
+from griptape.engines import EvalEngine
+from griptape.utils.j2 import J2
 
 if TYPE_CHECKING:
     from collections.abc import Sequence
@@ -26,8 +28,30 @@ class Ruleset:
     )
     meta: dict[str, Any] = field(factory=dict, kw_only=True)
     rules: Sequence[BaseRule] = field(factory=list)
+    generate_system_template: Callable[[Ruleset], str] = field(
+        default=Factory(lambda: lambda self: J2("rulesets/ruleset.j2").render(ruleset=self)),
+        kw_only=True,
+    )
+    eval_engine: Optional[EvalEngine] = field(
+        default=Factory(
+            lambda self: EvalEngine(id=f"{self.name} Eval Engine", criteria=self.to_text()), takes_self=True
+        ),
+        kw_only=True,
+    )
 
     def __attrs_post_init__(self) -> None:
         rules, meta = self.ruleset_driver.load(self.name)
         self.rules = [*rules, *self.rules]
         self.meta = {**meta, **self.meta}
+
+    def __str__(self) -> str:
+        return self.to_text()
+
+    def to_text(self) -> str:
+        return self.generate_system_template(self)
+
+    def evaluate(self, **kwargs) -> tuple[float, str]:
+        if self.eval_engine is None:
+            raise ValueError("eval_engine is not set")
+
+        return self.eval_engine.evaluate(**kwargs)

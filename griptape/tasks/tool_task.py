@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from griptape.common import PromptStack
     from griptape.memory import TaskMemory
     from griptape.structures import Structure
+    from griptape.tasks.base_subtask import BaseSubtask
     from griptape.tools import BaseTool
 
 
@@ -26,7 +27,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     ACTION_PATTERN = r"(?s)[^{]*({.*})"
 
     tool: BaseTool = field(kw_only=True, metadata={"serializable": True})
-    subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
+    subtask: Optional[BaseSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
 
     @property
@@ -102,13 +103,13 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     def find_memory(self, memory_name: str) -> TaskMemory:
         raise NotImplementedError("ToolTask does not support Task Memory.")
 
-    def find_subtask(self, subtask_id: str) -> ActionsSubtask:
+    def find_subtask(self, subtask_id: str) -> BaseSubtask:
         if self.subtask and self.subtask.id == subtask_id:
             return self.subtask
         else:
             raise ValueError(f"Subtask with id {subtask_id} not found.")
 
-    def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
+    def add_subtask(self, subtask: BaseSubtask) -> BaseSubtask:
         self.subtask = subtask
         self.subtask.attach_to(self)
 

@@ -2,12 +2,7 @@
 When responding, always use rules from the following rulesets.
 
 {% for ruleset in rulesets %}
-Ruleset name: {{ ruleset.name }}
-"{{ ruleset.name }}" rules:
-{% for rule in ruleset.rules %}
-Rule #{{loop.index}}
-{{ rule.to_text() }}
+{{ ruleset }}
 {% endfor %}
 
-{% endfor %}
 {% endif %}

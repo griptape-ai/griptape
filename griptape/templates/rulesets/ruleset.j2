@@ -1,0 +1,6 @@
+Ruleset name: {{ ruleset.name }}
+"{{ ruleset.name }}" rules:
+{% for rule in ruleset.rules %}
+Rule #{{loop.index}}
+{{ rule.to_text() }}
+{% endfor %}
