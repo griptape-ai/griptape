@@ -300,7 +300,7 @@ class TestGriptapeCloudToolTool:
                 "name": "processArray",
                 "description": "Processes an array input",
                 "schema": schema.Schema(
-                    {schema.Optional(schema.Literal("items", description="An array of numbers")): list}
+                    {schema.Optional(schema.Literal("items", description="An array of numbers")): [float]}
                 ),
             },
             "processObject": {

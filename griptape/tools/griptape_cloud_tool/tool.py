@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from types import MethodType
-from typing import Any, Callable
+from typing import Any, Callable, Optional
 from urllib.parse import urljoin
 
 import requests
 from attrs import define, field
-from schema import Literal, Optional, Schema
+from schema import Literal, Schema
+from schema import Optional as SchemaOptional
 
 from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.tools.base_griptape_cloud_tool import BaseGriptapeCloudTool
@@ -90,17 +91,21 @@ class GriptapeCloudToolTool(BaseGriptapeCloudTool):
             is_optional = prop not in schema_data.get("required", [])
 
             if is_optional:
-                schema_prop = Optional(schema_prop)
+                schema_prop = SchemaOptional(schema_prop)
 
-            properties[schema_prop] = self._map_openapi_type_to_python(prop_type)
+            properties[schema_prop] = self._map_openapi_type_to_python(prop_type, prop_info)
 
         return Schema(properties)
 
-    def _map_openapi_type_to_python(self, openapi_type: str) -> type:
+    def _map_openapi_type_to_python(self, openapi_type: str, schema_info: Optional[dict] = None) -> type | list[type]:
         """Maps OpenAPI types to native Python types."""
-        type_mapping = {"string": str, "integer": int, "boolean": bool, "number": float, "array": list, "object": dict}
+        type_mapping = {"string": str, "integer": int, "boolean": bool, "number": float, "object": dict}
 
-        return type_mapping.get(openapi_type, str)
+        if openapi_type == "array" and schema_info is not None and "items" in schema_info:
+            items_type = schema_info["items"].get("type", "string")
+            return [self._map_openapi_type_to_python(items_type)]  # pyright: ignore[reportReturnType]
+        else:
+            return type_mapping.get(openapi_type, str)
 
     def _create_activity_handler(self, activity_name: str, description: str, activity_schema: Schema) -> Callable:
         """Creates an activity handler method for the tool."""
