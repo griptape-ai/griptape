@@ -83,8 +83,8 @@ def _build_kwargs(func: Callable, params: dict) -> dict:
         kwargs["values"] = params.get("values")
 
     # set any missing parameters to None
-    for param_name in func_params:
-        if param_name not in kwargs:
+    for param_name, param in func_params.items():
+        if param_name not in kwargs and param.default == inspect.Parameter.empty:
             kwargs[param_name] = None
 
     return kwargs
