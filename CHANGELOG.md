@@ -93,7 +93,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `MarqoVectorStoreDriver.query` failing when `include_metadata` is `True`.
 - `with_contextvars` not properly wrapping functions in some cases.
 - Crash when calling `ToolkitTask.run()` directly.
-- Support default values using kwarg injection on `@activity` methods.
+- `@activity` decorator overwriting injected kwargs with default values as `None`.
 
 ## [0.34.3] - 2024-11-13
 
