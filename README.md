@@ -52,7 +52,6 @@ Drivers facilitate interactions with external resources and services:
 - 📈 **Observability Drivers** send trace and event data to observability platforms.
 - 📜 **Ruleset Drivers** load and apply rulesets from external sources.
 - 🗂️ **File Manager Drivers** handle file operations on local and remote storage.
-- 🔨 **Tool Drivers** augment Tools with additional functionality.
 
 ### 🚂 Engines
 
