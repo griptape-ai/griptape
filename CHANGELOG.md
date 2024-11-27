@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiAssistantDriver` for interacting with OpenAI's Assistant API.
 - `GriptapeCloudToolTool` for running Griptape Cloud hosted Tools.
 - `JsonLoader` for loading and parsing JSON files.
+- `PromptTask.conversation_memory` for setting the Conversation Memory on a Prompt Task.
 
 ### Changed
 
@@ -71,6 +72,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Updated `VariationImageGenerationTask.image_query_engine` to `VariationImageGenerationTask.image_generation_driver`.
   - Updated `PromptImageGenerationTask.image_query_engine` to `PromptImageGenerationTask.image_generation_driver`.
 - **BREAKING**: Renamed`BaseImageGenerationTask.all_negative_rulesets` to `BaseImageGenerationTask.negative_rulesets`.
+- **BREAKING**: `PromptTask`s now persist their input/output in Conversation Memory rather than the Structure doing so. This means `PromptTask`s now "remember" the input/output of previously executed `PromptTask`s in the Structure.
+- **BREAKING**: `Workflow.conversation_memory` and `Pipeline.conversation_memory` now default to `None`. `Agent.conversation_memory` still defaults to `ConversationMemory`.
 - File Manager Driver path logic has been improved.
   - `LocalFileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with the current working directory.
   - `AmazonS3FileManagerDriver.workdir` can now be a relative path or absolute path. Relative paths will be prefixed with `/`.

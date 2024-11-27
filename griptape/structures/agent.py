@@ -7,6 +7,7 @@ from attrs import Attribute, Factory, define, field
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import observable
 from griptape.configs import Defaults
+from griptape.memory.structure import BaseConversationMemory, ConversationMemory
 from griptape.structures import Structure
 from griptape.tasks import PromptTask, ToolkitTask
 
@@ -25,6 +26,11 @@ class Agent(Structure):
     stream: bool = field(default=Factory(lambda: Defaults.drivers_config.prompt_driver.stream), kw_only=True)
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
+    )
+    conversation_memory: Optional[BaseConversationMemory] = field(
+        default=Factory(lambda: ConversationMemory()),
+        kw_only=True,
+        metadata={"serializable": True},
     )
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)

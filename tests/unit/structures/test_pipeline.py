@@ -34,7 +34,7 @@ class TestPipeline:
         assert pipeline.output_task is None
         assert pipeline.rulesets[0].name == "TestRuleset"
         assert pipeline.rulesets[0].rules[0].value == "test"
-        assert pipeline.conversation_memory is not None
+        assert pipeline.conversation_memory is None
 
     def test_rulesets(self):
         pipeline = Pipeline(rulesets=[Ruleset("Foo", [Rule("foo test")])])
@@ -134,7 +134,7 @@ class TestPipeline:
         pipeline.run()
         pipeline.run()
 
-        assert len(pipeline.conversation_memory.runs) == 3
+        assert len(pipeline.conversation_memory.runs) == 9
 
     def test_tasks_initialization(self):
         first_task = PromptTask(id="test1")
@@ -304,13 +304,13 @@ class TestPipeline:
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.messages) == 5
-        assert len(task2.prompt_stack.messages) == 5
+        assert len(task1.prompt_stack.messages) == 3
+        assert len(task2.prompt_stack.messages) == 3
 
         pipeline.run()
 
-        assert len(task1.prompt_stack.messages) == 7
-        assert len(task2.prompt_stack.messages) == 7
+        assert len(task1.prompt_stack.messages) == 3
+        assert len(task2.prompt_stack.messages) == 3
 
     def test_text_artifact_token_count(self):
         text = "foobar"
@@ -414,7 +414,7 @@ class TestPipeline:
 
     def test_to_dict(self):
         task = PromptTask("test")
-        pipeline = Pipeline()
+        pipeline = Pipeline(conversation_memory=ConversationMemory())
         pipeline + [task]
         expected_pipeline_dict = {
             "type": pipeline.type,

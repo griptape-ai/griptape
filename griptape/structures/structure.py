@@ -10,7 +10,6 @@ from griptape.common import observable
 from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRunEvent
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
-from griptape.memory.structure import ConversationMemory, Run
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.mixins.runnable_mixin import RunnableMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
@@ -28,9 +27,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
     )
     conversation_memory: Optional[BaseConversationMemory] = field(
-        default=Factory(lambda: ConversationMemory()),
-        kw_only=True,
-        metadata={"serializable": True},
+        default=None, kw_only=True, metadata={"serializable": True}
     )
     task_memory: TaskMemory = field(
         default=Factory(lambda self: TaskMemory(), takes_self=True),
@@ -161,17 +158,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     @observable
     def after_run(self) -> None:
         super().after_run()
-
         if self.output_task is not None:
-            if (
-                self.conversation_memory is not None
-                and self.input_task is not None
-                and self.output_task.output is not None
-            ):
-                run = Run(input=self.input_task.input, output=self.output_task.output)
-
-                self.conversation_memory.add_run(run)
-
             EventBus.publish_event(
                 FinishStructureRunEvent(
                     structure_id=self.id,
