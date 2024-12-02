@@ -94,6 +94,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `with_contextvars` not properly wrapping functions in some cases.
 - Crash when calling `ToolkitTask.run()` directly.
 - `@activity` decorator overwriting injected kwargs with default values as `None`.
+- Multiple calls to `RuleMixin.rulesets` resulting in duplicate Rulesets.
 
 ## [0.34.3] - 2024-11-13
 

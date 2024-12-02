@@ -36,7 +36,7 @@ class PromptTask(RuleMixin, BaseTask):
     @property
     def rulesets(self) -> list:
         default_rules = self.rules
-        rulesets = self._rulesets
+        rulesets = self._rulesets.copy()
 
         if self.structure is not None:
             if self.structure._rulesets:

@@ -19,6 +19,8 @@ class TestRuleMixin:
         mixin = RuleMixin(rulesets=[ruleset])
 
         assert mixin.rulesets == [ruleset]
+        mixin.rulesets.append(Ruleset("baz", [Rule("qux")]))
+        assert mixin.rulesets == [ruleset]
 
     def test_rules_and_rulesets(self):
         mixin = RuleMixin(rules=[Rule("foo")], rulesets=[Ruleset("bar", [Rule("baz")])])
