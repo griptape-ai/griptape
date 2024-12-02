@@ -204,7 +204,7 @@ pytest = "^8.3.1"
 pytest-mock = "^3.1.4"
 mongomock = "^4.1.2"
 
-twine = "^5.1.1"
+twine = "^6.0.1"
 moto = {extras = ["dynamodb", "iotdata", "sqs"], version = "^5.0.16"}
 pytest-xdist = "^3.3.1"
 pytest-cov = "^6.0.0"
