@@ -189,8 +189,6 @@ all = [
     "opentelemetry-exporter-otlp-proto-http",
     "diffusers",
     "pillow",
-    "azure-core",
-    "azure-storage-blob",
 
     # loaders
     "pandas",
