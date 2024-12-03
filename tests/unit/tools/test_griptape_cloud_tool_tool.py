@@ -253,6 +253,7 @@ MOCK_SCHEMA = {
 }
 
 BAD_SCHEMA = "This is a bad schema"
+ERROR_SCHEMA = {"error": "This is an error"}
 
 
 class TestGriptapeCloudToolTool:
@@ -367,6 +368,14 @@ class TestGriptapeCloudToolTool:
         mock_get = mocker.patch("requests.get")
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = BAD_SCHEMA
+
+        with pytest.raises(RuntimeError):
+            GriptapeCloudToolTool(tool_id="tool_id")
+
+    def test_error_schema(self, mocker):
+        mock_get = mocker.patch("requests.get")
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = ERROR_SCHEMA
 
         with pytest.raises(RuntimeError):
             GriptapeCloudToolTool(tool_id="tool_id")
