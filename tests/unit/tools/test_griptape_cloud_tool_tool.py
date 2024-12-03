@@ -253,7 +253,7 @@ MOCK_SCHEMA = {
 }
 
 BAD_SCHEMA = "This is a bad schema"
-ERROR_SCHEMA = {"error": "This is an error"}
+ERROR_SCHEMA = {"error": "This is an error", "tool_run_id": "tool_run_id"}
 
 
 class TestGriptapeCloudToolTool:
