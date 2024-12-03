@@ -95,6 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash when calling `ToolkitTask.run()` directly.
 - `@activity` decorator overwriting injected kwargs with default values as `None`.
 - Multiple calls to `RuleMixin.rulesets` resulting in duplicate Rulesets.
+- `WebSearchTool` popping off `query` from its parameters.
 
 ## [0.34.3] - 2024-11-13
 
