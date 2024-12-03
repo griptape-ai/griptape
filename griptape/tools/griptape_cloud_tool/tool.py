@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from types import MethodType
 from typing import Any, Callable, Optional
 from urllib.parse import urljoin
@@ -10,8 +11,11 @@ from schema import Literal, Schema
 from schema import Optional as SchemaOptional
 
 from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.configs import Defaults
 from griptape.tools.base_griptape_cloud_tool import BaseGriptapeCloudTool
 from griptape.utils.decorators import activity
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define()
@@ -49,26 +53,31 @@ class GriptapeCloudToolTool(BaseGriptapeCloudTool):
     def _parse_schema(self, schema: dict) -> tuple[str, dict[str, tuple[str, Schema]]]:
         """Parses an openapi schema into a dictionary of activity names and their respective descriptions + schemas."""
         activities = {}
+        name = ""
+        try:
+            name = schema.get("info", {}).get("title")
 
-        name = schema.get("info", {}).get("title")
+            for path, path_info in schema.get("paths", {}).items():
+                if not path.startswith("/activities"):
+                    continue
+                for method, method_info in path_info.items():
+                    if "post" in method.lower():
+                        activity_name = method_info["operationId"]
+                        description = method_info.get("description", "")
 
-        for path, path_info in schema.get("paths", {}).items():
-            if not path.startswith("/activities"):
-                continue
-            for method, method_info in path_info.items():
-                if "post" in method.lower():
-                    activity_name = method_info["operationId"]
-                    description = method_info.get("description", "")
+                        activity_schema = self.__extract_schema_from_ref(
+                            schema,
+                            method_info.get("requestBody", {})
+                            .get("content", {})
+                            .get("application/json", {})
+                            .get("schema", {}),
+                        )
 
-                    activity_schema = self.__extract_schema_from_ref(
-                        schema,
-                        method_info.get("requestBody", {})
-                        .get("content", {})
-                        .get("application/json", {})
-                        .get("schema", {}),
-                    )
+                        activities[activity_name] = (description, activity_schema)
 
-                    activities[activity_name] = (description, activity_schema)
+        except Exception as e:
+            logger.exception("Failed to parse schema for tool %s", self.tool_id)
+            raise RuntimeError(f"Failed to parse schema for tool {self.tool_id}") from e
 
         return name, activities
 
