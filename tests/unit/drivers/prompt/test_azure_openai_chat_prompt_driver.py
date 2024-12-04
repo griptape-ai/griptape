@@ -89,7 +89,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "tools": self.OPENAI_TOOLS,
                 "tool_choice": driver.tool_choice,
-                "parallel_tool_calls": driver.parallel_tool_calls,
             }
             if use_native_tools
             else {},
@@ -129,7 +128,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "tools": self.OPENAI_TOOLS,
                 "tool_choice": driver.tool_choice,
-                "parallel_tool_calls": driver.parallel_tool_calls,
             }
             if use_native_tools
             else {},
