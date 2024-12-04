@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiAssistantDriver` for interacting with OpenAI's Assistant API.
 - `GriptapeCloudToolTool` for running Griptape Cloud hosted Tools.
 - `JsonLoader` for loading and parsing JSON files.
+- `EvalEngine` for evaluating the performance of an LLM's output against a given input.
 
 ### Changed
 
