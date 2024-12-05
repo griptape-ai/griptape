@@ -1,5 +1,6 @@
+from griptape.drivers import LocalStructureRunDriver
 from griptape.structures import Agent, Pipeline, Workflow
-from griptape.tasks import PromptTask
+from griptape.tasks import PromptTask, StructureRunTask
 from griptape.utils import StructureVisualizer
 
 
@@ -10,7 +11,7 @@ class TestStructureVisualizer:
         visualizer = StructureVisualizer(agent)
         result = visualizer.to_url()
 
-        assert result == "https://mermaid.ink/svg/Z3JhcGggVEQ7CgljYzVkYWYyNih0YXNrMSk7"
+        assert result == "https://mermaid.ink/svg/Z3JhcGggVEQ7CglUYXNrMTs="
 
     def test_pipeline(self):
         pipeline = Pipeline(
@@ -27,7 +28,7 @@ class TestStructureVisualizer:
 
         assert (
             result
-            == "https://mermaid.ink/svg/Z3JhcGggVEQ7CgljYzVkYWYyNih0YXNrMSktLT4gYWE1ZGU4N2UodGFzazIpOwoJYWE1ZGU4N2UodGFzazIpLS0+IDUxZmViYjIxKHRhc2szKTsKCTUxZmViYjIxKHRhc2szKS0tPiBhN2JlMzY4Yih0YXNrNCk7CglhN2JlMzY4Yih0YXNrNCk7"
+            == "https://mermaid.ink/svg/Z3JhcGggVEQ7CglUYXNrMS0tPiBUYXNrMjsKCVRhc2syLS0+IFRhc2szOwoJVGFzazMtLT4gVGFzazQ7CglUYXNrNDs="
         )
 
     def test_workflow(self):
@@ -45,5 +46,36 @@ class TestStructureVisualizer:
 
         assert (
             result
-            == "https://mermaid.ink/svg/Z3JhcGggVEQ7CgljYzVkYWYyNih0YXNrMSktLT4gYWE1ZGU4N2UodGFzazIpICYgNTFmZWJiMjEodGFzazMpOwoJYWE1ZGU4N2UodGFzazIpLS0+IGE3YmUzNjhiKHRhc2s0KTsKCTUxZmViYjIxKHRhc2szKS0tPiBhN2JlMzY4Yih0YXNrNCk7CglhN2JlMzY4Yih0YXNrNCk7"
+            == "https://mermaid.ink/svg/Z3JhcGggVEQ7CglUYXNrMS0tPiBUYXNrMiAmIFRhc2szOwoJVGFzazItLT4gVGFzazQ7CglUYXNrMy0tPiBUYXNrNDsKCVRhc2s0Ow=="
         )
+
+    def test_structure_run_task(self):
+        pipeline = Pipeline(
+            tasks=[
+                PromptTask("test1", id="task1"),
+                StructureRunTask(
+                    "test2",
+                    structure_run_driver=LocalStructureRunDriver(
+                        create_structure=lambda: Pipeline(
+                            tasks=[
+                                PromptTask("test2a", id="task2a"),
+                                PromptTask("test2b", id="task2b"),
+                            ],
+                        )
+                    ),
+                    id="task2",
+                ),
+                PromptTask("test3", id="task3"),
+            ],
+        )
+
+        visualizer = StructureVisualizer(pipeline)
+        result = visualizer.to_url()
+
+        assert (
+            result
+            == "https://mermaid.ink/svg/Z3JhcGggVEQ7CglUYXNrMS0tPiBUYXNrMjsKCVRhc2syLS0+IFRhc2szOwoJc3ViZ3JhcGggVGFzazIKCVRhc2syQS0tPiBUYXNrMkI7CglUYXNrMkI7CgllbmQKCVRhc2szOw=="
+        )
+
+    def test_build_node_id(self):
+        assert StructureVisualizer(Pipeline()).build_node_id(PromptTask("test1", id="test1")) == "Test1"

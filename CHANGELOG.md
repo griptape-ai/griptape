@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `OpenAiAssistantDriver` for interacting with OpenAI's Assistant API.
 - `GriptapeCloudToolTool` for running Griptape Cloud hosted Tools.
 - `JsonLoader` for loading and parsing JSON files.
+- `StructureVisualizer.build_node_id` field for customizing the node ID.
 
 ### Changed
 
@@ -84,6 +85,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `TrafilaturaWebScraperDriver` no longer sets `no_ssl` to `True` by default.
 - `AmazonBedrockPromptDriver` not working without setting `max_tokens`.
 - `BaseImageGenerationTask` no longer prevents setting `negative_rulesets` _and_ `negative_rules` at the same time.
+- `StructureVisualizer` now renders `StructureRunTask`s with a `LocalStructureRunDriver`.
+- `StructureVisualizer` to titlecase the node IDs to avoid Mermaid.js reserved keywords.
 
 ### Fixed
 
