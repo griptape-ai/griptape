@@ -324,6 +324,22 @@ This task takes a python function, and authors can elect to return a custom arti
                              Output: "Silent code, loud impact."  
 ```
 
+## Branch Task
+
+By default, a [Workflow](../structures/workflows.md) will only run a Task when all the Tasks it depends on have finished.
+
+You can make use of [BranchTask](../../reference/griptape/tasks/branch_task.md) in order to tell the Workflow not to run all dependent tasks, but instead to pick and choose one or more paths to go down.
+
+The `BranchTask`'s [on_run](../../reference/griptape/tasks/branch_task.md#griptape.tasks.branch_task.BranchTask.on_run) function can return one of three things:
+
+1. An `InfoArtifact` containing the `id` of the Task to run next.
+1. A `ListArtifact` of `InfoArtifact`s containing the `id`s of the Tasks to run next.
+1. An _empty_ `ListArtifact` to indicate that no Tasks should be run next.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/branch_task.py"
+```
+
 ## Image Generation Tasks
 
 To generate an image, use one of the following [Image Generation Tasks](../../reference/griptape/tasks/index.md). All Image Generation Tasks accept an [Image Generation Driver](../drivers/image-generation-drivers.md).
