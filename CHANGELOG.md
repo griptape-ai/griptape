@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `PromptTask.conversation_memory` for setting the Conversation Memory on a Prompt Task.
 - `Structure.conversation_memory_strategy` for setting whether Conversation Memory Runs should be created on a per-Structure or per-Task basis. Default is `per_structure`.
+- `Structure.conversation_memory_strategy` for setting whether Conversation Memory Runs should be created on a per-Structure or per-Task basis. Default is `Structure.ConversationMemoryStrategy.PER_STRUCTURE`.
+- `BranchTask` for selecting which Tasks (if any) to run based on a condition.
+- Support for `BranchTask` in `StructureVisualizer`.
 
 ## [1.0.0] - 2024-12-09
 

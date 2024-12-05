@@ -1,6 +1,8 @@
+from griptape.artifacts import InfoArtifact, ListArtifact
 from griptape.drivers import LocalStructureRunDriver
 from griptape.structures import Agent, Pipeline, Workflow
 from griptape.tasks import PromptTask, StructureRunTask
+from griptape.tasks.branch_task import BranchTask
 from griptape.utils import StructureVisualizer
 
 
@@ -79,3 +81,25 @@ class TestStructureVisualizer:
 
     def test_build_node_id(self):
         assert StructureVisualizer(Pipeline()).build_node_id(PromptTask("test1", id="test1")) == "Test1"
+
+    def test_branch_task(self):
+        def on_run(_: BranchTask) -> ListArtifact[InfoArtifact]:
+            return ListArtifact([])
+
+        workflow = Workflow(
+            tasks=[
+                PromptTask(id="1", child_ids=["branch"]),
+                BranchTask(id="branch", on_run=on_run, child_ids=["2", "3"]),
+                PromptTask(id="2", child_ids=["4"]),
+                PromptTask(id="3", child_ids=["4"]),
+                PromptTask(id="4"),
+            ]
+        )
+
+        visualizer = StructureVisualizer(workflow)
+        result = visualizer.to_url()
+
+        assert (
+            result
+            == "https://mermaid.ink/svg/Z3JhcGggVEQ7CgkxLS0+IEJyYW5jaDsKCUJyYW5jaHsgQnJhbmNoIH0tLi0+IDIgJiAzOwoJMi0tPiA0OwoJMy0tPiA0OwoJNDs="
+        )
