@@ -4,7 +4,8 @@ import logging
 from typing import TYPE_CHECKING, Optional, cast
 
 from attrs import define, field
-from statemachine import State
+from statemachine import Event, State,
+from statemachine.transition_list import TransitionList
 from statemachine import StateMachine as _StateMachine
 from statemachine.factory import StateMachineMetaclass
 
@@ -90,27 +91,27 @@ class StateMachine(Structure):
                 for state_id, state_kwargs in definition["states"].items()
             }
 
-            events = {}
+            events_instances = {}
             for event_name, transitions in definition["events"].items():
-                for transition_data in transitions:
-                    source = states_instances[transition_data["from"]]
-                    target = states_instances[transition_data["to"]]
-
-                    transition = source.to(
-                        target,
+                transition_instances = [
+                    transition["from"].to(
+                        transition["to"],
                         event=event_name,
-                        cond=transition_data.get("cond"),
-                        unless=transition_data.get("unless"),
-                        on=transition_data.get("on"),
-                        internal=transition_data.get("internal"),
+                        cond=transition.get("cond"),
+                        unless=transition.get("unless"),
+                        on=transition.get("on"),
+                        internal=transition.get("internal"),
                     )
+                    for transition in transitions
+                ]
+                event = Event(TransitionList(transition_instances), name=event_name)
 
-                    if event_name in events:
-                        events[event_name] |= transition
-                    else:
-                        events[event_name] = transition
+                if event_name in events_instances:
+                    events_instances[event_name] |= event
+                else:
+                    events_instances[event_name] = event
 
-            attrs_mapper = {**extra_kwargs, **states_instances, **events}
+            attrs_mapper = {**extra_kwargs, **states_instances, **events_instances}
 
             return cast(
                 StateMachine.InnerStateMachine,
@@ -126,6 +127,7 @@ class StateMachine(Structure):
         for task in self.tasks:
             definition["states"][task.id] = task.meta
 
+        print(definition)
         for transitions in self.events.values():
             for transition in transitions:
                 from_task = self.find_task(transition.source)
