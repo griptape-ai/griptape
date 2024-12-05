@@ -1,17 +1,15 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
-from statemachine import Event, State,
-from statemachine.transition_list import TransitionList
-from statemachine import StateMachine as _StateMachine
-from statemachine.factory import StateMachineMetaclass
 
+from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.common import observable
 from griptape.configs import Defaults
 from griptape.structures import Structure
+from griptape.tasks.branch_task import BranchTask
 
 if TYPE_CHECKING:
     from griptape.tasks import BaseTask
@@ -21,122 +19,20 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 @define
 class StateMachine(Structure):
-    state_machine: _StateMachine = field(init=False)
-    events: dict[str, list[StateMachine.Transition]] = field(kw_only=True)
-
     @property
     def input_task(self) -> Optional[BaseTask]:
-        return self.find_task(self.state_machine.current_state.value)
+        return next((task for task in self.tasks if task.meta.get("start", False)), None)
 
     @property
     def output_task(self) -> Optional[BaseTask]:
-        return self.find_task(self.state_machine.current_state.value)
+        return next((task for task in self.tasks if task.meta.get("end", False)), None)
 
-    @define(eq=False)
-    class StateMachineListener:
-        state_machine: StateMachine = field()
-
-        def on_enter_state(self, state: State) -> None:
-            task = self.state_machine.find_task(state.value)
-            logger.debug({"state_id": state.value, "task_id": task.id, "event": "on_enter_state"})
-
-            task.run()
-
-    @define(kw_only=True)
-    class Transition:
-        source: str = field()
-        destination: str = field()
-
-    @define
-    class InnerStateMachine(_StateMachine):
-        def __attrs_pre_init__(self, *args, **kwargs) -> None:
-            super().__init__(*args, **kwargs)
-
-        @classmethod
-        def from_definition(cls, definition: dict, **extra_kwargs) -> StateMachine.InnerStateMachine:
-            """Creates a StateMachine class from a dictionary definition, using the StateMachineMetaclass metaclass.
-
-            It maps the definition to the StateMachineMetaclass parameters and then creates the class.
-
-            Example usage with a traffic light machine:
-
-            >>> machine = BaseMachine.from_definition(
-            ...     "TrafficLightMachine",
-            ...     {
-            ...         "states": {
-            ...             "green": {"initial": True},
-            ...             "yellow": {},
-            ...             "red": {},
-            ...         },
-            ...         "events": {
-            ...             "transitions": [
-            ...                 {"from": "green", "to": "yellow"},
-            ...                 {"from": "yellow", "to": "red"},
-            ...                 {"from": "red", "to": "green"},
-            ...             ]
-            ...         },
-            ...     }
-            ... )
-
-            Args:
-                definition (dict): The definition of the state machine.
-                **extra_kwargs: Extra keyword arguments to pass to the metaclass.
-
-            Returns:
-                StateMachine.InnerStateMachine: The created state machine class.
-
-            """
-            states_instances = {
-                state_id: State(**state_kwargs, value=state_id)
-                for state_id, state_kwargs in definition["states"].items()
-            }
-
-            events_instances = {}
-            for event_name, transitions in definition["events"].items():
-                transition_instances = [
-                    transition["from"].to(
-                        transition["to"],
-                        event=event_name,
-                        cond=transition.get("cond"),
-                        unless=transition.get("unless"),
-                        on=transition.get("on"),
-                        internal=transition.get("internal"),
-                    )
-                    for transition in transitions
-                ]
-                event = Event(TransitionList(transition_instances), name=event_name)
-
-                if event_name in events_instances:
-                    events_instances[event_name] |= event
-                else:
-                    events_instances[event_name] = event
-
-            attrs_mapper = {**extra_kwargs, **states_instances, **events_instances}
-
-            return cast(
-                StateMachine.InnerStateMachine,
-                StateMachineMetaclass(cls.__name__, (cls,), attrs_mapper)(**extra_kwargs),
-            )
+    current_task: BaseTask = field(init=False, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
-        definition = {
-            "states": {},
-            "events": self.events,
-        }
-        for task in self.tasks:
-            definition["states"][task.id] = task.meta
-
-        print(definition)
-        for transitions in self.events.values():
-            for transition in transitions:
-                from_task = self.find_task(transition.source)
-                to_task = self.find_task(transition.destination)
-
-                from_task.add_child(to_task)
-
-        self.state_machine = StateMachine.InnerStateMachine.from_definition(definition)
-        self.state_machine.add_listener(StateMachine.StateMachineListener(self))
+        if self.input_task is not None:
+            self.current_task = self.input_task
 
     def add_task(self, task: BaseTask) -> BaseTask:
         task.preprocess(self)
@@ -144,8 +40,34 @@ class StateMachine(Structure):
 
         return task
 
+    def is_finished(self) -> bool:
+        return self.current_task.meta.get("end", False)
+
+    def context(self, task: BaseTask) -> dict[str, Any]:
+        context = super().context(task)
+
+        context.update(
+            {
+                "task_outputs": self.task_outputs,
+                "parent_outputs": task.parent_outputs,
+                "parents_output_text": task.parents_output_text,
+                "parents": {parent.id: parent for parent in task.parents},
+                "children": {child.id: child for child in task.children},
+            },
+        )
+
+        return context
+
     @observable
     def try_run(self, *args) -> StateMachine:
-        self.state_machine.send(*args)
+        while not self.is_finished():
+            result = self.current_task.run(*args)
+            if isinstance(result, ErrorArtifact) and self.fail_fast:
+                break
+
+            if isinstance(self.current_task, BranchTask):
+                self.current_task = self.find_task(result.value)
+            else:
+                self.current_task = self.current_task.children[0]
 
         return self
