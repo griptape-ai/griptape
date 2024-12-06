@@ -88,6 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseImageGenerationTask` no longer prevents setting `negative_rulesets` _and_ `negative_rules` at the same time.
 - `StructureVisualizer` now renders `StructureRunTask`s with a `LocalStructureRunDriver`.
 - `StructureVisualizer` to titlecase the node IDs to avoid Mermaid.js reserved keywords.
+- `BaseTool` now logs Tool activity exceptions after catching them.
+- `BaseTool` now deep copies activity params.
 
 ### Fixed
 
@@ -99,7 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash when calling `ToolkitTask.run()` directly.
 - `@activity` decorator overwriting injected kwargs with default values as `None`.
 - Multiple calls to `RuleMixin.rulesets` resulting in duplicate Rulesets.
-- `WebSearchTool` popping off `query` from its parameters.
+- `BaseTool` incorrectly checking for empty values.
 
 ## [0.34.3] - 2024-11-13
 

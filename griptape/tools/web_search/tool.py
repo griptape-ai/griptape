@@ -31,7 +31,7 @@ class WebSearchTool(BaseTool):
         },
     )
     def search(self, values: dict) -> ListArtifact | ErrorArtifact:
-        query = values["query"]
+        query = values.pop("query")
 
         try:
             return self.web_search_driver.search(query, **values)
