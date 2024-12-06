@@ -7,7 +7,9 @@ import os
 import re
 import subprocess
 import sys
+import traceback
 from abc import ABC
+from copy import deepcopy
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Callable, Optional
 
@@ -15,8 +17,9 @@ import schema
 from attrs import Attribute, Factory, define, field
 from schema import Literal, Or, Schema
 
-from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact
 from griptape.common import observable
+from griptape.configs import Defaults
 from griptape.mixins.activity_mixin import ActivityMixin
 from griptape.mixins.runnable_mixin import RunnableMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
@@ -25,6 +28,9 @@ if TYPE_CHECKING:
     from griptape.common import ToolAction
     from griptape.memory import TaskMemory
     from griptape.tasks import ActionsSubtask
+
+
+logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
@@ -131,6 +137,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
 
             output = self.after_run(activity, subtask, action, output)
         except Exception as e:
+            logging.error(traceback.format_exc())
             output = ErrorArtifact(str(e), exception=e)
 
         return output
@@ -148,14 +155,17 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         action: ToolAction,
         value: Optional[dict],
     ) -> BaseArtifact:
-        activity_result = activity(value)
+        activity_result = activity(deepcopy(value))
 
         if isinstance(activity_result, BaseArtifact):
             result = activity_result
         else:
             logging.warning("Activity result is not an artifact; converting result to InfoArtifact")
 
-            result = InfoArtifact(activity_result)
+            if activity_result is None:
+                result = InfoArtifact("Tool returned an empty value")
+            else:
+                result = InfoArtifact(activity_result)
 
         return result
 
@@ -168,20 +178,14 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
     ) -> BaseArtifact:
         super().after_run()
 
-        if value:
-            if self.output_memory:
-                output_memories = self.output_memory[getattr(activity, "name")] or []
-                for memory in output_memories:
-                    value = memory.process_output(activity, subtask, value)
+        if self.output_memory:
+            output_memories = self.output_memory[getattr(activity, "name")] or []
+            for memory in output_memories:
+                value = memory.process_output(activity, subtask, value)
 
-                if isinstance(value, BaseArtifact):
-                    return value
-                else:
-                    return TextArtifact(str(value))
-            else:
-                return value
+            return value
         else:
-            return InfoArtifact("Tool returned an empty value")
+            return value
 
     def validate(self) -> bool:
         if not os.path.exists(self.requirements_path):

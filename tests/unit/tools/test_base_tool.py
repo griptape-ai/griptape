@@ -4,11 +4,13 @@ import tempfile
 from unittest.mock import Mock
 
 import pytest
+from attrs import define
 from schema import Or, Schema, SchemaMissingKeyError
 
 from griptape.common import ToolAction
 from griptape.tasks import ActionsSubtask, ToolkitTask
 from griptape.tools import BaseTool
+from griptape.utils.decorators import activity
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_tool_kwargs.tool import MockToolKwargs
 from tests.utils import defaults
@@ -355,3 +357,17 @@ class TestBaseTool:
 
         mock_on_before_run.assert_called_once_with(tool)
         mock_after_run.assert_called_once_with(tool)
+
+    def test_frozen_values(self):
+        values = {"query": "foo"}
+
+        @define
+        class FrozenTool(BaseTool):
+            @activity({"description": "Test description"})
+            def mutate_values(self, values: dict) -> None:
+                values.pop("query")
+
+        tool = FrozenTool()
+
+        tool.run(tool.mutate_values, ActionsSubtask("foo"), ToolAction(input={"values": values}, name="", tag=""))
+        assert "query" in values
