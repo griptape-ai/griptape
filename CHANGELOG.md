@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GriptapeCloudToolTool` for running Griptape Cloud hosted Tools.
 - `JsonLoader` for loading and parsing JSON files.
 - `StructureVisualizer.build_node_id` field for customizing the node ID.
+- Support for Python `3.13`.
 
 ### Changed
 
