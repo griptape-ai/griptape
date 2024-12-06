@@ -29,7 +29,7 @@ from griptape.utils.decorators import lazy_property
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 if TYPE_CHECKING:
-    from ollama import Client
+    from ollama import ChatResponse, Client
 
     from griptape.tokenizers.base_tokenizer import BaseTokenizer
     from griptape.tools import BaseTool
@@ -81,13 +81,10 @@ class OllamaPromptDriver(BasePromptDriver):
         response = self.client.chat(**params)
         logger.debug(response)
 
-        if isinstance(response, dict):
-            return Message(
-                content=self.__to_prompt_stack_message_content(response),
-                role=Message.ASSISTANT_ROLE,
-            )
-        else:
-            raise Exception("invalid model response")
+        return Message(
+            content=self.__to_prompt_stack_message_content(response),
+            role=Message.ASSISTANT_ROLE,
+        )
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
@@ -213,7 +210,7 @@ class OllamaPromptDriver(BasePromptDriver):
             else:
                 return "user"
 
-    def __to_prompt_stack_message_content(self, response: dict) -> list[BaseMessageContent]:
+    def __to_prompt_stack_message_content(self, response: ChatResponse) -> list[BaseMessageContent]:
         content = []
         message = response["message"]
 
