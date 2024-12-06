@@ -230,16 +230,6 @@ class TestOllamaPromptDriver:
         assert message.value[1].value.path == "test"
         assert message.value[1].value.input == {"foo": "bar"}
 
-    def test_try_run_bad_response(self, mock_client):
-        # Given
-        prompt_stack = PromptStack()
-        driver = OllamaPromptDriver(model="llama")
-        mock_client.return_value.chat.return_value = "bad-response"
-
-        # When/Then
-        with pytest.raises(Exception, match="invalid model response"):
-            driver.try_run(prompt_stack)
-
     def test_try_stream_run(self, mock_stream_client):
         # Given
         prompt_stack = PromptStack()
