@@ -29,7 +29,7 @@ class BaseActionsSubtaskEvent(BaseTaskEvent, ABC):
             task_child_ids=task.child_ids,
             task_input=task.input,
             task_output=task.output,
-            subtask_parent_task_id=task.parent_task_id,
+            subtask_parent_task_id=task.origin_task.id,
             subtask_thought=task.thought,
             subtask_actions=task.actions_to_dicts(),
         )

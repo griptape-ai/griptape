@@ -1,9 +1,11 @@
 import contextvars
-import functools
-from typing import Callable
+from typing import Any, Callable
 
 
 def with_contextvars(wrapped: Callable) -> Callable:
     ctx = contextvars.copy_context()
 
-    return functools.partial(ctx.run, wrapped)
+    def wrapper(*args, **kwargs) -> Any:
+        return ctx.run(wrapped, *args, **kwargs)
+
+    return wrapper

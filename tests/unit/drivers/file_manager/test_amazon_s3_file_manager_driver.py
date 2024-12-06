@@ -78,11 +78,6 @@ class TestAmazonS3FileManagerDriver:
 
         return _get_s3_value
 
-    @pytest.mark.parametrize("workdir", ["", ".", "foo", "foo/bar"])
-    def test_validate_workdir(self, workdir, session, bucket):
-        with pytest.raises(ValueError):
-            AmazonS3FileManagerDriver(session=session, bucket=bucket, workdir=workdir)
-
     @pytest.mark.parametrize(
         ("workdir", "path", "expected"),
         [
@@ -265,3 +260,10 @@ class TestAmazonS3FileManagerDriver:
 
         assert isinstance(result, TextArtifact)
         assert result.encoding == "ascii"
+
+    def test_workdir(self, driver):
+        assert driver.workdir == "/"
+        driver.workdir = "/new"
+        assert driver.workdir == "/new"
+        driver.workdir = "new"
+        assert driver.workdir == "/new"

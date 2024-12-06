@@ -358,7 +358,13 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             messages=messages,
             seed=driver.seed,
-            **{"tools": self.OPENAI_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            **{
+                "tools": self.OPENAI_TOOLS,
+                "tool_choice": driver.tool_choice,
+                "parallel_tool_calls": driver.parallel_tool_calls,
+            }
+            if use_native_tools
+            else {},
             foo="bar",
         )
         assert isinstance(message.value[0], TextArtifact)
@@ -461,7 +467,13 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             messages=messages,
             seed=driver.seed,
             stream_options={"include_usage": True},
-            **{"tools": self.OPENAI_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            **{
+                "tools": self.OPENAI_TOOLS,
+                "tool_choice": driver.tool_choice,
+                "parallel_tool_calls": driver.parallel_tool_calls,
+            }
+            if use_native_tools
+            else {},
             foo="bar",
         )
 

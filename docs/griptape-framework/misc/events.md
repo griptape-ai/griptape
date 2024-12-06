@@ -100,6 +100,9 @@ You can also use the [TextChunkEvent](../../reference/griptape/events/text_chunk
 If you want Griptape to handle the chunk events for you, use the [Stream](../../reference/griptape/utils/stream.md) utility to automatically wrap
 [BaseChunkEvent](../../reference/griptape/events/base_chunk_event.md)s in a Python iterator.
 
+The `Stream` utility does not automatically enable streaming on the Drivers that produce `BaseChunkEvent`s.
+Make sure to enable streaming on the Drivers or else `Stream` will yield no iterations.
+
 ```python
 --8<-- "docs/griptape-framework/misc/src/events_4.py"
 ```

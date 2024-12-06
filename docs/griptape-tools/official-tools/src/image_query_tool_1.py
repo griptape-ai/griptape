@@ -1,19 +1,12 @@
-from griptape.drivers import OpenAiImageQueryDriver
-from griptape.engines import ImageQueryEngine
+from griptape.drivers import OpenAiChatPromptDriver
 from griptape.structures import Agent
 from griptape.tools import ImageQueryTool
 
-# Create an Image Query Driver.
-driver = OpenAiImageQueryDriver(model="gpt-4o")
-
-# Create an Image Query Engine configured to use the driver.
-engine = ImageQueryEngine(
-    image_query_driver=driver,
-)
+driver = OpenAiChatPromptDriver(model="gpt-4o")
 
 # Create an Image Query Tool configured to use the engine.
 tool = ImageQueryTool(
-    image_query_engine=engine,
+    prompt_driver=driver,
 )
 
 # Create an agent and provide the tool to it.

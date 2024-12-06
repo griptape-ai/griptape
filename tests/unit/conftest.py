@@ -1,3 +1,6 @@
+import os
+from unittest import mock
+
 import pytest
 
 from tests.mocks.mock_drivers_config import MockDriversConfig
@@ -27,3 +30,13 @@ def mock_config(request):
     Defaults.drivers_config = MockDriversConfig()
 
     yield Defaults
+
+
+@pytest.fixture(autouse=True)
+def _mock_env():
+    # removing env vars on Windows causes requests to error with [Errno 11001]
+    if os.name == "nt":
+        yield
+    else:
+        with mock.patch.dict(os.environ, clear=True):
+            yield

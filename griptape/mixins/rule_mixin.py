@@ -14,7 +14,7 @@ class RuleMixin:
 
     @property
     def rulesets(self) -> list[Ruleset]:
-        rulesets = self._rulesets
+        rulesets = self._rulesets.copy()
 
         if self.rules:
             rulesets.append(Ruleset(name=self.DEFAULT_RULESET_NAME, rules=self.rules))

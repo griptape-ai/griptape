@@ -60,6 +60,13 @@ class PromptStack(SerializableMixin):
     def add_assistant_message(self, artifact: str | BaseArtifact) -> Message:
         return self.add_message(artifact, Message.ASSISTANT_ROLE)
 
+    @classmethod
+    def from_artifact(cls, artifact: BaseArtifact) -> PromptStack:
+        prompt_stack = cls()
+        prompt_stack.add_user_message(artifact)
+
+        return prompt_stack
+
     def __to_message_content(self, artifact: str | BaseArtifact) -> list[BaseMessageContent]:
         if isinstance(artifact, str):
             return [TextMessageContent(TextArtifact(artifact))]

@@ -36,7 +36,7 @@ python session.py "What is my name?" "user-id-123"
 Conversation Memory for a group of users:
 
 ```bash
-python session.py "Hello my name is Zach." "group-id-122"
+python session.py "Hello my name is Zach." "group-id-123"
 python session.py "And I'm Matt" "group-id-123"
 python session.py "And I'm Collin, who all is here?" "group-id-123"
 ```

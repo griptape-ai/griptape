@@ -27,7 +27,7 @@ class TestExtractionTool:
         return ExtractionTool(
             input_memory=[defaults.text_task_memory("TestMemory")],
             extraction_engine=CsvExtractionEngine(
-                prompt_driver=MockPromptDriver(),
+                prompt_driver=MockPromptDriver(mock_output="header\nmock output"),
                 column_names=["test1"],
             ),
         )
@@ -57,11 +57,13 @@ class TestExtractionTool:
             {"values": {"data": {"memory_name": csv_tool.input_memory[0].name, "artifact_namespace": "foo"}}}
         )
 
-        assert len(result.value) == 1
-        assert result.value[0].value == "test1: mock output"
+        assert len(result.value) == 2
+        assert result.value[0].value == "test1"
+        assert result.value[1].value == "mock output"
 
     def test_csv_extract_content(self, csv_tool):
         result = csv_tool.extract({"values": {"data": "foo"}})
 
-        assert len(result.value) == 1
-        assert result.value[0].value == "test1: mock output"
+        assert len(result.value) == 2
+        assert result.value[0].value == "test1"
+        assert result.value[1].value == "mock output"

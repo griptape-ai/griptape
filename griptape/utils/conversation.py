@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 class Conversation:
     memory: Optional[BaseConversationMemory] = field()
 
-    @memory.validator  # pyright: ignore[reportAttributeAccessIssue]
+    @memory.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_memory(self, attribute: Attribute, value: Optional[BaseConversationMemory]) -> None:
         if value is None:
             raise ValueError("Conversation memory must not be None.")
@@ -22,7 +22,7 @@ class Conversation:
 
         lines = []
 
-        for run in self.memory.runs:
+        for run in self.memory.runs if self.memory is not None else []:
             lines.extend((f"Q: {run.input}", f"A: {run.output}"))
 
         if isinstance(self.memory, SummaryConversationMemory):
@@ -35,7 +35,7 @@ class Conversation:
 
         lines = []
 
-        for stack in self.memory.to_prompt_stack().messages:
+        for stack in self.memory.to_prompt_stack().messages if self.memory is not None else []:
             lines.append(f"{stack.role}: {stack.to_text()}")
 
         if isinstance(self.memory, SummaryConversationMemory):

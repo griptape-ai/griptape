@@ -12,4 +12,7 @@ class AudioLoader(BaseFileLoader[AudioArtifact]):
     """Loads audio content into audio artifacts."""
 
     def parse(self, data: bytes) -> AudioArtifact:
-        return AudioArtifact(data, format=filetype.guess(data).extension)
+        filetype_guess = filetype.guess(data)
+        if filetype_guess is None:
+            raise ValueError("Could not determine the file type of the audio data")
+        return AudioArtifact(data, format=filetype_guess.extension)

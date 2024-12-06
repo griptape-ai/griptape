@@ -1,13 +1,16 @@
 from __future__ import annotations
 
-from typing import Callable, Union
+from typing import TYPE_CHECKING, Callable, Union
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
-from griptape.engines import VariationImageGenerationEngine
+from griptape.configs.defaults_config import Defaults
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
+
+if TYPE_CHECKING:
+    from griptape.drivers import BaseImageGenerationDriver
 
 
 @define
@@ -21,15 +24,15 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
     - Callable that returns a tuple of (TextArtifact, ImageArtifact).
 
     Attributes:
-        image_generation_engine: The engine used to generate the image.
+        image_generation_driver: The engine used to generate the image.
         negative_rulesets: List of negatively-weighted rulesets applied to the text prompt, if supported by the driver.
         negative_rules: List of negatively-weighted rules applied to the text prompt, if supported by the driver.
         output_dir: If provided, the generated image will be written to disk in output_dir.
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    image_generation_engine: VariationImageGenerationEngine = field(
-        default=Factory(lambda: VariationImageGenerationEngine()),
+    image_generation_driver: BaseImageGenerationDriver = field(
+        default=Factory(lambda: Defaults.drivers_config.image_generation_driver),
         kw_only=True,
     )
     _input: Union[tuple[Union[str, TextArtifact], ImageArtifact], Callable[[BaseTask], ListArtifact], ListArtifact] = (
@@ -63,11 +66,10 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
         if not isinstance(image_artifact, ImageArtifact):
             raise ValueError("Image must be an ImageArtifact.")
 
-        output_image_artifact = self.image_generation_engine.run(
-            prompts=[prompt_artifact.to_text()],
+        output_image_artifact = self.image_generation_driver.run_image_variation(
+            prompts=self._get_prompts(prompt_artifact.to_text()),
+            negative_prompts=self._get_negative_prompts(),
             image=image_artifact,
-            rulesets=self.rulesets,
-            negative_rulesets=self.negative_rulesets,
         )
 
         if self.output_dir or self.output_file:

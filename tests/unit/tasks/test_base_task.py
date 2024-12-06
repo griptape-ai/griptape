@@ -207,3 +207,21 @@ class TestBaseTask:
         task.structure._execution_args = ("foo", "bar")
 
         assert task.full_context == {"args": ("foo", "bar"), "structure": task.structure}
+
+    def test_is_pending(self, task):
+        task.state = task.State.PENDING
+        assert task.is_pending()
+
+    def test_is_running(self, task):
+        task.state = task.State.RUNNING
+        assert task.is_running()
+
+    def test_is_finished(self, task):
+        task.state = task.State.FINISHED
+        assert task.is_finished()
+
+    def test___str__(self, task):
+        task.output = TextArtifact("foobar")
+        assert str(task) == "foobar"
+        task.output = None
+        assert str(task) == ""

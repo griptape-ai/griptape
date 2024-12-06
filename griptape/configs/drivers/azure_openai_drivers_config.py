@@ -9,7 +9,6 @@ from griptape.drivers import (
     AzureOpenAiChatPromptDriver,
     AzureOpenAiEmbeddingDriver,
     AzureOpenAiImageGenerationDriver,
-    AzureOpenAiImageQueryDriver,
     AzureOpenAiTextToSpeechDriver,
     LocalVectorStoreDriver,
 )
@@ -27,7 +26,6 @@ class AzureOpenAiDriversConfig(DriversConfig):
         api_key: An optional Azure API key.
         prompt_driver: An Azure OpenAI Chat Prompt Driver.
         image_generation_driver: An Azure OpenAI Image Generation Driver.
-        image_query_driver: An Azure OpenAI Vision Image Query Driver.
         embedding_driver: An Azure OpenAI Embedding Driver.
         vector_store_driver: A Local Vector Store Driver.
     """
@@ -70,16 +68,6 @@ class AzureOpenAiDriversConfig(DriversConfig):
             azure_ad_token=self.azure_ad_token,
             azure_ad_token_provider=self.azure_ad_token_provider,
             image_size="512x512",
-        )
-
-    @lazy_property()
-    def image_query_driver(self) -> AzureOpenAiImageQueryDriver:
-        return AzureOpenAiImageQueryDriver(
-            model="gpt-4o",
-            azure_endpoint=self.azure_endpoint,
-            api_key=self.api_key,
-            azure_ad_token=self.azure_ad_token,
-            azure_ad_token_provider=self.azure_ad_token_provider,
         )
 
     @lazy_property()

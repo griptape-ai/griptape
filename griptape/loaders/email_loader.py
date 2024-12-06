@@ -41,7 +41,7 @@ class EmailLoader(BaseLoader["EmailLoader.EmailQuery", list[bytes], ListArtifact
 
             mailbox = client.select(f'"{label}"', readonly=True)
             if mailbox[0] != "OK":
-                raise Exception(mailbox[1][0].decode())
+                raise Exception(mailbox[1][0].decode())  # pyright: ignore[reportOptionalMemberAccess] Unsure what mailbox[1][0] is, so leaving as-is
 
             if key and search_criteria:
                 _typ, [message_numbers] = client.search(None, key, f'"{search_criteria}"')

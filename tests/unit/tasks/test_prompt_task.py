@@ -4,6 +4,7 @@ from griptape.artifacts.text_artifact import TextArtifact
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.structure.run import Run
 from griptape.rules import Rule
+from griptape.rules.ruleset import Ruleset
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -169,3 +170,22 @@ class TestPromptTask:
         assert task.prompt_stack.messages[1].to_text() == "output"
         assert task.prompt_stack.messages[2].is_user()
         assert task.prompt_stack.messages[2].to_text() == "test value"
+
+    def test_rulesets(self):
+        pipeline = Pipeline(
+            rulesets=[Ruleset("Pipeline Ruleset")],
+            rules=[Rule("Pipeline Rule")],
+        )
+        task = PromptTask(rulesets=[Ruleset("Task Ruleset")], rules=[Rule("Task Rule")])
+
+        pipeline.add_task(task)
+
+        assert len(task.rulesets) == 3
+        assert task.rulesets[0].name == "Pipeline Ruleset"
+        assert task.rulesets[1].name == "Task Ruleset"
+        assert task.rulesets[2].name == "Default Ruleset"
+
+        assert len(task.rulesets[0].rules) == 0
+        assert len(task.rulesets[1].rules) == 0
+        assert task.rulesets[2].rules[0].value == "Pipeline Rule"
+        assert task.rulesets[2].rules[1].value == "Task Rule"

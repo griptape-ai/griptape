@@ -60,5 +60,7 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
         # TODO: Add `stream_options` parameter once Azure supports it.
         if "stream_options" in params:
             del params["stream_options"]
-
+        # TODO: Add `parallel_tool_calls` parameter once Azure supports it.
+        if "parallel_tool_calls" in params:
+            del params["parallel_tool_calls"]
         return params

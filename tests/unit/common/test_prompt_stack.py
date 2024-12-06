@@ -108,3 +108,9 @@ class TestPromptStack:
 
         assert prompt_stack.messages[0].role == "assistant"
         assert prompt_stack.messages[0].content[0].artifact.value == "foo"
+
+    def test_from_artifact(self):
+        prompt_stack = PromptStack.from_artifact(TextArtifact("foo"))
+
+        assert prompt_stack.messages[0].role == "user"
+        assert prompt_stack.messages[0].content[0].artifact.value == "foo"

@@ -36,24 +36,30 @@ Tools provide capabilities for LLMs to interact with data and services. Griptape
 
 Drivers facilitate interactions with external resources and services:
 
-- 🗣️ **Prompt Drivers** manage textual interactions with LLMs.
+- 🗣️ **Prompt Drivers** manage textual and image interactions with LLMs.
 - 🔢 **Embedding Drivers** generate vector embeddings from textual inputs.
 - 💾 **Vector Store Drivers** manage the storage and retrieval of embeddings.
 - 🎨 **Image Generation Drivers** create images from text descriptions.
-- 🔎 **Image Query Drivers** query images from text queries.
 - 💼 **SQL Drivers** interact with SQL databases.
 - 🌐 **Web Scraper Drivers** extract information from web pages.
 - 🧠 **Conversation Memory Drivers** manage the storage and retrieval of conversational data.
+- 📡 **Event Listener Drivers** forward framework events to external services.
+- 🏗️ **Structure Run Drivers** execute structures both locally and in the cloud.
+- 🤖 **Assistant Drivers** enable interactions with various "assistant" services.
+- 🗣️ **Text to Speech Drivers** convert text to speech.
+- 🎙️ **Audio Transcription Drivers** convert audio to text.
+- 🔍 **Web Search Drivers** search the web for information.
+- 📈 **Observability Drivers** send trace and event data to observability platforms.
+- 📜 **Ruleset Drivers** load and apply rulesets from external sources.
+- 🗂️ **File Manager Drivers** handle file operations on local and remote storage.
 
 ### 🚂 Engines
 
 Engines wrap Drivers and provide use-case-specific functionality:
 
 - 📊 **RAG Engine** is an abstraction for implementing modular Retrieval Augmented Generation (RAG) pipelines.
-- 🛠️ **Extraction Engines** extract JSON or CSV data from unstructured text.
-- 📝 **Summary Engines** generate summaries from textual content.
-- 🖼️ **Image Generation Engines** generate images from textual descriptions.
-- 🔎 **Image Query Engines** query images based on textual prompts.
+- 🛠️ **Extraction Engine** extracts JSON or CSV data from unstructured text.
+- 📝 **Summary Engine** generates summaries from textual content.
 
 ### 📦 Additional Components
 
@@ -61,7 +67,7 @@ Engines wrap Drivers and provide use-case-specific functionality:
 - 🔄 **Loaders** load data from various sources.
 - 🏺 **Artifacts** allow for passing data of different types between Griptape components.
 - ✂️ **Chunkers** segment texts into manageable pieces for diverse text types.
-- 🔢 **Tokenizers**  count the number of tokens in a text to not exceed LLM token limits.
+- 🔢 **Tokenizers** count the number of tokens in a text to not exceed LLM token limits.
 
 ## Documentation
 
@@ -169,7 +175,7 @@ The important thing to note here is that no matter how big the webpage is it can
 
 In the above example, we set [off_prompt](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md#off-prompt) to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
 
-> \[!IMPORTANT\]\
+> [!IMPORTANT]
 > This example uses Griptape's [ToolkitTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#toolkit-task), which requires a highly capable LLM to function correctly. By default, Griptape uses the [OpenAiChatPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#openai-chat); for another powerful LLM try swapping to the [AnthropicPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#anthropic)!
 > If you're using a less powerful LLM, consider using the [ToolTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#tool-task) instead, as the `ToolkitTask` might not work properly or at all.
 
@@ -177,7 +183,7 @@ In the above example, we set [off_prompt](https://docs.griptape.ai/stable/gripta
 
 ## Versioning
 
-Griptape is in constant development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce features and breaking features, and patch versions (i.e., x.y.Z) for bug fixes.
+Griptape uses [Semantic Versioning](https://semver.org/).
 
 ## Contributing
 
@@ -209,11 +215,12 @@ Run `make check` to run all code checks locally.
 
 6. **Changelog:** If your pull request introduces a notable change, please update the [changelog](https://github.com/griptape-ai/griptape/blob/dev/CHANGELOG.md).
 
-### New Griptape Tools
+### Griptape Extensions
 
-Griptape's extensibility allows anyone to develop and distribute tools independently. With rare exceptions for Tools providing broadly applicable functionality, new Griptape Tools should be managed as their own projects and not submitted to the core framework. Pull requests for new tools (unless addressing an [existing issue](https://github.com/griptape-ai/griptape/issues)) will be closed.
+Griptape's extensibility allows anyone to develop and distribute functionality independently.
+All new integrations, including Tools, Drivers, Tasks, etc., should initially be developed as extensions and then can be upstreamed into Griptape core if discussed and approved.
 
-The [Griptape Tool Template](https://github.com/griptape-ai/tool-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new Tools. In the Template, select **Use this template** then **Create a new repository** to begin a new Tool project.
+The [Griptape Extension Template](https://github.com/griptape-ai/griptape-extension-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new integrations.
 
 ### Dev and Test Dependencies
 

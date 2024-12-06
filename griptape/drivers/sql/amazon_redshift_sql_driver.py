@@ -30,7 +30,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
     def client(self) -> RedshiftDataAPIServiceClient:
         return self.session.client("redshift-data")
 
-    @workgroup_name.validator  # pyright: ignore[reportAttributeAccessIssue]
+    @workgroup_name.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_params(self, _: Attribute, workgroup_name: Optional[str]) -> None:
         if not self.cluster_identifier and not self.workgroup_name:
             raise ValueError("Provide a value for one of `cluster_identifier` or `workgroup_name`")

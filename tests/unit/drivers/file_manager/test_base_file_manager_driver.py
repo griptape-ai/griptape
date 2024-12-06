@@ -7,6 +7,14 @@ from griptape.drivers import BaseFileManagerDriver
 
 
 class MockFileManagerDriver(BaseFileManagerDriver):
+    @property
+    def workdir(self) -> str:
+        return self._workdir
+
+    @workdir.setter
+    def workdir(self, value: str) -> None:
+        self._workdir = value
+
     def try_list_files(self, path: str) -> list[str]:
         return ["foo", "bar"]
 
@@ -36,3 +44,8 @@ class TestBaseFileManagerDriver:
         response = driver.save_artifact("foo", TextArtifact(value="value"))
 
         assert response.value == "Successfully saved artifact at: mock_save_location"
+
+    def test_workir(self, driver):
+        assert driver.workdir == "/"
+        driver.workdir = "/new"
+        assert driver.workdir == "/new"

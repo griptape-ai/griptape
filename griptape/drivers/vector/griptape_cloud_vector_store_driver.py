@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import TYPE_CHECKING, Any, NoReturn, Optional
 from urllib.parse import urljoin
 
@@ -23,9 +24,11 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
         headers: Headers for Griptape Cloud.
     """
 
-    api_key: str = field(kw_only=True, metadata={"serializable": True})
+    base_url: str = field(
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
+    )
+    api_key: str = field(default=Factory(lambda: os.environ["GT_CLOUD_API_KEY"]))
     knowledge_base_id: str = field(kw_only=True, metadata={"serializable": True})
-    base_url: str = field(default="https://cloud.griptape.ai", kw_only=True)
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         kw_only=True,

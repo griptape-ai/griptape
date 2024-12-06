@@ -3,7 +3,7 @@ from __future__ import annotations
 import contextlib
 from abc import ABC
 from concurrent import futures
-from typing import Callable, Optional
+from typing import Callable
 
 from attrs import Factory, define, field
 
@@ -14,7 +14,7 @@ class FuturesExecutorMixin(ABC):
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
     )
 
-    futures_executor: Optional[futures.Executor] = field(
+    futures_executor: futures.Executor = field(
         default=Factory(lambda self: self.create_futures_executor(), takes_self=True)
     )
 
@@ -22,7 +22,7 @@ class FuturesExecutorMixin(ABC):
         executor = self.futures_executor
 
         if executor is not None:
-            self.futures_executor = None
+            self.futures_executor = None  # pyright: ignore[reportAttributeAccessIssue] In practice this is safe, nobody will access this attribute after this point
 
             with contextlib.suppress(Exception):
                 # don't raise exceptions in __del__

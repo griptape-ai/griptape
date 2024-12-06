@@ -29,7 +29,7 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
         ),
         kw_only=True,
     )
-    _tracer: Optional[Tracer] = None
+    _tracer: Tracer = field(init=False)
     _root_span_context_manager: Any = None
 
     def _trace_provider_factory(self) -> TracerProvider:

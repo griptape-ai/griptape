@@ -58,7 +58,7 @@ class TestGriptapeCloudObservabilityDriver:
 
     def test_init_raises_when_structure_run_is_none(self):
         with pytest.raises(ValueError, match="structure_run_id must be set"):
-            GriptapeCloudObservabilityDriver(structure_run_id=None)
+            GriptapeCloudObservabilityDriver(structure_run_id=None, api_key="foo")
 
     def test_context_manager_pass(self, driver, mock_span_exporter):
         expected_spans = ExpectedSpans(spans=[ExpectedSpan(name="main", parent=None, status_code=StatusCode.OK)])

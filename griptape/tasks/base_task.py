@@ -26,7 +26,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"], ABC):
     class State(Enum):
         PENDING = 1
-        EXECUTING = 2
+        RUNNING = 2
         FINISHED = 3
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
@@ -88,7 +88,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
             return []
 
     def __str__(self) -> str:
-        return str(self.output.value)
+        return str(self.output.value) if self.output is not None else ""
 
     def add_parents(self, parents: list[BaseTask]) -> None:
         for parent in parents:
@@ -133,8 +133,8 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
     def is_finished(self) -> bool:
         return self.state == BaseTask.State.FINISHED
 
-    def is_executing(self) -> bool:
-        return self.state == BaseTask.State.EXECUTING
+    def is_running(self) -> bool:
+        return self.state == BaseTask.State.RUNNING
 
     def before_run(self) -> None:
         super().before_run()
@@ -151,7 +151,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
 
     def run(self) -> BaseArtifact:
         try:
-            self.state = BaseTask.State.EXECUTING
+            self.state = BaseTask.State.RUNNING
 
             self.before_run()
 

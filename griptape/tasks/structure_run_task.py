@@ -17,13 +17,13 @@ class StructureRunTask(PromptTask):
     """Task to run a Structure.
 
     Attributes:
-        driver: Driver to run the Structure.
+        structure_run_driver: Driver to run the Structure.
     """
 
-    driver: BaseStructureRunDriver = field(kw_only=True)
+    structure_run_driver: BaseStructureRunDriver = field(kw_only=True)
 
     def try_run(self) -> BaseArtifact:
         if isinstance(self.input, ListArtifact):
-            return self.driver.run(*self.input.value)
+            return self.structure_run_driver.run(*self.input.value)
         else:
-            return self.driver.run(self.input)
+            return self.structure_run_driver.run(self.input)

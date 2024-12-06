@@ -12,7 +12,7 @@ from griptape.utils.decorators import activity
 from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
 
 if TYPE_CHECKING:
-    from griptape.engines import OutpaintingImageGenerationEngine
+    from griptape.drivers import BaseImageGenerationDriver
 
 
 @define
@@ -20,12 +20,12 @@ class OutpaintingImageGenerationTool(BaseImageGenerationTool):
     """A tool that can be used to generate prompted outpaintings of an image.
 
     Attributes:
-        engine: The outpainting image generation engine used to generate the image.
+        image_generation_driver: The image generation driver used to generate the image.
         output_dir: If provided, the generated image will be written to disk in output_dir.
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    engine: OutpaintingImageGenerationEngine = field(kw_only=True)
+    image_generation_driver: BaseImageGenerationDriver = field(kw_only=True)
     image_loader: ImageLoader = field(default=ImageLoader(), kw_only=True)
 
     @activity(
@@ -104,7 +104,7 @@ class OutpaintingImageGenerationTool(BaseImageGenerationTool):
     def _generate_outpainting(
         self, prompt: str, negative_prompt: str, image_artifact: ImageArtifact, mask_artifact: ImageArtifact
     ) -> ImageArtifact | ErrorArtifact:
-        output_artifact = self.engine.run(
+        output_artifact = self.image_generation_driver.run_image_outpainting(
             prompts=[prompt], negative_prompts=[negative_prompt], image=image_artifact, mask=mask_artifact
         )
 

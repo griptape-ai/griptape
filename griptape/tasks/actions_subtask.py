@@ -29,7 +29,6 @@ class ActionsSubtask(BaseTask):
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
 
-    parent_task_id: Optional[str] = field(default=None, kw_only=True)
     thought: Optional[str] = field(default=None, kw_only=True)
     actions: list[ToolAction] = field(factory=list, kw_only=True)
     output: Optional[BaseArtifact] = field(default=None, init=False)
@@ -38,6 +37,7 @@ class ActionsSubtask(BaseTask):
         alias="input",
     )
     _memory: Optional[TaskMemory] = None
+    _origin_task: Optional[BaseTask] = field(default=None, kw_only=True)
 
     @property
     def input(self) -> TextArtifact | ListArtifact:
@@ -49,10 +49,10 @@ class ActionsSubtask(BaseTask):
 
     @property
     def origin_task(self) -> BaseTask:
-        if self.parent_task_id:
-            return self.structure.find_task(self.parent_task_id)
+        if self._origin_task is not None:
+            return self._origin_task
         else:
-            raise Exception("ActionSubtask has no parent task.")
+            raise Exception("ActionSubtask has no origin task.")
 
     @property
     def parents(self) -> list[BaseTask]:
@@ -79,7 +79,7 @@ class ActionsSubtask(BaseTask):
         return parent
 
     def attach_to(self, parent_task: BaseTask) -> None:
-        self.parent_task_id = parent_task.id
+        self._origin_task = parent_task
         self.structure = parent_task.structure
 
         try:
@@ -100,7 +100,7 @@ class ActionsSubtask(BaseTask):
                 task_child_ids=self.child_ids,
                 task_input=self.input,
                 task_output=self.output,
-                subtask_parent_task_id=self.parent_task_id,
+                subtask_parent_task_id=self.origin_task.id,
                 subtask_thought=self.thought,
                 subtask_actions=self.actions_to_dicts(),
             ),
@@ -165,7 +165,7 @@ class ActionsSubtask(BaseTask):
                 task_child_ids=self.child_ids,
                 task_input=self.input,
                 task_output=self.output,
-                subtask_parent_task_id=self.parent_task_id,
+                subtask_parent_task_id=self.origin_task.id,
                 subtask_thought=self.thought,
                 subtask_actions=self.actions_to_dicts(),
             ),
@@ -306,25 +306,25 @@ class ActionsSubtask(BaseTask):
 
         action = ToolAction(tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool)
 
-        if action.tool and action.input:
-            self.__validate_action(action)
+        self.__validate_action(action)
 
         return action
 
     def __validate_action(self, action: ToolAction) -> None:
         try:
-            if action.path is not None:
-                activity = getattr(action.tool, action.path)
-            else:
-                raise Exception("ToolAction path not found.")
+            if action.tool is not None:
+                if action.path is not None:
+                    activity = getattr(action.tool, action.path)
+                else:
+                    raise Exception("ToolAction path not found.")
 
-            if activity is not None:
-                activity_schema = action.tool.activity_schema(activity)
-            else:
-                raise Exception("Activity not found.")
+                if activity is not None:
+                    activity_schema = action.tool.activity_schema(activity)
+                else:
+                    raise Exception("Activity not found.")
 
-            if activity_schema:
-                activity_schema.validate(action.input)
+                if activity_schema is not None and action.input is not None:
+                    activity_schema.validate(action.input)
         except schema.SchemaError as e:
             logger.exception("Subtask %s\nInvalid action JSON: %s", self.origin_task.id, e)
 

@@ -73,6 +73,8 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
 
     @property
     def output(self) -> BaseArtifact:
+        if self.output_task is None:
+            raise ValueError("Structure has no output Task. Add a Task to the Structure to generate output.")
         if self.output_task.output is None:
             raise ValueError("Structure's output Task has no output. Run the Structure to generate output.")
         return self.output_task.output
@@ -88,8 +90,8 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     def is_finished(self) -> bool:
         return all(s.is_finished() for s in self.tasks)
 
-    def is_executing(self) -> bool:
-        return any(s for s in self.tasks if s.is_executing())
+    def is_running(self) -> bool:
+        return any(s for s in self.tasks if s.is_running())
 
     def find_task(self, task_id: str) -> BaseTask:
         if (task := self.try_find_task(task_id)) is not None:
@@ -145,32 +147,39 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
 
         [task.reset() for task in self.tasks]
 
-        EventBus.publish_event(
-            StartStructureRunEvent(
-                structure_id=self.id,
-                input_task_input=self.input_task.input,
-                input_task_output=self.input_task.output,
-            ),
-        )
+        if self.input_task is not None:
+            EventBus.publish_event(
+                StartStructureRunEvent(
+                    structure_id=self.id,
+                    input_task_input=self.input_task.input,
+                    input_task_output=self.input_task.output,
+                ),
+            )
 
         self.resolve_relationships()
 
     @observable
     def after_run(self) -> None:
         super().after_run()
-        if self.conversation_memory and self.output_task.output is not None:
-            run = Run(input=self.input_task.input, output=self.output_task.output)
 
-            self.conversation_memory.add_run(run)
+        if self.output_task is not None:
+            if (
+                self.conversation_memory is not None
+                and self.input_task is not None
+                and self.output_task.output is not None
+            ):
+                run = Run(input=self.input_task.input, output=self.output_task.output)
 
-        EventBus.publish_event(
-            FinishStructureRunEvent(
-                structure_id=self.id,
-                output_task_input=self.output_task.input,
-                output_task_output=self.output_task.output,
-            ),
-            flush=True,
-        )
+                self.conversation_memory.add_run(run)
+
+            EventBus.publish_event(
+                FinishStructureRunEvent(
+                    structure_id=self.id,
+                    output_task_input=self.output_task.input,
+                    output_task_output=self.output_task.output,
+                ),
+                flush=True,
+            )
 
     @abstractmethod
     def add_task(self, task: BaseTask) -> BaseTask: ...

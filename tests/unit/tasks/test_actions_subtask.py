@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from griptape.artifacts import ActionArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.common import ToolAction
@@ -240,3 +242,18 @@ class TestActionsSubtask:
         assert isinstance(subtask.output, ListArtifact)
         assert isinstance(subtask.output.value[0], ErrorArtifact)
         assert subtask.output.value[0].value == "error value"
+
+    def test_origin_task(self):
+        valid_input = (
+            "Thought: need to test\n"
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]'
+        )
+
+        task = ToolkitTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
+
+        assert subtask.origin_task == task
+
+        with pytest.raises(Exception, match="ActionSubtask has no origin task."):
+            assert ActionsSubtask("test").origin_task

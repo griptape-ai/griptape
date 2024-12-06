@@ -39,6 +39,7 @@ class TestBasePromptDriver:
 
     def test_run(self):
         assert isinstance(MockPromptDriver().run(PromptStack(messages=[])), Message)
+        assert isinstance(MockPromptDriver().run(TextArtifact("")), Message)
 
     def test_run_with_stream(self):
         result = MockPromptDriver(stream=True).run(PromptStack(messages=[]))

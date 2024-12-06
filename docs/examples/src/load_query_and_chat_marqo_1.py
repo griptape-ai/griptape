@@ -1,6 +1,5 @@
 import os
 
-from griptape import utils
 from griptape.chunkers import TextChunker
 from griptape.drivers import MarqoVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
@@ -38,5 +37,4 @@ vector_store.upsert_text_artifacts(
 # Initialize the agent
 agent = Agent(tools=[vector_store_tool])
 
-# Start the chat
-utils.Chat(agent).start()
+agent.run("What is the Griptape Framework?")

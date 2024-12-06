@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import base64
-import hashlib
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from attrs import define, field
 
@@ -17,6 +16,7 @@ class StructureVisualizer:
 
     structure: Structure = field()
     header: str = field(default="graph TD;", kw_only=True)
+    build_node_id: Callable[[BaseTask], str] = field(default=lambda task: task.id.title(), kw_only=True)
 
     def to_url(self) -> str:
         """Generates a url that renders the Workflow structure as a Mermaid flowchart.
@@ -28,7 +28,7 @@ class StructureVisualizer:
         """
         self.structure.resolve_relationships()
 
-        tasks = "\n\t" + "\n\t".join([self.__render_task(task) for task in self.structure.tasks])
+        tasks = self.__render_tasks(self.structure.tasks)
         graph = f"{self.header}{tasks}"
 
         graph_bytes = graph.encode("utf-8")
@@ -36,12 +36,23 @@ class StructureVisualizer:
 
         return f"https://mermaid.ink/svg/{base64_string}"
 
-    def __render_task(self, task: BaseTask) -> str:
-        if task.children:
-            children = " & ".join([f"{self.__get_id(child.id)}({child.id})" for child in task.children])
-            return f"{self.__get_id(task.id)}({task.id})--> {children};"
-        else:
-            return f"{self.__get_id(task.id)}({task.id});"
+    def __render_tasks(self, tasks: list[BaseTask]) -> str:
+        return "\n\t" + "\n\t".join([self.__render_task(task) for task in tasks])
 
-    def __get_id(self, string: str) -> str:
-        return hashlib.md5(string.encode()).hexdigest()[:8]
+    def __render_task(self, task: BaseTask) -> str:
+        from griptape.drivers import LocalStructureRunDriver
+        from griptape.tasks import StructureRunTask
+
+        parts = []
+        if task.children:
+            children = " & ".join([f"{self.build_node_id(child)}" for child in task.children])
+            parts.append(f"{self.build_node_id(task)}--> {children};")
+        else:
+            parts.append(f"{self.build_node_id(task)};")
+
+        if isinstance(task, StructureRunTask) and isinstance(task.structure_run_driver, LocalStructureRunDriver):
+            sub_structure = task.structure_run_driver.create_structure()
+            sub_tasks = self.__render_tasks(sub_structure.tasks)
+            parts.append(f"subgraph {self.build_node_id(task)}{sub_tasks}\n\tend")
+
+        return "\n\t".join(parts)

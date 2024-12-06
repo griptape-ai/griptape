@@ -43,9 +43,10 @@ class TestQdrantVectorStoreDriver:
         mock_deletion_response = MagicMock()
         mock_deletion_response.status = import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED
 
-        with patch.object(driver.client, "delete", return_value=mock_deletion_response) as mock_delete, patch(
-            "griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency"
-        ) as mock_import:
+        with (
+            patch.object(driver.client, "delete", return_value=mock_deletion_response) as mock_delete,
+            patch("griptape.drivers.vector.qdrant_vector_store_driver.import_optional_dependency") as mock_import,
+        ):
             mock_import.return_value.PointIdsList.return_value = MagicMock()
             mock_import.return_value.UpdateStatus = import_optional_dependency("qdrant_client.http.models").UpdateStatus
 
@@ -63,9 +64,10 @@ class TestQdrantVectorStoreDriver:
             )
         ]
 
-        with patch.object(
-            driver.embedding_driver, "embed_string", return_value=[0.1, 0.2, 0.3]
-        ) as mock_embed, patch.object(driver.client, "search", return_value=mock_query_result) as mock_search:
+        with (
+            patch.object(driver.embedding_driver, "embed_string", return_value=[0.1, 0.2, 0.3]) as mock_embed,
+            patch.object(driver.client, "search", return_value=mock_query_result) as mock_search,
+        ):
             query = "test"
             count = 10
             include_vectors = True

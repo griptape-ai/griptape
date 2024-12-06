@@ -7,7 +7,6 @@ from griptape.drivers import (
     OpenAiChatPromptDriver,
     OpenAiEmbeddingDriver,
     OpenAiImageGenerationDriver,
-    OpenAiImageQueryDriver,
     OpenAiTextToSpeechDriver,
 )
 from griptape.utils.decorators import lazy_property
@@ -22,10 +21,6 @@ class OpenAiDriversConfig(DriversConfig):
     @lazy_property()
     def image_generation_driver(self) -> OpenAiImageGenerationDriver:
         return OpenAiImageGenerationDriver(model="dall-e-2", image_size="512x512")
-
-    @lazy_property()
-    def image_query_driver(self) -> OpenAiImageQueryDriver:
-        return OpenAiImageQueryDriver(model="gpt-4o")
 
     @lazy_property()
     def embedding_driver(self) -> OpenAiEmbeddingDriver:

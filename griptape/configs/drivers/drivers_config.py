@@ -9,7 +9,6 @@ from griptape.drivers import (
     DummyAudioTranscriptionDriver,
     DummyEmbeddingDriver,
     DummyImageGenerationDriver,
-    DummyImageQueryDriver,
     DummyPromptDriver,
     DummyTextToSpeechDriver,
     DummyVectorStoreDriver,
@@ -24,7 +23,6 @@ if TYPE_CHECKING:
         BaseConversationMemoryDriver,
         BaseEmbeddingDriver,
         BaseImageGenerationDriver,
-        BaseImageQueryDriver,
         BasePromptDriver,
         BaseRulesetDriver,
         BaseTextToSpeechDriver,
@@ -41,10 +39,6 @@ class DriversConfig(BaseDriversConfig):
     @lazy_property()
     def image_generation_driver(self) -> BaseImageGenerationDriver:
         return DummyImageGenerationDriver()
-
-    @lazy_property()
-    def image_query_driver(self) -> BaseImageQueryDriver:
-        return DummyImageQueryDriver()
 
     @lazy_property()
     def embedding_driver(self) -> BaseEmbeddingDriver:

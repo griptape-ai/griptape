@@ -32,7 +32,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
     _engine: sqlalchemy.Engine = field(default=None, kw_only=True, alias="engine", metadata={"serializable": False})
 
-    @connection_string.validator  # pyright: ignore[reportAttributeAccessIssue]
+    @connection_string.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_connection_string(self, _: Attribute, connection_string: Optional[str]) -> None:
         # If an engine is provided, the connection string is not used.
         if self._engine is not None:

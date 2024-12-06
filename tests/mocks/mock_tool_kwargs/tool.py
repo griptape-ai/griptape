@@ -13,7 +13,9 @@ class MockToolKwargs(BaseTool):
             "schema": Schema({Literal("test_kwarg"): str}, description="Test input"),
         }
     )
-    def test_with_kwargs(self, params: dict, test_kwarg: str, test_kwarg_none: None, **kwargs) -> str:
+    def test_with_kwargs(
+        self, params: dict, test_kwarg: str, test_kwarg_none: None, default_str_param: str = "default", **kwargs
+    ) -> str:
         if test_kwarg_none is not None:
             raise ValueError("test_kwarg_none should be None")
         if "test_kwarg_kwargs" not in kwargs:
@@ -22,4 +24,6 @@ class MockToolKwargs(BaseTool):
             raise ValueError("values not in params")
         if "test_kwarg" not in params["values"]:
             raise ValueError("test_kwarg not in params")
+        if default_str_param != "default":
+            raise ValueError("default_str_param not default")
         return f"ack {test_kwarg}"

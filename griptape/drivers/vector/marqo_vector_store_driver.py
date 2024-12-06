@@ -190,7 +190,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         """
         params = {
             "limit": count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
-            "attributes_to_retrieve": ["*"] if include_metadata else ["_id"],
+            "attributes_to_retrieve": None if include_metadata else ["_id"],
             "filter_string": f"namespace:{namespace}" if namespace else None,
         } | kwargs
 

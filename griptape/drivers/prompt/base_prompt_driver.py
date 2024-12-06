@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
+from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.common import (
     ActionCallDeltaMessageContent,
     ActionCallMessageContent,
@@ -71,7 +72,12 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         )
 
     @observable(tags=["PromptDriver.run()"])
-    def run(self, prompt_stack: PromptStack) -> Message:
+    def run(self, prompt_input: PromptStack | BaseArtifact) -> Message:
+        if isinstance(prompt_input, BaseArtifact):
+            prompt_stack = PromptStack.from_artifact(prompt_input)
+        else:
+            prompt_stack = prompt_input
+
         for attempt in self.retrying():
             with attempt:
                 self.before_run(prompt_stack)
@@ -85,7 +91,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             raise Exception("prompt driver failed after all retry attempts")
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
-        """Converts a Prompt Stack to a string for token counting or model input.
+        """Converts a Prompt Stack to a string for token counting or model prompt_input.
 
         This base implementation is only a rough approximation, and should be overridden by subclasses with model-specific tokens.
 

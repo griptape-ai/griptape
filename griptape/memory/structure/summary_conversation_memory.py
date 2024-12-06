@@ -67,7 +67,7 @@ class SummaryConversationMemory(BaseConversationMemory):
             if len(runs) > 0:
                 summary = self.summarize_conversation_get_template.render(summary=previous_summary, runs=runs)
                 return self.prompt_driver.run(
-                    prompt_stack=PromptStack(messages=[Message(summary, role=Message.USER_ROLE)]),
+                    PromptStack(messages=[Message(summary, role=Message.USER_ROLE)]),
                 ).to_text()
             else:
                 return previous_summary

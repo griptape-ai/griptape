@@ -7,10 +7,8 @@ from attrs import Factory, define, field
 from griptape.configs.drivers import DriversConfig
 from griptape.drivers import (
     AmazonBedrockImageGenerationDriver,
-    AmazonBedrockImageQueryDriver,
     AmazonBedrockPromptDriver,
     AmazonBedrockTitanEmbeddingDriver,
-    BedrockClaudeImageQueryModelDriver,
     BedrockTitanImageGenerationModelDriver,
     LocalVectorStoreDriver,
 )
@@ -43,14 +41,6 @@ class AmazonBedrockDriversConfig(DriversConfig):
             session=self.session,
             model="amazon.titan-image-generator-v1",
             image_generation_model_driver=BedrockTitanImageGenerationModelDriver(),
-        )
-
-    @lazy_property()
-    def image_query_driver(self) -> AmazonBedrockImageQueryDriver:
-        return AmazonBedrockImageQueryDriver(
-            session=self.session,
-            model="anthropic.claude-3-5-sonnet-20240620-v1:0",
-            image_query_model_driver=BedrockClaudeImageQueryModelDriver(),
         )
 
     @lazy_property()

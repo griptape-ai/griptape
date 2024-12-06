@@ -3,7 +3,7 @@ from collections.abc import Iterator
 
 import pytest
 
-from griptape.structures import Agent, Pipeline
+from griptape.structures import Agent
 from griptape.utils import Stream
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -18,9 +18,8 @@ class TestStream:
         return Agent(stream=request.param, tools=[MockTool()], prompt_driver=driver)
 
     def test_init(self, agent):
+        chat_stream = Stream(agent)
         if agent.stream:
-            chat_stream = Stream(agent)
-
             assert chat_stream.structure == agent
             chat_stream_run = chat_stream.run()
             assert isinstance(chat_stream_run, Iterator)
@@ -32,11 +31,6 @@ class TestStream:
             with pytest.raises(StopIteration):
                 next(chat_stream_run)
         else:
-            with pytest.raises(ValueError):
-                Stream(agent)
-
-    def test_validate_structure_invalid(self):
-        pipeline = Pipeline(tasks=[])
-
-        with pytest.raises(ValueError):
-            Stream(pipeline)
+            next(chat_stream.run())
+            with pytest.raises(StopIteration):
+                next(chat_stream.run())

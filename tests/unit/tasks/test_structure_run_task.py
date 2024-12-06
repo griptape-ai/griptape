@@ -12,7 +12,7 @@ class TestStructureRunTask:
         pipeline = Pipeline()
         driver = LocalStructureRunDriver(create_structure=lambda: agent)
 
-        task = StructureRunTask(driver=driver)
+        task = StructureRunTask(structure_run_driver=driver)
 
         pipeline.add_task(task)
 
@@ -25,7 +25,7 @@ class TestStructureRunTask:
         pipeline = Pipeline()
         driver = LocalStructureRunDriver(create_structure=lambda: agent)
 
-        task = StructureRunTask(input=["foo", "bar", "baz"], driver=driver)
+        task = StructureRunTask(input=["foo", "bar", "baz"], structure_run_driver=driver)
 
         pipeline.add_task(task)
 
