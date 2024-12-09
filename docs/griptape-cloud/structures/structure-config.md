@@ -4,6 +4,8 @@ Structure repositories require a configuration file which informs Griptape Cloud
 
 ## Structure Config File Schema
 
+All relative paths are based off of the directory in which the `structure_config.yaml` file is located.
+
 The schema for the configuration file is as follows:
 
 ```yaml
