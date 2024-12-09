@@ -24,9 +24,9 @@ class ElevenLabsTextToSpeechDriver(BaseTextToSpeechDriver):
     def client(self) -> ElevenLabs:
         return import_optional_dependency("elevenlabs.client").ElevenLabs(api_key=self.api_key)
 
-    def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
+    def try_text_to_audio(self, prompt: str) -> AudioArtifact:
         audio = self.client.generate(
-            text=". ".join(prompts),
+            text=prompt,
             voice=self.voice,
             model=self.model,
             output_format=self.output_format,

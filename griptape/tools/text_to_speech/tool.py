@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 from schema import Literal, Schema
@@ -32,10 +32,8 @@ class TextToSpeechTool(ArtifactFileOutputMixin, BaseTool):
             "schema": Schema({Literal("text", description="The literal text to be converted to speech."): str}),
         },
     )
-    def text_to_speech(self, params: dict[str, Any]) -> AudioArtifact | ErrorArtifact:
-        text = params["values"]["text"]
-
-        output_artifact = self.text_to_speech_driver.run_text_to_audio(prompts=[text])
+    def text_to_speech(self, text: str) -> AudioArtifact | ErrorArtifact:
+        output_artifact = self.text_to_speech_driver.run_text_to_audio(prompt=text)
 
         if self.output_dir or self.output_file:
             self._write_to_file(output_artifact)

@@ -15,5 +15,5 @@ if TYPE_CHECKING:
 class DummyTextToSpeechDriver(BaseTextToSpeechDriver):
     model: None = field(init=False, default=None, kw_only=True)
 
-    def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
+    def try_text_to_audio(self, prompt: str) -> AudioArtifact:
         raise DummyError(__class__.__name__, "try_text_to_audio")
