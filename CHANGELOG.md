@@ -88,6 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseImageGenerationTask` no longer prevents setting `negative_rulesets` _and_ `negative_rules` at the same time.
 - `StructureVisualizer` now renders `StructureRunTask`s with a `LocalStructureRunDriver`.
 - `StructureVisualizer` to titlecase the node IDs to avoid Mermaid.js reserved keywords.
+- Updated Tokenizer model-to-max tokens lookup logic for more flexible matching.
 
 ### Fixed
 

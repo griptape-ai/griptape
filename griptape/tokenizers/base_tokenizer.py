@@ -46,7 +46,14 @@ class BaseTokenizer(ABC):
     def count_tokens(self, text: str) -> int: ...
 
     def _default_max_input_tokens(self) -> int:
-        tokens = next((v for k, v in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items() if self.model.startswith(k)), None)
+        tokens = next(
+            (
+                max_tokens
+                for model_prefix, max_tokens in self.MODEL_PREFIXES_TO_MAX_INPUT_TOKENS.items()
+                if model_prefix in self.model
+            ),
+            None,
+        )
 
         if tokens is None:
             logging.warning(
@@ -60,7 +67,11 @@ class BaseTokenizer(ABC):
 
     def _default_max_output_tokens(self) -> int:
         tokens = next(
-            (v for k, v in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items() if self.model.startswith(k)),
+            (
+                max_tokens
+                for model_prefix, max_tokens in self.MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS.items()
+                if model_prefix in self.model
+            ),
             None,
         )
 
