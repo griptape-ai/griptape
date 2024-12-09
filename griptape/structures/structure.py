@@ -142,10 +142,11 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
 
     @observable
     def before_run(self, args: Any) -> None:
-        super().before_run(args)
         self._execution_args = args
 
         [task.reset() for task in self.tasks]
+
+        super().before_run(args)
 
         if self.input_task is not None:
             EventBus.publish_event(
