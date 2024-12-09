@@ -1,5 +1,4 @@
 from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
-from griptape.engines import PromptImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tools import PromptImageGenerationTool
 
@@ -12,11 +11,10 @@ driver = AmazonBedrockImageGenerationDriver(
     model="stability.stable-diffusion-xl-v0",
 )
 
-engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(
     tools=[
-        PromptImageGenerationTool(engine=engine),
+        PromptImageGenerationTool(image_generation_driver=driver),
     ]
 )
 

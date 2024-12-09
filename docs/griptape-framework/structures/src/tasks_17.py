@@ -1,7 +1,6 @@
 import os
 
 from griptape.drivers import ElevenLabsTextToSpeechDriver
-from griptape.engines import TextToSpeechEngine
 from griptape.structures import Pipeline
 from griptape.tasks import TextToSpeechTask
 
@@ -12,9 +11,7 @@ driver = ElevenLabsTextToSpeechDriver(
 )
 
 task = TextToSpeechTask(
-    text_to_speech_engine=TextToSpeechEngine(
-        text_to_speech_driver=driver,
-    ),
+    text_to_speech_driver=driver,
 )
 
 Pipeline(tasks=[task]).run("Generate audio from this text: 'Hello, world!'")

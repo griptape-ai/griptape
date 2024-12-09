@@ -28,11 +28,6 @@ class TestAnthropicDriversConfig:
                 "extra_params": {},
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
-            "image_query_driver": {
-                "type": "AnthropicImageQueryDriver",
-                "model": "claude-3-5-sonnet-20240620",
-                "max_tokens": 256,
-            },
             "embedding_driver": {
                 "type": "DummyEmbeddingDriver",
             },

@@ -11,7 +11,7 @@ from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
     from griptape.artifacts import AudioArtifact, ErrorArtifact
-    from griptape.engines import TextToSpeechEngine
+    from griptape.drivers import BaseTextToSpeechDriver
 
 
 @define
@@ -19,12 +19,12 @@ class TextToSpeechTool(ArtifactFileOutputMixin, BaseTool):
     """A tool that can be used to generate speech from input text.
 
     Attributes:
-        engine: The text to audio generation engine used to generate the speech audio.
+        text_to_speech_driver: The text to audio generation driver used to generate the speech audio.
         output_dir: If provided, the generated audio will be written to disk in output_dir.
         output_file: If provided, the generated audio will be written to disk as output_file.
     """
 
-    engine: TextToSpeechEngine = field(kw_only=True)
+    text_to_speech_driver: BaseTextToSpeechDriver = field(kw_only=True)
 
     @activity(
         config={
@@ -35,7 +35,7 @@ class TextToSpeechTool(ArtifactFileOutputMixin, BaseTool):
     def text_to_speech(self, params: dict[str, Any]) -> AudioArtifact | ErrorArtifact:
         text = params["values"]["text"]
 
-        output_artifact = self.engine.run(prompts=[text])
+        output_artifact = self.text_to_speech_driver.run_text_to_audio(prompts=[text])
 
         if self.output_dir or self.output_file:
             self._write_to_file(output_artifact)

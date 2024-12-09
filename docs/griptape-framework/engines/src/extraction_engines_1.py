@@ -8,9 +8,11 @@ csv_engine = CsvExtractionEngine(
 
 # Define some unstructured data
 sample_text = """
-Alice, 28, lives in New York.
-Bob, 35 lives in California.
-Charlie is 40 and lives in Texas.
+Alice, 28, lives in New
+York.
+Bob, 35 lives in California
+Charlie is 40
+Collin is 28 and lives in San Francisco
 """
 
 # Extract CSV rows using the engine

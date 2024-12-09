@@ -31,6 +31,8 @@ class WebSearchTool(BaseTool):
         },
     )
     def search(self, values: dict) -> ListArtifact | ErrorArtifact:
+        # `BaseWebSearchDriver.query` already has a parameter named `query`, so we need to pop it from the values
+        # to avoid passing it twice.
         query = values.pop("query")
 
         try:

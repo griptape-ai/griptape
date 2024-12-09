@@ -28,6 +28,7 @@ class TestAzureOpenAiDriversConfig:
                 "azure_endpoint": "http://localhost:8080",
                 "api_version": "2023-05-15",
                 "organization": None,
+                "parallel_tool_calls": True,
                 "response_format": None,
                 "seed": None,
                 "temperature": 0.1,
@@ -62,17 +63,6 @@ class TestAzureOpenAiDriversConfig:
                 "response_format": "b64_json",
                 "style": None,
                 "type": "AzureOpenAiImageGenerationDriver",
-            },
-            "image_query_driver": {
-                "base_url": None,
-                "image_quality": "auto",
-                "max_tokens": 256,
-                "model": "gpt-4o",
-                "api_version": "2024-02-01",
-                "azure_deployment": "gpt-4o",
-                "azure_endpoint": "http://localhost:8080",
-                "organization": None,
-                "type": "AzureOpenAiImageQueryDriver",
             },
             "vector_store_driver": {
                 "embedding_driver": {

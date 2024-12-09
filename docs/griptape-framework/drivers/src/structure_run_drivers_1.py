@@ -27,13 +27,13 @@ def build_joke_rewriter() -> Agent:
 joke_coordinator = Pipeline(
     tasks=[
         StructureRunTask(
-            driver=LocalStructureRunDriver(
+            structure_run_driver=LocalStructureRunDriver(
                 create_structure=build_joke_teller,
             ),
         ),
         StructureRunTask(
             ("Rewrite this joke: {{ parent_output }}",),
-            driver=LocalStructureRunDriver(
+            structure_run_driver=LocalStructureRunDriver(
                 create_structure=build_joke_rewriter,
             ),
         ),

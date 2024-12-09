@@ -25,3 +25,12 @@ class TestJsonArtifact:
         assert JsonArtifact({"foo": True}).to_text() == json.dumps({"foo": True})
         assert JsonArtifact({"foo": None}).to_text() == json.dumps({"foo": None})
         assert JsonArtifact([{"foo": {"bar": "baz"}}]).to_text() == json.dumps([{"foo": {"bar": "baz"}}])
+
+    def test_to_dict(self):
+        assert JsonArtifact({"foo": "bar"}).to_dict()["value"] == {"foo": "bar"}
+        assert JsonArtifact({"foo": 1}).to_dict()["value"] == {"foo": 1}
+        assert JsonArtifact({"foo": 1.0}).to_dict()["value"] == {"foo": 1.0}
+        assert JsonArtifact({"foo": True}).to_dict()["value"] == {"foo": True}
+        assert JsonArtifact({"foo": None}).to_dict()["value"] == {"foo": None}
+        assert JsonArtifact([{"foo": {"bar": "baz"}}]).to_dict()["value"] == [{"foo": {"bar": "baz"}}]
+        assert JsonArtifact(None).to_dict()["value"] is None

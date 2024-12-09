@@ -1,7 +1,6 @@
 import os
 
 from griptape.drivers import AzureOpenAiImageGenerationDriver
-from griptape.engines import PromptImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tools import PromptImageGenerationTool
 
@@ -12,11 +11,10 @@ driver = AzureOpenAiImageGenerationDriver(
     api_key=os.environ["AZURE_OPENAI_API_KEY_2"],
 )
 
-engine = PromptImageGenerationEngine(image_generation_driver=driver)
 
 agent = Agent(
     tools=[
-        PromptImageGenerationTool(engine=engine),
+        PromptImageGenerationTool(image_generation_driver=driver),
     ]
 )
 

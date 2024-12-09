@@ -43,12 +43,6 @@ class TestAmazonBedrockDriversConfig:
                 "seed": None,
                 "type": "AmazonBedrockImageGenerationDriver",
             },
-            "image_query_driver": {
-                "type": "AmazonBedrockImageQueryDriver",
-                "model": "anthropic.claude-3-5-sonnet-20240620-v1:0",
-                "max_tokens": 256,
-                "image_query_model_driver": {"type": "BedrockClaudeImageQueryModelDriver"},
-            },
             "prompt_driver": {
                 "max_tokens": None,
                 "model": "anthropic.claude-3-5-sonnet-20240620-v1:0",
@@ -103,12 +97,6 @@ class TestAmazonBedrockDriversConfig:
                 "model": "amazon.titan-image-generator-v1",
                 "seed": None,
                 "type": "AmazonBedrockImageGenerationDriver",
-            },
-            "image_query_driver": {
-                "type": "AmazonBedrockImageQueryDriver",
-                "model": "anthropic.claude-3-5-sonnet-20240620-v1:0",
-                "max_tokens": 256,
-                "image_query_model_driver": {"type": "BedrockClaudeImageQueryModelDriver"},
             },
             "prompt_driver": {
                 "max_tokens": None,

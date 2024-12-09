@@ -36,7 +36,7 @@ class PromptTask(RuleMixin, BaseTask):
     @property
     def rulesets(self) -> list:
         default_rules = self.rules
-        rulesets = self._rulesets
+        rulesets = self._rulesets.copy()
 
         if self.structure is not None:
             if self.structure._rulesets:
@@ -92,7 +92,12 @@ class PromptTask(RuleMixin, BaseTask):
     def after_run(self) -> None:
         super().after_run()
 
-        logger.info("%s %s\nOutput: %s", self.__class__.__name__, self.id, self.output.to_text())
+        logger.info(
+            "%s %s\nOutput: %s",
+            self.__class__.__name__,
+            self.id,
+            self.output.to_text() if self.output is not None else "",
+        )
 
     def try_run(self) -> BaseArtifact:
         message = self.prompt_driver.run(self.prompt_stack)

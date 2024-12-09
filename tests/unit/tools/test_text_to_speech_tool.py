@@ -11,29 +11,33 @@ from griptape.tools.text_to_speech.tool import TextToSpeechTool
 
 class TestTextToSpeechTool:
     @pytest.fixture()
-    def text_to_speech_engine(self) -> Mock:
+    def text_to_speech_driver(self) -> Mock:
         return Mock()
 
     @pytest.fixture()
-    def text_to_speech_client(self, text_to_speech_engine) -> TextToSpeechTool:
-        return TextToSpeechTool(engine=text_to_speech_engine)
+    def text_to_speech_client(self, text_to_speech_driver) -> TextToSpeechTool:
+        return TextToSpeechTool(text_to_speech_driver=text_to_speech_driver)
 
-    def test_validate_output_configs(self, text_to_speech_engine) -> None:
+    def test_validate_output_configs(self, text_to_speech_driver) -> None:
         with pytest.raises(ValueError):
-            TextToSpeechTool(engine=text_to_speech_engine, output_dir="test", output_file="test")
+            TextToSpeechTool(text_to_speech_driver=text_to_speech_driver, output_dir="test", output_file="test")
 
     def test_text_to_speech(self, text_to_speech_client) -> None:
-        text_to_speech_client.engine.run.return_value = Mock(value=b"audio data", format="mp3")
+        text_to_speech_client.text_to_speech_driver.run_text_to_audio.return_value = Mock(
+            value=b"audio data", format="mp3"
+        )
 
         audio_artifact = text_to_speech_client.text_to_speech(params={"values": {"text": "say this!"}})
 
         assert audio_artifact
 
-    def test_text_to_speech_with_outfile(self, text_to_speech_engine) -> None:
+    def test_text_to_speech_with_outfile(self, text_to_speech_driver) -> None:
         outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.mp3"
-        text_to_speech_client = TextToSpeechTool(engine=text_to_speech_engine, output_file=outfile)
+        text_to_speech_client = TextToSpeechTool(text_to_speech_driver=text_to_speech_driver, output_file=outfile)
 
-        text_to_speech_client.engine.run.return_value = AudioArtifact(value=b"audio data", format="mp3")  # pyright: ignore[reportFunctionMemberAccess]
+        text_to_speech_client.text_to_speech_driver.run_text_to_audio.return_value = AudioArtifact(  # pyright: ignore[reportFunctionMemberAccess]
+            value=b"audio data", format="mp3"
+        )
 
         audio_artifact = text_to_speech_client.text_to_speech(params={"values": {"text": "say this!"}})
 

@@ -20,6 +20,7 @@ class TestOpenAiDriversConfig:
                 "base_url": None,
                 "model": "gpt-4o",
                 "organization": None,
+                "parallel_tool_calls": True,
                 "response_format": None,
                 "seed": None,
                 "temperature": 0.1,
@@ -49,15 +50,6 @@ class TestOpenAiDriversConfig:
                 "response_format": "b64_json",
                 "style": None,
                 "type": "OpenAiImageGenerationDriver",
-            },
-            "image_query_driver": {
-                "api_version": None,
-                "base_url": None,
-                "image_quality": "auto",
-                "max_tokens": 256,
-                "model": "gpt-4o",
-                "organization": None,
-                "type": "OpenAiImageQueryDriver",
             },
             "vector_store_driver": {
                 "embedding_driver": {

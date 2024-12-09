@@ -1,5 +1,4 @@
 from griptape.drivers import OpenAiImageGenerationDriver
-from griptape.engines import PromptImageGenerationEngine
 from griptape.structures import Agent
 from griptape.tools import PromptImageGenerationTool
 
@@ -7,11 +6,9 @@ driver = OpenAiImageGenerationDriver(
     model="dall-e-2",
 )
 
-engine = PromptImageGenerationEngine(image_generation_driver=driver)
-
 agent = Agent(
     tools=[
-        PromptImageGenerationTool(engine=engine),
+        PromptImageGenerationTool(image_generation_driver=driver),
     ]
 )
 

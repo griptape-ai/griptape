@@ -3,7 +3,6 @@ from griptape.drivers import (
     HuggingFacePipelineImageGenerationDriver,
     StableDiffusion3Img2ImgImageGenerationPipelineDriver,
 )
-from griptape.engines import VariationImageGenerationEngine
 from griptape.loaders import ImageLoader
 from griptape.structures import Pipeline
 from griptape.tasks import VariationImageGenerationTask
@@ -13,15 +12,13 @@ input_image_artifact = ImageLoader().load("tests/resources/mountain.png")
 
 image_variation_task = VariationImageGenerationTask(
     input=(prompt_artifact, input_image_artifact),
-    image_generation_engine=VariationImageGenerationEngine(
-        image_generation_driver=HuggingFacePipelineImageGenerationDriver(
-            model="stabilityai/stable-diffusion-3-medium-diffusers",
-            device="cuda",
-            pipeline_driver=StableDiffusion3Img2ImgImageGenerationPipelineDriver(
-                height=1024,
-                width=1024,
-            ),
-        )
+    image_generation_driver=HuggingFacePipelineImageGenerationDriver(
+        model="stabilityai/stable-diffusion-3-medium-diffusers",
+        device="cuda",
+        pipeline_driver=StableDiffusion3Img2ImgImageGenerationPipelineDriver(
+            height=1024,
+            width=1024,
+        ),
     ),
 )
 

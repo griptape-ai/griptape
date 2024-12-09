@@ -37,7 +37,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def embed_string(self, string: str) -> list[float]:
         for attempt in self.retrying():
             with attempt:
-                if self.tokenizer and self.tokenizer.count_tokens(string) > self.tokenizer.max_input_tokens:
+                if self.tokenizer is not None and self.tokenizer.count_tokens(string) > self.tokenizer.max_input_tokens:
                     return self._embed_long_string(string)
                 else:
                     return self.try_embed_chunk(string)
@@ -53,7 +53,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
         Adapted from: https://github.com/openai/openai-cookbook/blob/683e5f5a71bc7a1b0e5b7a35e087f53cc55fceea/examples/Embedding_long_inputs.ipynb
         """
-        chunks = self.chunker.chunk(string)
+        chunks = self.chunker.chunk(string)  # pyright: ignore[reportOptionalMemberAccess] In practice this is never None
 
         embedding_chunks = []
         length_chunks = []

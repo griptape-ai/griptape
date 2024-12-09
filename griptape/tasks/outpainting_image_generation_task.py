@@ -2,10 +2,9 @@ from __future__ import annotations
 
 from typing import Callable, Union
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.artifacts import ImageArtifact, ListArtifact, TextArtifact
-from griptape.engines import OutpaintingImageGenerationEngine
 from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
@@ -21,17 +20,13 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
     - Callable that returns a tuple of (TextArtifact, ImageArtifact, ImageArtifact).
 
     Attributes:
-        image_generation_engine: The engine used to generate the image.
+        image_generation_driver: The engine used to generate the image.
         negative_rulesets: List of negatively-weighted rulesets applied to the text prompt, if supported by the driver.
         negative_rules: List of negatively-weighted rules applied to the text prompt, if supported by the driver.
         output_dir: If provided, the generated image will be written to disk in output_dir.
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    image_generation_engine: OutpaintingImageGenerationEngine = field(
-        default=Factory(lambda: OutpaintingImageGenerationEngine()),
-        kw_only=True,
-    )
     _input: Union[
         tuple[Union[str, TextArtifact], ImageArtifact, ImageArtifact], Callable[[BaseTask], ListArtifact], ListArtifact
     ] = field(default=None, alias="input")
@@ -70,12 +65,11 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
         if not isinstance(mask_artifact, ImageArtifact):
             raise ValueError("Mask must be an ImageArtifact.")
 
-        output_image_artifact = self.image_generation_engine.run(
-            prompts=[prompt_artifact.to_text()],
+        output_image_artifact = self.image_generation_driver.run_image_outpainting(
+            prompts=self._get_prompts(prompt_artifact.to_text()),
+            negative_prompts=self._get_negative_prompts(),
             image=image_artifact,
             mask=mask_artifact,
-            rulesets=self.rulesets,
-            negative_rulesets=self.negative_rulesets,
         )
 
         if self.output_dir or self.output_file:

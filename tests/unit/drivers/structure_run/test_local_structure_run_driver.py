@@ -11,7 +11,7 @@ class TestLocalStructureRunDriver:
         pipeline = Pipeline()
         driver = LocalStructureRunDriver(create_structure=lambda: Agent())
 
-        task = StructureRunTask(driver=driver)
+        task = StructureRunTask(structure_run_driver=driver)
 
         pipeline.add_task(task)
 
@@ -23,7 +23,7 @@ class TestLocalStructureRunDriver:
         mock_config.drivers_config.prompt_driver = MockPromptDriver(mock_output=lambda _: os.environ["KEY"])
         agent = Agent()
         driver = LocalStructureRunDriver(create_structure=lambda: agent, env={"KEY": "value"})
-        task = StructureRunTask(driver=driver)
+        task = StructureRunTask(structure_run_driver=driver)
 
         pipeline.add_task(task)
 

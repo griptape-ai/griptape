@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import concurrent.futures as futures
+from graphlib import TopologicalSorter
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define
-from graphlib import TopologicalSorter
 
 from griptape.artifacts import ErrorArtifact
 from griptape.common import observable

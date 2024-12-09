@@ -44,7 +44,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
     )
-    api_key: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")))
+    api_key: str = field(default=Factory(lambda: os.environ["GT_CLOUD_API_KEY"]))
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         init=False,
