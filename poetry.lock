@@ -6523,27 +6523,27 @@ telegram = ["requests"]
 
 [[package]]
 name = "trafilatura"
-version = "1.12.2"
-description = "Python package and command-line tool designed to gather text on the Web, includes all necessary discovery and text processing components to perform web crawling, downloads, scraping, and extraction of main texts, metadata and comments."
+version = "2.0.0"
+description = "Python & Command-line tool to gather text and metadata on the Web: Crawling, scraping, extraction, output as CSV, JSON, HTML, MD, TXT, XML."
 optional = true
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 files = [
-    {file = "trafilatura-1.12.2-py3-none-any.whl", hash = "sha256:6df5b666f625c9579a50d7cc715005f450fa75606696aceab73eeda0a76dbe96"},
-    {file = "trafilatura-1.12.2.tar.gz", hash = "sha256:4c9cb1434f7e13ef0b16cb44ee1d44e84523ec7268940b9559c374e7effc9a96"},
+    {file = "trafilatura-2.0.0-py3-none-any.whl", hash = "sha256:77eb5d1e993747f6f20938e1de2d840020719735690c840b9a1024803a4cd51d"},
+    {file = "trafilatura-2.0.0.tar.gz", hash = "sha256:ceb7094a6ecc97e72fea73c7dba36714c5c5b577b6470e4520dca893706d6247"},
 ]
 
 [package.dependencies]
 certifi = "*"
-charset-normalizer = {version = ">=3.2.0", markers = "python_version >= \"3.7\""}
-courlan = ">=1.2.0"
-htmldate = ">=1.8.1"
+charset_normalizer = ">=3.4.0"
+courlan = ">=1.3.2"
+htmldate = ">=1.9.2"
 justext = ">=3.0.1"
-lxml = {version = ">=5.2.2", markers = "platform_system != \"Darwin\" or python_version > \"3.8\""}
-urllib3 = {version = ">=1.26,<3", markers = "python_version >= \"3.7\""}
+lxml = {version = ">=5.3.0", markers = "platform_system != \"Darwin\" or python_version > \"3.8\""}
+urllib3 = ">=1.26,<3"
 
 [package.extras]
-all = ["brotli", "cchardet (>=2.1.7)", "faust-cchardet (>=2.1.19)", "htmldate[speed] (>=1.8.1)", "py3langid (>=0.2.2)", "pycurl (>=7.45.3)", "urllib3[socks]", "zstandard (>=0.20.0)"]
-gui = ["Gooey (>=1.0.1)"]
+all = ["brotli", "cchardet (>=2.1.7)", "faust-cchardet (>=2.1.19)", "htmldate[speed] (>=1.9.2)", "py3langid (>=0.3.0)", "pycurl (>=7.45.3)", "urllib3[socks]", "zstandard (>=0.23.0)"]
+dev = ["flake8", "mypy", "pytest", "pytest-cov", "types-lxml", "types-urllib3"]
 
 [[package]]
 name = "transformers"
@@ -7259,4 +7259,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "8ee926fe419b88d8dbefc513175757eb300cae89a0d92cde515b8c81a69e0a90"
+content-hash = "2e1be0f31d5963ad928e4636df6dc9275e579c3c8d4ba98bcddc1e2712a2edc2"
