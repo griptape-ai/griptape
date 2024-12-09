@@ -89,6 +89,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `StructureVisualizer` now renders `StructureRunTask`s with a `LocalStructureRunDriver`.
 - `StructureVisualizer` to titlecase the node IDs to avoid Mermaid.js reserved keywords.
 - Updated Tokenizer model-to-max tokens lookup logic for more flexible matching.
+- `BaseTool` now logs Tool activity exceptions after catching them.
+- `BaseTool` now deep copies activity params.
 
 ### Fixed
 
@@ -100,7 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Crash when calling `ToolkitTask.run()` directly.
 - `@activity` decorator overwriting injected kwargs with default values as `None`.
 - Multiple calls to `RuleMixin.rulesets` resulting in duplicate Rulesets.
-- `WebSearchTool` popping off `query` from its parameters.
+- `BaseTool` incorrectly checking for empty values.
 
 ## [0.34.3] - 2024-11-13
 
