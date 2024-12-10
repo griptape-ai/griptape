@@ -183,7 +183,7 @@ In the above example, we set [off_prompt](https://docs.griptape.ai/stable/gripta
 
 ## Versioning
 
-Griptape is in constant development and its APIs and documentation are subject to change. Until we stabilize the API and release version 1.0.0, we will use minor versions (i.e., x.Y.z) to introduce features and breaking features, and patch versions (i.e., x.y.Z) for bug fixes.
+Griptape uses [Semantic Versioning](https://semver.org/).
 
 ## Contributing
 
