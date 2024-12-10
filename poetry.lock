@@ -302,17 +302,17 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.35.76"
+version = "1.35.77"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3-1.35.76-py3-none-any.whl", hash = "sha256:69458399f41f57a50770c8974796d96978bcca44915c260319696bb43e47dffd"},
-    {file = "boto3-1.35.76.tar.gz", hash = "sha256:31ddcdb6f15dace2b68f6a0f11bdb58dd3ae79b8a3ccb174ff811ef0bbf938e0"},
+    {file = "boto3-1.35.77-py3-none-any.whl", hash = "sha256:a09871805f8e462349a1c33c23eb413668df0bf68424e61d53518e1a7d883b2f"},
+    {file = "boto3-1.35.77.tar.gz", hash = "sha256:cc819cdbccbc2d0dc185f1dcfe74cf3809489c4cae63c2e5d6a557aa0c5ab928"},
 ]
 
 [package.dependencies]
-botocore = ">=1.35.76,<1.36.0"
+botocore = ">=1.35.77,<1.36.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.10.0,<0.11.0"
 
@@ -756,13 +756,13 @@ xray = ["mypy-boto3-xray (>=1.35.0,<1.36.0)"]
 
 [[package]]
 name = "botocore"
-version = "1.35.76"
+version = "1.35.77"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore-1.35.76-py3-none-any.whl", hash = "sha256:b4729d12d00267b3185628f83543917b6caae292385230ab464067621aa086af"},
-    {file = "botocore-1.35.76.tar.gz", hash = "sha256:a75a42ae53395796b8300c5fefb2d65a8696dc40dc85e49cf3a769e0c0202b13"},
+    {file = "botocore-1.35.77-py3-none-any.whl", hash = "sha256:3faa27d65841499762228902d7e215fa99a4c2fdc76c9113e1c3f339bdf685b8"},
+    {file = "botocore-1.35.77.tar.gz", hash = "sha256:17b778016644e9342ca3ff2f430c1d1db0c6126e9b41a57cff52ac58e7a455e0"},
 ]
 
 [package.dependencies]
@@ -1394,13 +1394,13 @@ lxml = ["lxml (>=5.2.2)"]
 
 [[package]]
 name = "elevenlabs"
-version = "1.13.3"
+version = "1.13.4"
 description = ""
 optional = true
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "elevenlabs-1.13.3-py3-none-any.whl", hash = "sha256:4cbda2d86aa0b8d54b9b359ce3bf0d2b3e0c38769a156cfba32a7980525e4384"},
-    {file = "elevenlabs-1.13.3.tar.gz", hash = "sha256:6ccb79c233578f778e1e45761ab9a3538c079d236eebf1c00716d510e4a2c9fa"},
+    {file = "elevenlabs-1.13.4-py3-none-any.whl", hash = "sha256:fda0a9ac99325f1718ef704c5326ee864b7c9a6a8b1821049524e50faef36428"},
+    {file = "elevenlabs-1.13.4.tar.gz", hash = "sha256:ba26bcde6ff656fea4ae16b843765b7af060156514fd174d0dee262a01367436"},
 ]
 
 [package.dependencies]
