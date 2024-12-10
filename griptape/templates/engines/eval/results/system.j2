@@ -5,14 +5,6 @@ Given the evaluation steps, return a JSON with two keys:
 Evaluation Steps:
 {{ evaluation_steps }}
 
-{{ text }}
+{{ evaluation_text }}
 
-**
-IMPORTANT: Please make sure to only return in JSON format, with the "score" and "reason" key. No words or explanation is needed.
-
-Example JSON:
-{
-    "score": 0,
-    "reason": "The text does not follow the evaluation steps provided."
-}
-**
+{{ json_schema_rule }}

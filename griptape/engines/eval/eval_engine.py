@@ -2,29 +2,37 @@ from __future__ import annotations
 
 import json
 import uuid
-from enum import Enum
 from typing import TYPE_CHECKING, Optional
 
+import schema
 from attrs import Attribute, Factory, define, field, validators
 
 from griptape.common import Message, PromptStack
 from griptape.configs import Defaults
 from griptape.engines import BaseEvalEngine
 from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.rules import JsonSchemaRule
 from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
 
+STEPS_SCHEMA = schema.Schema(
+    {
+        "steps": [str],
+    }
+)
+
+RESULTS_SCHEMA = schema.Schema(
+    {
+        "score": float,
+        "reason": str,
+    }
+)
+
 
 @define(kw_only=True)
 class EvalEngine(BaseEvalEngine, SerializableMixin):
-    class Param(Enum):
-        INPUT = "Input"
-        ACTUAL_OUTPUT = "Actual Output"
-        EXPECTED_OUTPUT = "Expected Output"
-        CONTEXT = "Context"
-
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
     name: str = field(
         default=Factory(lambda self: self.id, takes_self=True),
@@ -33,9 +41,6 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
     criteria: Optional[str] = field(default=None, metadata={"serializable": True})
     evaluation_steps: Optional[list[str]] = field(default=None, metadata={"serializable": True})
     prompt_driver: BasePromptDriver = field(default=Factory(lambda: Defaults.drivers_config.prompt_driver))
-    evaluation_params: list[EvalEngine.Param] = field(
-        default=Factory(lambda: [EvalEngine.Param.INPUT, EvalEngine.Param.ACTUAL_OUTPUT])
-    )
     generate_steps_system_template: J2 = field(default=Factory(lambda: J2("engines/eval/steps/system.j2")))
     generate_steps_user_template: J2 = field(default=Factory(lambda: J2("engines/eval/steps/user.j2")))
     generate_results_system_template: J2 = field(default=Factory(lambda: J2("engines/eval/results/system.j2")))
@@ -67,39 +72,23 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
         if not value:
             raise ValueError("evaluation_steps must not be empty")
 
-    @evaluation_params.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_evaluation_params(self, attribute: Attribute, value: list[EvalEngine.Param]) -> None:
-        if not value:
-            raise ValueError("evaluation_params must not be empty")
+    def evaluate(self, input: str, actual_output: str, **kwargs) -> tuple[float, str]:  # noqa: A002
+        evaluation_params = {
+            key.replace("_", " ").title(): value
+            for key, value in {"input": input, "actual_output": actual_output, **kwargs}.items()
+        }
 
-        if EvalEngine.Param.INPUT not in value:
-            raise ValueError("Input is required in evaluation_params")
-
-        if EvalEngine.Param.ACTUAL_OUTPUT not in value:
-            raise ValueError("Actual Output is required in evaluation_params")
-
-    def __attrs_post_init__(self) -> None:
         if self.evaluation_steps is None:
             with validators.disabled():
-                self.evaluation_steps = self._generate_steps()
+                self.evaluation_steps = self._generate_steps(evaluation_params)
 
-    def evaluate(self, **kwargs) -> tuple[float, str]:
-        if not all(key.upper() in EvalEngine.Param.__members__ for key in kwargs):
-            raise ValueError("All keys in kwargs must be a member of EvalEngine.Param")
+        return self._generate_results(evaluation_params)
 
-        if EvalEngine.Param.INPUT.name.lower() not in kwargs:
-            raise ValueError("Input is required for evaluation")
-        if EvalEngine.Param.ACTUAL_OUTPUT.name.lower() not in kwargs:
-            raise ValueError("Actual Output is required for evaluation")
-
-        text = "\n\n".join(f"{EvalEngine.Param[key.upper()]}: {value}" for key, value in kwargs.items())
-
-        return self._generate_results(text)
-
-    def _generate_steps(self) -> list[str]:
+    def _generate_steps(self, evaluation_params: dict[str, str]) -> list[str]:
         system_prompt = self.generate_steps_system_template.render(
-            parameters=self.__generate_evaluation_params_str(self.evaluation_params),
+            evaluation_params=self.__generate_evaluation_params_text(evaluation_params),
             criteria=self.criteria,
+            json_schema_rule=JsonSchemaRule(STEPS_SCHEMA.json_schema("Output Format")),
         )
         user_prompt = self.generate_steps_user_template.render()
 
@@ -116,11 +105,12 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
 
         return parsed_result["steps"]
 
-    def _generate_results(self, text: str) -> tuple[float, str]:
+    def _generate_results(self, evaluation_params: dict[str, str]) -> tuple[float, str]:
         system_prompt = self.generate_results_system_template.render(
-            parameters=self.__generate_evaluation_params_str(self.evaluation_params),
+            evaluation_params=self.__generate_evaluation_params_text(evaluation_params),
             evaluation_steps=self.evaluation_steps,
-            text=text,
+            evaluation_text=self.__generate_evaluation_text(evaluation_params),
+            json_schema_rule=JsonSchemaRule(RESULTS_SCHEMA.json_schema("Output Format")),
         )
         user_prompt = self.generate_results_user_template.render()
 
@@ -140,5 +130,8 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
 
         return score, reason
 
-    def __generate_evaluation_params_str(self, evaluation_params: list[EvalEngine.Param]) -> str:
-        return ", ".join(param.value for param in evaluation_params)
+    def __generate_evaluation_params_text(self, evaluation_params: dict[str, str]) -> str:
+        return ", ".join(param for param in evaluation_params)
+
+    def __generate_evaluation_text(self, evaluation_params: dict[str, str]) -> str:
+        return "\n\n".join(f"{key}: {value}" for key, value in evaluation_params.items())

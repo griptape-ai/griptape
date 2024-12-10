@@ -11,16 +11,6 @@ Eval Engines require either [criteria](../../reference/griptape/engines/eval/eva
 If `criteria` is set, Griptape will generate `evaluation_steps` for you. This is useful for getting started, but you may want to customize the evaluation steps for more complex evaluations.
 `evaluation_steps` are a list of instructions provided to the LLM to evaluate the input.
 
-Eval Engines also require a list of [evaluation_params](../../reference/griptape/engines/eval/eval_engine.md#griptape.engines.eval.eval_engine.EvalEngine.evaluation_params).
-These parameters must be passed as arguments when running [EvalEngine.evaluate](../../reference/griptape/engines/eval/eval_engine.md#griptape.engines.eval.eval_engine.EvalEngine.evaluate). The available parameters are:
-
-- [EvalEngine.Param.INPUT](../../reference/griptape/engines/eval/eval_engine.md#griptape.engines.eval.eval_engine.EvalEngine.Param.INPUT): The original input to the LLM.
-- [EvalEngine.Param.ACTUAL_OUTPUT](../../reference/griptape/engines/eval/eval_engine.md#griptape.engines.eval.eval_engine.EvalEngine.Param.ACTUAL_OUTPUT): The actual output from the LLM.
-- [EvalEngine.Param.EXPECTED_OUTPUT](../../reference/griptape/engines/eval/eval_engine.md#griptape.engines.eval.eval_engine.EvalEngine.Param.EXPECTED_OUTPUT): The expected output from the LLM.
-- [EvalEngine.Param.CONTEXT](../../reference/griptape/engines/eval/eval_engine.md#griptape.engines.eval.eval_engine.EvalEngine.Param.CONTEXT): Additional context to be included as part of the evaluation.
-
-`INPUT` and `ACTUAL_OUTPUT` are required; all other parameters are optional.
-
 ```python
 --8<-- "docs/griptape-framework/engines/src/eval_engines_1.py"
 ```

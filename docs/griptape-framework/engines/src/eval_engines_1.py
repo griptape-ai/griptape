@@ -4,11 +4,6 @@ from griptape.engines import EvalEngine
 
 engine = EvalEngine(
     criteria="Determine whether the actual output is factually correct based on the expected output.",
-    evaluation_params=[
-        EvalEngine.Param.INPUT,
-        EvalEngine.Param.EXPECTED_OUTPUT,
-        EvalEngine.Param.ACTUAL_OUTPUT,
-    ],
 )
 
 score, reason = engine.evaluate(

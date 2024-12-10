@@ -23,17 +23,8 @@ class TestEvalEngine:
             ),
         )
 
-    def test_generate_evaluation_steps(self):
-        engine = EvalEngine(
-            criteria="foo",
-            prompt_driver=MockPromptDriver(
-                mock_output=json.dumps(
-                    {
-                        "steps": ["mock output"],
-                    }
-                ),
-            ),
-        )
+    def test_generate_evaluation_steps(self, engine):
+        engine.evaluate(input="foo", actual_output="bar")
         assert engine.evaluation_steps == ["mock output"]
 
     def test_validate_criteria(self):
@@ -79,16 +70,6 @@ class TestEvalEngine:
         with pytest.raises(ValueError, match="evaluation_steps must not be empty"):
             assert EvalEngine(evaluation_steps=[])
 
-    def test_validate_evaluation_params(self):
-        with pytest.raises(ValueError, match="evaluation_params must not be empty"):
-            assert EvalEngine(evaluation_steps=["foo"], evaluation_params=[])
-
-        with pytest.raises(ValueError, match="Input is required in evaluation_params"):
-            assert EvalEngine(evaluation_steps=["foo"], evaluation_params=[EvalEngine.Param.EXPECTED_OUTPUT])
-
-        with pytest.raises(ValueError, match="Actual Output is required in evaluation_params"):
-            assert EvalEngine(evaluation_steps=["foo"], evaluation_params=[EvalEngine.Param.INPUT])
-
     def test_evaluate(self):
         engine = EvalEngine(
             evaluation_steps=["foo"],
@@ -109,15 +90,3 @@ class TestEvalEngine:
 
         assert score == 0.0
         assert reason == "mock output"
-
-    def test_evaluate_invalid_param(self, engine):
-        with pytest.raises(ValueError, match="All keys in kwargs must be a member of EvalEngine.Param"):
-            engine.evaluate(foo="bar")
-
-    def test_evaluate_missing_input(self, engine):
-        with pytest.raises(ValueError, match="Input is required for evaluation"):
-            engine.evaluate()
-
-    def test_evaluate_missing_actual_output(self, engine):
-        with pytest.raises(ValueError, match="Actual Output is required for evaluation"):
-            engine.evaluate(input="foo")
