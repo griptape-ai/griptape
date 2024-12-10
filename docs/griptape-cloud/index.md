@@ -10,6 +10,10 @@ Connect to your data with our [Data Sources](data-sources/create-data-source.md)
 
 Have Griptape code? Have existing code with another LLM framework? You can host your Python code using [Structures](structures/create-structure.md) whether it uses the Griptape Framework or not.
 
+## Empower any LLM With Custom Tools
+
+Create custom actions that LLMs can perform with [Tools](tools/create-tool.md). These Tools can be created, shared, and given to any LLM integration.
+
 ## Store Configuration for LLM Agents
 
 [Rules and Rulesets](rules/rulesets.md) enable rapid and collabortive iteration for managing LLM behavior. [Threads and Messages](threads/threads.md) allow for persisted and editable conversation memory across any LLM invocation.
