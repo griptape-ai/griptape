@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Callable, Optional, Union
+from typing import TYPE_CHECKING, Callable, Literal, Optional, Union
 
-from attrs import Factory, define, field
+from attrs import NOTHING, Factory, define, field
 
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
 from griptape.configs import Defaults
+from griptape.memory.structure import Run
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Ruleset
 from griptape.tasks import BaseTask
@@ -15,6 +16,8 @@ from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.drivers import BasePromptDriver
+    from griptape.memory.structure.base_conversation_memory import BaseConversationMemory
+    from griptape.structures import Structure
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -27,6 +30,9 @@ class PromptTask(RuleMixin, BaseTask):
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_generate_system_template, takes_self=True),
         kw_only=True,
+    )
+    conversation_memory: Union[Optional[BaseConversationMemory], Literal[NOTHING]] = field(  # pyright: ignore[reportInvalidTypeForm] TODO: Replace with [NothingType](https://github.com/python-attrs/attrs/pull/1358)
+        default=Factory(lambda: NOTHING), kw_only=True
     )
     _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
@@ -62,7 +68,7 @@ class PromptTask(RuleMixin, BaseTask):
     @property
     def prompt_stack(self) -> PromptStack:
         stack = PromptStack()
-        memory = self.structure.conversation_memory if self.structure is not None else None
+        memory = self.conversation_memory
 
         system_template = self.generate_system_template(self)
         if system_template:
@@ -98,11 +104,32 @@ class PromptTask(RuleMixin, BaseTask):
             self.id,
             self.output.to_text() if self.output is not None else "",
         )
+        structure = self.structure
+        if (
+            structure is not None
+            and structure.conversation_memory_strategy == structure.ConversationMemoryStrategy.PER_TASK
+            and self.conversation_memory is not None
+            and self.output is not None
+        ):
+            run = Run(input=self.input, output=self.output)
+
+            self.conversation_memory.add_run(run)
 
     def try_run(self) -> BaseArtifact:
         message = self.prompt_driver.run(self.prompt_stack)
 
         return message.to_artifact()
+
+    def preprocess(self, structure: Structure) -> BaseTask:
+        super().preprocess(structure)
+
+        if self.conversation_memory is NOTHING:
+            if structure.conversation_memory is not None:
+                self.conversation_memory = structure.conversation_memory
+            else:
+                self.conversation_memory = None
+
+        return self
 
     def _process_task_input(
         self,

@@ -208,6 +208,7 @@ class BaseSchema(Schema):
                 "Sequence": Sequence,
                 "TaskMemory": TaskMemory,
                 "State": BaseTask.State,
+                "ConversationMemoryStrategy": Structure.ConversationMemoryStrategy,
                 "BaseConversationMemory": BaseConversationMemory,
                 "BaseArtifactStorage": BaseArtifactStorage,
                 # Third party modules

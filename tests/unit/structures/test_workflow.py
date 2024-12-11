@@ -1004,6 +1004,7 @@ class TestWorkflow:
                 "meta": workflow.conversation_memory.meta,
                 "max_runs": workflow.conversation_memory.max_runs,
             },
+            "conversation_memory_strategy": str(workflow.conversation_memory_strategy),
             "fail_fast": workflow.fail_fast,
         }
         assert workflow.to_dict() == expected_workflow_dict
