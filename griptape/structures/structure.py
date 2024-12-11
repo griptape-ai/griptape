@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
+from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional, Union
 
 from attrs import Factory, define, field
@@ -23,6 +24,10 @@ if TYPE_CHECKING:
 
 @define
 class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
+    class ConversationMemoryStrategy(Enum):
+        PER_STRUCTURE = 1
+        PER_TASK = 2
+
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
     _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
@@ -31,6 +36,9 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
         metadata={"serializable": True},
+    )
+    conversation_memory_strategy: ConversationMemoryStrategy = field(
+        default=ConversationMemoryStrategy.PER_STRUCTURE, kw_only=True, metadata={"serializable": True}
     )
     task_memory: TaskMemory = field(
         default=Factory(lambda self: TaskMemory(), takes_self=True),
@@ -164,7 +172,8 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
 
         if self.output_task is not None:
             if (
-                self.conversation_memory is not None
+                self.conversation_memory_strategy == self.ConversationMemoryStrategy.PER_STRUCTURE
+                and self.conversation_memory is not None
                 and self.input_task is not None
                 and self.output_task.output is not None
             ):
