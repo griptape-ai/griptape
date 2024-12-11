@@ -22,7 +22,7 @@ Or use them independently:
 You can pass images to the Driver if the model supports it:
 
 ```python
---8<-- "docs/griptape-framework/drivers/src/prompt_driver_images.py"
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_images.py"
 ```
 
 ## Prompt Drivers
