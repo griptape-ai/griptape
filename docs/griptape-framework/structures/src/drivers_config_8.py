@@ -1,18 +1,18 @@
+from pathlib import Path
+
 from griptape.configs import Defaults
-from griptape.configs.drivers import AmazonBedrockDriversConfig
+from griptape.configs.drivers import DriversConfig
 from griptape.structures import Agent
 
-custom_config = AmazonBedrockDriversConfig()
-dict_config = custom_config.to_dict()
-# Use OpenAi for embeddings
-dict_config["embedding_driver"] = {
-    "base_url": None,
-    "model": "text-embedding-3-small",
-    "organization": None,
-    "type": "OpenAiEmbeddingDriver",
-}
-custom_config = AmazonBedrockDriversConfig.from_dict(dict_config)
+config_file = "config.json"
 
-Defaults.drivers_config = custom_config
+# Save config
+config_text = Defaults.drivers_config.to_json()
+Path(config_file).write_text(config_text)
+
+# Load config
+config_text = Path(config_file).read_text()
+Defaults.drivers_config = DriversConfig.from_json(config_text)
+
 
 agent = Agent()
