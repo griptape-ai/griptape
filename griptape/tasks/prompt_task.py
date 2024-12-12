@@ -107,7 +107,7 @@ class PromptTask(RuleMixin, BaseTask):
         structure = self.structure
         if (
             structure is not None
-            and structure.conversation_memory_strategy == structure.ConversationMemoryStrategy.PER_TASK
+            and structure.conversation_memory_strategy == "per_task"
             and self.conversation_memory is not None
             and self.output is not None
         ):
