@@ -3,8 +3,8 @@ version: ## Bump version and push to release branch.
 	@poetry version $(v)
 	@git add pyproject.toml
 	@git commit -m "Version bump v$$(poetry version -s)"
-	@git push origin release/v$$(poetry version -s)
-
+	@git push origin release/v$$(poetry version -s | sed 's/\.[0-9]*$$//') # Release branches don't have patch versions.
+	
 .PHONY: publish
 publish: ## Push git tag and publish version to PyPI.
 	@git tag v$$(poetry version -s)
