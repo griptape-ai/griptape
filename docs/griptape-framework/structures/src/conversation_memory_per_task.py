@@ -2,7 +2,7 @@ from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
 
 pipeline = Pipeline(
-    conversation_memory_strategy=Pipeline.ConversationMemoryStrategy.PER_TASK,
+    conversation_memory_strategy="per_task",
     tasks=[
         PromptTask("Respond to this request: {{ args[0] }}", id="input"),
         PromptTask("Improve the writing", id="improve"),

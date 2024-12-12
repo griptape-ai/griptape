@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.structures import Agent, Pipeline, Structure
+from griptape.structures import Agent, Pipeline
 from griptape.tasks import PromptTask
 
 
@@ -20,7 +20,7 @@ class TestStructure:
 
     def test_conversation_mode_per_structure(self):
         pipeline = Pipeline(
-            conversation_memory_strategy=Structure.ConversationMemoryStrategy.PER_STRUCTURE,
+            conversation_memory_strategy="per_structure",
             tasks=[PromptTask("1"), PromptTask("2")],
         )
 
@@ -32,7 +32,7 @@ class TestStructure:
 
     def test_conversation_mode_per_task(self):
         pipeline = Pipeline(
-            conversation_memory_strategy=Structure.ConversationMemoryStrategy.PER_TASK,
+            conversation_memory_strategy="per_task",
             tasks=[PromptTask("1"), PromptTask("2")],
         )
 
@@ -46,7 +46,7 @@ class TestStructure:
 
     def test_conversation_mode_per_task_no_memory(self):
         pipeline = Pipeline(
-            conversation_memory_strategy=Structure.ConversationMemoryStrategy.PER_TASK,
+            conversation_memory_strategy="per_task",
             tasks=[PromptTask(conversation_memory=None), PromptTask("2")],
         )
 

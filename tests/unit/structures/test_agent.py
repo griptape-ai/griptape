@@ -279,7 +279,7 @@ class TestAgent:
                 "meta": agent.conversation_memory.meta,
                 "max_runs": agent.conversation_memory.max_runs,
             },
-            "conversation_memory_strategy": str(agent.conversation_memory_strategy),
+            "conversation_memory_strategy": agent.conversation_memory_strategy,
         }
         assert agent.to_dict() == expected_agent_dict
 

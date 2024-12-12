@@ -46,7 +46,7 @@ In this example, the `improve` Task is "forgotten" after the Structure's run is 
 
 #### Per Task
 
-You can change when Conversation Memory Runs are created by modifying [Structure.conversation_memory_strategy](../../reference/griptape/structures/structure.md#griptape.structures.Structure.conversation_memory_strategy) from the default [PER_STRUCTURE](../../reference/griptape/structures/structure.md#griptape.structures.structure.ConversationMemoryStrategy.PER_STRUCTURE) to [PER_TASK](../../reference/griptape/structures/structure.md#griptape.structures.structure.ConversationMemoryStrategy.PER_TASK).
+You can change when Conversation Memory Runs are created by modifying [Structure.conversation_memory_strategy](../../reference/griptape/structures/structure.md#griptape.structures.Structure.conversation_memory_strategy) from the default `per_structure` to `per_task`.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/conversation_memory_per_task.py"

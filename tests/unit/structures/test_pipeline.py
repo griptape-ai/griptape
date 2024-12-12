@@ -436,7 +436,7 @@ class TestPipeline:
                 "meta": pipeline.conversation_memory.meta,
                 "max_runs": pipeline.conversation_memory.max_runs,
             },
-            "conversation_memory_strategy": str(pipeline.conversation_memory_strategy),
+            "conversation_memory_strategy": pipeline.conversation_memory_strategy,
             "fail_fast": pipeline.fail_fast,
         }
         assert pipeline.to_dict() == expected_pipeline_dict
