@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import base64
+import urllib.parse
 from typing import TYPE_CHECKING, Callable
 
 from attrs import define, field
+from requests.models import PreparedRequest
 
 if TYPE_CHECKING:
     from griptape.structures import Structure
@@ -17,6 +19,8 @@ class StructureVisualizer:
     structure: Structure = field()
     header: str = field(default="graph TD;", kw_only=True)
     build_node_id: Callable[[BaseTask], str] = field(default=lambda task: task.id.title(), kw_only=True)
+    query_params: dict[str, str] = field(factory=dict, kw_only=True)
+    base_url: str = field(default="https://mermaid.ink", kw_only=True)
 
     def to_url(self) -> str:
         """Generates a url that renders the Workflow structure as a Mermaid flowchart.
@@ -34,7 +38,14 @@ class StructureVisualizer:
         graph_bytes = graph.encode("utf-8")
         base64_string = base64.b64encode(graph_bytes).decode("utf-8")
 
-        return f"https://mermaid.ink/svg/{base64_string}"
+        url = urllib.parse.urljoin(self.base_url, f"svg/{base64_string}")
+        req = PreparedRequest()
+        req.prepare_url(url, self.query_params)
+
+        if req.url is None:
+            raise ValueError("Failed to generate the URL")
+
+        return req.url
 
     def __render_tasks(self, tasks: list[BaseTask]) -> str:
         return "\n\t" + "\n\t".join([self.__render_task(task) for task in tasks])
