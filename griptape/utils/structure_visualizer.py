@@ -41,12 +41,15 @@ class StructureVisualizer:
 
     def __render_task(self, task: BaseTask) -> str:
         from griptape.drivers import LocalStructureRunDriver
-        from griptape.tasks import StructureRunTask
+        from griptape.tasks import BranchTask, StructureRunTask
 
         parts = []
         if task.children:
             children = " & ".join([f"{self.build_node_id(child)}" for child in task.children])
-            parts.append(f"{self.build_node_id(task)}--> {children};")
+            if isinstance(task, BranchTask):
+                parts.append(f"{self.build_node_id(task)}{{ {self.build_node_id(task)} }}-.-> {children};")
+            else:
+                parts.append(f"{self.build_node_id(task)}--> {children};")
         else:
             parts.append(f"{self.build_node_id(task)};")
 

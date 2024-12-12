@@ -28,6 +28,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
         PENDING = 1
         RUNNING = 2
         FINISHED = 3
+        SKIPPED = 4
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
     state: State = field(default=State.PENDING, kw_only=True, metadata={"serializable": True})
@@ -136,6 +137,9 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
     def is_running(self) -> bool:
         return self.state == BaseTask.State.RUNNING
 
+    def is_skipped(self) -> bool:
+        return self.state == BaseTask.State.SKIPPED
+
     def before_run(self) -> None:
         super().before_run()
         if self.structure is not None:
@@ -181,7 +185,19 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
             )
 
     def can_run(self) -> bool:
-        return self.state == BaseTask.State.PENDING and all(parent.is_finished() for parent in self.parents)
+        # If this Task has been skipped or is not pending, it should not run
+        if self.is_skipped() or not self.is_pending():
+            return False
+
+        # If this Task has parents, and _all_ of them are skipped, it should not run
+        if self.parents and all(parent.is_skipped() for parent in self.parents):
+            self.state = BaseTask.State.SKIPPED
+            return False
+
+        # If _all_ this Task's unskipped parents are finished, it should run
+        unskipped_parents = [parent for parent in self.parents if not parent.is_skipped()]
+
+        return all(parent.is_finished() for parent in unskipped_parents)
 
     def reset(self) -> BaseTask:
         self.state = BaseTask.State.PENDING

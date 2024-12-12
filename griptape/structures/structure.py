@@ -91,7 +91,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         return [s for s in self.tasks if s.is_finished()]
 
     def is_finished(self) -> bool:
-        return all(s.is_finished() for s in self.tasks)
+        return all(not s.can_run() for s in self.tasks)
 
     def is_running(self) -> bool:
         return any(s for s in self.tasks if s.is_running())
