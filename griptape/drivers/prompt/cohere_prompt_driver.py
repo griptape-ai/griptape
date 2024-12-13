@@ -113,6 +113,18 @@ class CoherePromptDriver(BasePromptDriver):
                 if prompt_stack.tools and self.use_native_tools
                 else {}
             ),
+            **(
+                {
+                    "response_format": {
+                        "type": "json_object",
+                        "schema": prompt_stack.output_schema.json_schema("Output"),
+                    }
+                }
+                if not prompt_stack.tools  # Respond format is not supported with tools https://docs.cohere.com/reference/chat#request.body.response_format
+                and prompt_stack.output_schema is not None
+                and self.use_native_structured_output
+                else {}
+            ),
             **self.extra_params,
         }
 

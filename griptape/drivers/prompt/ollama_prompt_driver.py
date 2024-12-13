@@ -68,6 +68,7 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
@@ -79,7 +80,7 @@ class OllamaPromptDriver(BasePromptDriver):
         params = self._base_params(prompt_stack)
         logger.debug(params)
         response = self.client.chat(**params)
-        logger.debug(response)
+        logger.debug(response.model_dump())
 
         return Message(
             content=self.__to_prompt_stack_message_content(response),
@@ -111,6 +112,11 @@ class OllamaPromptDriver(BasePromptDriver):
                 if prompt_stack.tools
                 and self.use_native_tools
                 and not self.stream  # Tool calling is only supported when not streaming
+                else {}
+            ),
+            **(
+                {"format": prompt_stack.output_schema.json_schema("Output")}
+                if prompt_stack.output_schema and self.use_native_structured_output
                 else {}
             ),
             **self.extra_params,

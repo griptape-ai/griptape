@@ -4,6 +4,7 @@ import logging
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import NOTHING, Factory, NothingType, define, field
+from schema import Schema
 
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
@@ -38,6 +39,7 @@ class PromptTask(RuleMixin, BaseTask):
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )
+    output_schema: Optional[Schema] = field(default=None, kw_only=True)
 
     @property
     def rulesets(self) -> list:
@@ -67,7 +69,7 @@ class PromptTask(RuleMixin, BaseTask):
 
     @property
     def prompt_stack(self) -> PromptStack:
-        stack = PromptStack()
+        stack = PromptStack(output_schema=self.output_schema)
         memory = self.conversation_memory
 
         system_template = self.generate_system_template(self)

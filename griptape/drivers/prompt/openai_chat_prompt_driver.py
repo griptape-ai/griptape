@@ -76,6 +76,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     parallel_tool_calls: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
@@ -160,6 +161,20 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
+            **(
+                {
+                    "response_format": {
+                        "type": "json_schema",
+                        "json_schema": {
+                            "name": "Output",
+                            "schema": prompt_stack.output_schema.json_schema("Output"),
+                            "strict": True,
+                        },
+                    }
+                }
+                if prompt_stack.output_schema is not None and self.use_native_structured_output
+                else {}
+            ),
             **self.extra_params,
         }
 
