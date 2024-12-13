@@ -4,9 +4,10 @@ import pytest
 
 from griptape.artifacts import ActionArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
+from griptape.artifacts.json_artifact import JsonArtifact
 from griptape.common import ToolAction
 from griptape.structures import Agent
-from griptape.tasks import ActionsSubtask, PromptTask
+from griptape.tasks import ActionsSubtask, PromptTask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -257,3 +258,68 @@ class TestActionsSubtask:
 
         with pytest.raises(Exception, match="ActionSubtask has no origin task."):
             assert ActionsSubtask("test").origin_task
+
+    def test_structured_output_tool(self):
+        import schema
+
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
+        actions = ListArtifact(
+            [
+                ActionArtifact(
+                    ToolAction(
+                        tag="foo",
+                        name="StructuredOutputTool",
+                        path="provide_output",
+                        input={"values": {"test": "value"}},
+                    )
+                ),
+            ]
+        )
+
+        task = ToolkitTask(tools=[StructuredOutputTool(output_schema=schema.Schema({"test": str}))])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(actions))
+
+        assert isinstance(subtask.output, JsonArtifact)
+        assert subtask.output.value == {"test": "value"}
+
+    def test_structured_output_tool_multiple(self):
+        import schema
+
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
+        actions = ListArtifact(
+            [
+                ActionArtifact(
+                    ToolAction(
+                        tag="foo",
+                        name="StructuredOutputTool1",
+                        path="provide_output",
+                        input={"values": {"test1": "value"}},
+                    )
+                ),
+                ActionArtifact(
+                    ToolAction(
+                        tag="foo",
+                        name="StructuredOutputTool2",
+                        path="provide_output",
+                        input={"values": {"test2": "value"}},
+                    )
+                ),
+            ]
+        )
+
+        task = ToolkitTask(
+            tools=[
+                StructuredOutputTool(name="StructuredOutputTool1", output_schema=schema.Schema({"test": str})),
+                StructuredOutputTool(name="StructuredOutputTool2", output_schema=schema.Schema({"test": str})),
+            ]
+        )
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(actions))
+
+        assert isinstance(subtask.output, ListArtifact)
+        assert len(subtask.output.value) == 2
+        assert subtask.output.value[0].value == {"test1": "value"}
+        assert subtask.output.value[1].value == {"test2": "value"}

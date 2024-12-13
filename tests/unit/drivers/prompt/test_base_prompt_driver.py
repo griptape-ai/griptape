@@ -1,3 +1,5 @@
+import pytest
+
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.common import Message, PromptStack
 from griptape.events import FinishPromptEvent, StartPromptEvent
@@ -65,3 +67,24 @@ class TestBasePromptDriver:
         output = pipeline.run().output_task.output
         assert isinstance(output, TextArtifact)
         assert output.value == "mock output"
+
+    def test__add_structured_output_tool(self):
+        from schema import Schema
+
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
+        mock_prompt_driver = MockPromptDriver()
+
+        prompt_stack = PromptStack()
+
+        with pytest.raises(ValueError, match="PromptStack must have an output schema to use structured output."):
+            mock_prompt_driver._add_structured_output_tool(prompt_stack)
+
+        prompt_stack.output_schema = Schema({"foo": str})
+
+        mock_prompt_driver._add_structured_output_tool(prompt_stack)
+        # Ensure it doesn't get added twice
+        mock_prompt_driver._add_structured_output_tool(prompt_stack)
+        assert len(prompt_stack.tools) == 1
+        assert isinstance(prompt_stack.tools[0], StructuredOutputTool)
+        assert prompt_stack.tools[0].output_schema is prompt_stack.output_schema

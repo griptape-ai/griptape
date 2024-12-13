@@ -151,6 +151,8 @@ class BaseSchema(Schema):
         from collections.abc import Sequence
         from typing import Any
 
+        from schema import Schema
+
         from griptape.artifacts import BaseArtifact
         from griptape.common import (
             BaseDeltaMessageContent,
@@ -215,6 +217,7 @@ class BaseSchema(Schema):
                 "BaseRule": BaseRule,
                 "Ruleset": Ruleset,
                 # Third party modules
+                "Schema": Schema,
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "ClientV2": import_optional_dependency("cohere").ClientV2 if is_dependency_installed("cohere") else Any,
                 "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel
