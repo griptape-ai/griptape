@@ -68,6 +68,7 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
@@ -79,7 +80,7 @@ class OllamaPromptDriver(BasePromptDriver):
         params = self._base_params(prompt_stack)
         logger.debug(params)
         response = self.client.chat(**params)
-        logger.debug(response)
+        logger.debug(response.model_dump())
 
         return Message(
             content=self.__to_prompt_stack_message_content(response),
@@ -102,19 +103,25 @@ class OllamaPromptDriver(BasePromptDriver):
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         messages = self._prompt_stack_to_messages(prompt_stack)
 
-        return {
+        params = {
             "messages": messages,
             "model": self.model,
             "options": self.options,
-            **(
-                {"tools": self.__to_ollama_tools(prompt_stack.tools)}
-                if prompt_stack.tools
-                and self.use_native_tools
-                and not self.stream  # Tool calling is only supported when not streaming
-                else {}
-            ),
             **self.extra_params,
         }
+
+        if prompt_stack.output_schema is not None and self.use_native_structured_output:
+            if self.native_structured_output_strategy == "native":
+                params["format"] = prompt_stack.output_schema.json_schema("Output")
+            elif self.native_structured_output_strategy == "tool":
+                # TODO: Implement tool choice once supported
+                self._add_structured_output_tool(prompt_stack)
+
+        # Tool calling is only supported when not streaming
+        if prompt_stack.tools and self.use_native_tools and not self.stream:
+            params["tools"] = self.__to_ollama_tools(prompt_stack.tools)
+
+        return params
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         ollama_messages = []

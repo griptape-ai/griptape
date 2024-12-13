@@ -25,6 +25,37 @@ You can pass images to the Driver if the model supports it:
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_images.py"
 ```
 
+## Structured Output
+
+Some LLMs provide functionality often referred to as "Structured Output". This means instructing the LLM to output data in a particular format, usually JSON. This can be useful for forcing the LLM to output in a parsable format that can be used by downstream systems.
+
+Structured output can be enabled or disabled for a Prompt Driver by setting the [use_native_structured_output](../../reference/griptape/drivers.md#griptape.drivers.BasePromptDriver.use_native_structured_output).
+
+If `use_native_structured_output=True`, you can change _how_ the output is structured by setting the [native_structured_output_strategy](../../reference/griptape/drivers.md#griptape.drivers.BasePromptDriver.native_structured_output_strategy) to one of:
+
+- `native`: The Driver will use the LLM's structured output functionality provided by the API.
+- `tool`: Griptape will pass a special Tool, [StructuredOutputTool](../../reference/griptape/tools/structured_output_tool.md) and try to force the LLM to use a Tool.
+
+### JSON Schema
+
+The easiest way to get started with structured output is by using a [JsonSchemaRule](../structures/rulesets.md#json-schema). If a [schema.Schema](https://pypi.org/project/schema/) instance is provided to the Rule, Griptape will convert it to a JSON Schema and provide it to the LLM using the selected structured output strategy.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_structured_output.py"
+```
+
+### Multiple Schemas
+
+If multiple `JsonSchemaRule`s are provided, Griptape will merge them into a single JSON Schema using `anyOf`.
+
+Some LLMs may not support `anyOf` as a top-level JSON Schema. To work around this, you can try using another `native_structured_output_strategy`:
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_structured_output_multi.py"
+```
+
+Not every LLM supports `use_native_structured_output` or all `native_structured_output_strategy` options.
+
 ## Prompt Drivers
 
 Griptape offers the following Prompt Drivers for interacting with LLMs.

@@ -76,6 +76,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     parallel_tool_calls: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
@@ -148,20 +149,29 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "temperature": self.temperature,
             "user": self.user,
             "seed": self.seed,
-            **(
-                {
-                    "tools": self.__to_openai_tools(prompt_stack.tools),
-                    "tool_choice": self.tool_choice,
-                    "parallel_tool_calls": self.parallel_tool_calls,
-                }
-                if prompt_stack.tools and self.use_native_tools
-                else {}
-            ),
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
             **self.extra_params,
         }
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["tool_choice"] = self.tool_choice
+            params["parallel_tool_calls"] = self.parallel_tool_calls
+
+        if prompt_stack.output_schema is not None and self.use_native_structured_output:
+            if self.native_structured_output_strategy == "native":
+                params["response_format"] = {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "Output",
+                        "schema": prompt_stack.output_schema.json_schema("Output"),
+                        "strict": True,
+                    },
+                }
+            elif self.native_structured_output_strategy == "tool" and self.use_native_tools:
+                params["tool_choice"] = "required"
+                self._add_structured_output_tool(prompt_stack)
 
         if self.response_format is not None:
             if self.response_format == {"type": "json_object"}:
@@ -170,6 +180,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 prompt_stack.add_system_message("Provide your response as a valid JSON object.")
             else:
                 params["response_format"] = self.response_format
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["tools"] = self.__to_openai_tools(prompt_stack.tools)
 
         messages = self.__to_openai_messages(prompt_stack.messages)
 

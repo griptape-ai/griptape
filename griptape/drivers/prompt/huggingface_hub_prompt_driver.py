@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.common import DeltaMessage, Message, PromptStack, TextDeltaMessageContent, observable
 from griptape.configs import Defaults
@@ -35,6 +35,10 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     api_token: str = field(kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     model: str = field(kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    native_structured_output_strategy: Literal["native", "tool"] = field(
+        default="native", kw_only=True, metadata={"serializable": True}
+    )
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
@@ -51,11 +55,23 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             token=self.api_token,
         )
 
+    @native_structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_native_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
+        if value == "tool":
+            raise ValueError("HuggingFaceHubPromptDriver does not support `tool` structured output mode.")
+
+        return value
+
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         prompt = self.prompt_stack_to_string(prompt_stack)
         full_params = self._base_params(prompt_stack)
-        logger.debug((prompt, full_params))
+        logger.debug(
+            {
+                "prompt": prompt,
+                **full_params,
+            }
+        )
 
         response = self.client.text_generation(
             prompt,
@@ -75,7 +91,12 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
         full_params = {**self._base_params(prompt_stack), "stream": True}
-        logger.debug((prompt, full_params))
+        logger.debug(
+            {
+                "prompt": prompt,
+                **full_params,
+            }
+        )
 
         response = self.client.text_generation(prompt, **full_params)
 
@@ -94,11 +115,25 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        return {
+        params = {
             "return_full_text": False,
             "max_new_tokens": self.max_tokens,
             **self.extra_params,
         }
+
+        if (
+            prompt_stack.output_schema
+            and self.use_native_structured_output
+            and self.native_structured_output_strategy == "native"
+        ):
+            # https://huggingface.co/learn/cookbook/en/structured_generation#-constrained-decoding
+            output_schema = prompt_stack.output_schema.json_schema("Output Schema")
+            # Grammar does not support $schema and $id
+            del output_schema["$schema"]
+            del output_schema["$id"]
+            params["grammar"] = {"type": "json", "value": output_schema}
+
+        return params
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []

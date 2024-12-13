@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 from schema import Schema
 
 from griptape.artifacts import ActionArtifact, TextArtifact
@@ -63,8 +63,19 @@ class GooglePromptDriver(BasePromptDriver):
     top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    native_structured_output_strategy: Literal["native", "tool"] = field(
+        default="tool", kw_only=True, metadata={"serializable": True}
+    )
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
     _client: GenerativeModel = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @native_structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_native_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
+        if value == "native":
+            raise ValueError("GooglePromptDriver does not support `native` structured output mode.")
+
+        return value
 
     @lazy_property()
     def client(self) -> GenerativeModel:
@@ -135,7 +146,7 @@ class GooglePromptDriver(BasePromptDriver):
                 parts=[protos.Part(text=system_message.to_text()) for system_message in system_messages],
             )
 
-        return {
+        params = {
             "generation_config": types.GenerationConfig(
                 **{
                     # For some reason, providing stop sequences when streaming breaks native functions
@@ -148,15 +159,22 @@ class GooglePromptDriver(BasePromptDriver):
                     **self.extra_params,
                 },
             ),
-            **(
-                {
-                    "tools": self.__to_google_tools(prompt_stack.tools),
-                    "tool_config": {"function_calling_config": {"mode": self.tool_choice}},
-                }
-                if prompt_stack.tools and self.use_native_tools
-                else {}
-            ),
         }
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["tool_config"] = {"function_calling_config": {"mode": self.tool_choice}}
+
+            if (
+                prompt_stack.output_schema is not None
+                and self.use_native_structured_output
+                and self.native_structured_output_strategy == "tool"
+            ):
+                params["tool_config"]["function_calling_config"]["mode"] = "auto"
+                self._add_structured_output_tool(prompt_stack)
+
+            params["tools"] = self.__to_google_tools(prompt_stack.tools)
+
+        return params
 
     def __to_google_messages(self, prompt_stack: PromptStack) -> ContentsType:
         types = import_optional_dependency("google.generativeai.types")

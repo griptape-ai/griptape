@@ -53,6 +53,7 @@ class CoherePromptDriver(BasePromptDriver):
     model: str = field(metadata={"serializable": True})
     force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _client: ClientV2 = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
@@ -101,20 +102,30 @@ class CoherePromptDriver(BasePromptDriver):
 
         messages = self.__to_cohere_messages(prompt_stack.messages)
 
-        return {
+        params = {
             "model": self.model,
             "messages": messages,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_tokens,
             **({"tool_results": tool_results} if tool_results else {}),
-            **(
-                {"tools": self.__to_cohere_tools(prompt_stack.tools)}
-                if prompt_stack.tools and self.use_native_tools
-                else {}
-            ),
             **self.extra_params,
         }
+
+        if prompt_stack.output_schema is not None and self.use_native_structured_output:
+            if self.native_structured_output_strategy == "native":
+                params["response_format"] = {
+                    "type": "json_object",
+                    "schema": prompt_stack.output_schema.json_schema("Output"),
+                }
+            elif self.native_structured_output_strategy == "tool":
+                # TODO: Implement tool choice once supported
+                self._add_structured_output_tool(prompt_stack)
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["tools"] = self.__to_cohere_tools(prompt_stack.tools)
+
+        return params
 
     def __to_cohere_messages(self, messages: list[Message]) -> list[dict]:
         cohere_messages = []

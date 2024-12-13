@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import TYPE_CHECKING, Callable, Union
 
 from attrs import define, field
@@ -31,9 +32,20 @@ class MockPromptDriver(BasePromptDriver):
     tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
     mock_input: Union[str, Callable[[], str]] = field(default="mock input", kw_only=True)
     mock_output: Union[str, Callable[[PromptStack], str]] = field(default="mock output", kw_only=True)
+    mock_structured_output: Union[dict, Callable[[PromptStack], dict]] = field(factory=dict, kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
+        if prompt_stack.output_schema and self.use_native_structured_output:
+            if self.native_structured_output_strategy == "native":
+                return Message(
+                    content=[TextMessageContent(TextArtifact(json.dumps(self.mock_structured_output)))],
+                    role=Message.ASSISTANT_ROLE,
+                    usage=Message.Usage(input_tokens=100, output_tokens=100),
+                )
+            elif self.native_structured_output_strategy == "tool":
+                self._add_structured_output_tool(prompt_stack)
+
         if self.use_native_tools and prompt_stack.tools:
             # Hack to simulate CoT. If there are any action messages in the prompt stack, give the answer.
             action_messages = [

@@ -2,24 +2,25 @@ from __future__ import annotations
 
 import json
 import logging
+import warnings
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import NOTHING, Attribute, Factory, NothingType, define, field
+from schema import Or, Schema
 
 from griptape import utils
 from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts.json_artifact import JsonArtifact
 from griptape.common import PromptStack, ToolAction
 from griptape.configs import Defaults
 from griptape.memory.structure import Run
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.mixins.rule_mixin import RuleMixin
-from griptape.rules import Ruleset
+from griptape.rules import JsonSchemaRule, Ruleset
 from griptape.tasks import ActionsSubtask, BaseTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from schema import Schema
-
     from griptape.drivers import BasePromptDriver
     from griptape.memory import TaskMemory
     from griptape.memory.structure.base_conversation_memory import BaseConversationMemory
@@ -92,54 +93,30 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         stack = PromptStack(tools=self.tools)
         memory = self.structure.conversation_memory if self.structure is not None else None
 
-        system_template = self.generate_system_template(self)
-        if system_template:
-            stack.add_system_message(system_template)
+        rulesets = self.rulesets
+        system_artifacts = [TextArtifact(self.generate_system_template(self))]
+        if self.prompt_driver.use_native_structured_output:
+            self._add_native_schema_to_prompt_stack(stack, rulesets)
+
+        # Ensure there is at least one Ruleset that has non-empty `rules`.
+        if any(len(ruleset.rules) for ruleset in rulesets):
+            system_artifacts.append(TextArtifact(J2("rulesets/rulesets.j2").render(rulesets=rulesets)))
+
+        # Ensure there is at least one system Artifact that has a non-empty value.
+        has_system_artifacts = any(system_artifact.value for system_artifact in system_artifacts)
+        if has_system_artifacts:
+            stack.add_system_message(ListArtifact(system_artifacts))
 
         stack.add_user_message(self.input)
 
         if self.output:
             stack.add_assistant_message(self.output.to_text())
         else:
-            for s in self.subtasks:
-                if self.prompt_driver.use_native_tools:
-                    action_calls = [
-                        ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
-                        for action in s.actions
-                    ]
-                    action_results = [
-                        ToolAction(
-                            name=action.name,
-                            path=action.path,
-                            tag=action.tag,
-                            output=action.output if action.output is not None else s.output,
-                        )
-                        for action in s.actions
-                    ]
-
-                    stack.add_assistant_message(
-                        ListArtifact(
-                            [
-                                *([TextArtifact(s.thought)] if s.thought else []),
-                                *[ActionArtifact(a) for a in action_calls],
-                            ],
-                        ),
-                    )
-                    stack.add_user_message(
-                        ListArtifact(
-                            [
-                                *[ActionArtifact(a) for a in action_results],
-                                *([] if s.output else [TextArtifact("Please keep going")]),
-                            ],
-                        ),
-                    )
-                else:
-                    stack.add_assistant_message(self.generate_assistant_subtask_template(s))
-                    stack.add_user_message(self.generate_user_subtask_template(s))
+            self._add_subtasks_to_prompt_stack(stack)
 
         if memory is not None:
             # inserting at index 1 to place memory right after system prompt
-            memory.add_to_prompt_stack(self.prompt_driver, stack, 1 if system_template else 0)
+            memory.add_to_prompt_stack(self.prompt_driver, stack, 1 if has_system_artifacts else 0)
 
         return stack
 
@@ -218,11 +195,17 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
                 else:
                     break
 
-            self.output = subtask.output
+            output = subtask.output
         else:
-            self.output = result.to_artifact()
+            output = result.to_artifact()
 
-        return self.output
+        if (
+            self.prompt_driver.use_native_structured_output
+            and self.prompt_driver.native_structured_output_strategy == "native"
+        ):
+            return JsonArtifact(output.value)
+        else:
+            return output
 
     def preprocess(self, structure: Structure) -> BaseTask:
         super().preprocess(structure)
@@ -243,7 +226,6 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         schema["minItems"] = 1  # The `schema` library doesn't support `minItems` so we must add it manually.
 
         return J2("tasks/prompt_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
             action_names=str.join(", ", [tool.name for tool in self.tools]),
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
@@ -324,3 +306,60 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
         else:
             return self._process_task_input(TextArtifact(task_input))
+
+    def _add_native_schema_to_prompt_stack(self, stack: PromptStack, rulesets: list[Ruleset]) -> None:
+        # Need to separate JsonSchemaRules from other rules, removing them in the process
+        json_schema_rules = [rule for ruleset in rulesets for rule in ruleset.rules if isinstance(rule, JsonSchemaRule)]
+        non_json_schema_rules = [
+            [rule for rule in ruleset.rules if not isinstance(rule, JsonSchemaRule)] for ruleset in rulesets
+        ]
+        for ruleset, non_json_rules in zip(rulesets, non_json_schema_rules):
+            ruleset.rules = non_json_rules
+
+        schemas = [rule.value for rule in json_schema_rules if isinstance(rule.value, Schema)]
+
+        if len(json_schema_rules) != len(schemas):
+            warnings.warn(
+                "Not all provided `JsonSchemaRule`s include a `schema.Schema` instance. These will be ignored with `use_native_structured_output`.",
+                stacklevel=2,
+            )
+
+        if schemas:
+            stack.output_schema = schemas[0] if len(schemas) == 1 else Schema(Or(*schemas))
+
+    def _add_subtasks_to_prompt_stack(self, stack: PromptStack) -> None:
+        for s in self.subtasks:
+            if self.prompt_driver.use_native_tools:
+                action_calls = [
+                    ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
+                    for action in s.actions
+                ]
+                action_results = [
+                    ToolAction(
+                        name=action.name,
+                        path=action.path,
+                        tag=action.tag,
+                        output=action.output if action.output is not None else s.output,
+                    )
+                    for action in s.actions
+                ]
+
+                stack.add_assistant_message(
+                    ListArtifact(
+                        [
+                            *([TextArtifact(s.thought)] if s.thought else []),
+                            *[ActionArtifact(a) for a in action_calls],
+                        ],
+                    ),
+                )
+                stack.add_user_message(
+                    ListArtifact(
+                        [
+                            *[ActionArtifact(a) for a in action_results],
+                            *([] if s.output else [TextArtifact("Please keep going")]),
+                        ],
+                    ),
+                )
+            else:
+                stack.add_assistant_message(self.generate_assistant_subtask_template(s))
+                stack.add_user_message(self.generate_user_subtask_template(s))

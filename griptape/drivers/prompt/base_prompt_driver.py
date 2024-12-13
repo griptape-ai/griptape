@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 from attrs import Factory, define, field
 
@@ -56,6 +56,10 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    native_structured_output_strategy: Literal["native", "tool"] = field(
+        default="native", kw_only=True, metadata={"serializable": True}
+    )
     extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
@@ -121,6 +125,16 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     @abstractmethod
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]: ...
+
+    def _add_structured_output_tool(self, prompt_stack: PromptStack) -> None:
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
+        if prompt_stack.output_schema is None:
+            raise ValueError("PromptStack must have an output schema to use structured output.")
+
+        structured_output_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
+        if structured_output_tool not in prompt_stack.tools:
+            prompt_stack.tools.append(structured_output_tool)
 
     def __process_run(self, prompt_stack: PromptStack) -> Message:
         return self.try_run(prompt_stack)
