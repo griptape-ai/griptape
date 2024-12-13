@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import uuid
 from abc import ABC, abstractmethod
+from copy import deepcopy
 from enum import Enum
 from typing import TYPE_CHECKING, Any, Optional
 
@@ -210,7 +211,8 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
 
     @property
     def full_context(self) -> dict[str, Any]:
-        context = self.context
+        # Need to deep copy so that the serialized context doesn't contain non-serializable data
+        context = deepcopy(self.context)
         if self.structure is not None:
             context.update(self.structure.context(self))
 
