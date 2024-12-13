@@ -276,3 +276,11 @@ class TestAgent:
         task.state = BaseTask.State.RUNNING
 
         assert agent.is_running()
+
+    def test_stream_mutation(self):
+        prompt_driver = MockPromptDriver()
+        agent = Agent(prompt_driver=MockPromptDriver(), stream=True)
+
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].prompt_driver.stream is True
+        assert agent.tasks[0].prompt_driver is not prompt_driver
