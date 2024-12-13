@@ -103,3 +103,22 @@ class TestStructureVisualizer:
             result
             == "https://mermaid.ink/svg/Z3JhcGggVEQ7CgkxLS0+IEJyYW5jaDsKCUJyYW5jaHsgQnJhbmNoIH0tLi0+IDIgJiAzOwoJMi0tPiA0OwoJMy0tPiA0OwoJNDs="
         )
+
+    def test_query_params(self):
+        visualizer = StructureVisualizer(
+            Pipeline(
+                tasks=[
+                    PromptTask("test1", id="task1"),
+                    PromptTask("test2", id="task2", parent_ids=["task1"]),
+                    PromptTask("test3", id="task3", parent_ids=["task1"]),
+                    PromptTask("test4", id="task4", parent_ids=["task2", "task3"]),
+                ],
+            ),
+            query_params={"theme": "dark", "bgColor": "2b2b2b"},
+        )
+        result = visualizer.to_url()
+
+        assert (
+            result
+            == "https://mermaid.ink/svg/Z3JhcGggVEQ7CglUYXNrMS0tPiBUYXNrMiAmIFRhc2szOwoJVGFzazItLT4gVGFzazMgJiBUYXNrNDsKCVRhc2szLS0+IFRhc2s0OwoJVGFzazQ7?theme=dark&bgColor=2b2b2b"
+        )
