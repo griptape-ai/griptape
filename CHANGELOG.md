@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## Fixed
+### Fixed
 
+- Exception when calling `Structure.to_json()` after it has run.
+- `Agent` unintentionally modifying `stream` for all Prompt Drivers.
 - Exception when calling `Structure.to_json()` after it has run.
 
 ## [1.0.0] - 2024-12-09
