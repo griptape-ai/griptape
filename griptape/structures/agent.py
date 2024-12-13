@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
-from attrs import Attribute, Factory, define, field
+from attrs import Attribute, Factory, define, evolve, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import observable
@@ -24,7 +24,10 @@ class Agent(Structure):
     )
     stream: bool = field(default=Factory(lambda: Defaults.drivers_config.prompt_driver.stream), kw_only=True)
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
+        default=Factory(
+            lambda self: evolve(Defaults.drivers_config.prompt_driver, stream=self.stream), takes_self=True
+        ),
+        kw_only=True,
     )
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
