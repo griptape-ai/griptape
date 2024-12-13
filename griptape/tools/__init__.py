@@ -23,6 +23,7 @@ from .audio_transcription.tool import AudioTranscriptionTool
 from .extraction.tool import ExtractionTool
 from .prompt_summary.tool import PromptSummaryTool
 from .query.tool import QueryTool
+from .structured_output.tool import StructuredOutputTool
 
 __all__ = [
     "BaseTool",
@@ -50,4 +51,5 @@ __all__ = [
     "ExtractionTool",
     "PromptSummaryTool",
     "QueryTool",
+    "StructuredOutputTool",
 ]

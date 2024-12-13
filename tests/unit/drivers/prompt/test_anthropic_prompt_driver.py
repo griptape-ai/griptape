@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 
 import pytest
+from schema import Schema
 
 from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
@@ -141,6 +142,24 @@ class TestAnthropicPromptDriver:
         },
     ]
 
+    ANTHROPIC_STRUCTURED_OUTPUT_TOOL = {
+        "description": "Used to provide the final response which ends this conversation.",
+        "input_schema": {
+            "additionalProperties": False,
+            "properties": {
+                "values": {
+                    "additionalProperties": False,
+                    "properties": {"foo": {"type": "string"}},
+                    "required": ["foo"],
+                    "type": "object",
+                },
+            },
+            "required": ["values"],
+            "type": "object",
+        },
+        "name": "StructuredOutputTool_provide_output",
+    }
+
     @pytest.fixture()
     def mock_client(self, mocker):
         mock_client = mocker.patch("anthropic.Anthropic")
@@ -199,6 +218,7 @@ class TestAnthropicPromptDriver:
     @pytest.fixture(params=[True, False])
     def prompt_stack(self, request):
         prompt_stack = PromptStack()
+        prompt_stack.output_schema = Schema({"foo": str})
         prompt_stack.tools = [MockTool()]
         if request.param:
             prompt_stack.add_system_message("system-input")
@@ -350,10 +370,15 @@ class TestAnthropicPromptDriver:
         assert AnthropicPromptDriver(model="claude-3-haiku", api_key="1234")
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("use_native_structured_output", [True, False])
+    def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools, use_native_structured_output):
         # Given
         driver = AnthropicPromptDriver(
-            model="claude-3-haiku", api_key="api-key", use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+            model="claude-3-haiku",
+            api_key="api-key",
+            use_native_tools=use_native_tools,
+            use_native_structured_output=use_native_structured_output,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -369,7 +394,21 @@ class TestAnthropicPromptDriver:
             top_p=0.999,
             top_k=250,
             **{"system": "system-input"} if prompt_stack.system_messages else {},
-            **{"tools": self.ANTHROPIC_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            **{
+                "tools": [
+                    *self.ANTHROPIC_TOOLS,
+                    *(
+                        [self.ANTHROPIC_STRUCTURED_OUTPUT_TOOL]
+                        if use_native_structured_output and driver.native_structured_output_strategy == "tool"
+                        else []
+                    ),
+                ]
+                if use_native_tools
+                else {},
+                "tool_choice": {"type": "any"} if use_native_structured_output else driver.tool_choice,
+            }
+            if use_native_tools
+            else {},
             foo="bar",
         )
         assert isinstance(message.value[0], TextArtifact)
@@ -383,13 +422,17 @@ class TestAnthropicPromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_stream_client, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("use_native_structured_output", [True, False])
+    def test_try_stream_run(
+        self, mock_stream_client, prompt_stack, messages, use_native_tools, use_native_structured_output
+    ):
         # Given
         driver = AnthropicPromptDriver(
             model="claude-3-haiku",
             api_key="api-key",
             stream=True,
             use_native_tools=use_native_tools,
+            use_native_structured_output=use_native_structured_output,
             extra_params={"foo": "bar"},
         )
 
@@ -408,7 +451,21 @@ class TestAnthropicPromptDriver:
             top_p=0.999,
             top_k=250,
             **{"system": "system-input"} if prompt_stack.system_messages else {},
-            **{"tools": self.ANTHROPIC_TOOLS, "tool_choice": driver.tool_choice} if use_native_tools else {},
+            **{
+                "tools": [
+                    *self.ANTHROPIC_TOOLS,
+                    *(
+                        [self.ANTHROPIC_STRUCTURED_OUTPUT_TOOL]
+                        if use_native_structured_output and driver.native_structured_output_strategy == "tool"
+                        else []
+                    ),
+                ]
+                if use_native_tools
+                else {},
+                "tool_choice": {"type": "any"} if use_native_structured_output else driver.tool_choice,
+            }
+            if use_native_tools
+            else {},
             foo="bar",
         )
         assert event.usage.input_tokens == 5
@@ -433,3 +490,9 @@ class TestAnthropicPromptDriver:
 
         event = next(stream)
         assert event.usage.output_tokens == 10
+
+    def test_verify_native_structured_output_strategy(self):
+        assert AnthropicPromptDriver(model="foo", native_structured_output_strategy="tool")
+
+        with pytest.raises(ValueError, match="AnthropicPromptDriver does not support `native` structured output mode."):
+            AnthropicPromptDriver(model="foo", native_structured_output_strategy="native")
