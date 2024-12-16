@@ -1,10 +1,24 @@
-.PHONY: version
-version: ## Bump version and push to release branch.
-	@poetry version $(v)
+.PHONY: version/patch
+version/patch: ## Bump patch version and push to release branch.
+	@poetry version patch
+	@make version/commit
+	@git push origin release/v$$(poetry version -s | sed 's/\.[0-9]*$$//') # Trim the patch version
+
+.PHONY: version/minor
+version/minor: ## Bump minor version.
+	@poetry version minor
+	@make version/commit
+
+.PHONY: version/major
+version/major: ## Bump major version.
+	@poetry version major
+	@make version/commit
+
+.PHONY: version/commit
+version/commit: ## Commit version bump.
 	@git add pyproject.toml
 	@git commit -m "Version bump v$$(poetry version -s)"
-	@git push origin release/v$$(poetry version -s)
-
+	
 .PHONY: publish
 publish: ## Push git tag and publish version to PyPI.
 	@git tag v$$(poetry version -s)
