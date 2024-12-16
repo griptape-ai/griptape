@@ -8,9 +8,9 @@ from griptape.rules import BaseRule
 from griptape.utils import J2
 
 
-@define(frozen=True)
+@define()
 class JsonSchemaRule(BaseRule):
-    value: dict = field()
+    value: dict = field(metadata={"serializable": True})
     generate_template: J2 = field(default=Factory(lambda: J2("rules/json_schema.j2")))
 
     def to_text(self) -> str:

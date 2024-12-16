@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BranchTask` for selecting which Tasks (if any) to run based on a condition.
 - Support for `BranchTask` in `StructureVisualizer`.
 
+### Changed
+
+- Rulesets can now be serialized and deserialized.
+
 ### Fixed
 
 - Exception when calling `Structure.to_json()` after it has run.

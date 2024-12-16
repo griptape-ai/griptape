@@ -1,5 +1,5 @@
 from griptape.mixins.rule_mixin import RuleMixin
-from griptape.rules import Rule, Ruleset
+from griptape.rules import JsonSchemaRule, Rule, Ruleset
 from griptape.structures import Agent
 from griptape.tasks import PromptTask
 
@@ -41,3 +41,76 @@ class TestRuleMixin:
         agent.add_task(task)
 
         assert task.rulesets == [ruleset1, ruleset2]
+
+    def test_to_dict(self):
+        mixin = RuleMixin(
+            rules=[
+                Rule("foo"),
+                JsonSchemaRule(
+                    {
+                        "type": "object",
+                        "properties": {
+                            "foo": {"type": "string"},
+                        },
+                        "required": ["foo"],
+                    }
+                ),
+            ],
+            rulesets=[Ruleset("bar", [Rule("baz")])],
+        )
+
+        assert mixin.to_dict() == {
+            "rulesets": [
+                {
+                    "id": mixin.rulesets[0].id,
+                    "meta": {},
+                    "name": "bar",
+                    "rules": [{"type": "Rule", "value": "baz"}],
+                    "type": "Ruleset",
+                },
+                {
+                    "name": "Default Ruleset",
+                    "id": mixin.rulesets[1].id,
+                    "meta": {},
+                    "rules": [
+                        {"type": "Rule", "value": "foo"},
+                        {
+                            "type": "JsonSchemaRule",
+                            "value": {
+                                "properties": {"foo": {"type": "string"}},
+                                "required": ["foo"],
+                                "type": "object",
+                            },
+                        },
+                    ],
+                    "type": "Ruleset",
+                },
+            ],
+            "type": "RuleMixin",
+        }
+
+    def test_from_dict(self):
+        mixin = RuleMixin(
+            rules=[
+                Rule("foo"),
+                JsonSchemaRule(
+                    {
+                        "type": "object",
+                        "properties": {
+                            "foo": {"type": "string"},
+                        },
+                        "required": ["foo"],
+                    }
+                ),
+            ],
+            rulesets=[Ruleset("bar", [Rule("baz")])],
+        )
+
+        new_mixin = RuleMixin.from_dict(mixin.to_dict())
+
+        for idx, _ in enumerate(new_mixin.rulesets):
+            rules = mixin.rulesets[idx].rules
+            new_rules = new_mixin.rulesets[idx].rules
+            for idx, _ in enumerate(rules):
+                assert rules[idx].value == new_rules[idx].value
+                assert rules[idx].meta == new_rules[idx].meta

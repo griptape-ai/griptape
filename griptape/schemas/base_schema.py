@@ -174,6 +174,8 @@ class BaseSchema(Schema):
         from griptape.memory import TaskMemory
         from griptape.memory.structure import BaseConversationMemory, Run
         from griptape.memory.task.storage import BaseArtifactStorage
+        from griptape.rules.base_rule import BaseRule
+        from griptape.rules.ruleset import Ruleset
         from griptape.structures import Structure
         from griptape.tasks import BaseTask
         from griptape.tokenizers import BaseTokenizer
@@ -210,6 +212,8 @@ class BaseSchema(Schema):
                 "State": BaseTask.State,
                 "BaseConversationMemory": BaseConversationMemory,
                 "BaseArtifactStorage": BaseArtifactStorage,
+                "BaseRule": BaseRule,
+                "Ruleset": Ruleset,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel
