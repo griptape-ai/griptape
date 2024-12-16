@@ -225,7 +225,7 @@ pre-commit = "^4.0.0"
 boto3-stubs = {extras = ["bedrock", "iam", "opensearch", "s3", "sagemaker", "sqs", "iot-data", "dynamodb", "redshift-data"], version = "^1.34.105"}
 typos = "^1.22.9"
 mdformat = "^0.7.17"
-mdformat-gfm = "^0.3.6"
+mdformat-gfm = "^0.4.1"
 mdformat-frontmatter = "^2.0.8"
 mdformat-footnote = "^0.1.1"
 mdformat-admon = "^2.0.6"
