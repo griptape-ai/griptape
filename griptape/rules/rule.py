@@ -5,9 +5,9 @@ from attrs import define, field
 from griptape.rules import BaseRule
 
 
-@define(frozen=True)
+@define()
 class Rule(BaseRule):
-    value: str = field()
+    value: str = field(metadata={"serializable": True})
 
     def to_text(self) -> str:
         return self.value

@@ -72,8 +72,10 @@ class TestStructure:
                     "child_ids": agent.tasks[0].child_ids,
                     "max_meta_memory_entries": agent.tasks[0].max_meta_memory_entries,
                     "context": agent.tasks[0].context,
+                    "rulesets": [],
                 }
             ],
+            "rulesets": [],
             "conversation_memory": {
                 "type": agent.conversation_memory.type,
                 "runs": agent.conversation_memory.runs,

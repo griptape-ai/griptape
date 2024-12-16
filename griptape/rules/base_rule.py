@@ -5,10 +5,12 @@ from typing import Any
 
 from attrs import define, field
 
+from griptape.mixins.serializable_mixin import SerializableMixin
 
-@define(frozen=True)
-class BaseRule(ABC):
-    value: Any = field()
+
+@define()
+class BaseRule(ABC, SerializableMixin):
+    value: Any = field(metadata={"serializable": True})
     meta: dict[str, Any] = field(factory=dict, kw_only=True)
 
     def __str__(self) -> str:

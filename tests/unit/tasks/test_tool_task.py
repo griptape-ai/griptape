@@ -250,6 +250,7 @@ class TestToolTask:
             "child_ids": task.child_ids,
             "max_meta_memory_entries": task.max_meta_memory_entries,
             "context": task.context,
+            "rulesets": [],
             "tool": {
                 "type": task.tool.type,
                 "name": task.tool.name,
