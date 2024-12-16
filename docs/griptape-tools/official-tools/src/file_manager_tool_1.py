@@ -13,7 +13,7 @@ agent = Agent(tools=[file_manager_tool])
 filename = "sample1.txt"
 content = "This is the content of sample1.txt"
 
-Path(filename).write_text(filename)
+Path(filename).write_text(content)
 
 # Now, read content from the file 'sample1.txt' using the agent's command
 agent.run("Can you get me the sample1.txt file?")
