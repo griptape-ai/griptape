@@ -174,6 +174,8 @@ agent.run("Hello world!")
 
 ### Loading/Saving Configs
 
+You can serialize and deserialize Driver Configs using the [to_json()](../../reference/griptape/mixins/serializable_mixin.md#griptape.mixins.serializable_mixin.SerializableMixin.to_json) and [from_json()](../../reference/griptape/mixins/serializable_mixin.md#griptape.mixins.serializable_mixin.SerializableMixin.from_json) methods.
+
 ```python
 --8<-- "docs/griptape-framework/structures/src/drivers_config_8.py"
 ```

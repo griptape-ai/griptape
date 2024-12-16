@@ -36,7 +36,7 @@ You can disable conversation memory in any structure by setting it to `None`:
 
 #### Per Structure
 
-By default, Conversation Memory [Runs](../../reference/griptape/memory/structure/run.md) are created for each run of the structure. Griptape takes the Structure's [input_task](../../reference/griptape/structures/structure.md#griptape.structures.Structure.input_task)'s input and the [output_task](../../reference/griptape/structures/structure.md#griptape.structures.Structure.output_task)'s output, storing them in the Run. Tasks that are neither the input task nor the output task are not stored in the Run.
+By default, Conversation Memory [Runs](../../reference/griptape/memory/structure/run.md) are created for each run of the structure. Griptape takes the Structure's [input_task](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.input_task)'s input and the [output_task](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.output_task)'s output, storing them in the Run. Tasks that are neither the input task nor the output task are not stored in the Run.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/conversation_memory_per_structure.py"
@@ -46,7 +46,7 @@ In this example, the `improve` Task is "forgotten" after the Structure's run is 
 
 #### Per Task
 
-You can change when Conversation Memory Runs are created by modifying [Structure.conversation_memory_strategy](../../reference/griptape/structures/structure.md#griptape.structures.Structure.conversation_memory_strategy) from the default `per_structure` to `per_task`.
+You can change when Conversation Memory Runs are created by modifying [Structure.conversation_memory_strategy](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.conversation_memory_strategy) from the default `per_structure` to `per_task`.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/conversation_memory_per_task.py"
@@ -54,7 +54,7 @@ You can change when Conversation Memory Runs are created by modifying [Structure
 
 Now, each _Task_ creates a Conversation Memory Run when it runs. This eliminates the need to feed the output of Tasks into each other using context variables like `{{ parent_output }}` since the output of the previous Task is stored in Conversation Memory and loaded when the next Task runs.
 
-To blend the two approaches, you can disable Conversation Memory on individual tasks by setting [PromptTask.conversation_memory](../../reference/griptape/tasks/prompt_task.md#griptape.tasks.PromptTask.conversation_memory) to `None`.
+To blend the two approaches, you can disable Conversation Memory on individual tasks by setting [PromptTask.conversation_memory](../../reference/griptape/tasks/prompt_task.md#griptape.tasks.prompt_task.PromptTask.conversation_memory) to `None`.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/conversation_memory_per_task_with_none.py"
