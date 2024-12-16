@@ -17,6 +17,7 @@ from griptape.events import (
     FinishStructureRunEvent,
     TextChunkEvent,
 )
+from griptape.utils.contextvars_utils import with_contextvars
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -44,7 +45,7 @@ class Stream:
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))
 
     def run(self, *args) -> Iterator[TextArtifact]:
-        t = Thread(target=self._run_structure, args=args)
+        t = Thread(target=with_contextvars(self._run_structure), args=args)
         t.start()
 
         action_str = ""
