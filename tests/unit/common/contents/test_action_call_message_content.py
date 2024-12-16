@@ -21,6 +21,7 @@ class TestActionCallMessageContent:
             ActionCallDeltaMessageContent(tag="testtag"),
             ActionCallDeltaMessageContent(name="TestName"),
             ActionCallDeltaMessageContent(path="test_tag"),
+            ActionCallDeltaMessageContent(partial_input=""),
             ActionCallDeltaMessageContent(partial_input='{"foo":'),
             ActionCallDeltaMessageContent(partial_input='"bar"}'),
         ]
