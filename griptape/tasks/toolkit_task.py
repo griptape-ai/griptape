@@ -27,8 +27,8 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
     # so that it doesn't trigger on accident.
     RESPONSE_STOP_SEQUENCE = "<|Response|>"
 
-    tools: list[BaseTool] = field(factory=list, kw_only=True)
-    max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True)
+    tools: list[BaseTool] = field(factory=list, kw_only=True, metadata={"serializable": True})
+    max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True, metadata={"serializable": True})
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
     subtasks: list[ActionsSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(

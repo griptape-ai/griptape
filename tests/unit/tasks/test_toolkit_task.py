@@ -376,3 +376,39 @@ class TestToolkitSubtask:
         Agent().add_task(task)
 
         assert task.actions_schema().json_schema("Actions Schema") == self.TARGET_TOOLS_SCHEMA
+
+    def test_to_dict(self):
+        tool = MockTool()
+        task = ToolkitTask("test", tools=[tool])
+
+        assert task.to_dict() == {
+            "type": "ToolkitTask",
+            "id": task.id,
+            "state": "State.PENDING",
+            "parent_ids": [],
+            "child_ids": [],
+            "max_meta_memory_entries": 20,
+            "context": {},
+            "rulesets": [],
+            "tools": [
+                {
+                    "type": "MockTool",
+                    "name": "MockTool",
+                    "input_memory": None,
+                    "output_memory": None,
+                    "install_dependencies_on_init": True,
+                    "dependencies_install_directory": None,
+                    "verbose": False,
+                    "off_prompt": False,
+                }
+            ],
+            "max_subtasks": 20,
+        }
+
+    def test_from_dict(self):
+        tool = MockTool()
+        task = ToolkitTask("test", tools=[tool])
+        serialized_task = task.to_dict()
+        serialized_task["tools"][0]["module_name"] = "tests.mocks.mock_tool.tool"
+
+        assert ToolkitTask.from_dict(serialized_task).to_dict() == task.to_dict()

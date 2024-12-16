@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Rulesets can now be serialized and deserialized.
+- `ToolkitTask` now serializes its `tools` field.
 
 ### Fixed
 
