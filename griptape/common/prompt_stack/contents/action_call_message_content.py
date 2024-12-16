@@ -37,7 +37,7 @@ class ActionCallMessageContent(BaseMessageContent):
 
         if tag is not None and name is not None and path is not None:
             try:
-                parsed_input = json.loads(json_input)
+                parsed_input = json.loads(json_input or "{}")
             except json.JSONDecodeError as exc:
                 raise ValueError("Invalid JSON input for ToolAction") from exc
             action = ToolAction(tag=tag, name=name, path=path, input=parsed_input)
