@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import json
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
+from schema import Schema
 
 from griptape.artifacts import ActionArtifact, TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
@@ -30,8 +32,7 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from cohere import Client
-    from cohere.types import NonStreamedChatResponse
+    from cohere import AssistantMessageResponse, ChatResponse, ClientV2, StreamedChatResponseV2
 
     from griptape.tools import BaseTool
 
@@ -52,82 +53,66 @@ class CoherePromptDriver(BasePromptDriver):
     model: str = field(metadata={"serializable": True})
     force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: ClientV2 = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
     )
 
     @lazy_property()
-    def client(self) -> Client:
-        return import_optional_dependency("cohere").Client(self.api_key)
+    def client(self) -> ClientV2:
+        return import_optional_dependency("cohere").ClientV2(self.api_key, log_warning_experimental_features=False)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
+
         logger.debug(params)
 
-        result = self.client.chat(**params)
+        result: ChatResponse = self.client.chat(**params)
         logger.debug(result.model_dump())
-        usage = result.meta.tokens
 
         return Message(
-            content=self.__to_prompt_stack_message_content(result),
+            content=self.__to_prompt_stack_message_content(result.message),
             role=Message.ASSISTANT_ROLE,
-            usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
+            usage=Message.Usage(
+                input_tokens=result.usage.tokens.input_tokens if result.usage and result.usage.tokens else 0,
+                output_tokens=result.usage.tokens.output_tokens if result.usage and result.usage.tokens else 0,
+            ),
         )
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         params = self._base_params(prompt_stack)
         logger.debug(params)
-        result = self.client.chat_stream(**params)
+        result: Iterator[StreamedChatResponseV2] = self.client.chat_stream(**params)
 
         for event in result:
-            logger.debug(event.model_dump())
-            if event.event_type == "stream-end":
+            if event.type == "stream-end":
                 usage = event.response.meta.tokens
 
                 yield DeltaMessage(
                     usage=DeltaMessage.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
                 )
-            elif event.event_type == "text-generation" or event.event_type == "tool-calls-chunk":
+            elif event.type in ("tool-plan-delta", "content-delta", "tool-call-start", "tool-call-delta"):
                 yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(event))
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        # Current message
-        last_input = prompt_stack.messages[-1]
-        user_message = ""
         tool_results = []
-        if last_input is not None:
-            message = self.__to_cohere_messages([prompt_stack.messages[-1]])
 
-            if "message" in message[0]:
-                user_message = message[0]["message"]
-            if "tool_results" in message[0]:
-                tool_results = message[0]["tool_results"]
-
-        # History messages
-        history_messages = self.__to_cohere_messages(
-            [message for message in prompt_stack.messages[:-1] if not message.is_system()],
-        )
-
-        # System message (preamble)
-        system_messages = prompt_stack.system_messages
-        preamble = system_messages[0].to_text() if system_messages else None
+        messages = self.__to_cohere_messages(prompt_stack.messages)
 
         return {
-            "message": user_message,
-            "chat_history": history_messages,
+            "model": self.model,
+            "messages": messages,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_tokens,
             **({"tool_results": tool_results} if tool_results else {}),
             **(
-                {"tools": self.__to_cohere_tools(prompt_stack.tools), "force_single_step": self.force_single_step}
+                {"tools": self.__to_cohere_tools(prompt_stack.tools)}
                 if prompt_stack.tools and self.use_native_tools
                 else {}
             ),
-            **({"preamble": preamble} if preamble else {}),
             **self.extra_params,
         }
 
@@ -135,129 +120,137 @@ class CoherePromptDriver(BasePromptDriver):
         cohere_messages = []
 
         for message in messages:
-            cohere_message: dict = {"role": self.__to_cohere_role(message), "message": message.to_text()}
-
-            if message.has_any_content_type(ActionResultMessageContent):
-                cohere_message["tool_results"] = [
-                    self.__to_cohere_message_content(action_result)
+            # If the message only contains textual content we can send it as a single content.
+            if message.is_text():
+                cohere_messages.append({"role": self.__to_cohere_role(message), "content": message.to_text()})
+            # Action results must be sent as separate messages.
+            elif message.has_any_content_type(ActionResultMessageContent):
+                cohere_messages.extend(
+                    {
+                        "role": self.__to_cohere_role(message, action_result),
+                        "content": self.__to_cohere_message_content(action_result),
+                        "tool_call_id": action_result.action.tag,
+                    }
                     for action_result in message.get_content_type(ActionResultMessageContent)
-                ]
+                )
+
+                if message.has_any_content_type(TextMessageContent):
+                    cohere_messages.append({"role": self.__to_cohere_role(message), "content": message.to_text()})
             else:
-                if message.has_any_content_type(ActionCallMessageContent):
+                cohere_message = {
+                    "role": self.__to_cohere_role(message),
+                    "content": [
+                        self.__to_cohere_message_content(content)
+                        for content in [
+                            content for content in message.content if not isinstance(content, ActionCallMessageContent)
+                        ]
+                    ],
+                }
+
+                # Action calls must be attached to the message, not sent as content.
+                action_call_content = [
+                    content for content in message.content if isinstance(content, ActionCallMessageContent)
+                ]
+                if action_call_content:
                     cohere_message["tool_calls"] = [
-                        self.__to_cohere_message_content(action_call)
-                        for action_call in message.get_content_type(ActionCallMessageContent)
+                        self.__to_cohere_message_content(action_call) for action_call in action_call_content
                     ]
 
-            cohere_messages.append(cohere_message)
+                cohere_messages.append(cohere_message)
 
         return cohere_messages
 
-    def __to_cohere_message_content(self, content: BaseMessageContent) -> str | dict:
+    def __to_cohere_message_content(self, content: BaseMessageContent) -> str | dict | list[dict]:
         if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
-            return {"name": action.to_native_tool_name(), "parameters": action.input}
+            return {
+                "type": "function",
+                "id": action.tag,
+                "function": {
+                    "name": action.to_native_tool_name(),
+                    "arguments": json.dumps(action.input),
+                },
+            }
         elif isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
             if isinstance(artifact, ListArtifact):
-                message_content = [{"text": artifact.to_text()} for artifact in artifact.value]
+                message_content = [{"type": "text", "text": artifact.to_text()} for artifact in artifact.value]
             else:
-                message_content = [{"text": artifact.to_text()}]
+                message_content = {"type": "text", "text": artifact.to_text()}
 
-            return {
-                "call": {"name": content.action.to_native_tool_name(), "parameters": content.action.input},
-                "outputs": message_content,
-            }
-        elif isinstance(content, ActionResultMessageContent):
-            return {"text": content.artifact.to_text()}
+            return message_content
         else:
-            raise ValueError(f"Unsupported content type: {type(content)}")
+            return {"type": "text", "text": content.artifact.to_text()}
 
-    def __to_cohere_role(self, message: Message) -> str:
+    def __to_cohere_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
         if message.is_system():
-            return "SYSTEM"
+            return "system"
         elif message.is_assistant():
-            return "CHATBOT"
+            return "assistant"
         else:
-            if message.has_any_content_type(ActionResultMessageContent):
-                return "TOOL"
+            if isinstance(message_content, ActionResultMessageContent):
+                return "tool"
             else:
-                return "USER"
+                return "user"
 
     def __to_cohere_tools(self, tools: list[BaseTool]) -> list[dict]:
-        tool_definitions = []
+        return [
+            {
+                "function": {
+                    "name": tool.to_native_tool_name(activity),
+                    "description": tool.activity_description(activity),
+                    "parameters": (tool.activity_schema(activity) or Schema({})).json_schema("Parameters Schema"),
+                },
+                "type": "function",
+            }
+            for tool in tools
+            for activity in tool.activities()
+        ]
 
-        for tool in tools:
-            for activity in tool.activities():
-                activity_schema = tool.activity_schema(activity)
-                if activity_schema is not None:
-                    properties_values = activity_schema.json_schema("Parameters Schema")["properties"]["values"]
-
-                    properties = properties_values["properties"]
-                else:
-                    properties_values = {}
-                    properties = {}
-
-                tool_definitions.append(
-                    {
-                        "name": tool.to_native_tool_name(activity),
-                        "description": tool.activity_description(activity),
-                        "parameter_definitions": {
-                            property_name: {
-                                "type": property_value["type"],
-                                "required": property_name in properties_values["required"],
-                                **(
-                                    {"description": property_value["description"]}
-                                    if "description" in property_value
-                                    else {}
-                                ),
-                            }
-                            for property_name, property_value in properties.items()
-                        },
-                    },
-                )
-
-        return tool_definitions
-
-    def __to_prompt_stack_message_content(self, response: NonStreamedChatResponse) -> list[BaseMessageContent]:
+    def __to_prompt_stack_message_content(self, response: AssistantMessageResponse) -> list[BaseMessageContent]:
         content = []
-        if response.text:
-            content.append(TextMessageContent(TextArtifact(response.text)))
+        if response.content:
+            content.extend([TextMessageContent(TextArtifact(content.text)) for content in response.content])
+        if response.tool_plan:
+            content.append(TextMessageContent(TextArtifact(response.tool_plan)))
         if response.tool_calls is not None:
             content.extend(
                 [
                     ActionCallMessageContent(
                         ActionArtifact(
                             ToolAction(
-                                tag=tool_call.name,
-                                name=ToolAction.from_native_tool_name(tool_call.name)[0],
-                                path=ToolAction.from_native_tool_name(tool_call.name)[1],
-                                input=tool_call.parameters,
+                                tag=tool_call.id,
+                                name=ToolAction.from_native_tool_name(tool_call.function.name)[0],
+                                path=ToolAction.from_native_tool_name(tool_call.function.name)[1],
+                                input=json.loads(tool_call.function.arguments),
                             ),
                         ),
                     )
                     for tool_call in response.tool_calls
+                    if tool_call.id is not None
+                    and tool_call.function is not None
+                    and tool_call.function.name is not None
+                    and tool_call.function.arguments is not None
                 ],
             )
 
         return content
 
     def __to_prompt_stack_delta_message_content(self, event: Any) -> BaseDeltaMessageContent:
-        if event.event_type == "text-generation":
-            return TextDeltaMessageContent(event.text, index=0)
-        elif event.event_type == "tool-calls-chunk":
-            if event.tool_call_delta is not None:
-                tool_call_delta = event.tool_call_delta
-                if tool_call_delta.name is not None:
-                    name, path = ToolAction.from_native_tool_name(tool_call_delta.name)
+        if event.type == "content-delta":
+            return TextDeltaMessageContent(event.delta.message.content.text, index=0)
+        elif event.type == "tool-plan-delta":
+            return TextDeltaMessageContent(event.delta.message["tool_plan"])
+        elif event.type == "tool-call-start":
+            tool_call_delta = event.delta.message["tool_calls"]
+            name, path = ToolAction.from_native_tool_name(tool_call_delta["function"]["name"])
 
-                    return ActionCallDeltaMessageContent(tag=tool_call_delta.name, name=name, path=path)
-                else:
-                    return ActionCallDeltaMessageContent(partial_input=tool_call_delta.parameters)
+            return ActionCallDeltaMessageContent(tag=tool_call_delta["id"], name=name, path=path)
+        elif event.type == "tool-call-delta":
+            tool_call_delta = event.delta.message["tool_calls"]["function"]
 
-            else:
-                return TextDeltaMessageContent(event.text)
+            return ActionCallDeltaMessageContent(partial_input=tool_call_delta["arguments"])
         else:
-            raise ValueError(f"Unsupported event type: {event.event_type}")
+            raise ValueError(f"Unsupported event type: {event.type}")

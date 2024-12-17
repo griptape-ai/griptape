@@ -216,6 +216,7 @@ class BaseSchema(Schema):
                 "Ruleset": Ruleset,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
+                "ClientV2": import_optional_dependency("cohere").ClientV2 if is_dependency_installed("cohere") else Any,
                 "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel
                 if is_dependency_installed("google.generativeai")
                 else Any,
