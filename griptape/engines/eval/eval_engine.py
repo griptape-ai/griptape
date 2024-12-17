@@ -79,6 +79,7 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
         }
 
         if self.evaluation_steps is None:
+            # Need to disable validators to allow for both `criteria` and `evaluation_steps` to be set
             with validators.disabled():
                 self.evaluation_steps = self._generate_steps(evaluation_params)
 
@@ -86,7 +87,7 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
 
     def _generate_steps(self, evaluation_params: dict[str, str]) -> list[str]:
         system_prompt = self.generate_steps_system_template.render(
-            evaluation_params=self.__generate_evaluation_params_text(evaluation_params),
+            evaluation_params=", ".join(param for param in evaluation_params),
             criteria=self.criteria,
             json_schema_rule=JsonSchemaRule(STEPS_SCHEMA.json_schema("Output Format")),
         )
@@ -107,9 +108,9 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
 
     def _generate_results(self, evaluation_params: dict[str, str]) -> tuple[float, str]:
         system_prompt = self.generate_results_system_template.render(
-            evaluation_params=self.__generate_evaluation_params_text(evaluation_params),
+            evaluation_params=", ".join(param for param in evaluation_params),
             evaluation_steps=self.evaluation_steps,
-            evaluation_text=self.__generate_evaluation_text(evaluation_params),
+            evaluation_text="\n\n".join(f"{key}: {value}" for key, value in evaluation_params.items()),
             json_schema_rule=JsonSchemaRule(RESULTS_SCHEMA.json_schema("Output Format")),
         )
         user_prompt = self.generate_results_user_template.render()
@@ -121,17 +122,13 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
                     Message(user_prompt, role=Message.USER_ROLE),
                 ],
             ),
-        ).to_artifact()
+        ).to_text()
 
-        parsed_result = json.loads(result.value)
+        parsed_result = json.loads(result)
 
+        # Better to have the LLM deal strictly with integers to avoid ambiguities with floating point precision.
+        # We want the user to receive a float, however.
         score = float(parsed_result["score"]) / 10
         reason = parsed_result["reason"]
 
         return score, reason
-
-    def __generate_evaluation_params_text(self, evaluation_params: dict[str, str]) -> str:
-        return ", ".join(param for param in evaluation_params)
-
-    def __generate_evaluation_text(self, evaluation_params: dict[str, str]) -> str:
-        return "\n\n".join(f"{key}: {value}" for key, value in evaluation_params.items())
