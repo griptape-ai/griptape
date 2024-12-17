@@ -104,11 +104,9 @@ class PromptTask(RuleMixin, BaseTask):
             self.id,
             self.output.to_text() if self.output is not None else "",
         )
-        structure = self.structure
         conversation_memory = self.conversation_memory
         if (
-            structure is not None
-            and structure.conversation_memory_strategy == "per_task"
+            (self.structure is None or self.structure.conversation_memory_strategy == "per_task")
             and conversation_memory is not None
             and conversation_memory is not NOTHING
             and self.output is not None
