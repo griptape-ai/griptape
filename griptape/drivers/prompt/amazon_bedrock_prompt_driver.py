@@ -102,11 +102,12 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             raise Exception("model response is empty")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        system_messages = [{"text": message.to_text()} for message in prompt_stack.system_messages]
+        from griptape.tools.structured_output.tool import StructuredOutputTool
 
+        system_messages = [{"text": message.to_text()} for message in prompt_stack.system_messages]
         messages = self.__to_bedrock_messages([message for message in prompt_stack.messages if not message.is_system()])
 
-        return {
+        params = {
             "modelId": self.model,
             "messages": messages,
             "system": system_messages,
@@ -122,6 +123,14 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             ),
             **self.extra_params,
         }
+
+        if not self.use_native_structured_output and prompt_stack.output_schema is not None:
+            structured_ouptut_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
+            params["tool_choice"] = {"any": {}}
+            if structured_ouptut_tool not in prompt_stack.tools:
+                prompt_stack.tools.append(structured_ouptut_tool)
+
+        return params
 
     def __to_bedrock_messages(self, messages: list[Message]) -> list[dict]:
         return [

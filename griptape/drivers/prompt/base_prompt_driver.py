@@ -60,13 +60,6 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
-        from griptape.tools.structured_output.tool import StructuredOutputTool
-
-        if not self.use_native_structured_output and prompt_stack.output_schema is not None:
-            structured_ouptut_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
-            if structured_ouptut_tool not in prompt_stack.tools:
-                prompt_stack.tools.append(structured_ouptut_tool)
-
         EventBus.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
     def after_run(self, result: Message) -> None:

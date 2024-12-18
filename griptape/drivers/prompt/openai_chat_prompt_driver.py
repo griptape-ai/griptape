@@ -144,6 +144,15 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(delta))
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
+        tools = prompt_stack.tools
+        if not self.use_native_structured_output and prompt_stack.output_schema is not None:
+            structured_ouptut_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
+            params["tool_choice"] = "required"
+            if structured_ouptut_tool not in prompt_stack.tools:
+                prompt_stack.tools.append(structured_ouptut_tool)
+
         params = {
             "model": self.model,
             "temperature": self.temperature,
