@@ -73,6 +73,14 @@ class TestStructure:
                     "max_meta_memory_entries": agent.tasks[0].max_meta_memory_entries,
                     "context": agent.tasks[0].context,
                     "rulesets": [],
+                    "prompt_driver": {
+                        "extra_params": {},
+                        "max_tokens": None,
+                        "stream": False,
+                        "temperature": 0.1,
+                        "type": "MockPromptDriver",
+                        "use_native_tools": False,
+                    },
                 }
             ],
             "rulesets": [],
@@ -111,6 +119,7 @@ class TestStructure:
         serialized_agent = agent.to_dict()
         assert isinstance(serialized_agent, dict)
 
+        serialized_agent["tasks"][0]["prompt_driver"]["module_name"] = "tests.mocks.mock_prompt_driver"
         deserialized_agent = Agent.from_dict(serialized_agent)
         assert isinstance(deserialized_agent, Agent)
 

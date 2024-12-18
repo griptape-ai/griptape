@@ -251,6 +251,14 @@ class TestToolTask:
             "max_meta_memory_entries": task.max_meta_memory_entries,
             "context": task.context,
             "rulesets": [],
+            "prompt_driver": {
+                "extra_params": {},
+                "max_tokens": None,
+                "stream": False,
+                "temperature": 0.1,
+                "type": "MockPromptDriver",
+                "use_native_tools": False,
+            },
             "tool": {
                 "type": task.tool.type,
                 "name": task.tool.name,
@@ -270,6 +278,7 @@ class TestToolTask:
 
         serialized_tool_task = task.to_dict()
         serialized_tool_task["tool"]["module_name"] = "tests.mocks.mock_tool.tool"
+        serialized_tool_task["prompt_driver"]["module_name"] = "tests.mocks.mock_prompt_driver"
         assert isinstance(serialized_tool_task, dict)
 
         deserialized_tool_task = ToolTask.from_dict(serialized_tool_task)
