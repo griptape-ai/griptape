@@ -1,3 +1,4 @@
+import json
 from unittest.mock import Mock
 
 import pytest
@@ -13,64 +14,222 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestCoherePromptDriver:
     COHERE_TOOLS = [
         {
-            "description": "test description: foo",
-            "name": "MockTool_test",
-            "parameter_definitions": {"test": {"required": True, "type": "string"}},
+            "function": {
+                "description": "test description: foo",
+                "name": "MockTool_test",
+                "parameters": {
+                    "$id": "Parameters Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "additionalProperties": False,
+                    "properties": {
+                        "values": {
+                            "additionalProperties": False,
+                            "description": "Test input",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "type": "object",
+                        }
+                    },
+                    "required": ["values"],
+                    "type": "object",
+                },
+            },
+            "type": "function",
         },
         {
-            "description": "test description",
-            "name": "MockTool_test_callable_schema",
-            "parameter_definitions": {"test": {"required": True, "type": "string"}},
+            "function": {
+                "name": "MockTool_test_callable_schema",
+                "description": "test description",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "values": {
+                            "description": "Test input",
+                            "type": "object",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "additionalProperties": False,
+                        }
+                    },
+                    "required": ["values"],
+                    "additionalProperties": False,
+                    "$id": "Parameters Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                },
+            },
+            "type": "function",
         },
         {
-            "description": "test description: foo",
-            "name": "MockTool_test_error",
-            "parameter_definitions": {"test": {"required": True, "type": "string"}},
+            "function": {
+                "description": "test description: foo",
+                "name": "MockTool_test_error",
+                "parameters": {
+                    "$id": "Parameters Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "additionalProperties": False,
+                    "properties": {
+                        "values": {
+                            "additionalProperties": False,
+                            "description": "Test input",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "type": "object",
+                        }
+                    },
+                    "required": ["values"],
+                    "type": "object",
+                },
+            },
+            "type": "function",
         },
         {
-            "description": "test description: foo",
-            "name": "MockTool_test_exception",
-            "parameter_definitions": {"test": {"required": True, "type": "string"}},
+            "function": {
+                "description": "test description: foo",
+                "name": "MockTool_test_exception",
+                "parameters": {
+                    "$id": "Parameters Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "additionalProperties": False,
+                    "properties": {
+                        "values": {
+                            "additionalProperties": False,
+                            "description": "Test input",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "type": "object",
+                        }
+                    },
+                    "required": ["values"],
+                    "type": "object",
+                },
+            },
+            "type": "function",
         },
-        {"description": "test description", "name": "MockTool_test_list_output", "parameter_definitions": {}},
-        {"description": "test description", "name": "MockTool_test_no_schema", "parameter_definitions": {}},
         {
-            "description": "test description: foo",
-            "name": "MockTool_test_str_output",
-            "parameter_definitions": {"test": {"required": True, "type": "string"}},
+            "function": {
+                "description": "test description",
+                "name": "MockTool_test_list_output",
+                "parameters": {
+                    "$id": "Parameters Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "additionalProperties": False,
+                    "properties": {},
+                    "required": [],
+                    "type": "object",
+                },
+            },
+            "type": "function",
         },
         {
-            "description": "test description",
-            "name": "MockTool_test_without_default_memory",
-            "parameter_definitions": {"test": {"required": True, "type": "string"}},
+            "function": {
+                "description": "test description",
+                "name": "MockTool_test_no_schema",
+                "parameters": {
+                    "$id": "Parameters Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "additionalProperties": False,
+                    "properties": {},
+                    "required": [],
+                    "type": "object",
+                },
+            },
+            "type": "function",
+        },
+        {
+            "function": {
+                "description": "test description: foo",
+                "name": "MockTool_test_str_output",
+                "parameters": {
+                    "$id": "Parameters Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "additionalProperties": False,
+                    "properties": {
+                        "values": {
+                            "additionalProperties": False,
+                            "description": "Test input",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "type": "object",
+                        }
+                    },
+                    "required": ["values"],
+                    "type": "object",
+                },
+            },
+            "type": "function",
+        },
+        {
+            "function": {
+                "description": "test description",
+                "name": "MockTool_test_without_default_memory",
+                "parameters": {
+                    "$id": "Parameters Schema",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "additionalProperties": False,
+                    "properties": {
+                        "values": {
+                            "additionalProperties": False,
+                            "description": "Test input",
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
+                            "type": "object",
+                        }
+                    },
+                    "required": ["values"],
+                    "type": "object",
+                },
+            },
+            "type": "function",
         },
     ]
 
     @pytest.fixture()
     def mock_client(self, mocker):
-        mock_client = mocker.patch("cohere.Client").return_value
-        mock_tool_call = Mock(parameters={"foo": "bar"})
-        mock_tool_call.name = "MockTool_test"
+        mock_client = mocker.patch("cohere.ClientV2").return_value
+        mock_tool_call = Mock(id="mock-id", function=Mock(arguments=json.dumps({"foo": "bar"})))
+        mock_tool_call.function.name = "MockTool_test"
         mock_client.chat.return_value = Mock(
-            text="model-output", meta=Mock(tokens=Mock(input_tokens=5, output_tokens=10)), tool_calls=[mock_tool_call]
+            message=Mock(
+                tool_plan="tool-plan",
+                content=[Mock(text="model-output")],
+                tool_calls=[mock_tool_call],
+            ),
+            usage=Mock(tokens=Mock(input_tokens=5, output_tokens=10)),
         )
 
         return mock_client
 
     @pytest.fixture()
     def mock_stream_client(self, mocker):
-        mock_client = mocker.patch("cohere.Client").return_value
-        mock_tool_call_delta_header = Mock()
-        mock_tool_call_delta_header.name = "MockTool_test"
-        mock_tool_call_delta_body = Mock()
-        mock_tool_call_delta_body.name = None
-        mock_tool_call_delta_body.parameters = '{"foo": "bar"}'
+        mock_client = mocker.patch("cohere.ClientV2").return_value
+
+        mock_tool_call_delta_header = Mock(
+            message={
+                "tool_calls": {
+                    "id": "mock-id",
+                    "function": {
+                        "name": "MockTool_test",
+                    },
+                }
+            },
+        )
+
+        mock_tool_call_delta_body = Mock(
+            message={
+                "tool_calls": {
+                    "function": {
+                        "arguments": '{"foo": "bar"}',
+                    },
+                }
+            },
+        )
         mock_client.chat_stream.return_value = iter(
             [
-                Mock(text="model-output", event_type="text-generation"),
-                Mock(text="model-output", event_type="tool-calls-chunk", tool_call_delta=mock_tool_call_delta_header),
-                Mock(text="model-output", event_type="tool-calls-chunk", tool_call_delta=mock_tool_call_delta_body),
-                Mock(response=Mock(meta=Mock(tokens=Mock(input_tokens=5, output_tokens=10))), event_type="stream-end"),
+                Mock(type="content-delta", delta=Mock(message=Mock(content=Mock(text="model-output")))),
+                Mock(type="tool-plan-delta", delta=Mock(message={"tool_plan": "tool-plan"})),
+                Mock(type="tool-call-start", delta=mock_tool_call_delta_header),
+                Mock(type="tool-call-delta", delta=mock_tool_call_delta_body),
+                Mock(type="stream-end", response=Mock(meta=Mock(tokens=Mock(input_tokens=5, output_tokens=10)))),
             ]
         )
 
@@ -80,12 +239,11 @@ class TestCoherePromptDriver:
     def mock_tokenizer(self, mocker):
         return mocker.patch("griptape.tokenizers.CohereTokenizer").return_value
 
-    @pytest.fixture(params=[True, False])
-    def prompt_stack(self, request):
+    @pytest.fixture()
+    def prompt_stack(self):
         prompt_stack = PromptStack()
         prompt_stack.tools = [MockTool()]
-        if request.param:
-            prompt_stack.add_system_message("system-input")
+        prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
         prompt_stack.add_assistant_message("assistant-input")
         prompt_stack.add_assistant_message(
@@ -99,23 +257,7 @@ class TestCoherePromptDriver:
         prompt_stack.add_user_message(
             ListArtifact(
                 [
-                    TextArtifact("keep going"),
-                    ActionArtifact(
-                        ToolAction(
-                            tag="MockTool_test",
-                            name="MockTool",
-                            path="test",
-                            input={"foo": "bar"},
-                            output=TextArtifact("tool-output"),
-                        )
-                    ),
-                ]
-            )
-        )
-        prompt_stack.add_user_message(
-            ListArtifact(
-                [
-                    TextArtifact("keep going"),
+                    TextArtifact("keep-going"),
                     ActionArtifact(
                         ToolAction(
                             tag="MockTool_test",
@@ -130,11 +272,41 @@ class TestCoherePromptDriver:
         )
         return prompt_stack
 
+    @pytest.fixture()
+    def messages(self):
+        return [
+            {"role": "system", "content": "system-input"},
+            {"role": "user", "content": "user-input"},
+            {"role": "assistant", "content": "assistant-input"},
+            {
+                "content": [
+                    {"type": "text", "text": "thought"},
+                ],
+                "role": "assistant",
+                "tool_calls": [
+                    {
+                        "function": {"arguments": '{"foo": "bar"}', "name": "MockTool_test"},
+                        "id": "MockTool_test",
+                        "type": "function",
+                    }
+                ],
+            },
+            {
+                "content": {
+                    "type": "text",
+                    "text": "tool-output",
+                },
+                "role": "tool",
+                "tool_call_id": "MockTool_test",
+            },
+            {"content": "keep-going", "role": "user"},
+        ]
+
     def test_init(self):
         assert CoherePromptDriver(model="command", api_key="foobar")
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_client, prompt_stack, use_native_tools):
+    def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools):
         # Given
         driver = CoherePromptDriver(
             model="command", api_key="api-key", use_native_tools=use_native_tools, extra_params={"foo": "bar"}
@@ -145,32 +317,10 @@ class TestCoherePromptDriver:
 
         # Then
         mock_client.chat.assert_called_once_with(
-            chat_history=[
-                {"message": "user-input", "role": "USER"},
-                {"message": "assistant-input", "role": "CHATBOT"},
-                {
-                    "message": "thought",
-                    "role": "CHATBOT",
-                    "tool_calls": [{"name": "MockTool_test", "parameters": {"foo": "bar"}}],
-                },
-                {
-                    "message": "keep going",
-                    "role": "TOOL",
-                    "tool_results": [
-                        {
-                            "call": {"name": "MockTool_test", "parameters": {"foo": "bar"}},
-                            "outputs": [{"text": "tool-output"}],
-                        }
-                    ],
-                },
-            ],
+            model="command",
+            messages=messages,
             max_tokens=None,
-            message="keep going",
-            **({"tools": self.COHERE_TOOLS, "force_single_step": False} if use_native_tools else {}),
-            **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
-            tool_results=[
-                {"call": {"name": "MockTool_test", "parameters": {"foo": "bar"}}, "outputs": [{"text": "tool-output"}]}
-            ],
+            **({"tools": self.COHERE_TOOLS} if use_native_tools else {}),
             stop_sequences=[],
             temperature=0.1,
             foo="bar",
@@ -178,17 +328,19 @@ class TestCoherePromptDriver:
 
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
-        assert isinstance(message.value[1], ActionArtifact)
-        assert message.value[1].value.tag == "MockTool_test"
-        assert message.value[1].value.name == "MockTool"
-        assert message.value[1].value.path == "test"
-        assert message.value[1].value.input == {"foo": "bar"}
+        assert isinstance(message.value[1], TextArtifact)
+        assert message.value[1].value == "tool-plan"
+        assert isinstance(message.value[2], ActionArtifact)
+        assert message.value[2].value.tag == "mock-id"
+        assert message.value[2].value.name == "MockTool"
+        assert message.value[2].value.path == "test"
+        assert message.value[2].value.input == {"foo": "bar"}
 
         assert message.usage.input_tokens == 5
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_stream_client, prompt_stack, use_native_tools):
+    def test_try_stream_run(self, mock_stream_client, prompt_stack, messages, use_native_tools):
         # Given
         driver = CoherePromptDriver(
             model="command",
@@ -204,32 +356,10 @@ class TestCoherePromptDriver:
 
         # Then
         mock_stream_client.chat_stream.assert_called_once_with(
-            chat_history=[
-                {"message": "user-input", "role": "USER"},
-                {"message": "assistant-input", "role": "CHATBOT"},
-                {
-                    "message": "thought",
-                    "role": "CHATBOT",
-                    "tool_calls": [{"name": "MockTool_test", "parameters": {"foo": "bar"}}],
-                },
-                {
-                    "role": "TOOL",
-                    "message": "keep going",
-                    "tool_results": [
-                        {
-                            "call": {"name": "MockTool_test", "parameters": {"foo": "bar"}},
-                            "outputs": [{"text": "tool-output"}],
-                        }
-                    ],
-                },
-            ],
+            model="command",
+            messages=messages,
             max_tokens=None,
-            message="keep going",
-            **({"tools": self.COHERE_TOOLS, "force_single_step": False} if use_native_tools else {}),
-            **({"preamble": "system-input"} if prompt_stack.system_messages else {}),
-            tool_results=[
-                {"call": {"name": "MockTool_test", "parameters": {"foo": "bar"}}, "outputs": [{"text": "tool-output"}]}
-            ],
+            **({"tools": self.COHERE_TOOLS} if use_native_tools else {}),
             stop_sequences=[],
             temperature=0.1,
             foo="bar",
@@ -239,8 +369,12 @@ class TestCoherePromptDriver:
         assert event.content.text == "model-output"
 
         event = next(stream)
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == "tool-plan"
+
+        event = next(stream)
         assert isinstance(event.content, ActionCallDeltaMessageContent)
-        assert event.content.tag == "MockTool_test"
+        assert event.content.tag == "mock-id"
         assert event.content.name == "MockTool"
         assert event.content.path == "test"
 
