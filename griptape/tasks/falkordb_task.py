@@ -1,5 +1,6 @@
 import redis
 from redis.commands.graph import Graph
+
 from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.tasks import BaseTask
 
