@@ -25,7 +25,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 @define
 class PromptTask(RuleMixin, BaseTask):
     prompt_driver: BasePromptDriver = field(
-        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True
+        default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True, metadata={"serializable": True}
     )
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_generate_system_template, takes_self=True),

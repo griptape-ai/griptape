@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Rulesets can now be serialized and deserialized.
 - `ToolkitTask` now serializes its `tools` field.
+- `PromptTask.prompt_driver` is now serialized.
 
 ### Fixed
 
