@@ -70,8 +70,7 @@ class ToolkitTask(PromptTask, ActionsSubtaskOriginMixin):
         stack = PromptStack(tools=self.tools, output_schema=self.output_schema)
         memory = self.structure.conversation_memory if self.structure is not None else None
 
-        if system_prompt := self.generate_system_template(self):
-            stack.add_system_message(system_prompt)
+        stack.add_system_message(self.generate_system_template(self))
 
         stack.add_user_message(self.input)
 

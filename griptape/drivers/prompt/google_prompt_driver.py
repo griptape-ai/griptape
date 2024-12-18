@@ -125,6 +125,8 @@ class GooglePromptDriver(BasePromptDriver):
                 )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
         types = import_optional_dependency("google.generativeai.types")
         protos = import_optional_dependency("google.generativeai.protos")
 
@@ -135,7 +137,7 @@ class GooglePromptDriver(BasePromptDriver):
                 parts=[protos.Part(text=system_message.to_text()) for system_message in system_messages],
             )
 
-        return {
+        params = {
             "generation_config": types.GenerationConfig(
                 **{
                     # For some reason, providing stop sequences when streaming breaks native functions
@@ -148,15 +150,19 @@ class GooglePromptDriver(BasePromptDriver):
                     **self.extra_params,
                 },
             ),
-            **(
-                {
-                    "tools": self.__to_google_tools(prompt_stack.tools),
-                    "tool_config": {"function_calling_config": {"mode": self.tool_choice}},
-                }
-                if prompt_stack.tools and self.use_native_tools
-                else {}
-            ),
         }
+        if prompt_stack.output_schema is not None:
+            structured_ouptut_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
+            params["tool_config"] = {
+                "function_calling_config": {"mode": self.tool_choice},
+            }
+            if structured_ouptut_tool not in prompt_stack.tools:
+                prompt_stack.tools.append(structured_ouptut_tool)
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["tools"] = self.__to_google_tools(prompt_stack.tools)
+
+        return params
 
     def __to_google_messages(self, prompt_stack: PromptStack) -> ContentsType:
         types = import_optional_dependency("google.generativeai.types")

@@ -101,9 +101,11 @@ class OllamaPromptDriver(BasePromptDriver):
             raise Exception("invalid model response")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
         messages = self._prompt_stack_to_messages(prompt_stack)
 
-        return {
+        params = {
             "messages": messages,
             "model": self.model,
             "options": self.options,
@@ -121,6 +123,16 @@ class OllamaPromptDriver(BasePromptDriver):
             ),
             **self.extra_params,
         }
+
+        if prompt_stack.output_schema is not None:
+            if self.use_native_structured_output:
+                params["format"] = prompt_stack.output_schema.json_schema("Output")
+            else:
+                structured_ouptut_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
+                if structured_ouptut_tool not in prompt_stack.tools:
+                    prompt_stack.tools.append(structured_ouptut_tool)
+
+        return params
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         ollama_messages = []

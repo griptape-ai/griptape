@@ -1,11 +1,14 @@
 from __future__ import annotations
 
 import uuid
+from typing import TypeVar
 
 from attrs import Factory, define, field
 
 from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.rules import BaseRule, Ruleset
+
+T = TypeVar("T", bound=BaseRule)
 
 
 @define(slots=False)
@@ -25,3 +28,6 @@ class RuleMixin(SerializableMixin):
             rulesets.append(Ruleset(id=self._default_ruleset_id, name=self._default_ruleset_name, rules=self.rules))
 
         return rulesets
+
+    def get_rules_for_type(self, rule_type: type[T]) -> list[T]:
+        return [rule for ruleset in self.rulesets for rule in ruleset.rules if isinstance(rule, rule_type)]

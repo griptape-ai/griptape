@@ -35,6 +35,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     api_token: str = field(kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     model: str = field(kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
         default=Factory(
             lambda self: HuggingFaceTokenizer(model=self.model, max_output_tokens=self.max_tokens),
@@ -55,7 +56,12 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> Message:
         prompt = self.prompt_stack_to_string(prompt_stack)
         full_params = self._base_params(prompt_stack)
-        logger.debug((prompt, full_params))
+        logger.debug(
+            {
+                "prompt": prompt,
+                **full_params,
+            }
+        )
 
         response = self.client.text_generation(
             prompt,
@@ -75,7 +81,12 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         prompt = self.prompt_stack_to_string(prompt_stack)
         full_params = {**self._base_params(prompt_stack), "stream": True}
-        logger.debug((prompt, full_params))
+        logger.debug(
+            {
+                "prompt": prompt,
+                **full_params,
+            }
+        )
 
         response = self.client.text_generation(prompt, **full_params)
 
@@ -94,11 +105,19 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        return {
+        params = {
             "return_full_text": False,
             "max_new_tokens": self.max_tokens,
             **self.extra_params,
         }
+
+        if prompt_stack.output_schema and self.use_native_structured_output:
+            # https://huggingface.co/learn/cookbook/en/structured_generation#-constrained-decoding
+            params["grammar"] = {"type": "json", "value": prompt_stack.output_schema.json_schema("Output Schema")}
+            del params["grammar"]["value"]["$schema"]
+            del params["grammar"]["value"]["$id"]
+
+        return params
 
     def _prompt_stack_to_messages(self, prompt_stack: PromptStack) -> list[dict]:
         messages = []

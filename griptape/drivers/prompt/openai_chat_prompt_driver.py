@@ -144,50 +144,38 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(delta))
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        from griptape.tools.structured_output.tool import StructuredOutputTool
-
-        tools = prompt_stack.tools
-        if not self.use_native_structured_output and prompt_stack.output_schema is not None:
-            structured_ouptut_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
-            params["tool_choice"] = "required"
-            if structured_ouptut_tool not in prompt_stack.tools:
-                prompt_stack.tools.append(structured_ouptut_tool)
-
         params = {
             "model": self.model,
             "temperature": self.temperature,
             "user": self.user,
             "seed": self.seed,
-            **(
-                {
-                    "tools": self.__to_openai_tools(prompt_stack.tools),
-                    "tool_choice": self.tool_choice,
-                    "parallel_tool_calls": self.parallel_tool_calls,
-                }
-                if prompt_stack.tools and self.use_native_tools
-                else {}
-            ),
+            "stop": self.tokenizer.stop_sequences,
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
-            **(
-                {
-                    "response_format": {
-                        "type": "json_schema",
-                        "json_schema": {
-                            "name": "Output",
-                            "schema": prompt_stack.output_schema.json_schema("Output"),
-                            "strict": True,
-                        },
-                    }
-                }
-                if prompt_stack.output_schema is not None and self.use_native_structured_output
-                else {}
-            ),
             **self.extra_params,
         }
 
-        if self.response_format is not None:
+        if prompt_stack.output_schema is not None and self.use_native_structured_output:
+            if self.native_structured_output_mode == "native":
+                params["response_format"] = {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "Output",
+                        "schema": prompt_stack.output_schema.json_schema("Output"),
+                        "strict": True,
+                    },
+                }
+            else:
+                params["tool_choice"] = "required"
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["tools"] = self.__to_openai_tools(prompt_stack.tools)
+            params["parallel_tool_calls"] = self.parallel_tool_calls
+            if "tool_choice" not in params:
+                params["tool_choice"] = self.tool_choice
+
+        if self.response_format is not None and "response_format" not in params:
             if self.response_format == {"type": "json_object"}:
                 params["response_format"] = self.response_format
                 # JSON mode still requires a system message instructing the LLM to output JSON.

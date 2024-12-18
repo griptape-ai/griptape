@@ -97,36 +97,38 @@ class CoherePromptDriver(BasePromptDriver):
                 yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(event))
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
         tool_results = []
 
         messages = self.__to_cohere_messages(prompt_stack.messages)
 
-        return {
+        params = {
             "model": self.model,
             "messages": messages,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_tokens,
             **({"tool_results": tool_results} if tool_results else {}),
-            **(
-                {"tools": self.__to_cohere_tools(prompt_stack.tools)}
-                if prompt_stack.tools and self.use_native_tools
-                else {}
-            ),
-            **(
-                {
-                    "response_format": {
-                        "type": "json_object",
-                        "schema": prompt_stack.output_schema.json_schema("Output"),
-                    }
-                }
-                if not prompt_stack.tools  # Respond format is not supported with tools https://docs.cohere.com/reference/chat#request.body.response_format
-                and prompt_stack.output_schema is not None
-                and self.use_native_structured_output
-                else {}
-            ),
             **self.extra_params,
         }
+
+        if prompt_stack.output_schema is not None:
+            if self.use_native_structured_output:
+                params["response_format"] = {
+                    "type": "json_object",
+                    "schema": prompt_stack.output_schema.json_schema("Output"),
+                }
+            else:
+                # This does not work great since Cohere does not support forced tool use.
+                structured_output_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
+                if structured_output_tool not in prompt_stack.tools:
+                    prompt_stack.tools.append(structured_output_tool)
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["tools"] = self.__to_cohere_tools(prompt_stack.tools)
+
+        return params
 
     def __to_cohere_messages(self, messages: list[Message]) -> list[dict]:
         cohere_messages = []

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 from attrs import Factory, define, field
 
@@ -57,6 +57,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_structured_output: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    native_structured_output_mode: Literal["native", "tool"] = field(
+        default="native", kw_only=True, metadata={"serializable": True}
+    )
     extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
