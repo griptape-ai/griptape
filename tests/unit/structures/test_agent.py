@@ -284,3 +284,11 @@ class TestAgent:
         assert isinstance(agent.tasks[0], PromptTask)
         assert agent.tasks[0].prompt_driver.stream is True
         assert agent.tasks[0].prompt_driver is not prompt_driver
+
+    def test_output_type_primitive(self):
+        from griptape.tools import StructuredOutputTool
+
+        agent = Agent(output_type=str)
+
+        assert isinstance(agent.tools[0], StructuredOutputTool)
+        assert agent.tools[0].output_schema == agent._build_schema_from_type(str)

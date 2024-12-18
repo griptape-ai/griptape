@@ -4,6 +4,7 @@ import logging
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import NOTHING, Factory, NothingType, define, field
+from schema import Schema
 
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack
@@ -11,7 +12,9 @@ from griptape.configs import Defaults
 from griptape.memory.structure import Run
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Ruleset
+from griptape.rules.json_schema_rule import JsonSchemaRule
 from griptape.tasks import BaseTask
+from griptape.tools import StructuredOutputTool
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -38,6 +41,7 @@ class PromptTask(RuleMixin, BaseTask):
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )
+    output_schema: Optional[Schema] = field(default=None, kw_only=True)
 
     @property
     def rulesets(self) -> list:
@@ -67,12 +71,31 @@ class PromptTask(RuleMixin, BaseTask):
 
     @property
     def prompt_stack(self) -> PromptStack:
-        stack = PromptStack()
+        stack = PromptStack(output_schema=self.output_schema)
         memory = self.conversation_memory
 
-        system_template = self.generate_system_template(self)
-        if system_template:
-            stack.add_system_message(system_template)
+        system_contents = [TextArtifact(self.generate_system_template(self))]
+        if self.prompt_driver.use_native_structured_output:
+            json_schema_rules = self.get_rules_for_type(JsonSchemaRule)
+            if len(json_schema_rules) > 1:
+                raise ValueError("Only one JSON Schema rule is allowed per task when using native structured output.")
+            json_schema_rule = json_schema_rules[0] if json_schema_rules else None
+            if json_schema_rule is not None:
+                if isinstance(json_schema_rule.value, Schema):
+                    stack.output_schema = json_schema_rule.value
+                    if self.prompt_driver.native_structured_output_mode == "native":
+                        stack.output_schema = json_schema_rule.value
+                    else:
+                        stack.tools.append(StructuredOutputTool(output_schema=stack.output_schema))
+                else:
+                    raise ValueError(
+                        "JSON Schema rule value must be of type Schema when using native structured output."
+                    )
+        else:
+            system_contents.append(TextArtifact(J2("rulesets/rulesets.j2").render(rulesets=self.rulesets)))
+
+        if system_contents:
+            stack.add_system_message(ListArtifact(system_contents))
 
         stack.add_user_message(self.input)
 
@@ -81,14 +104,12 @@ class PromptTask(RuleMixin, BaseTask):
 
         if memory is not None and memory is not NOTHING:
             # insert memory into the stack right before the user messages
-            memory.add_to_prompt_stack(self.prompt_driver, stack, 1 if system_template else 0)
+            memory.add_to_prompt_stack(self.prompt_driver, stack, 1 if system_contents else 0)
 
         return stack
 
     def default_generate_system_template(self, _: PromptTask) -> str:
-        return J2("tasks/prompt_task/system.j2").render(
-            rulesets=J2("rulesets/rulesets.j2").render(rulesets=self.rulesets),
-        )
+        return J2("tasks/prompt_task/system.j2").render()
 
     def before_run(self) -> None:
         super().before_run()

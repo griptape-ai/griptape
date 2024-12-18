@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Literal
 
 from attrs import Factory, define, field
 from schema import Schema
@@ -55,6 +55,9 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    native_structured_output_mode: Literal["native", "tool"] = field(
+        default="tool", kw_only=True, metadata={"serializable": True}
+    )
     tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
     _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
@@ -102,11 +105,12 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             raise Exception("model response is empty")
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        system_messages = [{"text": message.to_text()} for message in prompt_stack.system_messages]
+        from griptape.tools.structured_output.tool import StructuredOutputTool
 
+        system_messages = [{"text": message.to_text()} for message in prompt_stack.system_messages]
         messages = self.__to_bedrock_messages([message for message in prompt_stack.messages if not message.is_system()])
 
-        return {
+        params = {
             "modelId": self.model,
             "messages": messages,
             "system": system_messages,
@@ -115,13 +119,26 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 **({"maxTokens": self.max_tokens} if self.max_tokens is not None else {}),
             },
             "additionalModelRequestFields": self.additional_model_request_fields,
-            **(
-                {"toolConfig": {"tools": self.__to_bedrock_tools(prompt_stack.tools), "toolChoice": self.tool_choice}}
-                if prompt_stack.tools and self.use_native_tools
-                else {}
-            ),
             **self.extra_params,
         }
+
+        if prompt_stack.output_schema is not None and self.use_native_structured_output:
+            if self.native_structured_output_mode == "tool":
+                structured_ouptut_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
+                params["toolConfig"] = {
+                    "toolChoice": {"any": {}},
+                }
+                if structured_ouptut_tool not in prompt_stack.tools:
+                    prompt_stack.tools.append(structured_ouptut_tool)
+            else:
+                raise ValueError(f"Unsupported native structured output mode: {self.native_structured_output_mode}")
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["toolConfig"] = {
+                "tools": self.__to_bedrock_tools(prompt_stack.tools),
+            }
+
+        return params
 
     def __to_bedrock_messages(self, messages: list[Message]) -> list[dict]:
         return [

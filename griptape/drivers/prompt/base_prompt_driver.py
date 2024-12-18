@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 from attrs import Factory, define, field
 
@@ -56,6 +56,10 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    native_structured_output_mode: Literal["native", "tool"] = field(
+        default="native", kw_only=True, metadata={"serializable": True}
+    )
     extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
@@ -73,10 +77,17 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     @observable(tags=["PromptDriver.run()"])
     def run(self, prompt_input: PromptStack | BaseArtifact) -> Message:
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
         if isinstance(prompt_input, BaseArtifact):
             prompt_stack = PromptStack.from_artifact(prompt_input)
         else:
             prompt_stack = prompt_input
+
+        if not self.use_native_structured_output and prompt_stack.output_schema is not None:
+            structured_ouptut_tool = StructuredOutputTool(output_schema=prompt_stack.output_schema)
+            if structured_ouptut_tool not in prompt_stack.tools:
+                prompt_stack.tools.append(structured_ouptut_tool)
 
         for attempt in self.retrying():
             with attempt:
