@@ -1,5 +1,6 @@
-from griptape.tasks import BaseTask
 from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.tasks import BaseTask
+
 
 class ProcessResultTask(BaseTask):
     @property
@@ -16,5 +17,7 @@ class ProcessResultTask(BaseTask):
         Processes the input artifact and returns a transformed result.
         """
         input_data = self.input.to_text()
-        processed_data = input_data.replace("Alice", "Alice (Processed)")  # Example modification
+        processed_data = input_data.replace(
+            "Alice", "Alice (Processed)"
+        )  # Example modification
         return TextArtifact(processed_data)

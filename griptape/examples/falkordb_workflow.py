@@ -1,21 +1,31 @@
-from griptape.structures import Pipeline
+import logging
+
 from griptape.artifacts import TextArtifact
+from griptape.structures import Pipeline
 from griptape.tasks.falkordb_task import FalkorDBTask
 from griptape.tasks.process_result_task import ProcessResultTask
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format="%(message)s")
+
+host = "your_host"  # Replace with actual value
+port = "your_port"  # Replace with actual value
+
 # Initialize Tasks
-falkordb_task = FalkorDBTask(graph_name="falkordb", host="localhost", port=6379)
+falkordb_task = FalkorDBTask(graph_name="falkordb")
+falkordb_task.connect(host=host, port=port)
 process_result_task = ProcessResultTask()
 
 # Chain Tasks
-falkordb_task >> process_result_task  # type: ignore # `process_result_task` depends on `falkordb_task`
+falkordb_task >> process_result_task
 
 # Create a Pipeline
 pipeline = Pipeline(tasks=[falkordb_task, process_result_task])
 
-
 # Run Task 1: Create a node
-falkordb_task.context["input"] = TextArtifact("CREATE (:Person {name: 'Alice', age: 30})")
+falkordb_task.context["input"] = TextArtifact(
+    "CREATE (:Person {name: 'Alice', age: 30})"
+)
 pipeline.run()
 
 # Run Task 2: Query the created node and process the result
@@ -26,6 +36,6 @@ pipeline.run()
 result = process_result_task.output
 
 if result:
-    print("Final Processed Result:", result.to_text())
+    logging.info("Final Processed Result: %s", result.to_text())
 else:
-    print("No output was produced by the task.")
+    logging.error("No output was produced by the task.")

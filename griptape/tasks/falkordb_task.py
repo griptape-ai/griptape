@@ -1,19 +1,25 @@
-from griptape.tasks import BaseTask
-from griptape.artifacts import TextArtifact, BaseArtifact
 import redis
+from griptape.artifacts import BaseArtifact, TextArtifact
+from griptape.tasks import BaseTask
 from redis.commands.graph import Graph
 
 
 class FalkorDBTask(BaseTask):
-    def __init__(self, graph_name="falkordb", host="localhost", port=6379, password=None):
+    def __init__(self, graph_name: str = "falkordb") -> None:
+        """
+        Initialize FalkorDBTask with a default graph_name.
+        """
         super().__init__()
-        self.client = redis.Redis(
-            host=host,
-            port=port,
-            password=password,
-            decode_responses=True
-        )
-        self.graph = Graph(self.client, graph_name)
+        self.graph_name = graph_name
+        self.client = None
+        self.graph = None
+
+    def connect(self, host: str, port: int) -> None:
+        """
+        Connect to Redis with the provided host and port.
+        """
+        self.client = redis.Redis(host=host, port=port, decode_responses=True)
+        self.graph = Graph(self.client, self.graph_name)
 
     @property
     def input(self) -> BaseArtifact:
@@ -27,9 +33,11 @@ class FalkorDBTask(BaseTask):
 
     def try_run(self) -> BaseArtifact:
         """
-        Executes the Cypher query from the input and returns the result as a TextArtifact.
+        Executes the Cypher query from the input.
         """
-        query = self.input.value  # Extract the query string from the input artifact
+        query = self.input.value
+        if not self.graph:
+            raise RuntimeError("Graph client is not connected.")
         try:
             result = self.graph.query(query)
 
