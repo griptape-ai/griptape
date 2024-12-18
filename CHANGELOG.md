@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Structure.conversation_memory_strategy` for setting whether Conversation Memory Runs should be created on a per-Structure or per-Task basis. Default is `Structure.ConversationMemoryStrategy.PER_STRUCTURE`.
 - `BranchTask` for selecting which Tasks (if any) to run based on a condition.
 - Support for `BranchTask` in `StructureVisualizer`.
+- `EvalEngine` for evaluating the performance of an LLM's output against a given input.
 
 ### Changed
 

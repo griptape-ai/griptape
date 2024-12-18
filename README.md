@@ -60,6 +60,7 @@ Engines wrap Drivers and provide use-case-specific functionality:
 - 📊 **RAG Engine** is an abstraction for implementing modular Retrieval Augmented Generation (RAG) pipelines.
 - 🛠️ **Extraction Engine** extracts JSON or CSV data from unstructured text.
 - 📝 **Summary Engine** generates summaries from textual content.
+- ✅ **Eval Engine** evaluates and scores the quality of generated text.
 
 ### 📦 Additional Components
 
