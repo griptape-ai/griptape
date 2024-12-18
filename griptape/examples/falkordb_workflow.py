@@ -8,8 +8,8 @@ from griptape.tasks.process_result_task import ProcessResultTask
 # Configure logging
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
-host = "your_host"  # Replace with actual value
-port = "your_port"  # Replace with actual value
+host = "localhost"  # Replace with actual value
+port = 6379  # Replace with actual value
 
 # Initialize Tasks
 falkordb_task = FalkorDBTask(graph_name="falkordb")
