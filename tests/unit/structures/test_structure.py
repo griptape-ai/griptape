@@ -73,6 +73,8 @@ class TestStructure:
                     "max_meta_memory_entries": agent.tasks[0].max_meta_memory_entries,
                     "context": agent.tasks[0].context,
                     "rulesets": [],
+                    "max_subtasks": 20,
+                    "tools": [],
                     "prompt_driver": {
                         "extra_params": {},
                         "max_tokens": None,
