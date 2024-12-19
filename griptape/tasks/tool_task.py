@@ -23,11 +23,14 @@ if TYPE_CHECKING:
 
 @define
 class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
+    DEFAULT_MAX_STEPS = 0
     ACTION_PATTERN = r"(?s)[^{]*({.*})"
 
     tool: BaseTool = field(kw_only=True, metadata={"serializable": True})
     subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
+    tools: list[BaseTool] = field(factory=list, kw_only=True, metadata={"serializable": False})
+    max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True, metadata={"serializable": False})
 
     @property
     def prompt_stack(self) -> PromptStack:

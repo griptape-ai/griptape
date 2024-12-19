@@ -1,3 +1,5 @@
+import pytest
+
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.common import ToolAction
 from griptape.structures import Agent
@@ -421,3 +423,9 @@ class TestToolkitSubtask:
         serialized_task["prompt_driver"]["module_name"] = "tests.mocks.mock_prompt_driver"
 
         assert ToolkitTask.from_dict(serialized_task).to_dict() == task.to_dict()
+
+    def test_deprecation_warning(self):
+        task = ToolkitTask("test")
+
+        with pytest.warns(DeprecationWarning):
+            task.run()
