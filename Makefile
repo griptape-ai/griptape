@@ -93,6 +93,10 @@ check/types:
 .PHONY: check/spell
 check/spell:
 	@poetry run typos 
+
+.PHONY: check/breaking
+check/breaking: ## Check for breaking changes.
+	@poetry run griffe check griptape --against main
 	
 .PHONY: docs
 docs: ## Build documentation.
