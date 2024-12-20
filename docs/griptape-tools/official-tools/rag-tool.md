@@ -9,7 +9,7 @@ Here is an example of how it can be used with a local vector store driver:
 ```
 
 ```
-[07/11/24 13:30:43] INFO     ToolkitTask a6d057d5c71d4e9cb6863a2adb64b76c
+[07/11/24 13:30:43] INFO     PromptTask a6d057d5c71d4e9cb6863a2adb64b76c
                              Input: what is Griptape?
 [07/11/24 13:30:44] INFO     Subtask 8fd89ed9eefe49b8892187f2fca3890a
                              Actions: [
@@ -27,7 +27,7 @@ Here is an example of how it can be used with a local vector store driver:
 [07/11/24 13:30:49] INFO     Subtask 8fd89ed9eefe49b8892187f2fca3890a
                              Response: Griptape builds AI-powered applications that connect securely to your enterprise data and APIs. Griptape Agents provide incredible
                              power and flexibility when working with large language models.
-                    INFO     ToolkitTask a6d057d5c71d4e9cb6863a2adb64b76c
+                    INFO     PromptTask a6d057d5c71d4e9cb6863a2adb64b76c
                              Output: Griptape builds AI-powered applications that connect securely to your enterprise data and APIs. Griptape Agents provide incredible
                              power and flexibility when working with large language models.
 ```

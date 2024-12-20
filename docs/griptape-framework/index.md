@@ -106,7 +106,7 @@ Agents on their own are fun, but let's add some capabilities to them using Gript
 Here is the chain of thought from the Agent. Notice where it realizes it can use the tool you just injected to do the calculation.[^1]
 
 ```
-[07/23/24 10:47:38] INFO     ToolkitTask 6a51060d1fb74e57840a91aa319f26dc
+[07/23/24 10:47:38] INFO     PromptTask 6a51060d1fb74e57840a91aa319f26dc
                              Input: what is 7^12
 [07/23/24 10:47:39] INFO     Subtask 0c984616fd2345a7b48a0b0d692daa3c
                              Actions: [
@@ -123,7 +123,7 @@ Here is the chain of thought from the Agent. Notice where it realizes it can use
                              ]
                     INFO     Subtask 0c984616fd2345a7b48a0b0d692daa3c
                              Response: 13841287201
-[07/23/24 10:47:40] INFO     ToolkitTask 6a51060d1fb74e57840a91aa319f26dc
+[07/23/24 10:47:40] INFO     PromptTask 6a51060d1fb74e57840a91aa319f26dc
                              Output: 13,841,287,201
 Answer: 13,841,287,201
 ```
@@ -137,7 +137,7 @@ Agents are great for getting started, but they are intentionally limited to a si
 ```
 
 ```
-[08/12/24 14:50:28] INFO     ToolkitTask 19dcf6020968468a91aa8a93c2a3f645
+[08/12/24 14:50:28] INFO     PromptTask 19dcf6020968468a91aa8a93c2a3f645
                              Input: Load https://www.griptape.ai, summarize it, and store it in griptape.txt
 [08/12/24 14:50:30] INFO     Subtask a685799379c5421b91768353fc219939
                              Actions: [
@@ -202,7 +202,7 @@ Agents are great for getting started, but they are intentionally limited to a si
                              ]
                     INFO     Subtask aaaeca1a089844d4915d065deb3c00cf
                              Response: Successfully saved file
-[08/12/24 14:50:39] INFO     ToolkitTask 19dcf6020968468a91aa8a93c2a3f645
+[08/12/24 14:50:39] INFO     PromptTask 19dcf6020968468a91aa8a93c2a3f645
                              Output: The content from https://www.griptape.ai has been summarized and stored in griptape.txt.
                     INFO     PromptTask dbbb38f144f445db896dc12854f17ad3
                              Input: Say the following in spanish: The content from https://www.griptape.ai has been summarized and stored in griptape.txt.

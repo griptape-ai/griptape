@@ -3,7 +3,7 @@ import pytest
 from tests.utils.structure_tester import StructureTester
 
 
-class TestToolkitTask:
+class TestPromptTask:
     @pytest.fixture(
         autouse=True,
         params=StructureTester.TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS,

@@ -19,7 +19,7 @@ from griptape.events import (
 )
 from griptape.events.base_event import BaseEvent
 from griptape.structures import Pipeline
-from griptape.tasks import ActionsSubtask, ToolkitTask
+from griptape.tasks import ActionsSubtask, PromptTask
 from tests.mocks.mock_event import MockEvent
 from tests.mocks.mock_event_listener_driver import MockEventListenerDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -30,7 +30,7 @@ class TestEventListener:
     @pytest.fixture()
     def pipeline(self, mock_config):
         mock_config.drivers_config.prompt_driver = MockPromptDriver(stream=True, use_native_tools=True)
-        task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
+        task = PromptTask("test", tools=[MockTool(name="Tool1")])
 
         pipeline = Pipeline()
         pipeline.add_task(task)

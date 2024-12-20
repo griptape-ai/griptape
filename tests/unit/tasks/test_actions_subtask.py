@@ -6,7 +6,7 @@ from griptape.artifacts import ActionArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.common import ToolAction
 from griptape.structures import Agent
-from griptape.tasks import ActionsSubtask, ToolkitTask
+from griptape.tasks import ActionsSubtask, PromptTask
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -19,7 +19,7 @@ class TestActionsSubtask:
             "Answer: test output"
         )
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -40,7 +40,7 @@ class TestActionsSubtask:
                 TextArtifact("answer"),
             ]
         )
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -60,7 +60,7 @@ class TestActionsSubtask:
                 ),
             ]
         )
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -73,7 +73,7 @@ class TestActionsSubtask:
     def test_prompt_answer(self):
         valid_input = "Answer: test output"
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
 
@@ -84,7 +84,7 @@ class TestActionsSubtask:
     def test_prompt_implicit_answer(self):
         valid_input = "test output"
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
 
@@ -98,7 +98,7 @@ class TestActionsSubtask:
                 TextArtifact("answer"),
             ]
         )
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
 
@@ -115,7 +115,7 @@ class TestActionsSubtask:
                 ),
             ]
         )
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(lambda task: valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -133,7 +133,7 @@ class TestActionsSubtask:
             "Answer: test output"
         )
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -153,7 +153,7 @@ class TestActionsSubtask:
             "Answer: test output"
         )
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -165,7 +165,7 @@ class TestActionsSubtask:
     def test_no_actions(self):
         valid_input = "Thought: need to test\n" "<|Response|>: test observation\n" "Answer: test output"
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -175,7 +175,7 @@ class TestActionsSubtask:
     def test_empty_actions(self):
         valid_input = "Thought: need to test\n" "Actions: []\n" "<|Response|>: test observation\n" "Answer: test output"
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -187,7 +187,7 @@ class TestActionsSubtask:
             "Thought: need to test\n" "Actions: [{,{]\n" "<|Response|>: test observation\n" "Answer: test output"
         )
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(invalid_input))
 
@@ -204,7 +204,7 @@ class TestActionsSubtask:
             "Answer: test output"
         )
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
@@ -219,7 +219,7 @@ class TestActionsSubtask:
             'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]'
         )
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         subtask.run()
@@ -234,7 +234,7 @@ class TestActionsSubtask:
             'Actions:[{"tag": "foo", "name": "MockTool","path": "test_exception","input": {"values": {"test": "value"}}}]'
         )
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         subtask.run()
@@ -249,7 +249,7 @@ class TestActionsSubtask:
             'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]'
         )
 
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
 

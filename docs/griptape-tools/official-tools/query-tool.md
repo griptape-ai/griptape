@@ -5,7 +5,7 @@ The [QueryTool](../../reference/griptape/tools/query/tool.md) enables Agents to 
 ```
 
 ```
-[08/12/24 15:49:23] INFO     ToolkitTask a88abda2e5324bdf81a3e2b99c26b9df
+[08/12/24 15:49:23] INFO     PromptTask a88abda2e5324bdf81a3e2b99c26b9df
                              Input: Tell me about the architecture as described here: https://neovim.io/doc/user/vim_diff.html
 [08/12/24 15:49:24] INFO     Subtask 3dc9910bcac44c718b3aedd6222e372a
                              Actions: [
@@ -63,7 +63,7 @@ The [QueryTool](../../reference/griptape/tools/query/tool.md) enables Agents to 
                              plugins/extensions.
 
                              These architectural decisions make Nvim more stable, extensible, and user-friendly compared to traditional Vim.
-[08/12/24 15:49:37] INFO     ToolkitTask a88abda2e5324bdf81a3e2b99c26b9df
+[08/12/24 15:49:37] INFO     PromptTask a88abda2e5324bdf81a3e2b99c26b9df
                              Output: The architecture of Neovim (Nvim) is designed to enhance stability, performance, and extensibility. Here are the key points:
 
                              1. **Decoupled UI**: The user interface (UI) is separated from the core editor. All UIs, including the built-in terminal user interface (TUI),

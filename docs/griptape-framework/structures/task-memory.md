@@ -26,14 +26,14 @@ Lets look at a simple example where `off_prompt` is set to `False`:
 ```
 
 ```
-[04/26/24 13:06:42] INFO     ToolkitTask 36b9dea13b9d479fb752014f41dca54c
+[04/26/24 13:06:42] INFO     PromptTask 36b9dea13b9d479fb752014f41dca54c
                              Input: What is the square root of 12345?
 [04/26/24 13:06:48] INFO     Subtask a88c0feeaef6493796a9148ed68c9caf
                              Thought: To find the square root of 12345, I can use the CalculatorTool action with the expression "12345 ** 0.5".
                              Actions: [{"name": "CalculatorTool", "path": "calculate", "input": {"values": {"expression": "12345 ** 0.5"}}, "tag": "sqrt_12345"}]
                     INFO     Subtask a88c0feeaef6493796a9148ed68c9caf
                              Response: 111.1080555135405
-[04/26/24 13:06:49] INFO     ToolkitTask 36b9dea13b9d479fb752014f41dca54c
+[04/26/24 13:06:49] INFO     PromptTask 36b9dea13b9d479fb752014f41dca54c
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
@@ -46,7 +46,7 @@ Let's explore what happens when `off_prompt` is set to `True`:
 ```
 
 ```
-[04/26/24 13:07:02] INFO     ToolkitTask ecbb788d9830491ab72a8a2bbef5fb0a
+[04/26/24 13:07:02] INFO     PromptTask ecbb788d9830491ab72a8a2bbef5fb0a
                              Input: What is the square root of 12345?
 [04/26/24 13:07:10] INFO     Subtask 4700dc0c2e934d1a9af60a28bd770bc6
                              Thought: To find the square root of a number, we can use the CalculatorTool action with the expression "sqrt(12345)". However, the CalculatorTool
@@ -85,7 +85,7 @@ If we had kept it as `True`, the results would have been stored back Task Memory
 ```
 
 ```
-[08/12/24 14:54:04] INFO     ToolkitTask f7ebd8acc3d64e3ca9db82ef9ec4e65f
+[08/12/24 14:54:04] INFO     PromptTask f7ebd8acc3d64e3ca9db82ef9ec4e65f
                              Input: What is the square root of 12345?
 [08/12/24 14:54:05] INFO     Subtask 777693d039e74ed288f663742fdde2ea
                              Actions: [
@@ -121,7 +121,7 @@ If we had kept it as `True`, the results would have been stored back Task Memory
                              ]
 [08/12/24 14:54:07] INFO     Subtask c8394ca51f1f4ae1b715618a2c5c8120
                              Response: The text contains a single numerical value: 111.1080555135405.
-[08/12/24 14:54:08] INFO     ToolkitTask f7ebd8acc3d64e3ca9db82ef9ec4e65f
+[08/12/24 14:54:08] INFO     PromptTask f7ebd8acc3d64e3ca9db82ef9ec4e65f
                              Output: The square root of 12345 is approximately 111.108.
 ```
 
@@ -139,7 +139,7 @@ Let's say we want to query the contents of a very large webpage.
 When running this example, we get the following error:
 
 ```
-[04/26/24 13:20:02] ERROR    ToolkitTask 67e2f907f95d4850ae79f9da67df54c1
+[04/26/24 13:20:02] ERROR    PromptTask 67e2f907f95d4850ae79f9da67df54c1
                              Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 73874 tokens.
                              Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
 ```
@@ -154,7 +154,7 @@ Note that we're setting `off_prompt` to `False` on the `QueryTool` so that the _
 And now we get the expected output:
 
 ```
-[08/12/24 14:56:18] INFO     ToolkitTask d3ce58587dc944b0a30a205631b82944
+[08/12/24 14:56:18] INFO     PromptTask d3ce58587dc944b0a30a205631b82944
                              Input: According to this page https://en.wikipedia.org/wiki/Elden_Ring, how many copies of Elden Ring have been sold?
 [08/12/24 14:56:20] INFO     Subtask 494850ec40fe474c83d48b5620c5dcbb
                              Actions: [
@@ -192,7 +192,7 @@ And now we get the expected output:
 [08/12/24 14:56:29] INFO     Subtask 8669ee523bb64550850566011bcd14e2
                              Response: "Elden Ring" sold 13.4 million copies worldwide by the end of March 2022 and 25 million by June 2024. The downloadable content (DLC)
                              "Shadow of the Erdtree" sold five million copies within three days of its release.
-[08/12/24 14:56:30] INFO     ToolkitTask d3ce58587dc944b0a30a205631b82944
+[08/12/24 14:56:30] INFO     PromptTask d3ce58587dc944b0a30a205631b82944
                              Output: Elden Ring sold 13.4 million copies worldwide by the end of March 2022 and 25 million by June 2024.
 ```
 
@@ -208,7 +208,7 @@ In this example, GPT-4 _never_ sees the contents of the page, only that it was s
 ```
 
 ```
-[08/12/24 14:55:21] INFO     ToolkitTask 329b1abc760e4d30bbf23e349451d930
+[08/12/24 14:55:21] INFO     PromptTask 329b1abc760e4d30bbf23e349451d930
                              Input: Use this page https://en.wikipedia.org/wiki/Elden_Ring to find how many copies of Elden Ring have been sold, and then save the result to
                              a file.
 [08/12/24 14:55:23] INFO     Subtask 26205b5623174424b618abafd886c4d8
@@ -265,7 +265,7 @@ In this example, GPT-4 _never_ sees the contents of the page, only that it was s
                              ]
                     INFO     Subtask 7aafcb3fb0d845858e2fcf9b8dc8a7ec
                              Response: Successfully saved memory artifacts to disk
-[08/12/24 14:55:40] INFO     ToolkitTask 329b1abc760e4d30bbf23e349451d930
+[08/12/24 14:55:40] INFO     PromptTask 329b1abc760e4d30bbf23e349451d930
                              Output: Successfully saved the number of copies sold of Elden Ring to a file named "elden_ring_sales.txt" in the "results" directory.
 ```
 
