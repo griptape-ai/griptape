@@ -18,7 +18,6 @@ from .structure_visualizer import StructureVisualizer
 from .reference_utils import references_from_artifacts
 from .file_utils import get_mime_type
 from .contextvars_utils import with_contextvars
-from .events import Events
 
 
 def minify_json(value: str) -> str:
@@ -50,5 +49,4 @@ __all__ = [
     "references_from_artifacts",
     "get_mime_type",
     "with_contextvars",
-    "Events",
 ]
