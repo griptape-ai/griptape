@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BranchTask` for selecting which Tasks (if any) to run based on a condition.
 - Support for `BranchTask` in `StructureVisualizer`.
 - `EvalEngine` for evaluating the performance of an LLM's output against a given input.
+- `BaseFileLoader.save()` method for saving an Artifact to a destination.
 
 ### Changed
 
