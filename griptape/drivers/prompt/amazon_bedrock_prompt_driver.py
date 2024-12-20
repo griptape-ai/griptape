@@ -188,7 +188,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 },
             }
         else:
-            raise ValueError(f"Unsupported content type: {type(content)}")
+            return content.artifact.value
 
     def __to_bedrock_tool_use_content(self, artifact: BaseArtifact) -> dict:
         if isinstance(artifact, ImageArtifact):
