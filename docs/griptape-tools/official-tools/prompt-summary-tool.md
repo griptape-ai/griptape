@@ -5,7 +5,7 @@ The [PromptSummaryTool](../../reference/griptape/tools/prompt_summary/tool.md) e
 ```
 
 ````
-[08/12/24 15:54:46] INFO     ToolkitTask 8be73eb542c44418ba880399044c017a
+[08/12/24 15:54:46] INFO     PromptTask 8be73eb542c44418ba880399044c017a
                              Input: How can I build Neovim from source for MacOS according to this https://github.com/neovim/neovim/blob/master/BUILD.md
 [08/12/24 15:54:47] INFO     Subtask cd362a149e1d400997be93c1342d1663
                              Actions: [
@@ -67,7 +67,7 @@ The [PromptSummaryTool](../../reference/griptape/tools/prompt_summary/tool.md) e
                                 - Commands for checking and updating translations.
 
                              The text also includes troubleshooting tips and links to additional resources for further guidance.
-[08/12/24 15:55:01] INFO     ToolkitTask 8be73eb542c44418ba880399044c017a
+[08/12/24 15:55:01] INFO     PromptTask 8be73eb542c44418ba880399044c017a
                              Output: To build Neovim from source on macOS, follow these steps:
 
                              1. **Install Dependencies**:

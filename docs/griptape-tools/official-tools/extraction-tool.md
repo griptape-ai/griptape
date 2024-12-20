@@ -5,7 +5,7 @@ The [ExractionTool](../../reference/griptape/tools/extraction/tool.md) enables L
 ```
 
 ```
-[08/12/24 15:58:03] INFO     ToolkitTask 43b3d209a83c470d8371b7ef4af175b4
+[08/12/24 15:58:03] INFO     PromptTask 43b3d209a83c470d8371b7ef4af175b4
                              Input: Load https://griptape.ai and extract key info
 [08/12/24 15:58:05] INFO     Subtask 6a9a63802faf4717bab24bbbea2cb49b
                              Actions: [
@@ -49,6 +49,6 @@ The [ExractionTool](../../reference/griptape/tools/extraction/tool.md) enables L
                              extract, prep/transform, and load into a vector database index.", "Retrieval as a Service (RAG): Generate answers, summaries, and details from
                              your own data with ready-made or custom retrieval patterns.", "Structure Runtime (RUN): Build AI agents, pipelines, and workflows for real-time
                              interfaces, transactional processes, and batch workloads."]}
-[08/12/24 15:58:14] INFO     ToolkitTask 43b3d209a83c470d8371b7ef4af175b4
+[08/12/24 15:58:14] INFO     PromptTask 43b3d209a83c470d8371b7ef4af175b4
                              Output: Extracted key information from Griptape's website.
 ```

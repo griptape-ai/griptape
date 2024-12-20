@@ -5,7 +5,7 @@ from griptape.configs.drivers import DriversConfig
 from griptape.drivers import OpenAiChatPromptDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
-from griptape.tasks import ToolkitTask
+from griptape.tasks import PromptTask
 from griptape.tools import RestApiTool
 
 Defaults.drivers_config = DriversConfig(
@@ -116,27 +116,27 @@ pipeline = Pipeline(
 )
 
 pipeline.add_tasks(
-    ToolkitTask(
+    PromptTask(
         "Output the title of post 1.",
         tools=[posts_client],
     ),
-    ToolkitTask(
+    PromptTask(
         "Create a post for user 1 with title 'My First Post' and body 'Hello world!'.",
         tools=[posts_client],
     ),
-    ToolkitTask(
+    PromptTask(
         "Update post 1 with a new body: 'Hello universe!'.",
         tools=[posts_client],
     ),
-    ToolkitTask(
+    PromptTask(
         "Patch post 1 with a new title: 'My First Post, A Journey'.",
         tools=[posts_client],
     ),
-    ToolkitTask(
+    PromptTask(
         "Delete post 1.",
         tools=[posts_client],
     ),
-    ToolkitTask(
+    PromptTask(
         "Output the body of all the comments for post 1.",
         tools=[posts_client],
     ),

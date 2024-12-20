@@ -8,7 +8,7 @@ from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import observable
 from griptape.configs import Defaults
 from griptape.structures import Structure
-from griptape.tasks import PromptTask, ToolkitTask
+from griptape.tasks import PromptTask
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
@@ -43,18 +43,12 @@ class Agent(Structure):
 
         self.prompt_driver.stream = self.stream
         if len(self.tasks) == 0:
-            if self.tools:
-                task = ToolkitTask(
-                    self.input,
-                    prompt_driver=self.prompt_driver,
-                    tools=self.tools,
-                    max_meta_memory_entries=self.max_meta_memory_entries,
-                )
-            else:
-                task = PromptTask(
-                    self.input, prompt_driver=self.prompt_driver, max_meta_memory_entries=self.max_meta_memory_entries
-                )
-
+            task = PromptTask(
+                self.input,
+                prompt_driver=self.prompt_driver,
+                tools=self.tools,
+                max_meta_memory_entries=self.max_meta_memory_entries,
+            )
             self.add_task(task)
 
     @property

@@ -7,7 +7,7 @@ from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
-from griptape.tasks import BaseTask, PromptTask, ToolkitTask
+from griptape.tasks import BaseTask, PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -23,7 +23,7 @@ class TestAgent:
         assert agent.rulesets[0].name == "TestRuleset"
         assert agent.rulesets[0].rules[0].value == "test"
         assert isinstance(agent.conversation_memory, ConversationMemory)
-        assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
+        assert isinstance(Agent(tools=[MockTool()]).task, PromptTask)
 
     def test_rulesets(self):
         agent = Agent(rulesets=[Ruleset("Foo", [Rule("foo test")])])

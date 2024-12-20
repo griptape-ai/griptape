@@ -7,7 +7,7 @@ This tool enables LLMs to scrape web pages for full text, summaries, authors, ti
 ```
 
 ```
-[08/12/24 15:32:08] INFO     ToolkitTask b14a4305365f4b17a4dcf235f84397e2
+[08/12/24 15:32:08] INFO     PromptTask b14a4305365f4b17a4dcf235f84397e2
                              Input: Based on https://www.griptape.ai/, tell me what griptape is
 [08/12/24 15:32:10] INFO     Subtask bf396977ea634eb28f55388d3f828f5d
                              Actions: [
@@ -65,7 +65,7 @@ This tool enables LLMs to scrape web pages for full text, summaries, authors, ti
                              - Automated Data Prep (ETL): Connect, extract, transform, and load data into a vector database index.
                              - Retrieval as a Service (RAG): Generate answers, summaries, and details from your data using customizable retrieval patterns.
                              - Structure Runtime (RUN): Build and integrate AI agents, pipelines, and workflows into client applications.
-[08/12/24 15:32:21] INFO     ToolkitTask b14a4305365f4b17a4dcf235f84397e2
+[08/12/24 15:32:21] INFO     PromptTask b14a4305365f4b17a4dcf235f84397e2
                              Output: Griptape is a comprehensive solution designed to facilitate the building, deploying, and scaling of AI applications in the cloud. It
                              provides developers with a framework and cloud services that simplify the creation of retrieval-driven AI-powered applications, even for those
                              without extensive AI or prompt engineering expertise.

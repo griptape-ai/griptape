@@ -1,7 +1,7 @@
 from griptape.structures import Agent
-from griptape.tools import CalculatorTool
 
-agent = Agent(input="Calculate the following: {{ args[0] }}", tools=[CalculatorTool()])
+agent = Agent(
+    input="Write me a {{ args[0] }} about {{ args[1] }} and {{ args[2] }}",
+)
 
-agent.run("what's 13^7?")
-print("Answer:", agent.output)
+agent.run("Haiku", "Skateboards", "Programming")

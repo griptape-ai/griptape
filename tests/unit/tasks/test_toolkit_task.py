@@ -3,7 +3,7 @@ import pytest
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.common import ToolAction
 from griptape.structures import Agent
-from griptape.tasks import ActionsSubtask, PromptTask, ToolkitTask
+from griptape.tasks import ActionsSubtask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -367,7 +367,7 @@ class TestToolkitSubtask:
 
         agent.add_task(task)
 
-        system_template = task.generate_system_template(PromptTask())
+        system_template = task.generate_system_template(ToolkitTask())
 
         assert "You have access to additional contextual information" in system_template
 

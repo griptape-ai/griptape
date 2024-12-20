@@ -7,7 +7,7 @@ This tool enables LLMs to execute SQL statements via [SQLAlchemy](https://www.sq
 ```
 
 ```
-[08/12/24 14:59:31] INFO     ToolkitTask e302f7315d1a4f939e0125103ff4f09f
+[08/12/24 14:59:31] INFO     PromptTask e302f7315d1a4f939e0125103ff4f09f
                              Input: SELECT * FROM people;
 [08/12/24 14:59:34] INFO     Subtask 809d1a281b85447f90706d431b77b845
                              Actions: [
@@ -42,7 +42,7 @@ This tool enables LLMs to execute SQL statements via [SQLAlchemy](https://www.sq
                              9,David,Macdonald,Public relations account executive
 
                              10,Erica,Ramos,"Accountant, chartered public finance"
-[08/12/24 14:59:43] INFO     ToolkitTask e302f7315d1a4f939e0125103ff4f09f
+[08/12/24 14:59:43] INFO     PromptTask e302f7315d1a4f939e0125103ff4f09f
                              Output:
                              1. Lee Andrews - Engineer, electrical
                              2. Michael Woods - Therapist, art

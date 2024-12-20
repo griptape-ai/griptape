@@ -9,7 +9,7 @@ from schema import Or, Schema, SchemaMissingKeyError
 
 from griptape.artifacts.info_artifact import InfoArtifact
 from griptape.common import ToolAction
-from griptape.tasks import ActionsSubtask, ToolkitTask
+from griptape.tasks import ActionsSubtask, PromptTask
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 from tests.mocks.mock_tool.tool import MockTool
@@ -190,13 +190,13 @@ class TestBaseTool:
 
     def test_off_prompt(self, tool):
         assert (
-            not ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool()])
+            not PromptTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool()])
             .tools[0]
             .output_memory
         )
 
         assert (
-            ToolkitTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool(off_prompt=True)])
+            PromptTask(task_memory=defaults.text_task_memory("TestMemory"), tools=[MockTool(off_prompt=True)])
             .tools[0]
             .output_memory
         )

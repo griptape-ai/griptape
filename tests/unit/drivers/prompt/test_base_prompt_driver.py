@@ -3,7 +3,7 @@ from griptape.common import Message, PromptStack
 from griptape.events import FinishPromptEvent, StartPromptEvent
 from griptape.events.event_bus import _EventBus
 from griptape.structures import Pipeline
-from griptape.tasks import PromptTask, ToolkitTask
+from griptape.tasks import PromptTask
 from tests.mocks.mock_failing_prompt_driver import MockFailingPromptDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -50,7 +50,7 @@ class TestBasePromptDriver:
         mock_config.drivers_config.prompt_driver = MockPromptDriver(max_attempts=1, use_native_tools=True)
         pipeline = Pipeline()
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+        pipeline.add_task(PromptTask(tools=[MockTool()]))
 
         output = pipeline.run().output_task.output
         assert isinstance(output, TextArtifact)
@@ -60,7 +60,7 @@ class TestBasePromptDriver:
         mock_config.driver = MockPromptDriver(max_attempts=1, stream=True, use_native_tools=True)
         pipeline = Pipeline()
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+        pipeline.add_task(PromptTask(tools=[MockTool()]))
 
         output = pipeline.run().output_task.output
         assert isinstance(output, TextArtifact)

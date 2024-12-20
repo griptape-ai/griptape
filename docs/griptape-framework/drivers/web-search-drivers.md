@@ -16,7 +16,7 @@ You can use Web Search Drivers with [Structures](../structures/agents.md):
 ```
 
 ```
-ToolkitTask 45a53f1024494baab41a1f10a67017b1
+PromptTask 45a53f1024494baab41a1f10a67017b1
     Output: Here are some websites with information about AI
     frameworks:
 
