@@ -50,6 +50,19 @@ jobs:
         uses: ./.github/actions/init-environment
       - name: Run linter
         run: make check/lint
+  breaking:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9" ]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v4
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run breaking changes checker
+        run: make check/breaking
   coverage:
       runs-on: ubuntu-latest
       strategy:
