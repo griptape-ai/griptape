@@ -192,7 +192,7 @@ class AnthropicPromptDriver(BasePromptDriver):
                 "is_error": isinstance(artifact, ErrorArtifact),
             }
         else:
-            raise ValueError(f"Unsupported prompt content type: {type(content)}")
+            return content.artifact.value
 
     def __to_anthropic_tool_result_content(self, artifact: BaseArtifact) -> dict:
         if isinstance(artifact, ImageArtifact):
