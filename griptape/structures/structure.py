@@ -2,20 +2,27 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
+from queue import Queue
+from threading import Thread
 from typing import TYPE_CHECKING, Any, Literal, Optional, Union
 
 from attrs import Factory, define, field
 
 from griptape.common import observable
 from griptape.events import EventBus, FinishStructureRunEvent, StartStructureRunEvent
+from griptape.events.base_event import BaseEvent
+from griptape.events.event_listener import EventListener
 from griptape.memory import TaskMemory
 from griptape.memory.meta import MetaMemory
 from griptape.memory.structure import ConversationMemory, Run
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.mixins.runnable_mixin import RunnableMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.utils.contextvars_utils import with_contextvars
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from griptape.artifacts import BaseArtifact
     from griptape.memory.structure import BaseConversationMemory
     from griptape.tasks import BaseTask
@@ -42,6 +49,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _execution_args: tuple = ()
+    _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()), init=False)
 
     def __attrs_post_init__(self) -> None:
         tasks = self._tasks.copy()
@@ -197,6 +205,26 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         self.after_run()
 
         return result
+
+    @observable
+    def run_stream(self, *args, event_types: Optional[list[type[BaseEvent]]] = None) -> Iterator[BaseEvent]:
+        if event_types is None:
+            event_types = [BaseEvent]
+        else:
+            if FinishStructureRunEvent not in event_types:
+                event_types = [*event_types, FinishStructureRunEvent]
+
+        with EventListener(self._event_queue.put, event_types=event_types):
+            t = Thread(target=with_contextvars(self.run), args=args)
+            t.start()
+
+            while True:
+                event = self._event_queue.get()
+                if isinstance(event, FinishStructureRunEvent):
+                    break
+                else:
+                    yield event
+            t.join()
 
     @abstractmethod
     def try_run(self, *args) -> Structure: ...
