@@ -20,7 +20,6 @@ from griptape.utils import J2
 if TYPE_CHECKING:
     from schema import Schema
 
-    from griptape.drivers import BasePromptDriver
     from griptape.memory import TaskMemory
     from griptape.memory.structure.base_conversation_memory import BaseConversationMemory
     from griptape.structures import Structure
@@ -35,7 +34,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
     # Stop sequence for chain-of-thought in the framework. Using this "token-like" string to make it more unique,
     # so that it doesn't trigger on accident.
     RESPONSE_STOP_SEQUENCE = "<|Response|>"
-    prompt_driver: BasePromptDriver = field(
+    prompt_driver: str = field(
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True, metadata={"serializable": True}
     )
     generate_system_template: Callable[[PromptTask], str] = field(
