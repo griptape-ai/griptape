@@ -92,9 +92,9 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         stack = PromptStack(tools=self.tools)
         memory = self.structure.conversation_memory if self.structure is not None else None
 
-        system_message = self.generate_system_template(self)
-        if system_message:
-            stack.add_system_message(system_message)
+        system_template = self.generate_system_template(self)
+        if system_template:
+            stack.add_system_message(system_template)
 
         stack.add_user_message(self.input)
 
@@ -139,7 +139,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
 
         if memory is not None:
             # inserting at index 1 to place memory right after system prompt
-            memory.add_to_prompt_stack(self.prompt_driver, stack, 1 if system_message else 0)
+            memory.add_to_prompt_stack(self.prompt_driver, stack, 1 if system_template else 0)
 
         return stack
 
