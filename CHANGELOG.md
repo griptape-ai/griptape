@@ -67,7 +67,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `GoogleDocsTool`
   - `GoogleDriveTool`
   - `GoogleGmailTool`
-- **BREAKING**: Moved the following AWS Tools to the [Griptape AWS Extension](https://github.com/griptape-ai/griptape-google):
+- **BREAKING**: Moved the following AWS Tools to the [Griptape AWS Extension](https://github.com/griptape-ai/griptape-aws):
   - `AwsCliTool`
   - `AwsIamTool`
   - `AwsPricingTool`
