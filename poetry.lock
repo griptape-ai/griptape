@@ -1950,17 +1950,21 @@ test = ["objgraph", "psutil"]
 
 [[package]]
 name = "griffe"
-version = "1.5.1"
+version = "1.5.2.dev18+g596cf6d"
 description = "Signatures for entire Python programs. Extract the structure, the frame, the skeleton of your project, to generate API documentation or find breaking changes in your API."
 optional = false
 python-versions = ">=3.9"
-files = [
-    {file = "griffe-1.5.1-py3-none-any.whl", hash = "sha256:ad6a7980f8c424c9102160aafa3bcdf799df0e75f7829d75af9ee5aef656f860"},
-    {file = "griffe-1.5.1.tar.gz", hash = "sha256:72964f93e08c553257706d6cd2c42d1c172213feb48b2be386f243380b405d4b"},
-]
+files = []
+develop = false
 
 [package.dependencies]
 colorama = ">=0.4"
+
+[package.source]
+type = "git"
+url = "https://github.com/mkdocstrings/griffe.git"
+reference = "main"
+resolved_reference = "596cf6d2f329929abfc6f8fa21a18bbc522c27ef"
 
 [[package]]
 name = "grpcio"
@@ -7231,4 +7235,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "64d0644016a067063e7d24b95ac74340773f6bb31e006945c233d1993fe266d7"
+content-hash = "e6fbf505c47fd2ac1e16c9365a93d38eb1c4f2bf1bc2eee8187cd76e36ffede7"
