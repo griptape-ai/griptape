@@ -1376,22 +1376,22 @@ files = [
 
 [[package]]
 name = "duckduckgo-search"
-version = "6.3.7"
+version = "7.0.1"
 description = "Search for words, documents, images, news, maps and text translation using the DuckDuckGo.com search engine."
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "duckduckgo_search-6.3.7-py3-none-any.whl", hash = "sha256:6a831a27977751e8928222f04c99a5d069ff80e2a7c78b699c9b9ac6cb48c41b"},
-    {file = "duckduckgo_search-6.3.7.tar.gz", hash = "sha256:53d84966429a6377647e2a1ea7224b657575c7a4d506729bdb837e4ee12915ed"},
+    {file = "duckduckgo_search-7.0.1-py3-none-any.whl", hash = "sha256:a9e52c7e4241925aef4aa9861ee262afad0f1b885b0153a8947bde1477ce4eeb"},
+    {file = "duckduckgo_search-7.0.1.tar.gz", hash = "sha256:80860c5f5219a2f29b880db36e04343c1b8fabbbf517f96427ff6ec9985ddbb2"},
 ]
 
 [package.dependencies]
 click = ">=8.1.7"
-primp = ">=0.8.1"
+lxml = ">=5.3.0"
+primp = ">=0.9.1"
 
 [package.extras]
-dev = ["mypy (>=1.11.1)", "pytest (>=8.3.1)", "pytest-asyncio (>=0.23.8)", "ruff (>=0.6.1)"]
-lxml = ["lxml (>=5.2.2)"]
+dev = ["mypy (>=1.13.0)", "pytest (>=8.3.4)", "pytest-dependency (>=0.6.0)", "ruff (>=0.8.3)"]
 
 [[package]]
 name = "elevenlabs"
@@ -4518,20 +4518,20 @@ virtualenv = ">=20.10.0"
 
 [[package]]
 name = "primp"
-version = "0.8.2"
+version = "0.9.1"
 description = "HTTP client that can impersonate web browsers, mimicking their headers and `TLS/JA3/JA4/HTTP2` fingerprints"
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "primp-0.8.2-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:20c4988c6538dfcac804e804f286493696e53498d5705e745a36d9fe436c787c"},
-    {file = "primp-0.8.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:dde74d6bf5534a60fd075e81b5828a6591753a647c5bfe69e664883e5c7a28bb"},
-    {file = "primp-0.8.2-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:f988d7e47d7f63b63f851885d51abd86ba3a2a1981d047466c1e63827753a168"},
-    {file = "primp-0.8.2-cp38-abi3-manylinux_2_34_aarch64.whl", hash = "sha256:965cf0c19986d074d4e20ce18f1b81e5c31818324718814af6317a291a3aba65"},
-    {file = "primp-0.8.2-cp38-abi3-manylinux_2_34_armv7l.whl", hash = "sha256:afc56989ae09bed76105bf045e666ea2da5f32e2e93dfb967795a4da4fc777e5"},
-    {file = "primp-0.8.2-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:64e8b9b216ee0f52d2885ac23303000339f798a59eb9b4b3b747dcbbf9187beb"},
-    {file = "primp-0.8.2-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:b65de6d8fe4c7ef9d5d508e2a9cee3da77455e3a44c9282bdebb2134c55087c9"},
-    {file = "primp-0.8.2-cp38-abi3-win_amd64.whl", hash = "sha256:d686cf4ce21c318bafe2f0574aec9f7f9526d18a4b0c017f507bd007f323e519"},
-    {file = "primp-0.8.2.tar.gz", hash = "sha256:572ecd34b77021a89a0574b66b07e1da100afd6ec490d3b519a6763fac6ae6c5"},
+    {file = "primp-0.9.1-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:4204cd36454168c2fb50cfbc124eb08abc8dd54a70be31522aa0f83aec1c1df9"},
+    {file = "primp-0.9.1-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:bdc7c77edd51e3da675f58a7c6c1e2d6c80a72bc519529143a27f45e24de7759"},
+    {file = "primp-0.9.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:eb93dd24f1b96ebf94501a4e5d2ee74c53b7a24fd25fc72806453cdd62116094"},
+    {file = "primp-0.9.1-cp38-abi3-manylinux_2_34_aarch64.whl", hash = "sha256:035e134b33195e6a4b8e46ad56c929543ab758c3f373d5277017eb53ba60101d"},
+    {file = "primp-0.9.1-cp38-abi3-manylinux_2_34_armv7l.whl", hash = "sha256:d38c29116c87d71951214fbd06b9f61c55a8ab0c62b7ea926565f8de7fbcdd87"},
+    {file = "primp-0.9.1-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:9eaa20ff6c0157aa9d2925decbf09fc915b2084fc0e8c2eeba125b2f99ac2a41"},
+    {file = "primp-0.9.1-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:8b4fdc844e096025fa36c175390c298b71bd9495e9a1c4986afb198557793b54"},
+    {file = "primp-0.9.1-cp38-abi3-win_amd64.whl", hash = "sha256:36996df75c24b8fca669041d0d636e84c8d67cad86c8e94ccb80884f08b2984b"},
+    {file = "primp-0.9.1.tar.gz", hash = "sha256:961b4791b855d30673d68891c574928a585794c5c1fd4474e5429988d74866cc"},
 ]
 
 [package.extras]
@@ -7231,4 +7231,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "64d0644016a067063e7d24b95ac74340773f6bb31e006945c233d1993fe266d7"
+content-hash = "c63180c2c22dc5a94de77320c6c450e8bdd43fe419758a2d76e9bf1f1b9d9f78"
