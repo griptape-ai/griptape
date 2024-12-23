@@ -31,6 +31,6 @@ class TestStream:
             with pytest.raises(StopIteration):
                 next(chat_stream_run)
         else:
-            next(chat_stream.run())
+            assert next(chat_stream.run()).value == "\n"
             with pytest.raises(StopIteration):
                 next(chat_stream.run())

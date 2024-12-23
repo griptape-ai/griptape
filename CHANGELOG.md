@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `BranchTask` in `StructureVisualizer`.
 - `EvalEngine` for evaluating the performance of an LLM's output against a given input.
 - `BaseFileLoader.save()` method for saving an Artifact to a destination.
+- `Structure.run_stream()` for streaming Events from a Structure as an iterator.
 
 ### Changed
 
