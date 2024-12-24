@@ -1,4 +1,5 @@
 import pytest
+from schema import Schema
 
 from griptape.artifacts import ActionArtifact, ErrorArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
@@ -7,6 +8,29 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestAmazonBedrockPromptDriver:
+    BEDROCK_STRUCTURED_OUTPUT_TOOL = {
+        "toolSpec": {
+            "description": "Used to provide the final response which ends this conversation.",
+            "inputSchema": {
+                "json": {
+                    "$id": "http://json-schema.org/draft-07/schema#",
+                    "$schema": "http://json-schema.org/draft-07/schema#",
+                    "additionalProperties": False,
+                    "properties": {
+                        "values": {
+                            "additionalProperties": False,
+                            "properties": {"foo": {"type": "string"}},
+                            "required": ["foo"],
+                            "type": "object",
+                        },
+                    },
+                    "required": ["values"],
+                    "type": "object",
+                },
+            },
+            "name": "StructuredOutputTool_provide_output",
+        },
+    }
     BEDROCK_TOOLS = [
         {
             "toolSpec": {
@@ -229,6 +253,7 @@ class TestAmazonBedrockPromptDriver:
     def prompt_stack(self, request):
         prompt_stack = PromptStack()
         prompt_stack.tools = [MockTool()]
+        prompt_stack.output_schema = Schema({"foo": str})
         if request.param:
             prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
@@ -357,10 +382,14 @@ class TestAmazonBedrockPromptDriver:
         ]
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_converse, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("use_native_structured_output", [True, False])
+    def test_try_run(self, mock_converse, prompt_stack, messages, use_native_tools, use_native_structured_output):
         # Given
         driver = AmazonBedrockPromptDriver(
-            model="ai21.j2", use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+            model="ai21.j2",
+            use_native_tools=use_native_tools,
+            use_native_structured_output=use_native_structured_output,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -377,7 +406,19 @@ class TestAmazonBedrockPromptDriver:
             additionalModelRequestFields={},
             **({"system": [{"text": "system-input"}]} if prompt_stack.system_messages else {"system": []}),
             **(
-                {"toolConfig": {"tools": self.BEDROCK_TOOLS, "toolChoice": driver.tool_choice}}
+                {
+                    "toolConfig": {
+                        "tools": [
+                            *self.BEDROCK_TOOLS,
+                            *(
+                                [self.BEDROCK_STRUCTURED_OUTPUT_TOOL]
+                                if use_native_structured_output and driver.native_structured_output_mode == "tool"
+                                else []
+                            ),
+                        ],
+                        "toolChoice": {"any": {}} if use_native_structured_output else driver.tool_choice,
+                    }
+                }
                 if use_native_tools
                 else {}
             ),
@@ -394,10 +435,17 @@ class TestAmazonBedrockPromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_converse_stream, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("use_native_structured_output", [True, False])
+    def test_try_stream_run(
+        self, mock_converse_stream, prompt_stack, messages, use_native_tools, use_native_structured_output
+    ):
         # Given
         driver = AmazonBedrockPromptDriver(
-            model="ai21.j2", stream=True, use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+            model="ai21.j2",
+            stream=True,
+            use_native_tools=use_native_tools,
+            use_native_structured_output=use_native_structured_output,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -415,8 +463,20 @@ class TestAmazonBedrockPromptDriver:
             additionalModelRequestFields={},
             **({"system": [{"text": "system-input"}]} if prompt_stack.system_messages else {"system": []}),
             **(
-                {"toolConfig": {"tools": self.BEDROCK_TOOLS, "toolChoice": driver.tool_choice}}
-                if prompt_stack.tools and use_native_tools
+                {
+                    "toolConfig": {
+                        "tools": [
+                            *self.BEDROCK_TOOLS,
+                            *(
+                                [self.BEDROCK_STRUCTURED_OUTPUT_TOOL]
+                                if use_native_structured_output and driver.native_structured_output_mode == "tool"
+                                else []
+                            ),
+                        ],
+                        "toolChoice": {"any": {}} if use_native_structured_output else driver.tool_choice,
+                    }
+                }
+                if use_native_tools
                 else {}
             ),
             foo="bar",
@@ -439,3 +499,11 @@ class TestAmazonBedrockPromptDriver:
         event = next(stream)
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 10
+
+    def test_verify_native_structured_output_mode(self):
+        assert AmazonBedrockPromptDriver(model="foo", native_structured_output_mode="tool")
+
+        with pytest.raises(
+            ValueError, match="AmazonBedrockPromptDriver does not support `native` structured output mode."
+        ):
+            AmazonBedrockPromptDriver(model="foo", native_structured_output_mode="native")
