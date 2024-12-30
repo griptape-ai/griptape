@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `ToolkitTask` now serializes its `tools` field.
 - `PromptTask.prompt_driver` is now serialized.
 - `PromptTask` can now do everything a `ToolkitTask` can do.
+- Loosten `numpy`s version constraint to `>=1.26.4,<3`.
 
 ### Fixed
 
