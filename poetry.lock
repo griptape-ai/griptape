@@ -302,17 +302,17 @@ lxml = ["lxml"]
 
 [[package]]
 name = "boto3"
-version = "1.35.86"
+version = "1.35.90"
 description = "The AWS SDK for Python"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "boto3-1.35.86-py3-none-any.whl", hash = "sha256:ed59fb4883da167464a5dfbc96e76d571db75e1a7a27d8e7b790c3008b02fcc7"},
-    {file = "boto3-1.35.86.tar.gz", hash = "sha256:d61476fdd5a5388503b72c897083310d2329ce088593c4332b571a860be5d155"},
+    {file = "boto3-1.35.90-py3-none-any.whl", hash = "sha256:b0874233057995a8f0c813f5b45a36c09630e74c43d7a7c64db2feef2915d493"},
+    {file = "boto3-1.35.90.tar.gz", hash = "sha256:dc56caaaab2157a4bfc109c88b50cd032f3ac66c06d17f8ee335b798eaf53e5c"},
 ]
 
 [package.dependencies]
-botocore = ">=1.35.86,<1.36.0"
+botocore = ">=1.35.90,<1.36.0"
 jmespath = ">=0.7.1,<2.0.0"
 s3transfer = ">=0.10.0,<0.11.0"
 
@@ -757,13 +757,13 @@ xray = ["mypy-boto3-xray (>=1.35.0,<1.36.0)"]
 
 [[package]]
 name = "botocore"
-version = "1.35.86"
+version = "1.35.90"
 description = "Low-level, data-driven core of boto 3."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "botocore-1.35.86-py3-none-any.whl", hash = "sha256:77cb4b445e4f424f956c68c688bd3ad527f4d214d51d67ffc8e245f4476d7de0"},
-    {file = "botocore-1.35.86.tar.gz", hash = "sha256:951e944eb30284b4593d4da98f70f7b5292ea237e4de0c5a2852946a549b8347"},
+    {file = "botocore-1.35.90-py3-none-any.whl", hash = "sha256:51dcbe1b32e2ac43dac17091f401a00ce5939f76afe999081802009cce1e92e4"},
+    {file = "botocore-1.35.90.tar.gz", hash = "sha256:f007f58e8e3c1ad0412a6ddfae40ed92a7bca571c068cb959902bcf107f2ae48"},
 ]
 
 [package.dependencies]
@@ -1268,13 +1268,13 @@ packaging = "*"
 
 [[package]]
 name = "diffusers"
-version = "0.32.0"
+version = "0.32.1"
 description = "State-of-the-art diffusion in PyTorch and JAX."
 optional = true
 python-versions = ">=3.8.0"
 files = [
-    {file = "diffusers-0.32.0-py3-none-any.whl", hash = "sha256:81d878e9fb6515c3155d3698168102d637b86ccad8bba44c418fefb6b5ed5428"},
-    {file = "diffusers-0.32.0.tar.gz", hash = "sha256:a99ebc2e645b9417e06646bc4c82e26099b4dd9d01b4b717153b061bd62b1032"},
+    {file = "diffusers-0.32.1-py3-none-any.whl", hash = "sha256:ab2ed6efe9dd2364db55b94fae453ff149dc06693ec99702cadfbeeaaa00c9c1"},
+    {file = "diffusers-0.32.1.tar.gz", hash = "sha256:d48c19a4bce612d225f857e2e5d4f6ee003b88234af46b44c20119ee23f1568c"},
 ]
 
 [package.dependencies]
@@ -1373,19 +1373,19 @@ files = [
 
 [[package]]
 name = "duckduckgo-search"
-version = "7.0.1"
+version = "7.1.1"
 description = "Search for words, documents, images, news, maps and text translation using the DuckDuckGo.com search engine."
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "duckduckgo_search-7.0.1-py3-none-any.whl", hash = "sha256:a9e52c7e4241925aef4aa9861ee262afad0f1b885b0153a8947bde1477ce4eeb"},
-    {file = "duckduckgo_search-7.0.1.tar.gz", hash = "sha256:80860c5f5219a2f29b880db36e04343c1b8fabbbf517f96427ff6ec9985ddbb2"},
+    {file = "duckduckgo_search-7.1.1-py3-none-any.whl", hash = "sha256:753b2237fd8a9a4cbf06c788aaf0cfc7e00f4623e8f854d0525682ff31770093"},
+    {file = "duckduckgo_search-7.1.1.tar.gz", hash = "sha256:1874e55aa6eac3de2d0e9b556b70f35ed0cd7a4544d7417cf38216275b3de009"},
 ]
 
 [package.dependencies]
 click = ">=8.1.7"
 lxml = ">=5.3.0"
-primp = ">=0.9.1"
+primp = ">=0.9.2"
 
 [package.extras]
 dev = ["mypy (>=1.13.0)", "pytest (>=8.3.4)", "pytest-dependency (>=0.6.0)", "ruff (>=0.8.3)"]
@@ -1424,13 +1424,13 @@ files = [
 
 [[package]]
 name = "exa-py"
-version = "1.7.0"
+version = "1.7.1"
 description = "Python SDK for Exa API."
 optional = true
 python-versions = "*"
 files = [
-    {file = "exa_py-1.7.0-py3-none-any.whl", hash = "sha256:01973b4bd1c1d7e7144a4ffd6b8017c6e7674d123bab828c08b48ca41c5dd5ea"},
-    {file = "exa_py-1.7.0.tar.gz", hash = "sha256:8f8a11c537092880608565ec69764f263eb3ddbc124ce9ced48b4d9b76a652c0"},
+    {file = "exa_py-1.7.1-py3-none-any.whl", hash = "sha256:a7c6ebdd85c4114a3763644b99eeef80971082ebcd62f7713a20c31fd2ab0663"},
+    {file = "exa_py-1.7.1.tar.gz", hash = "sha256:d4912b66eed3f49bdc216d6dccfa93c745409d3cdb0bd6fd32f85ce5fd3ed54d"},
 ]
 
 [package.dependencies]
@@ -3942,13 +3942,13 @@ files = [
 
 [[package]]
 name = "ollama"
-version = "0.4.4"
+version = "0.4.5"
 description = "The official Python client for Ollama."
 optional = true
 python-versions = "<4.0,>=3.8"
 files = [
-    {file = "ollama-0.4.4-py3-none-any.whl", hash = "sha256:0f466e845e2205a1cbf5a2fef4640027b90beaa3b06c574426d8b6b17fd6e139"},
-    {file = "ollama-0.4.4.tar.gz", hash = "sha256:e1db064273c739babc2dde9ea84029c4a43415354741b6c50939ddd3dd0f7ffb"},
+    {file = "ollama-0.4.5-py3-none-any.whl", hash = "sha256:74936de89a41c87c9745f09f2e1db964b4783002188ac21241bfab747f46d925"},
+    {file = "ollama-0.4.5.tar.gz", hash = "sha256:e7fb71a99147046d028ab8b75e51e09437099aea6f8f9a0d91a71f787e97439e"},
 ]
 
 [package.dependencies]
@@ -4515,20 +4515,20 @@ virtualenv = ">=20.10.0"
 
 [[package]]
 name = "primp"
-version = "0.9.1"
+version = "0.9.2"
 description = "HTTP client that can impersonate web browsers, mimicking their headers and `TLS/JA3/JA4/HTTP2` fingerprints"
 optional = true
 python-versions = ">=3.8"
 files = [
-    {file = "primp-0.9.1-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:4204cd36454168c2fb50cfbc124eb08abc8dd54a70be31522aa0f83aec1c1df9"},
-    {file = "primp-0.9.1-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:bdc7c77edd51e3da675f58a7c6c1e2d6c80a72bc519529143a27f45e24de7759"},
-    {file = "primp-0.9.1-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:eb93dd24f1b96ebf94501a4e5d2ee74c53b7a24fd25fc72806453cdd62116094"},
-    {file = "primp-0.9.1-cp38-abi3-manylinux_2_34_aarch64.whl", hash = "sha256:035e134b33195e6a4b8e46ad56c929543ab758c3f373d5277017eb53ba60101d"},
-    {file = "primp-0.9.1-cp38-abi3-manylinux_2_34_armv7l.whl", hash = "sha256:d38c29116c87d71951214fbd06b9f61c55a8ab0c62b7ea926565f8de7fbcdd87"},
-    {file = "primp-0.9.1-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:9eaa20ff6c0157aa9d2925decbf09fc915b2084fc0e8c2eeba125b2f99ac2a41"},
-    {file = "primp-0.9.1-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:8b4fdc844e096025fa36c175390c298b71bd9495e9a1c4986afb198557793b54"},
-    {file = "primp-0.9.1-cp38-abi3-win_amd64.whl", hash = "sha256:36996df75c24b8fca669041d0d636e84c8d67cad86c8e94ccb80884f08b2984b"},
-    {file = "primp-0.9.1.tar.gz", hash = "sha256:961b4791b855d30673d68891c574928a585794c5c1fd4474e5429988d74866cc"},
+    {file = "primp-0.9.2-cp38-abi3-macosx_10_12_x86_64.whl", hash = "sha256:a3179640e633be843ed5daba5c4e3086ad91f77c7bb40a9db06326f28d56b12b"},
+    {file = "primp-0.9.2-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:94a5da8ba25f74152b43bc16a7591dfb5d7d30a5827dc0a0f96a956f7d3616be"},
+    {file = "primp-0.9.2-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:0668c0abb6d56fc8b0a918179b1d0f68e7267c1dc632e2b683c618317e13143f"},
+    {file = "primp-0.9.2-cp38-abi3-manylinux_2_34_aarch64.whl", hash = "sha256:a9c29a4b8eabfc28a1746d2fe93d33b9fcf2e81e642dd0e3eaecede60cc36b7d"},
+    {file = "primp-0.9.2-cp38-abi3-manylinux_2_34_armv7l.whl", hash = "sha256:04d499308a101b06b40f5fda1bdc795db5731cd0dfbb1a8873f4acd07c085b1d"},
+    {file = "primp-0.9.2-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:4cd5daf39034a0a8c96cdc0c4c306184c6f2b1b2a0b39dc3294d79ed28a6f7fe"},
+    {file = "primp-0.9.2-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:8d14653434837eb431b3cf7ca006647d7a196906e48bba96bb600ba2ba70bcdc"},
+    {file = "primp-0.9.2-cp38-abi3-win_amd64.whl", hash = "sha256:80d9f07564dc9b25b1a9676df770561418557c124fedecae84f6491a1974b61d"},
+    {file = "primp-0.9.2.tar.gz", hash = "sha256:5b95666c25b9107eab3c05a89cb7b1748d5122e57c57b25bfc3249d525c45300"},
 ]
 
 [package.extras]
