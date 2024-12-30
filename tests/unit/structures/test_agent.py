@@ -279,8 +279,41 @@ class TestAgent:
 
     def test_stream_mutation(self):
         prompt_driver = MockPromptDriver()
-        agent = Agent(prompt_driver=MockPromptDriver(), stream=True)
+
+        agent = Agent(prompt_driver=MockPromptDriver(stream=False), stream=True)
+
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].prompt_driver.stream is False
+        assert agent.tasks[0].prompt_driver is not prompt_driver
+
+    def test_validate_stream(self):
+        with pytest.warns(UserWarning, match="`Agent.stream` is set, but `Agent.prompt_driver` was provided."):
+            Agent(stream=True, prompt_driver=MockPromptDriver())
+
+    def test_validate_prompt_driver(self):
+        with pytest.warns(UserWarning, match="`Agent.prompt_driver` is set, but `Agent.stream` was provided."):
+            Agent(stream=True, prompt_driver=MockPromptDriver())
+
+    def test_validate_tasks(self):
+        with pytest.warns(UserWarning, match="`Agent.tasks` is set, but `Agent.prompt_driver` was provided."):
+            Agent(prompt_driver=MockPromptDriver(), tasks=[PromptTask()])
+
+    def test_sugar_fields(self):
+        agent = Agent(stream=True)
 
         assert isinstance(agent.tasks[0], PromptTask)
         assert agent.tasks[0].prompt_driver.stream is True
-        assert agent.tasks[0].prompt_driver is not prompt_driver
+
+        agent = Agent(stream=True, prompt_driver=MockPromptDriver())
+
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].prompt_driver.stream is False
+
+        agent = Agent(
+            stream=False,
+            prompt_driver=MockPromptDriver(stream=False),
+            tasks=[PromptTask(prompt_driver=MockPromptDriver(stream=True))],
+        )
+
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].prompt_driver.stream is True

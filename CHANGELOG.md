@@ -18,6 +18,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseFileLoader.save()` method for saving an Artifact to a destination.
 - `Structure.run_stream()` for streaming Events from a Structure as an iterator.
 - Support for `GenericMessageContent` in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver`.
+- Validators to `Agent` initialization.
+
 
 ### Changed
 
