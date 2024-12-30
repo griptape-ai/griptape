@@ -40,6 +40,10 @@ class TestGriptapeCloudVectorStoreDriver:
 
         return GriptapeCloudVectorStoreDriver(api_key="foo bar", knowledge_base_id="1")
 
+    def test_query_vector(self, driver):
+        with pytest.raises(NotImplementedError):
+            driver.query_vector([0.0, 0.5])
+
     def test_query(self, driver):
         result = driver.query(
             "some query", count=10, namespace="foo", include_vectors=True, distance_metric="bar", filter={"foo": "bar"}

@@ -140,6 +140,17 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
     def load_entries(self, *, namespace: Optional[str] = None) -> list[Entry]: ...
 
     @abstractmethod
+    def query_vector(
+        self,
+        vector: list[float],
+        *,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        **kwargs,
+    ) -> list[Entry]: ...
+
+    @abstractmethod
     def query(
         self,
         query: str,

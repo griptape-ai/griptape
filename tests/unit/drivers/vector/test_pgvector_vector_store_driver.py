@@ -102,6 +102,61 @@ class TestPgVectorVectorStoreDriver:
         assert entries[0].meta == test_metas[0]
         assert entries[1].meta == test_metas[1]
 
+    def test_query_vector_invalid_distance_metric(self, mock_engine):
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+        )
+
+        with pytest.raises(ValueError):
+            driver.query_vector([0.0, 0.5], distance_metric="invalid")
+
+    def test_query_vector(self, mock_session, mock_engine):
+        test_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_vecs = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+        test_namespaces = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_metas = [{"key": "value1"}, {"key": "value2"}]
+        test_result = [
+            [Mock(id=test_ids[0], vector=test_vecs[0], namespace=test_namespaces[0], meta=test_metas[0]), 0.1],
+            [Mock(id=test_ids[1], vector=test_vecs[1], namespace=test_namespaces[1], meta=test_metas[1]), 0.9],
+        ]
+        mock_session.query().order_by().limit().all.return_value = test_result
+
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+        )
+
+        result = driver.query_vector([0.0, 0.5], include_vectors=True)
+
+        assert result[0].id == test_ids[0]
+        assert result[1].id == test_ids[1]
+        assert result[0].vector == test_vecs[0]
+        assert result[1].vector == test_vecs[1]
+        assert result[0].namespace == test_namespaces[0]
+        assert result[1].namespace == test_namespaces[1]
+        assert result[0].meta == test_metas[0]
+        assert result[1].meta == test_metas[1]
+
+    def test_query_vector_filter(self, mock_session, mock_engine):
+        test_ids = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_vecs = [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]]
+        test_namespaces = [str(uuid.uuid4()), str(uuid.uuid4())]
+        test_metas = [{"key": "value1"}, {"key": "value2"}]
+        test_result = [
+            [Mock(id=test_ids[0], vector=test_vecs[0], namespace=test_namespaces[0], meta=test_metas[0]), 0.1]
+        ]
+        mock_session.query().order_by().filter_by().limit().all.return_value = test_result
+
+        driver = PgVectorVectorStoreDriver(
+            embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name
+        )
+
+        result = driver.query_vector([0.0, 0.5], include_vectors=True, filter={"namespace": test_namespaces[0]})
+
+        assert result[0].id == test_ids[0]
+        assert result[0].vector == test_vecs[0]
+        assert result[0].namespace == test_namespaces[0]
+        assert result[0].meta == test_metas[0]
+
     def test_query_invalid_distance_metric(self, mock_engine):
         driver = PgVectorVectorStoreDriver(
             embedding_driver=MockEmbeddingDriver(), engine=mock_engine, table_name=self.table_name

@@ -57,6 +57,32 @@ class TestQdrantVectorStoreDriver:
                 points_selector=mock_import.return_value.PointIdsList(points=[vector_id]),
             )
 
+    def test_query_vector(self, driver):
+        mock_query_result = [
+            MagicMock(
+                id="foo", vector=[0, 1, 0], score=42, payload={"foo": "bar", "_score": 0.99, "_tensor_facets": []}
+            )
+        ]
+
+        with (
+            patch.object(driver.client, "search", return_value=mock_query_result) as mock_search,
+        ):
+            vector = [0.1, 0.2, 0.3]
+            count = 10
+            include_vectors = True
+
+            results = driver.query_vector(vector, count=count, include_vectors=include_vectors)
+
+            mock_search.assert_called_once_with(
+                collection_name=driver.collection_name, query_vector=[0.1, 0.2, 0.3], limit=count
+            )
+
+            assert len(results) == 1
+            assert results[0].id == "foo"
+            assert results[0].vector == [0, 1, 0] if include_vectors else []
+            assert results[0].score == 42
+            assert results[0].meta == {"foo": "bar"}
+
     def test_query(self, driver):
         mock_query_result = [
             MagicMock(

@@ -78,6 +78,26 @@ class TestRedisVectorStorageDriver:
         assert entries[0].vector == [1.0, 2.0, 3.0]
         assert entries[0].meta == {"foo": "bar"}
 
+    def test_query_vector(self, driver, mock_search):
+        results = driver.query_vector([0.0, 0.5])
+        mock_search.assert_called_once()
+        assert len(results) == 1
+        assert results[0].namespace == "some_namespace"
+        assert results[0].id == "some_vector_id"
+        assert results[0].score == 0.456198036671
+        assert results[0].meta == {"foo": "bar"}
+        assert results[0].vector is None
+
+    def test_query_vector_with_include_vectors(self, driver, mock_search):
+        results = driver.query_vector([0.0, 0.5], include_vectors=True)
+        mock_search.assert_called_once()
+        assert len(results) == 1
+        assert results[0].namespace == "some_namespace"
+        assert results[0].id == "some_vector_id"
+        assert results[0].score == 0.456198036671
+        assert results[0].meta == {"foo": "bar"}
+        assert results[0].vector == [1.0, 2.0, 3.0]
+
     def test_query(self, driver, mock_search):
         results = driver.query("Some query")
         mock_search.assert_called_once()

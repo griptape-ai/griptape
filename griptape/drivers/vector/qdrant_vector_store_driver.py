@@ -93,6 +93,42 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         if deletion_response.status == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED:
             logging.info("ID %s is successfully deleted", vector_id)
 
+    def query_vector(
+        self,
+        vector: list[float],
+        *,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        **kwargs,
+    ) -> list[BaseVectorStoreDriver.Entry]:
+        """Query the Qdrant collection based on a query vector.
+
+        Parameters:
+            query (list[float]): Query vector.
+            count (Optional[int]): Optional number of results to return.
+            namespace (Optional[str]): Optional namespace of the vectors.
+            include_vectors (bool): Whether to include vectors in the results.
+
+        Returns:
+            list[BaseVectorStoreDriver.Entry]: List of Entry objects.
+        """
+        # Create a search request
+        request = {"collection_name": self.collection_name, "query_vector": vector, "limit": count}
+        request = {k: v for k, v in request.items() if v is not None}
+        results = self.client.search(**request)
+
+        # Convert results to QueryResult objects
+        return [
+            BaseVectorStoreDriver.Entry(
+                id=result.id,
+                vector=result.vector if include_vectors else [],
+                score=result.score,
+                meta={k: v for k, v in result.payload.items() if k not in ["_score", "_tensor_facets"]},
+            )
+            for result in results
+        ]
+
     def query(
         self,
         query: str,
@@ -113,23 +149,8 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             list[BaseVectorStoreDriver.Entry]: List of Entry objects.
         """
-        query_vector = self.embedding_driver.embed_string(query)
-
-        # Create a search request
-        request = {"collection_name": self.collection_name, "query_vector": query_vector, "limit": count}
-        request = {k: v for k, v in request.items() if v is not None}
-        results = self.client.search(**request)
-
-        # Convert results to QueryResult objects
-        return [
-            BaseVectorStoreDriver.Entry(
-                id=result.id,
-                vector=result.vector if include_vectors else [],
-                score=result.score,
-                meta={k: v for k, v in result.payload.items() if k not in ["_score", "_tensor_facets"]},
-            )
-            for result in results
-        ]
+        vector = self.embedding_driver.embed_string(query)
+        return self.query_vector(vector, count=count, namespace=namespace, include_vectors=include_vectors, **kwargs)
 
     def upsert_vector(
         self,

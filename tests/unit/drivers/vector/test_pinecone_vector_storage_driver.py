@@ -48,6 +48,12 @@ class TestPineconeVectorStorageDriver:
         assert driver.upsert_text("foo", vector_id="foo") == "foo"
         assert isinstance(driver.upsert_text("foo"), str)
 
+    def test_query_vector(self, driver):
+        results = driver.query_vector([0.0, 0.5])
+
+        assert results[0].vector == [0, 1, 0]
+        assert results[0].id == "foo"
+
     def test_query(self, driver):
         results = driver.query("test")
 

@@ -78,24 +78,22 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         return [entry for key, entry in self.entries.items() if namespace is None or entry.namespace == namespace]
 
-    def query(
+    def query_vector(
         self,
-        query: str,
+        vector: list[float],
         *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        query_embedding = self.embedding_driver.embed_string(query)
-
         if namespace:
             entries = {k: v for (k, v) in self.entries.items() if k.startswith(f"{namespace}-")}
         else:
             entries = self.entries
 
         entries_and_relatednesses = [
-            (entry, self.calculate_relatedness(query_embedding, entry.vector)) for entry in list(entries.values())
+            (entry, self.calculate_relatedness(vector, entry.vector)) for entry in list(entries.values())
         ]
 
         entries_and_relatednesses.sort(key=operator.itemgetter(1), reverse=True)
@@ -112,6 +110,18 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
                 BaseVectorStoreDriver.Entry(id=r.id, vector=[], score=r.score, meta=r.meta, namespace=r.namespace)
                 for r in result
             ]
+
+    def query(
+        self,
+        query: str,
+        *,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        **kwargs,
+    ) -> list[BaseVectorStoreDriver.Entry]:
+        vector = self.embedding_driver.embed_string(query)
+        return self.query_vector(vector, count=count, namespace=namespace, include_vectors=include_vectors, **kwargs)
 
     def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

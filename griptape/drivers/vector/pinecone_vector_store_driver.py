@@ -87,9 +87,9 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             for r in results["matches"]
         ]
 
-    def query(
+    def query_vector(
         self,
-        query: str,
+        vector: list[float],
         *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
@@ -97,8 +97,6 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         include_metadata: bool = True,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        vector = self.embedding_driver.embed_string(query)
-
         params = {
             "top_k": count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
             "namespace": namespace,
@@ -118,6 +116,26 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
             )
             for r in results["matches"]
         ]
+
+    def query(
+        self,
+        query: str,
+        *,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        include_metadata: bool = True,
+        **kwargs,
+    ) -> list[BaseVectorStoreDriver.Entry]:
+        vector = self.embedding_driver.embed_string(query)
+        return self.query_vector(
+            vector,
+            count=count,
+            namespace=namespace,
+            include_vectors=include_vectors,
+            include_metadata=include_metadata,
+            **kwargs,
+        )
 
     def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

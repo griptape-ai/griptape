@@ -35,6 +35,17 @@ class DummyVectorStoreDriver(BaseVectorStoreDriver):
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         raise DummyError(__class__.__name__, "load_entries")
 
+    def query_vector(
+        self,
+        vector: list[float],
+        *,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        **kwargs,
+    ) -> list[BaseVectorStoreDriver.Entry]:
+        raise DummyError(__class__.__name__, "query_vector")
+
     def query(
         self,
         query: str,

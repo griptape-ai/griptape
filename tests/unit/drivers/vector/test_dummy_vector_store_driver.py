@@ -25,6 +25,10 @@ class TestDummyVectorStoreDriver:
         with pytest.raises(DummyError):
             vector_store_driver.load_entries(namespace="foo bar huzzah")
 
+    def test_query_vector(self, vector_store_driver):
+        with pytest.raises(DummyError):
+            vector_store_driver.query_vector([0.0, 0.5])
+
     def test_query(self, vector_store_driver):
         with pytest.raises(DummyError):
             vector_store_driver.query("foo bar huzzah")
