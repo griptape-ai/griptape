@@ -203,21 +203,24 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
 
         result = self.prompt_driver.run(self.prompt_stack)
-        subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
+        if self.tools:
+            subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
 
-        while True:
-            if subtask.output is None:
-                if len(self.subtasks) >= self.max_subtasks:
-                    subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
+            while True:
+                if subtask.output is None:
+                    if len(self.subtasks) >= self.max_subtasks:
+                        subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
+                    else:
+                        subtask.run()
+
+                        result = self.prompt_driver.run(self.prompt_stack)
+                        subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
                 else:
-                    subtask.run()
+                    break
 
-                    result = self.prompt_driver.run(self.prompt_stack)
-                    subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
-            else:
-                break
-
-        self.output = subtask.output
+            self.output = subtask.output
+        else:
+            self.output = result.to_artifact()
 
         return self.output
 

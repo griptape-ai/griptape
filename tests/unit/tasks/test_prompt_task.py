@@ -8,6 +8,7 @@ from griptape.rules.ruleset import Ruleset
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestPromptTask:
@@ -212,3 +213,17 @@ class TestPromptTask:
         task.run()
 
         assert len(conversation_memory.runs) == 2
+
+    def test_subtasks(self):
+        task = PromptTask(
+            input="foo",
+            prompt_driver=MockPromptDriver(),
+        )
+
+        task.run()
+        assert len(task.subtasks) == 0
+
+        task = PromptTask(input="foo", prompt_driver=MockPromptDriver(use_native_tools=True), tools=[MockTool()])
+
+        task.run()
+        assert len(task.subtasks) == 2
