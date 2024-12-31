@@ -111,9 +111,10 @@ nav:
           - Overview: "griptape-framework/tools/index.md"
           - Building Custom Tools: "griptape-tools/custom-tools/index.md"
       - Engines:
-          - RAG Engines: "griptape-framework/engines/rag-engines.md"
+          - RAG Engine: "griptape-framework/engines/rag-engines.md"
           - Extraction Engines: "griptape-framework/engines/extraction-engines.md"
-          - Summary Engines: "griptape-framework/engines/summary-engines.md"
+          - Summary Engine: "griptape-framework/engines/summary-engines.md"
+          - Eval Engine: "griptape-framework/engines/eval-engines.md"
       - Drivers:
           - Prompt Drivers: "griptape-framework/drivers/prompt-drivers.md"
           - Embedding Drivers: "griptape-framework/drivers/embedding-drivers.md"
@@ -175,6 +176,7 @@ nav:
           - Talk to a PDF: "examples/talk-to-a-pdf.md"
           - Talk to a Video: "examples/talk-to-a-video.md"
           - Talk to an Image: "examples/talk-to-an-image.md"
+          - Talk to a Document: "examples/talk-to-a-document.md"
           - Multi Agent Workflows: "examples/multi-agent-workflow.md"
           - Shared Memory Between Agents: "examples/multiple-agent-shared-memory.md"
           - Chat Sessions with Amazon DynamoDB: "examples/amazon-dynamodb-sessions.md"

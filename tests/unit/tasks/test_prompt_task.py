@@ -8,6 +8,7 @@ from griptape.rules.ruleset import Ruleset
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestPromptTask:
@@ -189,3 +190,40 @@ class TestPromptTask:
         assert len(task.rulesets[1].rules) == 0
         assert task.rulesets[2].rules[0].value == "Pipeline Rule"
         assert task.rulesets[2].rules[1].value == "Task Rule"
+
+    def test_conversation_memory(self):
+        conversation_memory = ConversationMemory()
+        task = PromptTask("{{ test }}", context={"test": "test value"})
+
+        task.run()
+        task.run()
+
+        assert len(conversation_memory.runs) == 0
+
+        task.conversation_memory = conversation_memory
+
+        task.run()
+        task.run()
+
+        assert len(conversation_memory.runs) == 2
+
+        task.conversation_memory = None
+
+        task.run()
+        task.run()
+
+        assert len(conversation_memory.runs) == 2
+
+    def test_subtasks(self):
+        task = PromptTask(
+            input="foo",
+            prompt_driver=MockPromptDriver(),
+        )
+
+        task.run()
+        assert len(task.subtasks) == 0
+
+        task = PromptTask(input="foo", prompt_driver=MockPromptDriver(use_native_tools=True), tools=[MockTool()])
+
+        task.run()
+        assert len(task.subtasks) == 2

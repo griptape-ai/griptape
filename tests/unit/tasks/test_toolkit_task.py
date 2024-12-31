@@ -1,7 +1,9 @@
+import pytest
+
 from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.common import ToolAction
 from griptape.structures import Agent
-from griptape.tasks import ActionsSubtask, PromptTask, ToolkitTask
+from griptape.tasks import ActionsSubtask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
 from tests.utils import defaults
 
@@ -365,7 +367,7 @@ class TestToolkitSubtask:
 
         agent.add_task(task)
 
-        system_template = task.generate_system_template(PromptTask())
+        system_template = task.generate_system_template(ToolkitTask())
 
         assert "You have access to additional contextual information" in system_template
 
@@ -390,6 +392,14 @@ class TestToolkitSubtask:
             "max_meta_memory_entries": 20,
             "context": {},
             "rulesets": [],
+            "prompt_driver": {
+                "extra_params": {},
+                "max_tokens": None,
+                "stream": False,
+                "temperature": 0.1,
+                "type": "MockPromptDriver",
+                "use_native_tools": False,
+            },
             "tools": [
                 {
                     "type": "MockTool",
@@ -410,5 +420,12 @@ class TestToolkitSubtask:
         task = ToolkitTask("test", tools=[tool])
         serialized_task = task.to_dict()
         serialized_task["tools"][0]["module_name"] = "tests.mocks.mock_tool.tool"
+        serialized_task["prompt_driver"]["module_name"] = "tests.mocks.mock_prompt_driver"
 
         assert ToolkitTask.from_dict(serialized_task).to_dict() == task.to_dict()
+
+    def test_deprecation_warning(self):
+        task = ToolkitTask("test")
+
+        with pytest.warns(DeprecationWarning):
+            task.run()

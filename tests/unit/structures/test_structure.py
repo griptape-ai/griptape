@@ -1,5 +1,6 @@
 import pytest
 
+from griptape.events import FinishStructureRunEvent, FinishTaskEvent, StartTaskEvent
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
@@ -73,6 +74,16 @@ class TestStructure:
                     "max_meta_memory_entries": agent.tasks[0].max_meta_memory_entries,
                     "context": agent.tasks[0].context,
                     "rulesets": [],
+                    "max_subtasks": 20,
+                    "tools": [],
+                    "prompt_driver": {
+                        "extra_params": {},
+                        "max_tokens": None,
+                        "stream": False,
+                        "temperature": 0.1,
+                        "type": "MockPromptDriver",
+                        "use_native_tools": False,
+                    },
                 }
             ],
             "rulesets": [],
@@ -111,6 +122,7 @@ class TestStructure:
         serialized_agent = agent.to_dict()
         assert isinstance(serialized_agent, dict)
 
+        serialized_agent["tasks"][0]["prompt_driver"]["module_name"] = "tests.mocks.mock_prompt_driver"
         deserialized_agent = Agent.from_dict(serialized_agent)
         assert isinstance(deserialized_agent, Agent)
 
@@ -119,3 +131,39 @@ class TestStructure:
 
         assert len(deserialized_agent.task_outputs) == 1
         assert deserialized_agent.task_outputs[task.id].value == "mock output"
+
+    def test_run_stream(self):
+        from griptape.events import (
+            EventBus,
+            FinishPromptEvent,
+            FinishStructureRunEvent,
+            StartPromptEvent,
+            StartStructureRunEvent,
+        )
+
+        agent = Agent()
+        event_types = [
+            StartStructureRunEvent,
+            StartTaskEvent,
+            StartPromptEvent,
+            FinishPromptEvent,
+            FinishTaskEvent,
+            FinishStructureRunEvent,
+        ]
+        events = agent.run_stream()
+
+        for idx, event in enumerate(events):
+            assert isinstance(event, event_types[idx])
+        assert len(EventBus.event_listeners) == 0
+
+    def test_run_stream_custom_event_types(self):
+        from griptape.events import EventBus, FinishPromptEvent, StartPromptEvent, StartStructureRunEvent
+
+        agent = Agent()
+        event_types = [StartStructureRunEvent, StartPromptEvent, FinishPromptEvent]
+        expected_event_types = [StartStructureRunEvent, StartPromptEvent, FinishPromptEvent, FinishStructureRunEvent]
+        events = agent.run_stream(event_types=event_types)
+
+        for idx, event in enumerate(events):
+            assert isinstance(event, expected_event_types[idx])
+        assert len(EventBus.event_listeners) == 0

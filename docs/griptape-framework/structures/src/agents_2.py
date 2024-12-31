@@ -1,11 +1,7 @@
 from griptape.structures import Agent
-from griptape.tasks import PromptTask
+from griptape.tools import CalculatorTool
 
-agent = Agent()
-agent.add_task(
-    PromptTask(
-        "Write me a {{ creative_medium }} about {{ args[0] }} and {{ args[1] }}", context={"creative_medium": "haiku"}
-    )
-)
+agent = Agent(input="Calculate the following: {{ args[0] }}", tools=[CalculatorTool()])
 
-agent.run("Skateboards", "Programming")
+agent.run("what's 13^7?")
+print("Answer:", agent.output)

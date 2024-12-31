@@ -6,7 +6,7 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.memory.structure import ConversationMemory
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Workflow
-from griptape.tasks import BaseTask, CodeExecutionTask, PromptTask, ToolkitTask
+from griptape.tasks import BaseTask, CodeExecutionTask, PromptTask
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -80,9 +80,9 @@ class TestWorkflow:
     def test_with_no_task_memory(self):
         workflow = Workflow()
 
-        workflow.add_task(ToolkitTask(tools=[MockTool()]))
+        workflow.add_task(PromptTask(tools=[MockTool()]))
 
-        assert isinstance(workflow.tasks[0], ToolkitTask)
+        assert isinstance(workflow.tasks[0], PromptTask)
         assert workflow.tasks[0].tools[0].input_memory is not None
         assert workflow.tasks[0].tools[0].input_memory[0] == workflow.task_memory
         assert workflow.tasks[0].tools[0].output_memory is None
@@ -90,9 +90,9 @@ class TestWorkflow:
     def test_with_task_memory(self):
         workflow = Workflow()
 
-        workflow.add_task(ToolkitTask(tools=[MockTool(off_prompt=True)]))
+        workflow.add_task(PromptTask(tools=[MockTool(off_prompt=True)]))
 
-        assert isinstance(workflow.tasks[0], ToolkitTask)
+        assert isinstance(workflow.tasks[0], PromptTask)
         assert workflow.tasks[0].tools[0].input_memory is not None
         assert workflow.tasks[0].tools[0].input_memory[0] == workflow.task_memory
         assert workflow.tasks[0].tools[0].output_memory is not None
@@ -101,17 +101,17 @@ class TestWorkflow:
     def test_with_task_memory_and_empty_tool_output_memory(self):
         workflow = Workflow()
 
-        workflow.add_task(ToolkitTask(tools=[MockTool(output_memory={}, off_prompt=True)]))
+        workflow.add_task(PromptTask(tools=[MockTool(output_memory={}, off_prompt=True)]))
 
-        assert isinstance(workflow.tasks[0], ToolkitTask)
+        assert isinstance(workflow.tasks[0], PromptTask)
         assert workflow.tasks[0].tools[0].output_memory == {}
 
     def test_without_task_memory(self):
         workflow = Workflow(task_memory=None)
 
-        workflow.add_task(ToolkitTask(tools=[MockTool()]))
+        workflow.add_task(PromptTask(tools=[MockTool()]))
 
-        assert isinstance(workflow.tasks[0], ToolkitTask)
+        assert isinstance(workflow.tasks[0], PromptTask)
         assert workflow.tasks[0].tools[0].input_memory is None
         assert workflow.tasks[0].tools[0].output_memory is None
 

@@ -1,56 +1,40 @@
 from __future__ import annotations
 
 import json
-from queue import Queue
-from threading import Thread
 from typing import TYPE_CHECKING
 
-from attrs import Factory, define, field
+from attrs import define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.events import (
     ActionChunkEvent,
-    BaseChunkEvent,
-    EventBus,
-    EventListener,
     FinishPromptEvent,
     FinishStructureRunEvent,
     TextChunkEvent,
 )
-from griptape.utils.contextvars_utils import with_contextvars
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from griptape.events.base_event import BaseEvent
     from griptape.structures import Structure
 
 
 @define
 class Stream:
-    """A wrapper for Structures that converts `BaseChunkEvent`s into an iterator of TextArtifacts.
-
-    It achieves this by running the Structure in a separate thread, listening for events from the Structure,
-    and yielding those events.
-
-    See relevant Stack Overflow post: https://stackoverflow.com/questions/9968592/turn-functions-with-a-callback-into-python-generators
+    """A wrapper for Structures filters Events relevant to text output and converts them to TextArtifacts.
 
     Attributes:
         structure: The Structure to wrap.
-        _event_queue: A queue to hold events from the Structure.
     """
 
     structure: Structure = field()
 
-    _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()))
-
     def run(self, *args) -> Iterator[TextArtifact]:
-        t = Thread(target=with_contextvars(self._run_structure), args=args)
-        t.start()
-
         action_str = ""
-        while True:
-            event = self._event_queue.get()
+
+        for event in self.structure.run_stream(
+            *args, event_types=[TextChunkEvent, ActionChunkEvent, FinishPromptEvent, FinishStructureRunEvent]
+        ):
             if isinstance(event, FinishStructureRunEvent):
                 break
             elif isinstance(event, FinishPromptEvent):
@@ -67,18 +51,3 @@ class Stream:
                         action_str = ""
                     except Exception:
                         pass
-        t.join()
-
-    def _run_structure(self, *args) -> None:
-        def event_handler(event: BaseEvent) -> None:
-            self._event_queue.put(event)
-
-        stream_event_listener = EventListener(
-            on_event=event_handler,
-            event_types=[BaseChunkEvent, FinishPromptEvent, FinishStructureRunEvent],
-        )
-        EventBus.add_event_listener(stream_event_listener)
-
-        self.structure.run(*args)
-
-        EventBus.remove_event_listener(stream_event_listener)

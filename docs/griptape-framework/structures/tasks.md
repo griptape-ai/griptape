@@ -78,7 +78,7 @@ These hooks can be used to perform actions before and after the Task is run. For
 
 ## Prompt Task
 
-For general purpose prompting, use the [PromptTask](../../reference/griptape/tasks/prompt_task.md):
+For general-purpose interaction with LLMs, use the [PromptTask](../../reference/griptape/tasks/prompt_task.md):
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/tasks_2.py"
@@ -94,35 +94,16 @@ For general purpose prompting, use the [PromptTask](../../reference/griptape/tas
                              Day begins anew.
 ```
 
-If the model supports it, you can also pass image inputs:
+### Tools
 
-```python
---8<-- "docs/griptape-framework/structures/src/tasks_3.py"
-```
-
-```
-[06/21/24 10:01:08] INFO     PromptTask c229d1792da34ab1a7c45768270aada9
-                             Input: What's in this image?
-
-                             Media, type: image/jpeg, size: 82351 bytes
-[06/21/24 10:01:12] INFO     PromptTask c229d1792da34ab1a7c45768270aada9
-                             Output: The image depicts a stunning mountain landscape at sunrise or sunset. The sun is partially visible on the left side of the image,
-                             casting a warm golden light over the scene. The mountains are covered with snow at their peaks, and a layer of clouds or fog is settled in the
-                             valleys between them. The sky is a mix of warm colors near the horizon, transitioning to cooler blues higher up, with some scattered clouds
-                             adding texture to the sky. The overall scene is serene and majestic, highlighting the natural beauty of the mountainous terrain.
-```
-
-## Toolkit Task
-
-To use [Griptape Tools](../../griptape-framework/tools/index.md), use a [Toolkit Task](../../reference/griptape/tasks/toolkit_task.md).
-This Task takes in one or more Tools which the LLM will decide to use through Chain of Thought (CoT) reasoning. Because this Task uses CoT, it is recommended to only use with very capable models.
+You can pass in one or more Tools which the LLM will decide to use through Chain of Thought (CoT) reasoning. Because tool execution uses CoT, it is recommended to only use with very capable models.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/tasks_4.py"
 ```
 
 ```
-[08/12/24 15:16:30] INFO     ToolkitTask f5b44fe1dadc4e6688053df71d97e0de
+[08/12/24 15:16:30] INFO     PromptTask f5b44fe1dadc4e6688053df71d97e0de
                              Input: Load https://www.griptape.ai, summarize it, and store it in a file called griptape.txt
 [08/12/24 15:16:32] INFO     Subtask a4483eddfbe84129b0f4c04ef0f5d695
                              Actions: [
@@ -177,8 +158,28 @@ This Task takes in one or more Tools which the LLM will decide to use through Ch
                              ]
                     INFO     Subtask d9b2dd9f96d841f49f5d460e33905183
                              Response: Successfully saved memory artifacts to disk
-[08/12/24 15:16:39] INFO     ToolkitTask f5b44fe1dadc4e6688053df71d97e0de
+[08/12/24 15:16:39] INFO     PromptTask f5b44fe1dadc4e6688053df71d97e0de
                              Output: The content from https://www.griptape.ai has been summarized and stored in a file called `griptape.txt`.
+```
+
+### Images
+
+If the model supports it, you can also pass image inputs:
+
+```python
+--8<-- "docs/griptape-framework/structures/src/tasks_3.py"
+```
+
+```
+[06/21/24 10:01:08] INFO     PromptTask c229d1792da34ab1a7c45768270aada9
+                             Input: What's in this image?
+
+                             Media, type: image/jpeg, size: 82351 bytes
+[06/21/24 10:01:12] INFO     PromptTask c229d1792da34ab1a7c45768270aada9
+                             Output: The image depicts a stunning mountain landscape at sunrise or sunset. The sun is partially visible on the left side of the image,
+                             casting a warm golden light over the scene. The mountains are covered with snow at their peaks, and a layer of clouds or fog is settled in the
+                             valleys between them. The sky is a mix of warm colors near the horizon, transitioning to cooler blues higher up, with some scattered clouds
+                             adding texture to the sky. The overall scene is serene and majestic, highlighting the natural beauty of the mountainous terrain.
 ```
 
 ## Tool Task

@@ -2,7 +2,7 @@ import pytest
 
 from griptape.events import FinishActionsSubtaskEvent
 from griptape.structures import Agent
-from griptape.tasks import ActionsSubtask, ToolkitTask
+from griptape.tasks import ActionsSubtask, PromptTask
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -15,7 +15,7 @@ class TestFinishActionsSubtaskEvent:
             "<|Response|>: test observation\n"
             "Answer: test output"
         )
-        task = ToolkitTask(tools=[MockTool()])
+        task = PromptTask(tools=[MockTool()])
         agent = Agent()
         agent.add_task(task)
         subtask = ActionsSubtask(valid_input)

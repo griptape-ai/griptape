@@ -6,7 +6,7 @@ from griptape.artifacts import ErrorArtifact, TextArtifact
 from griptape.memory.structure import ConversationMemory
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Pipeline
-from griptape.tasks import BaseTask, CodeExecutionTask, PromptTask, ToolkitTask
+from griptape.tasks import BaseTask, CodeExecutionTask, PromptTask
 from griptape.tokenizers import OpenAiTokenizer
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -82,9 +82,9 @@ class TestPipeline:
     def test_with_no_task_memory(self):
         pipeline = Pipeline()
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+        pipeline.add_task(PromptTask(tools=[MockTool()]))
 
-        assert isinstance(pipeline.tasks[0], ToolkitTask)
+        assert isinstance(pipeline.tasks[0], PromptTask)
         assert pipeline.tasks[0].tools[0].input_memory is not None
         assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.task_memory
         assert pipeline.tasks[0].tools[0].output_memory is None
@@ -92,9 +92,9 @@ class TestPipeline:
     def test_with_task_memory(self):
         pipeline = Pipeline()
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool(off_prompt=True)]))
+        pipeline.add_task(PromptTask(tools=[MockTool(off_prompt=True)]))
 
-        assert isinstance(pipeline.tasks[0], ToolkitTask)
+        assert isinstance(pipeline.tasks[0], PromptTask)
         assert pipeline.tasks[0].task_memory == pipeline.task_memory
         assert pipeline.tasks[0].tools[0].input_memory is not None
         assert pipeline.tasks[0].tools[0].input_memory[0] == pipeline.task_memory
@@ -104,17 +104,17 @@ class TestPipeline:
     def test_with_task_memory_and_empty_tool_output_memory(self):
         pipeline = Pipeline()
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool(output_memory={}, off_prompt=True)]))
+        pipeline.add_task(PromptTask(tools=[MockTool(output_memory={}, off_prompt=True)]))
 
-        assert isinstance(pipeline.tasks[0], ToolkitTask)
+        assert isinstance(pipeline.tasks[0], PromptTask)
         assert pipeline.tasks[0].tools[0].output_memory == {}
 
     def test_without_task_memory(self):
         pipeline = Pipeline(task_memory=None)
 
-        pipeline.add_task(ToolkitTask(tools=[MockTool()]))
+        pipeline.add_task(PromptTask(tools=[MockTool()]))
 
-        assert isinstance(pipeline.tasks[0], ToolkitTask)
+        assert isinstance(pipeline.tasks[0], PromptTask)
         assert pipeline.tasks[0].tools[0].input_memory is None
         assert pipeline.tasks[0].tools[0].output_memory is None
 

@@ -20,7 +20,7 @@ Here is an example of a Pipeline using Tools:
 ```
 
 ```
-[08/12/24 15:18:19] INFO     ToolkitTask 48ac0486e5374e1ea53e8d2b955e511f
+[08/12/24 15:18:19] INFO     PromptTask 48ac0486e5374e1ea53e8d2b955e511f
                              Input: Load https://www.griptape.ai, summarize it, and store it in griptape.txt
 [08/12/24 15:18:20] INFO     Subtask 3b8365c077ae4a7e94087bfeff7a858c
                              Actions: [
@@ -82,7 +82,7 @@ Here is an example of a Pipeline using Tools:
                              ]
                     INFO     Subtask d0f22504f576401f8d7e8ea78270a376
                              Response: Successfully saved file
-[08/12/24 15:18:28] INFO     ToolkitTask 48ac0486e5374e1ea53e8d2b955e511f
+[08/12/24 15:18:28] INFO     PromptTask 48ac0486e5374e1ea53e8d2b955e511f
                              Output: The content from https://www.griptape.ai has been summarized and stored in griptape.txt.
                     INFO     PromptTask 4a9c59b1c06d4c549373d243a12f1285
                              Input: Say the following in spanish: The content from https://www.griptape.ai has been summarized and stored in griptape.txt.

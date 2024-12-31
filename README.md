@@ -60,6 +60,7 @@ Engines wrap Drivers and provide use-case-specific functionality:
 - 📊 **RAG Engine** is an abstraction for implementing modular Retrieval Augmented Generation (RAG) pipelines.
 - 🛠️ **Extraction Engine** extracts JSON or CSV data from unstructured text.
 - 📝 **Summary Engine** generates summaries from textual content.
+- ✅ **Eval Engine** evaluates and scores the quality of generated text.
 
 ### 📦 Additional Components
 
@@ -110,7 +111,7 @@ agent.run("https://griptape.ai", "griptape.txt")
 And here is the output:
 
 ```
-[08/12/24 14:48:15] INFO     ToolkitTask c90d263ec69046e8b30323c131ae4ba0
+[08/12/24 14:48:15] INFO     PromptTask c90d263ec69046e8b30323c131ae4ba0
                              Input: Load https://griptape.ai, summarize it, and store it in a file called griptape.txt.
 [08/12/24 14:48:16] INFO     Subtask ebe23832cbe2464fb9ecde9fcee7c30f
                              Actions: [
@@ -165,7 +166,7 @@ And here is the output:
                              ]
                     INFO     Subtask c233853450fb4fd6a3e9c04c52b33bf6
                              Response: Successfully saved memory artifacts to disk
-[08/12/24 14:48:23] INFO     ToolkitTask c90d263ec69046e8b30323c131ae4ba0
+[08/12/24 14:48:23] INFO     PromptTask c90d263ec69046e8b30323c131ae4ba0
                              Output: The content from https://griptape.ai has been summarized and stored in a file called `griptape.txt`.
 ```
 
@@ -176,8 +177,8 @@ The important thing to note here is that no matter how big the webpage is it can
 In the above example, we set [off_prompt](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md#off-prompt) to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
 
 > [!IMPORTANT]
-> This example uses Griptape's [ToolkitTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#toolkit-task), which requires a highly capable LLM to function correctly. By default, Griptape uses the [OpenAiChatPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#openai-chat); for another powerful LLM try swapping to the [AnthropicPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#anthropic)!
-> If you're using a less powerful LLM, consider using the [ToolTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#tool-task) instead, as the `ToolkitTask` might not work properly or at all.
+> This example uses Griptape's [PromptTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#prompt-task) with `tools`, which requires a highly capable LLM to function correctly. By default, Griptape uses the [OpenAiChatPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#openai-chat); for another powerful LLM try swapping to the [AnthropicPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#anthropic)!
+> If you're using a less powerful LLM, consider using the [ToolTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#tool-task) instead, as the `PromptTask` with `tools` might not work properly or at all.
 
 [Check out our docs](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 

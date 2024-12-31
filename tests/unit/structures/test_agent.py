@@ -7,7 +7,7 @@ from griptape.memory.structure import ConversationMemory
 from griptape.memory.task.storage import TextArtifactStorage
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
-from griptape.tasks import BaseTask, PromptTask, ToolkitTask
+from griptape.tasks import BaseTask, PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -23,7 +23,7 @@ class TestAgent:
         assert agent.rulesets[0].name == "TestRuleset"
         assert agent.rulesets[0].rules[0].value == "test"
         assert isinstance(agent.conversation_memory, ConversationMemory)
-        assert isinstance(Agent(tools=[MockTool()]).task, ToolkitTask)
+        assert isinstance(Agent(tools=[MockTool()]).task, PromptTask)
 
     def test_rulesets(self):
         agent = Agent(rulesets=[Ruleset("Foo", [Rule("foo test")])])
@@ -279,8 +279,40 @@ class TestAgent:
 
     def test_stream_mutation(self):
         prompt_driver = MockPromptDriver()
-        agent = Agent(prompt_driver=MockPromptDriver(), stream=True)
+
+        agent = Agent(prompt_driver=MockPromptDriver(stream=False), stream=True)
+
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].prompt_driver.stream is False
+        assert agent.tasks[0].prompt_driver is not prompt_driver
+
+    def test_validate_prompt_driver(self):
+        with pytest.warns(UserWarning, match="`Agent.prompt_driver` is set, but `Agent.stream` was provided."):
+            Agent(stream=True, prompt_driver=MockPromptDriver())
+
+    def test_validate_tasks(self):
+        with pytest.warns(UserWarning, match="`Agent.tasks` is set, but `Agent.prompt_driver` was provided."):
+            Agent(prompt_driver=MockPromptDriver(), tasks=[PromptTask()])
+
+    def test_field_hierarchy(self):
+        # Test that stream on its own propagates to the task.
+        agent = Agent(stream=True)
 
         assert isinstance(agent.tasks[0], PromptTask)
         assert agent.tasks[0].prompt_driver.stream is True
-        assert agent.tasks[0].prompt_driver is not prompt_driver
+
+        # Test that stream does not propagate to the prompt driver if explicitly provided
+        agent = Agent(stream=True, prompt_driver=MockPromptDriver())
+
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].prompt_driver.stream is False
+
+        # Test that neither stream nor prompt driver propagate to the task if explicitly provided
+        agent = Agent(
+            stream=False,
+            prompt_driver=MockPromptDriver(stream=False),
+            tasks=[PromptTask(prompt_driver=MockPromptDriver(stream=True))],
+        )
+
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].prompt_driver.stream is True

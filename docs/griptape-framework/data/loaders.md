@@ -13,6 +13,12 @@ multiple sources with [load_collection()](../../reference/griptape/loaders/base_
 
 The following Loaders load a file using a [FileManagerDriver](../../reference/griptape/drivers/file_manager/base_file_manager_driver.md) and loads the resulting data into an [Artifact](../../griptape-framework/data/artifacts.md) for the respective file type.
 
+As a convenience, File Loaders also have a `save()` method that can save an Artifact to a destination.
+
+```python
+--8<-- "docs/griptape-framework/data/src/loaders_save.py"
+```
+
 ### Text
 
 Loads text files into [TextArtifact](../../griptape-framework/data/artifacts.md#text)s:
