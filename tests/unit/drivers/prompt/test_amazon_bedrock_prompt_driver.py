@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.artifacts import ActionArtifact, ErrorArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ActionArtifact, ErrorArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers import AmazonBedrockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -299,6 +299,7 @@ class TestAmazonBedrockPromptDriver:
                 ]
             )
         )
+        prompt_stack.add_user_message(GenericArtifact("video-file"))
 
         return prompt_stack
 
@@ -354,6 +355,7 @@ class TestAmazonBedrockPromptDriver:
                 ],
                 "role": "user",
             },
+            {"content": ["video-file"], "role": "user"},
         ]
 
     @pytest.mark.parametrize("use_native_tools", [True, False])

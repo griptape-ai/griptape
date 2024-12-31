@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers import AnthropicPromptDriver
@@ -270,6 +270,7 @@ class TestAnthropicPromptDriver:
                 ]
             )
         )
+        prompt_stack.add_user_message(GenericArtifact({"type": "document"}))
 
         return prompt_stack
 
@@ -334,6 +335,12 @@ class TestAnthropicPromptDriver:
                         "type": "tool_result",
                     },
                     {"text": "keep-going", "type": "text"},
+                ],
+                "role": "user",
+            },
+            {
+                "content": [
+                    {"type": "document"},
                 ],
                 "role": "user",
             },
