@@ -20,7 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for `GenericMessageContent` in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver`.
 - Validators to `Agent` initialization.
 
-
 ### Changed
 
 - Rulesets can now be serialized and deserialized.
@@ -38,6 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Parsing `ActionCallDeltaMessageContent`s with empty string `partial_input`s.
 - `Stream` util not properly propagating thread contextvars.
 - `ValueError` with `DuckDuckGoWebSearchDriver`.
+- `Agent.stream` overriding `Agent.prompt_driver.stream` even when `Agent.prompt_driver` is explicitly provided.
 
 ### Deprecated
 

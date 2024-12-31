@@ -3,7 +3,7 @@ from __future__ import annotations
 import warnings
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
-from attrs import Attribute, define, evolve, field
+from attrs import Attribute, define, evolve, field, validators
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import observable
@@ -23,8 +23,8 @@ class Agent(Structure):
     input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
-    stream: Optional[bool] = field(default=None, kw_only=True)
-    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
+    stream: bool = field(default=None, kw_only=True)
+    prompt_driver: BasePromptDriver = field(default=None, kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
     fail_fast: bool = field(default=False, kw_only=True)
@@ -36,15 +36,6 @@ class Agent(Structure):
     def validate_fail_fast(self, _: Attribute, fail_fast: bool) -> None:  # noqa: FBT001
         if fail_fast:
             raise ValueError("Agents cannot fail fast, as they can only have 1 task.")
-
-    @stream.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_stream(self, _: Attribute, stream: bool) -> None:  # noqa: FBT001
-        if stream is not None and self.prompt_driver is not None:
-            warnings.warn(
-                "`Agent.stream` is set, but `Agent.prompt_driver` was provided. `Agent.stream` will be ignored. This will be an error in the future.",
-                UserWarning,
-                stacklevel=2,
-            )
 
     @prompt_driver.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_prompt_driver(self, _: Attribute, prompt_driver: Optional[BasePromptDriver]) -> None:  # noqa: FBT001
@@ -95,17 +86,19 @@ class Agent(Structure):
         return self
 
     def _init_task(self) -> None:
-        stream = False if self.stream is None else self.stream
+        if self.stream is None:
+            with validators.disabled():
+                self.stream = Defaults.drivers_config.prompt_driver.stream
 
-        prompt_driver = (
-            evolve(Defaults.drivers_config.prompt_driver, stream=stream)
-            if self.prompt_driver is None
-            else self.prompt_driver
-        )
+        if self.prompt_driver is None:
+            with validators.disabled():
+                self.prompt_driver = evolve(Defaults.drivers_config.prompt_driver, stream=self.stream)
+
         task = PromptTask(
             self.input,
-            prompt_driver=prompt_driver,
+            prompt_driver=self.prompt_driver,
             tools=self.tools,
             max_meta_memory_entries=self.max_meta_memory_entries,
         )
+
         self.add_task(task)
