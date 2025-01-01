@@ -186,30 +186,3 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
             )
             for match in matches
         ]
-
-    def query(
-        self,
-        query: str,
-        *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
-        include_vectors: bool = False,
-        **kwargs: Any,
-    ) -> list[BaseVectorStoreDriver.Entry]:
-        """Run a similarity search on the Astra DB store, based on a query string.
-
-        Args:
-            query: the query string.
-            count: the maximum number of results to return. If omitted, defaults will apply.
-            namespace: the namespace to filter results by.
-            include_vectors: whether to include vector data in the results.
-            kwargs: additional keyword arguments. Currently only the free-form dict `filter`
-                is recognized (and goes straight to the Data API query);
-                others will generate a warning and be ignored.
-
-        Returns:
-            A list of vector (`BaseVectorStoreDriver.Entry`) entries,
-            with their `score` attribute set to the vector similarity to the query.
-        """
-        vector = self.embedding_driver.embed_string(query)
-        return self.query_vector(vector, count=count, namespace=namespace, include_vectors=include_vectors, **kwargs)

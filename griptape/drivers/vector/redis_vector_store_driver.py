@@ -155,25 +155,6 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             )
         return query_results
 
-    def query(
-        self,
-        query: str,
-        *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
-        include_vectors: bool = False,
-        **kwargs,
-    ) -> list[BaseVectorStoreDriver.Entry]:
-        """Performs a nearest neighbor search on Redis to find vectors similar to the provided input vector.
-
-        Results can be limited using the count parameter and optionally filtered by a namespace.
-
-        Returns:
-            A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
-        """
-        vector = self.embedding_driver.embed_string(query)
-        return self.query_vector(vector, count=count, namespace=namespace, include_vectors=include_vectors, **kwargs)
-
     def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
         """Generates a Redis key using the provided vector ID and optionally a namespace."""
         return f"{namespace}:{vector_id}" if namespace else vector_id

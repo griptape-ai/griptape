@@ -129,29 +129,6 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             for result in results
         ]
 
-    def query(
-        self,
-        query: str,
-        *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
-        include_vectors: bool = False,
-        **kwargs,
-    ) -> list[BaseVectorStoreDriver.Entry]:
-        """Query the Qdrant collection based on a query vector.
-
-        Parameters:
-            query (str): Query string.
-            count (Optional[int]): Optional number of results to return.
-            namespace (Optional[str]): Optional namespace of the vectors.
-            include_vectors (bool): Whether to include vectors in the results.
-
-        Returns:
-            list[BaseVectorStoreDriver.Entry]: List of Entry objects.
-        """
-        vector = self.embedding_driver.embed_string(query)
-        return self.query_vector(vector, count=count, namespace=namespace, include_vectors=include_vectors, **kwargs)
-
     def upsert_vector(
         self,
         vector: list[float],
