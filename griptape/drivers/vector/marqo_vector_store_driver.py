@@ -165,17 +165,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
 
         return entries
 
-    def query_vector(
-        self,
-        vector: list[float],
-        *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
-        include_vectors: bool = False,
-        **kwargs,
-    ) -> NoReturn:
-        raise NotImplementedError(f"{self.__class__.__name__} does not support vector query.")
-
     def query(
         self,
         query: str,
