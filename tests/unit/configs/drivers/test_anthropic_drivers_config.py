@@ -25,7 +25,7 @@ class TestAnthropicDriversConfig:
                 "top_p": 0.999,
                 "top_k": 250,
                 "use_native_tools": True,
-                "native_structured_output_strategy": "tool",
+                "structured_output_strategy": "tool",
                 "use_native_structured_output": True,
                 "extra_params": {},
             },

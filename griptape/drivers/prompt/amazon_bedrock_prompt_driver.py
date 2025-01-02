@@ -56,14 +56,14 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    native_structured_output_strategy: Literal["native", "tool"] = field(
+    structured_output_strategy: Literal["native", "tool"] = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
     tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
     _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
-    @native_structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_native_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
+    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
         if value == "native":
             raise ValueError("AmazonBedrockPromptDriver does not support `native` structured output mode.")
 
@@ -137,7 +137,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             if (
                 prompt_stack.output_schema is not None
                 and self.use_native_structured_output
-                and self.native_structured_output_strategy == "tool"
+                and self.structured_output_strategy == "tool"
             ):
                 self._add_structured_output_tool(prompt_stack)
                 params["toolConfig"]["toolChoice"] = {"any": {}}

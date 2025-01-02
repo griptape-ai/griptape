@@ -233,7 +233,7 @@ class TestOllamaPromptDriver:
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("use_native_structured_output", [True, False])
-    @pytest.mark.parametrize("native_structured_output_strategy", ["native", "tool", "foo"])
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
     def test_try_run(
         self,
         mock_client,
@@ -241,14 +241,14 @@ class TestOllamaPromptDriver:
         messages,
         use_native_tools,
         use_native_structured_output,
-        native_structured_output_strategy,
+        structured_output_strategy,
     ):
         # Given
         driver = OllamaPromptDriver(
             model="llama",
             use_native_tools=use_native_tools,
             use_native_structured_output=use_native_structured_output,
-            native_structured_output_strategy=native_structured_output_strategy,
+            structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
 
@@ -269,7 +269,7 @@ class TestOllamaPromptDriver:
                     *self.OLLAMA_TOOLS,
                     *(
                         [self.OLLAMA_STRUCTURED_OUTPUT_TOOL]
-                        if use_native_structured_output and native_structured_output_strategy == "tool"
+                        if use_native_structured_output and structured_output_strategy == "tool"
                         else []
                     ),
                 ]
@@ -277,7 +277,7 @@ class TestOllamaPromptDriver:
             if use_native_tools
             else {},
             **{"format": self.OLLAMA_STRUCTURED_OUTPUT_SCHEMA}
-            if use_native_structured_output and native_structured_output_strategy == "native"
+            if use_native_structured_output and structured_output_strategy == "native"
             else {},
             foo="bar",
         )
@@ -291,7 +291,7 @@ class TestOllamaPromptDriver:
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("use_native_structured_output", [True, False])
-    @pytest.mark.parametrize("native_structured_output_strategy", ["native", "tool", "foo"])
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
     def test_try_stream_run(
         self,
         mock_stream_client,
@@ -299,7 +299,7 @@ class TestOllamaPromptDriver:
         messages,
         use_native_tools,
         use_native_structured_output,
-        native_structured_output_strategy,
+        structured_output_strategy,
     ):
         # Given
         driver = OllamaPromptDriver(
@@ -307,7 +307,7 @@ class TestOllamaPromptDriver:
             stream=True,
             use_native_tools=use_native_tools,
             use_native_structured_output=use_native_structured_output,
-            native_structured_output_strategy=native_structured_output_strategy,
+            structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
 
@@ -320,7 +320,7 @@ class TestOllamaPromptDriver:
             model=driver.model,
             options={"temperature": driver.temperature, "stop": [], "num_predict": driver.max_tokens},
             **{"format": self.OLLAMA_STRUCTURED_OUTPUT_SCHEMA}
-            if use_native_structured_output and native_structured_output_strategy == "native"
+            if use_native_structured_output and structured_output_strategy == "native"
             else {},
             stream=True,
             foo="bar",

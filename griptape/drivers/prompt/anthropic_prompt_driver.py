@@ -69,7 +69,7 @@ class AnthropicPromptDriver(BasePromptDriver):
     tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    native_structured_output_strategy: Literal["native", "tool"] = field(
+    structured_output_strategy: Literal["native", "tool"] = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
     max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
@@ -79,8 +79,8 @@ class AnthropicPromptDriver(BasePromptDriver):
     def client(self) -> Client:
         return import_optional_dependency("anthropic").Anthropic(api_key=self.api_key)
 
-    @native_structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_native_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
+    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
         if value == "native":
             raise ValueError("AnthropicPromptDriver does not support `native` structured output mode.")
 
@@ -139,7 +139,7 @@ class AnthropicPromptDriver(BasePromptDriver):
             if (
                 prompt_stack.output_schema is not None
                 and self.use_native_structured_output
-                and self.native_structured_output_strategy == "tool"
+                and self.structured_output_strategy == "tool"
             ):
                 self._add_structured_output_tool(prompt_stack)
                 params["tool_choice"] = {"type": "any"}

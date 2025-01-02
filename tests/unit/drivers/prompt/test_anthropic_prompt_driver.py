@@ -399,7 +399,7 @@ class TestAnthropicPromptDriver:
                     *self.ANTHROPIC_TOOLS,
                     *(
                         [self.ANTHROPIC_STRUCTURED_OUTPUT_TOOL]
-                        if use_native_structured_output and driver.native_structured_output_strategy == "tool"
+                        if use_native_structured_output and driver.structured_output_strategy == "tool"
                         else []
                     ),
                 ]
@@ -456,7 +456,7 @@ class TestAnthropicPromptDriver:
                     *self.ANTHROPIC_TOOLS,
                     *(
                         [self.ANTHROPIC_STRUCTURED_OUTPUT_TOOL]
-                        if use_native_structured_output and driver.native_structured_output_strategy == "tool"
+                        if use_native_structured_output and driver.structured_output_strategy == "tool"
                         else []
                     ),
                 ]
@@ -491,8 +491,8 @@ class TestAnthropicPromptDriver:
         event = next(stream)
         assert event.usage.output_tokens == 10
 
-    def test_verify_native_structured_output_strategy(self):
-        assert AnthropicPromptDriver(model="foo", native_structured_output_strategy="tool")
+    def test_verify_structured_output_strategy(self):
+        assert AnthropicPromptDriver(model="foo", structured_output_strategy="tool")
 
         with pytest.raises(ValueError, match="AnthropicPromptDriver does not support `native` structured output mode."):
-            AnthropicPromptDriver(model="foo", native_structured_output_strategy="native")
+            AnthropicPromptDriver(model="foo", structured_output_strategy="native")

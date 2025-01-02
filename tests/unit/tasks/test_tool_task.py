@@ -257,7 +257,7 @@ class TestToolTask:
                 "stream": False,
                 "temperature": 0.1,
                 "type": "MockPromptDriver",
-                "native_structured_output_strategy": "native",
+                "structured_output_strategy": "native",
                 "use_native_structured_output": False,
                 "use_native_tools": False,
             },

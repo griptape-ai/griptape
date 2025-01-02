@@ -2,7 +2,7 @@ import schema
 from rich.pretty import pprint
 
 from griptape.drivers import OpenAiChatPromptDriver
-from griptape.rules import JsonSchemaRule, Rule
+from griptape.rules import Rule
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
 
@@ -12,18 +12,16 @@ pipeline = Pipeline(
             prompt_driver=OpenAiChatPromptDriver(
                 model="gpt-4o",
                 use_native_structured_output=True,
-                native_structured_output_strategy="native",
+                structured_output_strategy="native",
+            ),
+            output_schema=schema.Schema(
+                {
+                    "steps": [schema.Schema({"explanation": str, "output": str})],
+                    "final_answer": str,
+                }
             ),
             rules=[
                 Rule("You are a helpful math tutor. Guide the user through the solution step by step."),
-                JsonSchemaRule(
-                    schema.Schema(
-                        {
-                            "steps": [schema.Schema({"explanation": str, "output": str})],
-                            "final_answer": str,
-                        }
-                    )
-                ),
             ],
         )
     ]
