@@ -1,7 +1,5 @@
 import warnings
 
-import pytest
-
 from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.artifacts.json_artifact import JsonArtifact
 from griptape.artifacts.list_artifact import ListArtifact
@@ -188,7 +186,7 @@ class TestPromptTask:
                 use_native_structured_output=True,
                 mock_structured_output={"baz": "foo"},
             ),
-            rules=[JsonSchemaRule(output_schema)],
+            output_schema=output_schema,
         )
         output = task.run()
 
@@ -204,27 +202,6 @@ class TestPromptTask:
             warnings.simplefilter("error")
             assert task.prompt_stack
 
-    def test_prompt_stack_mixed_native_schema(self):
-        from schema import Schema
-
-        output_schema = Schema({"baz": str})
-        task = PromptTask(
-            input="foo",
-            prompt_driver=MockPromptDriver(
-                use_native_structured_output=True,
-            ),
-            rules=[Rule("foo"), JsonSchemaRule({"bar": {}}), JsonSchemaRule(output_schema)],
-        )
-
-        assert task.prompt_stack.output_schema is output_schema
-        assert task.prompt_stack.messages[0].is_system()
-        assert "foo" in task.prompt_stack.messages[0].to_text()
-        assert "bar" not in task.prompt_stack.messages[0].to_text()
-        with pytest.warns(
-            match="Not all provided `JsonSchemaRule`s include a `schema.Schema` instance. These will be ignored with `use_native_structured_output`."
-        ):
-            assert task.prompt_stack
-
     def test_prompt_stack_empty_native_schema(self):
         task = PromptTask(
             input="foo",
@@ -235,23 +212,6 @@ class TestPromptTask:
         )
 
         assert task.prompt_stack.output_schema is None
-
-    def test_prompt_stack_multi_native_schema(self):
-        from schema import Or, Schema
-
-        output_schema = Schema({"foo": str})
-        task = PromptTask(
-            input="foo",
-            prompt_driver=MockPromptDriver(
-                use_native_structured_output=True,
-            ),
-            rules=[JsonSchemaRule({"foo": {}}), JsonSchemaRule(output_schema), JsonSchemaRule(output_schema)],
-        )
-
-        assert isinstance(task.prompt_stack.output_schema, Schema)
-        assert task.prompt_stack.output_schema.json_schema("Output") == Schema(
-            Or(output_schema, output_schema)
-        ).json_schema("Output")
 
     def test_rulesets(self):
         pipeline = Pipeline(

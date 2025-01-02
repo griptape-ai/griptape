@@ -44,17 +44,8 @@ The easiest way to get started with structured output is by using a [JsonSchemaR
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_structured_output.py"
 ```
 
-### Multiple Schemas
-
-If multiple `JsonSchemaRule`s are provided, Griptape will merge them into a single JSON Schema using `anyOf`.
-
-Some LLMs may not support `anyOf` as a top-level JSON Schema. To work around this, you can try using another `native_structured_output_strategy`:
-
-```python
---8<-- "docs/griptape-framework/drivers/src/prompt_drivers_structured_output_multi.py"
-```
-
-Not every LLM supports `use_native_structured_output` or all `native_structured_output_strategy` options.
+!!! warning
+    Not every LLM supports `use_native_structured_output` or all `native_structured_output_strategy` options.
 
 ## Prompt Drivers
 
