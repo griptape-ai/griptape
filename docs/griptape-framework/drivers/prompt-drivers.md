@@ -29,16 +29,16 @@ You can pass images to the Driver if the model supports it:
 
 Some LLMs provide functionality often referred to as "Structured Output". This means instructing the LLM to output data in a particular format, usually JSON. This can be useful for forcing the LLM to output in a parsable format that can be used by downstream systems.
 
-If an [output_schema](../../reference/griptape/tasks.md#griptape.tasks.PromptTask.output_schema) is provided to the Task, you can change _how_ the output is structured by setting the Driver's [structured_output_strategy](../../reference/griptape/drivers.md#griptape.drivers.BasePromptDriver.structured_output_strategy) to one of:
+You can change _how_ the output is structured by setting the Driver's [structured_output_strategy](../../reference/griptape/drivers/prompt/base_prompt_driver.md#griptape.drivers.prompt.base_prompt_driver.BasePromptDriver.structured_output_strategy) to one of:
 
 - `native`: The Driver will use the LLM's structured output functionality provided by the API.
-- `tool`: Griptape will pass a special Tool, [StructuredOutputTool](../../reference/griptape/tools/structured_output_tool.md) and try to force the LLM to use a Tool.
+- `tool`: Griptape will pass a special Tool, [StructuredOutputTool](../../reference/griptape/tools/structured_output/tool.md) and try to force the LLM to use a Tool.
 
 Each Driver may have a different default setting depending on the LLM provider's capabilities.
 
-### JSON Schema
+### Prompt Task
 
-The easiest way to get started with structured output is by using a [JsonSchemaRule](../structures/rulesets.md#json-schema). If a [schema.Schema](https://pypi.org/project/schema/) instance is provided to the Rule, Griptape will convert it to a JSON Schema and provide it to the LLM using the selected structured output strategy.
+The easiest way to get started with structured output is by using a [PromptTask](../structures/tasks.md#prompt)'s [output_schema](../../reference/griptape/tasks/prompt_task.md#griptape.tasks.PromptTask.output_schema) parameter.
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_structured_output.py"
