@@ -36,7 +36,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     model: str = field(kw_only=True, metadata={"serializable": True})
     use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    native_structured_output_strategy: Literal["native", "tool"] = field(
+    structured_output_strategy: Literal["native", "tool"] = field(
         default="native", kw_only=True, metadata={"serializable": True}
     )
     tokenizer: HuggingFaceTokenizer = field(
@@ -55,8 +55,8 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             token=self.api_token,
         )
 
-    @native_structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_native_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
+    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
         if value == "tool":
             raise ValueError("HuggingFaceHubPromptDriver does not support `tool` structured output mode.")
 
@@ -124,7 +124,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         if (
             prompt_stack.output_schema
             and self.use_native_structured_output
-            and self.native_structured_output_strategy == "native"
+            and self.structured_output_strategy == "native"
         ):
             # https://huggingface.co/learn/cookbook/en/structured_generation#-constrained-decoding
             output_schema = prompt_stack.output_schema.json_schema("Output Schema")

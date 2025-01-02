@@ -400,7 +400,7 @@ class TestToolkitSubtask:
                 "type": "MockPromptDriver",
                 "use_native_tools": False,
                 "use_native_structured_output": False,
-                "native_structured_output_strategy": "native",
+                "structured_output_strategy": "native",
             },
             "tools": [
                 {

@@ -111,9 +111,9 @@ class OllamaPromptDriver(BasePromptDriver):
         }
 
         if prompt_stack.output_schema is not None and self.use_native_structured_output:
-            if self.native_structured_output_strategy == "native":
+            if self.structured_output_strategy == "native":
                 params["format"] = prompt_stack.output_schema.json_schema("Output")
-            elif self.native_structured_output_strategy == "tool":
+            elif self.structured_output_strategy == "tool":
                 # TODO: Implement tool choice once supported
                 self._add_structured_output_tool(prompt_stack)
 

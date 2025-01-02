@@ -189,7 +189,7 @@ class TestGooglePromptDriver:
             top_k=50,
             use_native_tools=use_native_tools,
             use_native_structured_output=use_native_structured_output,
-            native_structured_output_strategy="tool",
+            structured_output_strategy="tool",
             extra_params={"max_output_tokens": 10},
         )
 
@@ -290,8 +290,8 @@ class TestGooglePromptDriver:
         event = next(stream)
         assert event.usage.output_tokens == 5
 
-    def test_verify_native_structured_output_strategy(self):
-        assert GooglePromptDriver(model="foo", native_structured_output_strategy="tool")
+    def test_verify_structured_output_strategy(self):
+        assert GooglePromptDriver(model="foo", structured_output_strategy="tool")
 
         with pytest.raises(ValueError, match="GooglePromptDriver does not support `native` structured output mode."):
-            GooglePromptDriver(model="foo", native_structured_output_strategy="native")
+            GooglePromptDriver(model="foo", structured_output_strategy="native")

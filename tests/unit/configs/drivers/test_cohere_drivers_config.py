@@ -27,7 +27,7 @@ class TestCohereDriversConfig:
                 "force_single_step": False,
                 "use_native_tools": True,
                 "use_native_structured_output": True,
-                "native_structured_output_strategy": "native",
+                "structured_output_strategy": "native",
                 "extra_params": {},
             },
             "embedding_driver": {

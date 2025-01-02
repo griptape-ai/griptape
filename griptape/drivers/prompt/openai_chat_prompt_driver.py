@@ -160,7 +160,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             params["parallel_tool_calls"] = self.parallel_tool_calls
 
         if prompt_stack.output_schema is not None and self.use_native_structured_output:
-            if self.native_structured_output_strategy == "native":
+            if self.structured_output_strategy == "native":
                 params["response_format"] = {
                     "type": "json_schema",
                     "json_schema": {
@@ -169,7 +169,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         "strict": True,
                     },
                 }
-            elif self.native_structured_output_strategy == "tool" and self.use_native_tools:
+            elif self.structured_output_strategy == "tool" and self.use_native_tools:
                 params["tool_choice"] = "required"
                 self._add_structured_output_tool(prompt_stack)
 

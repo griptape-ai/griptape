@@ -414,7 +414,7 @@ class TestAmazonBedrockPromptDriver:
                             *self.BEDROCK_TOOLS,
                             *(
                                 [self.BEDROCK_STRUCTURED_OUTPUT_TOOL]
-                                if use_native_structured_output and driver.native_structured_output_strategy == "tool"
+                                if use_native_structured_output and driver.structured_output_strategy == "tool"
                                 else []
                             ),
                         ],
@@ -471,7 +471,7 @@ class TestAmazonBedrockPromptDriver:
                             *self.BEDROCK_TOOLS,
                             *(
                                 [self.BEDROCK_STRUCTURED_OUTPUT_TOOL]
-                                if use_native_structured_output and driver.native_structured_output_strategy == "tool"
+                                if use_native_structured_output and driver.structured_output_strategy == "tool"
                                 else []
                             ),
                         ],
@@ -502,10 +502,10 @@ class TestAmazonBedrockPromptDriver:
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 10
 
-    def test_verify_native_structured_output_strategy(self):
-        assert AmazonBedrockPromptDriver(model="foo", native_structured_output_strategy="tool")
+    def test_verify_structured_output_strategy(self):
+        assert AmazonBedrockPromptDriver(model="foo", structured_output_strategy="tool")
 
         with pytest.raises(
             ValueError, match="AmazonBedrockPromptDriver does not support `native` structured output mode."
         ):
-            AmazonBedrockPromptDriver(model="foo", native_structured_output_strategy="native")
+            AmazonBedrockPromptDriver(model="foo", structured_output_strategy="native")

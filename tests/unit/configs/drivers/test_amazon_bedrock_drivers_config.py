@@ -52,7 +52,7 @@ class TestAmazonBedrockDriversConfig:
                 "tool_choice": {"auto": {}},
                 "use_native_tools": True,
                 "use_native_structured_output": True,
-                "native_structured_output_strategy": "tool",
+                "structured_output_strategy": "tool",
                 "extra_params": {},
             },
             "vector_store_driver": {
@@ -109,7 +109,7 @@ class TestAmazonBedrockDriversConfig:
                 "tool_choice": {"auto": {}},
                 "use_native_tools": True,
                 "use_native_structured_output": True,
-                "native_structured_output_strategy": "tool",
+                "structured_output_strategy": "tool",
                 "extra_params": {},
             },
             "vector_store_driver": {

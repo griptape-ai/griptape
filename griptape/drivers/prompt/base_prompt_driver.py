@@ -57,7 +57,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_structured_output: bool = field(default=False, kw_only=True, metadata={"serializable": True})
-    native_structured_output_strategy: Literal["native", "tool"] = field(
+    structured_output_strategy: Literal["native", "tool"] = field(
         default="native", kw_only=True, metadata={"serializable": True}
     )
     extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})

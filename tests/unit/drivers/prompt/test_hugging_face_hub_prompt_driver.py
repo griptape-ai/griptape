@@ -114,10 +114,10 @@ class TestHuggingFaceHubPromptDriver:
         assert event.usage.input_tokens == 3
         assert event.usage.output_tokens == 3
 
-    def test_verify_native_structured_output_strategy(self):
-        assert HuggingFaceHubPromptDriver(model="foo", api_token="bar", native_structured_output_strategy="native")
+    def test_verify_structured_output_strategy(self):
+        assert HuggingFaceHubPromptDriver(model="foo", api_token="bar", structured_output_strategy="native")
 
         with pytest.raises(
             ValueError, match="HuggingFaceHubPromptDriver does not support `tool` structured output mode."
         ):
-            HuggingFaceHubPromptDriver(model="foo", api_token="bar", native_structured_output_strategy="tool")
+            HuggingFaceHubPromptDriver(model="foo", api_token="bar", structured_output_strategy="tool")
