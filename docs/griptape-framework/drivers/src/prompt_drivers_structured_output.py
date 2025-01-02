@@ -11,7 +11,6 @@ pipeline = Pipeline(
         PromptTask(
             prompt_driver=OpenAiChatPromptDriver(
                 model="gpt-4o",
-                use_native_structured_output=True,
                 structured_output_strategy="native",
             ),
             output_schema=schema.Schema(

@@ -183,7 +183,6 @@ class TestPromptTask:
         task = PromptTask(
             input="foo",
             prompt_driver=MockPromptDriver(
-                use_native_structured_output=True,
                 mock_structured_output={"baz": "foo"},
             ),
             output_schema=output_schema,
@@ -205,9 +204,7 @@ class TestPromptTask:
     def test_prompt_stack_empty_native_schema(self):
         task = PromptTask(
             input="foo",
-            prompt_driver=MockPromptDriver(
-                use_native_structured_output=True,
-            ),
+            prompt_driver=MockPromptDriver(),
             rules=[JsonSchemaRule({"foo": {}})],
         )
 

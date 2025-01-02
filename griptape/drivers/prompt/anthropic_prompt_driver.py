@@ -68,7 +68,6 @@ class AnthropicPromptDriver(BasePromptDriver):
     top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
     tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     structured_output_strategy: Literal["native", "tool"] = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
@@ -136,11 +135,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         if prompt_stack.tools and self.use_native_tools:
             params["tool_choice"] = self.tool_choice
 
-            if (
-                prompt_stack.output_schema is not None
-                and self.use_native_structured_output
-                and self.structured_output_strategy == "tool"
-            ):
+            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
                 self._add_structured_output_tool(prompt_stack)
                 params["tool_choice"] = {"type": "any"}
 

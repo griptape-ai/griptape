@@ -54,13 +54,11 @@ class TestHuggingFaceHubPromptDriver:
     def test_init(self):
         assert HuggingFaceHubPromptDriver(api_token="foobar", model="gpt2")
 
-    @pytest.mark.parametrize("use_native_structured_output", [True, False])
-    def test_try_run(self, prompt_stack, mock_client, use_native_structured_output):
+    def test_try_run(self, prompt_stack, mock_client):
         # Given
         driver = HuggingFaceHubPromptDriver(
             api_token="api-token",
             model="repo-id",
-            use_native_structured_output=use_native_structured_output,
             extra_params={"foo": "bar"},
         )
 
@@ -73,22 +71,18 @@ class TestHuggingFaceHubPromptDriver:
             return_full_text=False,
             max_new_tokens=250,
             foo="bar",
-            **{"grammar": {"type": "json", "value": self.HUGGINGFACE_HUB_OUTPUT_SCHEMA}}
-            if use_native_structured_output
-            else {},
+            grammar={"type": "json", "value": self.HUGGINGFACE_HUB_OUTPUT_SCHEMA},
         )
         assert message.value == "model-output"
         assert message.usage.input_tokens == 3
         assert message.usage.output_tokens == 3
 
-    @pytest.mark.parametrize("use_native_structured_output", [True, False])
-    def test_try_stream(self, prompt_stack, mock_client_stream, use_native_structured_output):
+    def test_try_stream(self, prompt_stack, mock_client_stream):
         # Given
         driver = HuggingFaceHubPromptDriver(
             api_token="api-token",
             model="repo-id",
             stream=True,
-            use_native_structured_output=use_native_structured_output,
             extra_params={"foo": "bar"},
         )
 
@@ -102,9 +96,7 @@ class TestHuggingFaceHubPromptDriver:
             return_full_text=False,
             max_new_tokens=250,
             foo="bar",
-            **{"grammar": {"type": "json", "value": self.HUGGINGFACE_HUB_OUTPUT_SCHEMA}}
-            if use_native_structured_output
-            else {},
+            grammar={"type": "json", "value": self.HUGGINGFACE_HUB_OUTPUT_SCHEMA},
             stream=True,
         )
         assert isinstance(event.content, TextDeltaMessageContent)
