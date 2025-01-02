@@ -105,7 +105,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """Query the Qdrant collection based on a query vector.
 
         Parameters:
-            query (list[float]): Query vector.
+            vector (list[float]): Query vector.
             count (Optional[int]): Optional number of results to return.
             namespace (Optional[str]): Optional namespace of the vectors.
             include_vectors (bool): Whether to include vectors in the results.
