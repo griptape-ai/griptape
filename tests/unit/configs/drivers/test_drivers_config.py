@@ -18,7 +18,6 @@ class TestDriversConfig:
                 "max_tokens": None,
                 "stream": False,
                 "use_native_tools": False,
-                "use_native_structured_output": False,
                 "structured_output_strategy": "native",
                 "extra_params": {},
             },

@@ -190,10 +190,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         else:
             output = result.to_artifact()
 
-        if (
-            self.prompt_driver.use_native_structured_output
-            and self.prompt_driver.structured_output_strategy == "native"
-        ):
+        if self.output_schema is not None and self.prompt_driver.structured_output_strategy == "native":
             return JsonArtifact(output.value)
         else:
             return output

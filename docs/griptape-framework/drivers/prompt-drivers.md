@@ -29,9 +29,7 @@ You can pass images to the Driver if the model supports it:
 
 Some LLMs provide functionality often referred to as "Structured Output". This means instructing the LLM to output data in a particular format, usually JSON. This can be useful for forcing the LLM to output in a parsable format that can be used by downstream systems.
 
-Structured output can be enabled or disabled for a Prompt Driver by setting the [use_native_structured_output](../../reference/griptape/drivers.md#griptape.drivers.BasePromptDriver.use_native_structured_output).
-
-If `use_native_structured_output=True`, you can change _how_ the output is structured by setting the [structured_output_strategy](../../reference/griptape/drivers.md#griptape.drivers.BasePromptDriver.structured_output_strategy) to one of:
+If an [output_schema](../../reference/griptape/tasks.md#griptape.tasks.PromptTask.output_schema) is provided to the Task, you can change _how_ the output is structured by setting the Driver's [structured_output_strategy](../../reference/griptape/drivers.md#griptape.drivers.BasePromptDriver.structured_output_strategy) to one of:
 
 - `native`: The Driver will use the LLM's structured output functionality provided by the API.
 - `tool`: Griptape will pass a special Tool, [StructuredOutputTool](../../reference/griptape/tools/structured_output_tool.md) and try to force the LLM to use a Tool.
@@ -47,7 +45,7 @@ The easiest way to get started with structured output is by using a [JsonSchemaR
 ```
 
 !!! warning
-    Not every LLM supports `use_native_structured_output` or all `structured_output_strategy` options.
+    Not every LLM supports all `structured_output_strategy` options.
 
 ## Prompt Drivers
 
