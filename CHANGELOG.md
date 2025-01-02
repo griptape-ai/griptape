@@ -41,8 +41,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `PromptTask.prompt_driver` is now serialized.
 - `PromptTask` can now do everything a `ToolkitTask` can do.
 - Loosten `numpy`s version constraint to `>=1.26.4,<3`.
-- `JsonSchemaRule`s can now take a `schema.Schema` instance. Required for using a `JsonSchemaRule` with structured output.
-- `JsonSchemaRule`s will now be used for structured output if the Prompt Driver supports it.
 
 ### Fixed
 
