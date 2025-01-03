@@ -36,7 +36,6 @@ class MockPromptDriver(BasePromptDriver):
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
-
         if self.use_native_tools and prompt_stack.tools:
             # Hack to simulate CoT. If there are any action messages in the prompt stack, give the answer.
             action_messages = [
@@ -85,7 +84,6 @@ class MockPromptDriver(BasePromptDriver):
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
-
         if self.use_native_tools and prompt_stack.tools:
             # Hack to simulate CoT. If there are any action messages in the prompt stack, give the answer.
             action_messages = [

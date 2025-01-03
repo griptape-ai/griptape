@@ -15,7 +15,6 @@ from griptape.memory.structure import Run
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Ruleset
-from griptape.rules.json_schema_rule import JsonSchemaRule
 from griptape.tasks import ActionsSubtask, BaseTask
 from griptape.utils import J2
 
@@ -92,15 +91,8 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
 
     @property
     def prompt_stack(self) -> PromptStack:
-        from griptape.tools.structured_output.tool import StructuredOutputTool
-
-        stack = PromptStack(tools=self.tools)
+        stack = PromptStack(tools=self.tools, output_schema=self.output_schema)
         memory = self.structure.conversation_memory if self.structure is not None else None
-
-        if self.output_schema is not None:
-            stack.output_schema = self.output_schema
-            if self.prompt_driver.structured_output_strategy == "tool":
-                stack.tools.append(StructuredOutputTool(output_schema=stack.output_schema))
 
         system_template = self.generate_system_template(self)
         if system_template:
@@ -227,10 +219,6 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             use_native_tools=self.prompt_driver.use_native_tools,
-            structured_output_strategy=self.prompt_driver.structured_output_strategy,
-            json_schema_rule=JsonSchemaRule(self.output_schema.json_schema("Output"))
-            if self.output_schema is not None
-            else None,
             stop_sequence=self.response_stop_sequence,
         )
 
