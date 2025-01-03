@@ -28,7 +28,6 @@ A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define [Ru
 
 !!! tip
     [Structured Output](../drivers/prompt-drivers.md#structured-output) provides a more robust solution for having the LLM generate structured output.
-    And if an LLM does not natively support structured output, a `JsonSchemaRule` will automatically be added.
 
 [JsonSchemaRule](../../reference/griptape/rules/json_schema_rule.md)s defines a structured format for the LLM's output by providing a JSON schema.
 This is particularly useful when you need the LLM to return well-formed data, such as JSON objects, with specific fields and data types.
