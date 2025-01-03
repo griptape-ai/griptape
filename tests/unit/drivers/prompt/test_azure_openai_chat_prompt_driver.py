@@ -67,13 +67,22 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert AzureOpenAiChatPromptDriver(azure_endpoint="foobar", model="gpt-4").azure_deployment == "gpt-4"
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_chat_completion_create, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
+    def test_try_run(
+        self,
+        mock_chat_completion_create,
+        prompt_stack,
+        messages,
+        use_native_tools,
+        structured_output_strategy,
+    ):
         # Given
         driver = AzureOpenAiChatPromptDriver(
             azure_endpoint="endpoint",
             azure_deployment="deployment-id",
             model="gpt-4",
             use_native_tools=use_native_tools,
+            structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
 
@@ -88,9 +97,21 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             messages=messages,
             **{
                 "tools": self.OPENAI_TOOLS,
-                "tool_choice": driver.tool_choice,
+                "tool_choice": "required" if structured_output_strategy == "tool" else driver.tool_choice,
             }
             if use_native_tools
+            else {},
+            **{
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "Output",
+                        "schema": self.OPENAI_STRUCTURED_OUTPUT_SCHEMA,
+                        "strict": True,
+                    },
+                }
+            }
+            if structured_output_strategy == "native"
             else {},
             foo="bar",
         )
@@ -103,7 +124,15 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert message.value[1].value.input == {"foo": "bar"}
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_chat_completion_stream_create, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
+    def test_try_stream_run(
+        self,
+        mock_chat_completion_stream_create,
+        prompt_stack,
+        messages,
+        use_native_tools,
+        structured_output_strategy,
+    ):
         # Given
         driver = AzureOpenAiChatPromptDriver(
             azure_endpoint="endpoint",
@@ -111,6 +140,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model="gpt-4",
             stream=True,
             use_native_tools=use_native_tools,
+            structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
 
@@ -127,9 +157,21 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             messages=messages,
             **{
                 "tools": self.OPENAI_TOOLS,
-                "tool_choice": driver.tool_choice,
+                "tool_choice": "required" if structured_output_strategy == "tool" else driver.tool_choice,
             }
             if use_native_tools
+            else {},
+            **{
+                "response_format": {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "Output",
+                        "schema": self.OPENAI_STRUCTURED_OUTPUT_SCHEMA,
+                        "strict": True,
+                    },
+                }
+            }
+            if structured_output_strategy == "native"
             else {},
             foo="bar",
         )

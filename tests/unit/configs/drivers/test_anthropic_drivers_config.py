@@ -25,6 +25,7 @@ class TestAnthropicDriversConfig:
                 "top_p": 0.999,
                 "top_k": 250,
                 "use_native_tools": True,
+                "structured_output_strategy": "tool",
                 "extra_params": {},
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},

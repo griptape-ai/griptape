@@ -42,10 +42,15 @@ class TestHuggingFacePipelinePromptDriver:
     def test_init(self, mock_pipeline):
         assert HuggingFacePipelinePromptDriver(model="gpt2", max_tokens=42, pipeline=mock_pipeline)
 
-    def test_try_run(self, prompt_stack, messages, mock_pipeline):
+    @pytest.mark.parametrize("structured_output_strategy", ["rule", "foo"])
+    def test_try_run(self, prompt_stack, messages, mock_pipeline, structured_output_strategy):
         # Given
         driver = HuggingFacePipelinePromptDriver(
-            model="foo", max_tokens=42, extra_params={"foo": "bar"}, pipeline=mock_pipeline
+            model="foo",
+            max_tokens=42,
+            extra_params={"foo": "bar"},
+            pipeline=mock_pipeline,
+            structured_output_strategy=structured_output_strategy,
         )
 
         # When
@@ -57,9 +62,12 @@ class TestHuggingFacePipelinePromptDriver:
         assert message.usage.input_tokens == 3
         assert message.usage.output_tokens == 3
 
-    def test_try_stream(self, prompt_stack, mock_pipeline):
+    @pytest.mark.parametrize("structured_output_strategy", ["rule", "foo"])
+    def test_try_stream(self, prompt_stack, mock_pipeline, structured_output_strategy):
         # Given
-        driver = HuggingFacePipelinePromptDriver(model="foo", max_tokens=42, pipeline=mock_pipeline)
+        driver = HuggingFacePipelinePromptDriver(
+            model="foo", max_tokens=42, pipeline=mock_pipeline, structured_output_strategy=structured_output_strategy
+        )
 
         # When
         with pytest.raises(Exception) as e:
@@ -101,3 +109,11 @@ class TestHuggingFacePipelinePromptDriver:
 
         # Then
         assert result == "model-output"
+
+    def test_verify_structured_output_strategy(self):
+        assert HuggingFacePipelinePromptDriver(model="foo", structured_output_strategy="rule")
+
+        with pytest.raises(
+            ValueError, match="HuggingFacePipelinePromptDriver does not support `native` structured output strategy."
+        ):
+            HuggingFacePipelinePromptDriver(model="foo", structured_output_strategy="native")

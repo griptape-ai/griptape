@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 from attrs import Factory, define, field
 
-from griptape.artifacts.base_artifact import BaseArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.common import (
     ActionCallDeltaMessageContent,
     ActionCallMessageContent,
@@ -26,11 +26,14 @@ from griptape.events import (
 )
 from griptape.mixins.exponential_backoff_mixin import ExponentialBackoffMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
+from griptape.rules.json_schema_rule import JsonSchemaRule
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from griptape.tokenizers import BaseTokenizer
+
+StructuredOutputStrategy = Literal["native", "tool", "rule"]
 
 
 @define(kw_only=True)
@@ -56,9 +59,13 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=False, kw_only=True, metadata={"serializable": True})
+    structured_output_strategy: StructuredOutputStrategy = field(
+        default="rule", kw_only=True, metadata={"serializable": True}
+    )
     extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompt_stack: PromptStack) -> None:
+        self._init_structured_output(prompt_stack)
         EventBus.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
     def after_run(self, result: Message) -> None:
@@ -121,6 +128,34 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     @abstractmethod
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]: ...
+
+    def _init_structured_output(self, prompt_stack: PromptStack) -> None:
+        from griptape.tools import StructuredOutputTool
+
+        if (output_schema := prompt_stack.output_schema) is not None:
+            if self.structured_output_strategy == "tool":
+                structured_output_tool = StructuredOutputTool(output_schema=output_schema)
+                if structured_output_tool not in prompt_stack.tools:
+                    prompt_stack.tools.append(structured_output_tool)
+            elif self.structured_output_strategy == "rule":
+                output_artifact = TextArtifact(JsonSchemaRule(output_schema.json_schema("Output Schema")).to_text())
+                system_messages = prompt_stack.system_messages
+                if system_messages:
+                    last_system_message = prompt_stack.system_messages[-1]
+                    last_system_message.content.extend(
+                        [
+                            TextMessageContent(TextArtifact("\n\n")),
+                            TextMessageContent(output_artifact),
+                        ]
+                    )
+                else:
+                    prompt_stack.messages.insert(
+                        0,
+                        Message(
+                            content=[TextMessageContent(output_artifact)],
+                            role=Message.SYSTEM_ROLE,
+                        ),
+                    )
 
     def __process_run(self, prompt_stack: PromptStack) -> Message:
         return self.try_run(prompt_stack)

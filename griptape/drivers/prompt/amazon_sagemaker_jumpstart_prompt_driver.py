@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     import boto3
 
     from griptape.common import PromptStack
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -39,7 +40,17 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    structured_output_strategy: StructuredOutputStrategy = field(
+        default="rule", kw_only=True, metadata={"serializable": True}
+    )
     _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
+        if value != "rule":
+            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
+
+        return value
 
     @lazy_property()
     def client(self) -> Any:

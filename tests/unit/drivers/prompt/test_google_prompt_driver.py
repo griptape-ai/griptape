@@ -4,6 +4,7 @@ import pytest
 from google.generativeai.protos import FunctionCall, FunctionResponse, Part
 from google.generativeai.types import ContentDict, GenerationConfig
 from google.protobuf.json_format import MessageToDict
+from schema import Schema
 
 from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
@@ -100,6 +101,7 @@ class TestGooglePromptDriver:
     @pytest.fixture(params=[True, False])
     def prompt_stack(self, request):
         prompt_stack = PromptStack()
+        prompt_stack.output_schema = Schema({"foo": str})
         prompt_stack.tools = [MockTool()]
         if request.param:
             prompt_stack.add_system_message("system-input")
@@ -166,7 +168,8 @@ class TestGooglePromptDriver:
         assert driver
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_generative_model, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("structured_output_strategy", ["tool", "rule", "foo"])
+    def test_try_run(self, mock_generative_model, prompt_stack, messages, use_native_tools, structured_output_strategy):
         # Given
         driver = GooglePromptDriver(
             model="gemini-pro",
@@ -174,6 +177,7 @@ class TestGooglePromptDriver:
             top_p=0.5,
             top_k=50,
             use_native_tools=use_native_tools,
+            structured_output_strategy=structured_output_strategy,
             extra_params={"max_output_tokens": 10},
         )
 
@@ -195,9 +199,11 @@ class TestGooglePromptDriver:
         )
         if use_native_tools:
             tool_declarations = call_args.kwargs["tools"]
-            assert [
-                MessageToDict(tool_declaration.to_proto()._pb) for tool_declaration in tool_declarations
-            ] == self.GOOGLE_TOOLS
+            tools = self.GOOGLE_TOOLS
+            assert [MessageToDict(tool_declaration.to_proto()._pb) for tool_declaration in tool_declarations] == tools
+
+            if driver.structured_output_strategy == "tool":
+                assert call_args.kwargs["tool_config"] == {"function_calling_config": {"mode": "auto"}}
 
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
@@ -210,7 +216,10 @@ class TestGooglePromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream(self, mock_stream_generative_model, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("structured_output_strategy", ["tool", "rule", "foo"])
+    def test_try_stream(
+        self, mock_stream_generative_model, prompt_stack, messages, use_native_tools, structured_output_strategy
+    ):
         # Given
         driver = GooglePromptDriver(
             model="gemini-pro",
@@ -219,6 +228,7 @@ class TestGooglePromptDriver:
             top_p=0.5,
             top_k=50,
             use_native_tools=use_native_tools,
+            structured_output_strategy=structured_output_strategy,
             extra_params={"max_output_tokens": 10},
         )
 
@@ -242,9 +252,11 @@ class TestGooglePromptDriver:
         )
         if use_native_tools:
             tool_declarations = call_args.kwargs["tools"]
-            assert [
-                MessageToDict(tool_declaration.to_proto()._pb) for tool_declaration in tool_declarations
-            ] == self.GOOGLE_TOOLS
+            tools = self.GOOGLE_TOOLS
+            assert [MessageToDict(tool_declaration.to_proto()._pb) for tool_declaration in tool_declarations] == tools
+
+            if driver.structured_output_strategy == "tool":
+                assert call_args.kwargs["tool_config"] == {"function_calling_config": {"mode": "auto"}}
         assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
         assert event.usage.input_tokens == 5
@@ -259,3 +271,11 @@ class TestGooglePromptDriver:
 
         event = next(stream)
         assert event.usage.output_tokens == 5
+
+    def test_verify_structured_output_strategy(self):
+        assert GooglePromptDriver(model="foo", structured_output_strategy="tool")
+
+        with pytest.raises(
+            ValueError, match="GooglePromptDriver does not support `native` structured output strategy."
+        ):
+            GooglePromptDriver(model="foo", structured_output_strategy="native")

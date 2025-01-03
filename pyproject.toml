@@ -315,7 +315,7 @@ fixture-parentheses = true
     "ANN202", # missing-return-type-private-function
 ]
 "docs/*" = [
-    "T20" # flake8-print
+    "T20", # flake8-print
 ]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]

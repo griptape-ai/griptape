@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 from schema import Schema
 
 from griptape.artifacts import (
@@ -41,6 +41,7 @@ if TYPE_CHECKING:
     import boto3
 
     from griptape.common import PromptStack
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tools import BaseTool
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
@@ -55,8 +56,18 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    structured_output_strategy: StructuredOutputStrategy = field(
+        default="tool", kw_only=True, metadata={"serializable": True}
+    )
     tool_choice: dict = field(default=Factory(lambda: {"auto": {}}), kw_only=True, metadata={"serializable": True})
     _client: Any = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
+        if value == "native":
+            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
+
+        return value
 
     @lazy_property()
     def client(self) -> Any:
@@ -103,10 +114,9 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         system_messages = [{"text": message.to_text()} for message in prompt_stack.system_messages]
-
         messages = self.__to_bedrock_messages([message for message in prompt_stack.messages if not message.is_system()])
 
-        return {
+        params = {
             "modelId": self.model,
             "messages": messages,
             "system": system_messages,
@@ -115,13 +125,21 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 **({"maxTokens": self.max_tokens} if self.max_tokens is not None else {}),
             },
             "additionalModelRequestFields": self.additional_model_request_fields,
-            **(
-                {"toolConfig": {"tools": self.__to_bedrock_tools(prompt_stack.tools), "toolChoice": self.tool_choice}}
-                if prompt_stack.tools and self.use_native_tools
-                else {}
-            ),
             **self.extra_params,
         }
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["toolConfig"] = {
+                "tools": [],
+                "toolChoice": self.tool_choice,
+            }
+
+            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
+                params["toolConfig"]["toolChoice"] = {"any": {}}
+
+            params["toolConfig"]["tools"] = self.__to_bedrock_tools(prompt_stack.tools)
+
+        return params
 
     def __to_bedrock_messages(self, messages: list[Message]) -> list[dict]:
         return [
