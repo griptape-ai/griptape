@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 class ToolkitTask(PromptTask):
     def try_run(self) -> BaseArtifact:
         warnings.warn(
-            "`PromptTask` is deprecated and will be removed in a future release. `PromptTask` is a drop-in replacement.",
+            "`ToolkitTask` is deprecated and will be removed in a future release. `PromptTask` is a drop-in replacement.",
             DeprecationWarning,
             stacklevel=2,
         )
