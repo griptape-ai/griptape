@@ -338,6 +338,7 @@ class TestCoherePromptDriver:
         assert CoherePromptDriver(model="command", api_key="foobar")
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
+    @pytest.mark.parametrize("use_native_structured_output", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
     def test_try_run(
         self,
@@ -345,6 +346,7 @@ class TestCoherePromptDriver:
         prompt_stack,
         messages,
         use_native_tools,
+        use_native_structured_output,
         structured_output_strategy,
     ):
         # Given
@@ -352,6 +354,7 @@ class TestCoherePromptDriver:
             model="command",
             api_key="api-key",
             use_native_tools=use_native_tools,
+            use_native_structured_output=use_native_structured_output,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
@@ -367,7 +370,11 @@ class TestCoherePromptDriver:
             **{
                 "tools": [
                     *self.COHERE_TOOLS,
-                    *([self.COHERE_STRUCTURED_OUTPUT_TOOL] if structured_output_strategy == "tool" else []),
+                    *(
+                        [self.COHERE_STRUCTURED_OUTPUT_TOOL]
+                        if use_native_structured_output and structured_output_strategy == "tool"
+                        else []
+                    ),
                 ]
             }
             if use_native_tools
@@ -378,7 +385,7 @@ class TestCoherePromptDriver:
                     "schema": self.COHERE_STRUCTURED_OUTPUT_SCHEMA,
                 }
             }
-            if structured_output_strategy == "native"
+            if use_native_structured_output and structured_output_strategy == "native"
             else {},
             stop_sequences=[],
             temperature=0.1,
@@ -399,6 +406,7 @@ class TestCoherePromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
+    @pytest.mark.parametrize("use_native_structured_output", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
     def test_try_stream_run(
         self,
@@ -406,6 +414,7 @@ class TestCoherePromptDriver:
         prompt_stack,
         messages,
         use_native_tools,
+        use_native_structured_output,
         structured_output_strategy,
     ):
         # Given
@@ -414,6 +423,7 @@ class TestCoherePromptDriver:
             api_key="api-key",
             stream=True,
             use_native_tools=use_native_tools,
+            use_native_structured_output=use_native_structured_output,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
@@ -430,7 +440,11 @@ class TestCoherePromptDriver:
             **{
                 "tools": [
                     *self.COHERE_TOOLS,
-                    *([self.COHERE_STRUCTURED_OUTPUT_TOOL] if structured_output_strategy == "tool" else []),
+                    *(
+                        [self.COHERE_STRUCTURED_OUTPUT_TOOL]
+                        if use_native_structured_output and structured_output_strategy == "tool"
+                        else []
+                    ),
                 ]
             }
             if use_native_tools
@@ -441,7 +455,7 @@ class TestCoherePromptDriver:
                     "schema": self.COHERE_STRUCTURED_OUTPUT_SCHEMA,
                 }
             }
-            if structured_output_strategy == "native"
+            if use_native_structured_output and structured_output_strategy == "native"
             else {},
             stop_sequences=[],
             temperature=0.1,

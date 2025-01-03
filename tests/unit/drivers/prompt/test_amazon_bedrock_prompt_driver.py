@@ -384,11 +384,13 @@ class TestAmazonBedrockPromptDriver:
         ]
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_converse, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("use_native_structured_output", [True, False])
+    def test_try_run(self, mock_converse, prompt_stack, messages, use_native_tools, use_native_structured_output):
         # Given
         driver = AmazonBedrockPromptDriver(
             model="ai21.j2",
             use_native_tools=use_native_tools,
+            use_native_structured_output=use_native_structured_output,
             extra_params={"foo": "bar"},
         )
 
@@ -412,13 +414,11 @@ class TestAmazonBedrockPromptDriver:
                             *self.BEDROCK_TOOLS,
                             *(
                                 [self.BEDROCK_STRUCTURED_OUTPUT_TOOL]
-                                if driver.structured_output_strategy == "tool"
+                                if use_native_structured_output and driver.structured_output_strategy == "tool"
                                 else []
                             ),
                         ],
-                        "toolChoice": {"any": {}}
-                        if driver.structured_output_strategy == "tool"
-                        else driver.tool_choice,
+                        "toolChoice": {"any": {}} if use_native_structured_output else driver.tool_choice,
                     }
                 }
                 if use_native_tools
@@ -437,12 +437,16 @@ class TestAmazonBedrockPromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_converse_stream, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("use_native_structured_output", [True, False])
+    def test_try_stream_run(
+        self, mock_converse_stream, prompt_stack, messages, use_native_tools, use_native_structured_output
+    ):
         # Given
         driver = AmazonBedrockPromptDriver(
             model="ai21.j2",
             stream=True,
             use_native_tools=use_native_tools,
+            use_native_structured_output=use_native_structured_output,
             extra_params={"foo": "bar"},
         )
 
@@ -467,13 +471,11 @@ class TestAmazonBedrockPromptDriver:
                             *self.BEDROCK_TOOLS,
                             *(
                                 [self.BEDROCK_STRUCTURED_OUTPUT_TOOL]
-                                if driver.structured_output_strategy == "tool"
+                                if use_native_structured_output and driver.structured_output_strategy == "tool"
                                 else []
                             ),
                         ],
-                        "toolChoice": {"any": {}}
-                        if driver.structured_output_strategy == "tool"
-                        else driver.tool_choice,
+                        "toolChoice": {"any": {}} if use_native_structured_output else driver.tool_choice,
                     }
                 }
                 if use_native_tools
