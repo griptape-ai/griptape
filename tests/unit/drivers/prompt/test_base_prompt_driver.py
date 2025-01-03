@@ -78,13 +78,13 @@ class TestBasePromptDriver:
         prompt_stack = PromptStack()
 
         with pytest.raises(ValueError, match="PromptStack must have an output schema to use structured output."):
-            mock_prompt_driver._add_structured_output_tool(prompt_stack)
+            mock_prompt_driver._add_structured_output_tool_if_absent(prompt_stack)
 
         prompt_stack.output_schema = Schema({"foo": str})
 
-        mock_prompt_driver._add_structured_output_tool(prompt_stack)
+        mock_prompt_driver._add_structured_output_tool_if_absent(prompt_stack)
         # Ensure it doesn't get added twice
-        mock_prompt_driver._add_structured_output_tool(prompt_stack)
+        mock_prompt_driver._add_structured_output_tool_if_absent(prompt_stack)
         assert len(prompt_stack.tools) == 1
         assert isinstance(prompt_stack.tools[0], StructuredOutputTool)
         assert prompt_stack.tools[0].output_schema is prompt_stack.output_schema

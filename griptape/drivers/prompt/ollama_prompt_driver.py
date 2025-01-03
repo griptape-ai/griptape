@@ -115,7 +115,7 @@ class OllamaPromptDriver(BasePromptDriver):
                 params["format"] = prompt_stack.output_schema.json_schema("Output")
             elif self.structured_output_strategy == "tool":
                 # TODO: Implement tool choice once supported
-                self._add_structured_output_tool(prompt_stack)
+                self._add_structured_output_tool_if_absent(prompt_stack)
 
         # Tool calling is only supported when not streaming
         if prompt_stack.tools and self.use_native_tools and not self.stream:

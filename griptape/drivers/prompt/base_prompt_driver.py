@@ -126,7 +126,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     @abstractmethod
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]: ...
 
-    def _add_structured_output_tool(self, prompt_stack: PromptStack) -> None:
+    def _add_structured_output_tool_if_absent(self, prompt_stack: PromptStack) -> None:
         from griptape.tools.structured_output.tool import StructuredOutputTool
 
         if prompt_stack.output_schema is None:

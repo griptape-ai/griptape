@@ -170,7 +170,7 @@ class GooglePromptDriver(BasePromptDriver):
                 and self.structured_output_strategy == "tool"
             ):
                 params["tool_config"]["function_calling_config"]["mode"] = "auto"
-                self._add_structured_output_tool(prompt_stack)
+                self._add_structured_output_tool_if_absent(prompt_stack)
 
             params["tools"] = self.__to_google_tools(prompt_stack.tools)
 

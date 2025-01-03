@@ -171,7 +171,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 }
             elif self.structured_output_strategy == "tool" and self.use_native_tools:
                 params["tool_choice"] = "required"
-                self._add_structured_output_tool(prompt_stack)
+                self._add_structured_output_tool_if_absent(prompt_stack)
 
         if self.response_format is not None:
             if self.response_format == {"type": "json_object"}:
