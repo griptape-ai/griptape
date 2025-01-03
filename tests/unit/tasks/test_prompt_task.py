@@ -1,5 +1,7 @@
+import pytest
+import schema
+
 from griptape.artifacts.image_artifact import ImageArtifact
-from griptape.artifacts.json_artifact import JsonArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.memory.structure import ConversationMemory
@@ -174,50 +176,6 @@ class TestPromptTask:
         assert task.prompt_stack.messages[2].is_user()
         assert task.prompt_stack.messages[2].to_text() == "test value"
 
-    def test_prompt_stack_native_schema(self):
-        from schema import Schema
-
-        output_schema = Schema({"baz": str})
-        task = PromptTask(
-            input="foo",
-            prompt_driver=MockPromptDriver(
-                mock_structured_output={"baz": "foo"},
-                structured_output_strategy="native",
-            ),
-            output_schema=output_schema,
-        )
-        output = task.run()
-
-        assert isinstance(output, JsonArtifact)
-        assert output.value == {"baz": "foo"}
-
-        assert task.prompt_stack.output_schema is output_schema
-        assert task.prompt_stack.messages[0].is_user()
-        assert "foo" in task.prompt_stack.messages[0].to_text()
-
-    def test_prompt_stack_tool_schema(self):
-        from schema import Schema
-
-        output_schema = Schema({"baz": str})
-        task = PromptTask(
-            input="foo",
-            prompt_driver=MockPromptDriver(
-                mock_structured_output={"baz": "foo"},
-                structured_output_strategy="tool",
-                use_native_tools=True,
-            ),
-            output_schema=output_schema,
-        )
-        output = task.run()
-
-        assert isinstance(output, JsonArtifact)
-        assert output.value == {"baz": "foo"}
-
-        assert task.prompt_stack.output_schema is output_schema
-        assert task.prompt_stack.messages[0].is_system()
-        assert task.prompt_stack.messages[1].is_user()
-        assert "foo" in task.prompt_stack.messages[1].to_text()
-
     def test_prompt_stack_empty_native_schema(self):
         task = PromptTask(
             input="foo",
@@ -282,3 +240,19 @@ class TestPromptTask:
 
         task.run()
         assert len(task.subtasks) == 2
+
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "rule"])
+    def test_parse_output(self, structured_output_strategy):
+        task = PromptTask(
+            input="foo",
+            prompt_driver=MockPromptDriver(
+                structured_output_strategy=structured_output_strategy,
+                mock_structured_output={"foo": "bar"},
+            ),
+            output_schema=schema.Schema({"foo": str}),
+        )
+
+        task.run()
+
+        assert task.output is not None
+        assert task.output.value == {"foo": "bar"}
