@@ -54,14 +54,14 @@ class TestHuggingFaceHubPromptDriver:
     def test_init(self):
         assert HuggingFaceHubPromptDriver(api_token="foobar", model="gpt2")
 
-    @pytest.mark.parametrize("use_structured_output", [True, False])
-    def test_try_run(self, prompt_stack, mock_client, use_structured_output):
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "rule", "foo"])
+    def test_try_run(self, prompt_stack, mock_client, structured_output_strategy):
         # Given
         driver = HuggingFaceHubPromptDriver(
             api_token="api-token",
             model="repo-id",
-            use_structured_output=use_structured_output,
             extra_params={"foo": "bar"},
+            structured_output_strategy=structured_output_strategy,
         )
 
         # When
@@ -73,23 +73,27 @@ class TestHuggingFaceHubPromptDriver:
             return_full_text=False,
             max_new_tokens=250,
             foo="bar",
-            **{"grammar": {"type": "json", "value": self.HUGGINGFACE_HUB_OUTPUT_SCHEMA}}
-            if use_structured_output
-            else {},
+            **(
+                {
+                    "grammar": {"type": "json", "value": self.HUGGINGFACE_HUB_OUTPUT_SCHEMA},
+                }
+                if structured_output_strategy == "native"
+                else {}
+            ),
         )
         assert message.value == "model-output"
         assert message.usage.input_tokens == 3
         assert message.usage.output_tokens == 3
 
-    @pytest.mark.parametrize("use_structured_output", [True, False])
-    def test_try_stream(self, prompt_stack, mock_client_stream, use_structured_output):
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "rule", "foo"])
+    def test_try_stream(self, prompt_stack, mock_client_stream, structured_output_strategy):
         # Given
         driver = HuggingFaceHubPromptDriver(
             api_token="api-token",
             model="repo-id",
             stream=True,
-            use_structured_output=use_structured_output,
             extra_params={"foo": "bar"},
+            structured_output_strategy=structured_output_strategy,
         )
 
         # When
@@ -102,9 +106,13 @@ class TestHuggingFaceHubPromptDriver:
             return_full_text=False,
             max_new_tokens=250,
             foo="bar",
-            **{"grammar": {"type": "json", "value": self.HUGGINGFACE_HUB_OUTPUT_SCHEMA}}
-            if use_structured_output
-            else {},
+            **(
+                {
+                    "grammar": {"type": "json", "value": self.HUGGINGFACE_HUB_OUTPUT_SCHEMA},
+                }
+                if structured_output_strategy == "native"
+                else {}
+            ),
             stream=True,
         )
         assert isinstance(event.content, TextDeltaMessageContent)
@@ -118,6 +126,6 @@ class TestHuggingFaceHubPromptDriver:
         assert HuggingFaceHubPromptDriver(model="foo", api_token="bar", structured_output_strategy="native")
 
         with pytest.raises(
-            ValueError, match="HuggingFaceHubPromptDriver does not support `tool` structured output mode."
+            ValueError, match="HuggingFaceHubPromptDriver does not support `tool` structured output strategy."
         ):
             HuggingFaceHubPromptDriver(model="foo", api_token="bar", structured_output_strategy="tool")

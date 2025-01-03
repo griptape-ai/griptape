@@ -172,6 +172,7 @@ class BaseSchema(Schema):
             BaseTextToSpeechDriver,
             BaseVectorStoreDriver,
         )
+        from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
         from griptape.events import EventListener
         from griptape.memory import TaskMemory
         from griptape.memory.structure import BaseConversationMemory, Run
@@ -216,6 +217,7 @@ class BaseSchema(Schema):
                 "BaseArtifactStorage": BaseArtifactStorage,
                 "BaseRule": BaseRule,
                 "Ruleset": Ruleset,
+                "StructuredOutputStrategy": StructuredOutputStrategy,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "ClientV2": import_optional_dependency("cohere").ClientV2 if is_dependency_installed("cohere") else Any,

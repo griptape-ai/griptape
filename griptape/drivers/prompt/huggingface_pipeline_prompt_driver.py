@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import DeltaMessage, Message, PromptStack, TextMessageContent, observable
@@ -17,6 +17,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from transformers import TextGenerationPipeline
+
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -38,9 +40,19 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    structured_output_strategy: StructuredOutputStrategy = field(
+        default="rule", kw_only=True, metadata={"serializable": True}
+    )
     _pipeline: TextGenerationPipeline = field(
         default=None, kw_only=True, alias="pipeline", metadata={"serializable": False}
     )
+
+    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
+        if value in ("native", "tool"):
+            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
+
+        return value
 
     @lazy_property()
     def pipeline(self) -> TextGenerationPipeline:

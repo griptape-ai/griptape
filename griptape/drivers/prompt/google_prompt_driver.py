@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
 from schema import Schema
@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from google.generativeai.protos import Part
     from google.generativeai.types import ContentDict, ContentsType, GenerateContentResponse
 
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tools import BaseTool
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
@@ -63,17 +64,16 @@ class GooglePromptDriver(BasePromptDriver):
     top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    use_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    structured_output_strategy: Literal["native", "tool"] = field(
+    structured_output_strategy: StructuredOutputStrategy = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
     _client: GenerativeModel = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
+    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
         if value == "native":
-            raise ValueError("GooglePromptDriver does not support `native` structured output mode.")
+            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
 
         return value
 
@@ -164,13 +164,8 @@ class GooglePromptDriver(BasePromptDriver):
         if prompt_stack.tools and self.use_native_tools:
             params["tool_config"] = {"function_calling_config": {"mode": self.tool_choice}}
 
-            if (
-                prompt_stack.output_schema is not None
-                and self.use_structured_output
-                and self.structured_output_strategy == "tool"
-            ):
+            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
                 params["tool_config"]["function_calling_config"]["mode"] = "auto"
-                self._add_structured_output_tool_if_absent(prompt_stack)
 
             params["tools"] = self.__to_google_tools(prompt_stack.tools)
 

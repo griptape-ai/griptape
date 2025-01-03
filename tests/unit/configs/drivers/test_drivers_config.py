@@ -18,8 +18,7 @@ class TestDriversConfig:
                 "max_tokens": None,
                 "stream": False,
                 "use_native_tools": False,
-                "use_structured_output": False,
-                "structured_output_strategy": "native",
+                "structured_output_strategy": "rule",
                 "extra_params": {},
             },
             "conversation_memory_driver": {

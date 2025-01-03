@@ -68,7 +68,6 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    use_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
@@ -110,12 +109,8 @@ class OllamaPromptDriver(BasePromptDriver):
             **self.extra_params,
         }
 
-        if prompt_stack.output_schema is not None and self.use_structured_output:
-            if self.structured_output_strategy == "native":
-                params["format"] = prompt_stack.output_schema.json_schema("Output")
-            elif self.structured_output_strategy == "tool":
-                # TODO: Implement tool choice once supported
-                self._add_structured_output_tool_if_absent(prompt_stack)
+        if prompt_stack.output_schema is not None and self.structured_output_strategy == "native":
+            params["format"] = prompt_stack.output_schema.json_schema("Output")
 
         # Tool calling is only supported when not streaming
         if prompt_stack.tools and self.use_native_tools and not self.stream:

@@ -36,15 +36,6 @@ class MockPromptDriver(BasePromptDriver):
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
-        if self.use_structured_output and prompt_stack.output_schema is not None:
-            if self.structured_output_strategy == "native":
-                return Message(
-                    content=[TextMessageContent(TextArtifact(json.dumps(self.mock_structured_output)))],
-                    role=Message.ASSISTANT_ROLE,
-                    usage=Message.Usage(input_tokens=100, output_tokens=100),
-                )
-            elif self.structured_output_strategy == "tool":
-                self._add_structured_output_tool(prompt_stack)
 
         if self.use_native_tools and prompt_stack.tools:
             # Hack to simulate CoT. If there are any action messages in the prompt stack, give the answer.
@@ -58,41 +49,42 @@ class MockPromptDriver(BasePromptDriver):
                     usage=Message.Usage(input_tokens=100, output_tokens=100),
                 )
             else:
+                if self.structured_output_strategy == "tool":
+                    tool_action = ToolAction(
+                        tag="mock-tag",
+                        name="StructuredOutputTool",
+                        path="provide_output",
+                        input={"values": self.mock_structured_output},
+                    )
+                else:
+                    tool_action = ToolAction(
+                        tag="mock-tag",
+                        name="MockTool",
+                        path="test",
+                        input={"values": {"test": "test-value"}},
+                    )
+
                 return Message(
-                    content=[
-                        ActionCallMessageContent(
-                            ActionArtifact(
-                                ToolAction(
-                                    tag="mock-tag",
-                                    name="MockTool",
-                                    path="test",
-                                    input={"values": {"test": "test-value"}},
-                                )
-                            )
-                        )
-                    ],
+                    content=[ActionCallMessageContent(ActionArtifact(tool_action))],
                     role=Message.ASSISTANT_ROLE,
                     usage=Message.Usage(input_tokens=100, output_tokens=100),
                 )
         else:
-            return Message(
-                content=[TextMessageContent(TextArtifact(output))],
-                role=Message.ASSISTANT_ROLE,
-                usage=Message.Usage(input_tokens=100, output_tokens=100),
-            )
-
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
-
-        if self.use_structured_output and prompt_stack.output_schema is not None:
-            if self.structured_output_strategy == "native":
-                yield DeltaMessage(
-                    content=TextDeltaMessageContent(json.dumps(self.mock_structured_output)),
+            if prompt_stack.output_schema is not None:
+                return Message(
+                    content=[TextMessageContent(TextArtifact(json.dumps(self.mock_structured_output)))],
                     role=Message.ASSISTANT_ROLE,
                     usage=Message.Usage(input_tokens=100, output_tokens=100),
                 )
-            elif self.structured_output_strategy == "tool":
-                self._add_structured_output_tool(prompt_stack)
+            else:
+                return Message(
+                    content=[TextMessageContent(TextArtifact(output))],
+                    role=Message.ASSISTANT_ROLE,
+                    usage=Message.Usage(input_tokens=100, output_tokens=100),
+                )
+
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+        output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
         if self.use_native_tools and prompt_stack.tools:
             # Hack to simulate CoT. If there are any action messages in the prompt stack, give the answer.
@@ -103,15 +95,36 @@ class MockPromptDriver(BasePromptDriver):
                 yield DeltaMessage(content=TextDeltaMessageContent(f"Answer: {output}"))
                 yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100))
             else:
-                yield DeltaMessage(
-                    content=ActionCallDeltaMessageContent(
-                        tag="mock-tag",
-                        name="MockTool",
-                        path="test",
+                if self.structured_output_strategy == "tool":
+                    yield DeltaMessage(
+                        content=ActionCallDeltaMessageContent(
+                            tag="mock-tag",
+                            name="StructuredOutputTool",
+                            path="provide_output",
+                        )
                     )
-                )
-                yield DeltaMessage(
-                    content=ActionCallDeltaMessageContent(partial_input='{ "values": { "test": "test-value" } }')
-                )
+                    yield DeltaMessage(
+                        content=ActionCallDeltaMessageContent(
+                            partial_input=json.dumps({"values": self.mock_structured_output})
+                        )
+                    )
+                else:
+                    yield DeltaMessage(
+                        content=ActionCallDeltaMessageContent(
+                            tag="mock-tag",
+                            name="MockTool",
+                            path="test",
+                        )
+                    )
+                    yield DeltaMessage(
+                        content=ActionCallDeltaMessageContent(partial_input='{ "values": { "test": "test-value" } }')
+                    )
         else:
-            yield DeltaMessage(content=TextDeltaMessageContent(output))
+            if prompt_stack.output_schema is not None:
+                yield DeltaMessage(
+                    content=TextDeltaMessageContent(json.dumps(self.mock_structured_output)),
+                    role=Message.ASSISTANT_ROLE,
+                    usage=Message.Usage(input_tokens=100, output_tokens=100),
+                )
+            else:
+                yield DeltaMessage(content=TextDeltaMessageContent(output))

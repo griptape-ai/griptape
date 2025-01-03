@@ -1,5 +1,3 @@
-import warnings
-
 from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.artifacts.json_artifact import JsonArtifact
 from griptape.artifacts.list_artifact import ListArtifact
@@ -183,8 +181,8 @@ class TestPromptTask:
         task = PromptTask(
             input="foo",
             prompt_driver=MockPromptDriver(
-                use_structured_output=True,
                 mock_structured_output={"baz": "foo"},
+                structured_output_strategy="native",
             ),
             output_schema=output_schema,
         )
@@ -197,17 +195,33 @@ class TestPromptTask:
         assert task.prompt_stack.messages[0].is_user()
         assert "foo" in task.prompt_stack.messages[0].to_text()
 
-        # Ensure no warnings were raised
-        with warnings.catch_warnings():
-            warnings.simplefilter("error")
-            assert task.prompt_stack
+    def test_prompt_stack_tool_schema(self):
+        from schema import Schema
+
+        output_schema = Schema({"baz": str})
+        task = PromptTask(
+            input="foo",
+            prompt_driver=MockPromptDriver(
+                mock_structured_output={"baz": "foo"},
+                structured_output_strategy="tool",
+                use_native_tools=True,
+            ),
+            output_schema=output_schema,
+        )
+        output = task.run()
+
+        assert isinstance(output, JsonArtifact)
+        assert output.value == {"baz": "foo"}
+
+        assert task.prompt_stack.output_schema is output_schema
+        assert task.prompt_stack.messages[0].is_system()
+        assert task.prompt_stack.messages[1].is_user()
+        assert "foo" in task.prompt_stack.messages[1].to_text()
 
     def test_prompt_stack_empty_native_schema(self):
         task = PromptTask(
             input="foo",
-            prompt_driver=MockPromptDriver(
-                use_structured_output=True,
-            ),
+            prompt_driver=MockPromptDriver(),
             rules=[JsonSchemaRule({"foo": {}})],
         )
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
 from schema import Schema
@@ -42,6 +42,7 @@ if TYPE_CHECKING:
     from anthropic import Client
     from anthropic.types import ContentBlock, ContentBlockDeltaEvent, ContentBlockStartEvent
 
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tools.base_tool import BaseTool
 
 
@@ -68,8 +69,7 @@ class AnthropicPromptDriver(BasePromptDriver):
     top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
     tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    use_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    structured_output_strategy: Literal["native", "tool"] = field(
+    structured_output_strategy: StructuredOutputStrategy = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
     max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
@@ -80,9 +80,9 @@ class AnthropicPromptDriver(BasePromptDriver):
         return import_optional_dependency("anthropic").Anthropic(api_key=self.api_key)
 
     @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
+    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
         if value == "native":
-            raise ValueError("AnthropicPromptDriver does not support `native` structured output mode.")
+            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
 
         return value
 
@@ -136,12 +136,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         if prompt_stack.tools and self.use_native_tools:
             params["tool_choice"] = self.tool_choice
 
-            if (
-                prompt_stack.output_schema is not None
-                and self.use_structured_output
-                and self.structured_output_strategy == "tool"
-            ):
-                self._add_structured_output_tool_if_absent(prompt_stack)
+            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
                 params["tool_choice"] = {"type": "any"}
 
             params["tools"] = self.__to_anthropic_tools(prompt_stack.tools)

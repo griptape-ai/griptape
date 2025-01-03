@@ -26,7 +26,7 @@ NEVER make up actions, action names, or action paths. NEVER make up facts. NEVER
 
 {{ rulesets }}
 {% endif %}
-{% if not use_structured_output and json_schema_rule %}
+{% if json_schema_rule and structured_output_strategy == 'rule' %}
 
 {{ json_schema_rule }}
 {% endif %}
