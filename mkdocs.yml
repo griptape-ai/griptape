@@ -89,6 +89,10 @@ nav:
           - Structure Config YAML: "griptape-cloud/structures/structure-config.md"
           - Running Your Structure: "griptape-cloud/structures/run-structure.md"
           - Structure Run Events: "griptape-cloud/structures/structure-run-events.md"
+      - Tools:
+          - Create a Tool: "griptape-cloud/tools/create-tool.md"
+          - Tool Config YAML: "griptape-cloud/tools/tool-config.md"
+          - Running Your Tool: "griptape-cloud/tools/run-tool.md"
       - Rules:
           - Create a Ruleset: "griptape-cloud/rules/rulesets.md"
       - Threads:
