@@ -139,7 +139,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 and self.use_structured_output
                 and self.structured_output_strategy == "tool"
             ):
-                self._add_structured_output_tool(prompt_stack)
+                self._add_structured_output_tool_if_absent(prompt_stack)
                 params["toolConfig"]["toolChoice"] = {"any": {}}
 
             params["toolConfig"]["tools"] = self.__to_bedrock_tools(prompt_stack.tools)

@@ -141,7 +141,7 @@ class AnthropicPromptDriver(BasePromptDriver):
                 and self.use_structured_output
                 and self.structured_output_strategy == "tool"
             ):
-                self._add_structured_output_tool(prompt_stack)
+                self._add_structured_output_tool_if_absent(prompt_stack)
                 params["tool_choice"] = {"type": "any"}
 
             params["tools"] = self.__to_anthropic_tools(prompt_stack.tools)

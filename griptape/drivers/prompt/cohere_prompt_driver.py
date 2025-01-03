@@ -120,7 +120,7 @@ class CoherePromptDriver(BasePromptDriver):
                 }
             elif self.structured_output_strategy == "tool":
                 # TODO: Implement tool choice once supported
-                self._add_structured_output_tool(prompt_stack)
+                self._add_structured_output_tool_if_absent(prompt_stack)
 
         if prompt_stack.tools and self.use_native_tools:
             params["tools"] = self.__to_cohere_tools(prompt_stack.tools)
