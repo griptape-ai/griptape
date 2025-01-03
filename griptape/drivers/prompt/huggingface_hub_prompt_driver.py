@@ -35,7 +35,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     api_token: str = field(kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     structured_output_strategy: Literal["native", "tool"] = field(
         default="native", kw_only=True, metadata={"serializable": True}
     )
@@ -121,11 +121,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             **self.extra_params,
         }
 
-        if (
-            prompt_stack.output_schema
-            and self.use_native_structured_output
-            and self.structured_output_strategy == "native"
-        ):
+        if prompt_stack.output_schema and self.use_structured_output and self.structured_output_strategy == "native":
             # https://huggingface.co/learn/cookbook/en/structured_generation#-constrained-decoding
             output_schema = prompt_stack.output_schema.json_schema("Output Schema")
             # Grammar does not support $schema and $id

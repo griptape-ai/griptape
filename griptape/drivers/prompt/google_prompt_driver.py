@@ -63,7 +63,7 @@ class GooglePromptDriver(BasePromptDriver):
     top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
     top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     structured_output_strategy: Literal["native", "tool"] = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
@@ -166,7 +166,7 @@ class GooglePromptDriver(BasePromptDriver):
 
             if (
                 prompt_stack.output_schema is not None
-                and self.use_native_structured_output
+                and self.use_structured_output
                 and self.structured_output_strategy == "tool"
             ):
                 params["tool_config"]["function_calling_config"]["mode"] = "auto"

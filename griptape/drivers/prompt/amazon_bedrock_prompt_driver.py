@@ -55,7 +55,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     structured_output_strategy: Literal["native", "tool"] = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
@@ -136,7 +136,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
             if (
                 prompt_stack.output_schema is not None
-                and self.use_native_structured_output
+                and self.use_structured_output
                 and self.structured_output_strategy == "tool"
             ):
                 self._add_structured_output_tool(prompt_stack)

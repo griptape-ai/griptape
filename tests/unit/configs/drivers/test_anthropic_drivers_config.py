@@ -26,7 +26,7 @@ class TestAnthropicDriversConfig:
                 "top_k": 250,
                 "use_native_tools": True,
                 "structured_output_strategy": "tool",
-                "use_native_structured_output": True,
+                "use_structured_output": True,
                 "extra_params": {},
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},

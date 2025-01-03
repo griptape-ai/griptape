@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Structure.run_stream()` for streaming Events from a Structure as an iterator.
 - Support for `GenericMessageContent` in `AnthropicPromptDriver` and `AmazonBedrockPromptDriver`.
 - Validators to `Agent` initialization.
-- `BasePromptDriver.use_native_structured_output` for enabling or disabling structured output.
+- `BasePromptDriver.use_structured_output` for enabling or disabling structured output.
 - `BasePromptDriver.structured_output_strategy` for changing the structured output strategy between `native` and `tool`.
 
 ### Changed
