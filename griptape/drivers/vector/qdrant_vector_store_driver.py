@@ -93,9 +93,9 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         if deletion_response.status == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED:
             logging.info("ID %s is successfully deleted", vector_id)
 
-    def query(
+    def query_vector(
         self,
-        query: str,
+        vector: list[float],
         *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
@@ -105,7 +105,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         """Query the Qdrant collection based on a query vector.
 
         Parameters:
-            query (str): Query string.
+            vector (list[float]): Query vector.
             count (Optional[int]): Optional number of results to return.
             namespace (Optional[str]): Optional namespace of the vectors.
             include_vectors (bool): Whether to include vectors in the results.
@@ -113,10 +113,8 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             list[BaseVectorStoreDriver.Entry]: List of Entry objects.
         """
-        query_vector = self.embedding_driver.embed_string(query)
-
         # Create a search request
-        request = {"collection_name": self.collection_name, "query_vector": query_vector, "limit": count}
+        request = {"collection_name": self.collection_name, "query_vector": vector, "limit": count}
         request = {k: v for k, v in request.items() if v is not None}
         results = self.client.search(**request)
 

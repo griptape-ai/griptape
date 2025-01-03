@@ -127,9 +127,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 for result in results
             ]
 
-    def query(
+    def query_vector(
         self,
-        query: str,
+        vector: list[float],
         *,
         count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         namespace: Optional[str] = None,
@@ -152,8 +152,6 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         op = distance_metrics[distance_metric]
 
         with sqlalchemy_orm.Session(self.engine) as session:
-            vector = self.embedding_driver.embed_string(query)
-
             # The query should return both the vector and the distance metric score.
             query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore[reportOptionalCall]
 
@@ -181,6 +179,27 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 )
                 for result in results
             ]
+
+    def query(
+        self,
+        query: str,
+        *,
+        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        distance_metric: str = "cosine_distance",
+        **kwargs,
+    ) -> list[BaseVectorStoreDriver.Entry]:
+        """Performs a search on the collection to find vectors similar to the provided input vector, optionally filtering to only those that match the provided namespace."""
+        vector = self.embedding_driver.embed_string(query)
+        return self.query_vector(
+            vector,
+            count=count,
+            namespace=namespace,
+            include_vectors=include_vectors,
+            distance_metric=distance_metric,
+            **kwargs,
+        )
 
     def default_vector_model(self) -> Any:
         pgvector_sqlalchemy = import_optional_dependency("pgvector.sqlalchemy")

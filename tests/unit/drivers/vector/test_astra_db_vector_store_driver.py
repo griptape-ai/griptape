@@ -111,6 +111,28 @@ class TestAstraDbVectorStoreDriver:
             projection={"*": 1},
         )
 
+    def test_query_vector_allparams(self, driver, mock_collection, one_query_entry):
+        entries1 = driver.query_vector([0.0, 0.5], count=999, namespace="some_namespace", include_vectors=True)
+        assert entries1 == [one_query_entry]
+        mock_collection.return_value.find.assert_called_once_with(
+            filter={"namespace": "some_namespace"},
+            sort={"$vector": [0.0, 0.5]},
+            limit=999,
+            projection={"*": 1},
+            include_similarity=True,
+        )
+
+    def test_query_vector_minparams(self, driver, mock_collection, one_query_entry):
+        entries0 = driver.query_vector([0.0, 0.5])
+        assert entries0 == [one_query_entry]
+        mock_collection.return_value.find.assert_called_once_with(
+            filter={},
+            sort={"$vector": [0.0, 0.5]},
+            limit=BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+            projection=None,
+            include_similarity=True,
+        )
+
     def test_query_allparams(self, driver, mock_collection, one_query_entry):
         entries1 = driver.query("some query", count=999, namespace="some_namespace", include_vectors=True)
         assert entries1 == [one_query_entry]

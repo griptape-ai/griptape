@@ -41,6 +41,16 @@ class TestOpenSearchVectorStoreDriver:
             assert np.allclose(entries[0].vector, [0.7, 0.8, 0.9], atol=1e-6)
             assert entries[0].meta is None
 
+    def test_query_vector(self, driver):
+        mock_result = Mock()
+        mock_result.id = "query_result"
+
+        with patch.object(driver, "query_vector", return_value=[mock_result]):
+            query_string = [0.0, 0.5, 1.0]
+            results = driver.query_vector(query_string, count=5, namespace="company")
+            assert len(results) == 1, "Expected results from the query"
+            assert results[0].id == "query_result", "Expected a result id"
+
     def test_query(self, driver):
         mock_result = Mock()
         mock_result.id = "query_result"

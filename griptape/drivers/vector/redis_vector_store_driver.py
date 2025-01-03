@@ -107,9 +107,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         return entries
 
-    def query(
+    def query_vector(
         self,
-        query: str,
+        vector: list[float],
         *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
@@ -124,8 +124,6 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
         search_query = import_optional_dependency("redis.commands.search.query")
-
-        vector = self.embedding_driver.embed_string(query)
 
         filter_expression = f"(@namespace:{{{namespace}}})" if namespace else "*"
         query_expression = (

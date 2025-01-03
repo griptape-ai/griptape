@@ -139,7 +139,18 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
     @abstractmethod
     def load_entries(self, *, namespace: Optional[str] = None) -> list[Entry]: ...
 
-    @abstractmethod
+    def query_vector(
+        self,
+        vector: list[float],
+        *,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        **kwargs,
+    ) -> list[Entry]:
+        # TODO: Mark as abstract method for griptape 2.0
+        raise NotImplementedError(f"{self.__class__.__name__} does not support vector query.")
+
     def query(
         self,
         query: str,
@@ -148,7 +159,9 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
-    ) -> list[Entry]: ...
+    ) -> list[Entry]:
+        vector = self.embedding_driver.embed_string(query)
+        return self.query_vector(vector, count=count, namespace=namespace, include_vectors=include_vectors, **kwargs)
 
     def _get_default_vector_id(self, value: str) -> str:
         return str(uuid.uuid5(uuid.NAMESPACE_OID, value))

@@ -140,19 +140,19 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
             for match in self.collection.find(filter=find_filter, projection={"*": 1})
         ]
 
-    def query(
+    def query_vector(
         self,
-        query: str,
+        vector: list[float],
         *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs: Any,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        """Run a similarity search on the Astra DB store, based on a query string.
+        """Run a similarity search on the Astra DB store, based on a vector list.
 
         Args:
-            query: the query string.
+            vector: the vector to be queried.
             count: the maximum number of results to return. If omitted, defaults will apply.
             namespace: the namespace to filter results by.
             include_vectors: whether to include vector data in the results.
@@ -168,7 +168,6 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
         find_filter_ns: dict[str, Any] = {} if namespace is None else {"namespace": namespace}
         find_filter = {**(query_filter or {}), **find_filter_ns}
         find_projection: Optional[dict[str, int]] = {"*": 1} if include_vectors else None
-        vector = self.embedding_driver.embed_string(query)
         ann_limit = count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
         matches = self.collection.find(
             filter=find_filter,

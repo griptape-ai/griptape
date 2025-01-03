@@ -78,24 +78,22 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         return [entry for key, entry in self.entries.items() if namespace is None or entry.namespace == namespace]
 
-    def query(
+    def query_vector(
         self,
-        query: str,
+        vector: list[float],
         *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        query_embedding = self.embedding_driver.embed_string(query)
-
         if namespace:
             entries = {k: v for (k, v) in self.entries.items() if k.startswith(f"{namespace}-")}
         else:
             entries = self.entries
 
         entries_and_relatednesses = [
-            (entry, self.calculate_relatedness(query_embedding, entry.vector)) for entry in list(entries.values())
+            (entry, self.calculate_relatedness(vector, entry.vector)) for entry in list(entries.values())
         ]
 
         entries_and_relatednesses.sort(key=operator.itemgetter(1), reverse=True)

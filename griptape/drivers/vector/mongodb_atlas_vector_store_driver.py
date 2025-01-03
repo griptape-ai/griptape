@@ -114,9 +114,9 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             for doc in cursor
         ]
 
-    def query(
+    def query_vector(
         self,
-        query: str,
+        vector: list[float],
         *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
@@ -124,14 +124,11 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
         offset: Optional[int] = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        """Queries the MongoDB collection for documents that match the provided query string.
+        """Queries the MongoDB collection for documents that match the provided vector list.
 
         Results can be customized based on parameters like count, namespace, inclusion of vectors, offset, and index.
         """
         collection = self.get_collection()
-
-        # Using the embedding driver to convert the query string into a vector
-        vector = self.embedding_driver.embed_string(query)
 
         count = count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
         offset = offset or 0
@@ -170,6 +167,26 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
             )
             for doc in collection.aggregate(pipeline)
         ]
+
+    def query(
+        self,
+        query: str,
+        *,
+        count: Optional[int] = None,
+        namespace: Optional[str] = None,
+        include_vectors: bool = False,
+        offset: Optional[int] = None,
+        **kwargs,
+    ) -> list[BaseVectorStoreDriver.Entry]:
+        """Queries the MongoDB collection for documents that match the provided query string.
+
+        Results can be customized based on parameters like count, namespace, inclusion of vectors, offset, and index.
+        """
+        # Using the embedding driver to convert the query string into a vector
+        vector = self.embedding_driver.embed_string(query)
+        return self.query_vector(
+            vector, count=count, namespace=namespace, include_vectors=include_vectors, offset=offset, **kwargs
+        )
 
     def delete_vector(self, vector_id: str) -> None:
         """Deletes the vector from the collection."""
