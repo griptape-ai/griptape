@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 
 import pytest
+import schema
 
 from griptape.memory import TaskMemory
 from griptape.memory.structure import ConversationMemory
@@ -316,3 +317,14 @@ class TestAgent:
 
         assert isinstance(agent.tasks[0], PromptTask)
         assert agent.tasks[0].prompt_driver.stream is True
+
+    def test_output_schema(self):
+        agent = Agent()
+
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].output_schema is None
+
+        agent = Agent(output_schema=schema.Schema({"foo": str}))
+
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].output_schema is agent.output_schema

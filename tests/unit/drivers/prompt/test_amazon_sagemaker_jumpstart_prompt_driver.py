@@ -138,3 +138,12 @@ class TestAmazonSageMakerJumpstartPromptDriver:
 
         # Then
         assert e.value.args[0] == "model response is empty"
+
+    def test_verify_structured_output_strategy(self):
+        assert AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="foo", structured_output_strategy="rule")
+
+        with pytest.raises(
+            ValueError,
+            match="AmazonSageMakerJumpstartPromptDriver does not support `native` structured output strategy.",
+        ):
+            AmazonSageMakerJumpstartPromptDriver(endpoint="model", model="foo", structured_output_strategy="native")

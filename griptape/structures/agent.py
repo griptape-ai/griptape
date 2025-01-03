@@ -12,6 +12,8 @@ from griptape.structures import Structure
 from griptape.tasks import PromptTask
 
 if TYPE_CHECKING:
+    from schema import Schema
+
     from griptape.artifacts import BaseArtifact
     from griptape.drivers import BasePromptDriver
     from griptape.tasks import BaseTask
@@ -25,6 +27,7 @@ class Agent(Structure):
     )
     stream: bool = field(default=None, kw_only=True)
     prompt_driver: BasePromptDriver = field(default=None, kw_only=True)
+    output_schema: Optional[Schema] = field(default=None, kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
     fail_fast: bool = field(default=False, kw_only=True)
@@ -98,6 +101,7 @@ class Agent(Structure):
             self.input,
             prompt_driver=self.prompt_driver,
             tools=self.tools,
+            output_schema=self.output_schema,
             max_meta_memory_entries=self.max_meta_memory_entries,
         )
 

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Literal
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, Factory, define, field
 
@@ -16,6 +16,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from huggingface_hub import InferenceClient
+
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -35,8 +37,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
     api_token: str = field(kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     model: str = field(kw_only=True, metadata={"serializable": True})
-    use_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    structured_output_strategy: Literal["native", "tool"] = field(
+    structured_output_strategy: StructuredOutputStrategy = field(
         default="native", kw_only=True, metadata={"serializable": True}
     )
     tokenizer: HuggingFaceTokenizer = field(
@@ -56,9 +57,9 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         )
 
     @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_structured_output_strategy(self, attribute: Attribute, value: str) -> str:
+    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
         if value == "tool":
-            raise ValueError("HuggingFaceHubPromptDriver does not support `tool` structured output mode.")
+            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
 
         return value
 
@@ -121,7 +122,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
             **self.extra_params,
         }
 
-        if prompt_stack.output_schema and self.use_structured_output and self.structured_output_strategy == "native":
+        if prompt_stack.output_schema and self.structured_output_strategy == "native":
             # https://huggingface.co/learn/cookbook/en/structured_generation#-constrained-decoding
             output_schema = prompt_stack.output_schema.json_schema("Output Schema")
             # Grammar does not support $schema and $id

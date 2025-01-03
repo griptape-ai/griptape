@@ -35,6 +35,7 @@ if TYPE_CHECKING:
     from openai.types.chat.chat_completion_chunk import ChoiceDelta
     from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tools import BaseTool
 
 
@@ -76,7 +77,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    use_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    structured_output_strategy: StructuredOutputStrategy = field(
+        default="native", kw_only=True, metadata={"serializable": True}
+    )
     parallel_tool_calls: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(
@@ -159,7 +162,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             params["tool_choice"] = self.tool_choice
             params["parallel_tool_calls"] = self.parallel_tool_calls
 
-        if prompt_stack.output_schema is not None and self.use_structured_output:
+        if prompt_stack.output_schema is not None:
             if self.structured_output_strategy == "native":
                 params["response_format"] = {
                     "type": "json_schema",
@@ -171,7 +174,6 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 }
             elif self.structured_output_strategy == "tool" and self.use_native_tools:
                 params["tool_choice"] = "required"
-                self._add_structured_output_tool_if_absent(prompt_stack)
 
         if self.response_format is not None:
             if self.response_format == {"type": "json_object"}:

@@ -26,8 +26,7 @@ class TestCohereDriversConfig:
                 "model": "command-r",
                 "force_single_step": False,
                 "use_native_tools": True,
-                "use_structured_output": True,
-                "structured_output_strategy": "native",
+                "structured_output_strategy": "rule",
                 "extra_params": {},
             },
             "embedding_driver": {

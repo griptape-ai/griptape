@@ -67,7 +67,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert AzureOpenAiChatPromptDriver(azure_endpoint="foobar", model="gpt-4").azure_deployment == "gpt-4"
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    @pytest.mark.parametrize("use_structured_output", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
     def test_try_run(
         self,
@@ -75,7 +74,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         prompt_stack,
         messages,
         use_native_tools,
-        use_structured_output,
         structured_output_strategy,
     ):
         # Given
@@ -84,7 +82,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             azure_deployment="deployment-id",
             model="gpt-4",
             use_native_tools=use_native_tools,
-            use_structured_output=use_structured_output,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
@@ -99,17 +96,8 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             messages=messages,
             **{
-                "tools": [
-                    *self.OPENAI_TOOLS,
-                    *(
-                        [self.OPENAI_STRUCTURED_OUTPUT_TOOL]
-                        if use_structured_output and structured_output_strategy == "tool"
-                        else []
-                    ),
-                ],
-                "tool_choice": "required"
-                if use_structured_output and structured_output_strategy == "tool"
-                else driver.tool_choice,
+                "tools": self.OPENAI_TOOLS,
+                "tool_choice": "required" if structured_output_strategy == "tool" else driver.tool_choice,
             }
             if use_native_tools
             else {},
@@ -123,7 +111,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     },
                 }
             }
-            if use_structured_output and structured_output_strategy == "native"
+            if structured_output_strategy == "native"
             else {},
             foo="bar",
         )
@@ -136,7 +124,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert message.value[1].value.input == {"foo": "bar"}
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    @pytest.mark.parametrize("use_structured_output", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
     def test_try_stream_run(
         self,
@@ -144,7 +131,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         prompt_stack,
         messages,
         use_native_tools,
-        use_structured_output,
         structured_output_strategy,
     ):
         # Given
@@ -154,7 +140,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model="gpt-4",
             stream=True,
             use_native_tools=use_native_tools,
-            use_structured_output=use_structured_output,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
@@ -171,17 +156,8 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream=True,
             messages=messages,
             **{
-                "tools": [
-                    *self.OPENAI_TOOLS,
-                    *(
-                        [self.OPENAI_STRUCTURED_OUTPUT_TOOL]
-                        if use_structured_output and structured_output_strategy == "tool"
-                        else []
-                    ),
-                ],
-                "tool_choice": "required"
-                if use_structured_output and structured_output_strategy == "tool"
-                else driver.tool_choice,
+                "tools": self.OPENAI_TOOLS,
+                "tool_choice": "required" if structured_output_strategy == "tool" else driver.tool_choice,
             }
             if use_native_tools
             else {},
@@ -195,7 +171,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     },
                 }
             }
-            if use_structured_output and structured_output_strategy == "native"
+            if structured_output_strategy == "native"
             else {},
             foo="bar",
         )

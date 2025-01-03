@@ -20,28 +20,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         "required": ["foo"],
         "type": "object",
     }
-    OPENAI_STRUCTURED_OUTPUT_TOOL = {
-        "function": {
-            "description": "Used to provide the final response which ends this conversation.",
-            "name": "StructuredOutputTool_provide_output",
-            "parameters": {
-                "$id": "Parameters Schema",
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "additionalProperties": False,
-                "properties": {
-                    "values": {
-                        "additionalProperties": False,
-                        "properties": {"foo": {"type": "string"}},
-                        "required": ["foo"],
-                        "type": "object",
-                    },
-                },
-                "required": ["values"],
-                "type": "object",
-            },
-        },
-        "type": "function",
-    }
     OPENAI_TOOLS = [
         {
             "function": {
@@ -371,22 +349,19 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL)
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    @pytest.mark.parametrize("use_structured_output", [True, False])
-    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     def test_try_run(
         self,
         mock_chat_completion_create,
         prompt_stack,
         messages,
         use_native_tools,
-        use_structured_output,
         structured_output_strategy,
     ):
         # Given
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             use_native_tools=use_native_tools,
-            use_structured_output=use_structured_output,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
@@ -402,17 +377,8 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             messages=messages,
             seed=driver.seed,
             **{
-                "tools": [
-                    *self.OPENAI_TOOLS,
-                    *(
-                        [self.OPENAI_STRUCTURED_OUTPUT_TOOL]
-                        if use_structured_output and structured_output_strategy == "tool"
-                        else []
-                    ),
-                ],
-                "tool_choice": "required"
-                if use_structured_output and structured_output_strategy == "tool"
-                else driver.tool_choice,
+                "tools": self.OPENAI_TOOLS,
+                "tool_choice": "required" if structured_output_strategy == "tool" else driver.tool_choice,
                 "parallel_tool_calls": driver.parallel_tool_calls,
             }
             if use_native_tools
@@ -427,7 +393,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     },
                 }
             }
-            if use_structured_output and structured_output_strategy == "native"
+            if prompt_stack.output_schema is not None and structured_output_strategy == "native"
             else {},
             foo="bar",
         )
@@ -509,15 +475,13 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    @pytest.mark.parametrize("use_structured_output", [True, False])
-    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     def test_try_stream_run(
         self,
         mock_chat_completion_stream_create,
         prompt_stack,
         messages,
         use_native_tools,
-        use_structured_output,
         structured_output_strategy,
     ):
         # Given
@@ -525,7 +489,6 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             stream=True,
             use_native_tools=use_native_tools,
-            use_structured_output=use_structured_output,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
@@ -544,17 +507,8 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             seed=driver.seed,
             stream_options={"include_usage": True},
             **{
-                "tools": [
-                    *self.OPENAI_TOOLS,
-                    *(
-                        [self.OPENAI_STRUCTURED_OUTPUT_TOOL]
-                        if use_structured_output and structured_output_strategy == "tool"
-                        else []
-                    ),
-                ],
-                "tool_choice": "required"
-                if use_structured_output and structured_output_strategy == "tool"
-                else driver.tool_choice,
+                "tools": self.OPENAI_TOOLS,
+                "tool_choice": "required" if structured_output_strategy == "tool" else driver.tool_choice,
                 "parallel_tool_calls": driver.parallel_tool_calls,
             }
             if use_native_tools
@@ -569,7 +523,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     },
                 }
             }
-            if use_structured_output and structured_output_strategy == "native"
+            if structured_output_strategy == "native"
             else {},
             foo="bar",
         )
@@ -596,11 +550,11 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
+        prompt_stack.output_schema = None
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             max_tokens=1,
             use_native_tools=False,
-            use_structured_output=False,
         )
 
         # When
@@ -630,12 +584,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert e.value.args[0] == "Completion with more than one choice is not supported yet."
 
     def test_custom_tokenizer(self, mock_chat_completion_create, prompt_stack, messages):
+        prompt_stack.output_schema = None
         driver = OpenAiChatPromptDriver(
             model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
             tokenizer=MockTokenizer(model="mock-model", stop_sequences=["mock-stop"]),
             max_tokens=1,
             use_native_tools=False,
-            use_structured_output=False,
         )
 
         # When

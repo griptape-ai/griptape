@@ -21,28 +21,6 @@ class TestCoherePromptDriver:
         "required": ["foo"],
         "type": "object",
     }
-    COHERE_STRUCTURED_OUTPUT_TOOL = {
-        "function": {
-            "description": "Used to provide the final response which ends this conversation.",
-            "name": "StructuredOutputTool_provide_output",
-            "parameters": {
-                "$id": "Parameters Schema",
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "additionalProperties": False,
-                "properties": {
-                    "values": {
-                        "additionalProperties": False,
-                        "properties": {"foo": {"type": "string"}},
-                        "required": ["foo"],
-                        "type": "object",
-                    },
-                },
-                "required": ["values"],
-                "type": "object",
-            },
-        },
-        "type": "function",
-    }
     COHERE_TOOLS = [
         {
             "function": {
@@ -338,7 +316,6 @@ class TestCoherePromptDriver:
         assert CoherePromptDriver(model="command", api_key="foobar")
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    @pytest.mark.parametrize("use_structured_output", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
     def test_try_run(
         self,
@@ -346,7 +323,6 @@ class TestCoherePromptDriver:
         prompt_stack,
         messages,
         use_native_tools,
-        use_structured_output,
         structured_output_strategy,
     ):
         # Given
@@ -354,7 +330,6 @@ class TestCoherePromptDriver:
             model="command",
             api_key="api-key",
             use_native_tools=use_native_tools,
-            use_structured_output=use_structured_output,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
@@ -367,25 +342,14 @@ class TestCoherePromptDriver:
             model="command",
             messages=messages,
             max_tokens=None,
-            **{
-                "tools": [
-                    *self.COHERE_TOOLS,
-                    *(
-                        [self.COHERE_STRUCTURED_OUTPUT_TOOL]
-                        if use_structured_output and structured_output_strategy == "tool"
-                        else []
-                    ),
-                ]
-            }
-            if use_native_tools
-            else {},
+            **{"tools": self.COHERE_TOOLS} if use_native_tools else {},
             **{
                 "response_format": {
                     "type": "json_object",
                     "schema": self.COHERE_STRUCTURED_OUTPUT_SCHEMA,
                 }
             }
-            if use_structured_output and structured_output_strategy == "native"
+            if structured_output_strategy == "native"
             else {},
             stop_sequences=[],
             temperature=0.1,
@@ -406,7 +370,6 @@ class TestCoherePromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    @pytest.mark.parametrize("use_structured_output", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
     def test_try_stream_run(
         self,
@@ -414,7 +377,6 @@ class TestCoherePromptDriver:
         prompt_stack,
         messages,
         use_native_tools,
-        use_structured_output,
         structured_output_strategy,
     ):
         # Given
@@ -423,7 +385,6 @@ class TestCoherePromptDriver:
             api_key="api-key",
             stream=True,
             use_native_tools=use_native_tools,
-            use_structured_output=use_structured_output,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
@@ -437,25 +398,14 @@ class TestCoherePromptDriver:
             model="command",
             messages=messages,
             max_tokens=None,
-            **{
-                "tools": [
-                    *self.COHERE_TOOLS,
-                    *(
-                        [self.COHERE_STRUCTURED_OUTPUT_TOOL]
-                        if use_structured_output and structured_output_strategy == "tool"
-                        else []
-                    ),
-                ]
-            }
-            if use_native_tools
-            else {},
+            **{"tools": self.COHERE_TOOLS} if use_native_tools else {},
             **{
                 "response_format": {
                     "type": "json_object",
                     "schema": self.COHERE_STRUCTURED_OUTPUT_SCHEMA,
                 }
             }
-            if use_structured_output and structured_output_strategy == "native"
+            if structured_output_strategy == "native"
             else {},
             stop_sequences=[],
             temperature=0.1,

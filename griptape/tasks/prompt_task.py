@@ -15,6 +15,7 @@ from griptape.memory.structure import Run
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Ruleset
+from griptape.rules.json_schema_rule import JsonSchemaRule
 from griptape.tasks import ActionsSubtask, BaseTask
 from griptape.utils import J2
 
@@ -91,8 +92,15 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
 
     @property
     def prompt_stack(self) -> PromptStack:
-        stack = PromptStack(tools=self.tools, output_schema=self.output_schema)
+        from griptape.tools.structured_output.tool import StructuredOutputTool
+
+        stack = PromptStack(tools=self.tools)
         memory = self.structure.conversation_memory if self.structure is not None else None
+
+        if self.output_schema is not None:
+            stack.output_schema = self.output_schema
+            if self.prompt_driver.structured_output_strategy == "tool":
+                stack.tools.append(StructuredOutputTool(output_schema=stack.output_schema))
 
         system_template = self.generate_system_template(self)
         if system_template:
@@ -190,7 +198,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         else:
             output = result.to_artifact()
 
-        if self.prompt_driver.use_structured_output and self.prompt_driver.structured_output_strategy == "native":
+        if self.output_schema is not None and self.prompt_driver.structured_output_strategy in ("native", "rule"):
             return JsonArtifact(output.value)
         else:
             return output
@@ -210,8 +218,6 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         return self
 
     def default_generate_system_template(self, _: PromptTask) -> str:
-        from griptape.rules import JsonSchemaRule
-
         schema = self.actions_schema().json_schema("Actions Schema")
         schema["minItems"] = 1  # The `schema` library doesn't support `minItems` so we must add it manually.
 
@@ -221,8 +227,8 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             use_native_tools=self.prompt_driver.use_native_tools,
-            use_structured_output=self.prompt_driver.use_structured_output,
-            json_schema_rule=JsonSchemaRule(self.output_schema.json_schema("Output Schema"))
+            structured_output_strategy=self.prompt_driver.structured_output_strategy,
+            json_schema_rule=JsonSchemaRule(self.output_schema.json_schema("Output"))
             if self.output_schema is not None
             else None,
             stop_sequence=self.response_stop_sequence,
