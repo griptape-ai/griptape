@@ -53,7 +53,7 @@ class CoherePromptDriver(BasePromptDriver):
     model: str = field(metadata={"serializable": True})
     force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _client: ClientV2 = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
@@ -112,7 +112,7 @@ class CoherePromptDriver(BasePromptDriver):
             **self.extra_params,
         }
 
-        if prompt_stack.output_schema is not None and self.use_native_structured_output:
+        if prompt_stack.output_schema is not None and self.use_structured_output:
             if self.structured_output_strategy == "native":
                 params["response_format"] = {
                     "type": "json_object",

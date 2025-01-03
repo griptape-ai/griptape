@@ -190,10 +190,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         else:
             output = result.to_artifact()
 
-        if (
-            self.prompt_driver.use_native_structured_output
-            and self.prompt_driver.structured_output_strategy == "native"
-        ):
+        if self.prompt_driver.use_structured_output and self.prompt_driver.structured_output_strategy == "native":
             return JsonArtifact(output.value)
         else:
             return output
@@ -224,7 +221,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             actions_schema=utils.minify_json(json.dumps(schema)),
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             use_native_tools=self.prompt_driver.use_native_tools,
-            use_native_structured_output=self.prompt_driver.use_native_structured_output,
+            use_structured_output=self.prompt_driver.use_structured_output,
             json_schema_rule=JsonSchemaRule(self.output_schema.json_schema("Output Schema"))
             if self.output_schema is not None
             else None,

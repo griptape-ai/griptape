@@ -25,7 +25,7 @@ class TestGoogleDriversConfig:
                 "top_k": None,
                 "tool_choice": "auto",
                 "use_native_tools": True,
-                "use_native_structured_output": True,
+                "use_structured_output": True,
                 "structured_output_strategy": "tool",
                 "extra_params": {},
             },
