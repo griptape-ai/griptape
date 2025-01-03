@@ -68,6 +68,7 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    use_native_structured_output: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
@@ -109,7 +110,7 @@ class OllamaPromptDriver(BasePromptDriver):
             **self.extra_params,
         }
 
-        if prompt_stack.output_schema is not None:
+        if prompt_stack.output_schema is not None and self.use_native_structured_output:
             if self.structured_output_strategy == "native":
                 params["format"] = prompt_stack.output_schema.json_schema("Output")
             elif self.structured_output_strategy == "tool":

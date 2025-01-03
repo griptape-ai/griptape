@@ -36,7 +36,7 @@ class MockPromptDriver(BasePromptDriver):
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
-        if prompt_stack.output_schema is not None:
+        if self.use_native_structured_output and prompt_stack.output_schema is not None:
             if self.structured_output_strategy == "native":
                 return Message(
                     content=[TextMessageContent(TextArtifact(json.dumps(self.mock_structured_output)))],
@@ -84,7 +84,7 @@ class MockPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
 
-        if prompt_stack.output_schema is not None:
+        if self.use_native_structured_output and prompt_stack.output_schema is not None:
             if self.structured_output_strategy == "native":
                 yield DeltaMessage(
                     content=TextDeltaMessageContent(json.dumps(self.mock_structured_output)),
