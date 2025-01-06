@@ -45,30 +45,31 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         meta: Optional[dict] = None,
         **kwargs,
     ) -> list[str] | dict[str, list[str]]:
-        if isinstance(artifacts, list):
-            return utils.execute_futures_list(
-                [
-                    self.futures_executor.submit(
-                        with_contextvars(self.upsert_text_artifact), a, namespace=None, meta=meta, **kwargs
-                    )
-                    for a in artifacts
-                ],
-            )
-        else:
-            futures_dict = {}
-
-            for namespace, artifact_list in artifacts.items():
-                for a in artifact_list:
-                    if not futures_dict.get(namespace):
-                        futures_dict[namespace] = []
-
-                    futures_dict[namespace].append(
-                        self.futures_executor.submit(
-                            with_contextvars(self.upsert_text_artifact), a, namespace=namespace, meta=meta, **kwargs
+        with self.create_futures_executor() as futures_executor:
+            if isinstance(artifacts, list):
+                return utils.execute_futures_list(
+                    [
+                        futures_executor.submit(
+                            with_contextvars(self.upsert_text_artifact), a, namespace=None, meta=meta, **kwargs
                         )
-                    )
+                        for a in artifacts
+                    ],
+                )
+            else:
+                futures_dict = {}
 
-            return utils.execute_futures_list_dict(futures_dict)
+                for namespace, artifact_list in artifacts.items():
+                    for a in artifact_list:
+                        if not futures_dict.get(namespace):
+                            futures_dict[namespace] = []
+
+                        futures_dict[namespace].append(
+                            futures_executor.submit(
+                                with_contextvars(self.upsert_text_artifact), a, namespace=namespace, meta=meta, **kwargs
+                            )
+                        )
+
+                return utils.execute_futures_list_dict(futures_dict)
 
     def upsert_text_artifact(
         self,

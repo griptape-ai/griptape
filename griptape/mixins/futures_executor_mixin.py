@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 from abc import ABC
 from concurrent import futures
 from typing import Callable
@@ -17,13 +16,3 @@ class FuturesExecutorMixin(ABC):
     futures_executor: futures.Executor = field(
         default=Factory(lambda self: self.create_futures_executor(), takes_self=True)
     )
-
-    def __del__(self) -> None:
-        # don't raise exceptions in __del__
-        with contextlib.suppress(Exception):
-            executor = self.futures_executor
-
-            if executor is not None:
-                self.futures_executor = None  # pyright: ignore[reportAttributeAccessIssue] In practice this is safe, nobody will access this attribute after this point
-
-                executor.shutdown(wait=True)

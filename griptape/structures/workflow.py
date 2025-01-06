@@ -103,23 +103,24 @@ class Workflow(Structure, FuturesExecutorMixin):
     def try_run(self, *args) -> Workflow:
         exit_loop = False
 
-        while not self.is_finished() and not exit_loop:
-            futures_list = {}
-            ordered_tasks = self.order_tasks()
+        with self.create_futures_executor() as futures_executor:
+            while not self.is_finished() and not exit_loop:
+                futures_list = {}
+                ordered_tasks = self.order_tasks()
 
-            for task in ordered_tasks:
-                if task.can_run():
-                    future = self.futures_executor.submit(with_contextvars(task.run))
-                    futures_list[future] = task
+                for task in ordered_tasks:
+                    if task.can_run():
+                        future = futures_executor.submit(with_contextvars(task.run))
+                        futures_list[future] = task
 
-            # Wait for all tasks to complete
-            for future in futures.as_completed(futures_list):
-                if isinstance(future.result(), ErrorArtifact) and self.fail_fast:
-                    exit_loop = True
+                # Wait for all tasks to complete
+                for future in futures.as_completed(futures_list):
+                    if isinstance(future.result(), ErrorArtifact) and self.fail_fast:
+                        exit_loop = True
 
-                    break
+                        break
 
-        return self
+            return self
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
