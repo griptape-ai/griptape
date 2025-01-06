@@ -11,7 +11,7 @@ directly, which the agent uses to add a [Prompt Task](./tasks.md#prompt-task).
 
 You can access the final output of the Agent by using the [output](../../reference/griptape/structures/structure.md#griptape.structures.structure.Structure.output) attribute.
 
-### Agent Input
+### Agent Tools
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/agents_2.py"
@@ -26,7 +26,7 @@ You can access the final output of the Agent by using the [output](../../referen
                              In binary, we ignite.
 ```
 
-### Agent Tools
+### Agent Input
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/agents_1.py"
