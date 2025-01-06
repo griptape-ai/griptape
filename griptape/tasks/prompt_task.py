@@ -7,8 +7,7 @@ from typing import TYPE_CHECKING, Callable, Optional, Union
 from attrs import NOTHING, Attribute, Factory, NothingType, define, field
 
 from griptape import utils
-from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
-from griptape.artifacts.json_artifact import JsonArtifact
+from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, JsonArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack, ToolAction
 from griptape.configs import Defaults
 from griptape.memory.structure import Run

@@ -13,7 +13,7 @@ class StructuredOutputTool(BaseTool):
     @activity(
         config={
             "description": "Used to provide the final response which ends this conversation.",
-            "schema": lambda self: self.output_schema,
+            "schema": lambda _self: _self.output_schema,
         }
     )
     def provide_output(self, params: dict) -> BaseArtifact:
