@@ -1,9 +1,13 @@
+import pytest
+import schema
+
 from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.memory.structure import ConversationMemory
 from griptape.memory.structure.run import Run
 from griptape.rules import Rule
+from griptape.rules.json_schema_rule import JsonSchemaRule
 from griptape.rules.ruleset import Ruleset
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
@@ -172,6 +176,15 @@ class TestPromptTask:
         assert task.prompt_stack.messages[2].is_user()
         assert task.prompt_stack.messages[2].to_text() == "test value"
 
+    def test_prompt_stack_empty_native_schema(self):
+        task = PromptTask(
+            input="foo",
+            prompt_driver=MockPromptDriver(),
+            rules=[JsonSchemaRule({"foo": {}})],
+        )
+
+        assert task.prompt_stack.output_schema is None
+
     def test_rulesets(self):
         pipeline = Pipeline(
             rulesets=[Ruleset("Pipeline Ruleset")],
@@ -227,3 +240,19 @@ class TestPromptTask:
 
         task.run()
         assert len(task.subtasks) == 2
+
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "rule"])
+    def test_parse_output(self, structured_output_strategy):
+        task = PromptTask(
+            input="foo",
+            prompt_driver=MockPromptDriver(
+                structured_output_strategy=structured_output_strategy,
+                mock_structured_output={"foo": "bar"},
+            ),
+            output_schema=schema.Schema({"foo": str}),
+        )
+
+        task.run()
+
+        assert task.output is not None
+        assert task.output.value == {"foo": "bar"}

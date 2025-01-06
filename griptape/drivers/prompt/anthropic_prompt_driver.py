@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional
 
-from attrs import Factory, define, field
+from attrs import Attribute, Factory, define, field
 from schema import Schema
 
 from griptape.artifacts import (
@@ -42,6 +42,7 @@ if TYPE_CHECKING:
     from anthropic import Client
     from anthropic.types import ContentBlock, ContentBlockDeltaEvent, ContentBlockStartEvent
 
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tools.base_tool import BaseTool
 
 
@@ -68,12 +69,22 @@ class AnthropicPromptDriver(BasePromptDriver):
     top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
     tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
+    structured_output_strategy: StructuredOutputStrategy = field(
+        default="tool", kw_only=True, metadata={"serializable": True}
+    )
     max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
     _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Client:
         return import_optional_dependency("anthropic").Anthropic(api_key=self.api_key)
+
+    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
+        if value == "native":
+            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
+
+        return value
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -110,7 +121,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         system_messages = prompt_stack.system_messages
         system_message = system_messages[0].to_text() if system_messages else None
 
-        return {
+        params = {
             "model": self.model,
             "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
@@ -118,14 +129,19 @@ class AnthropicPromptDriver(BasePromptDriver):
             "top_k": self.top_k,
             "max_tokens": self.max_tokens,
             "messages": messages,
-            **(
-                {"tools": self.__to_anthropic_tools(prompt_stack.tools), "tool_choice": self.tool_choice}
-                if prompt_stack.tools and self.use_native_tools
-                else {}
-            ),
             **({"system": system_message} if system_message else {}),
             **self.extra_params,
         }
+
+        if prompt_stack.tools and self.use_native_tools:
+            params["tool_choice"] = self.tool_choice
+
+            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
+                params["tool_choice"] = {"type": "any"}
+
+            params["tools"] = self.__to_anthropic_tools(prompt_stack.tools)
+
+        return params
 
     def __to_anthropic_messages(self, messages: list[Message]) -> list[dict]:
         return [

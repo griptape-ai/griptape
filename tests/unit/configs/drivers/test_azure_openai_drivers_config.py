@@ -36,6 +36,7 @@ class TestAzureOpenAiDriversConfig:
                 "stream": False,
                 "user": "",
                 "use_native_tools": True,
+                "structured_output_strategy": "native",
                 "extra_params": {},
             },
             "conversation_memory_driver": {

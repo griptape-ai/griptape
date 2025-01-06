@@ -9,12 +9,13 @@ import schema
 from attrs import define, field
 
 from griptape import utils
-from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, JsonArtifact, ListArtifact, TextArtifact
 from griptape.common import ToolAction
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishActionsSubtaskEvent, StartActionsSubtaskEvent
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
+from griptape.tools.structured_output.tool import StructuredOutputTool
 from griptape.utils import remove_null_values_in_dict_recursively, with_contextvars
 
 if TYPE_CHECKING:
@@ -87,6 +88,14 @@ class ActionsSubtask(BaseTask):
                 self.__init_from_prompt(self.input.to_text())
             else:
                 self.__init_from_artifacts(self.input)
+
+            structured_outputs = [a for a in self.actions if isinstance(a.tool, StructuredOutputTool)]
+            if structured_outputs:
+                output_values = [JsonArtifact(a.input["values"]) for a in structured_outputs]
+                if len(structured_outputs) > 1:
+                    self.output = ListArtifact(output_values)
+                else:
+                    self.output = output_values[0]
         except Exception as e:
             logger.error("Subtask %s\nError parsing tool action: %s", self.origin_task.id, e)
 

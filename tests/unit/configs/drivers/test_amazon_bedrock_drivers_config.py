@@ -51,6 +51,7 @@ class TestAmazonBedrockDriversConfig:
                 "type": "AmazonBedrockPromptDriver",
                 "tool_choice": {"auto": {}},
                 "use_native_tools": True,
+                "structured_output_strategy": "tool",
                 "extra_params": {},
             },
             "vector_store_driver": {
@@ -106,6 +107,7 @@ class TestAmazonBedrockDriversConfig:
                 "type": "AmazonBedrockPromptDriver",
                 "tool_choice": {"auto": {}},
                 "use_native_tools": True,
+                "structured_output_strategy": "tool",
                 "extra_params": {},
             },
             "vector_store_driver": {

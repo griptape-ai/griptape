@@ -2,6 +2,7 @@ import json
 from unittest.mock import Mock
 
 import pytest
+from schema import Schema
 
 from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.list_artifact import ListArtifact
@@ -12,6 +13,14 @@ from tests.mocks.mock_tool.tool import MockTool
 
 
 class TestCoherePromptDriver:
+    COHERE_STRUCTURED_OUTPUT_SCHEMA = {
+        "$id": "Output",
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "additionalProperties": False,
+        "properties": {"foo": {"type": "string"}},
+        "required": ["foo"],
+        "type": "object",
+    }
     COHERE_TOOLS = [
         {
             "function": {
@@ -242,6 +251,7 @@ class TestCoherePromptDriver:
     @pytest.fixture()
     def prompt_stack(self):
         prompt_stack = PromptStack()
+        prompt_stack.output_schema = Schema({"foo": str})
         prompt_stack.tools = [MockTool()]
         prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
@@ -306,10 +316,22 @@ class TestCoherePromptDriver:
         assert CoherePromptDriver(model="command", api_key="foobar")
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
+    def test_try_run(
+        self,
+        mock_client,
+        prompt_stack,
+        messages,
+        use_native_tools,
+        structured_output_strategy,
+    ):
         # Given
         driver = CoherePromptDriver(
-            model="command", api_key="api-key", use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+            model="command",
+            api_key="api-key",
+            use_native_tools=use_native_tools,
+            structured_output_strategy=structured_output_strategy,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -320,7 +342,15 @@ class TestCoherePromptDriver:
             model="command",
             messages=messages,
             max_tokens=None,
-            **({"tools": self.COHERE_TOOLS} if use_native_tools else {}),
+            **{"tools": self.COHERE_TOOLS} if use_native_tools else {},
+            **{
+                "response_format": {
+                    "type": "json_object",
+                    "schema": self.COHERE_STRUCTURED_OUTPUT_SCHEMA,
+                }
+            }
+            if structured_output_strategy == "native"
+            else {},
             stop_sequences=[],
             temperature=0.1,
             foo="bar",
@@ -340,13 +370,22 @@ class TestCoherePromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_stream_client, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "foo"])
+    def test_try_stream_run(
+        self,
+        mock_stream_client,
+        prompt_stack,
+        messages,
+        use_native_tools,
+        structured_output_strategy,
+    ):
         # Given
         driver = CoherePromptDriver(
             model="command",
             api_key="api-key",
             stream=True,
             use_native_tools=use_native_tools,
+            structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
         )
 
@@ -359,7 +398,15 @@ class TestCoherePromptDriver:
             model="command",
             messages=messages,
             max_tokens=None,
-            **({"tools": self.COHERE_TOOLS} if use_native_tools else {}),
+            **{"tools": self.COHERE_TOOLS} if use_native_tools else {},
+            **{
+                "response_format": {
+                    "type": "json_object",
+                    "schema": self.COHERE_STRUCTURED_OUTPUT_SCHEMA,
+                }
+            }
+            if structured_output_strategy == "native"
+            else {},
             stop_sequences=[],
             temperature=0.1,
             foo="bar",

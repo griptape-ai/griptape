@@ -1,4 +1,5 @@
 import pytest
+from schema import Schema
 
 from griptape.artifacts import ActionArtifact, ErrorArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
@@ -229,6 +230,7 @@ class TestAmazonBedrockPromptDriver:
     def prompt_stack(self, request):
         prompt_stack = PromptStack()
         prompt_stack.tools = [MockTool()]
+        prompt_stack.output_schema = Schema({"foo": str})
         if request.param:
             prompt_stack.add_system_message("system-input")
         prompt_stack.add_user_message("user-input")
@@ -359,10 +361,14 @@ class TestAmazonBedrockPromptDriver:
         ]
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_run(self, mock_converse, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("structured_output_strategy", ["tool", "rule", "foo"])
+    def test_try_run(self, mock_converse, prompt_stack, messages, use_native_tools, structured_output_strategy):
         # Given
         driver = AmazonBedrockPromptDriver(
-            model="ai21.j2", use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+            model="ai21.j2",
+            use_native_tools=use_native_tools,
+            structured_output_strategy=structured_output_strategy,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -379,7 +385,14 @@ class TestAmazonBedrockPromptDriver:
             additionalModelRequestFields={},
             **({"system": [{"text": "system-input"}]} if prompt_stack.system_messages else {"system": []}),
             **(
-                {"toolConfig": {"tools": self.BEDROCK_TOOLS, "toolChoice": driver.tool_choice}}
+                {
+                    "toolConfig": {
+                        "tools": self.BEDROCK_TOOLS,
+                        "toolChoice": {"any": {}}
+                        if driver.structured_output_strategy == "tool"
+                        else driver.tool_choice,
+                    }
+                }
                 if use_native_tools
                 else {}
             ),
@@ -396,10 +409,17 @@ class TestAmazonBedrockPromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    def test_try_stream_run(self, mock_converse_stream, prompt_stack, messages, use_native_tools):
+    @pytest.mark.parametrize("structured_output_strategy", ["tool", "rule", "foo"])
+    def test_try_stream_run(
+        self, mock_converse_stream, prompt_stack, messages, use_native_tools, structured_output_strategy
+    ):
         # Given
         driver = AmazonBedrockPromptDriver(
-            model="ai21.j2", stream=True, use_native_tools=use_native_tools, extra_params={"foo": "bar"}
+            model="ai21.j2",
+            stream=True,
+            use_native_tools=use_native_tools,
+            structured_output_strategy=structured_output_strategy,
+            extra_params={"foo": "bar"},
         )
 
         # When
@@ -417,8 +437,15 @@ class TestAmazonBedrockPromptDriver:
             additionalModelRequestFields={},
             **({"system": [{"text": "system-input"}]} if prompt_stack.system_messages else {"system": []}),
             **(
-                {"toolConfig": {"tools": self.BEDROCK_TOOLS, "toolChoice": driver.tool_choice}}
-                if prompt_stack.tools and use_native_tools
+                {
+                    "toolConfig": {
+                        "tools": self.BEDROCK_TOOLS,
+                        "toolChoice": {"any": {}}
+                        if driver.structured_output_strategy == "tool"
+                        else driver.tool_choice,
+                    }
+                }
+                if use_native_tools
                 else {}
             ),
             foo="bar",
@@ -441,3 +468,11 @@ class TestAmazonBedrockPromptDriver:
         event = next(stream)
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 10
+
+    def test_verify_structured_output_strategy(self):
+        assert AmazonBedrockPromptDriver(model="foo", structured_output_strategy="tool")
+
+        with pytest.raises(
+            ValueError, match="AmazonBedrockPromptDriver does not support `native` structured output strategy."
+        ):
+            AmazonBedrockPromptDriver(model="foo", structured_output_strategy="native")

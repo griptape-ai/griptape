@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
@@ -24,6 +24,8 @@ from griptape.common import (
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
+    from schema import Schema
+
     from griptape.tools import BaseTool
 
 
@@ -31,6 +33,7 @@ if TYPE_CHECKING:
 class PromptStack(SerializableMixin):
     messages: list[Message] = field(factory=list, kw_only=True, metadata={"serializable": True})
     tools: list[BaseTool] = field(factory=list, kw_only=True)
+    output_schema: Optional[Schema] = field(default=None, kw_only=True)
 
     @property
     def system_messages(self) -> list[Message]:

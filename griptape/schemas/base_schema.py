@@ -151,6 +151,8 @@ class BaseSchema(Schema):
         from collections.abc import Sequence
         from typing import Any
 
+        from schema import Schema
+
         from griptape.artifacts import BaseArtifact
         from griptape.common import (
             BaseDeltaMessageContent,
@@ -170,6 +172,7 @@ class BaseSchema(Schema):
             BaseTextToSpeechDriver,
             BaseVectorStoreDriver,
         )
+        from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
         from griptape.events import EventListener
         from griptape.memory import TaskMemory
         from griptape.memory.structure import BaseConversationMemory, Run
@@ -214,6 +217,7 @@ class BaseSchema(Schema):
                 "BaseArtifactStorage": BaseArtifactStorage,
                 "BaseRule": BaseRule,
                 "Ruleset": Ruleset,
+                "StructuredOutputStrategy": StructuredOutputStrategy,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "ClientV2": import_optional_dependency("cohere").ClientV2 if is_dependency_installed("cohere") else Any,
@@ -228,6 +232,7 @@ class BaseSchema(Schema):
                 if is_dependency_installed("mypy_boto3_bedrock")
                 else Any,
                 "voyageai": import_optional_dependency("voyageai") if is_dependency_installed("voyageai") else Any,
+                "Schema": Schema,
             },
         )
 

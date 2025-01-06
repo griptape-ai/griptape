@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Callable, Optional, Union
 from attrs import NOTHING, Attribute, Factory, NothingType, define, field
 
 from griptape import utils
-from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, JsonArtifact, ListArtifact, TextArtifact
 from griptape.common import PromptStack, ToolAction
 from griptape.configs import Defaults
 from griptape.memory.structure import Run
@@ -38,6 +38,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True, metadata={"serializable": True}
     )
+    output_schema: Optional[Schema] = field(default=None, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_generate_system_template, takes_self=True),
         kw_only=True,
@@ -89,7 +90,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
 
     @property
     def prompt_stack(self) -> PromptStack:
-        stack = PromptStack(tools=self.tools)
+        stack = PromptStack(tools=self.tools, output_schema=self.output_schema)
         memory = self.structure.conversation_memory if self.structure is not None else None
 
         system_template = self.generate_system_template(self)
@@ -101,41 +102,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         if self.output:
             stack.add_assistant_message(self.output.to_text())
         else:
-            for s in self.subtasks:
-                if self.prompt_driver.use_native_tools:
-                    action_calls = [
-                        ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
-                        for action in s.actions
-                    ]
-                    action_results = [
-                        ToolAction(
-                            name=action.name,
-                            path=action.path,
-                            tag=action.tag,
-                            output=action.output if action.output is not None else s.output,
-                        )
-                        for action in s.actions
-                    ]
-
-                    stack.add_assistant_message(
-                        ListArtifact(
-                            [
-                                *([TextArtifact(s.thought)] if s.thought else []),
-                                *[ActionArtifact(a) for a in action_calls],
-                            ],
-                        ),
-                    )
-                    stack.add_user_message(
-                        ListArtifact(
-                            [
-                                *[ActionArtifact(a) for a in action_results],
-                                *([] if s.output else [TextArtifact("Please keep going")]),
-                            ],
-                        ),
-                    )
-                else:
-                    stack.add_assistant_message(self.generate_assistant_subtask_template(s))
-                    stack.add_user_message(self.generate_user_subtask_template(s))
+            self._add_subtasks_to_prompt_stack(stack)
 
         if memory is not None:
             # inserting at index 1 to place memory right after system prompt
@@ -218,11 +185,14 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
                 else:
                     break
 
-            self.output = subtask.output
+            output = subtask.output
         else:
-            self.output = result.to_artifact()
+            output = result.to_artifact()
 
-        return self.output
+        if self.output_schema is not None and self.prompt_driver.structured_output_strategy in ("native", "rule"):
+            return JsonArtifact(output.value)
+        else:
+            return output
 
     def preprocess(self, structure: Structure) -> BaseTask:
         super().preprocess(structure)
@@ -324,3 +294,40 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
         else:
             return self._process_task_input(TextArtifact(task_input))
+
+    def _add_subtasks_to_prompt_stack(self, stack: PromptStack) -> None:
+        for s in self.subtasks:
+            if self.prompt_driver.use_native_tools:
+                action_calls = [
+                    ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
+                    for action in s.actions
+                ]
+                action_results = [
+                    ToolAction(
+                        name=action.name,
+                        path=action.path,
+                        tag=action.tag,
+                        output=action.output if action.output is not None else s.output,
+                    )
+                    for action in s.actions
+                ]
+
+                stack.add_assistant_message(
+                    ListArtifact(
+                        [
+                            *([TextArtifact(s.thought)] if s.thought else []),
+                            *[ActionArtifact(a) for a in action_calls],
+                        ],
+                    ),
+                )
+                stack.add_user_message(
+                    ListArtifact(
+                        [
+                            *[ActionArtifact(a) for a in action_results],
+                            *([] if s.output else [TextArtifact("Please keep going")]),
+                        ],
+                    ),
+                )
+            else:
+                stack.add_assistant_message(self.generate_assistant_subtask_template(s))
+                stack.add_user_message(self.generate_user_subtask_template(s))

@@ -399,6 +399,7 @@ class TestToolkitSubtask:
                 "temperature": 0.1,
                 "type": "MockPromptDriver",
                 "use_native_tools": False,
+                "structured_output_strategy": "rule",
             },
             "tools": [
                 {
