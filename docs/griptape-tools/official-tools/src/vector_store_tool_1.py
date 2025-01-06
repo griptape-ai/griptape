@@ -2,7 +2,9 @@ from griptape.chunkers import TextChunker
 from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
-from griptape.tools import PromptSummaryTool, VectorStoreTool
+from griptape.tools import VectorStoreTool
+
+NAMESPACE = "griptape"
 
 vector_store_driver = LocalVectorStoreDriver(
     embedding_driver=OpenAiEmbeddingDriver(),
@@ -11,14 +13,13 @@ vector_store_driver = LocalVectorStoreDriver(
 artifacts = WebLoader().load("https://www.griptape.ai")
 chunks = TextChunker().chunk(artifacts)
 
-vector_store_driver.upsert_text_artifacts({"griptape": chunks})
+vector_store_driver.upsert_text_artifacts({NAMESPACE: chunks})
 vector_db = VectorStoreTool(
     description="This DB has information about the Griptape Python framework",
     vector_store_driver=vector_store_driver,
-    query_params={"namespace": "griptape"},
-    off_prompt=True,
+    query_params={"namespace": NAMESPACE},
 )
 
-agent = Agent(tools=[vector_db, PromptSummaryTool()])
+agent = Agent(tools=[vector_db])
 
 agent.run("what is Griptape?")
