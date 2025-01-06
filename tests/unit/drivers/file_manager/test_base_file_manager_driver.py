@@ -45,7 +45,7 @@ class TestBaseFileManagerDriver:
 
         assert response.value == "Successfully saved artifact at: mock_save_location"
 
-    def test_workir(self, driver):
+    def test_workdir(self, driver):
         assert driver.workdir == "/"
         driver.workdir = "/new"
         assert driver.workdir == "/new"
