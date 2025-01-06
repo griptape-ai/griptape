@@ -19,11 +19,11 @@ class FuturesExecutorMixin(ABC):
     )
 
     def __del__(self) -> None:
-        executor = self.futures_executor
+        # don't raise exceptions in __del__
+        with contextlib.suppress(Exception):
+            executor = self.futures_executor
 
-        if executor is not None:
-            self.futures_executor = None  # pyright: ignore[reportAttributeAccessIssue] In practice this is safe, nobody will access this attribute after this point
+            if executor is not None:
+                self.futures_executor = None  # pyright: ignore[reportAttributeAccessIssue] In practice this is safe, nobody will access this attribute after this point
 
-            with contextlib.suppress(Exception):
-                # don't raise exceptions in __del__
                 executor.shutdown(wait=True)
