@@ -9,7 +9,7 @@ we can always convert that to an issue later.
 
 **I'd like to contribute!**
 
-All issues are actionable. Pick one and start working on it. Thank you.
+All issues are actionable. Pick one and start working on it.
 If you need help or guidance, comment on the issue. Issues that are extra
 friendly to new contributors are tagged with "good first issue".
 
