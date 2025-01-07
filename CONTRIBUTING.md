@@ -16,8 +16,8 @@ friendly to new contributors are tagged with "good first issue".
 **I have a bug!**
 
 1. Search the issue tracker and discussions for similar issues.
-2. If you don't have steps to reproduce, open a discussion.
-3. If you have steps to reproduce, open an issue.
+1. If you don't have steps to reproduce, open a discussion.
+1. If you have steps to reproduce, open an issue.
 
 **I have an idea for a feature!**
 
@@ -26,7 +26,7 @@ friendly to new contributors are tagged with "good first issue".
 **I've implemented a feature!**
 
 1. If there is an issue for the feature, open a pull request.
-2. If there is no issue, open a discussion and link to your branch.
+1. If there is no issue, open a discussion and link to your branch.
 
 **I have a question!**
 
@@ -58,7 +58,6 @@ Pull requests should be associated with a previously accepted issue.
 **If you open a pull request for something that wasn't previously discussed,**
 it may be closed or remain stale for an indefinite period of time.
 
-
 > [!NOTE]
 >
 > **Pull requests are NOT a place to discuss feature design.** Please do
@@ -75,16 +74,19 @@ The [Griptape Extension Template](https://github.com/griptape-ai/griptape-extens
 ## Dev Environment
 
 Install all dependencies via Make:
+
 ```shell
 make install
 ```
 
 Run tests:
+
 ```shell
 make test/unit
 ```
 
 Run checks:
+
 ```shell
 make check
 ```

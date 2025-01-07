@@ -13,13 +13,11 @@ class TestEvalEngine:
         return EvalEngine(
             criteria="foo",
             prompt_driver=MockPromptDriver(
-                mock_output=json.dumps(
-                    {
-                        "steps": ["mock output"],
-                        "score": 0.0,
-                        "reason": "mock output",
-                    }
-                ),
+                mock_structured_output={
+                    "steps": ["mock output"],
+                    "score": 0.0,
+                    "reason": "mock output",
+                }
             ),
         )
 
@@ -74,12 +72,10 @@ class TestEvalEngine:
         engine = EvalEngine(
             evaluation_steps=["foo"],
             prompt_driver=MockPromptDriver(
-                mock_output=json.dumps(
-                    {
-                        "score": 0.0,
-                        "reason": "mock output",
-                    }
-                ),
+                mock_structured_output={
+                    "score": 0.0,
+                    "reason": "mock output",
+                }
             ),
         )
         score, reason = engine.evaluate(

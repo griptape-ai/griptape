@@ -22,6 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 - `FuturesExecutorMixin.futures_executor`. Use `FuturesExecutorMixin.create_futures_executor` instead.
+### Changed
+
+- `EvalEngine` to use structured output when generating evaluation steps.
 
 ## [1.1.1] - 2025-01-03
 
