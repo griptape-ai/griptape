@@ -61,12 +61,13 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
         # to avoid duplicate work.
         sources_by_key = {self.to_key(source): source for source in sources}
 
-        return execute_futures_dict(
-            {
-                key: self.futures_executor.submit(with_contextvars(self.load), source)
-                for key, source in sources_by_key.items()
-            },
-        )
+        with self.create_futures_executor() as futures_executor:
+            return execute_futures_dict(
+                {
+                    key: futures_executor.submit(with_contextvars(self.load), source)
+                    for key, source in sources_by_key.items()
+                },
+            )
 
     def to_key(self, source: S) -> str:
         """Converts the source to a key for the collection."""

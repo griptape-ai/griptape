@@ -8,7 +8,7 @@ class TestBaseEventListenerDriver:
     def test_publish_event_no_batched(self):
         executor = MagicMock()
         executor.__enter__.return_value = executor
-        driver = MockEventListenerDriver(batched=False, futures_executor=executor)
+        driver = MockEventListenerDriver(batched=False, create_futures_executor=lambda: executor)
         mock_event_payload = MockEvent().to_dict()
 
         driver.publish_event(mock_event_payload)
@@ -18,7 +18,7 @@ class TestBaseEventListenerDriver:
     def test_publish_event_yes_batched(self):
         executor = MagicMock()
         executor.__enter__.return_value = executor
-        driver = MockEventListenerDriver(batched=True, futures_executor=executor)
+        driver = MockEventListenerDriver(batched=True, create_futures_executor=lambda: executor)
         mock_event_payload = MockEvent().to_dict()
 
         # Publish 9 events to fill the batch
@@ -38,7 +38,7 @@ class TestBaseEventListenerDriver:
     def test_flush_events(self):
         executor = MagicMock()
         executor.__enter__.return_value = executor
-        driver = MockEventListenerDriver(batched=True, futures_executor=executor)
+        driver = MockEventListenerDriver(batched=True, create_futures_executor=lambda: executor)
         driver.try_publish_event_payload_batch = MagicMock(side_effect=driver.try_publish_event_payload)
 
         driver.flush_events()

@@ -32,9 +32,10 @@ class ResponseRagStage(BaseRagStage):
     def run(self, context: RagContext) -> RagContext:
         logging.info("ResponseRagStage: running %s retrieval modules in parallel", len(self.response_modules))
 
-        results = utils.execute_futures_list(
-            [self.futures_executor.submit(with_contextvars(r.run), context) for r in self.response_modules]
-        )
+        with self.create_futures_executor() as futures_executor:
+            results = utils.execute_futures_list(
+                [futures_executor.submit(with_contextvars(r.run), context) for r in self.response_modules]
+            )
 
         context.outputs = results
 

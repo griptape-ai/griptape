@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import contextlib
+import warnings
 from abc import ABC
 from concurrent import futures
 from typing import Callable
@@ -14,16 +14,27 @@ class FuturesExecutorMixin(ABC):
         default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
     )
 
-    futures_executor: futures.Executor = field(
-        default=Factory(lambda self: self.create_futures_executor(), takes_self=True)
+    _futures_executor: futures.Executor = field(
+        default=Factory(
+            lambda self: self.create_futures_executor(),
+            takes_self=True,
+        ),
+        alias="futures_executor",
     )
 
-    def __del__(self) -> None:
-        executor = self.futures_executor
+    @property
+    def futures_executor(self) -> futures.Executor:
+        self.__raise_deprecation_warning()
+        return self._futures_executor
 
-        if executor is not None:
-            self.futures_executor = None  # pyright: ignore[reportAttributeAccessIssue] In practice this is safe, nobody will access this attribute after this point
+    @futures_executor.setter
+    def futures_executor(self, value: futures.Executor) -> None:
+        self.__raise_deprecation_warning()
+        self._futures_executor = value
 
-            with contextlib.suppress(Exception):
-                # don't raise exceptions in __del__
-                executor.shutdown(wait=True)
+    def __raise_deprecation_warning(self) -> None:
+        warnings.warn(
+            "`FuturesExecutorMixin.futures_executor` is deprecated and will be removed in a future release. Use `FuturesExecutorMixin.create_futures_executor` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )

@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Agent.output_schema` for setting an output schema to be used on the Agent's Prompt Task.
 - `BasePromptDriver.structured_output_strategy` for changing the Structured Output strategy between `native`, `tool`, and `rule`.
 
+### Fixed
+
+- Occasional crash during `FuturesExecutorMixin` cleanup.
+
+### Deprecated
+
+- `FuturesExecutorMixin.futures_executor`. Use `FuturesExecutorMixin.create_futures_executor` instead.
+
 ## [1.1.1] - 2025-01-03
 
 ### Fixed
