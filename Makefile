@@ -81,6 +81,7 @@ check: check/format check/lint check/types check/spell ## Run all checks.
 .PHONY: check/format
 check/format:
 	@poetry run ruff format --check
+	@poetry run mdformat --check .
 
 .PHONY: check/lint
 check/lint:
