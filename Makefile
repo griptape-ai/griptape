@@ -73,7 +73,7 @@ lint: ## Lint project.
 .PHONY: format
 format: ## Format project.
 	@poetry run ruff format
-	@poetry run mdformat .
+	@poetry run mdformat .github/ docs/
 
 .PHONY: check
 check: check/format check/lint check/types check/spell ## Run all checks.
@@ -81,7 +81,7 @@ check: check/format check/lint check/types check/spell ## Run all checks.
 .PHONY: check/format
 check/format:
 	@poetry run ruff format --check
-	@poetry run mdformat --check .
+	@poetry run mdformat --check .github/ docs/
 
 .PHONY: check/lint
 check/lint:
