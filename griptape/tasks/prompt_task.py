@@ -53,11 +53,11 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True, metadata={"serializable": True})
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
     subtasks: list[BaseSubtask] = field(factory=list)
-    generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
+    generate_assistant_subtask_template: Callable[[BaseSubtask], Union[str, BaseArtifact]] = field(
         default=Factory(lambda self: self.default_generate_assistant_subtask_template, takes_self=True),
         kw_only=True,
     )
-    generate_user_subtask_template: Callable[[ActionsSubtask], str] = field(
+    generate_user_subtask_template: Callable[[BaseSubtask], Union[str, BaseArtifact]] = field(
         default=Factory(lambda self: self.default_generate_user_subtask_template, takes_self=True),
         kw_only=True,
     )
@@ -161,7 +161,6 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             conversation_memory.add_run(run)
 
     def try_run(self) -> BaseArtifact:
-        from griptape.tasks import ActionsSubtask
         from griptape.tasks.schema_validation_subtask import SchemaValidationSubtask
 
         self.subtasks.clear()
@@ -230,17 +229,52 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             stop_sequence=self.response_stop_sequence,
         )
 
-    def default_generate_assistant_subtask_template(self, subtask: ActionsSubtask) -> str:
-        return J2("tasks/prompt_task/assistant_subtask.j2").render(
-            stop_sequence=self.response_stop_sequence,
-            subtask=subtask,
-        )
+    def default_generate_assistant_subtask_template(self, subtask: BaseSubtask) -> str | BaseArtifact:
+        if isinstance(subtask, ActionsSubtask):
+            if self.prompt_driver.use_native_tools:
+                action_calls = [
+                    ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
+                    for action in subtask.actions
+                ]
+                return ListArtifact(
+                    [
+                        *([TextArtifact(subtask.thought)] if subtask.thought else []),
+                        *[ActionArtifact(a) for a in action_calls],
+                    ],
+                )
+            else:
+                return J2("tasks/prompt_task/assistant_subtask.j2").render(
+                    stop_sequence=self.response_stop_sequence,
+                    subtask=subtask,
+                )
+        else:
+            raise ValueError("Only ActionsSubtask is supported for assistant subtask generation.")
 
-    def default_generate_user_subtask_template(self, subtask: ActionsSubtask) -> str:
-        return J2("tasks/prompt_task/user_subtask.j2").render(
-            stop_sequence=self.response_stop_sequence,
-            subtask=subtask,
-        )
+    def default_generate_user_subtask_template(self, subtask: BaseSubtask) -> str | BaseArtifact:
+        if isinstance(subtask, ActionsSubtask):
+            if self.prompt_driver.use_native_tools:
+                action_results = [
+                    ToolAction(
+                        name=action.name,
+                        path=action.path,
+                        tag=action.tag,
+                        output=action.output if action.output is not None else subtask.output,
+                    )
+                    for action in subtask.actions
+                ]
+                return ListArtifact(
+                    [
+                        *[ActionArtifact(a) for a in action_results],
+                        *([] if subtask.output else [TextArtifact("Please keep going")]),
+                    ],
+                )
+            else:
+                return J2("tasks/prompt_task/user_subtask.j2").render(
+                    stop_sequence=self.response_stop_sequence,
+                    subtask=subtask,
+                )
+        else:
+            raise ValueError("Only ActionsSubtask is supported for user subtask generation.")
 
     def actions_schema(self) -> Schema:
         action_schemas = []
@@ -316,39 +350,6 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             return self._process_task_input(TextArtifact(task_input))
 
     def _add_subtasks_to_prompt_stack(self, stack: PromptStack) -> None:
-        actions_subtasks = [s for s in self.subtasks if isinstance(s, ActionsSubtask)]
-        for s in actions_subtasks:
-            if self.prompt_driver.use_native_tools:
-                action_calls = [
-                    ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
-                    for action in s.actions
-                ]
-                stack.add_assistant_message(
-                    ListArtifact(
-                        [
-                            *([TextArtifact(s.thought)] if s.thought else []),
-                            *[ActionArtifact(a) for a in action_calls],
-                        ],
-                    ),
-                )
-
-                action_results = [
-                    ToolAction(
-                        name=action.name,
-                        path=action.path,
-                        tag=action.tag,
-                        output=action.output if action.output is not None else s.output,
-                    )
-                    for action in s.actions
-                ]
-                stack.add_user_message(
-                    ListArtifact(
-                        [
-                            *[ActionArtifact(a) for a in action_results],
-                            *([] if s.output else [TextArtifact("Please keep going")]),
-                        ],
-                    ),
-                )
-            else:
-                stack.add_assistant_message(self.generate_assistant_subtask_template(s))
-                stack.add_user_message(self.generate_user_subtask_template(s))
+        for s in self.subtasks:
+            stack.add_assistant_message(self.generate_assistant_subtask_template(s))
+            stack.add_user_message(self.generate_user_subtask_template(s))
