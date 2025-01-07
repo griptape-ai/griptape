@@ -188,7 +188,7 @@ Griptape uses [Semantic Versioning](https://semver.org/).
 
 ## Contributing
 
-Thank you for considering contributing to Griptape! Before you start, please read the following guidelines.
+Thank you for considering contributing to Griptape! Before you start, please review our [Contributing Guidelines](https://github.com/griptape-ai/griptape/blob/main/CONTRIBUTING.md).
 
 ### Submitting Issues
 
