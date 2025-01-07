@@ -14,18 +14,19 @@ from griptape.common import ToolAction
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishActionsSubtaskEvent, StartActionsSubtaskEvent
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
-from griptape.tasks import BaseTask
+from griptape.tasks.base_subtask import BaseSubtask
 from griptape.tools.structured_output.tool import StructuredOutputTool
 from griptape.utils import remove_null_values_in_dict_recursively, with_contextvars
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
+    from griptape.tasks import BaseTask
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class ActionsSubtask(BaseTask):
+class ActionsSubtask(BaseSubtask):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
@@ -38,7 +39,6 @@ class ActionsSubtask(BaseTask):
         alias="input",
     )
     _memory: Optional[TaskMemory] = None
-    _origin_task: Optional[BaseTask] = field(default=None, kw_only=True)
 
     @property
     def input(self) -> TextArtifact | ListArtifact:
@@ -48,40 +48,8 @@ class ActionsSubtask(BaseTask):
     def input(self, value: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact]) -> None:
         self._input = value
 
-    @property
-    def origin_task(self) -> BaseTask:
-        if self._origin_task is not None:
-            return self._origin_task
-        else:
-            raise Exception("ActionSubtask has no origin task.")
-
-    @property
-    def parents(self) -> list[BaseTask]:
-        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
-            return [self.origin_task.find_subtask(parent_id) for parent_id in self.parent_ids]
-        else:
-            raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
-
-    @property
-    def children(self) -> list[BaseTask]:
-        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
-            return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
-        else:
-            raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
-
-    def add_child(self, child: BaseTask) -> BaseTask:
-        if child.id not in self.child_ids:
-            self.child_ids.append(child.id)
-        return child
-
-    def add_parent(self, parent: BaseTask) -> BaseTask:
-        if parent.id not in self.parent_ids:
-            self.parent_ids.append(parent.id)
-        return parent
-
     def attach_to(self, parent_task: BaseTask) -> None:
-        self._origin_task = parent_task
-        self.structure = parent_task.structure
+        super().attach_to(parent_task)
 
         try:
             if isinstance(self.input, TextArtifact):
@@ -327,13 +295,7 @@ class ActionsSubtask(BaseTask):
                 else:
                     raise Exception("ToolAction path not found.")
 
-                if activity is not None:
-                    activity_schema = action.tool.activity_schema(activity)
-                else:
-                    raise Exception("Activity not found.")
-
-                if activity_schema is not None and action.input is not None:
-                    activity_schema.validate(action.input)
+                action.tool.validate_schema(activity, action.input)
         except schema.SchemaError as e:
             logger.exception("Subtask %s\nInvalid action JSON: %s", self.origin_task.id, e)
 

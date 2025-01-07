@@ -5,6 +5,7 @@ import logging
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import NOTHING, Attribute, Factory, NothingType, define, field
+from schema import Literal, Schema
 
 from griptape import utils
 from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, JsonArtifact, ListArtifact, TextArtifact
@@ -14,12 +15,10 @@ from griptape.memory.structure import Run
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Ruleset
-from griptape.tasks import ActionsSubtask, BaseTask
+from griptape.tasks import ActionsSubtask, BaseSubtask, BaseTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from schema import Schema
-
     from griptape.drivers import BasePromptDriver
     from griptape.memory import TaskMemory
     from griptape.memory.structure.base_conversation_memory import BaseConversationMemory
@@ -53,7 +52,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
     tools: list[BaseTool] = field(factory=list, kw_only=True, metadata={"serializable": True})
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True, metadata={"serializable": True})
     task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
-    subtasks: list[ActionsSubtask] = field(factory=list)
+    subtasks: list[BaseSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
         default=Factory(lambda self: self.default_generate_assistant_subtask_template, takes_self=True),
         kw_only=True,
@@ -163,6 +162,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
 
     def try_run(self) -> BaseArtifact:
         from griptape.tasks import ActionsSubtask
+        from griptape.tasks.schema_validation_subtask import SchemaValidationSubtask
 
         self.subtasks.clear()
 
@@ -170,6 +170,15 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
 
         result = self.prompt_driver.run(self.prompt_stack)
+
+        if self.output_schema is not None:
+            subtask = self.add_subtask(
+                SchemaValidationSubtask(
+                    input=JsonArtifact(result.to_artifact()),
+                    schema=self.output_schema.json_schema("Output Schema"),
+                ),
+            )
+
         if self.tools:
             subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
 
@@ -234,7 +243,18 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         )
 
     def actions_schema(self) -> Schema:
-        return self._actions_schema_for_tools(self.tools)
+        action_schemas = []
+
+        for tool in self.tools:
+            for activity_schema in tool.activity_schemas():
+                action_schema = activity_schema.schema
+                tag_key = Literal("tag", description="Unique tag name for action execution.")
+
+                action_schema[tag_key] = str
+
+                action_schemas.append(action_schema)
+
+        return Schema(description="JSON schema for an array of actions.", schema=action_schemas)
 
     def set_default_tools_memory(self, memory: TaskMemory) -> None:
         self.task_memory = memory
@@ -246,13 +266,13 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
                 if tool.output_memory is None and tool.off_prompt:
                     tool.output_memory = {getattr(a, "name"): [self.task_memory] for a in tool.activities()}
 
-    def find_subtask(self, subtask_id: str) -> ActionsSubtask:
+    def find_subtask(self, subtask_id: str) -> BaseSubtask:
         for subtask in self.subtasks:
             if subtask.id == subtask_id:
                 return subtask
         raise ValueError(f"Subtask with id {subtask_id} not found.")
 
-    def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
+    def add_subtask(self, subtask: BaseSubtask) -> BaseSubtask:
         subtask.attach_to(self)
         subtask.structure = self.structure
 
@@ -296,12 +316,22 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             return self._process_task_input(TextArtifact(task_input))
 
     def _add_subtasks_to_prompt_stack(self, stack: PromptStack) -> None:
-        for s in self.subtasks:
+        actions_subtasks = [s for s in self.subtasks if isinstance(s, ActionsSubtask)]
+        for s in actions_subtasks:
             if self.prompt_driver.use_native_tools:
                 action_calls = [
                     ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
                     for action in s.actions
                 ]
+                stack.add_assistant_message(
+                    ListArtifact(
+                        [
+                            *([TextArtifact(s.thought)] if s.thought else []),
+                            *[ActionArtifact(a) for a in action_calls],
+                        ],
+                    ),
+                )
+
                 action_results = [
                     ToolAction(
                         name=action.name,
@@ -311,15 +341,6 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
                     )
                     for action in s.actions
                 ]
-
-                stack.add_assistant_message(
-                    ListArtifact(
-                        [
-                            *([TextArtifact(s.thought)] if s.thought else []),
-                            *[ActionArtifact(a) for a in action_calls],
-                        ],
-                    ),
-                )
                 stack.add_user_message(
                     ListArtifact(
                         [

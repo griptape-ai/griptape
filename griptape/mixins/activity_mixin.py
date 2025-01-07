@@ -4,6 +4,7 @@ import inspect
 from copy import deepcopy
 from typing import Callable, Optional
 
+import jsonschema
 from attrs import Attribute, define, field
 from jinja2 import Template
 from schema import Schema
@@ -84,7 +85,7 @@ class ActivityMixin:
             raise Exception("This method is not an activity.")
         return Template(getattr(activity, "config")["description"]).render({"_self": self})
 
-    def activity_schema(self, activity: Callable) -> Optional[Schema]:
+    def activity_schema(self, activity: Callable) -> Optional[Schema | dict]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         if getattr(activity, "config")["schema"] is not None:
@@ -102,6 +103,16 @@ class ActivityMixin:
             return Schema({"values": config_schema})
         else:
             return None
+
+    def validate_schema(self, activity: Callable, schema: dict) -> None:
+        activity_schema = self.activity_schema(activity)
+
+        if activity_schema is None:
+            raise ValueError(f"Activity {activity} does not have a schema")
+
+        json_schema = schema.json_schema("Schema") if isinstance(schema, Schema) else schema
+
+        jsonschema.validate(schema, json_schema)
 
     def _validate_tool_activity(self, activity_name: str) -> None:
         tool = self.__class__

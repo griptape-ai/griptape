@@ -1,6 +1,8 @@
 from .base_task import BaseTask
 from .base_text_input_task import BaseTextInputTask
+from .base_subtask import BaseSubtask
 from .actions_subtask import ActionsSubtask
+from .schema_validation_subtask import SchemaValidationSubtask
 from .prompt_task import PromptTask
 from .toolkit_task import ToolkitTask
 from .text_summary_task import TextSummaryTask
@@ -23,8 +25,10 @@ from .branch_task import BranchTask
 __all__ = [
     "BaseTask",
     "BaseTextInputTask",
+    "BaseSubtask",
     "PromptTask",
     "ActionsSubtask",
+    "SchemaValidationSubtask",
     "ToolkitTask",
     "TextSummaryTask",
     "ToolTask",
