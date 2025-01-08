@@ -11,7 +11,6 @@ from griptape.common import Message, PromptStack
 from griptape.configs import Defaults
 from griptape.engines import BaseEvalEngine
 from griptape.mixins.serializable_mixin import SerializableMixin
-from griptape.rules import JsonSchemaRule
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -89,7 +88,6 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
         system_prompt = self.generate_steps_system_template.render(
             evaluation_params=", ".join(param for param in evaluation_params),
             criteria=self.criteria,
-            json_schema_rule=JsonSchemaRule(STEPS_SCHEMA.json_schema("Output Format")),
         )
         user_prompt = self.generate_steps_user_template.render()
 
@@ -99,6 +97,7 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
                     Message(system_prompt, role=Message.SYSTEM_ROLE),
                     Message(user_prompt, role=Message.USER_ROLE),
                 ],
+                output_schema=STEPS_SCHEMA,
             ),
         ).to_artifact()
 
@@ -111,7 +110,6 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
             evaluation_params=", ".join(param for param in evaluation_params),
             evaluation_steps=self.evaluation_steps,
             evaluation_text="\n\n".join(f"{key}: {value}" for key, value in evaluation_params.items()),
-            json_schema_rule=JsonSchemaRule(RESULTS_SCHEMA.json_schema("Output Format")),
         )
         user_prompt = self.generate_results_user_template.render()
 
@@ -121,6 +119,7 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
                     Message(system_prompt, role=Message.SYSTEM_ROLE),
                     Message(user_prompt, role=Message.USER_ROLE),
                 ],
+                output_schema=RESULTS_SCHEMA,
             ),
         ).to_text()
 
