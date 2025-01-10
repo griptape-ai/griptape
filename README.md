@@ -190,59 +190,6 @@ Griptape uses [Semantic Versioning](https://semver.org/).
 
 Thank you for considering contributing to Griptape! Before you start, please review our [Contributing Guidelines](https://github.com/griptape-ai/griptape/blob/main/CONTRIBUTING.md).
 
-### Submitting Issues
-
-If you have identified a bug, want to propose a new feature, or have a question, please submit an issue through our public [issue tracker](https://github.com/griptape-ai/griptape/issues). Before submitting a new issue, please check the existing issues to ensure it hasn't been reported or discussed before.
-
-### Submitting Pull Requests
-
-We welcome and encourage pull requests. To streamline the process, please follow these guidelines:
-
-1. **Existing Issues:** Please submit pull requests only for existing issues. If you want to work on new functionality or fix a bug that hasn't been addressed yet, please first submit an issue. This allows the Griptape team to internally process the request and provide a public response.
-
-1. **Branch:** Submit all pull requests to the `dev` branch. This helps us manage changes and integrate them smoothly.
-
-1. **Unit Tests:** Ensure that your pull request passes all existing unit tests. Additionally, if you are introducing new code, please include new unit tests to validate its functionality.
-
-Run `make test/unit` to execute the test suite locally.
-
-4. **Documentation:** Every pull request must include updates to documentation or explicitly explain why a documentation update is not required. Documentation is crucial for maintaining a comprehensive and user-friendly project.
-
-Run `make docs` to build the documentation locally.
-
-5. **Code Checks:** Griptape a variety of tools to enforce code quality and style. Your code must pass all checks before it can be merged.
-
-Run `make check` to run all code checks locally.
-
-6. **Changelog:** If your pull request introduces a notable change, please update the [changelog](https://github.com/griptape-ai/griptape/blob/dev/CHANGELOG.md).
-
-### Griptape Extensions
-
-Griptape's extensibility allows anyone to develop and distribute functionality independently.
-All new integrations, including Tools, Drivers, Tasks, etc., should initially be developed as extensions and then can be upstreamed into Griptape core if discussed and approved.
-
-The [Griptape Extension Template](https://github.com/griptape-ai/griptape-extension-template) provides the recommended structure, step-by-step instructions, basic automation, and usage examples for new integrations.
-
-### Dev and Test Dependencies
-
-Install all dependencies via Make:
-
-```shell
-make install
-```
-
-Or install by calling Poetry directly:
-
-```shell
-poetry install --all-extras --with dev --with test --with docs
-```
-
-Configure pre-commit to ensure that your code is formatted correctly and passes all checks:
-
-```shell
-poetry run pre-commit install
-```
-
 ## License
 
 Griptape is available under the Apache 2.0 License.
