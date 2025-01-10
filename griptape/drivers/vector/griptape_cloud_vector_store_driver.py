@@ -99,10 +99,12 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
 
         request: dict[str, Any] = {
             "query": query,
-            "count": count,
-            "distance_metric": distance_metric,
-            "filter": filter,
-            "include_vectors": include_vectors,
+            "query_args": {
+                "count": count,
+                "distance_metric": distance_metric,
+                "filter": filter,
+                "include_vectors": include_vectors,
+            }
         }
         request = {k: v for k, v in request.items() if v is not None}
 
