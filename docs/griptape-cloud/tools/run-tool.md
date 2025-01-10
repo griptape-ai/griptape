@@ -33,4 +33,4 @@ echo "my_activity response: ${response}"
 
 ## Using the Griptape Framework
 
-The Griptape framework provides a [`GriptapeCloudToolTool`](../../griptape-tools/official-tools/griptape-cloud-tool-tool.md) for interacting with your deployed Tools. Simply pass your Tool resource UUID as the `tool_id` kwarg, and the schema and activity methods will be dynamically set on the Tool.
+The Griptape framework provides a [`GriptapeCloudToolTool`](../../griptape-tools/official-tools/griptape-cloud-tool-tool.md) for interacting with your deployed Tools. Simply pass your Tool resource UUID as the [`tool_id` kwarg](../../reference/griptape/tools/griptape_cloud_tool/tool#griptape.tools.griptape_cloud_tool.tool.GriptapeCloudToolTool.tool_id), and the schema and activity methods will be dynamically set on the Tool.

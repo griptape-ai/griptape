@@ -12,7 +12,7 @@ Have Griptape code? Have existing code with another LLM framework? You can host 
 
 ## Augment Agents with Tools
 
-Expand the capabilities of your agents with custom Tools they can call as part of their jobs. These Tools allow them to call services or perform custom logic, bridging the gap between the LLM and your application. See [Tools](tools/create-tool.md) to get started.
+Expand the capabilities of your agents with custom Tools they can use. These Tools allow them to call services or perform custom logic, bridging the gap between the LLM and your application. See [Tools](tools/create-tool.md) to get started.
 
 ## Store Configuration for LLM Agents
 
