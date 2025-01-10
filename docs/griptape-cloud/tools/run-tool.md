@@ -1,5 +1,15 @@
 # Running a Tool
 
+Tools are run by sending HTTP POST requests to the Tool's activity endpoints. Activities are defined by decorating your tool's methods with the `@activity` decorator. The activity name is the name of the method.
+
+For example, if you wanted to deploy Griptape's provided [`CalculatorTool`](../../griptape-tools/official-tools/calculator-tool.md), the endpoint for the `calculate` activity would be `https://cloud.griptape.ai/api/tools/{tool_id}/activities/calculate`, and the request body would be a JSON object with the key `expression` and the value as the expression to calculate.
+
+```json
+{
+  "expression": "10**5"
+}
+```
+
 Once your Tool is created and deployed, you can run your Tool one of three ways outlined below.
 
 ## From the Cloud Console

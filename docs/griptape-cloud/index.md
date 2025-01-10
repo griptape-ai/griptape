@@ -10,9 +10,9 @@ Connect to your data with our [Data Sources](data-sources/create-data-source.md)
 
 Have Griptape code? Have existing code with another LLM framework? You can host your Python code using [Structures](structures/create-structure.md) whether it uses the Griptape Framework or not.
 
-## Augment LLM requests with Tools
+## Augment Agents with Tools
 
-Create custom actions that LLMs can perform with [Tools](tools/create-tool.md). Tools in the cloud are instances of [Griptape Framework Tools](/griptape-tools/index.md) and can be run from anywhere with a simple API call or through Griptape Framework's [GriptapeCloudToolTool](/griptpe-tools/official-tools/griptape-cloud-tool-tool.md).
+Expand the capabilities of your agents with custom Tools they can call as part of their jobs. These Tools allow them to call services or perform custom logic, bridging the gap between the LLM and your application. See [Tools](tools/create-tool.md) to get started.
 
 ## Store Configuration for LLM Agents
 

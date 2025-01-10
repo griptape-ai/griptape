@@ -1,6 +1,6 @@
 # Tools
 
-Tools can be used to execute arbitrary actions in a request/response format. They can be given to an LLM so the LLM can take appropriate action based on the metadata of the Tool.
+You can host your [Griptape framework Tools](../../griptape-tools/index.md) on Griptape Cloud. This allows you to run your Tools without needing to manage infrastructure.
 
 ## Create a Tool
 

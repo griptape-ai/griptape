@@ -1,6 +1,6 @@
 ## Overview
 
-Tool repositories require a configuration file which informs Griptape Cloud of your Managed Tool's dependencies and how it needs to build and run.
+Tool repositories require a configuration file which informs Griptape Cloud of your Tool's dependencies and how it needs to build and run.
 
 ## Tool Config File Schema
 
