@@ -84,7 +84,7 @@ class ActionsSubtask(BaseSubtask):
         )
 
         parts = [
-            f"Subtask {self.id}",
+            f"{self.__class__.__name__} {self.id}",
             *([f"\nThought: {self.thought}"] if self.thought else []),
             f"\nActions: {self.actions_to_json()}",
         ]

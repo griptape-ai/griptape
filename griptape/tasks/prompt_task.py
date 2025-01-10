@@ -101,7 +101,9 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         if self.output:
             stack.add_assistant_message(self.output.to_text())
         else:
-            self._add_subtasks_to_prompt_stack(stack)
+            for s in self.subtasks:
+                stack.add_assistant_message(self.generate_assistant_subtask_template(s))
+                stack.add_user_message(self.generate_user_subtask_template(s))
 
         if memory is not None:
             # inserting at index 1 to place memory right after system prompt
@@ -168,39 +170,32 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         if self.response_stop_sequence not in self.prompt_driver.tokenizer.stop_sequences:
             self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
 
-        result = self.prompt_driver.run(self.prompt_stack)
+        output = self.prompt_driver.run(self.prompt_stack).to_artifact()
 
-        if self.output_schema is not None:
-            subtask = self.add_subtask(
-                SchemaValidationSubtask(
-                    input=JsonArtifact(result.to_artifact()),
-                    schema=self.output_schema.json_schema("Output Schema"),
-                ),
-            )
+        if isinstance(output, TextArtifact):
+            if self.output_schema is not None:
+                output_schema = self.output_schema
+                output = self._run_subtasks(
+                    lambda result: SchemaValidationSubtask(input=result, schema=output_schema),
+                    output,
+                    lambda artifact: isinstance(artifact, ErrorArtifact),
+                )
+                if not isinstance(output, ErrorArtifact) and self.prompt_driver.structured_output_strategy in (
+                    "native",
+                    "rule",
+                ):
+                    output = JsonArtifact(output.value)
+            # This could be a problem if the user has use_native_tools=False and output_schema set
+            elif self.tools:
+                output = self._run_subtasks(lambda result: ActionsSubtask(result), output, lambda _: True)
+        elif (
+            isinstance(output, ActionArtifact)
+            or (isinstance(output, ListArtifact) and output.has_type(ActionArtifact))
+            and self.tools
+        ):
+            output = self._run_subtasks(lambda result: ActionsSubtask(result), output, lambda _: True)
 
-        if self.tools:
-            subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
-
-            while True:
-                if subtask.output is None:
-                    if len(self.subtasks) >= self.max_subtasks:
-                        subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
-                    else:
-                        subtask.run()
-
-                        result = self.prompt_driver.run(self.prompt_stack)
-                        subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
-                else:
-                    break
-
-            output = subtask.output
-        else:
-            output = result.to_artifact()
-
-        if self.output_schema is not None and self.prompt_driver.structured_output_strategy in ("native", "rule"):
-            return JsonArtifact(output.value)
-        else:
-            return output
+        return output
 
     def preprocess(self, structure: Structure) -> BaseTask:
         super().preprocess(structure)
@@ -248,7 +243,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
                     subtask=subtask,
                 )
         else:
-            raise ValueError("Only ActionsSubtask is supported for assistant subtask generation.")
+            return subtask.input
 
     def default_generate_user_subtask_template(self, subtask: BaseSubtask) -> str | BaseArtifact:
         if isinstance(subtask, ActionsSubtask):
@@ -274,7 +269,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
                     subtask=subtask,
                 )
         else:
-            raise ValueError("Only ActionsSubtask is supported for user subtask generation.")
+            return f"Correct your JSON output with this error feedback: {subtask.output}"
 
     def actions_schema(self) -> Schema:
         action_schemas = []
@@ -330,6 +325,33 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
                 return memory
         raise ValueError(f"Memory with name {memory_name} not found.")
 
+    def _run_subtasks(
+        self,
+        subtask_factory: Callable[[BaseArtifact], BaseSubtask],
+        initial_input: BaseArtifact,
+        more_work: Callable[[BaseArtifact], bool],
+    ) -> BaseArtifact:
+        subtask = self.add_subtask(subtask_factory(initial_input))
+        while True:
+            if subtask.output is None:
+                if len(self.subtasks) >= self.max_subtasks:
+                    return ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
+                else:
+                    output = subtask.run()
+
+                    # CoT: work until the output is a non-tool call
+                    # non-CoT: work until the output is not an error
+                    # Validation: work until the output is not an error
+                    # Unknown: always give me the result with no subtasks
+                    # Should this be a enum? Or a callable?
+                    if more_work(output):
+                        result = self.prompt_driver.run(self.prompt_stack).to_artifact()
+                        subtask = self.add_subtask(subtask_factory(result))
+            else:
+                break
+
+        return subtask.output
+
     def _process_task_input(
         self,
         task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact],
@@ -348,8 +370,3 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
         else:
             return self._process_task_input(TextArtifact(task_input))
-
-    def _add_subtasks_to_prompt_stack(self, stack: PromptStack) -> None:
-        for s in self.subtasks:
-            stack.add_assistant_message(self.generate_assistant_subtask_template(s))
-            stack.add_user_message(self.generate_user_subtask_template(s))

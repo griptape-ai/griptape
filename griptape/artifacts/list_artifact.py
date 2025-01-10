@@ -54,5 +54,8 @@ class ListArtifact(BaseArtifact, Generic[T]):
         else:
             return False
 
+    def has_type(self, target_type: type) -> bool:
+        return any(isinstance(v, target_type) for v in self.value)
+
     def has_items(self) -> bool:
         return len(self) > 0

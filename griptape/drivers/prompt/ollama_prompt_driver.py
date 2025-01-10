@@ -67,6 +67,7 @@ class OllamaPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    structured_output_strategy: str = field(default="native", kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 

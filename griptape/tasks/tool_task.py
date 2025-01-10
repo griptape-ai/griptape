@@ -13,8 +13,6 @@ from griptape.tasks import ActionsSubtask, PromptTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from schema import Schema
-
     from griptape.common import PromptStack
     from griptape.memory import TaskMemory
     from griptape.structures import Structure
@@ -44,6 +42,8 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         if self.task_memory is not None:
             self.set_default_tools_memory(self.task_memory)
 
+        self.tools = [self.tool]
+
     def preprocess(self, structure: Structure) -> ToolTask:
         super().preprocess(structure)
 
@@ -59,9 +59,6 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             use_native_tools=self.prompt_driver.use_native_tools,
         )
-
-    def actions_schema(self) -> Schema:
-        return self._actions_schema_for_tools([self.tool])
 
     def try_run(self) -> BaseArtifact:
         result = self.prompt_driver.run(self.prompt_stack)

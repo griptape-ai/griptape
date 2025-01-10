@@ -158,6 +158,7 @@ class TestActionsSubtask:
         Agent().add_task(task)
         subtask = task.add_subtask(ActionsSubtask(valid_input))
         json_dict = json.loads(subtask.actions_to_json())
+        print(json_dict)
 
         assert json_dict[0]["name"] == "MockTool"
         assert json_dict[0]["path"] == "test_no_schema"

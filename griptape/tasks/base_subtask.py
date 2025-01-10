@@ -5,6 +5,7 @@ from typing import Optional
 
 from attrs import define, field
 
+from griptape.artifacts import BaseArtifact
 from griptape.configs import Defaults
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.tasks import BaseTask
@@ -15,6 +16,16 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 @define
 class BaseSubtask(BaseTask):
     _origin_task: Optional[BaseTask] = field(default=None, kw_only=True)
+
+    _input: BaseArtifact = field(kw_only=True, alias="input")
+
+    @property
+    def input(self) -> BaseArtifact:
+        return self._input
+
+    @input.setter
+    def input(self, value: BaseArtifact) -> None:
+        self._input = value
 
     @property
     def origin_task(self) -> BaseTask:

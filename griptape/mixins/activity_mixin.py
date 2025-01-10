@@ -108,7 +108,7 @@ class ActivityMixin:
         activity_schema = self.activity_schema(activity)
 
         if activity_schema is None:
-            raise ValueError(f"Activity {activity} does not have a schema")
+            return
 
         json_schema = schema.json_schema("Schema") if isinstance(schema, Schema) else schema
 
