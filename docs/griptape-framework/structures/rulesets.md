@@ -13,6 +13,10 @@ A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define [Ru
 
 [Rule](../../reference/griptape/rules/base_rule.md)s shape the LLM's behavior by defining specific guidelines or instructions for how it should interpret and respond to inputs. Rules can be used to modify language style, tone, or even behavior based on what you define.
 
+!!! tip
+    Try to avoid writing large amounts of text in a single Rule. Instead, break it down into smaller, more manageable Rules and Rulesets.
+    If you have an existing system prompt, consider [overriding it](#overriding-system-prompts) instead.
+
 ```python
 --8<-- "docs/griptape-framework/structures/src/basic_rule.py"
 ```
@@ -151,4 +155,18 @@ You can pass [rules](../../reference/griptape/mixins/rule_mixin.md#griptape.mixi
                              Output: {
                                "emoji_response": "😊👍"
                              }
+```
+
+## Overriding System Prompts
+
+While Rulesets are the preferred way to steer LLM output, sometimes you may want to fully override the system prompt.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/generate_system_prompt.py"
+```
+
+Note that by overriding the system prompt, Rulesets are no longer applied. To work around this, we can append the default system prompt to our custom prompt.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/generate_system_prompt_with_rules.py"
 ```
