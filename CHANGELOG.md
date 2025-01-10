@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - `EvalEngine` to use structured output when generating evaluation steps.
+- `GriptapeCloudVectorStoreDriver.query()` updated to non-deprecated Griptape Cloud API shape.
 
 ## [1.1.1] - 2025-01-03
 
