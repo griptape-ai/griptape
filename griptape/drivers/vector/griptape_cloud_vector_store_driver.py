@@ -104,7 +104,7 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
                 "distance_metric": distance_metric,
                 "filter": filter,
                 "include_vectors": include_vectors,
-            }
+            },
         }
         request = {k: v for k, v in request.items() if v is not None}
 
