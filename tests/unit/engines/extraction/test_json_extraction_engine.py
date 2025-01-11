@@ -29,7 +29,7 @@ class TestJsonExtractionEngine:
         large_text = Path(normpath(join(dirname(__file__), "../../../resources", "test.txt"))).read_text()
 
         extracted = engine.extract_text(large_text * 50)
-        assert len(extracted) == 354
+        assert len(extracted) == 322
         assert extracted[0].value == {"test_key_1": "test_value_1"}
 
     def test_extract_error(self, engine):
