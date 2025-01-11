@@ -44,9 +44,10 @@ class BaseChunker(ABC):
         if token_count <= self.max_tokens:
             return [chunk]
         else:
-            balance_index = -1
-            balance_diff = float("inf")
+            midpoint_index = -1
+            best_midpoint_distance = float("inf")
             tokens_count = 0
+            hmm = []
             half_token_count = token_count // 2
 
             # If a separator is provided, only use separators after it.
@@ -63,18 +64,20 @@ class BaseChunker(ABC):
                 if len(subchunks) > 1:
                     # Iterate through the subchunks and calculate token counts.
                     for index, subchunk in enumerate(subchunks):
-                        if index < len(subchunks):
-                            subchunk = separator.value + subchunk if separator.is_prefix else subchunk + separator.value
-
-                        tokens_count += self.tokenizer.count_tokens(subchunk)
+                        subchunk = separator.value + subchunk if separator.is_prefix else subchunk + separator.value
+                        hmm.append(subchunk)
+                        tokens_count = self.tokenizer.count_tokens("".join(hmm))
+                        # tokens_count += self.tokenizer.count_tokens(subchunk)
+                        print(tokens_count)
 
                         # Update the best split if the current one is more balanced.
-                        if abs(tokens_count - half_token_count) < balance_diff:
-                            balance_index = index
-                            balance_diff = abs(tokens_count - half_token_count)
+                        midpoint_distance = abs(tokens_count - half_token_count)
+                        if midpoint_distance < best_midpoint_distance:
+                            midpoint_index = index
+                            best_midpoint_distance = midpoint_distance
 
                     # Create the two subchunks based on the best separator.
-                    first_subchunk, second_subchunk = self.__get_subchunks(separator, subchunks, balance_index)
+                    first_subchunk, second_subchunk = self.__get_subchunks(separator, subchunks, midpoint_index)
 
                     # Continue recursively chunking the subchunks.
                     first_subchunk_rec = self._chunk_recursively(first_subchunk.strip(), separator)
@@ -106,3 +109,9 @@ class BaseChunker(ABC):
             second_subchunk = separator.value.join(subchunks[balance_index + 1 :])
 
         return first_subchunk, second_subchunk
+
+    def __join_subchunks(self, separator: ChunkSeparator, subchunks: list[str]) -> str:
+        if separator.is_prefix:
+            return separator.value + separator.value.join(subchunks)
+        else:
+            return separator.value.join(subchunks) + separator.value
