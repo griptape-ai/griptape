@@ -123,3 +123,17 @@ class TestTextChunker:
         assert len(chunks) == 2
         for chunk in chunks:
             assert chunker.tokenizer.count_tokens(chunk.value) <= max_tokens
+
+    def test_artifact_reference(self, chunker):
+        from griptape.common.reference import Reference
+
+        reference = Reference(authors=["jason"], title="pies I like")
+        chunks = chunker.chunk(TextArtifact(gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " "), reference=reference))
+
+        for chunk in chunks:
+            assert chunk.reference == reference
+
+        chunks = chunker.chunk(gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, " "))
+
+        for chunk in chunks:
+            assert chunk.reference is None
