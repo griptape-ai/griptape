@@ -35,3 +35,15 @@ class TestLocalVectorStoreDriver(TestBaseVectorStoreDriver):
         assert len(driver.query("foo", namespace="test1")) == 1000
         assert len(driver.query("foo", namespace="test2")) == 1000
         assert len(driver.query("foo", namespace="test3")) == 1000
+
+    def test_query_vector(self, driver):
+        driver.upsert_text_artifacts({"foo": [TextArtifact("foo bar")]})
+
+        result = driver.query_vector([1.0, 1.0], count=1, include_vectors=True)
+
+        assert len(result) == 1
+        assert result[0].to_artifact().value == "foo bar"
+        assert result[0].id is not None
+        assert result[0].vector == [0, 1]
+        assert result[0].score is not None
+        assert result[0].namespace == "foo"

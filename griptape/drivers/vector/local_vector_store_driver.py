@@ -99,7 +99,9 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         entries_and_relatednesses.sort(key=operator.itemgetter(1), reverse=True)
 
         result = [
-            BaseVectorStoreDriver.Entry(id=er[0].id, vector=er[0].vector, score=er[1], meta=er[0].meta)
+            BaseVectorStoreDriver.Entry(
+                id=er[0].id, vector=er[0].vector, score=er[1], meta=er[0].meta, namespace=er[0].namespace
+            )
             for er in entries_and_relatednesses
         ][:count]
 
