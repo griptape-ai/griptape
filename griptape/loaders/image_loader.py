@@ -22,7 +22,7 @@ class ImageLoader(BaseFileLoader[ImageArtifact]):
 
     format: Optional[str] = field(default=None, kw_only=True)
 
-    def parse(self, data: bytes) -> ImageArtifact:
+    def try_parse(self, data: bytes) -> ImageArtifact:
         pil_image = import_optional_dependency("PIL.Image")
         image = pil_image.open(BytesIO(data))
 
