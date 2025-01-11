@@ -34,11 +34,7 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
     def load(self, source: S) -> A:
         data = self.fetch(source)
 
-        artifact = self.parse(data)
-
-        artifact.reference = self.reference
-
-        return artifact
+        return self.parse(data)
 
     @abstractmethod
     def fetch(self, source: S) -> F:
@@ -46,11 +42,18 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
 
     ...
 
-    @abstractmethod
     def parse(self, data: F) -> A:
         """Parses the fetched data and returns an Artifact."""
+        artifact = self.try_parse(data)
 
-    ...
+        artifact.reference = self.reference
+
+        return artifact
+
+    def try_parse(self, data: F) -> A:
+        """Parses the fetched data and returns an Artifact."""
+        # TODO: Mark as abstract method for griptape 2.0
+        raise NotImplementedError()
 
     def load_collection(
         self,
