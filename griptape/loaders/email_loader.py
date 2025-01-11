@@ -64,7 +64,7 @@ class EmailLoader(BaseLoader["EmailLoader.EmailQuery", list[bytes], ListArtifact
 
         return mail_bytes
 
-    def parse(self, data: list[bytes]) -> ListArtifact[TextArtifact]:
+    def try_parse(self, data: list[bytes]) -> ListArtifact[TextArtifact]:
         mailparser = import_optional_dependency("mailparser")
         artifacts = []
         for byte in data:

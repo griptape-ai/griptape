@@ -18,7 +18,7 @@ class CsvLoader(BaseFileLoader[ListArtifact[TextArtifact]]):
         default=lambda value: "\n".join(f"{key}: {val}" for key, val in value.items()), kw_only=True
     )
 
-    def parse(self, data: bytes) -> ListArtifact[TextArtifact]:
+    def try_parse(self, data: bytes) -> ListArtifact[TextArtifact]:
         reader = csv.DictReader(StringIO(data.decode(self.encoding)), delimiter=self.delimiter)
 
         return ListArtifact(
