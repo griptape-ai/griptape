@@ -7,13 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-### Added
-
-- `BaseVectorStoreDriver.query_vector` for querying vector stores with vectors.
-- Structured Output support for all Prompt Drivers.
-- `PromptTask.output_schema` for setting an output schema to be used with Structured Output.
-- `Agent.output_schema` for setting an output schema to be used on the Agent's Prompt Task.
-- `BasePromptDriver.structured_output_strategy` for changing the Structured Output strategy between `native`, `tool`, and `rule`.
+## [1.1.2] - 2025-01-12
 
 ### Fixed
 
@@ -22,13 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseLoader.reference` not being set when using `BaseLoader.parse` directly.
 - `LocalVectorStoreDriver` returned Entries not containing the namespace.
 - References being lost on Artifacts during chunking.
-
-### Deprecated
-
-- `FuturesExecutorMixin.futures_executor`. Use `FuturesExecutorMixin.create_futures_executor` instead.
-### Changed
-
-- `EvalEngine` to use structured output when generating evaluation steps.
 
 ## [1.1.1] - 2025-01-03
 
