@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Occasional crash during `FuturesExecutorMixin` cleanup.
 - `BaseChunker` chunking more than necessary.
 - `BaseLoader.reference` not being set when using `BaseLoader.parse` directly.
+- `LocalVectorStoreDriver` returned Entries not containing the namespace.
 
 ### Deprecated
 
