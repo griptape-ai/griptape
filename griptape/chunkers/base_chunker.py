@@ -5,8 +5,7 @@ from typing import Optional
 
 from attrs import Attribute, Factory, define, field
 
-from griptape.artifacts import TextArtifact
-from griptape.artifacts.list_artifact import ListArtifact
+from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.chunkers import ChunkSeparator
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
@@ -34,21 +33,18 @@ class BaseChunker(ABC):
             raise ValueError("max_tokens must be 0 or greater.")
 
     def chunk(self, text: TextArtifact | ListArtifact | str) -> list[TextArtifact]:
-        text = text.to_text() if isinstance(text, (TextArtifact, ListArtifact)) else text
+        text_to_chunk = text if isinstance(text, str) else text.to_text()
+        reference = None if isinstance(text, str) else text.reference
 
-        return [TextArtifact(c) for c in self._chunk_recursively(text)]
+        return [TextArtifact(c, reference=reference) for c in self._chunk_recursively(text_to_chunk)]
 
     def _chunk_recursively(self, chunk: str, current_separator: Optional[ChunkSeparator] = None) -> list[str]:
         token_count = self.tokenizer.count_tokens(chunk)
+        half_token_count = token_count // 2
 
         if token_count <= self.max_tokens:
             return [chunk]
         else:
-            balance_index = -1
-            balance_diff = float("inf")
-            tokens_count = 0
-            half_token_count = token_count // 2
-
             # If a separator is provided, only use separators after it.
             separators = (
                 self.separators[self.separators.index(current_separator) :] if current_separator else self.separators
@@ -59,22 +55,13 @@ class BaseChunker(ABC):
                 # Split the chunk into subchunks using the current separator.
                 subchunks = list(filter(None, chunk.split(separator.value)))
 
-                # Check if the split resulted in more than one subchunk.
+                # We can only recurse if there are multiple subchunks.
                 if len(subchunks) > 1:
-                    # Iterate through the subchunks and calculate token counts.
-                    for index, subchunk in enumerate(subchunks):
-                        if index < len(subchunks):
-                            subchunk = separator.value + subchunk if separator.is_prefix else subchunk + separator.value
-
-                        tokens_count += self.tokenizer.count_tokens(subchunk)
-
-                        # Update the best split if the current one is more balanced.
-                        if abs(tokens_count - half_token_count) < balance_diff:
-                            balance_index = index
-                            balance_diff = abs(tokens_count - half_token_count)
+                    # Find what combination of subchunks results in the most balanced split of the chunk.
+                    midpoint_index = self.__find_midpoint_index(subchunks, half_token_count)
 
                     # Create the two subchunks based on the best separator.
-                    first_subchunk, second_subchunk = self.__get_subchunks(separator, subchunks, balance_index)
+                    first_subchunk, second_subchunk = self.__get_subchunks(separator, subchunks, midpoint_index)
 
                     # Continue recursively chunking the subchunks.
                     first_subchunk_rec = self._chunk_recursively(first_subchunk.strip(), separator)
@@ -106,3 +93,17 @@ class BaseChunker(ABC):
             second_subchunk = separator.value.join(subchunks[balance_index + 1 :])
 
         return first_subchunk, second_subchunk
+
+    def __find_midpoint_index(self, subchunks: list[str], half_token_count: int) -> int:
+        midpoint_index = -1
+        best_midpoint_distance = float("inf")
+
+        for index, _ in enumerate(subchunks):
+            subchunk_tokens_count = self.tokenizer.count_tokens("".join(subchunks[: index + 1]))
+
+            midpoint_distance = abs(subchunk_tokens_count - half_token_count)
+            if midpoint_distance < best_midpoint_distance:
+                midpoint_index = index
+                best_midpoint_distance = midpoint_distance
+
+        return midpoint_index

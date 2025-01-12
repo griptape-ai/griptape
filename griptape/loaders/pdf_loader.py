@@ -12,7 +12,7 @@ from griptape.utils import import_optional_dependency
 
 @define
 class PdfLoader(BaseFileLoader):
-    def parse(
+    def try_parse(
         self,
         data: bytes,
         *,
