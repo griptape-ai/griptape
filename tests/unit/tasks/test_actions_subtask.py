@@ -164,7 +164,7 @@ class TestActionsSubtask:
         assert json_dict[0].get("input") is None
 
     def test_no_actions(self):
-        valid_input = "Thought: need to test\n" "<|Response|>: test observation\n" "Answer: test output"
+        valid_input = "Thought: need to test\n<|Response|>: test observation\nAnswer: test output"
 
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -174,7 +174,7 @@ class TestActionsSubtask:
         assert len(json_dict) == 0
 
     def test_empty_actions(self):
-        valid_input = "Thought: need to test\n" "Actions: []\n" "<|Response|>: test observation\n" "Answer: test output"
+        valid_input = "Thought: need to test\nActions: []\n<|Response|>: test observation\nAnswer: test output"
 
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -184,9 +184,7 @@ class TestActionsSubtask:
         assert len(json_dict) == 0
 
     def test_invalid_actions(self):
-        invalid_input = (
-            "Thought: need to test\n" "Actions: [{,{]\n" "<|Response|>: test observation\n" "Answer: test output"
-        )
+        invalid_input = "Thought: need to test\nActions: [{,{]\n<|Response|>: test observation\nAnswer: test output"
 
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)

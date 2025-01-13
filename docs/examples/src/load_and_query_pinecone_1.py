@@ -8,7 +8,7 @@ from griptape.drivers import OpenAiEmbeddingDriver, PineconeVectorStoreDriver
 
 def load_data(driver: PineconeVectorStoreDriver) -> None:
     response = urlopen(
-        "https://raw.githubusercontent.com/wedeploy-examples/" "supermarket-web-example/master/products.json"
+        "https://raw.githubusercontent.com/wedeploy-examples/supermarket-web-example/master/products.json"
     )
 
     for product in json.loads(response.read()):
