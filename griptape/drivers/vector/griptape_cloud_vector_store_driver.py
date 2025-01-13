@@ -97,14 +97,18 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
         """
         url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
 
-        request: dict[str, Any] = {
-            "query": query,
+        query_args = {
             "count": count,
             "distance_metric": distance_metric,
             "filter": filter,
             "include_vectors": include_vectors,
         }
-        request = {k: v for k, v in request.items() if v is not None}
+        query_args = {k: v for k, v in query_args.items() if v is not None}
+
+        request: dict[str, Any] = {
+            "query": query,
+            "query_args": query_args,
+        }
 
         response = requests.post(url, json=request, headers=self.headers).json()
         entries = response.get("entries", [])
