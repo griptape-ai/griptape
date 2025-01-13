@@ -14,8 +14,9 @@ A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define [Ru
 [Rule](../../reference/griptape/rules/base_rule.md)s shape the LLM's behavior by defining specific guidelines or instructions for how it should interpret and respond to inputs. Rules can be used to modify language style, tone, or even behavior based on what you define.
 
 !!! tip
-    Try to avoid writing large amounts of text in a single Rule. Instead, break it down into smaller, more manageable Rules and Rulesets.
-    If you have an existing system prompt, consider [overriding it](#overriding-system-prompts) instead.
+    Avoid writing large amounts of text in a single Rule.
+    Breaking down your Rules generally helps the LLM follow them more effectively. Additionally, it makes it easier to evaluate the Rule's effectiveness using tools like the [Eval Engine](../engines/eval-engines.md).
+    If you have an existing system prompt, consider [overriding the default system prompt](#overriding-system-prompts) instead.
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/basic_rule.py"
@@ -165,7 +166,8 @@ While Rulesets are the preferred way to steer LLM output, sometimes you may want
 --8<-- "docs/griptape-framework/structures/src/generate_system_prompt.py"
 ```
 
-Note that by overriding the system prompt, Rulesets are no longer applied. To work around this, we can append the default system prompt to our custom prompt.
+Note that when overriding the system prompt, it is your responsibility to integrate anything that goes in [by default](https://github.com/griptape-ai/griptape/blob/6b31c129fc19a9ba4bdb205ad9e2a40aef9b121f/griptape/tasks/prompt_task.py?plain=1#L216-L221).
+You can achieve this by appending the default system prompt to your custom prompt like so:
 
 ```python
 --8<-- "docs/griptape-framework/structures/src/generate_system_prompt_with_rules.py"
