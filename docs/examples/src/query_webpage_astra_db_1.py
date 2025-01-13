@@ -53,4 +53,4 @@ rag_tool = RagTool(
     rag_engine=engine,
 )
 agent = Agent(tools=[rag_tool])
-agent.run("What engine made possible to index such an amount of data, " "and what kind of tuning was required?")
+agent.run("What engine made possible to index such an amount of data, and what kind of tuning was required?")

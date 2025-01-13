@@ -32,7 +32,7 @@ chunks = TextChunker().chunk(artifacts)
 vector_store_driver.upsert_text_artifacts({namespace: chunks})
 
 rag_tool = RagTool(
-    description="Contains information about physics. " "Use it to answer any physics-related questions.",
+    description="Contains information about physics. Use it to answer any physics-related questions.",
     rag_engine=engine,
 )
 

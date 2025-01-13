@@ -12,6 +12,6 @@ class TruncateLoggingFilter(logging.Filter):
         message = record.getMessage()
 
         if len(message) > self.max_log_length:
-            record.msg = f"{message[:self.max_log_length]}... [{len(message) - self.max_log_length} more characters]"
+            record.msg = f"{message[: self.max_log_length]}... [{len(message) - self.max_log_length} more characters]"
             record.args = ()
         return True
