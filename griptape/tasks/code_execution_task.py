@@ -14,18 +14,19 @@ class CodeExecutionTask(BaseTextInputTask):
     on_run: Callable[[CodeExecutionTask], BaseArtifact] = field(kw_only=True)
 
     def __call__(self, *args, **kwargs) -> CodeExecutionTask:
-        return self.decorate(*args, **kwargs)
+        return self.wrap(*args, **kwargs)
 
     def try_run(self) -> BaseArtifact:
         return self.on_run(self)
 
     @classmethod
-    def decorate(cls, func: Callable) -> Any:
+    def wrap(cls, func: Callable) -> Any:
         from griptape.artifacts import GenericArtifact
 
         @functools.wraps(func)
         def wrapper(*args, **kwargs) -> Any:
             def on_run(task: Any) -> Any:
+                # Any tasks must be "unwrapped" to get their output value
                 arg_values = [arg.output.value for arg in args if isinstance(arg, BaseTask) if arg.output]
                 output = func(*arg_values)
 
