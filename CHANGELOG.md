@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - References being lost on Artifacts during chunking.
 - `FootnotePromptResponseRagModule`'s system prompt causing it to not answer even with relevant chunks. 
 - Chunker occasionally dropping suffix chunk separators.
+- `PromptTask.conversation_memory` not working when set without a Structure.
 
 ### Deprecated
 
