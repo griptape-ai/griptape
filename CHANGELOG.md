@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LocalVectorStoreDriver` returned Entries not containing the namespace.
 - References being lost on Artifacts during chunking.
 - Chunker occasionally dropping suffix chunk separators.
+- `PromptTask.conversation_memory` not working when set without a Structure.
 
 
 ## [1.1.1] - 2025-01-03

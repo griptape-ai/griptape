@@ -199,6 +199,7 @@ class TestPromptTask:
         task.run()
 
         assert len(conversation_memory.runs) == 0
+        assert len(task.prompt_stack.messages) == 2
 
         task.conversation_memory = conversation_memory
 
@@ -206,6 +207,7 @@ class TestPromptTask:
         task.run()
 
         assert len(conversation_memory.runs) == 2
+        assert len(task.prompt_stack.messages) == 6
 
         task.conversation_memory = None
 
@@ -213,6 +215,7 @@ class TestPromptTask:
         task.run()
 
         assert len(conversation_memory.runs) == 2
+        assert len(task.prompt_stack.messages) == 2
 
     def test_subtasks(self):
         task = PromptTask(
