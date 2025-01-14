@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `LocalVectorStoreDriver` returned Entries not containing the namespace.
 - References being lost on Artifacts during chunking.
 - `FootnotePromptResponseRagModule`'s system prompt causing it to not answer even with relevant chunks. 
+- Chunker occasionally dropping suffix chunk separators.
 
 ### Deprecated
 

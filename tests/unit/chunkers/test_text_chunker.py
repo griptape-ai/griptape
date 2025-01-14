@@ -114,8 +114,8 @@ class TestTextChunker:
             TextChunker(max_tokens=-1)
 
     def test_tiny_max_tokens(self, chunker):
-        max_tokens = 10
-        chunker.separators = [ChunkSeparator(" ")]
+        max_tokens = 11
+        chunker.separators = [ChunkSeparator(".")]
         chunker.max_tokens = max_tokens
         text = "This is a paragraph of text. I'll count to three: one, two three."
         chunks = chunker.chunk(text)
@@ -123,6 +123,7 @@ class TestTextChunker:
         assert len(chunks) == 2
         for chunk in chunks:
             assert chunker.tokenizer.count_tokens(chunk.value) <= max_tokens
+        assert chunks[-1].value.endswith("one, two three.")
 
     def test_artifact_reference(self, chunker):
         from griptape.common.reference import Reference
