@@ -57,7 +57,7 @@ Now, each _Task_ creates a Conversation Memory Run when it runs. This eliminates
 To blend the two approaches, you can disable Conversation Memory on individual tasks by setting [PromptTask.conversation_memory](../../reference/griptape/tasks/prompt_task.md#griptape.tasks.prompt_task.PromptTask.conversation_memory) to `None`.
 
 ```python
---8<-- "docs/griptape-framework/structures/src/conversation_memory_per_task_with_none.py"
+--8<-- "docs/griptape-framework/structures/src/conversation_memory_per_task_with_disabled.py"
 ```
 
 ## Types of Memory
