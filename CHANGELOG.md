@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseLoader.reference` not being set when using `BaseLoader.parse` directly.
 - `LocalVectorStoreDriver` returned Entries not containing the namespace.
 - References being lost on Artifacts during chunking.
+- Chunker occasionally dropping suffix chunk separators.
+
 
 ## [1.1.1] - 2025-01-03
 

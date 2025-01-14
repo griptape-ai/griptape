@@ -53,10 +53,14 @@ class BaseChunker(ABC):
             # Loop through available separators to find the best split.
             for separator in separators:
                 # Split the chunk into subchunks using the current separator.
-                subchunks = list(filter(None, chunk.split(separator.value)))
+                subchunks = chunk.strip().split(separator.value)
 
-                # We can only recurse if there are multiple subchunks.
-                if len(subchunks) > 1:
+                # We should not operate on the filtered, non-empty subchunks because the joins will be incorrect.
+                # However, we only want to process chunks that have multiple non-empty subchunks.
+                # Therefore, we use the non-empty subchunks to decide if we should proceed, but we operate on the original subchunks.
+                non_empty_subchunks = list(filter(None, subchunks))
+
+                if len(non_empty_subchunks) > 1:
                     # Find what combination of subchunks results in the most balanced split of the chunk.
                     midpoint_index = self.__find_midpoint_index(subchunks, half_token_count)
 
@@ -82,13 +86,13 @@ class BaseChunker(ABC):
             return self._chunk_recursively(chunk[:midpoint]) + self._chunk_recursively(chunk[midpoint:])
 
     def __get_subchunks(self, separator: ChunkSeparator, subchunks: list[str], balance_index: int) -> tuple[str, str]:
-        # Create the two subchunks based on the best separator.
+        # Create the two subchunks based on the best separator
         if separator.is_prefix:
-            # If the separator is a prefix, append it before this subchunk.
-            first_subchunk = separator.value + separator.value.join(subchunks[: balance_index + 1])
+            first_subchunk = separator.value.join(subchunks[: balance_index + 1])
+            # We need to manually prepend the separator since join doesn't add it to the first element.
             second_subchunk = separator.value + separator.value.join(subchunks[balance_index + 1 :])
         else:
-            # If the separator is not a prefix, append it after this subchunk.
+            # We need to manually append the separator since join doesn't add it to the last element.
             first_subchunk = separator.value.join(subchunks[: balance_index + 1]) + separator.value
             second_subchunk = separator.value.join(subchunks[balance_index + 1 :])
 
