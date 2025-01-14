@@ -165,9 +165,8 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             self.output.to_text() if self.output is not None else "",
         )
         conversation_memory = self.conversation_memory
-        structure = self.structure
         if (
-            (structure is None or structure.conversation_memory_strategy == "per_task")
+            (self.structure is None or self.structure.conversation_memory_strategy == "per_task")
             and conversation_memory is not None
             and self.output is not None
         ):
