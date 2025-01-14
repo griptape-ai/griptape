@@ -43,8 +43,8 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         default=Factory(lambda self: self.default_generate_system_template, takes_self=True),
         kw_only=True,
     )
-    conversation_memory: Union[Optional[BaseConversationMemory], NothingType] = field(
-        default=Factory(lambda: NOTHING), kw_only=True
+    _conversation_memory: Union[Optional[BaseConversationMemory], NothingType] = field(
+        default=Factory(lambda: NOTHING), kw_only=True, alias="conversation_memory"
     )
     _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
@@ -89,9 +89,23 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
         self._input = value
 
     @property
+    def conversation_memory(self) -> Optional[BaseConversationMemory]:
+        if self._conversation_memory is NOTHING:
+            if self.structure is None:
+                return None
+            else:
+                return self.structure.conversation_memory
+        else:
+            return self._conversation_memory
+
+    @conversation_memory.setter
+    def conversation_memory(self, value: Optional[BaseConversationMemory]) -> None:
+        self._conversation_memory = value
+
+    @property
     def prompt_stack(self) -> PromptStack:
         stack = PromptStack(tools=self.tools, output_schema=self.output_schema)
-        memory = self.structure.conversation_memory if self.structure is not None else None
+        memory = self.conversation_memory
 
         system_template = self.generate_system_template(self)
         if system_template:
@@ -151,10 +165,10 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             self.output.to_text() if self.output is not None else "",
         )
         conversation_memory = self.conversation_memory
+        structure = self.structure
         if (
-            (self.structure is None or self.structure.conversation_memory_strategy == "per_task")
+            (structure is None or structure.conversation_memory_strategy == "per_task")
             and conversation_memory is not None
-            and conversation_memory is not NOTHING
             and self.output is not None
         ):
             run = Run(input=self.input, output=self.output)
@@ -196,12 +210,6 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
 
     def preprocess(self, structure: Structure) -> BaseTask:
         super().preprocess(structure)
-
-        if self.conversation_memory is NOTHING:
-            if structure.conversation_memory is not None:
-                self.conversation_memory = structure.conversation_memory
-            else:
-                self.conversation_memory = None
 
         if self.task_memory is None and structure.task_memory:
             self.set_default_tools_memory(structure.task_memory)
