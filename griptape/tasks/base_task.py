@@ -41,13 +41,19 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
     output: Optional[BaseArtifact] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
-    def __rshift__(self, other: BaseTask) -> BaseTask:
-        self.add_child(other)
+    def __rshift__(self, other: BaseTask | list[BaseTask]) -> BaseTask | list[BaseTask]:
+        if isinstance(other, list):
+            self.add_children(other)
+        else:
+            self.add_child(other)
 
         return other
 
-    def __lshift__(self, other: BaseTask) -> BaseTask:
-        self.add_parent(other)
+    def __lshift__(self, other: BaseTask | list[BaseTask]) -> BaseTask | list[BaseTask]:
+        if isinstance(other, list):
+            self.add_parents(other)
+        else:
+            self.add_parent(other)
 
         return other
 

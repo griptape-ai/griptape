@@ -208,7 +208,7 @@ output:
 
 ### Bitshift Composition
 
-Task relationships can also be set up with the Python bitshift operators `>>` and `<<`. The following four statements are all functionally equivalent:
+Task relationships can also be set up with the Python bitshift operators `>>` and `<<`. The following statements are all functionally equivalent:
 
 ```python
 task1 >> task2
@@ -216,6 +216,9 @@ task1.add_child(task2)
 
 task2 << task1
 task2.add_parent(task1)
+
+task3 >> [task4, task5]
+task3.add_children([task4, task5])
 ```
 
 When using the bitshift to compose operators, the relationship is set in the direction that the bitshift operator points.

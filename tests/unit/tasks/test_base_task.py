@@ -151,6 +151,18 @@ class TestBaseTask:
         assert task.id in parent.child_ids
         assert added_task == parent
 
+    def test_add_multiple_parent_bitshift(self, task):
+        parent_1 = MockTask("parent foobar", id="parent_1_foobar")
+        parent_2 = MockTask("parent foobar", id="parent_2_foobar")
+
+        added_tasks = task << [parent_1, parent_2]
+
+        assert parent_1.id in task.parent_ids
+        assert parent_2.id in task.parent_ids
+        assert task.id in parent_1.child_ids
+        assert task.id in parent_2.child_ids
+        assert added_tasks == [parent_1, parent_2]
+
     def test_add_child_bitshift(self, task):
         child = MockTask("child foobar", id="child_foobar")
 
@@ -159,6 +171,18 @@ class TestBaseTask:
         assert child.id in task.child_ids
         assert task.id in child.parent_ids
         assert added_task == child
+
+    def test_add_multiple_child_bitshift(self, task):
+        child_1 = MockTask("child foobar", id="child_1_foobar")
+        child_2 = MockTask("child foobar", id="child_2_foobar")
+
+        added_tasks = task >> [child_1, child_2]
+
+        assert child_1.id in task.child_ids
+        assert child_2.id in task.child_ids
+        assert task.id in child_1.parent_ids
+        assert task.id in child_2.parent_ids
+        assert added_tasks == [child_1, child_2]
 
     def test_to_dict(self, task):
         expected_task_dict = {
