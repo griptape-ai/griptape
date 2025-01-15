@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.1.4] - 2025-01-15
+
+- Chunker occasionally dropping suffix chunk separators.
+- `PromptTask.conversation_memory` not working when set without a Structure.
+
 ## [1.1.3] - 2025-01-12
 
 ### Fixed
@@ -22,9 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `BaseLoader.reference` not being set when using `BaseLoader.parse` directly.
 - `LocalVectorStoreDriver` returned Entries not containing the namespace.
 - References being lost on Artifacts during chunking.
-- Chunker occasionally dropping suffix chunk separators.
-- `PromptTask.conversation_memory` not working when set without a Structure.
-
 
 ## [1.1.1] - 2025-01-03
 
