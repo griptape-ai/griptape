@@ -34,6 +34,10 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
     additional_ruleset_ids: list[str] = field(factory=list, kw_only=True)
     knowledge_base_ids: Optional[list[str]] = field(default=None, kw_only=True)
     additional_knowledge_base_ids: list[str] = field(factory=list, kw_only=True)
+    structure_ids: Optional[list[str]] = field(default=None, kw_only=True)
+    additional_structure_ids: list[str] = field(factory=list, kw_only=True)
+    tool_ids: Optional[list[str]] = field(default=None, kw_only=True)
+    additional_tool_ids: list[str] = field(factory=list, kw_only=True)
     stream: bool = field(default=False, kw_only=True)
     poll_interval: int = field(default=1, kw_only=True)
     max_attempts: int = field(default=20, kw_only=True)
@@ -48,10 +52,14 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
                 "stream": self.stream,
                 "thread_id": self.thread_id,
                 "input": self.input,
-                "ruleset_ids": self.ruleset_ids,
+                **({"ruleset_ids": self.ruleset_ids} if self.ruleset_ids is not None else {}),
                 "additional_ruleset_ids": self.additional_ruleset_ids,
-                "knowledge_base_ids": self.knowledge_base_ids,
+                **({"knowledge_base_ids": self.knowledge_base_ids} if self.knowledge_base_ids is not None else {}),
                 "additional_knowledge_base_ids": self.additional_knowledge_base_ids,
+                **({"structure_ids": self.structure_ids} if self.structure_ids is not None else {}),
+                "additional_structure_ids": self.additional_structure_ids,
+                **({"tool_ids": self.tool_ids} if self.tool_ids is not None else {}),
+                "additional_tool_ids": self.additional_tool_ids,
             },
             headers=self.headers,
         )
