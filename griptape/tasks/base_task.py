@@ -5,7 +5,7 @@ import uuid
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
 
 from attrs import Factory, define, field
 
@@ -22,9 +22,11 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
+T = TypeVar("T", bound=BaseArtifact)
+
 
 @define
-class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"], ABC):
+class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"], ABC, Generic[T]):
     class State(Enum):
         PENDING = 1
         RUNNING = 2
@@ -38,7 +40,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True, metadata={"serializable": True})
     structure: Optional[Structure] = field(default=None, kw_only=True)
 
-    output: Optional[BaseArtifact] = field(default=None, init=False)
+    output: Optional[T] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def __rshift__(self, other: BaseTask | list[BaseTask]) -> BaseTask | list[BaseTask]:
@@ -155,8 +157,10 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
     def is_skipped(self) -> bool:
         return self.state == BaseTask.State.SKIPPED
 
-    def before_run(self) -> None:
+    def before_run(self, *args, **kwargs) -> None:
         super().before_run()
+        self._execution_args = args
+
         if self.structure is not None:
             EventBus.publish_event(
                 StartTaskEvent(
@@ -168,13 +172,13 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
                 ),
             )
 
-    def run(self) -> BaseArtifact:
+    def run(self, *args, **kwargs) -> T:
         try:
             self.state = BaseTask.State.RUNNING
 
             self.before_run()
 
-            self.output = self.try_run()
+            self.output = self.try_run(*args, **kwargs)
 
             self.after_run()
         except Exception as e:
@@ -220,8 +224,11 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
 
         return self
 
+    def default_context(self, task: BaseTask) -> dict[str, Any]:
+        return {"args": self._execution_args, "structure": self.structure}
+
     @abstractmethod
-    def try_run(self) -> BaseArtifact: ...
+    def try_run(self) -> T: ...
 
     @property
     def full_context(self) -> dict[str, Any]:
@@ -233,5 +240,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
         context = deepcopy(self.context)
         if self.structure is not None:
             context.update(self.structure.context(self))
+
+        context.update(self.default_context(self))
 
         return context

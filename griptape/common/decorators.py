@@ -4,9 +4,11 @@ import functools
 from typing import Any, Callable, TypeVar, cast
 
 import wrapt
+from typing_extensions import ParamSpec
 
 from griptape.artifacts.base_artifact import BaseArtifact
 
+P = ParamSpec("P")
 T = TypeVar("T")
 
 
