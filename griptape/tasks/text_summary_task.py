@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 @define
-class TextSummaryTask(BaseTextInputTask):
+class TextSummaryTask(BaseTextInputTask[TextArtifact]):
     summary_engine: BaseSummaryEngine = field(default=Factory(lambda: PromptSummaryEngine()), kw_only=True)
 
     def try_run(self) -> TextArtifact:

@@ -7,7 +7,7 @@ from attrs import Factory, define, field
 from openai import AssistantEventHandler
 from typing_extensions import override
 
-from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.drivers.assistant import BaseAssistantDriver
 from griptape.events import EventBus, TextChunkEvent
 from griptape.utils.decorators import lazy_property
@@ -56,7 +56,7 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
             organization=self.organization,
         )
 
-    def try_run(self, *args: BaseArtifact) -> BaseArtifact | InfoArtifact:
+    def try_run(self, *args: BaseArtifact) -> TextArtifact:
         if self.thread_id is None and self.auto_create_thread:
             self.thread_id = self.client.beta.threads.create().id
         response = self._create_run(*args)

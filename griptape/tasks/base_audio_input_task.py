@@ -2,20 +2,22 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import Callable, Union
+from typing import Callable, TypeVar, Union
 
 from attrs import define, field
 
-from griptape.artifacts.audio_artifact import AudioArtifact
+from griptape.artifacts import AudioArtifact, BaseArtifact
 from griptape.configs import Defaults
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
+T = TypeVar("T", bound=BaseArtifact)
+
 
 @define
-class BaseAudioInputTask(RuleMixin, BaseTask, ABC):
+class BaseAudioInputTask(RuleMixin, BaseTask[T], ABC):
     _input: Union[AudioArtifact, Callable[[BaseTask], AudioArtifact]] = field(alias="input")
 
     @property

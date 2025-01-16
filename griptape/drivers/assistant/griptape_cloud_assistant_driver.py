@@ -10,7 +10,7 @@ from urllib.parse import urljoin
 import requests
 from attrs import Factory, define, field
 
-from griptape.artifacts import BaseArtifact, InfoArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.assistant import BaseAssistantDriver
 from griptape.events import BaseEvent, EventBus
@@ -45,7 +45,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
     max_attempts: int = field(default=20, kw_only=True)
     auto_create_thread: bool = field(default=True, kw_only=True)
 
-    def try_run(self, *args: BaseArtifact) -> BaseArtifact | InfoArtifact:
+    def try_run(self, *args: BaseArtifact) -> TextArtifact:
         if self.thread_id is None and self.auto_create_thread:
             self._create_or_find_thread(self.thread_alias)
         assistant_run_id = self._create_run(*args)
@@ -101,7 +101,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         response.raise_for_status()
         return response.json()["assistant_run_id"]
 
-    def _get_run_result(self, assistant_run_id: str) -> BaseArtifact | InfoArtifact:
+    def _get_run_result(self, assistant_run_id: str) -> TextArtifact:
         events, next_offset = self._get_run_events(assistant_run_id)
         attempts = 0
         output = None
@@ -115,7 +115,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
                     except ValueError as e:
                         logger.warning("Failed to deserialize event: %s", e)
                     if event["type"] == "FinishStructureRunEvent":
-                        output = BaseArtifact.from_dict(event_payload["output_task_output"])
+                        output = TextArtifact.from_dict(event_payload["output_task_output"])
 
             if output is None and not events:
                 time.sleep(self.poll_interval)

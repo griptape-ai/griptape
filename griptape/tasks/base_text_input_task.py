@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import Callable, Union
+from typing import Callable, TypeVar, Union
 
 from attrs import define, field
 
-from griptape.artifacts import TextArtifact
+from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.configs import Defaults
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.tasks import BaseTask
@@ -14,9 +14,11 @@ from griptape.utils import J2
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
+T = TypeVar("T", bound=BaseArtifact)
+
 
 @define
-class BaseTextInputTask(RuleMixin, BaseTask, ABC):
+class BaseTextInputTask(RuleMixin, BaseTask[T], ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
     _input: Union[str, TextArtifact, Callable[[BaseTask], TextArtifact]] = field(

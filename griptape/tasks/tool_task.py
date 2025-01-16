@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import define, field
 
 from griptape import utils
-from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact, ListArtifact
+from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
 from griptape.tasks import ActionsSubtask, PromptTask
 from griptape.utils import J2
@@ -63,7 +63,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     def actions_schema(self) -> Schema:
         return self._actions_schema_for_tools([self.tool])
 
-    def try_run(self) -> BaseArtifact:
+    def try_run(self) -> ListArtifact | TextArtifact | ErrorArtifact:
         result = self.prompt_driver.run(self.prompt_stack)
 
         if self.prompt_driver.use_native_tools:
@@ -82,19 +82,13 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         try:
             subtask = self.add_subtask(ActionsSubtask(subtask_input))
 
-            subtask.run()
+            output = subtask.run()
 
-            if isinstance(subtask.output, ListArtifact):
-                first_artifact = subtask.output[0]
-                if isinstance(first_artifact, BaseArtifact):
-                    self.output = first_artifact
-                else:
-                    raise ValueError(f"Output is not an Artifact: {type(first_artifact)}")
-            else:
-                self.output = InfoArtifact("No tool output")
+            if isinstance(output, ListArtifact):
+                output = output[0]
         except Exception as e:
-            self.output = ErrorArtifact(f"Error processing tool input: {e}", exception=e)
-        return self.output
+            output = ErrorArtifact(f"Error processing tool input: {e}", exception=e)
+        return output
 
     def find_tool(self, tool_name: str) -> BaseTool:
         if self.tool.name == tool_name:

@@ -25,7 +25,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class ActionsSubtask(BaseTask):
+class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
@@ -122,7 +122,7 @@ class ActionsSubtask(BaseTask):
         ]
         logger.info("".join(parts))
 
-    def try_run(self) -> BaseArtifact:
+    def try_run(self) -> ListArtifact | ErrorArtifact:
         try:
             if any(isinstance(a.output, ErrorArtifact) for a in self.actions):
                 errors = [a.output.value for a in self.actions if isinstance(a.output, ErrorArtifact)]

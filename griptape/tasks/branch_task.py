@@ -9,7 +9,7 @@ from griptape.tasks import BaseTask, CodeExecutionTask
 
 
 @define
-class BranchTask(CodeExecutionTask):
+class BranchTask(CodeExecutionTask[Union[InfoArtifact, ListArtifact[InfoArtifact]]]):
     on_run: Callable[[BranchTask], Union[InfoArtifact, ListArtifact[InfoArtifact]]] = field(kw_only=True)
 
     def try_run(self) -> InfoArtifact | ListArtifact[InfoArtifact]:
