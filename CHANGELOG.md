@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `FootnotePromptResponseRagModule`'s system prompt causing it to not answer even with relevant chunks. 
 - Chunker occasionally dropping suffix chunk separators.
 - `PromptTask.conversation_memory` not working when set without a Structure.
+- `GriptapeCloudAssistantDriver` overriding Rulesets and Knowledge Bases on Cloud.
+- Missing `structure_ids` and `tool_ids` fields in `GriptapeCloudAssistantDriver`.
 
 ### Deprecated
 
