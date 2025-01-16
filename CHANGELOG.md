@@ -17,6 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Task bitshift operators can now take a list of Tasks.
+- `GriptapeCloudAssistantDriver` and `OpenAiAssistantDriver` now automatically create a new Thread if one is not provided. Can be disabled with `auto_create_thread=False`.
+- `GriptapeCloudAssistantDriver` and `OpenAiAssistantDriver` now return metadata (`thread_id`) on the response Artifact.
+- `GriptapeCloudAssistantDriver` now accepts a `thread_alias` parameter for fetching a Thread by alias, creating one if it doesn't exist.
 
 ### Fixed
 
