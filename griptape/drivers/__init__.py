@@ -1,3 +1,5 @@
+from griptape.utils.deprecation import deprecation_warn
+
 from .prompt import BasePromptDriver
 from .prompt.openai import OpenAiChatPromptDriver
 from .prompt.openai import AzureOpenAiChatPromptDriver
@@ -120,6 +122,12 @@ from .observability.datadog import DatadogObservabilityDriver
 from .assistant import BaseAssistantDriver
 from .assistant.griptape_cloud import GriptapeCloudAssistantDriver
 from .assistant.openai import OpenAiAssistantDriver
+
+deprecation_warn(
+    "Importing from `griptape.drivers` is deprecated and will be removed in a future release. "
+    "Please import from the provider-specific package instead. "
+    "e.g., `from griptape.drivers import OpenAiChatPromptDriver` -> `from griptape.drivers.prompt.openai import OpenAiChatPromptDriver`"
+)
 
 __all__ = [
     "BasePromptDriver",
