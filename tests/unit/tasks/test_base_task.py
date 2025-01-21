@@ -231,6 +231,13 @@ class TestBaseTask:
         task.structure._execution_args = ("foo", "bar")
 
         assert task.full_context == {"args": ("foo", "bar"), "structure": task.structure}
+        assert task.structure.execution_args == ("foo", "bar")
+
+        task.structure = None
+        task._execution_args = ("foo", "bar")
+
+        assert task.full_context == {"args": ("foo", "bar")}
+        assert task.execution_args == ("foo", "bar")
 
     def test_is_pending(self, task):
         task.state = task.State.PENDING
@@ -249,3 +256,15 @@ class TestBaseTask:
         assert str(task) == "foobar"
         task.output = None
         assert str(task) == ""
+
+    def test_run_args(self, task):
+        task.run("foo", "bar")
+
+        assert task._execution_args == ("foo", "bar")
+
+    def test_args_full_context(self):
+        task = MockTask()
+        task.context = {"foo": "buzz"}
+        task.run("foo", "bar")
+
+        assert task.full_context["args"] == ("foo", "bar")
