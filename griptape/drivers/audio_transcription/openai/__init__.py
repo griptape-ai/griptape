@@ -1,0 +1,3 @@
+from griptape.drivers.audio_transcription.openai_audio_transcription_driver import OpenAiAudioTranscriptionDriver
+
+__all__ = ["OpenAiAudioTranscriptionDriver"]

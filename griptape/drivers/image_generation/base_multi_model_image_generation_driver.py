@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 from abc import ABC
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.drivers import BaseImageGenerationDriver, BaseImageGenerationModelDriver
+from griptape.drivers.image_generation import BaseImageGenerationDriver
+
+if TYPE_CHECKING:
+    from griptape.drivers.image_generation_model import BaseImageGenerationModelDriver
 
 
 @define

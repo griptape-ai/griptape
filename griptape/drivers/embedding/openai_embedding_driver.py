@@ -5,7 +5,7 @@ from typing import Optional
 import openai
 from attrs import Factory, define, field
 
-from griptape.drivers import BaseEmbeddingDriver
+from griptape.drivers.embedding import BaseEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.utils.decorators import lazy_property
 

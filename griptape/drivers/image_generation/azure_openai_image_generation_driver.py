@@ -5,7 +5,7 @@ from typing import Callable, Optional
 import openai
 from attrs import Factory, define, field
 
-from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.drivers.image_generation.openai import OpenAiImageGenerationDriver
 from griptape.utils.decorators import lazy_property
 
 

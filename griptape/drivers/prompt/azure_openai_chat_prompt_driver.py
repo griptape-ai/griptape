@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Callable, Optional
 import openai
 from attrs import Factory, define, field
 
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
