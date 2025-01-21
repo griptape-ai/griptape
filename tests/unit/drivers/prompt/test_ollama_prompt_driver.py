@@ -1,8 +1,10 @@
+import json
+
 import pytest
 from schema import Schema
 
 from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
-from griptape.common import PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers import OllamaPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -132,7 +134,7 @@ class TestOllamaPromptDriver:
                             "name": "MockTool_test",
                             "arguments": {"foo": "bar"},
                         }
-                    }
+                    },
                 ],
             },
         }
@@ -146,7 +148,42 @@ class TestOllamaPromptDriver:
     @pytest.fixture()
     def mock_stream_client(self, mocker):
         mock_stream_client = mocker.patch("ollama.Client")
-        mock_stream_client.return_value.chat.return_value = iter([{"message": {"content": "model-output"}}])
+        mock_stream_client.return_value.chat.return_value = iter(
+            [
+                {"message": {"content": "model-output"}},
+                {
+                    "message": {
+                        "tool_calls": [
+                            {
+                                "function": {
+                                    "name": "MockTool_test",
+                                    "arguments": {"foo": "bar"},
+                                }
+                            },
+                        ],
+                    }
+                },
+                {
+                    "message": {
+                        "tool_calls": [
+                            {
+                                "function": {
+                                    "name": "MockTool_test",
+                                    "arguments": {"foo": "bar"},
+                                }
+                            },
+                            {
+                                "function": {
+                                    "name": "MockTool_test",
+                                    "arguments": {"foo": "bar"},
+                                }
+                            },
+                        ],
+                    }
+                },
+                {"message": {}},
+            ]
+        )
 
         return mock_stream_client
 
@@ -284,26 +321,42 @@ class TestOllamaPromptDriver:
         )
 
         # When
-        text_artifact = next(driver.try_stream(prompt_stack))
+        stream = driver.try_stream(prompt_stack)
+        event = next(stream)
 
         # Then
         mock_stream_client.return_value.chat.assert_called_once_with(
             messages=messages,
             model=driver.model,
             options={"temperature": driver.temperature, "stop": [], "num_predict": driver.max_tokens},
+            **{
+                "tools": self.OLLAMA_TOOLS,
+            }
+            if use_native_tools
+            else {},
             **{"format": self.OLLAMA_STRUCTURED_OUTPUT_SCHEMA} if structured_output_strategy == "native" else {},
             stream=True,
             foo="bar",
         )
-        if isinstance(text_artifact, TextDeltaMessageContent):
-            assert text_artifact.text == "model-output"
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == "model-output"
 
-    def test_try_stream_bad_response(self, mock_stream_client):
-        # Given
-        prompt_stack = PromptStack()
-        driver = OllamaPromptDriver(model="llama", stream=True)
-        mock_stream_client.return_value.chat.return_value = "bad-response"
+        event = next(stream)
+        assert isinstance(event.content, ActionCallDeltaMessageContent)
+        assert event.content.index == 0
+        assert event.content.tag == "MockTool_test"
+        assert event.content.name == "MockTool"
+        assert event.content.path == "test"
+        assert event.content.partial_input == json.dumps({"foo": "bar"})
 
-        # When/Then
-        with pytest.raises(Exception, match="invalid model response"):
-            next(driver.try_stream(prompt_stack))
+        event = next(stream)
+        assert isinstance(event.content, ActionCallDeltaMessageContent)
+        assert event.content.index == 1
+        assert event.content.tag == "MockTool_test"
+        assert event.content.name == "MockTool"
+        assert event.content.path == "test"
+        assert event.content.partial_input == json.dumps({"foo": "bar"})
+
+        event = next(stream)
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == ""
