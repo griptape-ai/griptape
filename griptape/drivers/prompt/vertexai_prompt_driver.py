@@ -1,6 +1,11 @@
 # need google application credentials environment variable
 # https://cloud.google.com/vertex-ai/docs/start/client-libraries
 #https://cloud.google.com/python/docs/reference/aiplatform/latest
+#https://cloud.google.com/python/docs/reference/aiplatform/latest?hl=en
+#https://cloud.google.com/vertex-ai/generative-ai/docs/reference/python/latest/vertexai.preview.generative_models.GenerativeModel
+
+
+# Google gemini doesn't work with the old version of parts and whatnot - needs it's own implementation
 from __future__ import annotations
 
 import json
@@ -19,7 +24,7 @@ from griptape.utils.import_utils import import_optional_dependency
 
 if TYPE_CHECKING:
     from google.auth.credentials import Credentials
-    from vertexai.preview.generative_models import GenerativeModel
+    from vertexai.generative_models import GenerativeModel
 
     from griptape.common import PromptStack
 
@@ -43,8 +48,8 @@ class VertexAIGooglePromptDriver(GooglePromptDriver):
     # These are all the potential fields for the VertexAI SDK
     # Mandatory field to sign into vertex ai
     google_application_credentials_content: str = field(default=None, kw_only=True, metadata={"serializable":False})
-    project: Optional[str] = field(default=None, kw_only=True, metadata={"serializable":True})
-    location: Optional[str] = field(default=None, kw_only=True, metadata={"serializable":True})
+    project: str = field(default=None, kw_only=True, metadata={"serializable":True})
+    location: str = field(default=None, kw_only=True, metadata={"serializable":True})
     experiment: Optional[str] = field(default=None, kw_only=True, metadata={"serializable":True})
     staging_bucket: Optional[str] = field(default=None, kw_only=True, metadata={"serializable":True})
     _credentials: Credentials = field(default=None, kw_only=True, alias="credentials", metadata={"serializable":False})
@@ -57,7 +62,7 @@ class VertexAIGooglePromptDriver(GooglePromptDriver):
     def credentials(self) -> Credentials:
         #TODO: Is this the proper way to do this?
         service_account = import_optional_dependency("google.oauth2.service_account")
-        malformed_error = import_optional_dependency("google.auth.exceptions")
+        google_exceptions = import_optional_dependency("google.auth.exceptions")
         try:
             key_data = json.loads(self.google_application_credentials_content)
             logging.debug(key_data)
@@ -67,7 +72,7 @@ class VertexAIGooglePromptDriver(GooglePromptDriver):
             raise Exception(errormsg) from e
         try:
             credentials = service_account.Credentials.from_service_account_info(key_data)
-        except malformed_error as e:
+        except google_exceptions.MalformedError as e:
             errormsg = f"Credentials Improperly Formatted: {e}"
             raise Exception(errormsg) from e
         return credentials
@@ -78,7 +83,7 @@ class VertexAIGooglePromptDriver(GooglePromptDriver):
         #TODO: Is this the proper way to do this?
         import_optional_dependency("google.cloud.aiplatform")
         vertexai = import_optional_dependency("vertexai")
-        from vertexai.preview.generative_models import GenerativeModel
+        from vertexai.generative_models import GenerativeModel
         vertexai.init(
             project=self.project,
             location=self.location,
@@ -91,21 +96,50 @@ class VertexAIGooglePromptDriver(GooglePromptDriver):
         return GenerativeModel(self.model)
 
     # TODO: Does VertexAI Gemini support the same parameters as the Gemini API?
-    def _base_params(self, prompt_stack:PromptStack) -> dict:
-        #Error with the typing for GenerationConfig
-        params = super()._base_params(prompt_stack)
-        if "generation_config" in params:
-            del params["generation_config"]
-        generation_config = {
-            "stop_sequences": [] if self.stream and self.use_native_tools else self.tokenizer.stop_sequences,
-                    "max_output_tokens": self.max_tokens,
-                    "temperature": self.temperature,
-                    "top_p": self.top_p,
-                    "top_k": self.top_k,
-                    **self.extra_params,
+    def _base_params(self, prompt_stack: PromptStack) -> dict:
+        import_optional_dependency("vertexai")
+        types = import_optional_dependency("google.generativeai.types")
+        from vertexai.generative_models import Part
+        from vertexai.generative_models._generative_models.gapic_content_types import ContentDict
+        system_messages = prompt_stack.system_messages
+        if system_messages:
+            self.client._system_instruction = ContentDict(
+                role="system",
+                parts=[Part.from_text(text=system_message.to_text()) for system_message in system_messages]
+            )
+        params = {
+            "generation_config":
+                {
+                "stop_sequences": [] if self.stream and self.use_native_tools else self.tokenizer.stop_sequences,
+                        "max_output_tokens": self.max_tokens,
+                        "temperature": self.temperature,
+                        "top_p": self.top_p,
+                        "top_k": self.top_k,
+                        **self.extra_params,
+            }
         }
-        params["generation_config"] = generation_config
+        if prompt_stack.tools and self.use_native_tools:
+            params["tool_config"] = {"function_calling_config": {"mode": self.tool_choice}}
+            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
+                params["tool_config"]["function_calling_config"]["mode"] = "auto"
+            params["tools"] = self.__to_google_tools(prompt_stack.tools)
         return params
+
+    #def _base_params(self, prompt_stack:PromptStack) -> dict:
+        #Error with the typing for GenerationConfig
+        # params = super()._base_params(prompt_stack)
+        # if "generation_config" in params:
+        #     del params["generation_config"]
+        # generation_config = {
+        #     "stop_sequences": [] if self.stream and self.use_native_tools else self.tokenizer.stop_sequences,
+        #             "max_output_tokens": self.max_tokens,
+        #             "temperature": self.temperature,
+        #             "top_p": self.top_p,
+        #             "top_k": self.top_k,
+        #             **self.extra_params,
+        # }
+        # params["generation_config"] = generation_config
+        # return params
 
 if __name__ == "__main__":
 
@@ -116,10 +150,9 @@ if __name__ == "__main__":
         location="us-west1",
         google_application_credentials_content=creds)
     message = Message(
-        content=[TextMessageContent(TextArtifact("What is MLK day?"))],
-        role=Message.USER_ROLE
+        role=Message.USER_ROLE,
+        content="What is MLK day?"
     )
-
     # Create PromptStack with the message
     prompt_stack = PromptStack(messages=[message])
     test.try_run(prompt_stack)
