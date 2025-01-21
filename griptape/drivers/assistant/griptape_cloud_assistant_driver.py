@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import time
+import uuid
 from typing import Optional
 from urllib.parse import urljoin
 
@@ -30,6 +31,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
     input: Optional[str] = field(default=None, kw_only=True)
     assistant_id: str = field(kw_only=True)
     thread_id: Optional[str] = field(default=None, kw_only=True)
+    thread_alias: Optional[str] = field(default=None, kw_only=True)
     ruleset_ids: Optional[list[str]] = field(default=None, kw_only=True)
     additional_ruleset_ids: list[str] = field(factory=list, kw_only=True)
     knowledge_base_ids: Optional[list[str]] = field(default=None, kw_only=True)
@@ -41,8 +43,41 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
     stream: bool = field(default=False, kw_only=True)
     poll_interval: int = field(default=1, kw_only=True)
     max_attempts: int = field(default=20, kw_only=True)
+    auto_create_thread: bool = field(default=True, kw_only=True)
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact | InfoArtifact:
+        if self.thread_id is None and self.auto_create_thread:
+            self._create_or_find_thread(self.thread_alias)
+        assistant_run_id = self._create_run(*args)
+        run_result = self._get_run_result(assistant_run_id)
+
+        run_result.meta.update(
+            {"assistant_id": self.assistant_id, "assistant_run_id": assistant_run_id, "thread_id": self.thread_id}
+        )
+
+        return run_result
+
+    def _create_or_find_thread(self, thread_alias: Optional[str] = None) -> None:
+        if thread_alias is None:
+            self.thread_id = self._create_thread()
+        else:
+            thread = self._find_thread_by_alias(thread_alias)
+
+            if thread is None:
+                self.thread_id = self._create_thread(thread_alias)
+
+    def _create_thread(self, thread_alias: Optional[str] = None) -> str:
+        url = urljoin(self.base_url.strip("/"), "/api/threads")
+
+        body = {"name": uuid.uuid4().hex}
+        if thread_alias is not None:
+            body["alias"] = thread_alias
+
+        response = requests.post(url, json=body, headers=self.headers)
+        response.raise_for_status()
+        return response.json()["thread_id"]
+
+    def _create_run(self, *args: BaseArtifact) -> str:
         url = urljoin(self.base_url.strip("/"), f"/api/assistants/{self.assistant_id}/runs")
 
         response = requests.post(
@@ -64,9 +99,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
             headers=self.headers,
         )
         response.raise_for_status()
-        response_json = response.json()
-
-        return self._get_run_result(response_json["assistant_run_id"])
+        return response.json()["assistant_run_id"]
 
     def _get_run_result(self, assistant_run_id: str) -> BaseArtifact | InfoArtifact:
         events, next_offset = self._get_run_events(assistant_run_id)
@@ -105,3 +138,12 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         next_offset = response_json.get("next_offset", 0)
 
         return events, next_offset
+
+    def _find_thread_by_alias(self, thread_alias: str) -> Optional[dict]:
+        url = urljoin(self.base_url.strip("/"), "/api/threads")
+        response = requests.get(url, params={"alias": thread_alias}, headers=self.headers)
+        response.raise_for_status()
+
+        threads = response.json()["threads"]
+
+        return next((thread for thread in threads if thread["alias"] == thread_alias), None)

@@ -39,11 +39,12 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    thread_id: Optional[str] = field(kw_only=True)
+    thread_id: Optional[str] = field(default=None, kw_only=True)
     assistant_id: str = field(kw_only=True)
     event_handler: AssistantEventHandler = field(
         default=Factory(lambda: OpenAiAssistantDriver.EventHandler()), kw_only=True, metadata={"serializable": False}
     )
+    auto_create_thread: bool = field(default=True, kw_only=True)
 
     _client: openai.OpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
@@ -56,8 +57,17 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
         )
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact | InfoArtifact:
+        if self.thread_id is None and self.auto_create_thread:
+            self.thread_id = self.client.beta.threads.create().id
+        response = self._create_run(*args)
+
+        response.meta.update({"assistant_id": self.assistant_id, "thread_id": self.thread_id})
+
+        return response
+
+    def _create_run(self, *args: BaseArtifact) -> TextArtifact:
         content = "\n".join(arg.value for arg in args)
-        self.client.beta.threads.messages.create(thread_id=self.thread_id, role="user", content=content)
+        message_id = self.client.beta.threads.messages.create(thread_id=self.thread_id, role="user", content=content)
         with self.client.beta.threads.runs.stream(
             thread_id=self.thread_id,
             assistant_id=self.assistant_id,
@@ -71,4 +81,9 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
                 message_contents.append("".join(content.text.value for content in message.content))
             message_text = "\n".join(message_contents)
 
-            return TextArtifact(message_text)
+            response = TextArtifact(message_text)
+
+            response.meta.update(
+                {"assistant_id": self.assistant_id, "thread_id": self.thread_id, "message_id": message_id}
+            )
+            return response
