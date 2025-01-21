@@ -8,8 +8,10 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import ActionArtifact, TextArtifact
 from griptape.common import (
+    ActionCallDeltaMessageContent,
     ActionCallMessageContent,
     ActionResultMessageContent,
+    BaseDeltaMessageContent,
     BaseMessageContent,
     DeltaMessage,
     ImageMessageContent,
@@ -95,7 +97,7 @@ class OllamaPromptDriver(BasePromptDriver):
         if isinstance(stream, Iterator):
             for chunk in stream:
                 logger.debug(chunk)
-                yield DeltaMessage(content=TextDeltaMessageContent(chunk["message"]["content"]))
+                yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(chunk))
         else:
             raise Exception("invalid model response")
 
@@ -236,3 +238,32 @@ class OllamaPromptDriver(BasePromptDriver):
             )
 
         return content
+
+    def __to_prompt_stack_delta_message_content(self, content_delta: ChatResponse) -> BaseDeltaMessageContent:
+        message = content_delta["message"]
+        if "content" in message and message["content"]:
+            return TextDeltaMessageContent(message["content"])
+        elif "tool_calls" in message:
+            tool_calls = message["tool_calls"]
+
+            if len(tool_calls) == 1:
+                tool_call = tool_calls[0]
+                index = tool_call.index
+
+                if tool_call.function is not None:
+                    # Tool call delta either contains the function header or the partial input.
+                    if tool_call.id is not None and tool_call.function.name is not None:
+                        return ActionCallDeltaMessageContent(
+                            index=index,
+                            tag=tool_call.id,
+                            name=ToolAction.from_native_tool_name(tool_call.function.name)[0],
+                            path=ToolAction.from_native_tool_name(tool_call.function.name)[1],
+                        )
+                    else:
+                        return ActionCallDeltaMessageContent(index=index, partial_input=tool_call.function.arguments)
+                else:
+                    raise ValueError(f"Unsupported tool call delta: {tool_call}")
+            else:
+                raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
+        else:
+            return TextDeltaMessageContent("")
