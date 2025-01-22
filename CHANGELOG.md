@@ -21,11 +21,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## Unreleased
+
 ### Added
 - Provider-specific Driver namespaces (e.g., `griptape.drivers.prompt.openai`, `griptape.drivers.embedding.cohere`).
 
 ## Added
 - Tool streaming support to `OllamaPromptDriver`.
+### Deprecated
+
+- `griptape.drivers` namespace. Use provider-specific namespaces instead.
 
 ## [1.2.0] - 2025-01-21
 
