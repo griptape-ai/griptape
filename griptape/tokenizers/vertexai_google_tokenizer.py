@@ -21,7 +21,7 @@ class VertexAIGoogleTokenizer(BaseTokenizer):
     #TODO: Do I need to add all of the other possible fields for the VertexAI SDK? 
     project: str = field(default=None, kw_only=True,metadata={"serializable": False})
     location: str = field(default=None, kw_only=True, metadata={"serializable":False})
-    credentials: Credentials = field(default=None, kw_only=True, alias="credentials", metadata={"serializable":False}) 
+    credentials: Credentials = field(default=None, kw_only=True, metadata={"serializable":False}) 
     _client: GenerativeModel = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
@@ -32,7 +32,6 @@ class VertexAIGoogleTokenizer(BaseTokenizer):
             project=self.project,
             location=self.location,
             credentials=self.credentials,
-
         )
         return vertexai.generative_models.GenerativeModel(self.model)
 

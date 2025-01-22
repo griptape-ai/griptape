@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
 from vertexai.generative_models import Part
+import vertexai.generative_models
 
 from griptape.artifacts import TextArtifact
 from griptape.common import Message, PromptStack, TextMessageContent, observable
@@ -33,7 +34,7 @@ if TYPE_CHECKING:
     from griptape.common.prompt_stack.contents.base_message_content import BaseMessageContent
     from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tokenizers.base_tokenizer import BaseTokenizer
-
+from rich.pretty import pprint #will automatically nicely format things 
 
 # need to install - pip install --upgrade google-cloud-aiplatform How do i do this?
 logger = logging.getLogger(Defaults.logging_config.logger_name)
@@ -59,10 +60,10 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
     """
     # These are all the fields for the VertexAI SDK
     google_application_credentials_content: str = field(default=None, kw_only=True, metadata={"serializable":False})
-    project: str = field(default=None, kw_only=True, metadata={"serializable":True})
-    location: str = field(default=None, kw_only=True, metadata={"serializable":True})
+    project: str = field(kw_only=True, metadata={"serializable":True})
+    location: str = field(kw_only=True, metadata={"serializable":True})
     response_schema: Optional[dict] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _credentials: Credentials = field(default=None, kw_only=True, alias="credentials", metadata={"serializable":False})
+    _credentials: Credentials = field(kw_only=True, alias="credentials", metadata={"serializable":False}) #non private field
 
     # Necessary for Google Prompt Driver as well
     top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -94,6 +95,8 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
         return value
 
     # Get credentials for VertexAI
+    # Just have the user create the credentials - pass us a fully formed credentials object so we don't make assumptions on how it will be done.
+    # Take this out
     @lazy_property()
     def credentials(self) -> Credentials:
         service_account = import_optional_dependency("google.oauth2.service_account")
@@ -102,7 +105,7 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
             key_data = json.loads(self.google_application_credentials_content)
         except json.JSONDecodeError as e:
             errormsg = f"Credentials Improperly Formatted: {e}"
-            logging.debug(errormsg)
+            logger.debug(errormsg)
             raise Exception(errormsg) from e
         try:
             credentials = service_account.Credentials.from_service_account_info(key_data)
@@ -124,15 +127,15 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
             encryption_spec_key_name=self.encryption_spec_key_name,
             service_account=self.service_account,
         )
-        return vertexai.generative_models.GenerativeModel(self.model)
+        return vertexai.generative_models.GenerativeModel(model_name=self.model)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self.__to_google_messages(prompt_stack)
         params = self._base_params(prompt_stack)
-        logging.debug((messages,params))
+        logger.debug((messages,params))
         response: GenerationResponse = self.client.generate_content(messages, **params) #This should be the same and should be fine. Params are slightly different.
-        logging.debug(response.to_dict())
+        logger.debug(response.to_dict())
         usage_metadata = response.usage_metadata
         return Message(
             content=response.text, #TODO: Google Prompt Driver was passing in a list of BaseMessages. How do I accomplish that with VertexAI?
@@ -143,7 +146,9 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
             )
         )
 
-    # Streaming is not currently supported with VertexAI.
+
+    # Streaming is not currently supported with VertexAI? Says there is no stream parameter - can't remember if that's in GenerationResponse or somewhere else.
+    # Does have streaming apparently - iterator so i can check each chunk if it's text/function/etc
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Message:
         return Message(
@@ -156,10 +161,12 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
         vertexai = import_optional_dependency("vertexai.generative_models")
         system_messages = prompt_stack.system_messages
         if system_messages:
+            # Fix this it is kind of hacky - system instruction. Want to set system
             self.client._system_instruction = vertexai.Content(
                 role="system",
                 parts=[vertexai.Part.from_text(text=system_message.to_text()) for system_message in system_messages]
             )
+            logging.debug(self.client._system_instruction)
         params = {
             "generation_config": vertexai.GenerationConfig(
                     temperature=self.temperature,
@@ -172,6 +179,7 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
         }
         #TODO: Add tools back in if necessary?
         return params
+
 
     # TODO: update return type to work accurately
     def __to_google_messages(self, prompt_stack:PromptStack) -> list[Content]: #TODO: Can't use ContentTypes - does this work?
@@ -199,6 +207,8 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
         elif isinstance(content, ImageMessageContent):
             return Part.from_data(mime_type=content.artifact.mime_type, data=content.artifact.value) #TODO: Check here for Image content
         elif isinstance(content, GenericMessageContent):
+            #TODO: Just return content.artifact.value, it's on the user to pass a part
+            return content.artifact.value
             return Part.from_uri(uri=content.artifact.value, mime_type=content.artifact.mime_type) #TODO: What do I do here in this case? This is incorrect.
         else:
             raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
@@ -226,6 +236,7 @@ if __name__ == "__main__":
             },
             "required": ["date", "description", "explanation"],
         }
+    schema = None
     test = VertexAIGooglePromptDriver(
         model="gemini-1.5-flash-002",
         project="griptape-cloud-dev",
@@ -247,5 +258,55 @@ if __name__ == "__main__":
     # Create PromptStack with the message
     #TODO: How should these be being processed / returned?
     prompt_stack = PromptStack(messages=[message,message2,message3])
-    print(test.run(prompt_stack))
+    prompt_stack.add_system_message("Use slang from the 1960s in your response")
+    # for system_message in prompt_stack.system_messages:
+    #     print(system_message.to_text()) 
+    pprint(test.run(prompt_stack))
 
+
+
+
+#Questions for collin:
+# How do I get the system messages to work properly? How do I get output from running the vertexai driver to be properly logged?
+# Why is it sometimes ignoring my system messages? Just an LLM thing?
+# How would I input content like a uri and a text string like this:
+#  def process_video(self, uri, query):
+#         response = self.vision_model.generate_content(
+#             [
+#                 Part.from_uri(uri, mime_type="video/mp4"),
+#                 query,
+#             ],
+#             generation_config=GenerationConfig(
+#                 response_mime_type="application/json",
+#                 response_schema=self.response_schema,
+#             ),
+#         )
+
+#         output_json = response.text
+#         return json.loads(output_json)
+
+
+# handle text and function separately - move logic to function to check for parts and try to copy/ make this logic similar
+    # # GenerationPart properties
+    # @property
+    # def text(self) -> str:
+    #     try:
+    #         return self.content.text
+    #     except (ValueError, AttributeError) as e:
+    #         # Enrich the error message with the whole Candidate.
+    #         # The Content object does not have full information.
+    #         raise ValueError(
+    #             "Cannot get the Candidate text.\n"
+    #             f"{e}\n"
+    #             "Candidate:\n" + _dict_to_pretty_string(self.to_dict())
+    #         ) from e
+
+    # @property
+    # def function_calls(self) -> Sequence["FunctionCall"]:
+    #     if not self.content or not self.content.parts:
+    #         return []
+    #     return [
+    #         part.function_call
+    #         for part in self.content.parts
+    #         if part._raw_part._pb.WhichOneof("data") == "function_call"
+    #     ]
