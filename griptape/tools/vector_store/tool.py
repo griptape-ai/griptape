@@ -10,7 +10,7 @@ from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseVectorStoreDriver
+    from griptape.drivers.vector import BaseVectorStoreDriver
 
 
 @define(kw_only=True)

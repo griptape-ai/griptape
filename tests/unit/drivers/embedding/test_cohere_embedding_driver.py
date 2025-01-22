@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import CohereEmbeddingDriver
+from griptape.drivers.embedding.cohere import CohereEmbeddingDriver
 
 
 class TestCohereEmbeddingDriver:

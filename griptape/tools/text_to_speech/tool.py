@@ -11,7 +11,7 @@ from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
     from griptape.artifacts import AudioArtifact, ErrorArtifact
-    from griptape.drivers import BaseTextToSpeechDriver
+    from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
 
 
 @define

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
 
-from griptape.drivers import BaseRulesetDriver
+from griptape.drivers.ruleset import BaseRulesetDriver
 
 if TYPE_CHECKING:
     from griptape.rules import BaseRule

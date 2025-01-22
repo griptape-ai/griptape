@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.drivers import BaseImageGenerationDriver
+from griptape.drivers.image_generation import BaseImageGenerationDriver
 from griptape.exceptions import DummyError
 
 if TYPE_CHECKING:

@@ -1,7 +1,8 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import AzureMongoDbVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.azure_mongodb import AzureMongoDbVectorStoreDriver
 from griptape.loaders import WebLoader
 
 # Initialize an Embedding Driver

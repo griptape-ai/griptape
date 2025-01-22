@@ -1,4 +1,4 @@
-from griptape.drivers import OpenAiTextToSpeechDriver
+from griptape.drivers.text_to_speech.openai import OpenAiTextToSpeechDriver
 from griptape.structures import Agent
 from griptape.tools.text_to_speech.tool import TextToSpeechTool
 

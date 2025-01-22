@@ -3,7 +3,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from griptape.drivers import QdrantVectorStoreDriver
+from griptape.drivers.vector.qdrant import QdrantVectorStoreDriver
 from griptape.utils import import_optional_dependency
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 

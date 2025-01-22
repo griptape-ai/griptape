@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, NoReturn, Optional
 from attrs import define, field
 
 from griptape import utils
-from griptape.drivers import BaseVectorStoreDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 

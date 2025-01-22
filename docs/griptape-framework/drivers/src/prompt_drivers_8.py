@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import GooglePromptDriver
+from griptape.drivers.prompt.google import GooglePromptDriver
 from griptape.structures import Agent
 
 agent = Agent(

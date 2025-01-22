@@ -11,7 +11,8 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import dict_merge
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseConversationMemoryDriver, BasePromptDriver
+    from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
+    from griptape.drivers.prompt import BasePromptDriver
     from griptape.memory.structure import Run
 
 

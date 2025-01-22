@@ -2,7 +2,7 @@ import sqlite3
 
 import pytest
 
-from griptape.drivers import SqlDriver
+from griptape.drivers.sql.sql_driver import SqlDriver
 from griptape.loaders import SqlLoader
 from griptape.tools import SqlTool
 

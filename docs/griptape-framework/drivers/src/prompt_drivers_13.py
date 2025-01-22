@@ -1,4 +1,4 @@
-from griptape.drivers import HuggingFacePipelinePromptDriver
+from griptape.drivers.prompt.huggingface_pipeline import HuggingFacePipelinePromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent
 

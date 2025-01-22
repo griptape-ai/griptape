@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 
 from griptape.common import observable
-from griptape.drivers import BasePromptDriver
+from griptape.drivers.prompt import BasePromptDriver
 from griptape.exceptions import DummyError
 from griptape.tokenizers import DummyTokenizer
 

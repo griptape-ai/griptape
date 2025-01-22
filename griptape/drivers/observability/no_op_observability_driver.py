@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define
 
-from griptape.drivers import BaseObservabilityDriver
+from griptape.drivers.observability import BaseObservabilityDriver
 
 if TYPE_CHECKING:
     from griptape.common import Observable

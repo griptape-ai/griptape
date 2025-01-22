@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
 
-from griptape.drivers import BaseConversationMemoryDriver
+from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
 
 if TYPE_CHECKING:
     from griptape.memory.structure import Run

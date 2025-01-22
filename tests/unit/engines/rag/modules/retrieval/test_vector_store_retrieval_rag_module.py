@@ -1,6 +1,6 @@
 from griptape.artifacts import TextArtifact
 from griptape.common import Reference
-from griptape.drivers import LocalVectorStoreDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import VectorStoreRetrievalRagModule
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver

@@ -5,7 +5,7 @@ from typing import Callable
 from attrs import define, field
 
 from griptape.artifacts import ListArtifact, TextArtifact
-from griptape.drivers import BaseSqlDriver
+from griptape.drivers.sql import BaseSqlDriver
 from griptape.loaders import BaseLoader
 
 

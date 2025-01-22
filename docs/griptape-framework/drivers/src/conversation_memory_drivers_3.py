@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from griptape.drivers import RedisConversationMemoryDriver
+from griptape.drivers.memory.conversation.redis import RedisConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
 

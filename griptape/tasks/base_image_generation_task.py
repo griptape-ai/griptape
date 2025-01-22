@@ -22,7 +22,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseImageGenerationDriver
+    from griptape.drivers.image_generation import BaseImageGenerationDriver
 
 
 @define

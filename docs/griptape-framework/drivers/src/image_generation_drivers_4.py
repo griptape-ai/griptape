@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import AzureOpenAiImageGenerationDriver
+from griptape.drivers.image_generation.openai import AzureOpenAiImageGenerationDriver
 from griptape.structures import Agent
 from griptape.tools import PromptImageGenerationTool
 

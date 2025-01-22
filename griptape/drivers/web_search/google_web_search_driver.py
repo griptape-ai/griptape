@@ -6,7 +6,7 @@ import requests
 from attrs import define, field
 
 from griptape.artifacts import ListArtifact, TextArtifact
-from griptape.drivers import BaseWebSearchDriver
+from griptape.drivers.web_search import BaseWebSearchDriver
 
 
 @define

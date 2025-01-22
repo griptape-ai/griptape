@@ -7,7 +7,7 @@ import requests
 class TestGriptapeCloudFileManagerDriver:
     @pytest.fixture()
     def driver(self, mocker):
-        from griptape.drivers import GriptapeCloudFileManagerDriver
+        from griptape.drivers.file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
 
         mock_response = mocker.Mock()
         mock_response.status_code = 200
@@ -26,7 +26,7 @@ class TestGriptapeCloudFileManagerDriver:
         assert driver.workdir == "/new"
 
     def test_instantiate_bucket_id(self, mocker):
-        from griptape.drivers import GriptapeCloudFileManagerDriver
+        from griptape.drivers.file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
 
         mock_response = mocker.Mock()
         mock_response.status_code = 200
@@ -36,13 +36,13 @@ class TestGriptapeCloudFileManagerDriver:
         GriptapeCloudFileManagerDriver(base_url="https://api.griptape.ai", api_key="foo bar", bucket_id="1")
 
     def test_instantiate_no_bucket_id(self):
-        from griptape.drivers import GriptapeCloudFileManagerDriver
+        from griptape.drivers.file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
 
         with pytest.raises(ValueError, match="GriptapeCloudFileManagerDriver requires an Bucket ID"):
             GriptapeCloudFileManagerDriver(api_key="foo bar")
 
     def test_instantiate_bucket_not_found(self, mocker):
-        from griptape.drivers import GriptapeCloudFileManagerDriver
+        from griptape.drivers.file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
 
         mocker.patch("requests.request", side_effect=requests.exceptions.HTTPError(response=mock.Mock(status_code=404)))
 
@@ -50,7 +50,7 @@ class TestGriptapeCloudFileManagerDriver:
             return GriptapeCloudFileManagerDriver(api_key="foo bar", bucket_id="1")
 
     def test_instantiate_bucket_500(self, mocker):
-        from griptape.drivers import GriptapeCloudFileManagerDriver
+        from griptape.drivers.file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
 
         mocker.patch("requests.request", side_effect=requests.exceptions.HTTPError(response=mock.Mock(status_code=500)))
 

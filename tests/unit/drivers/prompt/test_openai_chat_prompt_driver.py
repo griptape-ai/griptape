@@ -5,7 +5,7 @@ import schema
 
 from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.tokenizers import OpenAiTokenizer
 from tests.mocks.mock_tokenizer import MockTokenizer
 from tests.mocks.mock_tool.tool import MockTool

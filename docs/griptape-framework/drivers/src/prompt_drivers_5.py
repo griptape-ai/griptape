@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import AzureOpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import AzureOpenAiChatPromptDriver
 from griptape.rules import Rule
 from griptape.structures import Agent
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
 
-from griptape.drivers import StableDiffusion3ImageGenerationPipelineDriver
+from griptape.drivers.image_generation_pipeline.stable_diffusion_3 import StableDiffusion3ImageGenerationPipelineDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:

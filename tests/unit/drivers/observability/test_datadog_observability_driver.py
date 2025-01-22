@@ -1,7 +1,7 @@
 import os
 from unittest import mock
 
-from griptape.drivers import DatadogObservabilityDriver
+from griptape.drivers.observability.datadog import DatadogObservabilityDriver
 
 
 class TestDatadogTelemetryObservabilityDriver:

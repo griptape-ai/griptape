@@ -2,7 +2,7 @@ import os
 
 import boto3
 
-from griptape.drivers import AmazonS3FileManagerDriver
+from griptape.drivers.file_manager.amazon_s3 import AmazonS3FileManagerDriver
 
 amazon_s3_file_manager_driver = AmazonS3FileManagerDriver(
     bucket=os.environ["AMAZON_S3_BUCKET"],

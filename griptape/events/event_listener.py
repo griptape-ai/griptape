@@ -7,7 +7,7 @@ from attrs import define, field
 from .base_event import BaseEvent
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseEventListenerDriver
+    from griptape.drivers.event_listener import BaseEventListenerDriver
 
 
 T = TypeVar("T", bound=BaseEvent)

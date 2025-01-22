@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.drivers import OpenSearchVectorStoreDriver
+from griptape.drivers.vector.opensearch import OpenSearchVectorStoreDriver
 from griptape.utils import import_optional_dependency, str_to_hash
 
 if TYPE_CHECKING:

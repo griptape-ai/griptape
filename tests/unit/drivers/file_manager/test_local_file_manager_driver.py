@@ -6,7 +6,7 @@ import pytest
 
 from griptape.artifacts import InfoArtifact, TextArtifact
 from griptape.artifacts.blob_artifact import BlobArtifact
-from griptape.drivers import LocalFileManagerDriver
+from griptape.drivers.file_manager.local import LocalFileManagerDriver
 
 
 class TestLocalFileManagerDriver:

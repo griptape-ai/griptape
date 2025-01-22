@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from griptape.drivers import AmazonBedrockTitanEmbeddingDriver
+from griptape.drivers.embedding.amazon_bedrock import AmazonBedrockTitanEmbeddingDriver
 
 
 class TestAmazonBedrockTitanEmbeddingDriver:

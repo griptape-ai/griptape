@@ -1,7 +1,8 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import MongoDbAtlasVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.mongodb_atlas import MongoDbAtlasVectorStoreDriver
 from griptape.loaders import WebLoader
 
 # Initialize an Embedding Driver

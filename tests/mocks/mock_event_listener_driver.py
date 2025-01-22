@@ -4,7 +4,7 @@ from typing import Callable, Optional
 
 from attrs import define, field
 
-from griptape.drivers import BaseEventListenerDriver
+from griptape.drivers.event_listener import BaseEventListenerDriver
 
 
 @define

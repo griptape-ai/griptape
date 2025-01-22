@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 
 from griptape.artifacts import BaseArtifact, TextArtifact
-from griptape.drivers import BaseFileManagerDriver
+from griptape.drivers.file_manager import BaseFileManagerDriver
 
 
 class MockFileManagerDriver(BaseFileManagerDriver):

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.drivers import BaseEmbeddingDriver
+from griptape.drivers.embedding import BaseEmbeddingDriver
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 

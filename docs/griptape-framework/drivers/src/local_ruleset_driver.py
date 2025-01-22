@@ -2,7 +2,7 @@ import json
 import os
 from pathlib import Path
 
-from griptape.drivers import LocalRulesetDriver
+from griptape.drivers.ruleset.local import LocalRulesetDriver
 from griptape.rules import Ruleset
 
 ruleset_dir = "path/to/ruleset/dir"

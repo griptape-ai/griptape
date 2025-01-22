@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from griptape.drivers import GoogleEmbeddingDriver
+from griptape.drivers.embedding.google import GoogleEmbeddingDriver
 
 
 class TestGoogleEmbeddingDriver:

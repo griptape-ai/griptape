@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, Mock
 import pytest
 from sqlalchemy import create_engine
 
-from griptape.drivers import PgVectorVectorStoreDriver
+from griptape.drivers.vector.pgvector import PgVectorVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 

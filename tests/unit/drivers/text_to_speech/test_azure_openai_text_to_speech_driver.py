@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import AzureOpenAiTextToSpeechDriver
+from griptape.drivers.text_to_speech.openai import AzureOpenAiTextToSpeechDriver
 
 
 class TestAzureOpenAiTextToSpeechDriver:

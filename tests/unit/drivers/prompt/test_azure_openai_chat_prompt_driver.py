@@ -4,7 +4,7 @@ import pytest
 
 from griptape.artifacts import ActionArtifact, TextArtifact
 from griptape.common import ActionCallDeltaMessageContent, TextDeltaMessageContent
-from griptape.drivers import AzureOpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import AzureOpenAiChatPromptDriver
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiChatPromptDriverFixtureMixin
 
 

@@ -7,7 +7,7 @@ from urllib.parse import urljoin
 import requests
 from attrs import Attribute, Factory, define, field
 
-from griptape.drivers import BaseRulesetDriver
+from griptape.drivers.ruleset import BaseRulesetDriver
 from griptape.utils import dict_merge
 
 if TYPE_CHECKING:

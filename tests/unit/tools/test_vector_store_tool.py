@@ -1,5 +1,5 @@
 from griptape.artifacts import ListArtifact, TextArtifact
-from griptape.drivers import LocalVectorStoreDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.tools import VectorStoreTool
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 

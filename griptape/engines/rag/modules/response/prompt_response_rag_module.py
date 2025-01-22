@@ -12,7 +12,7 @@ from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
-    from griptape.drivers import BasePromptDriver
+    from griptape.drivers.prompt import BasePromptDriver
     from griptape.engines.rag import RagContext
 
 

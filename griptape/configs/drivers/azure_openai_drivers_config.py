@@ -5,13 +5,11 @@ from typing import Callable, Optional
 from attrs import define, field
 
 from griptape.configs.drivers import DriversConfig
-from griptape.drivers import (
-    AzureOpenAiChatPromptDriver,
-    AzureOpenAiEmbeddingDriver,
-    AzureOpenAiImageGenerationDriver,
-    AzureOpenAiTextToSpeechDriver,
-    LocalVectorStoreDriver,
-)
+from griptape.drivers.embedding.openai import AzureOpenAiEmbeddingDriver
+from griptape.drivers.image_generation.openai import AzureOpenAiImageGenerationDriver
+from griptape.drivers.prompt.openai import AzureOpenAiChatPromptDriver
+from griptape.drivers.text_to_speech.openai import AzureOpenAiTextToSpeechDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.utils.decorators import lazy_property
 
 

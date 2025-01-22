@@ -4,7 +4,7 @@ import tempfile
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.drivers import LocalVectorStoreDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.unit.drivers.vector.test_base_vector_store_driver import TestBaseVectorStoreDriver
 

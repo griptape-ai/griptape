@@ -1,6 +1,6 @@
 from schema import Schema
 
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.engines import JsonExtractionEngine
 from griptape.structures import Agent
 from griptape.tasks import ExtractionTask

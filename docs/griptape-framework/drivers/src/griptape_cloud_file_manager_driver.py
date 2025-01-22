@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import GriptapeCloudFileManagerDriver
+from griptape.drivers.file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
 
 gtc_file_manager_driver = GriptapeCloudFileManagerDriver(
     api_key=os.environ["GT_CLOUD_API_KEY"],

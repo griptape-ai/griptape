@@ -8,7 +8,7 @@ import requests
 from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseImageGenerationDriver
+from griptape.drivers.image_generation import BaseImageGenerationDriver
 
 
 @define

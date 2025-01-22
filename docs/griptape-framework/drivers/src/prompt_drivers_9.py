@@ -1,4 +1,4 @@
-from griptape.drivers import AmazonBedrockPromptDriver
+from griptape.drivers.prompt.amazon_bedrock import AmazonBedrockPromptDriver
 from griptape.rules import Rule
 from griptape.structures import Agent
 

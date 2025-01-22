@@ -3,7 +3,8 @@ import os
 import boto3
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import AmazonOpenSearchVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.amazon_opensearch import AmazonOpenSearchVectorStoreDriver
 from griptape.loaders import WebLoader
 
 # Initialize an Embedding Driver

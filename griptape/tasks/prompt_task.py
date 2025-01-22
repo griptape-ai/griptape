@@ -20,7 +20,7 @@ from griptape.utils import J2
 if TYPE_CHECKING:
     from schema import Schema
 
-    from griptape.drivers import BasePromptDriver
+    from griptape.drivers.prompt import BasePromptDriver
     from griptape.memory import TaskMemory
     from griptape.memory.structure.base_conversation_memory import BaseConversationMemory
     from griptape.structures import Structure

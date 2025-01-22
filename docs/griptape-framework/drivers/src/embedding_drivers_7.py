@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import AmazonSageMakerJumpstartEmbeddingDriver
+from griptape.drivers.embedding.amazon_sagemaker_jumpstart import AmazonSageMakerJumpstartEmbeddingDriver
 
 driver = AmazonSageMakerJumpstartEmbeddingDriver(
     endpoint=os.environ["SAGEMAKER_ENDPOINT"],

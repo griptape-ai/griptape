@@ -10,7 +10,7 @@ from griptape.chunkers import BaseChunker, TextChunker
 from griptape.configs import Defaults
 
 if TYPE_CHECKING:
-    from griptape.drivers import BasePromptDriver
+    from griptape.drivers.prompt import BasePromptDriver
     from griptape.rules import Ruleset
 
 

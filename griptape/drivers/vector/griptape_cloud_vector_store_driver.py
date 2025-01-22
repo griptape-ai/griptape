@@ -7,10 +7,12 @@ from urllib.parse import urljoin
 import requests
 from attrs import Factory, define, field
 
-from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
+from griptape.drivers.embedding.dummy import DummyEmbeddingDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
 
 if TYPE_CHECKING:
     from griptape.artifacts import ListArtifact, TextArtifact
+    from griptape.drivers.embedding import BaseEmbeddingDriver
 
 
 @define

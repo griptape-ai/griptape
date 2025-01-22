@@ -1,5 +1,5 @@
 from griptape.artifacts import TextArtifact
-from griptape.drivers import GriptapeCloudEventListenerDriver
+from griptape.drivers.event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
 from griptape.events import FinishStructureRunEvent
 
 # By default, GriptapeCloudEventListenerDriver uses the api key provided

@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import GriptapeCloudVectorStoreDriver
+from griptape.drivers.vector.griptape_cloud import GriptapeCloudVectorStoreDriver
 
 # Initialize environment variables
 gt_cloud_api_key = os.environ["GT_CLOUD_API_KEY"]

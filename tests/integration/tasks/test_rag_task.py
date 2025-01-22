@@ -13,7 +13,8 @@ class TestRagTask:
     )
     def structure_tester(self, request):
         from griptape.artifacts import TextArtifact
-        from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
+        from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+        from griptape.drivers.vector.local import LocalVectorStoreDriver
         from griptape.structures import Agent
         from griptape.tasks import RagTask
 

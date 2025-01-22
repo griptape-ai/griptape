@@ -9,7 +9,7 @@ import requests
 from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import BaseArtifact
-from griptape.drivers import BaseConversationMemoryDriver
+from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
 from griptape.utils import dict_merge
 
 if TYPE_CHECKING:

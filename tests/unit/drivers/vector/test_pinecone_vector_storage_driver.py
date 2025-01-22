@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.drivers import PineconeVectorStoreDriver
+from griptape.drivers.vector.pinecone import PineconeVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 

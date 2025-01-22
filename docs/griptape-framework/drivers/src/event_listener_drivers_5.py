@@ -1,4 +1,4 @@
-from griptape.drivers import GriptapeCloudEventListenerDriver
+from griptape.drivers.event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
 from griptape.events import EventBus, EventListener, FinishStructureRunEvent
 from griptape.structures import Agent
 

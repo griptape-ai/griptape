@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from griptape.drivers import GriptapeCloudVectorStoreDriver
+from griptape.drivers.vector.griptape_cloud import GriptapeCloudVectorStoreDriver
 
 
 class TestGriptapeCloudVectorStoreDriver:

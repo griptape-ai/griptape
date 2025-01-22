@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from griptape.drivers import LocalConversationMemoryDriver
+from griptape.drivers.memory.conversation.local import LocalConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask

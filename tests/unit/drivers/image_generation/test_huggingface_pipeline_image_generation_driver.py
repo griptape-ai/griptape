@@ -5,10 +5,8 @@ import pytest
 from PIL import Image
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import (
-    BaseDiffusionImageGenerationPipelineDriver,
-    HuggingFacePipelineImageGenerationDriver,
-)
+from griptape.drivers.image_generation.huggingface_pipeline import HuggingFacePipelineImageGenerationDriver
+from griptape.drivers.image_generation_pipeline import BaseDiffusionImageGenerationPipelineDriver
 
 
 class TestHuggingFacePipelineImageGenerationDriver:

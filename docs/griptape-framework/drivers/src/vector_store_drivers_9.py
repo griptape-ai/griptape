@@ -1,7 +1,8 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import OpenAiEmbeddingDriver, PgVectorVectorStoreDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.pgvector import PgVectorVectorStoreDriver
 from griptape.loaders import WebLoader
 
 # Initialize an Embedding Driver.

@@ -1,4 +1,4 @@
-from griptape.drivers import DuckDuckGoWebSearchDriver
+from griptape.drivers.web_search.duck_duck_go import DuckDuckGoWebSearchDriver
 from griptape.structures import Agent
 from griptape.tools import PromptSummaryTool, WebSearchTool
 

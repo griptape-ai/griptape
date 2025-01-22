@@ -1,4 +1,4 @@
-from griptape.drivers import GriptapeCloudObservabilityDriver
+from griptape.drivers.observability.griptape_cloud import GriptapeCloudObservabilityDriver
 from griptape.observability import Observability
 from griptape.structures import Agent
 

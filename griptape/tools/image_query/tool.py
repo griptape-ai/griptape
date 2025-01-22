@@ -14,7 +14,7 @@ from griptape.utils import load_artifact_from_memory
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.drivers import BasePromptDriver
+    from griptape.drivers.prompt import BasePromptDriver
 
 
 @define

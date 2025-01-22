@@ -2,7 +2,7 @@ import os
 
 import boto3
 
-from griptape.drivers import AmazonRedshiftSqlDriver
+from griptape.drivers.sql.amazon_redshift import AmazonRedshiftSqlDriver
 from griptape.loaders import SqlLoader
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent

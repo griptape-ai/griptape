@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import ElevenLabsTextToSpeechDriver
+from griptape.drivers.text_to_speech.elevenlabs import ElevenLabsTextToSpeechDriver
 from griptape.structures import Pipeline
 from griptape.tasks import TextToSpeechTask
 

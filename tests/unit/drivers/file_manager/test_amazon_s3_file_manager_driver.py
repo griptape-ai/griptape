@@ -7,7 +7,7 @@ from moto import mock_aws
 
 from griptape.artifacts import InfoArtifact, TextArtifact
 from griptape.artifacts.blob_artifact import BlobArtifact
-from griptape.drivers import AmazonS3FileManagerDriver
+from griptape.drivers.file_manager.amazon_s3 import AmazonS3FileManagerDriver
 from tests.utils.aws import mock_aws_credentials
 
 

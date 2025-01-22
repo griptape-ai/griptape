@@ -2,7 +2,7 @@ from json import dumps
 
 from griptape.configs import Defaults
 from griptape.configs.drivers import DriversConfig
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask

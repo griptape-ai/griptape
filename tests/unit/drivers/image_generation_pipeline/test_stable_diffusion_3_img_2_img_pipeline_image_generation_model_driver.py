@@ -4,7 +4,9 @@ import pytest
 import torch
 from PIL import Image
 
-from griptape.drivers import StableDiffusion3Img2ImgImageGenerationPipelineDriver
+from griptape.drivers.image_generation_pipeline.stable_diffusion_3_img_2_img import (
+    StableDiffusion3Img2ImgImageGenerationPipelineDriver,
+)
 
 
 class TestStableDiffusion3Img2ImgPipelineImageGenerationModelDriver:

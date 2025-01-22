@@ -5,7 +5,7 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import StatusCode
 
 from griptape.common import Observable
-from griptape.drivers import OpenTelemetryObservabilityDriver
+from griptape.drivers.observability.open_telemetry import OpenTelemetryObservabilityDriver
 from griptape.observability.observability import Observability
 from griptape.structures.agent import Agent
 from tests.utils.expected_spans import ExpectedSpan, ExpectedSpans

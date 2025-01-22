@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseMultiModelImageGenerationDriver
+from griptape.drivers.image_generation import BaseMultiModelImageGenerationDriver
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 

@@ -8,7 +8,7 @@ from griptape.tasks import BaseTextInputTask
 
 if TYPE_CHECKING:
     from griptape.artifacts import BaseArtifact
-    from griptape.drivers import BaseAssistantDriver
+    from griptape.drivers.assistant import BaseAssistantDriver
 
 
 @define

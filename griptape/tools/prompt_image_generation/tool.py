@@ -10,7 +10,7 @@ from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
     from griptape.artifacts import ErrorArtifact, ImageArtifact
-    from griptape.drivers import BaseImageGenerationDriver
+    from griptape.drivers.image_generation import BaseImageGenerationDriver
 
 
 @define

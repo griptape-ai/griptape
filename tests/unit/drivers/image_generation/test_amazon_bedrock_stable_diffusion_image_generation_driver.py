@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import AmazonBedrockImageGenerationDriver
+from griptape.drivers.image_generation.amazon_bedrock import AmazonBedrockImageGenerationDriver
 
 
 class TestAmazonBedrockImageGenerationDriver:

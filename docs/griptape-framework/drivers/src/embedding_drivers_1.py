@@ -1,4 +1,4 @@
-from griptape.drivers import OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
 
 embeddings = OpenAiEmbeddingDriver().embed_string("Hello Griptape!")
 

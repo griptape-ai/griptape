@@ -6,6 +6,8 @@ from schema import Schema
 from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers import OllamaPromptDriver
+from griptape.common import PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.drivers.prompt.ollama import OllamaPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 

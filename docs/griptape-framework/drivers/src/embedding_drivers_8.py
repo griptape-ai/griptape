@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import VoyageAiEmbeddingDriver
+from griptape.drivers.embedding.voyageai import VoyageAiEmbeddingDriver
 
 driver = VoyageAiEmbeddingDriver(api_key=os.environ["VOYAGE_API_KEY"])
 

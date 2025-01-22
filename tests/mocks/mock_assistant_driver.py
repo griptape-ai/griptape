@@ -3,7 +3,7 @@ from __future__ import annotations
 from attrs import define, field
 
 from griptape.artifacts import BaseArtifact, InfoArtifact, TextArtifact
-from griptape.drivers import BaseAssistantDriver
+from griptape.drivers.assistant import BaseAssistantDriver
 
 
 @define

@@ -1,8 +1,6 @@
 import os
 
-from griptape.drivers import (
-    AmazonSageMakerJumpstartPromptDriver,
-)
+from griptape.drivers.prompt.amazon_sagemaker_jumpstart import AmazonSageMakerJumpstartPromptDriver
 from griptape.structures import Agent
 
 agent = Agent(

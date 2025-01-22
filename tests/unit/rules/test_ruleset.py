@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from griptape.drivers import LocalRulesetDriver
+from griptape.drivers.ruleset.local import LocalRulesetDriver
 from griptape.rules import Rule, Ruleset
 
 TEST_RULESET_DIR = str(Path(os.path.dirname(__file__), "../../resources/"))

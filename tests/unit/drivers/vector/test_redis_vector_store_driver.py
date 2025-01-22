@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from griptape.drivers import RedisVectorStoreDriver
+from griptape.drivers.vector.redis import RedisVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 

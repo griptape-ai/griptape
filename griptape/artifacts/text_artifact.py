@@ -7,7 +7,7 @@ from attrs import define, field
 from griptape.artifacts import BaseArtifact
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseEmbeddingDriver
+    from griptape.drivers.embedding import BaseEmbeddingDriver
     from griptape.tokenizers import BaseTokenizer
 
 

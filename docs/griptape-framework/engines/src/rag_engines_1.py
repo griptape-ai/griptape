@@ -1,5 +1,7 @@
 from griptape.chunkers import TextChunker
-from griptape.drivers import LocalVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.engines.rag import RagContext, RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, TranslateQueryRagModule, VectorStoreRetrievalRagModule
 from griptape.engines.rag.stages import QueryRagStage, ResponseRagStage, RetrievalRagStage

@@ -2,13 +2,16 @@ from __future__ import annotations
 
 from abc import ABC
 from os import PathLike
-from typing import TypeVar, Union
+from typing import TYPE_CHECKING, TypeVar, Union
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact
-from griptape.drivers import BaseFileManagerDriver, LocalFileManagerDriver
+from griptape.drivers.file_manager.local import LocalFileManagerDriver
 from griptape.loaders import BaseLoader
+
+if TYPE_CHECKING:
+    from griptape.drivers.file_manager import BaseFileManagerDriver
 
 A = TypeVar("A", bound=BaseArtifact)
 

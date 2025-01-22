@@ -2,7 +2,7 @@ import pytest
 from schema import Schema
 
 from griptape.common import PromptStack, TextDeltaMessageContent
-from griptape.drivers import HuggingFaceHubPromptDriver
+from griptape.drivers.prompt.huggingface_hub import HuggingFaceHubPromptDriver
 
 
 class TestHuggingFaceHubPromptDriver:

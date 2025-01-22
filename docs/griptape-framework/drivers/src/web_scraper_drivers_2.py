@@ -1,4 +1,4 @@
-from griptape.drivers import MarkdownifyWebScraperDriver
+from griptape.drivers.web_scraper.markdownify import MarkdownifyWebScraperDriver
 
 driver = MarkdownifyWebScraperDriver()
 

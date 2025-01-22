@@ -6,14 +6,14 @@ from attrs import Factory, define, field
 from schema import Literal, Schema
 
 from griptape.artifacts import AudioArtifact, ErrorArtifact, TextArtifact
-from griptape.drivers import BaseAudioTranscriptionDriver
+from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
 from griptape.loaders import AudioLoader
 from griptape.tools import BaseTool
 from griptape.utils import load_artifact_from_memory
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseAudioTranscriptionDriver
+    from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
 
 
 @define

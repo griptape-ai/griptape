@@ -3,7 +3,7 @@ from schema import Schema
 
 from griptape.artifacts import ActionArtifact, ErrorArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
-from griptape.drivers import AmazonBedrockPromptDriver
+from griptape.drivers.prompt.amazon_bedrock import AmazonBedrockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 

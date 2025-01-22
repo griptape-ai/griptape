@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.drivers import BaseRerankDriver
+from griptape.drivers.rerank import BaseRerankDriver
 from griptape.utils import import_optional_dependency
 
 if TYPE_CHECKING:

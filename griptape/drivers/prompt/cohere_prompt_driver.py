@@ -24,7 +24,7 @@ from griptape.common import (
 )
 from griptape.common.prompt_stack.contents.action_call_delta_message_content import ActionCallDeltaMessageContent
 from griptape.configs import Defaults
-from griptape.drivers import BasePromptDriver
+from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, CohereTokenizer
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property

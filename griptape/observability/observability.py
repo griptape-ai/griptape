@@ -5,7 +5,10 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import define, field
 
 from griptape.common import Observable
-from griptape.drivers import BaseObservabilityDriver, NoOpObservabilityDriver
+from griptape.drivers.observability.no_op import NoOpObservabilityDriver
+
+if TYPE_CHECKING:
+    from griptape.drivers.observability import BaseObservabilityDriver
 
 _no_op_observability_driver = NoOpObservabilityDriver()
 _global_observability_driver: Optional[BaseObservabilityDriver] = None

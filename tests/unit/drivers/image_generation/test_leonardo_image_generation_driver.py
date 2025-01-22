@@ -3,7 +3,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import LeonardoImageGenerationDriver
+from griptape.drivers.image_generation.leonardo import LeonardoImageGenerationDriver
 
 
 class TestLeonardoImageGenerationDriver:

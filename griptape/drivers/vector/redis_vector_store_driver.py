@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, NoReturn, Optional
 import numpy as np
 from attrs import define, field
 
-from griptape.drivers import BaseVectorStoreDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency, str_to_hash
 from griptape.utils.decorators import lazy_property
 

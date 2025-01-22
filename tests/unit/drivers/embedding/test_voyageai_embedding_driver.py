@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import VoyageAiEmbeddingDriver
+from griptape.drivers.embedding.voyageai import VoyageAiEmbeddingDriver
 
 
 class TestVoyageAiEmbeddingDriver:

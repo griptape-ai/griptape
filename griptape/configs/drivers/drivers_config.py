@@ -5,29 +5,25 @@ from typing import TYPE_CHECKING
 from attrs import define
 
 from griptape.configs.drivers import BaseDriversConfig
-from griptape.drivers import (
-    DummyAudioTranscriptionDriver,
-    DummyEmbeddingDriver,
-    DummyImageGenerationDriver,
-    DummyPromptDriver,
-    DummyTextToSpeechDriver,
-    DummyVectorStoreDriver,
-    LocalConversationMemoryDriver,
-    LocalRulesetDriver,
-)
+from griptape.drivers.audio_transcription.dummy import DummyAudioTranscriptionDriver
+from griptape.drivers.embedding.dummy import DummyEmbeddingDriver
+from griptape.drivers.image_generation.dummy import DummyImageGenerationDriver
+from griptape.drivers.memory.conversation.local import LocalConversationMemoryDriver
+from griptape.drivers.prompt.dummy import DummyPromptDriver
+from griptape.drivers.ruleset.local import LocalRulesetDriver
+from griptape.drivers.text_to_speech.dummy import DummyTextToSpeechDriver
+from griptape.drivers.vector.dummy import DummyVectorStoreDriver
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
-    from griptape.drivers import (
-        BaseAudioTranscriptionDriver,
-        BaseConversationMemoryDriver,
-        BaseEmbeddingDriver,
-        BaseImageGenerationDriver,
-        BasePromptDriver,
-        BaseRulesetDriver,
-        BaseTextToSpeechDriver,
-        BaseVectorStoreDriver,
-    )
+    from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
+    from griptape.drivers.embedding import BaseEmbeddingDriver
+    from griptape.drivers.image_generation import BaseImageGenerationDriver
+    from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
+    from griptape.drivers.prompt import BasePromptDriver
+    from griptape.drivers.ruleset import BaseRulesetDriver
+    from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
+    from griptape.drivers.vector import BaseVectorStoreDriver
 
 
 @define

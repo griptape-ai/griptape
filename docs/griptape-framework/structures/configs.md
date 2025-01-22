@@ -101,22 +101,7 @@ Griptape provides a predefined [LoggingConfig](../../reference/griptape/configs/
 You can enable debug logs to view more granular information such as request/response payloads.
 
 ```python
-import logging
-
-from griptape.configs import Defaults
-from griptape.configs.defaults_config import LoggingConfig
-from griptape.configs.logging import JsonFormatter
-from griptape.drivers import OpenAiChatPromptDriver
-from griptape.structures import Agent
-from griptape.tools import CalculatorTool
-
-logger = logging.getLogger(Defaults.logging_config.logger_name)
-logger.setLevel(logging.DEBUG)
-logger.handlers[0].setFormatter(JsonFormatter())
-
-agent = Agent()
-
-agent.run("Hello world!")
+--8<-- "docs/griptape-framework/structures/src/debug_logs.py"
 ```
 
 ```

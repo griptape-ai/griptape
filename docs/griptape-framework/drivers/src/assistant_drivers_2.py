@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import OpenAiAssistantDriver
+from griptape.drivers.assistant.openai import OpenAiAssistantDriver
 from griptape.structures import Pipeline
 from griptape.tasks import AssistantTask
 from griptape.utils.stream import Stream

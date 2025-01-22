@@ -1,7 +1,9 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import MarqoVectorStoreDriver, OpenAiChatPromptDriver, OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
+from griptape.drivers.vector.marqo import MarqoVectorStoreDriver
 from griptape.loaders import WebLoader
 
 # Initialize an Embedding Driver

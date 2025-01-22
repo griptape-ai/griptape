@@ -3,7 +3,7 @@ from collections import namedtuple
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.drivers import MarqoVectorStoreDriver
+from griptape.drivers.vector.marqo import MarqoVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 

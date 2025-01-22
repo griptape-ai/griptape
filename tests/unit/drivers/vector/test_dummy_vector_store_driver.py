@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.drivers import DummyVectorStoreDriver
+from griptape.drivers.vector.dummy import DummyVectorStoreDriver
 from griptape.exceptions import DummyError
 
 

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from collections.abc import Sequence
 
     from griptape.artifacts import TextArtifact
-    from griptape.drivers import BaseVectorStoreDriver
+    from griptape.drivers.vector import BaseVectorStoreDriver
     from griptape.engines.rag import RagContext
     from griptape.loaders import TextLoader
 

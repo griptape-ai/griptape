@@ -1,5 +1,6 @@
 from griptape.artifacts import TextArtifact
-from griptape.drivers import HuggingFacePipelineImageGenerationDriver, StableDiffusion3ImageGenerationPipelineDriver
+from griptape.drivers.image_generation.huggingface_pipeline import HuggingFacePipelineImageGenerationDriver
+from griptape.drivers.image_generation_pipeline.stable_diffusion_3 import StableDiffusion3ImageGenerationPipelineDriver
 from griptape.structures import Pipeline
 from griptape.tasks import PromptImageGenerationTask
 

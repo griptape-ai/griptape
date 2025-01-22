@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.drivers import OllamaEmbeddingDriver
+from griptape.drivers.embedding.ollama import OllamaEmbeddingDriver
 
 
 class TestOllamaEmbeddingDriver:

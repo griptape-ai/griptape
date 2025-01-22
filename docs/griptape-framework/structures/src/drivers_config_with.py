@@ -1,7 +1,8 @@
 import schema
 
 from griptape.configs.drivers import AnthropicDriversConfig, OpenAiDriversConfig
-from griptape.drivers import AnthropicPromptDriver, OpenAiChatPromptDriver
+from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.engines import JsonExtractionEngine
 from griptape.structures import Agent
 from griptape.tasks import ToolTask

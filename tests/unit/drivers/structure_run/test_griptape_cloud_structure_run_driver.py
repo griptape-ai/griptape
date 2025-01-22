@@ -12,7 +12,7 @@ class TestGriptapeCloudStructureRunDriver:
 
     @pytest.fixture()
     def driver(self, mocker, mock_requests_post):
-        from griptape.drivers import GriptapeCloudStructureRunDriver
+        from griptape.drivers.structure_run.griptape_cloud import GriptapeCloudStructureRunDriver
 
         mock_response = mocker.Mock()
         mock_response.json.side_effect = [

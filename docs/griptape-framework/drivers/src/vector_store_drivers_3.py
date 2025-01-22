@@ -1,7 +1,8 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import OpenAiEmbeddingDriver, PineconeVectorStoreDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.pinecone import PineconeVectorStoreDriver
 from griptape.loaders import WebLoader
 
 NAMESPACE = "griptape"

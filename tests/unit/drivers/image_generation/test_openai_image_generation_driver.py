@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.drivers.image_generation.openai import OpenAiImageGenerationDriver
 
 
 class TestOpenAiImageGenerationDriver:

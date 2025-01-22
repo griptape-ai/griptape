@@ -12,7 +12,7 @@ from numpy import dot
 from numpy.linalg import norm
 
 from griptape import utils
-from griptape.drivers import BaseVectorStoreDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
 
 
 @define(kw_only=True)

@@ -1,6 +1,6 @@
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 
-from griptape.drivers import OpenTelemetryObservabilityDriver
+from griptape.drivers.observability.open_telemetry import OpenTelemetryObservabilityDriver
 from griptape.observability import Observability
 from griptape.rules import Rule
 from griptape.structures import Agent

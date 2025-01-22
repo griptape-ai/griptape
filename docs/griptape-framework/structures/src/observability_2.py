@@ -1,7 +1,7 @@
 import time
 
 from griptape.common import observable
-from griptape.drivers import GriptapeCloudObservabilityDriver
+from griptape.drivers.observability.griptape_cloud import GriptapeCloudObservabilityDriver
 from griptape.observability import Observability
 
 

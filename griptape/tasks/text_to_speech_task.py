@@ -11,7 +11,7 @@ from griptape.utils import J2
 
 if TYPE_CHECKING:
     from griptape.artifacts.audio_artifact import AudioArtifact
-    from griptape.drivers import BaseTextToSpeechDriver
+    from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
     from griptape.tasks import BaseTask
 
 

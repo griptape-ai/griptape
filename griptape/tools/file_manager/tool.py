@@ -1,17 +1,21 @@
 from __future__ import annotations
 
 import os
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 from schema import Literal, Schema
 
 import griptape.loaders as loaders
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
-from griptape.drivers import BaseFileManagerDriver, LocalFileManagerDriver
+from griptape.drivers.file_manager.local import LocalFileManagerDriver
 from griptape.loaders.blob_loader import BlobLoader
 from griptape.tools import BaseTool
 from griptape.utils import get_mime_type
 from griptape.utils.decorators import activity
+
+if TYPE_CHECKING:
+    from griptape.drivers.file_manager import BaseFileManagerDriver
 
 
 @define

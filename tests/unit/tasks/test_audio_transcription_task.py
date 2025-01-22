@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.artifacts import AudioArtifact, TextArtifact
-from griptape.drivers import BaseAudioTranscriptionDriver
+from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import AudioTranscriptionTask, BaseTask
 
