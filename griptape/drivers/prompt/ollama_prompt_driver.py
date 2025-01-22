@@ -1,15 +1,17 @@
 from __future__ import annotations
 
+import json
 import logging
-from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
 from griptape.artifacts import ActionArtifact, TextArtifact
 from griptape.common import (
+    ActionCallDeltaMessageContent,
     ActionCallMessageContent,
     ActionResultMessageContent,
+    BaseDeltaMessageContent,
     BaseMessageContent,
     DeltaMessage,
     ImageMessageContent,
@@ -29,6 +31,8 @@ from griptape.utils.decorators import lazy_property
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from ollama import ChatResponse, Client
 
     from griptape.tokenizers.base_tokenizer import BaseTokenizer
@@ -90,14 +94,18 @@ class OllamaPromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         params = {**self._base_params(prompt_stack), "stream": True}
         logger.debug(params)
-        stream = self.client.chat(**params)
+        stream: Iterator = self.client.chat(**params)
 
-        if isinstance(stream, Iterator):
-            for chunk in stream:
-                logger.debug(chunk)
-                yield DeltaMessage(content=TextDeltaMessageContent(chunk["message"]["content"]))
-        else:
-            raise Exception("invalid model response")
+        tool_index = 0
+        for chunk in stream:
+            logger.debug(chunk)
+            message_content = self.__to_prompt_stack_delta_message_content(chunk)
+            # Ollama provides multiple Tool calls as separate chunks but with no index to differentiate them.
+            # So we must keep track of the index ourselves.
+            if isinstance(message_content, ActionCallDeltaMessageContent):
+                message_content.index = tool_index
+                tool_index += 1
+            yield DeltaMessage(content=message_content)
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         messages = self._prompt_stack_to_messages(prompt_stack)
@@ -113,7 +121,7 @@ class OllamaPromptDriver(BasePromptDriver):
             params["format"] = prompt_stack.output_schema.json_schema("Output")
 
         # Tool calling is only supported when not streaming
-        if prompt_stack.tools and self.use_native_tools and not self.stream:
+        if prompt_stack.tools and self.use_native_tools:
             params["tools"] = self.__to_ollama_tools(prompt_stack.tools)
 
         return params
@@ -236,3 +244,24 @@ class OllamaPromptDriver(BasePromptDriver):
             )
 
         return content
+
+    def __to_prompt_stack_delta_message_content(self, content_delta: ChatResponse) -> BaseDeltaMessageContent:
+        message = content_delta["message"]
+        if "content" in message and message["content"]:
+            return TextDeltaMessageContent(message["content"])
+        elif "tool_calls" in message and len(message["tool_calls"]):
+            tool_calls = message["tool_calls"]
+
+            # Ollama doesn't _really_ support Tool streaming. They provide the full tool call at once.
+            # Multiple, parallel, Tool calls are provided as multiple content deltas.
+            # Tracking here: https://github.com/ollama/ollama/issues/7886
+            tool_call = tool_calls[0]
+
+            return ActionCallDeltaMessageContent(
+                tag=tool_call["function"]["name"],
+                name=ToolAction.from_native_tool_name(tool_call["function"]["name"])[0],
+                path=ToolAction.from_native_tool_name(tool_call["function"]["name"])[1],
+                partial_input=json.dumps(tool_call["function"]["arguments"]),
+            )
+        else:
+            return TextDeltaMessageContent("")
