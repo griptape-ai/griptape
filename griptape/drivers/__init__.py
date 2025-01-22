@@ -1,4 +1,7 @@
-from griptape.utils.deprecation import deprecation_warn
+from types import ModuleType
+import warnings
+import sys
+from typing import Any
 
 from .prompt import BasePromptDriver
 from .prompt.openai import OpenAiChatPromptDriver
@@ -123,11 +126,6 @@ from .assistant import BaseAssistantDriver
 from .assistant.griptape_cloud import GriptapeCloudAssistantDriver
 from .assistant.openai import OpenAiAssistantDriver
 
-deprecation_warn(
-    "Importing from `griptape.drivers` is deprecated and will be removed in a future release. "
-    "Please import from the provider-specific package instead. "
-    "e.g., `from griptape.drivers import OpenAiChatPromptDriver` -> `from griptape.drivers.prompt.openai import OpenAiChatPromptDriver`"
-)
 
 __all__ = [
     "BasePromptDriver",
@@ -236,3 +234,38 @@ __all__ = [
     "GriptapeCloudAssistantDriver",
     "OpenAiAssistantDriver",
 ]
+
+
+class _DeprecationWarningModuleWrapper(ModuleType):
+    """Module wrapper that issues a deprecation warning when importing."""
+
+    __ignore_attrs__ = {
+        "__file__",
+        "__package__",
+        "__path__",
+        "__doc__",
+        "__all__",
+        "__name__",
+        "__loader__",
+        "__spec__",
+    }
+
+    def __init__(self, real_module: Any) -> None:
+        self._real_module = real_module
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__ignore_attrs__:
+            return getattr(self._real_module, name)
+
+        warnings.warn(
+            "Importing from `griptape.drivers` is deprecated and will be removed in a future release. "
+            "Please import from the provider-specific package instead.\n"
+            "e.g., `from griptape.drivers import OpenAiChatPromptDriver` -> `from griptape.drivers.prompt.openai import OpenAiChatPromptDriver`",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
+        return getattr(self._real_module, name)
+
+
+sys.modules[__name__] = _DeprecationWarningModuleWrapper(sys.modules[__name__])
