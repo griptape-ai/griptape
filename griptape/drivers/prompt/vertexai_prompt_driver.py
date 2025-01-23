@@ -15,12 +15,18 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
 from vertexai.generative_models import Part
-import vertexai.generative_models
 
-from griptape.artifacts import TextArtifact
-from griptape.artifacts.base_artifact import BaseArtifact
 from griptape.artifacts.generic_artifact import GenericArtifact
-from griptape.common import Message, PromptStack, TextMessageContent, observable
+from griptape.common import (
+    ActionCallDeltaMessageContent,
+    BaseDeltaMessageContent,
+    DeltaMessage,
+    Message,
+    PromptStack,
+    TextDeltaMessageContent,
+    TextMessageContent,
+    observable,
+)
 from griptape.common.prompt_stack.contents.generic_message_content import (
     GenericMessageContent,
 )
@@ -34,6 +40,8 @@ from griptape.utils.decorators import lazy_property
 from griptape.utils.import_utils import import_optional_dependency
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator
+
     from google.auth.credentials import Credentials
     from vertexai.generative_models import Content, GenerationResponse, GenerativeModel
 
@@ -168,10 +176,41 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
     # Streaming is not currently supported with VertexAI? Says there is no stream parameter - can't remember if that's in GenerationResponse or somewhere else.
     # Does have streaming apparently - iterator so i can check each chunk if it's text/function/etc
     @observable
-    def try_stream(self, prompt_stack: PromptStack) -> Message:
-        return Message(
-            content="Stream not available for VertexAI", role=Message.ASSISTANT_ROLE
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+        messages = self.__to_google_messages(prompt_stack)
+        params = {
+            **self._base_params(prompt_stack),
+            "stream": True,
+        }  # TODO: Check if other params must be modified (generation_config?)
+        response: Iterable[GenerationResponse] = self.client.generate_content(
+            messages, **params
         )
+        prompt_token_count = None
+        for chunk in response:
+            usage_metadata = chunk.usage_metadata
+            content = (
+                self.__to_prompt_stack_delta_message_content(
+                    chunk.candidates[0].content.parts[0]
+                )
+                if chunk.candidates[0].content.parts
+                else None
+            )
+            if prompt_token_count is None:
+                prompt_token_count = usage_metadata.prompt_token_count
+                yield DeltaMessage(
+                    content=content,
+                    usage=DeltaMessage.Usage(
+                        input_tokens=usage_metadata.prompt_token_count,
+                        output_tokens=usage_metadata.candidates_token_count,
+                    ),
+                )
+            else:
+                yield DeltaMessage(
+                    content=content,
+                    usage=DeltaMessage.Usage(
+                        output_tokens=usage_metadata.candidates_token_count
+                    ),
+                )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         vertexai = import_optional_dependency("vertexai.generative_models")
@@ -235,80 +274,24 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
             raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
 
     # TODO: This is obsolete because I removed from try_run - How do I accurate make this reflect the results from VertexAI? Does it come back in parts?
-    def __to_prompt_stack_message_content(self, content: Part) -> BaseMessageContent:
-        # Only necessary if the information comes back in Parts, right now it is coming back in Text
+    def __to_prompt_stack_delta_message_content(
+        self, content: Part
+    ) -> BaseDeltaMessageContent:
+        json_format = import_optional_dependency("google.protobuf.json_format")
+
         if content.text:
-            return TextMessageContent(TextArtifact(content.text))
+            return TextDeltaMessageContent(content.text)
+        # elif content.function_call:
+        #     function_call = content.function_call
+
+        #     name, path = ToolAction.from_native_tool_name(function_call.name)
+
+        #     args = json_format.MessageToDict(function_call._pb).get("args", {})
+        #     return ActionCallDeltaMessageContent(
+        #         tag=function_call.name,
+        #         name=name,
+        #         path=path,
+        #         partial_input=json.dumps(args),
+        #     )
         else:
             raise ValueError(f"Unsupported message content type {content}")
-
-
-if __name__ == "__main__":
-    from google.oauth2.service_account import Credentials
-
-    creds = os.environ["GOOGLE_CREDENTIALS"]
-
-    schema = {
-        "type": "object",
-        "properties": {
-            "description": {"type": "string"},
-            "date": {"type": "integer"},
-            "explanation": {"type": "string"},
-        },
-        "required": ["date", "description", "explanation"],
-    }
-    schema = None
-    key_data = json.loads(creds)
-    credentials = Credentials.from_service_account_info(key_data)
-    test = VertexAIGooglePromptDriver(
-        model="gemini-1.5-flash-002",
-        project="griptape-cloud-dev",
-        location="us-west1",
-        credentials=credentials,
-        response_schema=schema,
-    )
-    video_part = Part.from_uri(
-        uri="gs://gt-airloom-video-analysis/back_entry-1733256720-1733256750.mp4",
-        mime_type="video/mp4",
-    )
-    # Create PromptStack with the message
-    prompt_stack = PromptStack()
-    prompt_stack.add_user_message("Return the first instance of people")
-    prompt_stack.add_message(
-        role=Message.USER_ROLE, artifact=GenericArtifact(video_part)
-    )  # Part is a generic type
-    # prompt_stack.add_system_message("Use slang from the 1960s in your response")
-    # for system_message in prompt_stack.system_messages:
-    #     print(system_message.to_text())
-    pprint(test.run(prompt_stack))
-
-# Questions for collin:
-# How do I get the system messages to work properly? How do I get output from running the vertexai driver to be properly logged?
-# Why is it sometimes ignoring my system messages? Just an LLM thing?
-# How would I input content like a uri and a text string like this:
-
-
-# handle text and function separately - move logic to function to check for parts and try to copy/ make this logic similar
-# # GenerationPart properties
-# @property
-# def text(self) -> str:
-#     try:
-#         return self.content.text
-#     except (ValueError, AttributeError) as e:
-#         # Enrich the error message with the whole Candidate.
-#         # The Content object does not have full information.
-#         raise ValueError(
-#             "Cannot get the Candidate text.\n"
-#             f"{e}\n"
-#             "Candidate:\n" + _dict_to_pretty_string(self.to_dict())
-#         ) from e
-
-# @property
-# def function_calls(self) -> Sequence["FunctionCall"]:
-#     if not self.content or not self.content.parts:
-#         return []
-#     return [
-#         part.function_call
-#         for part in self.content.parts
-#         if part._raw_part._pb.WhichOneof("data") == "function_call"
-#     ]
