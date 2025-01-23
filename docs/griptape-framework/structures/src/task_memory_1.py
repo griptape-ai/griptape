@@ -4,4 +4,4 @@ from griptape.tools import CalculatorTool
 # Create an agent with the CalculatorTool tool
 agent = Agent(tools=[CalculatorTool(off_prompt=False)])
 
-agent.run("What is 10 raised to the power of 5?")
+agent.run("What is the square root of 12345?")
