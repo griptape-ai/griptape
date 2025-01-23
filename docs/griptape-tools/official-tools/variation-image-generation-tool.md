@@ -11,5 +11,5 @@ This Tool allows LLMs to generate variations of an input image from a text promp
 ## Referencing an Image in Task Memory
 
 ```python
---8<-- "docs/griptape-tools/official-tools/src/variation_image_generation_client_tool_2.py"
+--8<-- "docs/griptape-tools/official-tools/src/variation_image_generation_tool_2.py"
 ```
