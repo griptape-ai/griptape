@@ -1,9 +1,11 @@
-from unittest.mock import Mock
+import base64
+import time
+from unittest.mock import ANY, MagicMock, Mock
 
 import pytest
 
-from griptape.artifacts import ActionArtifact, TextArtifact
-from griptape.common import ActionCallDeltaMessageContent, TextDeltaMessageContent
+from griptape.artifacts import ActionArtifact, AudioArtifact, TextArtifact
+from griptape.common import ActionCallDeltaMessageContent, AudioDeltaMessageContent, TextDeltaMessageContent
 from griptape.drivers.prompt.openai import AzureOpenAiChatPromptDriver
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiChatPromptDriverFixtureMixin
 
@@ -17,7 +19,18 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_create.return_value = Mock(
             headers={},
             choices=[
-                Mock(message=Mock(content="model-output", tool_calls=[Mock(id="mock-id", function=mock_function)]))
+                Mock(
+                    message=Mock(
+                        content="model-output",
+                        audio=Mock(
+                            id="audio-id",
+                            data=base64.b64encode(b"assistant-audio-data"),
+                            transcript="assistant-audio-transcription",
+                            expires_at=time.time(),
+                        ),
+                        tool_calls=[Mock(id="mock-id", function=mock_function)],
+                    )
+                )
             ],
             usage=Mock(prompt_tokens=5, completion_tokens=10),
         )
@@ -57,7 +70,50 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
                     usage=None,
                 ),
                 Mock(choices=None, usage=Mock(prompt_tokens=5, completion_tokens=10)),
-                Mock(choices=[Mock(delta=Mock(content=None, tool_calls=None))], usage=None),
+                Mock(choices=[Mock(delta=Mock(content=None, tool_calls=None, audio=None))], usage=None),
+                Mock(
+                    choices=[
+                        Mock(
+                            delta=MagicMock(
+                                content=None,
+                                tool_calls=None,
+                                audio={
+                                    "id": "audio-id",
+                                },
+                            )
+                        )
+                    ],
+                    usage=None,
+                ),
+                Mock(
+                    choices=[
+                        Mock(
+                            delta=MagicMock(
+                                content=None,
+                                tool_calls=None,
+                                audio={
+                                    "data": base64.b64encode(b"assistant-audio-data").decode("utf-8"),
+                                },
+                            )
+                        )
+                    ],
+                    usage=None,
+                ),
+                Mock(
+                    choices=[
+                        Mock(
+                            delta=MagicMock(
+                                content=None,
+                                tool_calls=None,
+                                audio={
+                                    "expires_at": time.time(),
+                                    "transcript": "assistant-audio-transcription",
+                                },
+                            )
+                        )
+                    ],
+                    usage=None,
+                ),
             ]
         )
         return mock_chat_create
@@ -69,6 +125,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
     @pytest.mark.parametrize("api_version", ["2023-05-15", "2024-02-01", "2024-06-01", "2024-10-21"])
+    @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
     def test_try_run(
         self,
         mock_chat_completion_create,
@@ -77,6 +134,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         use_native_tools,
         structured_output_strategy,
         api_version,
+        modalities,
     ):
         # Given
         driver = AzureOpenAiChatPromptDriver(
@@ -85,6 +143,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model="gpt-4",
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
+            modalities=modalities,
             extra_params={"foo": "bar"},
             api_version=api_version,
         )
@@ -98,6 +157,12 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             user=driver.user,
             messages=messages,
+            modalities=driver.modalities,
+            **{
+                "audio": driver.audio,
+            }
+            if "audio" in driver.modalities
+            else {},
             **{
                 "seed": driver.seed,
             }
@@ -130,15 +195,24 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
-        assert isinstance(message.value[1], ActionArtifact)
-        assert message.value[1].value.tag == "mock-id"
-        assert message.value[1].value.name == "MockTool"
-        assert message.value[1].value.path == "test"
-        assert message.value[1].value.input == {"foo": "bar"}
+        assert isinstance(message.value[1], AudioArtifact)
+        assert message.value[1].value == b"assistant-audio-data"
+        assert message.value[1].format == "wav"
+        assert message.value[1].meta == {
+            "audio_id": "audio-id",
+            "transcript": "assistant-audio-transcription",
+            "expires_at": ANY,
+        }
+        assert isinstance(message.value[2], ActionArtifact)
+        assert message.value[2].value.tag == "mock-id"
+        assert message.value[2].value.name == "MockTool"
+        assert message.value[2].value.path == "test"
+        assert message.value[2].value.input == {"foo": "bar"}
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
     @pytest.mark.parametrize("api_version", ["2023-05-15", "2024-02-01", "2024-06-01", "2024-10-21"])
+    @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
     def test_try_stream_run(
         self,
         mock_chat_completion_stream_create,
@@ -147,6 +221,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         use_native_tools,
         structured_output_strategy,
         api_version,
+        modalities,
     ):
         # Given
         driver = AzureOpenAiChatPromptDriver(
@@ -156,6 +231,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream=True,
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
+            modalities=modalities,
             extra_params={"foo": "bar"},
             api_version=api_version,
         )
@@ -169,6 +245,12 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model=driver.model,
             temperature=driver.temperature,
             user=driver.user,
+            **{
+                "audio": driver.audio,
+            }
+            if "audio" in driver.modalities
+            else {},
+            modalities=driver.modalities,
             stream=True,
             messages=messages,
             **{
@@ -223,6 +305,16 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         event = next(stream)
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 10
+
         event = next(stream)
-        assert isinstance(event.content, TextDeltaMessageContent)
-        assert event.content.text == ""
+        assert isinstance(event.content, AudioDeltaMessageContent)
+        assert event.content.id == "audio-id"
+
+        event = next(stream)
+        assert isinstance(event.content, AudioDeltaMessageContent)
+        assert event.content.data == "YXNzaXN0YW50LWF1ZGlvLWRhdGE="
+
+        event = next(stream)
+        assert isinstance(event.content, AudioDeltaMessageContent)
+        assert event.content.expires_at == ANY
+        assert event.content.transcript == "assistant-audio-transcription"

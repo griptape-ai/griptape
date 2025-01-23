@@ -26,6 +26,8 @@ class TestAzureOpenAiDriversConfig:
                 "model": "gpt-4o",
                 "azure_deployment": "gpt-4o",
                 "azure_endpoint": "http://localhost:8080",
+                "audio": {"format": "pcm16", "voice": "alloy"},
+                "modalities": ["text"],
                 "api_version": "2024-10-21",
                 "organization": None,
                 "parallel_tool_calls": True,
