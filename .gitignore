@@ -60,3 +60,6 @@ reference
 # coverage.py
 htmlcov/
 coverage.*
+
+# mise
+mise.local.toml
