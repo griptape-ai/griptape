@@ -1,7 +1,6 @@
----
-search:
-  boost: 2
----
+______________________________________________________________________
+
+## search: boost: 2
 
 ## Overview
 
@@ -72,7 +71,7 @@ This Driver supports image generation configurations like style presets, image q
 ### HuggingFace Pipelines
 
 !!! info
-    This driver requires the `drivers-image-generation-huggingface` [extra](../index.md#extras).
+This driver requires the `drivers-image-generation-huggingface` [extra](../index.md#extras).
 
 The [HuggingFace Pipelines Image Generation Driver](../../reference/griptape/drivers/image_generation/huggingface_pipeline_image_generation_driver.md) enables image generation through locally-hosted models using the HuggingFace [Diffusers](https://huggingface.co/docs/diffusers/en/index) library. This Driver requires a [Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/index.md) to prepare the appropriate Pipeline.
 
@@ -87,7 +86,7 @@ The `device` configuration specifies the hardware device used to run inference. 
 #### Stable Diffusion 3 Image Generation Pipeline Driver
 
 !!! info
-    The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
+The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
 
 The [Stable Diffusion 3 Image Generation Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_image_generation_pipeline_driver.md) provides a Stable `Diffusion3DiffusionPipeline` for text-to-image generations via the [HuggingFace Pipelines Image Generation Driver's](../../reference/griptape/drivers/image_generation/huggingface_pipeline_image_generation_driver.md) `.try_text_to_image()` method. This Driver accepts a text prompt and configurations including Stable Diffusion 3 model, output image size, generation seed, and inference steps.
 
@@ -100,7 +99,7 @@ Image generation consumes substantial memory. On devices with limited VRAM, it m
 #### Stable Diffusion 3 Img2Img Image Generation Pipeline Driver
 
 !!! info
-    The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
+The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
 
 The [Stable Diffusion 3 Img2Img Image Generation Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_img_2_img_image_generation_pipeline_driver.md) provides a `StableDiffusion3Img2ImgPipeline` for image-to-image generations, accepting a text prompt and input image. This Driver accepts a text prompt, an input image, and configurations including Stable Diffusion 3 model, output image size, inference steps, generation seed, and strength of generation over the input image.
 
@@ -111,7 +110,7 @@ The [Stable Diffusion 3 Img2Img Image Generation Pipeline Driver](../../referenc
 #### StableDiffusion3ControlNetImageGenerationPipelineDriver
 
 !!! note
-    The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
+The `Stable Diffusion 3 Image Generation Pipeline Driver` requires the `drivers-image-generation-huggingface` extra.
 
 The [StableDiffusion3ControlNetImageGenerationPipelineDriver](../../reference/griptape/drivers/image_generation_pipeline/stable_diffusion_3_controlnet_image_generation_pipeline_driver.md) provides a `StableDiffusion3ControlNetPipeline` for image-to-image generations, accepting a text prompt and a control image. This Driver accepts a text prompt, a control image, and configurations including Stable Diffusion 3 model, ControlNet model, output image size, generation seed, inference steps, and the degree to which the model adheres to the control image.
 

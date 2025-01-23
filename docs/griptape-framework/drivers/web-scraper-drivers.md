@@ -1,7 +1,6 @@
----
-search:
-  boost: 2
----
+______________________________________________________________________
+
+## search: boost: 2
 
 ## Overview
 
@@ -24,28 +23,30 @@ Example using `ProxyWebScraperDriver` directly:
 ### Markdownify
 
 !!! info
-    This driver requires the `drivers-web-scraper-markdownify` [extra](../index.md#extras) and the
-    playwright browsers to be installed.
+This driver requires the `drivers-web-scraper-markdownify` [extra](../index.md#extras) and the
+playwright browsers to be installed.
 
-    To install the playwright browsers, run `playwright install` in your terminal. If you are using
-    poetry, run `poetry run playwright install` instead. The `playwright` command should already be
-    installed as a dependency of the `drivers-web-scraper-markdownify` extra. For more details about
-    playwright, see [the playwright docs](https://playwright.dev/python/docs/library).
+````
+To install the playwright browsers, run `playwright install` in your terminal. If you are using
+poetry, run `poetry run playwright install` instead. The `playwright` command should already be
+installed as a dependency of the `drivers-web-scraper-markdownify` extra. For more details about
+playwright, see [the playwright docs](https://playwright.dev/python/docs/library).
 
-    Note that if you skip installing the playwright browsers, you will see the following error when
-    you run your code:
+Note that if you skip installing the playwright browsers, you will see the following error when
+you run your code:
 
-    ```
-    playwright._impl._errors.Error: Executable doesn't exist at ...
-    ╔════════════════════════════════════════════════════════════╗
-    ║ Looks like Playwright was just installed or updated.       ║
-    ║ Please run the following command to download new browsers: ║
-    ║                                                            ║
-    ║     playwright install                                     ║
-    ║                                                            ║
-    ║ <3 Playwright Team                                         ║
-    ╚════════════════════════════════════════════════════════════╝
-    ```
+```
+playwright._impl._errors.Error: Executable doesn't exist at ...
+╔════════════════════════════════════════════════════════════╗
+║ Looks like Playwright was just installed or updated.       ║
+║ Please run the following command to download new browsers: ║
+║                                                            ║
+║     playwright install                                     ║
+║                                                            ║
+║ <3 Playwright Team                                         ║
+╚════════════════════════════════════════════════════════════╝
+```
+````
 
 The [MarkdownifyWebScraperDriver](../../reference/griptape/drivers/web_scraper/markdownify_web_scraper_driver.md) outputs the scraped text in markdown format. It uses [playwright](https://pypi.org/project/playwright/) to render web pages along with dynamically loaded content, and a combination of [beautifulsoup4](https://pypi.org/project/beautifulsoup4/) and [markdownify](https://pypi.org/project/markdownify/) to produce a markdown representation of a webpage. It makes a best effort to produce a markdown representation of a webpage that is concise yet human (and LLM) readable.
 
@@ -64,7 +65,7 @@ Example of using `MarkdownifyWebScraperDriver` with an agent:
 ### Trafilatura
 
 !!! info
-    This driver requires the `drivers-web-scraper-trafilatura` [extra](../index.md#extras).
+This driver requires the `drivers-web-scraper-trafilatura` [extra](../index.md#extras).
 
 The [TrafilaturaWebScraperDriver](../../reference/griptape/drivers/web_scraper/trafilatura_web_scraper_driver.md) scrapes text from a webpage using the [Trafilatura](https://trafilatura.readthedocs.io) library.
 

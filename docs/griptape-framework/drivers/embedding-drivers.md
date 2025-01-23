@@ -1,7 +1,6 @@
----
-search:
-  boost: 2
----
+______________________________________________________________________
+
+## search: boost: 2
 
 ## Overview
 
@@ -38,7 +37,7 @@ Simply set the `base_url` to the service's API endpoint and the `model` to the m
 ```
 
 !!! tip
-    Make sure to include `v1` at the end of the `base_url` to match the OpenAI API endpoint.
+Make sure to include `v1` at the end of the `base_url` to match the OpenAI API endpoint.
 
 ### Azure OpenAI
 
@@ -48,7 +47,7 @@ with updated defaults.
 ### Bedrock Titan
 
 !!! info
-    This driver requires the `drivers-embedding-amazon-bedrock` [extra](../index.md#extras).
+This driver requires the `drivers-embedding-amazon-bedrock` [extra](../index.md#extras).
 
 The [AmazonBedrockTitanEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_bedrock_titan_embedding_driver.md) uses the [Amazon Bedrock Embeddings API](https://docs.aws.amazon.com/bedrock/latest/userguide/embeddings.html).
 
@@ -63,7 +62,7 @@ The [AmazonBedrockTitanEmbeddingDriver](../../reference/griptape/drivers/embeddi
 ### Google
 
 !!! info
-    This driver requires the `drivers-embedding-google` [extra](../index.md#extras).
+This driver requires the `drivers-embedding-google` [extra](../index.md#extras).
 
 The [GoogleEmbeddingDriver](../../reference/griptape/drivers/embedding/google_embedding_driver.md) uses the [Google Embeddings API](https://ai.google.dev/tutorials/python_quickstart#use_embeddings).
 
@@ -78,7 +77,7 @@ The [GoogleEmbeddingDriver](../../reference/griptape/drivers/embedding/google_em
 ### Hugging Face Hub
 
 !!! info
-    This driver requires the `drivers-embedding-huggingface` [extra](../index.md#extras).
+This driver requires the `drivers-embedding-huggingface` [extra](../index.md#extras).
 
 The [HuggingFaceHubEmbeddingDriver](../../reference/griptape/drivers/embedding/huggingface_hub_embedding_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api). It supports models with the following tasks:
 
@@ -91,7 +90,7 @@ The [HuggingFaceHubEmbeddingDriver](../../reference/griptape/drivers/embedding/h
 ### Ollama
 
 !!! info
-    This driver requires the `drivers-embedding-ollama` [extra](../index.md#extras).
+This driver requires the `drivers-embedding-ollama` [extra](../index.md#extras).
 
 The [OllamaEmbeddingDriver](../../reference/griptape/drivers/embedding/ollama_embedding_driver.md) uses the [Ollama Embeddings API](https://ollama.com/blog/embedding-models).
 
@@ -104,7 +103,7 @@ The [OllamaEmbeddingDriver](../../reference/griptape/drivers/embedding/ollama_em
 The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_sagemaker_jumpstart_embedding_driver.md) uses the [Amazon SageMaker Endpoints](https://docs.aws.amazon.com/sagemaker/latest/dg/realtime-endpoints.html) to generate embeddings on AWS.
 
 !!! info
-    This driver requires the `drivers-embedding-amazon-sagemaker` [extra](../index.md#extras).
+This driver requires the `drivers-embedding-amazon-sagemaker` [extra](../index.md#extras).
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_7.py"
@@ -115,7 +114,7 @@ The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/e
 The [VoyageAiEmbeddingDriver](../../reference/griptape/drivers/embedding/voyageai_embedding_driver.md) uses the [VoyageAI Embeddings API](https://www.voyageai.com/).
 
 !!! info
-    This driver requires the `drivers-embedding-voyageai` [extra](../index.md#extras).
+This driver requires the `drivers-embedding-voyageai` [extra](../index.md#extras).
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_8.py"
@@ -126,7 +125,7 @@ The [VoyageAiEmbeddingDriver](../../reference/griptape/drivers/embedding/voyagea
 The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_embedding_driver.md) uses the [Cohere Embeddings API](https://docs.cohere.com/docs/embeddings).
 
 !!! info
-    This driver requires the `drivers-embedding-cohere` [extra](../index.md#extras).
+This driver requires the `drivers-embedding-cohere` [extra](../index.md#extras).
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_9.py"

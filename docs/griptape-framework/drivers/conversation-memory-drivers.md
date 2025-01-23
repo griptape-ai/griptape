@@ -1,7 +1,6 @@
----
-search:
-  boost: 2
----
+______________________________________________________________________
+
+## search: boost: 2
 
 ## Overview
 
@@ -28,7 +27,7 @@ The [LocalConversationMemoryDriver](../../reference/griptape/drivers/memory/conv
 ### Amazon DynamoDb
 
 !!! info
-    This driver requires the `drivers-memory-conversation-amazon-dynamodb` [extra](../index.md#extras).
+This driver requires the `drivers-memory-conversation-amazon-dynamodb` [extra](../index.md#extras).
 
 The [AmazonDynamoDbConversationMemoryDriver](../../reference/griptape/drivers/memory/conversation/amazon_dynamodb_conversation_memory_driver.md) allows you to persist Conversation Memory in [Amazon DynamoDb](https://aws.amazon.com/dynamodb/).
 
@@ -41,7 +40,7 @@ Optional parameters `sort_key` and `sort_key_value` can be supplied for tables w
 ### Redis
 
 !!! info
-    This driver requires the `drivers-memory-conversation-redis` [extra](../index.md#extras).
+This driver requires the `drivers-memory-conversation-redis` [extra](../index.md#extras).
 
 The [RedisConversationMemoryDriver](../../reference/griptape/drivers/memory/conversation/redis_conversation_memory_driver.md) allows you to persist Conversation Memory in [Redis](https://redis.io/).
 

@@ -15,11 +15,11 @@ class TestTextChunker:
         text = [
             "## Header 1\n",
             gen_paragraph(MAX_TOKENS // 2, chunker.tokenizer, ". "),
-            "\n" "## Header 2\n",
+            "\n## Header 2\n",
             gen_paragraph(MAX_TOKENS // 2, chunker.tokenizer, ". "),
             "\n\n",
             gen_paragraph(MAX_TOKENS // 2, chunker.tokenizer, ". "),
-            "\n" "## Header 3\n",
+            "\n## Header 3\n",
             gen_paragraph(MAX_TOKENS * 2, chunker.tokenizer, ". "),
         ]
         chunks = chunker.chunk("".join(text))

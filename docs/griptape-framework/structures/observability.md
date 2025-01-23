@@ -1,7 +1,6 @@
----
-search:
-  boost: 2
----
+______________________________________________________________________
+
+## search: boost: 2
 
 ## Overview
 
@@ -14,7 +13,7 @@ Observability is completely optional. To opt in, wrap your application code with
 ```
 
 !!! info
-    For available Drivers (and destinations), see [Observability Drivers](../drivers/observability-drivers.md).
+For available Drivers (and destinations), see [Observability Drivers](../drivers/observability-drivers.md).
 
 ## Tracing Custom Code
 

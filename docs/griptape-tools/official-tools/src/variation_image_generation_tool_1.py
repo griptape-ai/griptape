@@ -17,5 +17,5 @@ tool = VariationImageGenerationTool(
 
 # Create an agent and provide the tool to it.
 Agent(tools=[tool]).run(
-    "Generate a variation of the image located at tests/resources/mountain.png " "depicting a mountain on a winter day"
+    "Generate a variation of the image located at tests/resources/mountain.png depicting a mountain on a winter day"
 )

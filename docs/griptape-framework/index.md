@@ -210,4 +210,4 @@ Agents are great for getting started, but they are intentionally limited to a si
                              Output: El contenido de https://www.griptape.ai ha sido resumido y almacenado en griptape.txt.
 ```
 
-[^1]: In some cases a model might be capable of basic arithmetic. For example, gpt-3.5 returns the correct numeric answer but in an odd format.
+\[^1\]: In some cases a model might be capable of basic arithmetic. For example, gpt-3.5 returns the correct numeric answer but in an odd format.

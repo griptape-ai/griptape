@@ -1,7 +1,6 @@
----
-search:
-  boost: 2
----
+______________________________________________________________________
+
+## search: boost: 2
 
 ## Overview
 
@@ -36,7 +35,7 @@ The [LocalFileManagerDriver](../../reference/griptape/drivers/file_manager/local
 ### Amazon S3
 
 !!! info
-    This driver requires the `drivers-file-manager-amazon-s3` [extra](../index.md#extras).
+This driver requires the `drivers-file-manager-amazon-s3` [extra](../index.md#extras).
 
 The [LocalFile ManagerDriver](../../reference/griptape/drivers/file_manager/amazon_s3_file_manager_driver.md) allows you to load and save files sourced from an Amazon S3 bucket.
 

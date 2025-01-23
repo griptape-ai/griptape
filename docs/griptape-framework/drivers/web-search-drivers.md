@@ -1,7 +1,6 @@
----
-search:
-  boost: 2
----
+______________________________________________________________________
+
+## search: boost: 2
 
 ## Overview
 
@@ -66,7 +65,7 @@ Example using `GoogleWebSearchDriver` directly:
 ### DuckDuckGo
 
 !!! info
-    This driver requires the `drivers-web-search-duckduckgo` [extra](../index.md#extras).
+This driver requires the `drivers-web-search-duckduckgo` [extra](../index.md#extras).
 
 The [DuckDuckGoWebSearchDriver](../../reference/griptape/drivers/web_search/duck_duck_go_web_search_driver.md) uses the [duckduckgo_search](https://github.com/deedy5/duckduckgo_search) SDK for web searching.
 
@@ -79,7 +78,7 @@ Example of using `DuckDuckGoWebSearchDriver` directly:
 ### Tavily
 
 !!! info
-    This driver requires the `drivers-web-search-tavily` [extra](../index.md#extras), and a Tavily [api key](https://app.tavily.com).
+This driver requires the `drivers-web-search-tavily` [extra](../index.md#extras), and a Tavily [api key](https://app.tavily.com).
 
 Example of using `TavilyWebSearchDriver` directly:
 
@@ -90,8 +89,8 @@ Example of using `TavilyWebSearchDriver` directly:
 ### Exa
 
 !!! info
-    This driver requires the `drivers-web-search-exa` [extra](../index.md#extras),
-    and an Exa [api key](https://dashboard.exa.ai/api-keys)
+This driver requires the `drivers-web-search-exa` [extra](../index.md#extras),
+and an Exa [api key](https://dashboard.exa.ai/api-keys)
 
 Example of using `ExaWebSearchDriver` directly:
 

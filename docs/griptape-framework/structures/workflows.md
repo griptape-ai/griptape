@@ -1,7 +1,6 @@
----
-search:
-  boost: 2
----
+______________________________________________________________________
+
+## search: boost: 2
 
 ## Overview
 
@@ -32,7 +31,7 @@ Note that we use the `StructureVisualizer` to get a visual representation of the
 ![Workflow](https://mermaid.ink/img/Z3JhcGggVEQ7OwoJd29ybGQtLT4gc3RvcnkgJiBzY290dHkgJiBhbm5pZTsKCXNjb3R0eS0tPiBzdG9yeTsKCWFubmllLS0+IHN0b3J5Ow==)
 
 !!! Info
-    Output edited for brevity
+Output edited for brevity
 
 ```
 [09/08/23 10:26:21] INFO     PromptTask world
@@ -175,7 +174,7 @@ Or even mix imperative and declarative:
 `Workflow.insert_tasks()` provides a convenient way to insert parallel tasks between parents and children.
 
 !!! info
-    By default, all children are removed from the parent task and all parent tasks are removed from the child task. If you want to keep these parent-child relationships, then set the `preserve_relationship` parameter to `True`.
+By default, all children are removed from the parent task and all parent tasks are removed from the child task. If you want to keep these parent-child relationships, then set the `preserve_relationship` parameter to `True`.
 
 Imperatively insert parallel tasks between a parent and child:
 

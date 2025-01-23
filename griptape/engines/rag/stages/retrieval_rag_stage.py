@@ -50,7 +50,7 @@ class RetrievalRagStage(BaseRagStage):
         chunks_after_dedup = len(results)
 
         logging.info(
-            "RetrievalRagStage: deduplicated %s " "chunks (%s - %s)",
+            "RetrievalRagStage: deduplicated %s chunks (%s - %s)",
             chunks_before_dedup - chunks_after_dedup,
             chunks_before_dedup,
             chunks_after_dedup,

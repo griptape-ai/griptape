@@ -218,6 +218,6 @@ class RestApiTool(BaseTool):
             url += path.strip("/")
 
         if path_params:
-            url += f'/{str.join("/", map(str, path_params))}'
+            url += f"/{str.join('/', map(str, path_params))}"
 
         return urljoin(base_url.strip("/"), url)
