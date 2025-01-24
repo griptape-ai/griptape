@@ -16,6 +16,7 @@ Provide a Driver to a [Tool](../tools/index.md) for use by an [Agent](../structu
 The [Eleven Labs Text to Speech Driver](../../reference/griptape/drivers/text_to_speech/elevenlabs_text_to_speech_driver.md) provides support for text-to-speech models hosted by Eleven Labs. This Driver supports configurations specific to Eleven Labs, like voice selection and output format.
 
 !!! info
+
     This driver requires the `drivers-text-to-speech-elevenlabs` [extra](../index.md#extras).
 
 ```python

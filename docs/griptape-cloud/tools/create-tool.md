@@ -6,9 +6,9 @@ You can host your [Griptape framework Tools](../../griptape-tools/index.md) on G
 
 1. [Connect Your GitHub Account in your Griptape Cloud account](https://cloud.griptape.ai/account)
 1. Install the [Griptape Cloud GitHub app to your GitHub account or organization](https://github.com/apps/griptape-cloud/installations/new/)
-   - Be sure to allow the app access to `All Repositories` or select the specific repositories you need
+    - Be sure to allow the app access to `All Repositories` or select the specific repositories you need
 1. Ensure your repository has a Tool Config YAML file
-   - To learn more see [Tool Config YAML](tool-config.md)
+    - To learn more see [Tool Config YAML](tool-config.md)
 
 You can now [create a Tool in the Griptape Cloud console](https://cloud.griptape.ai/tools/create) by providing your GitHub repository information.
 

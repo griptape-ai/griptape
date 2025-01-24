@@ -79,6 +79,7 @@ Handler 2 <class 'griptape.events.finish_structure_run_event.FinishStructureRunE
 You can use `Structure.run_stream()` for streaming Events from the `Structure` in the form of an iterator.
 
 !!! tip
+
     Set `stream=True` on your [Prompt Driver](../drivers/prompt-drivers.md) in order to receive completion chunk events.
 
 ```python
