@@ -139,7 +139,7 @@ class ActionsSubtask(BaseTask):
                     actions_output.append(output)
                 self.output = ListArtifact(actions_output)
         except Exception as e:
-            logger.exception("Subtask %s\n%s", self.id, e)
+            logger.debug("Subtask %s\n%s", self.id, e)
 
             self.output = ErrorArtifact(str(e), exception=e)
         if self.output is not None:
@@ -277,7 +277,7 @@ class ActionsSubtask(BaseTask):
 
             return [self.__process_action_object(action_object) for action_object in actions_list]
         except json.JSONDecodeError as e:
-            logger.exception("Subtask %s\nInvalid actions JSON: %s", self.origin_task.id, e)
+            logger.debug("Subtask %s\nInvalid actions JSON: %s", self.origin_task.id, e)
 
             self.output = ErrorArtifact(f"Actions JSON decoding error: {e}", exception=e)
 
@@ -336,10 +336,10 @@ class ActionsSubtask(BaseTask):
                 if activity_schema is not None and action.input is not None:
                     activity_schema.validate(action.input)
         except schema.SchemaError as e:
-            logger.exception("Subtask %s\nInvalid action JSON: %s", self.origin_task.id, e)
+            logger.debug("Subtask %s\nInvalid action JSON: %s", self.origin_task.id, e)
 
             action.output = ErrorArtifact(f"Activity input JSON validation error: {e}", exception=e)
         except SyntaxError as e:
-            logger.exception("Subtask %s\nSyntax error: %s", self.origin_task.id, e)
+            logger.debug("Subtask %s\nSyntax error: %s", self.origin_task.id, e)
 
             action.output = ErrorArtifact(f"Syntax error: {e}", exception=e)
