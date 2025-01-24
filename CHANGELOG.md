@@ -37,6 +37,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `griptape.drivers` namespace. Use provider-specific namespaces instead.
 
+### Fixed
+
+- Error when serializing `RagContext`.
+
 
 ## [1.2.0] - 2025-01-21
 
