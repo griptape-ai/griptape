@@ -30,6 +30,7 @@ Loads text files into [TextArtifact](../../griptape-framework/data/artifacts.md#
 ### PDF
 
 !!! info
+
     This driver requires the `loaders-pdf` [extra](../index.md#extras).
 
 Loads PDF files into [ListArtifact](../../griptape-framework/data/artifacts.md#list)s, where each element is a [TextArtifact](../../griptape-framework/data/artifacts.md#text) containing a page of the PDF:
@@ -49,6 +50,7 @@ Loads CSV files into [ListArtifact](../../griptape-framework/data/artifacts.md#l
 ### Image
 
 !!! info
+
     This driver requires the `loaders-image` [extra](../index.md#extras).
 
 Loads images into [ImageArtifact](../../griptape-framework/data/artifacts.md#image)s:
@@ -85,6 +87,7 @@ Loads JSON files into [JsonArtifact](../../griptape-framework/data/artifacts.md#
 ## Web
 
 !!! info
+
     This driver requires the `loaders-web` [extra](../index.md#extras).
 
 Scrapes web pages using a [WebScraperDriver](../drivers/web-scraper-drivers.md) and loads the resulting text into [TextArtifact](../../griptape-framework/data/artifacts.md#text)s.
@@ -104,6 +107,7 @@ Loads data from a SQL database using a [SQLDriver](../drivers/sql-drivers.md) an
 ## Email
 
 !!! info
+
     This driver requires the `loaders-email` [extra](../index.md#extras).
 
 Loads data from an imap email server into a [ListArtifact](../../reference/griptape/artifacts/list_artifact.md)s, where each element is a [TextArtifact](../../reference/griptape/artifacts/text_artifact.md) containing an email.

@@ -14,6 +14,7 @@ A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define [Ru
 [Rule](../../reference/griptape/rules/base_rule.md)s shape the LLM's behavior by defining specific guidelines or instructions for how it should interpret and respond to inputs. Rules can be used to modify language style, tone, or even behavior based on what you define.
 
 !!! tip
+
     Avoid writing large amounts of text in a single Rule.
     Breaking down your Rules generally helps the LLM follow them more effectively. Additionally, it makes it easier to evaluate the Rule's effectiveness using tools like the [Eval Engine](../engines/eval-engines.md).
     If you have an existing system prompt, consider [overriding the default system prompt](#overriding-system-prompts) instead.
@@ -32,6 +33,7 @@ A [Ruleset](../../reference/griptape/rules/ruleset.md) can be used to define [Ru
 ### Json Schema
 
 !!! tip
+
     [Structured Output](../drivers/prompt-drivers.md#structured-output) provides a more robust solution for having the LLM generate structured output.
 
 [JsonSchemaRule](../../reference/griptape/rules/json_schema_rule.md)s defines a structured format for the LLM's output by providing a JSON schema.

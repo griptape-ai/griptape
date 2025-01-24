@@ -24,6 +24,7 @@ Example using `ProxyWebScraperDriver` directly:
 ### Markdownify
 
 !!! info
+
     This driver requires the `drivers-web-scraper-markdownify` [extra](../index.md#extras) and the
     playwright browsers to be installed.
 
@@ -64,6 +65,7 @@ Example of using `MarkdownifyWebScraperDriver` with an agent:
 ### Trafilatura
 
 !!! info
+
     This driver requires the `drivers-web-scraper-trafilatura` [extra](../index.md#extras).
 
 The [TrafilaturaWebScraperDriver](../../reference/griptape/drivers/web_scraper/trafilatura_web_scraper_driver.md) scrapes text from a webpage using the [Trafilatura](https://trafilatura.readthedocs.io) library.

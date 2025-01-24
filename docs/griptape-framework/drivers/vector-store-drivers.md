@@ -16,9 +16,11 @@ Griptape provides a way to build drivers for vector DBs where embeddings can be 
 Each Vector Store Driver takes a [BaseEmbeddingDriver](../../reference/griptape/drivers/embedding/base_embedding_driver.md) used to dynamically generate embeddings for strings.
 
 !!! info
+
     When working with vector database indexes with Griptape Drivers, make sure the number of dimensions is equal to 1536. Nearly all embedding models create vectors with this number of dimensions. Check the documentation for your vector database on how to create/update vector indexes.
 
 !!! info
+
     More Vector Store Drivers are coming soon.
 
 ## Vector Store Drivers
@@ -42,6 +44,7 @@ The [GriptapeCloudVectorStoreDriver](../../reference/griptape/drivers/vector/gri
 ### Pinecone
 
 !!! info
+
     This Driver requires the `drivers-vector-pinecone` [extra](../index.md#extras).
 
 The [PineconeVectorStoreDriver](../../reference/griptape/drivers/vector/pinecone_vector_store_driver.md) supports the [Pinecone vector database](https://www.pinecone.io/).
@@ -55,6 +58,7 @@ Here is an example of how the Driver can be used to load and query information i
 ### Marqo
 
 !!! info
+
     This Driver requires the `drivers-vector-marqo` [extra](../index.md#extras).
 
 The [MarqoVectorStoreDriver](../../reference/griptape/drivers/vector/marqo_vector_store_driver.md) supports the Marqo vector database.
@@ -68,6 +72,7 @@ Here is an example of how the Driver can be used to load and query information i
 ### Mongodb Atlas
 
 !!! info
+
     This Driver requires the `drivers-vector-mongodb` [extra](../index.md#extras).
 
 The [MongodbAtlasVectorStoreDriver](../../reference/griptape/drivers/vector/mongodb_atlas_vector_store_driver.md) provides support for storing vector data in a MongoDB Atlas database.
@@ -102,6 +107,7 @@ Replace `path_to_vector` with the expected field name where the vector content w
 ### Azure MongoDB
 
 !!! info
+
     This Driver requires the `drivers-vector-mongodb` [extra](../index.md#extras).
 
 The [AzureMongoDbVectorStoreDriver](../../reference/griptape/drivers/vector/azure_mongodb_vector_store_driver.md) provides support for storing vector data in an Azure CosmosDb database account using the MongoDb vCore API
@@ -115,6 +121,7 @@ Here is an example of how the Driver can be used to load and query information i
 ### Redis
 
 !!! info
+
     This Driver requires the `drivers-vector-redis` [extra](../index.md#extras).
 
 The [RedisVectorStoreDriver](../../reference/griptape/drivers/vector/redis_vector_store_driver.md) integrates with the Redis vector storage system.
@@ -134,6 +141,7 @@ FT.CREATE idx:griptape ON hash PREFIX 1 "griptape:" SCHEMA namespace TAG vector 
 ### OpenSearch
 
 !!! info
+
     This Driver requires the `drivers-vector-opensearch` [extra](../index.md#extras).
 
 The [OpenSearchVectorStoreDriver](../../reference/griptape/drivers/vector/opensearch_vector_store_driver.md) integrates with the OpenSearch platform, allowing for storage, retrieval, and querying of vector data.
@@ -161,6 +169,7 @@ The body mappings for creating a vector index should look similar to the followi
 ### PGVector
 
 !!! info
+
     This Driver requires the `drivers-vector-pgvector` [extra](../index.md#extras).
 
 The [PGVectorVectorStoreDriver](../../reference/griptape/drivers/vector/pgvector_vector_store_driver.md) integrates with PGVector, a vector storage and search extension for Postgres. While Griptape will handle enabling the extension, PGVector must be installed and ready for use in your Postgres instance before using this Vector Store Driver.
@@ -174,6 +183,7 @@ Here is an example of how the Driver can be used to load and query information i
 ### Qdrant
 
 !!! info
+
     This Driver requires the `drivers-vector-qdrant` [extra](../index.md#extras).
 
 The QdrantVectorStoreDriver supports the [Qdrant vector database](https://qdrant.tech/).
@@ -187,6 +197,7 @@ Here is an example of how the Driver can be used to query information in a Qdran
 ### Astra DB
 
 !!! info
+
     This Driver requires the `drivers-vector-astra-db` [extra](../index.md#extras).
 
 The AstraDbVectorStoreDriver supports [DataStax Astra DB](https://www.datastax.com/products/datastax-astra).

@@ -7,6 +7,7 @@ A tool can have many "activities" as denoted by the `@activity` decorator. Each 
 When a function is decorated with `@activity`, the decorator injects keyword arguments into the function according to the schema. There are also two Griptape-provided keyword arguments: `params: dict` and `values: dict`.
 
 !!! info
+
     If your schema defines any parameters named `params` or `values`, they will be overwritten by the Griptape-provided arguments.
 
 In the following example, all `@activity` decorated functions will result in the same value, but the method signature is defined in different ways.
