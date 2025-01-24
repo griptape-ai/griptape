@@ -22,15 +22,12 @@ class DeprecationModuleWrapper(ModuleType):
         self._deprecation_message = deprecation_message
 
     def __getattr__(self, name: str) -> Any:
-        if name in self.__ignore_attrs__:
-            return getattr(self._real_module, name)
-
-        warnings.warn(
-            self._deprecation_message,
-            DeprecationWarning,
-            stacklevel=2,
-        )
-
+        if name not in self.__ignore_attrs__:
+            warnings.warn(
+                self._deprecation_message,
+                DeprecationWarning,
+                stacklevel=2,
+            )
         return getattr(self._real_module, name)
 
 
