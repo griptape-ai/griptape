@@ -25,19 +25,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Provider-specific Driver namespaces (e.g., `griptape.drivers.prompt.openai`, `griptape.drivers.embedding.cohere`).
-
-### Added
-
 - Tool streaming support to `OllamaPromptDriver`.
 - `DateTimeTool.add_timedelta` and `DateTimeTool.get_datetime_diff` for basic datetime arithmetic.
 
 ### Changed
 
 - Added `DateTime.get_relative_datetime` to `DateTimeTool.denylist`. May be removed in a future release.
+- Changed log level of `ActionsSubtask` errors from `EXCEPTION` to `DEBUG`.
 
 ### Deprecated
 
 - `griptape.drivers` namespace. Use provider-specific namespaces instead.
+
 
 ## [1.2.0] - 2025-01-21
 
