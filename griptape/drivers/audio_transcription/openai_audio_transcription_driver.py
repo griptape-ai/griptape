@@ -7,7 +7,7 @@ import openai
 from attrs import define, field
 
 from griptape.artifacts import AudioArtifact, TextArtifact
-from griptape.drivers import BaseAudioTranscriptionDriver
+from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
 from griptape.utils.decorators import lazy_property
 
 

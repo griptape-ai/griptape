@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import GriptapeCloudConversationMemoryDriver
+from griptape.drivers.memory.conversation.griptape_cloud import GriptapeCloudConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
 

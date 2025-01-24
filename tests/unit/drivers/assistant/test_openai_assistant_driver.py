@@ -3,7 +3,7 @@ from unittest.mock import ANY, Mock
 import pytest
 
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.drivers import OpenAiAssistantDriver
+from griptape.drivers.assistant.openai import OpenAiAssistantDriver
 from griptape.events import EventBus
 from griptape.events.event_listener import EventListener
 

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
-from griptape.drivers import BaseConversationMemoryDriver
+from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 

@@ -1,5 +1,5 @@
 from griptape.common import PromptStack
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 
 stack = PromptStack()
 

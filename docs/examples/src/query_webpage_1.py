@@ -1,7 +1,8 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import LocalVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.loaders import WebLoader
 
 vector_store = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"]))

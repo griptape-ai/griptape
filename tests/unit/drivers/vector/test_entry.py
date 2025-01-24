@@ -1,5 +1,5 @@
 from griptape.artifacts import TextArtifact
-from griptape.drivers import BaseVectorStoreDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
 
 
 class TestEntry:

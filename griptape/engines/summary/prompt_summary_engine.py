@@ -12,7 +12,7 @@ from griptape.engines import BaseSummaryEngine
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers import BasePromptDriver
+    from griptape.drivers.prompt import BasePromptDriver
     from griptape.rules import Ruleset
 
 

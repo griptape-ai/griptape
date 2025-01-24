@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import GriptapeCloudStructureRunDriver
+from griptape.drivers.structure_run.griptape_cloud import GriptapeCloudStructureRunDriver
 from griptape.structures import Agent
 from griptape.tools import StructureRunTool
 

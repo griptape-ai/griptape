@@ -1,4 +1,4 @@
-from griptape.drivers import OpenAiImageGenerationDriver
+from griptape.drivers.image_generation.openai import OpenAiImageGenerationDriver
 from griptape.structures import Pipeline
 from griptape.tasks import PromptImageGenerationTask
 

@@ -1,6 +1,7 @@
 import os
 
-from griptape.drivers import GoogleWebSearchDriver, LocalStructureRunDriver
+from griptape.drivers.structure_run.local import LocalStructureRunDriver
+from griptape.drivers.web_search.google import GoogleWebSearchDriver
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask

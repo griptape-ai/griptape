@@ -1,6 +1,6 @@
 from griptape.artifacts import TextArtifact
-from griptape.drivers import (
-    HuggingFacePipelineImageGenerationDriver,
+from griptape.drivers.image_generation.huggingface_pipeline import HuggingFacePipelineImageGenerationDriver
+from griptape.drivers.image_generation_pipeline.stable_diffusion_3_controlnet import (
     StableDiffusion3ControlNetImageGenerationPipelineDriver,
 )
 from griptape.loaders import ImageLoader

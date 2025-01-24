@@ -2,7 +2,8 @@ import os
 
 from griptape.configs import Defaults
 from griptape.configs.drivers import DriversConfig
-from griptape.drivers import AwsIotCoreEventListenerDriver, OpenAiChatPromptDriver
+from griptape.drivers.event_listener.aws_iot_core import AwsIotCoreEventListenerDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.events import EventBus, EventListener, FinishStructureRunEvent
 from griptape.rules import Rule
 from griptape.structures import Agent

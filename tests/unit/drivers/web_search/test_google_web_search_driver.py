@@ -3,7 +3,7 @@ import json
 import pytest
 from pytest_mock import MockerFixture
 
-from griptape.drivers import GoogleWebSearchDriver
+from griptape.drivers.web_search.google import GoogleWebSearchDriver
 
 
 class TestGoogleWebSearchDriver:

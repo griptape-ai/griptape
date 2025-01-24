@@ -11,7 +11,7 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 if TYPE_CHECKING:
     from collections.abc import Sequence
 
-    from griptape.drivers import BaseRulesetDriver
+    from griptape.drivers.ruleset import BaseRulesetDriver
     from griptape.rules import BaseRule
 
 

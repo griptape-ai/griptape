@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Optional
 
 from griptape.artifacts import ErrorArtifact, InfoArtifact
-from griptape.drivers import GriptapeCloudEventListenerDriver
+from griptape.drivers.event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
 from griptape.events import BaseEvent, EventBus, EventListener, FinishStructureRunEvent
 from griptape.structures import Agent
 

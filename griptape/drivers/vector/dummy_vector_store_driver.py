@@ -1,11 +1,15 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
 
-from griptape.drivers import BaseEmbeddingDriver, BaseVectorStoreDriver, DummyEmbeddingDriver
+from griptape.drivers.embedding.dummy import DummyEmbeddingDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
 from griptape.exceptions import DummyError
+
+if TYPE_CHECKING:
+    from griptape.drivers.embedding import BaseEmbeddingDriver
 
 
 @define()

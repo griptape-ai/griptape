@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import PusherEventListenerDriver
+from griptape.drivers.event_listener.pusher import PusherEventListenerDriver
 from tests.mocks.mock_event import MockEvent
 
 

@@ -1,4 +1,4 @@
-from griptape.drivers import SqlDriver
+from griptape.drivers.sql.sql_driver import SqlDriver
 from griptape.loaders import SqlLoader
 
 SqlLoader(sql_driver=SqlDriver(engine_url="sqlite:///:memory:")).load("SELECT 'foo', 'bar'")

@@ -10,7 +10,7 @@ from griptape.tools.base_tool import BaseTool
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseStructureRunDriver
+    from griptape.drivers.structure_run import BaseStructureRunDriver
 
 
 @define

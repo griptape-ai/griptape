@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import DummyImageGenerationDriver
+from griptape.drivers.image_generation.dummy import DummyImageGenerationDriver
 from griptape.exceptions import DummyError
 
 

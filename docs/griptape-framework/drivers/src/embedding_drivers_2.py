@@ -1,4 +1,4 @@
-from griptape.drivers import OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
 
 embedding_driver = OpenAiEmbeddingDriver(
     base_url="http://127.0.0.1:1234/v1",

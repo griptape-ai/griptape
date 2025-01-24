@@ -3,7 +3,8 @@ import json
 import os
 from urllib.request import urlopen
 
-from griptape.drivers import OpenAiEmbeddingDriver, PineconeVectorStoreDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.pinecone import PineconeVectorStoreDriver
 
 
 def load_data(driver: PineconeVectorStoreDriver) -> None:

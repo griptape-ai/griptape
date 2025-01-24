@@ -1,4 +1,4 @@
-from griptape.drivers import LocalConversationMemoryDriver
+from griptape.drivers.memory.conversation.local import LocalConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
 

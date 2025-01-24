@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.drivers import BaseEventListenerDriver
+from griptape.drivers.event_listener import BaseEventListenerDriver
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 

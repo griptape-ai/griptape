@@ -3,7 +3,7 @@ import json
 import pytest
 
 from griptape.artifacts import BaseArtifact, TextArtifact
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.memory import TaskMemory
 from griptape.memory.structure import ConversationMemory
 from griptape.schemas import BaseSchema

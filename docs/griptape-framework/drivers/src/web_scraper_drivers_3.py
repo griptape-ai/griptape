@@ -1,4 +1,4 @@
-from griptape.drivers import MarkdownifyWebScraperDriver
+from griptape.drivers.web_scraper.markdownify import MarkdownifyWebScraperDriver
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
 from griptape.tools import WebScraperTool

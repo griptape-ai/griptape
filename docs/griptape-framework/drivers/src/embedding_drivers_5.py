@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import HuggingFaceHubEmbeddingDriver
+from griptape.drivers.embedding.huggingface_hub import HuggingFaceHubEmbeddingDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 
 driver = HuggingFaceHubEmbeddingDriver(

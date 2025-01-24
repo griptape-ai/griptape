@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
 
-from griptape.drivers import BaseImageGenerationModelDriver
+from griptape.drivers.image_generation_model import BaseImageGenerationModelDriver
 
 if TYPE_CHECKING:
     from griptape.artifacts import ImageArtifact

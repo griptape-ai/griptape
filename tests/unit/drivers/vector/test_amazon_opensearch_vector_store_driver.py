@@ -4,7 +4,7 @@ import boto3
 import numpy as np
 import pytest
 
-from griptape.drivers import AmazonOpenSearchVectorStoreDriver
+from griptape.drivers.vector.amazon_opensearch import AmazonOpenSearchVectorStoreDriver
 
 
 class TestAmazonOpenSearchVectorStoreDriver:

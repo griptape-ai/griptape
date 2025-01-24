@@ -1,11 +1,9 @@
 from griptape.configs import Defaults
 from griptape.configs.drivers import OpenAiDriversConfig
-from griptape.drivers import (
-    AmazonBedrockPromptDriver,
-    LocalVectorStoreDriver,
-    OpenAiChatPromptDriver,
-    OpenAiEmbeddingDriver,
-)
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.prompt.amazon_bedrock import AmazonBedrockPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.structures import Agent
 from griptape.tools import FileManagerTool, QueryTool, WebScraperTool
 

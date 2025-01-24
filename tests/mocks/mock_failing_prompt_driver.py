@@ -6,7 +6,7 @@ from attrs import define
 
 from griptape.artifacts import TextArtifact
 from griptape.common import DeltaMessage, Message, PromptStack, TextDeltaMessageContent, TextMessageContent
-from griptape.drivers import BasePromptDriver
+from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 
 if TYPE_CHECKING:

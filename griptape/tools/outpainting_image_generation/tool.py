@@ -12,7 +12,7 @@ from griptape.utils.decorators import activity
 from griptape.utils.load_artifact_from_memory import load_artifact_from_memory
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseImageGenerationDriver
+    from griptape.drivers.image_generation import BaseImageGenerationDriver
 
 
 @define

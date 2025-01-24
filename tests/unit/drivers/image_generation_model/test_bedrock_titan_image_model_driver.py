@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BedrockTitanImageGenerationModelDriver
+from griptape.drivers.image_generation_model.bedrock_titan import BedrockTitanImageGenerationModelDriver
 
 
 class TestBedrockTitanImageGenerationModelDriver:

@@ -1,4 +1,7 @@
 import json
+import warnings
+
+import pytest
 
 from griptape.artifacts import ActionArtifact, ErrorArtifact, TextArtifact
 from griptape.common import Message, PromptStack
@@ -139,3 +142,15 @@ class TestBasePromptDriver:
         assert "baz" in prompt_stack.messages[0].content[2].to_text()
         assert isinstance(output, TextArtifact)
         assert output.value == json.dumps({"baz": "foo"})
+
+    def test_deprecated_import(self):
+        with pytest.warns(DeprecationWarning):
+            from griptape.drivers import BasePromptDriver
+
+            assert BasePromptDriver
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
+
+            assert BasePromptDriver

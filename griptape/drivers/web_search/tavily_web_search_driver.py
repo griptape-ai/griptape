@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any
 from attrs import define, field
 
 from griptape.artifacts import JsonArtifact, ListArtifact
-from griptape.drivers import BaseWebSearchDriver
+from griptape.drivers.web_search import BaseWebSearchDriver
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 

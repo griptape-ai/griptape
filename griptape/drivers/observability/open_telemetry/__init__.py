@@ -1,0 +1,3 @@
+from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
+
+__all__ = ["OpenTelemetryObservabilityDriver"]

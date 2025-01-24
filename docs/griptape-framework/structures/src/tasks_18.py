@@ -1,4 +1,4 @@
-from griptape.drivers import OpenAiAudioTranscriptionDriver
+from griptape.drivers.audio_transcription.openai import OpenAiAudioTranscriptionDriver
 from griptape.loaders import AudioLoader
 from griptape.structures import Pipeline
 from griptape.tasks import AudioTranscriptionTask

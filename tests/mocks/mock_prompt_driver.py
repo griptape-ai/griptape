@@ -17,7 +17,7 @@ from griptape.common import (
     TextMessageContent,
     ToolAction,
 )
-from griptape.drivers import BasePromptDriver
+from griptape.drivers.prompt import BasePromptDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
 
 if TYPE_CHECKING:

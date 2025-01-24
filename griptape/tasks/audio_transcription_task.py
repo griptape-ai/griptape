@@ -9,7 +9,7 @@ from griptape.tasks.base_audio_input_task import BaseAudioInputTask
 
 if TYPE_CHECKING:
     from griptape.artifacts import TextArtifact
-    from griptape.drivers import BaseAudioTranscriptionDriver
+    from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
 
 
 @define

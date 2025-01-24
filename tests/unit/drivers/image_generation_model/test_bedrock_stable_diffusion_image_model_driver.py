@@ -3,7 +3,9 @@ import base64
 import pytest
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BedrockStableDiffusionImageGenerationModelDriver
+from griptape.drivers.image_generation_model.bedrock_stable_diffusion import (
+    BedrockStableDiffusionImageGenerationModelDriver,
+)
 
 
 class TestBedrockStableDiffusionImageGenerationModelDriver:

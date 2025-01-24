@@ -1,4 +1,4 @@
-from griptape.drivers import LocalStructureRunDriver
+from griptape.drivers.structure_run.local import LocalStructureRunDriver
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver

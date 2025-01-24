@@ -1,5 +1,5 @@
 from griptape.artifacts import ListArtifact, TextArtifact
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.loaders import ImageLoader
 
 driver = OpenAiChatPromptDriver(model="gpt-4o", max_tokens=256)

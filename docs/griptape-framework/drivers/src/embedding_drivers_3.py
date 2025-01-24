@@ -1,4 +1,4 @@
-from griptape.drivers import AmazonBedrockTitanEmbeddingDriver
+from griptape.drivers.embedding.amazon_bedrock import AmazonBedrockTitanEmbeddingDriver
 
 embeddings = AmazonBedrockTitanEmbeddingDriver().embed_string("Hello world!")
 

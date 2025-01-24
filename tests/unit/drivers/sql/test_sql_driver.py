@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.drivers import SqlDriver
+from griptape.drivers.sql.sql_driver import SqlDriver
 
 
 class TestSqlDriver:

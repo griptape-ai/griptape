@@ -1,4 +1,4 @@
-from griptape.drivers import TrafilaturaWebScraperDriver
+from griptape.drivers.web_scraper.trafilatura import TrafilaturaWebScraperDriver
 
 driver = TrafilaturaWebScraperDriver()
 

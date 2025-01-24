@@ -6,7 +6,7 @@ from opentelemetry.sdk.trace import Event, ReadableSpan
 from opentelemetry.trace import SpanContext, Status, StatusCode
 
 from griptape.common import Observable
-from griptape.drivers import GriptapeCloudObservabilityDriver
+from griptape.drivers.observability.griptape_cloud import GriptapeCloudObservabilityDriver
 from tests.utils.expected_spans import ExpectedSpan, ExpectedSpans
 
 

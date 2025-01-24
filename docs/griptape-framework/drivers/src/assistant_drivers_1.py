@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import GriptapeCloudAssistantDriver
+from griptape.drivers.assistant.griptape_cloud import GriptapeCloudAssistantDriver
 from griptape.structures import Pipeline
 from griptape.tasks import AssistantTask
 from griptape.utils.stream import Stream

@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import AnthropicPromptDriver
+from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
 from griptape.structures import Agent
 
 agent = Agent(

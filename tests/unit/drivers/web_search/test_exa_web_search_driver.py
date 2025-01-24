@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import ListArtifact
-from griptape.drivers import ExaWebSearchDriver
+from griptape.drivers.web_search.exa import ExaWebSearchDriver
 
 
 class TestExaWebSearchDriver:

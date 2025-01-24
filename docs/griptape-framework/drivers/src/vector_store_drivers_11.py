@@ -1,7 +1,8 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import AstraDbVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.astradb import AstraDbVectorStoreDriver
 from griptape.loaders import WebLoader
 
 # Astra DB secrets and connection parameters

@@ -4,7 +4,7 @@ import pytest
 import requests
 
 from griptape.artifacts import TextArtifact
-from griptape.drivers import GriptapeCloudAssistantDriver
+from griptape.drivers.assistant.griptape_cloud import GriptapeCloudAssistantDriver
 
 
 class TestGriptapeCloudAssistantDriver:

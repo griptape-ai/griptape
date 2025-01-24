@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from attrs import Attribute, define, field
 
-from griptape.drivers import BaseSqlDriver
+from griptape.drivers.sql import BaseSqlDriver
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 

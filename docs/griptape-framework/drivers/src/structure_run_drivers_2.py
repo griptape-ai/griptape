@@ -1,6 +1,7 @@
 import os
 
-from griptape.drivers import GriptapeCloudStructureRunDriver, LocalStructureRunDriver
+from griptape.drivers.structure_run.griptape_cloud import GriptapeCloudStructureRunDriver
+from griptape.drivers.structure_run.local import LocalStructureRunDriver
 from griptape.rules import Rule
 from griptape.structures import Agent, Pipeline
 from griptape.tasks import StructureRunTask

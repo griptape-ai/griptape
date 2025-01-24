@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import CohereEmbeddingDriver
+from griptape.drivers.embedding.cohere import CohereEmbeddingDriver
 
 embedding_driver = CohereEmbeddingDriver(
     model="embed-english-v3.0",

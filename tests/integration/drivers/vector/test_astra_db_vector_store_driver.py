@@ -6,7 +6,8 @@ import os
 
 import pytest
 
-from griptape.drivers import AstraDbVectorStoreDriver, BaseVectorStoreDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
+from griptape.drivers.vector.astradb import AstraDbVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 TEST_COLLECTION_NAME = "gt_int_test"

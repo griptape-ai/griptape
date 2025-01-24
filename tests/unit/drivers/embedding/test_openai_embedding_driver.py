@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
 
 

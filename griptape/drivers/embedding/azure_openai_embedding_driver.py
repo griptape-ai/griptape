@@ -5,7 +5,7 @@ from typing import Callable, Optional
 import openai
 from attrs import Factory, define, field
 
-from griptape.drivers import OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.utils.decorators import lazy_property
 

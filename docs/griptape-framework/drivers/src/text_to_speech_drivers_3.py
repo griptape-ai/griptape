@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import AzureOpenAiTextToSpeechDriver
+from griptape.drivers.text_to_speech.openai import AzureOpenAiTextToSpeechDriver
 from griptape.structures import Agent
 from griptape.tools.text_to_speech.tool import TextToSpeechTool
 

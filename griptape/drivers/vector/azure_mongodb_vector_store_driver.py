@@ -4,7 +4,8 @@ from typing import Optional
 
 from attrs import define
 
-from griptape.drivers import BaseVectorStoreDriver, MongoDbAtlasVectorStoreDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
+from griptape.drivers.vector.mongodb_atlas import MongoDbAtlasVectorStoreDriver
 
 
 @define

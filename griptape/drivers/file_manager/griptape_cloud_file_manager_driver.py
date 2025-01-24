@@ -8,7 +8,7 @@ from urllib.parse import urljoin
 import requests
 from attrs import Attribute, Factory, define, field
 
-from griptape.drivers import BaseFileManagerDriver
+from griptape.drivers.file_manager import BaseFileManagerDriver
 
 logger = logging.getLogger(__name__)
 

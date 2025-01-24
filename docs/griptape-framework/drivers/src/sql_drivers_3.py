@@ -3,7 +3,7 @@ import os
 import snowflake.connector
 from snowflake.connector import SnowflakeConnection
 
-from griptape.drivers import SnowflakeSqlDriver
+from griptape.drivers.sql.snowflake import SnowflakeSqlDriver
 
 
 def get_snowflake_connection() -> SnowflakeConnection:

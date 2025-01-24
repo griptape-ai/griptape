@@ -51,7 +51,7 @@ class StructureVisualizer:
         return "\n\t" + "\n\t".join([self.__render_task(task) for task in tasks])
 
     def __render_task(self, task: BaseTask) -> str:
-        from griptape.drivers import LocalStructureRunDriver
+        from griptape.drivers.structure_run.local import LocalStructureRunDriver
         from griptape.tasks import BranchTask, StructureRunTask
 
         parts = []

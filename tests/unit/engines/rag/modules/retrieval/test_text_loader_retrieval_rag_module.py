@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.drivers import LocalVectorStoreDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.engines.rag import RagContext
 from griptape.engines.rag.modules import TextLoaderRetrievalRagModule
 from griptape.loaders import WebLoader

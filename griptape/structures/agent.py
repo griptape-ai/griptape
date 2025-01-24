@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from schema import Schema
 
     from griptape.artifacts import BaseArtifact
-    from griptape.drivers import BasePromptDriver
+    from griptape.drivers.prompt import BasePromptDriver
     from griptape.tasks import BaseTask
     from griptape.tools import BaseTool
 

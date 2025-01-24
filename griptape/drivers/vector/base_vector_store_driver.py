@@ -14,7 +14,7 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import with_contextvars
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseEmbeddingDriver
+    from griptape.drivers.embedding import BaseEmbeddingDriver
 
 
 @define

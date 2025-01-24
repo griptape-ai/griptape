@@ -1,4 +1,4 @@
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.events import ActionChunkEvent, EventBus, EventListener, TextChunkEvent
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask

@@ -2,7 +2,7 @@ import os
 
 import boto3
 
-from griptape.drivers import AmazonRedshiftSqlDriver
+from griptape.drivers.sql.amazon_redshift import AmazonRedshiftSqlDriver
 
 session = boto3.Session()
 

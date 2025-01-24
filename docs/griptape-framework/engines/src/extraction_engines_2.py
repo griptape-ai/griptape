@@ -4,7 +4,7 @@ from schema import Literal, Schema
 
 from griptape.artifacts import ListArtifact
 from griptape.chunkers import TextChunker
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.engines import JsonExtractionEngine
 from griptape.loaders import WebLoader
 

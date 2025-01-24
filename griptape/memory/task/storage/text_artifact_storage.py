@@ -9,7 +9,7 @@ from griptape.configs import Defaults
 from griptape.memory.task.storage import BaseArtifactStorage
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseVectorStoreDriver
+    from griptape.drivers.vector import BaseVectorStoreDriver
 
 
 @define(kw_only=True)

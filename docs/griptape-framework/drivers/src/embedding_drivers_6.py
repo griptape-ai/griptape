@@ -1,4 +1,4 @@
-from griptape.drivers import OllamaEmbeddingDriver
+from griptape.drivers.embedding.ollama import OllamaEmbeddingDriver
 
 driver = OllamaEmbeddingDriver(
     model="all-minilm",

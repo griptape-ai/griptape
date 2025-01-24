@@ -1,5 +1,5 @@
 from griptape.artifacts import InfoArtifact, ListArtifact
-from griptape.drivers import LocalStructureRunDriver
+from griptape.drivers.structure_run.local import LocalStructureRunDriver
 from griptape.structures import Agent, Pipeline, Workflow
 from griptape.tasks import PromptTask, StructureRunTask
 from griptape.tasks.branch_task import BranchTask

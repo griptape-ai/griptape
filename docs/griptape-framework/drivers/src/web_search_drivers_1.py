@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import GoogleWebSearchDriver
+from griptape.drivers.web_search.google import GoogleWebSearchDriver
 
 driver = GoogleWebSearchDriver(
     api_key=os.environ["GOOGLE_API_KEY"],

@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import HuggingFaceHubPromptDriver
+from griptape.drivers.prompt.huggingface_hub import HuggingFaceHubPromptDriver
 from griptape.structures import Agent
 
 agent = Agent(

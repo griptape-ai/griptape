@@ -6,7 +6,7 @@ from typing import Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.drivers import BaseWebScraperDriver
+from griptape.drivers.web_scraper import BaseWebScraperDriver
 from griptape.utils import import_optional_dependency
 
 

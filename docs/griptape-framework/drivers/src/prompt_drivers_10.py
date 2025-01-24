@@ -1,4 +1,4 @@
-from griptape.drivers import OllamaPromptDriver
+from griptape.drivers.prompt.ollama import OllamaPromptDriver
 from griptape.structures import Agent
 from griptape.tools import CalculatorTool
 

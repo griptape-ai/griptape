@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Attribute, define, field
 
-from griptape.drivers import BaseSqlDriver
+from griptape.drivers.sql import BaseSqlDriver
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:

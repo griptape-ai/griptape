@@ -1,4 +1,7 @@
-from griptape.drivers import AmazonBedrockImageGenerationDriver, BedrockStableDiffusionImageGenerationModelDriver
+from griptape.drivers.image_generation.amazon_bedrock import AmazonBedrockImageGenerationDriver
+from griptape.drivers.image_generation_model.bedrock_stable_diffusion import (
+    BedrockStableDiffusionImageGenerationModelDriver,
+)
 from griptape.structures import Agent
 from griptape.tools import PromptImageGenerationTool
 

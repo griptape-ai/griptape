@@ -1,9 +1,7 @@
 from attrs import define
 
 from griptape.configs.drivers import DriversConfig
-from griptape.drivers import (
-    AnthropicPromptDriver,
-)
+from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
 from griptape.utils.decorators import lazy_property
 
 

@@ -2,7 +2,7 @@ from unittest import mock
 
 import pytest
 
-from griptape.drivers import AmazonBedrockCohereEmbeddingDriver
+from griptape.drivers.embedding.amazon_bedrock import AmazonBedrockCohereEmbeddingDriver
 
 
 class TestAmazonBedrockCohereEmbeddingDriver:

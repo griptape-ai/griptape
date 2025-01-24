@@ -9,16 +9,14 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
-    from griptape.drivers import (
-        BaseAudioTranscriptionDriver,
-        BaseConversationMemoryDriver,
-        BaseEmbeddingDriver,
-        BaseImageGenerationDriver,
-        BasePromptDriver,
-        BaseRulesetDriver,
-        BaseTextToSpeechDriver,
-        BaseVectorStoreDriver,
-    )
+    from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
+    from griptape.drivers.embedding import BaseEmbeddingDriver
+    from griptape.drivers.image_generation import BaseImageGenerationDriver
+    from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
+    from griptape.drivers.prompt import BasePromptDriver
+    from griptape.drivers.ruleset import BaseRulesetDriver
+    from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
+    from griptape.drivers.vector import BaseVectorStoreDriver
 
 
 @define

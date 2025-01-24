@@ -1,5 +1,5 @@
 from griptape.artifacts import BlobArtifact, TextArtifact
-from griptape.drivers import LocalVectorStoreDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import PromptResponseRagModule, VectorStoreRetrievalRagModule
 from griptape.engines.rag.stages import ResponseRagStage, RetrievalRagStage

@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import CoherePromptDriver
+from griptape.drivers.prompt.cohere import CoherePromptDriver
 from griptape.structures import Agent
 
 agent = Agent(

@@ -3,24 +3,24 @@ from __future__ import annotations
 import json
 import logging
 import os
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 from schema import Literal, Schema
 
 from griptape.artifacts.error_artifact import ErrorArtifact
-from griptape.drivers import (
-    AmazonBedrockPromptDriver,
-    AmazonSageMakerJumpstartPromptDriver,
-    AnthropicPromptDriver,
-    AzureOpenAiChatPromptDriver,
-    BasePromptDriver,
-    CoherePromptDriver,
-    GooglePromptDriver,
-    OpenAiChatPromptDriver,
-)
+from griptape.drivers.prompt.amazon_bedrock import AmazonBedrockPromptDriver
+from griptape.drivers.prompt.amazon_sagemaker_jumpstart import AmazonSageMakerJumpstartPromptDriver
+from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
+from griptape.drivers.prompt.cohere import CoherePromptDriver
+from griptape.drivers.prompt.google import GooglePromptDriver
+from griptape.drivers.prompt.openai import AzureOpenAiChatPromptDriver, OpenAiChatPromptDriver
 from griptape.rules import Rule, Ruleset
 from griptape.structures import Agent, Structure
 from griptape.tasks import PromptTask
+
+if TYPE_CHECKING:
+    from griptape.drivers.prompt import BasePromptDriver
 
 
 def get_enabled_prompt_drivers(prompt_drivers_options) -> list[BasePromptDriver]:

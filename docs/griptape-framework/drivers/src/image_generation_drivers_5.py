@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import LeonardoImageGenerationDriver
+from griptape.drivers.image_generation.leonardo import LeonardoImageGenerationDriver
 from griptape.structures import Agent
 from griptape.tools import PromptImageGenerationTool
 

@@ -11,7 +11,7 @@ from griptape.memory.structure.base_conversation_memory import BaseConversationM
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers import BasePromptDriver
+    from griptape.drivers.prompt import BasePromptDriver
     from griptape.memory.structure import Run
 
 

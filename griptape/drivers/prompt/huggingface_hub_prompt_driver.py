@@ -7,7 +7,7 @@ from attrs import Attribute, Factory, define, field
 
 from griptape.common import DeltaMessage, Message, PromptStack, TextDeltaMessageContent, observable
 from griptape.configs import Defaults
-from griptape.drivers import BasePromptDriver
+from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import HuggingFaceTokenizer
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property

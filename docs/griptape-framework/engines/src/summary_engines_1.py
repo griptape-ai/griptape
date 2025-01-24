@@ -1,6 +1,6 @@
 import requests
 
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.engines import PromptSummaryEngine
 from griptape.loaders import PdfLoader
 

@@ -14,7 +14,7 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers import BasePromptDriver
+    from griptape.drivers.prompt import BasePromptDriver
 
 STEPS_SCHEMA = schema.Schema(
     {

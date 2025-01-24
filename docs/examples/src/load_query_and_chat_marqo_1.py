@@ -1,7 +1,8 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import MarqoVectorStoreDriver, OpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.marqo import MarqoVectorStoreDriver
 from griptape.loaders import WebLoader
 from griptape.structures import Agent
 from griptape.tools import VectorStoreTool

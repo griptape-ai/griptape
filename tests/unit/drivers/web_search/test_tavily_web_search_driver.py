@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import ListArtifact
-from griptape.drivers import TavilyWebSearchDriver
+from griptape.drivers.web_search.tavily import TavilyWebSearchDriver
 
 
 class TestTavilyWebSearchDriver:

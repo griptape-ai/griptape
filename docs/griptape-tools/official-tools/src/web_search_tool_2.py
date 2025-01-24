@@ -2,7 +2,7 @@ import os
 
 import schema
 
-from griptape.drivers import GoogleWebSearchDriver
+from griptape.drivers.web_search.google import GoogleWebSearchDriver
 from griptape.structures import Agent
 from griptape.tools import WebSearchTool
 

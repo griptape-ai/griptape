@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 
 from attrs import define, field
 
-from griptape.drivers import BaseTextToSpeechDriver
+from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
 from griptape.exceptions import DummyError
 
 if TYPE_CHECKING:

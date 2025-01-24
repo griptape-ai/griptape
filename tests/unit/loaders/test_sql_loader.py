@@ -1,7 +1,7 @@
 import pytest
 from sqlalchemy.pool import StaticPool
 
-from griptape.drivers import SqlDriver
+from griptape.drivers.sql.sql_driver import SqlDriver
 from griptape.loaders import SqlLoader
 
 MAX_TOKENS = 50

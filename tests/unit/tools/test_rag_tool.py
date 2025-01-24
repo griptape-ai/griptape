@@ -1,4 +1,4 @@
-from griptape.drivers import LocalVectorStoreDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.tools import RagTool
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver

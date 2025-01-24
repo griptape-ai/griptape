@@ -2,13 +2,16 @@ from __future__ import annotations
 
 import io
 from abc import ABC
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseDiffusionImageGenerationPipelineDriver, BaseImageGenerationDriver
+from griptape.drivers.image_generation import BaseImageGenerationDriver
 from griptape.utils import import_optional_dependency
+
+if TYPE_CHECKING:
+    from griptape.drivers.image_generation_pipeline import BaseDiffusionImageGenerationPipelineDriver
 
 
 @define

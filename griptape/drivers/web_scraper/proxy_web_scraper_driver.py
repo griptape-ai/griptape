@@ -4,7 +4,7 @@ import requests
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
-from griptape.drivers import BaseWebScraperDriver
+from griptape.drivers.web_scraper import BaseWebScraperDriver
 
 
 @define

@@ -162,17 +162,16 @@ class BaseSchema(Schema):
             Reference,
             ToolAction,
         )
-        from griptape.drivers import (
-            BaseAudioTranscriptionDriver,
-            BaseConversationMemoryDriver,
-            BaseEmbeddingDriver,
-            BaseImageGenerationDriver,
-            BasePromptDriver,
-            BaseRulesetDriver,
-            BaseTextToSpeechDriver,
-            BaseVectorStoreDriver,
-        )
+        from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
+        from griptape.drivers.embedding import BaseEmbeddingDriver
+        from griptape.drivers.image_generation import BaseImageGenerationDriver, BaseMultiModelImageGenerationDriver
+        from griptape.drivers.image_generation_model import BaseImageGenerationModelDriver
+        from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
+        from griptape.drivers.prompt import BasePromptDriver
         from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
+        from griptape.drivers.ruleset import BaseRulesetDriver
+        from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
+        from griptape.drivers.vector import BaseVectorStoreDriver
         from griptape.events import EventListener
         from griptape.memory import TaskMemory
         from griptape.memory.structure import BaseConversationMemory, Run
@@ -197,6 +196,8 @@ class BaseSchema(Schema):
                 "BaseConversationMemoryDriver": BaseConversationMemoryDriver,
                 "BaseRulesetDriver": BaseRulesetDriver,
                 "BaseImageGenerationDriver": BaseImageGenerationDriver,
+                "BaseMultiModelImageGenerationDriver": BaseMultiModelImageGenerationDriver,
+                "BaseImageGenerationModelDriver": BaseImageGenerationModelDriver,
                 "BaseArtifact": BaseArtifact,
                 "PromptStack": PromptStack,
                 "EventListener": EventListener,

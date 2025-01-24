@@ -12,7 +12,7 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import BaseArtifact, InfoArtifact
 from griptape.configs.defaults_config import Defaults
-from griptape.drivers import BaseAssistantDriver
+from griptape.drivers.assistant import BaseAssistantDriver
 from griptape.events import BaseEvent, EventBus
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)

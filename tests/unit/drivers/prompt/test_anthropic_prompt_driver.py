@@ -6,7 +6,7 @@ from schema import Schema
 from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
-from griptape.drivers import AnthropicPromptDriver
+from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 

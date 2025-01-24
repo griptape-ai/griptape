@@ -10,7 +10,7 @@ from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseWebSearchDriver
+    from griptape.drivers.web_search import BaseWebSearchDriver
 
 
 @define

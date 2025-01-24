@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import ElevenLabsTextToSpeechDriver
+from griptape.drivers.text_to_speech.elevenlabs import ElevenLabsTextToSpeechDriver
 
 
 class TestElevenLabsTextToSpeechDriver:

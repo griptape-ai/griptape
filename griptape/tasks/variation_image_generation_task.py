@@ -10,7 +10,7 @@ from griptape.tasks import BaseImageGenerationTask, BaseTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers import BaseImageGenerationDriver
+    from griptape.drivers.image_generation import BaseImageGenerationDriver
 
 
 @define

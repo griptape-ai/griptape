@@ -7,7 +7,7 @@ import openai
 from attrs import define, field
 
 from griptape.artifacts import ImageArtifact
-from griptape.drivers import BaseImageGenerationDriver
+from griptape.drivers.image_generation import BaseImageGenerationDriver
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:

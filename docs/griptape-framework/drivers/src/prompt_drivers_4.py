@@ -1,4 +1,4 @@
-from griptape.drivers import OpenAiChatPromptDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.rules import Rule
 from griptape.structures import Agent
 

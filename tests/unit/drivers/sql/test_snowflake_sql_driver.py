@@ -6,7 +6,8 @@ import pytest
 from snowflake.connector import SnowflakeConnection
 from sqlalchemy import create_engine
 
-from griptape.drivers import BaseSqlDriver, SnowflakeSqlDriver
+from griptape.drivers.sql import BaseSqlDriver
+from griptape.drivers.sql.snowflake import SnowflakeSqlDriver
 
 
 class TestSnowflakeSqlDriver:

@@ -2,7 +2,7 @@ from unittest.mock import Mock
 
 import pytest
 
-from griptape.drivers import AzureOpenAiEmbeddingDriver
+from griptape.drivers.embedding.openai import AzureOpenAiEmbeddingDriver
 
 
 class TestAzureOpenAiEmbeddingDriver:

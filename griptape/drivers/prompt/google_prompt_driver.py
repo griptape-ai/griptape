@@ -25,7 +25,7 @@ from griptape.common import (
     observable,
 )
 from griptape.configs import Defaults
-from griptape.drivers import BasePromptDriver
+from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
 from griptape.utils import import_optional_dependency, remove_key_in_dict_recursively
 from griptape.utils.decorators import lazy_property

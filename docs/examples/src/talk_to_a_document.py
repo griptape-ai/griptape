@@ -6,7 +6,7 @@ import requests
 from griptape.artifacts import GenericArtifact, TextArtifact
 from griptape.configs import Defaults
 from griptape.configs.logging import TruncateLoggingFilter
-from griptape.drivers import AnthropicPromptDriver
+from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
 from griptape.structures import Agent
 from griptape.tasks.base_task import BaseTask
 from griptape.tasks.prompt_task import PromptTask

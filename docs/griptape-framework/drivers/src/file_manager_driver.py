@@ -1,4 +1,4 @@
-from griptape.drivers import LocalFileManagerDriver
+from griptape.drivers.file_manager.local import LocalFileManagerDriver
 from griptape.loaders import TextLoader
 
 local_file_manager_driver = LocalFileManagerDriver()

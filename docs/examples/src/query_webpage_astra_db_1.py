@@ -1,11 +1,9 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import (
-    AstraDbVectorStoreDriver,
-    OpenAiChatPromptDriver,
-    OpenAiEmbeddingDriver,
-)
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
+from griptape.drivers.vector.astradb import AstraDbVectorStoreDriver
 from griptape.engines.rag import RagEngine
 from griptape.engines.rag.modules import (
     PromptResponseRagModule,

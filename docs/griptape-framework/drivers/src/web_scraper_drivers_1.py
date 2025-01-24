@@ -1,6 +1,6 @@
 import os
 
-from griptape.drivers import ProxyWebScraperDriver
+from griptape.drivers.web_scraper.proxy import ProxyWebScraperDriver
 
 query_params = [
     "markdown_response=true",

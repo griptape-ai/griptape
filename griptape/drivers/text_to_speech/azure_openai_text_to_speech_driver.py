@@ -5,7 +5,7 @@ from typing import Callable, Optional
 import openai
 from attrs import Factory, define, field
 
-from griptape.drivers import OpenAiTextToSpeechDriver
+from griptape.drivers.text_to_speech.openai import OpenAiTextToSpeechDriver
 from griptape.utils.decorators import lazy_property
 
 

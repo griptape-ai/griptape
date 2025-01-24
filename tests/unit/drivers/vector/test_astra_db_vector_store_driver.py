@@ -2,7 +2,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from griptape.drivers import AstraDbVectorStoreDriver, BaseVectorStoreDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
+from griptape.drivers.vector.astradb import AstraDbVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 

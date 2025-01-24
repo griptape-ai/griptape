@@ -9,7 +9,7 @@ from schema import Schema
 from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
-from griptape.drivers import GooglePromptDriver
+from griptape.drivers.prompt.google import GooglePromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 

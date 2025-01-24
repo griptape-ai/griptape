@@ -1,6 +1,6 @@
 import pytest
 
-from griptape.drivers import DummyEmbeddingDriver
+from griptape.drivers.embedding.dummy import DummyEmbeddingDriver
 from griptape.exceptions import DummyError
 
 

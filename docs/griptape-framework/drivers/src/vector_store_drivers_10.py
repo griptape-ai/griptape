@@ -1,7 +1,8 @@
 import os
 
 from griptape.chunkers import TextChunker
-from griptape.drivers import OpenAiEmbeddingDriver, QdrantVectorStoreDriver
+from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
+from griptape.drivers.vector.qdrant import QdrantVectorStoreDriver
 from griptape.loaders import WebLoader
 
 # Set up environment variables

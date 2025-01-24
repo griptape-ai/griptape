@@ -1,7 +1,7 @@
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.drivers import ProxyWebScraperDriver
+from griptape.drivers.web_scraper.proxy import ProxyWebScraperDriver
 
 
 class TestProxyWebScraperDriver:

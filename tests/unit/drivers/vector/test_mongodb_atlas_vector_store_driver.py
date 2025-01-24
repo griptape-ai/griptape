@@ -2,7 +2,8 @@ import mongomock
 import pytest
 
 from griptape.artifacts import TextArtifact
-from griptape.drivers import BaseVectorStoreDriver, MongoDbAtlasVectorStoreDriver
+from griptape.drivers.vector import BaseVectorStoreDriver
+from griptape.drivers.vector.mongodb_atlas import MongoDbAtlasVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 

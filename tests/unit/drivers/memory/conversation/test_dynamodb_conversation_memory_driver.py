@@ -2,7 +2,7 @@ import boto3
 import pytest
 from moto import mock_aws
 
-from griptape.drivers import AmazonDynamoDbConversationMemoryDriver
+from griptape.drivers.memory.conversation.amazon_dynamodb import AmazonDynamoDbConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask

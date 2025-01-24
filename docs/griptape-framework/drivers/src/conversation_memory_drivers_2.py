@@ -1,7 +1,7 @@
 import os
 import uuid
 
-from griptape.drivers import AmazonDynamoDbConversationMemoryDriver
+from griptape.drivers.memory.conversation.amazon_dynamodb import AmazonDynamoDbConversationMemoryDriver
 from griptape.memory.structure import ConversationMemory
 from griptape.structures import Agent
 

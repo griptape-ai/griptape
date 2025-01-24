@@ -4,7 +4,7 @@ from typing import Optional
 
 from attrs import define, field
 
-from griptape.drivers import BaseEmbeddingDriver
+from griptape.drivers.embedding import BaseEmbeddingDriver
 from griptape.utils import import_optional_dependency
 
 

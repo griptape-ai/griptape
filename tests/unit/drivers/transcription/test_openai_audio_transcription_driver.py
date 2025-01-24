@@ -3,7 +3,7 @@ from unittest.mock import Mock
 import pytest
 
 from griptape.artifacts import AudioArtifact
-from griptape.drivers import OpenAiAudioTranscriptionDriver
+from griptape.drivers.audio_transcription.openai import OpenAiAudioTranscriptionDriver
 
 
 class TestOpenAiAudioTranscriptionDriver:

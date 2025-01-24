@@ -1,11 +1,9 @@
 from attrs import define, field
 
 from griptape.configs.drivers import DriversConfig
-from griptape.drivers import (
-    CohereEmbeddingDriver,
-    CoherePromptDriver,
-    LocalVectorStoreDriver,
-)
+from griptape.drivers.embedding.cohere import CohereEmbeddingDriver
+from griptape.drivers.prompt.cohere import CoherePromptDriver
+from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.utils.decorators import lazy_property
 
 

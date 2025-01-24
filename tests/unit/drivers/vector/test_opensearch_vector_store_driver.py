@@ -3,7 +3,7 @@ from unittest.mock import Mock, create_autospec, patch
 import numpy as np
 import pytest
 
-from griptape.drivers import OpenSearchVectorStoreDriver
+from griptape.drivers.vector.opensearch import OpenSearchVectorStoreDriver
 
 
 class TestOpenSearchVectorStoreDriver:

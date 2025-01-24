@@ -8,7 +8,7 @@ from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
-from griptape.drivers import CoherePromptDriver
+from griptape.drivers.prompt.cohere import CoherePromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 

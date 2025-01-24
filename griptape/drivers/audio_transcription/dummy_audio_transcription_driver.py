@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
-from griptape.drivers import BaseAudioTranscriptionDriver
+from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
 from griptape.exceptions import DummyError
 
 if TYPE_CHECKING:
