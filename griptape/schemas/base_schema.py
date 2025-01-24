@@ -153,7 +153,7 @@ class BaseSchema(Schema):
 
         from schema import Schema
 
-        from griptape.artifacts import BaseArtifact
+        from griptape.artifacts import BaseArtifact, TextArtifact
         from griptape.common import (
             BaseDeltaMessageContent,
             BaseMessageContent,
@@ -172,6 +172,7 @@ class BaseSchema(Schema):
         from griptape.drivers.ruleset import BaseRulesetDriver
         from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
         from griptape.drivers.vector import BaseVectorStoreDriver
+        from griptape.engines.rag import RagContext
         from griptape.events import EventListener
         from griptape.memory import TaskMemory
         from griptape.memory.structure import BaseConversationMemory, Run
@@ -205,6 +206,7 @@ class BaseSchema(Schema):
                 "BaseDeltaMessageContent": BaseDeltaMessageContent,
                 "BaseTool": BaseTool,
                 "BaseTask": BaseTask,
+                "TextArtifact": TextArtifact,
                 "Usage": Message.Usage,
                 "Structure": Structure,
                 "BaseTokenizer": BaseTokenizer,
@@ -219,6 +221,7 @@ class BaseSchema(Schema):
                 "BaseRule": BaseRule,
                 "Ruleset": Ruleset,
                 "StructuredOutputStrategy": StructuredOutputStrategy,
+                "RagContext": RagContext,
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "ClientV2": import_optional_dependency("cohere").ClientV2 if is_dependency_installed("cohere") else Any,
