@@ -26,6 +26,7 @@ Griptape offers the following Event Listener Drivers for forwarding Griptape Eve
 ### Amazon SQS
 
 !!! info
+
     This driver requires the `drivers-event-listener-amazon-sqs` [extra](../index.md#extras).
 
 The [AmazonSqsEventListenerDriver](../../reference/griptape/drivers/event_listener/amazon_sqs_event_listener_driver.md) sends Events to an [Amazon SQS](https://aws.amazon.com/sqs/) queue.
@@ -37,6 +38,7 @@ The [AmazonSqsEventListenerDriver](../../reference/griptape/drivers/event_listen
 ### AWS IoT
 
 !!! info
+
     This driver requires the `drivers-event-listener-amazon-iot` [extra](../index.md#extras).
 
 The [AwsIotCoreEventListenerDriver](../../reference/griptape/drivers/event_listener/aws_iot_core_event_listener_driver.md) sends Events to the [AWS IoT Message Broker](https://aws.amazon.com/iot-core/).
@@ -50,6 +52,7 @@ The [AwsIotCoreEventListenerDriver](../../reference/griptape/drivers/event_liste
 The [GriptapeCloudEventListenerDriver](../../reference/griptape/drivers/event_listener/griptape_cloud_event_listener_driver.md) sends Events to [Griptape Cloud](https://www.griptape.ai/cloud).
 
 !!! note
+
     This Driver is required when using the Griptape Cloud Managed Structures feature. For local development, you can use the [Skatepark Emulator](https://github.com/griptape-ai/griptape-cli?tab=readme-ov-file#skatepark-emulator).
 
 ```python
@@ -67,6 +70,7 @@ The [WebhookEventListenerDriver](../../reference/griptape/drivers/event_listener
 ### Pusher
 
 !!! info
+
     This driver requires the `drivers-event-listener-pusher` [extra](../index.md#extras).
 
 The [PusherEventListenerDriver](../../reference/griptape/drivers/event_listener/pusher_event_listener_driver.md) sends Events to [Pusher](https://pusher.com).

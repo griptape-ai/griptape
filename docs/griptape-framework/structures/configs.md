@@ -63,6 +63,7 @@ The [Google Driver config](../../reference/griptape/configs/drivers/google_drive
 The [Anthropic Driver config](../../reference/griptape/configs/drivers/anthropic_drivers_config.md) provides default Drivers for Anthropic's APIs.
 
 !!! info
+
     Anthropic does not provide an embeddings API which means you will need to use another service for embeddings.
     To override the default embedding driver, see: [Override Default Structure Embedding Driver](../drivers/embedding-drivers.md#override-default-structure-embedding-driver).
 

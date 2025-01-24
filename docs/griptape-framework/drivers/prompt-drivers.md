@@ -32,6 +32,7 @@ This means instructing the LLM to output data in a particular format, usually JS
 This can be useful for forcing the LLM to output in a parsable format that can be used by downstream systems.
 
 !!! warning
+
     Each Driver may have a different default setting depending on the LLM provider's capabilities.
 
 ### Prompt Task
@@ -62,6 +63,7 @@ This driver uses [OpenAi function calling](https://platform.openai.com/docs/guid
 ```
 
 !!! info
+
     `response_format` and `seed` are unique to the OpenAI Chat Prompt Driver and Azure OpenAi Chat Prompt Driver.
 
 ### OpenAI Compatible
@@ -74,6 +76,7 @@ Simply set the `base_url` to the service's API endpoint and the `model` to the m
 ```
 
 !!! tip
+
     Make sure to include `v1` at the end of the `base_url` to match the OpenAI API endpoint.
 
 ### Azure OpenAI Chat
@@ -91,6 +94,7 @@ The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_d
 This driver uses [Cohere tool use](https://docs.cohere.com/docs/tools) when using [Tools](../tools/index.md).
 
 !!! info
+
     This driver requires the `drivers-prompt-cohere` [extra](../index.md#extras).
 
 ```python
@@ -100,6 +104,7 @@ This driver uses [Cohere tool use](https://docs.cohere.com/docs/tools) when usin
 ### Anthropic
 
 !!! info
+
     This driver requires the `drivers-prompt-anthropic` [extra](../index.md#extras).
 
 The [AnthropicPromptDriver](../../reference/griptape/drivers/prompt/anthropic_prompt_driver.md) connects to the Anthropic [Messages](https://docs.anthropic.com/claude/reference/messages_post) API.
@@ -112,6 +117,7 @@ This driver uses [Anthropic tool use](https://docs.anthropic.com/en/docs/build-w
 ### Google
 
 !!! info
+
     This driver requires the `drivers-prompt-google` [extra](../index.md#extras).
 
 The [GooglePromptDriver](../../reference/griptape/drivers/prompt/google_prompt_driver.md) connects to the [Google Generative AI](https://ai.google.dev/tutorials/python_quickstart#generate_text_from_text_inputs) API.
@@ -124,6 +130,7 @@ This driver uses [Gemini function calling](https://ai.google.dev/gemini-api/docs
 ### Amazon Bedrock
 
 !!! info
+
     This driver requires the `drivers-prompt-amazon-bedrock` [extra](../index.md#extras).
 
 The [AmazonBedrockPromptDriver](../../reference/griptape/drivers/prompt/amazon_bedrock_prompt_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/)'s [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
@@ -138,6 +145,7 @@ All models supported by the Converse API are available for use with this driver.
 ### Ollama
 
 !!! info
+
     This driver requires the `drivers-prompt-ollama` [extra](../index.md#extras).
 
 The [OllamaPromptDriver](../../reference/griptape/drivers/prompt/ollama_prompt_driver.md) connects to the [Ollama Chat Completion API](https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion).
@@ -150,11 +158,13 @@ This driver uses [Ollama tool calling](https://ollama.com/blog/tool-support) whe
 ### Hugging Face Hub
 
 !!! info
+
     This driver requires the `drivers-prompt-huggingface` [extra](../index.md#extras).
 
 The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_hub_prompt_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api).
 
 !!! warning
+
     Not all models featured on the Hugging Face Hub are supported by this driver. Models that are not supported by
     [Hugging Face serverless inference](https://huggingface.co/docs/api-inference/en/index) will not work with this driver.
     Due to the limitations of Hugging Face serverless inference, only models that are than 10GB are supported.
@@ -174,11 +184,13 @@ The [HuggingFaceHubPromptDriver](#hugging-face-hub) also supports [Text Generati
 ### Hugging Face Pipeline
 
 !!! info
+
     This driver requires the `drivers-prompt-huggingface-pipeline` [extra](../index.md#extras).
 
 The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally.
 
 !!! warning
+
     Running a model locally can be a computationally expensive process.
 
 ```python
@@ -188,6 +200,7 @@ The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/hu
 ### Amazon SageMaker Jumpstart
 
 !!! info
+
     This driver requires the `drivers-prompt-amazon-sagemaker` [extra](../index.md#extras).
 
 The [AmazonSageMakerJumpstartPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_jumpstart_prompt_driver.md) uses [Amazon SageMaker Jumpstart](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html) for inference on AWS.

@@ -6,6 +6,7 @@ search:
 ## RAG Engines
 
 !!! note
+
     This section is a work in progress.
 
 [Rag Engine](../../reference/griptape/engines/rag/index.md) is an abstraction for implementing modular retrieval augmented generation (RAG) pipelines.
