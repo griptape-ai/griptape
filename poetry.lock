@@ -3047,6 +3047,27 @@ mdformat-tables = ">=0.4.0"
 mdit-py-plugins = ">=0.2.0"
 
 [[package]]
+name = "mdformat-mkdocs"
+version = "4.1.2"
+description = "An mdformat plugin for `mkdocs`."
+optional = false
+python-versions = ">=3.9.0"
+files = [
+    {file = "mdformat_mkdocs-4.1.2-py3-none-any.whl", hash = "sha256:330774b40d27dc34ac56d216617968a7889de6adfb8641c510fb11d43ca257cf"},
+    {file = "mdformat_mkdocs-4.1.2.tar.gz", hash = "sha256:85017aa4cd6bcff68ca1c11a232bceef33fa7bfa181996f9c5004876af960de6"},
+]
+
+[package.dependencies]
+mdformat = ">=0.7.19"
+mdformat-gfm = ">=0.3.6"
+mdit-py-plugins = ">=0.4.1"
+more-itertools = ">=10.5.0"
+
+[package.extras]
+recommended = ["mdformat-beautysh (>=0.1.1)", "mdformat-config (>=0.2.1)", "mdformat-footnote (>=0.1.1)", "mdformat-frontmatter (>=2.0.8)", "mdformat-ruff (>=0.1.3)", "mdformat-simple-breaks (>=0.0.1)", "mdformat-tables (>=1.0.0)", "mdformat-web (>=0.2.0)", "mdformat-wikilink (>=0.2.0)", "setuptools"]
+test = ["pytest (>=8.3.4)", "pytest-beartype (>=0.1.1)", "pytest-cov (>=6.0.0)", "syrupy (>=4.7.2)"]
+
+[[package]]
 name = "mdformat-tables"
 version = "1.0.0"
 description = "An mdformat plugin for rendering tables."
@@ -7218,4 +7239,4 @@ loaders-sql = ["sqlalchemy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "d41679b260671e2700e53ba5e6792a03873a04551f879de8fb268254f5f868fd"
+content-hash = "e9cefdab26dde93f576d7d06300ca30686c27b9d2157a2c92114e35849ac432f"

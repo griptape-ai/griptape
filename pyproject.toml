@@ -229,6 +229,7 @@ mdformat-gfm = "^0.4.1"
 mdformat-frontmatter = "^2.0.8"
 mdformat-footnote = "^0.1.1"
 mdformat-admon = "^2.0.6"
+mdformat-mkdocs = "^4.1.2"
 
 
 [tool.poetry.group.docs]
