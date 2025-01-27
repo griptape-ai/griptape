@@ -5,9 +5,10 @@ import uuid
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any, Generic, Optional, cast
 
 from attrs import Factory, define, field
+from typing_extensions import TypeVar
 
 from griptape.artifacts import BaseArtifact, ErrorArtifact
 from griptape.configs import Defaults
@@ -22,9 +23,11 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
+T = TypeVar("T", bound=BaseArtifact)
+
 
 @define
-class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"], ABC):
+class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"], ABC, Generic[T]):
     class State(Enum):
         PENDING = 1
         RUNNING = 2
@@ -38,7 +41,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True, metadata={"serializable": True})
     structure: Optional[Structure] = field(default=None, kw_only=True)
 
-    output: Optional[BaseArtifact] = field(default=None, init=False)
+    output: Optional[T] = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def __rshift__(self, other: BaseTask | list[BaseTask]) -> BaseTask | list[BaseTask]:
@@ -160,7 +163,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
                 ),
             )
 
-    def run(self) -> BaseArtifact:
+    def run(self) -> T:
         try:
             self.state = BaseTask.State.RUNNING
 
@@ -172,7 +175,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
         except Exception as e:
             logger.exception("%s %s\n%s", self.__class__.__name__, self.id, e)
 
-            self.output = ErrorArtifact(str(e), exception=e)
+            self.output = cast(T, ErrorArtifact(str(e), exception=e))
         finally:
             self.state = BaseTask.State.FINISHED
 
@@ -213,7 +216,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
         return self
 
     @abstractmethod
-    def try_run(self) -> BaseArtifact: ...
+    def try_run(self) -> T: ...
 
     @property
     def full_context(self) -> dict[str, Any]:

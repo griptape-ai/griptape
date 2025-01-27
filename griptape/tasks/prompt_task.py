@@ -30,7 +30,9 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
+class PromptTask(
+    BaseTask[Union[TextArtifact, JsonArtifact, ListArtifact, ErrorArtifact]], RuleMixin, ActionsSubtaskOriginMixin
+):
     DEFAULT_MAX_STEPS = 20
     # Stop sequence for chain-of-thought in the framework. Using this "token-like" string to make it more unique,
     # so that it doesn't trigger on accident.
@@ -174,7 +176,7 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
 
             conversation_memory.add_run(run)
 
-    def try_run(self) -> BaseArtifact:
+    def try_run(self) -> ListArtifact | TextArtifact | JsonArtifact | ErrorArtifact:
         from griptape.tasks import ActionsSubtask
 
         self.subtasks.clear()
@@ -201,6 +203,9 @@ class PromptTask(BaseTask, RuleMixin, ActionsSubtaskOriginMixin):
             output = subtask.output
         else:
             output = result.to_artifact()
+
+        if not isinstance(output, (TextArtifact, JsonArtifact, ErrorArtifact)):
+            raise ValueError(f"Output must be a TextArtifact, JsonArtifact, or ErrorArtifact, not {type(output)}")
 
         if self.output_schema is not None and self.prompt_driver.structured_output_strategy in ("native", "rule"):
             return JsonArtifact(output.value)

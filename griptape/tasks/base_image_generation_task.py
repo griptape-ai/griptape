@@ -8,15 +8,13 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
+from griptape.artifacts import ImageArtifact
 from griptape.configs import Defaults
 from griptape.loaders import ImageLoader
 from griptape.mixins.artifact_file_output_mixin import ArtifactFileOutputMixin
 from griptape.mixins.rule_mixin import RuleMixin
 from griptape.rules import Rule, Ruleset
 from griptape.tasks import BaseTask
-
-if TYPE_CHECKING:
-    from griptape.artifacts import ImageArtifact
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -26,7 +24,7 @@ if TYPE_CHECKING:
 
 
 @define
-class BaseImageGenerationTask(ArtifactFileOutputMixin, RuleMixin, BaseTask, ABC):
+class BaseImageGenerationTask(ArtifactFileOutputMixin, RuleMixin, BaseTask[ImageArtifact], ABC):
     """Provides a base class for image generation-related tasks.
 
     Attributes:

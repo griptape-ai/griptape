@@ -58,11 +58,15 @@ class BaseSchema(Schema):
 
         field_class, args, optional = cls._get_field_type_info(field_type)
 
+        if field_class is None:
+            return fields.Constant(None, allow_none=True)
+
         # Resolve TypeVars to their bound type
         if isinstance(field_class, TypeVar):
             field_class = field_class.__bound__
-        if field_class is None:
-            return fields.Constant(None, allow_none=True)
+            if field_class is None:
+                return fields.Raw(allow_none=optional)
+
         if cls._is_union(field_type):
             return cls._handle_union(field_type, optional=optional)
         elif attrs.has(field_class):
