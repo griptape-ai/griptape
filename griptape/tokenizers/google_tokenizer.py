@@ -9,7 +9,7 @@ from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
-    from google.generativeai import GenerativeModel
+    from google.generativeai.generative_models import GenerativeModel
 
 
 @define()
