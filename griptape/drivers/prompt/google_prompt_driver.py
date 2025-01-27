@@ -33,7 +33,7 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from google.generativeai import GenerativeModel
+    from google.generativeai.generative_models import GenerativeModel
     from google.generativeai.protos import Part
     from google.generativeai.types import ContentDict, ContentsType, GenerateContentResponse
 
