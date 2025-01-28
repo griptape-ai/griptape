@@ -8,18 +8,14 @@
 # Google gemini doesn't work with the old version of parts and whatnot - needs it's own implementation
 from __future__ import annotations
 
-import json
 import logging
-import os
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
 from schema import Schema
 from vertexai.generative_models import Part
 
-from griptape.artifacts.generic_artifact import GenericArtifact
 from griptape.common import (
-    ActionCallDeltaMessageContent,
     BaseDeltaMessageContent,
     DeltaMessage,
     Message,
