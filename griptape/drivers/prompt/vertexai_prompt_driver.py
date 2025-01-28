@@ -14,6 +14,7 @@ import os
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
+from schema import Schema
 from vertexai.generative_models import Part
 
 from griptape.artifacts.generic_artifact import GenericArtifact
@@ -36,7 +37,9 @@ from griptape.common.prompt_stack.contents.image_message_content import (
 from griptape.configs import Defaults
 from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
 from griptape.tokenizers.vertexai_google_tokenizer import VertexAIGoogleTokenizer
+from griptape.tools.base_tool import BaseTool
 from griptape.utils.decorators import lazy_property
+from griptape.utils.dict_utils import remove_key_in_dict_recursively
 from griptape.utils.import_utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -113,6 +116,9 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
     structured_output_strategy: StructuredOutputStrategy = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
+    tool_choice: str = field(
+        default="auto", kw_only=True, metadata={"serializable": True}
+    )
     _client: GenerativeModel = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
@@ -158,12 +164,10 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self.__to_google_messages(prompt_stack)
-        logger.debug(messages)
         params = self._base_params(prompt_stack)
-        logger.debug((messages, params))
         response: GenerationResponse = self.client.generate_content(messages, **params)
-        logger.debug(response.to_dict())
         usage_metadata = response.usage_metadata
+        # TODO: modify for function calls
         return Message(
             content=response.text,  # TODO: Modify for try_stream potentially.
             role=Message.ASSISTANT_ROLE,
@@ -225,7 +229,7 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
                 ],
             )
             logger.debug(self.client._system_instruction)
-        return {
+        params = {
             "generation_config": vertexai.GenerationConfig(
                 temperature=self.temperature,
                 top_k=self.top_k,
@@ -236,7 +240,27 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
                 **self.extra_params,
             )
         }
-        # TODO: Add tools back in if necessary?
+        if prompt_stack.tools and self.use_native_tools:
+            params["tool_config"] = {
+                "function_calling_config": {"mode": self.tool_choice}
+            }
+            params["tools"] = self.__to_google_tools(prompt_stack.tools)
+        return params
+
+    # TODO: Implement later if necessary for Driver to be added to the framework
+    def __to_google_tools(self, tools: list[BaseTool]) -> list[dict]:
+        tool_declarations = []
+        for tool in tools:
+            for activity in tool.activities():
+                schema = (tool.activity_schema(activity) or Schema({})).json_schema(
+                    "Parameters Schema"
+                )
+                if "values" in schema["properties"]:
+                    schema = schema["properties"]["values"]
+                schema = remove_key_in_dict_recursively(schema, "additionalProperties")
+                tool_declaration = "f"  # TODO figure out vertex ai driver
+                tool_declarations.append(tool_declaration)
+        return tool_declarations
 
     def __to_google_messages(self, prompt_stack: PromptStack) -> list[Content]:
         content = import_optional_dependency("vertexai.generative_models")
@@ -273,7 +297,6 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
         else:
             raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
 
-    # TODO: This is obsolete because I removed from try_run - How do I accurate make this reflect the results from VertexAI? Does it come back in parts?
     def __to_prompt_stack_delta_message_content(
         self, content: Part
     ) -> BaseDeltaMessageContent:
@@ -281,6 +304,7 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
 
         if content.text:
             return TextDeltaMessageContent(content.text)
+        # TODO: Implement later when necessary.
         # elif content.function_call:
         #     function_call = content.function_call
 
