@@ -43,7 +43,7 @@ class MockPromptDriver(BasePromptDriver):
             ]
             if any(action_messages):
                 return Message(
-                    content=[TextMessageContent(TextArtifact(f"Answer: {output}"))],
+                    content=[TextMessageContent(TextArtifact(output))],
                     role=Message.ASSISTANT_ROLE,
                     usage=Message.Usage(input_tokens=100, output_tokens=100),
                 )
@@ -90,7 +90,7 @@ class MockPromptDriver(BasePromptDriver):
                 message for message in prompt_stack.messages if message.has_any_content_type(ActionCallMessageContent)
             ]
             if any(action_messages):
-                yield DeltaMessage(content=TextDeltaMessageContent(f"Answer: {output}"))
+                yield DeltaMessage(content=TextDeltaMessageContent(output))
                 yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100))
             else:
                 if self.structured_output_strategy == "tool":

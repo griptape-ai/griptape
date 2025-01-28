@@ -67,7 +67,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         result = self.prompt_driver.run(self.prompt_stack)
 
         if self.prompt_driver.use_native_tools:
-            subtask_input = result.to_artifact()
+            subtask_input = result.to_artifact(meta={"is_react_prompt": False})
         else:
             action_matches = re.findall(self.ACTION_PATTERN, result.to_text(), re.DOTALL)
 
@@ -77,7 +77,10 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
             action_dict = json.loads(data)
 
             action_dict["tag"] = self.tool.name
-            subtask_input = J2("tasks/tool_task/subtask.j2").render(action_json=json.dumps(action_dict))
+            subtask_input = TextArtifact(
+                J2("tasks/tool_task/subtask.j2").render(action_json=json.dumps(action_dict)),
+                meta={"is_react_prompt": True},
+            )
 
         try:
             subtask = self.add_subtask(ActionsSubtask(subtask_input))

@@ -1,5 +1,6 @@
 import pytest
 
+from griptape.artifacts import TextArtifact
 from griptape.events import FinishActionsSubtaskEvent
 from griptape.structures import Agent
 from griptape.tasks import ActionsSubtask, PromptTask
@@ -9,11 +10,12 @@ from tests.mocks.mock_tool.tool import MockTool
 class TestFinishActionsSubtaskEvent:
     @pytest.fixture()
     def finish_subtask_event(self):
-        valid_input = (
+        valid_input = TextArtifact(
             "Thought: need to test\n"
             'Actions: [{"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "test input"}}}]\n'
             "<|Response|>: test observation\n"
-            "Answer: test output"
+            "Answer: test output",
+            meta={"is_react_prompt": True},
         )
         task = PromptTask(tools=[MockTool()])
         agent = Agent()
