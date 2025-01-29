@@ -239,11 +239,12 @@ class TestToolkitSubtask:
         assert result.output_task.output.to_text() == "foo bar"
 
     def test_init_from_prompt_1(self):
-        valid_input = (
+        valid_input = TextArtifact(
             "Thought: need to test\n"
             'Actions: [{"tag": "foo", "name": "Tool1", "path": "test", "input": {"values": {"test": "value"}}}]\n'
             "<|Response|>: test observation\n"
-            "Answer: test output"
+            "Answer: test output",
+            meta={"is_react_prompt": True},
         )
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
@@ -259,8 +260,11 @@ class TestToolkitSubtask:
         assert subtask.output is None
 
     def test_init_from_prompt_2(self):
-        valid_input = """Thought: need to test\nObservation: test
-        observation\nAnswer: test output"""
+        valid_input = TextArtifact(
+            """Thought: need to test\nObservation: test
+        observation\nAnswer: test output""",
+            meta={"is_react_prompt": True},
+        )
         task = ToolkitTask("test", tools=[MockTool(name="Tool1")])
 
         Agent().add_task(task)

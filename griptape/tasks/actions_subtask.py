@@ -83,12 +83,14 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
         self._origin_task = parent_task
         self.structure = parent_task.structure
 
+        task_input = self.input
         try:
-            if isinstance(self.input, TextArtifact):
-                self.__init_from_prompt(self.input.to_text())
+            if isinstance(task_input, TextArtifact) and task_input.meta.get("is_react_prompt", False):
+                self.__init_from_prompt(task_input.to_text())
             else:
-                self.__init_from_artifacts(self.input)
+                self.__init_from_artifact(task_input)
 
+            # If StructuredOutputTool was used, treat the input to it as the output of the subtask.
             structured_outputs = [a for a in self.actions if isinstance(a.tool, StructuredOutputTool)]
             if structured_outputs:
                 output_values = [JsonArtifact(a.input["values"]) for a in structured_outputs]
@@ -242,31 +244,38 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
                 # The LLM failed to follow the ReAct prompt, set the LLM's raw response as the output.
                 self.output = TextArtifact(value)
 
-    def __init_from_artifacts(self, artifacts: ListArtifact) -> None:
-        """Parses the input Artifacts to extract the thought and actions.
+    def __init_from_artifact(self, artifact: TextArtifact | ListArtifact) -> None:
+        """Parses the input Artifact to extract either a final answer or thought and actions.
 
-        Text Artifacts are used to extract the thought, and ToolAction Artifacts are used to extract the actions.
+        When the input Artifact is a TextArtifact, it is assumed to be the final answer.
+        When the input Artifact is a ListArtifact, it is assumed to contain both thought and actions.
+        Text Artifacts are parsed as the thought, and ToolAction Artifacts parsed as the actions.
 
         Args:
-            artifacts: The input Artifacts.
+            artifact: The input Artifacts.
 
         Returns:
             None
         """
+        # When using native tools, we can assume that a TextArtifact is the LLM providing its final answer.
+        if isinstance(artifact, TextArtifact):
+            self.output = artifact
+            return
+
         self.actions = [
             self.__process_action_object(artifact.value.to_dict())
-            for artifact in artifacts.value
+            for artifact in artifact.value
             if isinstance(artifact, ActionArtifact)
         ]
 
         # When parsing from Artifacts we can't determine the thought unless there are also Actions
         if self.actions:
-            thoughts = [artifact.value for artifact in artifacts.value if isinstance(artifact, TextArtifact)]
+            thoughts = [artifact.value for artifact in artifact.value if isinstance(artifact, TextArtifact)]
             if thoughts:
                 self.thought = thoughts[0]
         else:
             if self.output is None:
-                self.output = TextArtifact(artifacts.to_text())
+                self.output = TextArtifact(artifact.to_text())
 
     def __parse_actions(self, actions_matches: list[str]) -> list[ToolAction]:
         if len(actions_matches) == 0:

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, TypeVar
+from typing import Any, Optional, TypeVar
 
 from attrs import define, field
 
@@ -45,8 +45,13 @@ class Message(BaseMessage):
             [content.artifact.to_text() for content in self.content if isinstance(content, TextMessageContent)],
         )
 
-    def to_artifact(self) -> BaseArtifact:
+    def to_artifact(self, meta: Optional[dict] = None) -> BaseArtifact:
+        if meta is None:
+            meta = {}
         if len(self.content) == 1:
-            return self.content[0].artifact
+            artifact = self.content[0].artifact
         else:
-            return ListArtifact([content.artifact for content in self.content])
+            artifact = ListArtifact([content.artifact for content in self.content])
+
+        artifact.meta.update(meta)
+        return artifact

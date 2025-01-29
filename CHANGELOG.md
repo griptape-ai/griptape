@@ -40,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Error when serializing `RagContext`.
+- `Answer:` being trimmed from LLM's final answer even when using native tool calling. 
 
 
 ## [1.2.0] - 2025-01-21

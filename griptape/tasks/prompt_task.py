@@ -184,9 +184,11 @@ class PromptTask(
         if self.response_stop_sequence not in self.prompt_driver.tokenizer.stop_sequences:
             self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
 
-        result = self.prompt_driver.run(self.prompt_stack)
+        output = self.prompt_driver.run(self.prompt_stack).to_artifact(
+            meta={"is_react_prompt": not self.prompt_driver.use_native_tools}
+        )
         if self.tools:
-            subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
+            subtask = self.add_subtask(ActionsSubtask(output))
 
             while True:
                 if subtask.output is None:
@@ -195,14 +197,14 @@ class PromptTask(
                     else:
                         subtask.run()
 
-                        result = self.prompt_driver.run(self.prompt_stack)
-                        subtask = self.add_subtask(ActionsSubtask(result.to_artifact()))
+                        output = self.prompt_driver.run(self.prompt_stack).to_artifact(
+                            meta={"is_react_prompt": not self.prompt_driver.use_native_tools}
+                        )
+                        subtask = self.add_subtask(ActionsSubtask(output))
                 else:
                     break
 
             output = subtask.output
-        else:
-            output = result.to_artifact()
 
         if not isinstance(output, (TextArtifact, JsonArtifact, ErrorArtifact)):
             raise ValueError(f"Output must be a TextArtifact, JsonArtifact, or ErrorArtifact, not {type(output)}")

@@ -25,7 +25,7 @@ class TestStream:
                 assert next(chat_stream_run).value == "MockTool.mock-tag (test)"
                 assert next(chat_stream_run).value == json.dumps({"values": {"test": "test-value"}}, indent=2)
                 next(chat_stream_run)
-                assert next(chat_stream_run).value == "Answer: mock output"
+                assert next(chat_stream_run).value == "mock output"
                 next(chat_stream_run)
                 with pytest.raises(StopIteration):
                     next(chat_stream_run)

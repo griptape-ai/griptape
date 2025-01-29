@@ -13,11 +13,12 @@ from tests.mocks.mock_tool.tool import MockTool
 
 class TestActionsSubtask:
     def test_prompt_input(self):
-        valid_input = (
+        valid_input = TextArtifact(
             "Thought: need to test\n"
             'Actions: [{"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "value"}}}]\n'
             "<|Response|>: test observation\n"
-            "Answer: test output"
+            "Answer: test output",
+            meta={"is_react_prompt": True},
         )
 
         task = PromptTask(tools=[MockTool()])
@@ -39,7 +40,7 @@ class TestActionsSubtask:
                     ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
                 ),
                 TextArtifact("answer"),
-            ]
+            ],
         )
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -59,7 +60,7 @@ class TestActionsSubtask:
                 ActionArtifact(
                     ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
                 ),
-            ]
+            ],
         )
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -71,8 +72,9 @@ class TestActionsSubtask:
         assert json_dict[0]["path"] == "test"
         assert json_dict[0]["input"] == {"values": {"test": "value"}}
 
-    def test_prompt_answer(self):
-        valid_input = "Answer: test output"
+    @pytest.mark.parametrize(("is_react_prompt", "expected"), [(True, "test output"), (False, "Answer: test output")])
+    def test_prompt_answer(self, is_react_prompt, expected):
+        valid_input = TextArtifact("Answer: test output", meta={"is_react_prompt": is_react_prompt})
 
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -80,10 +82,12 @@ class TestActionsSubtask:
 
         assert subtask.thought is None
         assert subtask.actions == []
-        assert subtask.output.value == "test output"
+        assert subtask.output is not None
+        assert subtask.output.value == expected
 
-    def test_prompt_implicit_answer(self):
-        valid_input = "test output"
+    @pytest.mark.parametrize("is_react_prompt", [True, False])
+    def test_prompt_implicit_answer(self, is_react_prompt):
+        valid_input = TextArtifact("test output", meta={"use_native_tools": is_react_prompt})
 
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -91,6 +95,7 @@ class TestActionsSubtask:
 
         assert subtask.thought is None
         assert subtask.actions == []
+        assert subtask.output is not None
         assert subtask.output.value == "test output"
 
     def test_artifact_answer(self):
@@ -105,6 +110,7 @@ class TestActionsSubtask:
 
         assert subtask.thought is None
         assert subtask.actions == []
+        assert subtask.output is not None
         assert subtask.output.value == "answer"
 
     def test_callable_input(self):
@@ -127,11 +133,12 @@ class TestActionsSubtask:
         assert json_dict[0]["input"] == {"values": {"test": "value"}}
 
     def test_input_with_multiline_actions(self):
-        valid_input = (
+        valid_input = TextArtifact(
             "Thought: need to test\n"
             'Actions:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n[{"tag": "foo", "name": "MockTool",\n"path": "test",\n\n"input": {"values":\n{"test":\n"test\n\ninput\n\nwith\nnewlines"}}}]```!@#$%^&*()123(*!378934)'
             "Response: test response\n"
-            "Answer: test output"
+            "Answer: test output",
+            meta={"is_react_prompt": True},
         )
 
         task = PromptTask(tools=[MockTool()])
@@ -147,11 +154,12 @@ class TestActionsSubtask:
         assert ActionsSubtask("{{ hello }}").input.value == "{{ hello }}"
 
     def test_with_no_action_input(self):
-        valid_input = (
+        valid_input = TextArtifact(
             "Thought: need to test\n"
             'Actions: [{"tag": "foo", "name": "MockTool", "path": "test_no_schema"}]\n'
             "<|Response|>: test observation\n"
-            "Answer: test output"
+            "Answer: test output",
+            meta={"is_react_prompt": True},
         )
 
         task = PromptTask(tools=[MockTool()])
@@ -164,7 +172,10 @@ class TestActionsSubtask:
         assert json_dict[0].get("input") is None
 
     def test_no_actions(self):
-        valid_input = "Thought: need to test\n<|Response|>: test observation\nAnswer: test output"
+        valid_input = TextArtifact(
+            "Thought: need to test\n<|Response|>: test observation\nAnswer: test output",
+            meta={"is_react_prompt": True},
+        )
 
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -174,7 +185,9 @@ class TestActionsSubtask:
         assert len(json_dict) == 0
 
     def test_empty_actions(self):
-        valid_input = "Thought: need to test\nActions: []\n<|Response|>: test observation\nAnswer: test output"
+        valid_input = TextArtifact(
+            "Thought: need to test\nActions: []\n<|Response|>: test observation\nAnswer: test output"
+        )
 
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -184,7 +197,10 @@ class TestActionsSubtask:
         assert len(json_dict) == 0
 
     def test_invalid_actions(self):
-        invalid_input = "Thought: need to test\nActions: [{,{]\n<|Response|>: test observation\nAnswer: test output"
+        invalid_input = TextArtifact(
+            "Thought: need to test\nActions: [{,{]\n<|Response|>: test observation\nAnswer: test output",
+            meta={"is_react_prompt": True},
+        )
 
         task = PromptTask(tools=[MockTool()])
         Agent().add_task(task)
@@ -196,11 +212,12 @@ class TestActionsSubtask:
         assert subtask.actions == []
 
     def test_implicit_values(self):
-        valid_input = (
+        valid_input = TextArtifact(
             "Thought: need to test\n"
             'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"test":\n"value"}}]'
             "Response: test response\n"
-            "Answer: test output"
+            "Answer: test output",
+            meta={"is_react_prompt": True},
         )
 
         task = PromptTask(tools=[MockTool()])
@@ -213,9 +230,10 @@ class TestActionsSubtask:
         assert json_dict[0]["input"] == {"values": {"test": "value"}}
 
     def test_execute_tool(self):
-        valid_input = (
+        valid_input = TextArtifact(
             "Thought: need to test\n"
-            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]'
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]',
+            meta={"is_react_prompt": True},
         )
 
         task = PromptTask(tools=[MockTool()])
@@ -228,9 +246,10 @@ class TestActionsSubtask:
         assert subtask.output.value[0].value == "ack value"
 
     def test_execute_tool_exception(self):
-        valid_input = (
+        valid_input = TextArtifact(
             "Thought: need to test\n"
-            'Actions:[{"tag": "foo", "name": "MockTool","path": "test_exception","input": {"values": {"test": "value"}}}]'
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test_exception","input": {"values": {"test": "value"}}}]',
+            meta={"is_react_prompt": True},
         )
 
         task = PromptTask(tools=[MockTool()])
@@ -243,9 +262,10 @@ class TestActionsSubtask:
         assert subtask.output.value[0].value == "error value"
 
     def test_origin_task(self):
-        valid_input = (
+        valid_input = TextArtifact(
             "Thought: need to test\n"
-            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]'
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]',
+            meta={"is_react_prompt": True},
         )
 
         task = PromptTask(tools=[MockTool()])
