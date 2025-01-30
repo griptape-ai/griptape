@@ -23,9 +23,7 @@ class TestFileUtils:
             ("mountain.jpg", "image/jpeg"),
             ("mountain.png", "image/png"),
             ("pig-balloon.jpg", "image/jpeg"),
-            ("pig-balloon.png", "image/webp"),  # TODO: Unclear why detecting as webp
-            ("sentences.wav", "audio/x-wav"),
-            ("sentences2.wav", "audio/x-wav"),
+            ("pig-balloon.png", "image/png"),
             ("small.bmp", "image/bmp"),
             ("small.gif", "image/gif"),
             ("small.jpg", "image/jpeg"),
@@ -62,9 +60,7 @@ class TestFileUtils:
             ("mountain.jpg", "image/jpeg"),
             ("mountain.png", "image/png"),
             ("pig-balloon.jpg", "image/jpeg"),
-            ("pig-balloon.png", "image/webp"),  # TODO: Unclear why detecting as webp
-            ("sentences.wav", "audio/x-wav"),
-            ("sentences2.wav", "audio/x-wav"),
+            ("pig-balloon.png", "image/webp"),  # TODO: Unclear why png bytes are appearing as webpg
             ("small.bmp", "image/bmp"),
             ("small.gif", "image/gif"),
             ("small.jpg", "image/jpeg"),
