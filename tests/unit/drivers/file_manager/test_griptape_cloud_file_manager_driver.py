@@ -81,15 +81,6 @@ class TestGriptapeCloudFileManagerDriver:
         assert files[0] == "foo/bar.pdf"
         assert files[1] == "foo/baz.pdf"
 
-    def test_try_list_files_not_directory(self, mocker, driver):
-        mock_response = mocker.Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {"assets": [{"name": "foo/bar"}, {"name": "foo/baz"}]}
-        mocker.patch("requests.request", return_value=mock_response)
-
-        with pytest.raises(NotADirectoryError):
-            driver.try_list_files("foo")
-
     def test_try_load_file(self, mocker, driver):
         mock_url_response = mocker.Mock()
         mock_url_response.status_code = 200

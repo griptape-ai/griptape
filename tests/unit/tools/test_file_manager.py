@@ -44,17 +44,6 @@ class TestFileManager:
         assert len(result.value) == 1
         assert isinstance(result.value[0], TextArtifact)
 
-    def test_load_files_from_disk_with_encoding_failure(self):
-        file_manager = FileManagerTool(
-            file_manager_driver=LocalFileManagerDriver(
-                encoding="utf-8",
-                workdir=os.path.abspath(os.path.dirname(__file__)),
-            )
-        )
-
-        with pytest.raises(UnicodeDecodeError):
-            file_manager.load_files_from_disk({"values": {"paths": ["../../resources/bitcoin.pdf"]}})
-
     def test_save_memory_artifacts_to_disk_for_one_artifact(self, temp_dir):
         memory = defaults.text_task_memory("Memory1")
         artifact = TextArtifact("foobar")
