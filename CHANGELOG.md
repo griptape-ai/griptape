@@ -33,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added `DateTime.get_relative_datetime` to `DateTimeTool.denylist`. May be removed in a future release.
 - Changed log level of `ActionsSubtask` errors from `EXCEPTION` to `DEBUG`.
 - `GriptapeCloudStructureRunDriver` now publishes its events to the global event bus.
+- Changed log level of Tool execution errors from `EXCEPTION` to `DEBUG`
+- Improved mime type detection in `FileManagerTool`.
 
 ### Deprecated
 
@@ -42,6 +44,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Error when serializing `RagContext`.
 - `Answer:` being trimmed from LLM's final answer even when using native tool calling. 
+- `NotADirectoryError` being raised for valid list operations in `FileManagerTool`.
+- `GriptapeCloudFileManagerDriver` list operation using wrong method when listing assets in a bucket.
 
 
 ## [1.2.0] - 2025-01-21
