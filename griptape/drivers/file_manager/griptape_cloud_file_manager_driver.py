@@ -69,14 +69,11 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     def try_list_files(self, path: str, postfix: str = "") -> list[str]:
         full_key = self._to_full_key(path)
 
-        if not self._is_a_directory(full_key):
-            raise NotADirectoryError
-
         data = {"prefix": full_key}
         if postfix:
             data["postfix"] = postfix
         list_assets_response = self._call_api(
-            method="list", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=False
+            method="get", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=False
         ).json()
 
         return [asset["name"] for asset in list_assets_response.get("assets", [])]
