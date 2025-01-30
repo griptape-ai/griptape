@@ -73,7 +73,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         if postfix:
             data["postfix"] = postfix
         list_assets_response = self._call_api(
-            method="list", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=False
+            method="get", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=False
         ).json()
 
         return [asset["name"] for asset in list_assets_response.get("assets", [])]
