@@ -173,9 +173,6 @@ class BaseSchema(Schema):
             BaseVectorStoreDriver,
         )
         from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
-        from griptape.drivers.ruleset import BaseRulesetDriver
-        from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
-        from griptape.drivers.vector import BaseVectorStoreDriver
         from griptape.engines.rag import RagContext
         from griptape.events import EventListener
         from griptape.memory import TaskMemory
