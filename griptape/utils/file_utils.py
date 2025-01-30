@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import csv
+import io
+import json
 import mimetypes
 
 import filetype
@@ -26,6 +29,10 @@ def get_mime_type(file_path_or_bytes: str | bytes) -> str:
     if filetype_guess is None:
         if isinstance(file_path_or_bytes, bytes):
             if _is_text(file_path_or_bytes):
+                if _is_json(file_path_or_bytes):
+                    return "application/json"
+                elif _is_csv(file_path_or_bytes):
+                    return "text/csv"
                 return "text/plain"
             else:
                 return "application/octet-stream"
@@ -39,17 +46,33 @@ def get_mime_type(file_path_or_bytes: str | bytes) -> str:
 
 
 def _is_text(data: bytes) -> bool:
-    """Heuristic check to determine if bytes represent text data.
+    """Check if bytes are decodable as text.
 
-    https://github.com/h2non/filetype.py/issues/30
+    Required since filetypes does not support this: https://github.com/h2non/filetype.py/issues/30
 
-    Args:
-        data: The bytes to check.
-
-    Returns: True if the bytes represent text data, False otherwise.
     """
     try:
         text = data.decode("utf-8")
         return all(c.isprintable() or c.isspace() for c in text)
     except UnicodeDecodeError:
+        return False
+
+
+def _is_json(data: bytes) -> bool:
+    """Check if data is valid JSON."""
+    try:
+        json.loads(data.decode("utf-8"))
+        return True
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return False
+
+
+def _is_csv(data: bytes) -> bool:
+    """Check if data appears to be CSV-like."""
+    try:
+        text = data.decode("utf-8")
+        sample = io.StringIO(text).read(1024)
+        dialect = csv.Sniffer().sniff(sample, delimiters=";,\t|")
+        return bool(dialect)
+    except (UnicodeDecodeError, csv.Error):
         return False
