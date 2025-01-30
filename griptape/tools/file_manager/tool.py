@@ -72,6 +72,7 @@ class FileManagerTool(BaseTool):
         artifacts = []
 
         for path in paths:
+            # Fetch the file to try and determine the appropriate loader
             abs_path = os.path.join(self.file_manager_driver.workdir, path)
             file_bytes = self.file_manager_driver.try_load_file(abs_path)
             mime_type = get_mime_type(file_bytes)
