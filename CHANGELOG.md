@@ -22,6 +22,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.2.1] - 2025-01-30
+
+### Changed
+- Changed log level of Tool execution errors from `EXCEPTION` to `DEBUG`
+- Improved mime type detection in `FileManagerTool`.
+
+### Fixed
+
+- Error when serializing `RagContext`.
+- `NotADirectoryError` being raised for valid list operations in `FileManagerTool`.
+- `GriptapeCloudFileManagerDriver` list operation using wrong method when listing assets in a bucket.
+
 ## [1.2.0] - 2025-01-21
 
 ### Added
