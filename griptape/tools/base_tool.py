@@ -137,7 +137,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
 
             output = self.after_run(activity, subtask, action, output)
         except Exception as e:
-            logging.error(traceback.format_exc())
+            logging.debug(traceback.format_exc())
             output = ErrorArtifact(str(e), exception=e)
 
         return output
