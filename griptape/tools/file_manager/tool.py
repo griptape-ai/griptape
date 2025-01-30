@@ -73,10 +73,11 @@ class FileManagerTool(BaseTool):
 
         for path in paths:
             abs_path = os.path.join(self.file_manager_driver.workdir, path)
-            mime_type = get_mime_type(abs_path)
+            file_bytes = self.file_manager_driver.try_load_file(abs_path)
+            mime_type = get_mime_type(file_bytes)
             loader = next((loader for key, loader in self.loaders.items() if mime_type.startswith(key)))
 
-            artifact = loader.load(path)
+            artifact = loader.parse(file_bytes)
             if isinstance(artifact, ListArtifact):
                 artifacts.extend(artifact.value)
             else:
