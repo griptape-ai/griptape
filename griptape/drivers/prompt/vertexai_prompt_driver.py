@@ -171,11 +171,14 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
 
         messages = self.__to_google_messages(prompt_stack)
         params = self._base_params(prompt_stack)
-        system = [
-            vertexai.Part.from_text(text=system_message.to_text())
-            for system_message in prompt_stack.system_messages
-        ]
-        messages.append(system)
+        system_messages = vertexai.Content(
+            role="system",
+            parts=[
+                vertexai.Part.from_text(text=system_message.to_text())
+                for system_message in prompt_stack.system_messages
+            ],
+        )
+        messages.append(system_messages)
         response: GenerationResponse = self.client.generate_content(messages, **params)
         usage_metadata = response.usage_metadata
         # TODO: modify for function calls
