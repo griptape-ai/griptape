@@ -179,6 +179,7 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
             ],
         )
         messages.append(system_messages)
+        logger.debug(messages)
         response: GenerationResponse = self.client.generate_content(messages, **params)
         usage_metadata = response.usage_metadata
         # TODO: modify for function calls
