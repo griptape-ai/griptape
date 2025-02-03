@@ -4,7 +4,7 @@
 
 ## Build Your Own RAG Pipeline
 
-Connect to your data with [Data Sources](data-sources/create-data-source.md), store files in [Data Lakes](data-lakes/data-lakes.md), and prepare them for retrieval with [Knowledge Bases](knowledge-bases/create-knowledge-base.md). 
+Connect to your data with [Data Sources](data-sources/create-data-source.md), store files in [Data Lakes](data-lakes/data-lakes.md), and prepare them for retrieval with [Knowledge Bases](knowledge-bases/create-knowledge-base.md).
 
 ## Host and Run Your Code
 
