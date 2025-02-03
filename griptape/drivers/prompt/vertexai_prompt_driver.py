@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Optional
 
 from attrs import Attribute, Factory, define, field
 from schema import Schema
+from griptape.drivers import prompt
 from vertexai.generative_models import Part
 
 from griptape.common import (
@@ -30,8 +31,11 @@ from griptape.common.prompt_stack.contents.generic_message_content import (
 from griptape.common.prompt_stack.contents.image_message_content import (
     ImageMessageContent,
 )
+from griptape.artifacts import GenericArtifact
 from griptape.configs import Defaults
 from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
+from griptape.structures.workflow import Workflow
+from griptape.tasks.prompt_task import PromptTask
 from griptape.tokenizers.vertexai_google_tokenizer import VertexAIGoogleTokenizer
 from griptape.tools.base_tool import BaseTool
 from griptape.utils.decorators import lazy_property
@@ -50,6 +54,10 @@ if TYPE_CHECKING:
     from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tokenizers.base_tokenizer import BaseTokenizer
 from rich.pretty import pprint  # will automatically nicely format things
+
+import os
+import json
+from google.oauth2 import service_account
 
 # need to install - pip install --upgrade google-cloud-aiplatform How do i do this?
 logger = logging.getLogger(Defaults.logging_config.logger_name)
@@ -159,8 +167,15 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
+        vertexai = import_optional_dependency("vertexai.generative_models")
+
         messages = self.__to_google_messages(prompt_stack)
         params = self._base_params(prompt_stack)
+        system = [
+            vertexai.Part.from_text(text=system_message.to_text())
+            for system_message in prompt_stack.system_messages
+        ]
+        messages.append(system)
         response: GenerationResponse = self.client.generate_content(messages, **params)
         usage_metadata = response.usage_metadata
         # TODO: modify for function calls
@@ -315,3 +330,56 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
         #     )
         else:
             raise ValueError(f"Unsupported message content type {content}")
+
+
+def _get_response_schema():
+    return {
+        "type": "object",
+        "properties": {
+            "criteria_found": {"type": "boolean"},
+            "description": {"type": "string"},
+            "time_stamp": {"type": "integer"},
+        },
+        "required": ["criteria_found", "description"],
+    }
+
+
+# if __name__ == "__main__":
+# uri = "gs://gt-airloom-video-analysis/front_entry-1737417990-1737418020.mp4"
+# creds = os.environ["GOOGLE_CREDENTIALS"]
+# key_data = json.loads(creds)
+# credentials = service_account.Credentials.from_service_account_info(key_data)
+# schema = _get_response_schema()
+
+# # Initialize the driver here
+# driver = VertexAIGooglePromptDriver(
+#     project="griptape-cloud-dev",
+#     location="us-west1",
+#     credentials=credentials,
+#     response_schema=schema,
+#     model="gemini-1.5-flash-002",
+# )
+# video_part = Part.from_uri(uri, mime_type="video/mp4")
+# stack = PromptStack()
+# import griptape
+# from griptape.artifacts import GenericArtifact
+
+# stack.add_message(GenericArtifact(video_part), role="USER")
+# stack.add_message("Is there a person in this video?", role="USER")
+# # result = driver.try_run(stack)
+# workflow = Workflow(
+#     # rules=[
+#     #     Rule(
+#     #         "You are skilled at determining different scenarios in a high end restaurant"
+#     #     ),
+#     #     Rule("Be as descriptive as possible"),
+#     # ]
+# )
+# video_part = Part.from_uri(uri, mime_type="video/mp4")
+# query = "Is there a person in this video?"
+# prompt_task = PromptTask(input=[uri, query], prompt_driver=driver)
+# print("Prompt task prompt stack: ", prompt_task.prompt_stack)
+# print("Normal prompt stack: ", stack.messages)
+# workflow.add_task(prompt_task)
+# result = workflow.run()
+# print(result.output)
