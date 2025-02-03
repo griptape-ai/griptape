@@ -172,7 +172,7 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
         messages = self.__to_google_messages(prompt_stack)
         params = self._base_params(prompt_stack)
         system_messages = vertexai.Content(
-            role="system",
+            role="user",
             parts=[
                 vertexai.Part.from_text(text=system_message.to_text())
                 for system_message in prompt_stack.system_messages
