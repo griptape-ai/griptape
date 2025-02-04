@@ -103,6 +103,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             organization=self.organization,
         )
 
+    @property
+    def is_reasoning_model(self) -> bool:
+        return any(model in self.model for model in ("o1", "o3"))
+
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
@@ -148,9 +152,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
             "model": self.model,
-            "temperature": self.temperature,
             "user": self.user,
             "seed": self.seed,
+            **({"temperature": self.temperature} if not self.is_reasoning_model else {}),
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
@@ -240,7 +244,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     def __to_openai_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
         if message.is_system():
-            return "system"
+            if self.is_reasoning_model:
+                return "developer"
+            else:
+                return "system"
         elif message.is_assistant():
             return "assistant"
         else:
