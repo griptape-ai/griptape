@@ -36,6 +36,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GriptapeCloudStructureRunDriver` now publishes its events to the global event bus.
 - Changed log level of Tool execution errors from `EXCEPTION` to `DEBUG`
 - Improved mime type detection in `FileManagerTool`.
+- Improve `SqlDriver.get_table_schema` speed.
+- Cache `SqlDriver.get_table_schema` results.
 
 ### Deprecated
 

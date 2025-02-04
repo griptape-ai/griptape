@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from functools import lru_cache
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import define, field
@@ -46,11 +47,18 @@ class SqlDriver(BaseSqlDriver):
                 raise ValueError("No result found")
 
     def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
-        sqlalchemy = import_optional_dependency("sqlalchemy")
         sqlalchemy_exc = import_optional_dependency("sqlalchemy.exc")
 
         try:
-            table = sqlalchemy.Table(table_name, sqlalchemy.MetaData(), schema=schema, autoload_with=self.engine)
-            return str([(c.name, c.type) for c in table.columns])
+            return str(SqlDriver._get_table_schema(self.engine, table_name, schema))
         except sqlalchemy_exc.NoSuchTableError:
             return None
+
+    @staticmethod
+    @lru_cache
+    def _get_table_schema(
+        engine: Engine, table_name: str, schema: Optional[str] = None
+    ) -> Optional[list[tuple[str, str]]]:
+        sqlalchemy = import_optional_dependency("sqlalchemy")
+
+        return [(col["name"], col["type"]) for col in sqlalchemy.inspect(engine).get_columns(table_name, schema=schema)]

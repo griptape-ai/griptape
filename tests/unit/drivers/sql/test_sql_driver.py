@@ -29,5 +29,10 @@ class TestSqlDriver:
             driver.get_table_schema("test_table")
             == "[('id', INTEGER()), ('name', TEXT()), ('age', INTEGER()), ('city', TEXT())]"
         )
+        # Calling twice to ensure that lru_cache is hit
+        assert (
+            driver.get_table_schema("test_table")
+            == "[('id', INTEGER()), ('name', TEXT()), ('age', INTEGER()), ('city', TEXT())]"
+        )
 
         assert driver.get_table_schema("doesnt-exist") is None
