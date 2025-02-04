@@ -13,5 +13,5 @@ The following shell commands will create a new data refresh job. You will need t
 ```shell
 export GT_CLOUD_API_KEY=<your API key here>
 export DATA_SOURCE_ID=<your data source id here>
-curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{}' https://cloud.griptape.ai/api/data-connectors/${DATA_SOURCE_ID}/data-jobs
+curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{}' "https://cloud.griptape.ai/api/data-connectors/${DATA_SOURCE_ID}/data-jobs"
 ```

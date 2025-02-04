@@ -18,11 +18,15 @@ You can connect Amazon S3 buckets, objects, and prefixes by providing their S3 U
 
 You can ingest documents and spreadsheets stored in a Google Drive account. We support all standard file formats such as text, markdown, spreadsheets, and presentations.
 
-### Confluence
+### Atlassian Confluence
 
 You can connect to your personal or company Confluence by providing a URL, [Atlassian API Token](https://id.atlassian.com/manage-profile/security/api-tokens), and the email address for the token holder's account. Each Confluence Data Source can be limited to a single Space in Confluence by specifying the [specific URL for that Space](https://support.atlassian.com/confluence-cloud/docs/use-spaces-to-organize-your-work/).
 
-### Structure (Experimental)
+### Griptape Cloud Data Lake
+
+You can connect a [Bucket](../data-lakes/data-lakes.md#buckets) and a list of [Asset Paths](../data-lakes/data-lakes.md#asset-paths) as a Data Source. Supported file types include PDF, CSV, Markdown, and most text-based file types.
+
+### Custom Data Source
 
 You can specify a [Structure](../structures/create-structure.md) to run as a Data Source as long as your Structure returns a [`TextArtifact` or `ListArtifact` from the Griptape Framework](../../griptape-framework/data/artifacts.md). You can use this as a way to build custom Data Sources.
 

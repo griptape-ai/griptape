@@ -24,7 +24,7 @@ The example below will kick off a run with the args you pass as a json object.
 ```shell
 export GT_CLOUD_API_KEY=<your API key here>
 export INVOCATION_URL=<your structure invocation URL>
-curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"args": ["arg1"], "env_vars": [{"name":"var1", "value": "value"}]}' ${INVOCATION_URL}
+curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"args": ["arg1"], "env_vars": [{"name":"var1", "value": "value"}]}' "${INVOCATION_URL}"
 ```
 
 For more information on other Structure run APIs, check out the [StructureRuns API docs](../api/api-reference.md/#/StructureRuns).
