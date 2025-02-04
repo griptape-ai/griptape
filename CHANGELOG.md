@@ -52,6 +52,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GriptapeCloudFileManagerDriver` list operation using wrong method when listing assets in a bucket.
 - `GriptapeCloudAssistantDriver` not initializing `thread_id` when providing a `thread_alias` and `auto_create_thread=True`.
 - Default Rulesets being duplicated when serializing `PromptTask`.
+- Structured output with `tool` strategy not working with certain OpenAI-compatible Prompt Drivers during streaming.
 
 
 ## [1.2.0] - 2025-01-21
