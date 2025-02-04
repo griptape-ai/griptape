@@ -29,6 +29,7 @@ class TestAzureOpenAiDriversConfig:
                 "api_version": "2023-05-15",
                 "organization": None,
                 "parallel_tool_calls": True,
+                "reasoning_effort": "medium",
                 "response_format": None,
                 "seed": None,
                 "temperature": 0.1,

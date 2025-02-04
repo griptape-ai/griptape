@@ -1,3 +1,4 @@
+from copy import deepcopy
 from unittest.mock import Mock
 
 import pytest
@@ -310,6 +311,14 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             {"content": "keep-going", "role": "user"},
         ]
 
+    @pytest.fixture()
+    def reasoning_messages(self, messages):
+        messages = deepcopy(messages)
+        for message in messages:
+            if message["role"] == "system":
+                message["role"] = "developer"
+        return messages
+
 
 class OpenAiApiResponseWithHeaders:
     def __init__(
@@ -350,17 +359,20 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
+    @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3"])
     def test_try_run(
         self,
         mock_chat_completion_create,
         prompt_stack,
+        reasoning_messages,
         messages,
         use_native_tools,
         structured_output_strategy,
+        model,
     ):
         # Given
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            model=model,
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
@@ -372,10 +384,19 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         # Then
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
-            temperature=driver.temperature,
             user=driver.user,
-            messages=messages,
+            messages=reasoning_messages if driver.is_reasoning_model else messages,
             seed=driver.seed,
+            **{
+                "reasoning_effort": driver.reasoning_effort,
+            }
+            if driver.is_reasoning_model
+            else {},
+            **{
+                "temperature": driver.temperature,
+            }
+            if not driver.is_reasoning_model
+            else {},
             **{
                 "tools": self.OPENAI_TOOLS,
                 "tool_choice": "required" if structured_output_strategy == "tool" else driver.tool_choice,
@@ -476,17 +497,20 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
+    @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3"])
     def test_try_stream_run(
         self,
         mock_chat_completion_stream_create,
         prompt_stack,
+        reasoning_messages,
         messages,
         use_native_tools,
         structured_output_strategy,
+        model,
     ):
         # Given
         driver = OpenAiChatPromptDriver(
-            model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL,
+            model=model,
             stream=True,
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
@@ -500,12 +524,21 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         # Then
         mock_chat_completion_stream_create.assert_called_once_with(
             model=driver.model,
-            temperature=driver.temperature,
             user=driver.user,
             stream=True,
-            messages=messages,
+            messages=reasoning_messages if driver.is_reasoning_model else messages,
             seed=driver.seed,
             stream_options={"include_usage": True},
+            **{
+                "reasoning_effort": driver.reasoning_effort,
+            }
+            if driver.is_reasoning_model
+            else {},
+            **{
+                "temperature": driver.temperature,
+            }
+            if not driver.is_reasoning_model
+            else {},
             **{
                 "tools": self.OPENAI_TOOLS,
                 "tool_choice": "required" if structured_output_strategy == "tool" else driver.tool_choice,
