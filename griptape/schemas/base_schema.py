@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from collections.abc import Sequence
 from enum import Enum
-from typing import Any, Literal, TypeVar, Union, _SpecialForm, get_args, get_origin
+from typing import Any, Literal, Optional, TypeVar, Union, _SpecialForm, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
@@ -32,13 +32,23 @@ class BaseSchema(Schema):
         class SubSchema(cls):
             @post_load
             def make_obj(self, data: Any, **kwargs) -> Any:
+                # Map the serialized keys to their correct deserialization keys
+                fields = attrs.fields_dict(attrs_cls)
+                for key in list(data):
+                    if key in fields:
+                        field = fields[key]
+                        if field.metadata.get("deserialization_key"):
+                            data[field.metadata["deserialization_key"]] = data.pop(key)
+
                 return attrs_cls(**data)
 
         if issubclass(attrs_cls, SerializableMixin):
             cls._resolve_types(attrs_cls)
             return SubSchema.from_dict(
                 {
-                    a.alias or a.name: cls._get_field_for_type(a.type)
+                    a.alias or a.name: cls._get_field_for_type(
+                        a.type, serialization_key=a.metadata.get("serialization_key")
+                    )
                     for a in attrs.fields(attrs_cls)
                     if a.metadata.get("serializable")
                 },
@@ -48,11 +58,14 @@ class BaseSchema(Schema):
             raise ValueError(f"Class must implement SerializableMixin: {attrs_cls}")
 
     @classmethod
-    def _get_field_for_type(cls, field_type: type) -> fields.Field | fields.Nested:
+    def _get_field_for_type(
+        cls, field_type: type, serialization_key: Optional[str] = None
+    ) -> fields.Field | fields.Nested:
         """Generate a marshmallow Field instance from a Python type.
 
         Args:
             field_type: A field type.
+            serialization_key: The key to pull the data from before serializing.
         """
         from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
@@ -65,50 +78,74 @@ class BaseSchema(Schema):
         if isinstance(field_class, TypeVar):
             field_class = field_class.__bound__
             if field_class is None:
-                return fields.Raw(allow_none=optional)
+                return fields.Raw(allow_none=optional, attribute=serialization_key)
 
         if cls._is_union(field_type):
-            return cls._handle_union(field_type, optional=optional)
+            return cls._handle_union(
+                field_type,
+                optional=optional,
+                serialization_key=serialization_key,
+            )
         elif attrs.has(field_class):
             schema = PolymorphicSchema if ABC in field_class.__bases__ else cls.from_attrs_cls
-            return fields.Nested(schema(field_class), allow_none=optional)
+            return fields.Nested(schema(field_class), allow_none=optional, attribute=serialization_key)
         elif cls._is_enum(field_type):
-            return fields.String(allow_none=optional)
+            return fields.String(allow_none=optional, attribute=serialization_key)
         elif cls._is_list_sequence(field_class):
             if args:
-                return cls._handle_list(args[0], optional=optional)
+                return cls._handle_list(
+                    args[0],
+                    optional=optional,
+                    serialization_key=serialization_key,
+                )
             else:
                 raise ValueError(f"Missing type for list field: {field_type}")
         field_class = cls.DATACLASS_TYPE_MAPPING.get(field_class, fields.Raw)
 
-        return field_class(allow_none=optional)
+        return field_class(allow_none=optional, attribute=serialization_key)
 
     @classmethod
-    def _handle_list(cls, list_type: type, *, optional: bool) -> fields.Field:
+    def _handle_list(
+        cls,
+        list_type: type,
+        *,
+        optional: bool,
+        serialization_key: Optional[str] = None,
+    ) -> fields.Field:
         """Handle List Fields, including Union Types.
 
         Args:
             list_type: The List type to handle.
             optional: Whether the List can be none.
+            serialization_key: The key to pull the data from before serializing.
 
         Returns:
             A marshmallow List field.
         """
         if cls._is_union(list_type):
-            union_field = cls._handle_union(list_type, optional=optional)
-            return fields.List(cls_or_instance=union_field, allow_none=optional)
-        list_field = cls._get_field_for_type(list_type)
-        if isinstance(list_field, fields.Constant) and list_field.constant is None:
-            raise ValueError(f"List elements cannot be None: {list_type}")
-        return fields.List(cls_or_instance=list_field, allow_none=optional)
+            instance = cls._handle_union(
+                list_type,
+                optional=optional,
+                serialization_key=serialization_key,
+            )
+        else:
+            instance = cls._get_field_for_type(list_type, serialization_key=serialization_key)
+        return fields.List(cls_or_instance=instance, allow_none=optional, attribute=serialization_key)
 
     @classmethod
-    def _handle_union(cls, union_type: type, *, optional: bool) -> fields.Field:
+    def _handle_union(
+        cls,
+        union_type: type,
+        *,
+        optional: bool,
+        serialization_key: Optional[str] = None,
+    ) -> fields.Field:
         """Handle Union Fields, including Unions with List Types.
 
         Args:
             union_type: The Union Type to handle.
             optional: Whether the Union can be None.
+            serialization_key: The key to pull the data from before serializing.
 
         Returns:
             A marshmallow Union field.
@@ -120,7 +157,7 @@ class BaseSchema(Schema):
         if not candidate_fields:
             raise ValueError(f"Unsupported UnionType field: {union_type}")
 
-        return UnionField(fields=candidate_fields, allow_none=optional)
+        return UnionField(fields=candidate_fields, allow_none=optional, attribute=serialization_key)
 
     @classmethod
     def _get_field_type_info(cls, field_type: type) -> tuple[type, tuple[type, ...], bool]:
