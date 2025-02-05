@@ -18,6 +18,8 @@ plugins:
         - docs/gen_ref_pages.py
   - literate-nav:
       nav_file: SUMMARY.md
+  - autorefs:
+      resolve_closest: true
   - section-index
 copyright: "&copy; Griptape, Inc."
 extra_css:
@@ -68,7 +70,8 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - pymdownx.details
-  - pymdownx.tabbed
+  - pymdownx.tabbed:
+      alternate_style: true
   - tables
   - def_list
   - footnotes
