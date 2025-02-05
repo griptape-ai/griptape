@@ -28,7 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tool streaming support to `OllamaPromptDriver`.
 - `DateTimeTool.add_timedelta` and `DateTimeTool.get_datetime_diff` for basic datetime arithmetic.
 - Support for `pydantic.BaseModel`s anywhere `schema.Schema` is supported.
-- Support for arrays of enums in `GriptapeCloudToolTool`.
+- Support for enums in `GriptapeCloudToolTool`.
 
 ### Changed
 
