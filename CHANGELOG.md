@@ -28,6 +28,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tool streaming support to `OllamaPromptDriver`.
 - `DateTimeTool.add_timedelta` and `DateTimeTool.get_datetime_diff` for basic datetime arithmetic.
 - Support for `pydantic.BaseModel`s anywhere `schema.Schema` is supported.
+- Support for new serialization metadata, `serialization_key` and `deserialization_key` for more granular control over serialization. 
 
 ### Changed
 
@@ -50,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `NotADirectoryError` being raised for valid list operations in `FileManagerTool`.
 - `GriptapeCloudFileManagerDriver` list operation using wrong method when listing assets in a bucket.
 - `GriptapeCloudAssistantDriver` not initializing `thread_id` when providing a `thread_alias` and `auto_create_thread=True`.
+- Default Rulesets being duplicated when serializing `PromptTask`.
 
 
 ## [1.2.0] - 2025-01-21
