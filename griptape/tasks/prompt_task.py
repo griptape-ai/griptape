@@ -9,15 +9,9 @@ from pydantic import BaseModel, TypeAdapter
 from schema import Schema
 
 from griptape import utils
-from griptape.artifacts import (
-    ActionArtifact,
-    BaseArtifact,
-    ErrorArtifact,
-    GenericArtifact,
-    JsonArtifact,
-    ListArtifact,
-    TextArtifact,
-)
+from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, JsonArtifact, ListArtifact, TextArtifact
+from griptape.artifacts.audio_artifact import AudioArtifact
+from griptape.artifacts.generic_artifact import GenericArtifact
 from griptape.common import PromptStack, ToolAction
 from griptape.configs import Defaults
 from griptape.memory.structure import Run
@@ -39,7 +33,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 @define
 class PromptTask(
-    BaseTask[Union[TextArtifact, JsonArtifact, GenericArtifact, ListArtifact, ErrorArtifact]],
+    BaseTask[Union[TextArtifact, AudioArtifact, GenericArtifact, JsonArtifact, ListArtifact, ErrorArtifact]],
     RuleMixin,
     ActionsSubtaskOriginMixin,
 ):
@@ -186,7 +180,7 @@ class PromptTask(
 
             conversation_memory.add_run(run)
 
-    def try_run(self) -> ListArtifact | TextArtifact | JsonArtifact | GenericArtifact | ErrorArtifact:
+    def try_run(self) -> ListArtifact | TextArtifact | AudioArtifact | GenericArtifact | JsonArtifact | ErrorArtifact:
         from griptape.tasks import ActionsSubtask
 
         self.subtasks.clear()
@@ -225,7 +219,7 @@ class PromptTask(
                 return GenericArtifact(TypeAdapter(self.output_schema).validate_json(output.value))
             else:
                 raise ValueError(f"Unsupported output schema type: {type(self.output_schema)}")
-        elif isinstance(output, (TextArtifact, JsonArtifact, ErrorArtifact)):
+        elif isinstance(output, (TextArtifact, AudioArtifact, JsonArtifact, ErrorArtifact)):
             return output
         else:
             raise ValueError(f"Unsupported output type: {type(output)}")
