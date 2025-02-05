@@ -6,7 +6,7 @@ from urllib.parse import urljoin
 
 import requests
 from attrs import define, field
-from schema import Literal, Schema
+from schema import Literal, Or, Schema
 from schema import Optional as SchemaOptional
 
 from griptape.artifacts import BaseArtifact, TextArtifact
@@ -104,13 +104,21 @@ class GriptapeCloudToolTool(BaseGriptapeCloudTool):
 
         return Schema(properties)
 
-    def _map_openapi_type_to_python(self, openapi_type: str, schema_info: Optional[dict] = None) -> type | list[type]:
+    def _map_openapi_type_to_python(
+        self, openapi_type: str, schema_info: Optional[dict] = None
+    ) -> type | list[type] | Or:
         """Maps OpenAPI types to native Python types."""
         type_mapping = {"string": str, "integer": int, "boolean": bool, "number": float, "object": dict}
 
         if openapi_type == "array" and schema_info is not None and "items" in schema_info:
-            items_type = schema_info["items"].get("type", "string")
+            enum = schema_info["items"].get("enum")
+            if enum:
+                return enum
+            else:
+                items_type = schema_info["items"].get("type", "string")
             return [self._map_openapi_type_to_python(items_type)]  # pyright: ignore[reportReturnType]
+        elif schema_info is not None and schema_info.get("enum"):
+            return Or(*schema_info["enum"])
         else:
             return type_mapping.get(openapi_type, str)
 

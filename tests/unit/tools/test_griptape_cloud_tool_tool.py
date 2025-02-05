@@ -68,6 +68,25 @@ MOCK_SCHEMA = {
                 "security": [{"bearerAuth": []}],
             }
         },
+        "/activities/processEnum": {
+            "post": {
+                "tags": ["Activities"],
+                "summary": "Process Enum",
+                "description": "Processes a enum input",
+                "operationId": "processEnum",
+                "requestBody": {
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EnumInput"}}},
+                    "required": True,
+                },
+                "responses": {
+                    "200": {
+                        "description": "Enum processed",
+                        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BaseArtifact"}}},
+                    }
+                },
+                "security": [{"bearerAuth": []}],
+            }
+        },
         "/activities/processArray": {
             "post": {
                 "tags": ["Activities"],
@@ -76,6 +95,25 @@ MOCK_SCHEMA = {
                 "operationId": "processArray",
                 "requestBody": {
                     "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ArrayInput"}}},
+                    "required": True,
+                },
+                "responses": {
+                    "200": {
+                        "description": "Array processed",
+                        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BaseArtifact"}}},
+                    }
+                },
+                "security": [{"bearerAuth": []}],
+            }
+        },
+        "/activities/processArrayEnum": {
+            "post": {
+                "tags": ["Activities"],
+                "summary": "Process Array Enum",
+                "description": "Processes an array enum input",
+                "operationId": "processArrayEnum",
+                "requestBody": {
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ArrayEnumInput"}}},
                     "required": True,
                 },
                 "responses": {
@@ -211,6 +249,13 @@ MOCK_SCHEMA = {
                 "type": "object",
                 "title": "BooleanInput",
             },
+            "EnumInput": {
+                "properties": {
+                    "flag": {"enum": ["true", "false"], "title": "Enum", "description": "The enum to process"},
+                },
+                "type": "object",
+                "title": "EnumInput",
+            },
             "ArrayInput": {
                 "properties": {
                     "items": {
@@ -218,6 +263,18 @@ MOCK_SCHEMA = {
                         "title": "Items",
                         "description": "An array of numbers",
                         "items": {"type": "number"},
+                    }
+                },
+                "type": "object",
+                "title": "ArrayInput",
+            },
+            "ArrayEnumInput": {
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "title": "Items",
+                        "description": "An array of enums",
+                        "items": {"enum": ["foo", "bar"]},
                     }
                 },
                 "type": "object",
@@ -299,11 +356,30 @@ class TestGriptapeCloudToolTool:
                     {schema.Optional(schema.Literal("flag", description="The boolean to process")): bool}
                 ),
             },
+            "processEnum": {
+                "name": "processEnum",
+                "description": "Processes a enum input",
+                "schema": schema.Schema(
+                    {
+                        schema.Optional(schema.Literal("flag", description="The enum to process")): schema.Or(
+                            "true",  # pyright: ignore[reportArgumentType]
+                            "false",  # pyright: ignore[reportArgumentType]
+                        )
+                    }
+                ),
+            },
             "processArray": {
                 "name": "processArray",
                 "description": "Processes an array input",
                 "schema": schema.Schema(
                     {schema.Optional(schema.Literal("items", description="An array of numbers")): [float]}
+                ),
+            },
+            "processArrayEnum": {
+                "name": "processArrayEnum",
+                "description": "Processes an array enum input",
+                "schema": schema.Schema(
+                    {schema.Optional(schema.Literal("items", description="An array of enums")): ["foo", "bar"]}
                 ),
             },
             "processObject": {
