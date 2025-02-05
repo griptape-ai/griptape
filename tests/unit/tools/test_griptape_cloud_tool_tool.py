@@ -87,6 +87,25 @@ MOCK_SCHEMA = {
                 "security": [{"bearerAuth": []}],
             }
         },
+        "/activities/processArrayEnum": {
+            "post": {
+                "tags": ["Activities"],
+                "summary": "Process Array Enum",
+                "description": "Processes an array enum input",
+                "operationId": "processArrayEnum",
+                "requestBody": {
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/ArrayEnumInput"}}},
+                    "required": True,
+                },
+                "responses": {
+                    "200": {
+                        "description": "Array processed",
+                        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BaseArtifact"}}},
+                    }
+                },
+                "security": [{"bearerAuth": []}],
+            }
+        },
         "/activities/processObject": {
             "post": {
                 "tags": ["Activities"],
@@ -223,6 +242,18 @@ MOCK_SCHEMA = {
                 "type": "object",
                 "title": "ArrayInput",
             },
+            "ArrayEnumInput": {
+                "properties": {
+                    "items": {
+                        "type": "array",
+                        "title": "Items",
+                        "description": "An array of enums",
+                        "items": {"enum": ["foo", "bar"]},
+                    }
+                },
+                "type": "object",
+                "title": "ArrayInput",
+            },
             "ObjectInput": {
                 "properties": {
                     "data": {
@@ -304,6 +335,13 @@ class TestGriptapeCloudToolTool:
                 "description": "Processes an array input",
                 "schema": schema.Schema(
                     {schema.Optional(schema.Literal("items", description="An array of numbers")): [float]}
+                ),
+            },
+            "processArrayEnum": {
+                "name": "processArrayEnum",
+                "description": "Processes an array enum input",
+                "schema": schema.Schema(
+                    {schema.Optional(schema.Literal("items", description="An array of enums")): ["foo", "bar"]}
                 ),
             },
             "processObject": {
