@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 import openai
 from attrs import Factory, define, field
@@ -75,6 +75,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     )
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
+    reasoning_effort: Literal["low", "medium", "high"] = field(
+        default="medium", kw_only=True, metadata={"serializable": True}
+    )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     structured_output_strategy: StructuredOutputStrategy = field(
         default="native", kw_only=True, metadata={"serializable": True}
@@ -102,6 +105,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             api_key=self.api_key,
             organization=self.organization,
         )
+
+    @property
+    def is_reasoning_model(self) -> bool:
+        return any(model in self.model for model in ("o1", "o3"))
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -148,9 +155,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
             "model": self.model,
-            "temperature": self.temperature,
             "user": self.user,
             "seed": self.seed,
+            **({"reasoning_effort": self.reasoning_effort} if self.is_reasoning_model else {}),
+            **({"temperature": self.temperature} if not self.is_reasoning_model else {}),
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
@@ -240,7 +248,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     def __to_openai_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
         if message.is_system():
-            return "system"
+            if self.is_reasoning_model:
+                return "developer"
+            else:
+                return "system"
         elif message.is_assistant():
             return "assistant"
         else:
