@@ -65,6 +65,8 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
 
             if thread is None:
                 self.thread_id = self._create_thread(thread_alias)
+            else:
+                self.thread_id = thread["thread_id"]
 
     def _create_thread(self, thread_alias: Optional[str] = None) -> str:
         url = urljoin(self.base_url.strip("/"), "/api/threads")

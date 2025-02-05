@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Answer:` being trimmed from LLM's final answer even when using native tool calling. 
 - `NotADirectoryError` being raised for valid list operations in `FileManagerTool`.
 - `GriptapeCloudFileManagerDriver` list operation using wrong method when listing assets in a bucket.
+- `GriptapeCloudAssistantDriver` not initializing `thread_id` when providing a `thread_alias` and `auto_create_thread=True`.
 
 
 ## [1.2.0] - 2025-01-21
