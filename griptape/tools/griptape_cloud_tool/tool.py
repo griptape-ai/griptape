@@ -109,8 +109,14 @@ class GriptapeCloudToolTool(BaseGriptapeCloudTool):
         type_mapping = {"string": str, "integer": int, "boolean": bool, "number": float, "object": dict}
 
         if openapi_type == "array" and schema_info is not None and "items" in schema_info:
-            items_type = schema_info["items"].get("type", "string")
+            enum = schema_info["items"].get("enum")
+            if enum:
+                return enum
+            else:
+                items_type = schema_info["items"].get("type", "string")
             return [self._map_openapi_type_to_python(items_type)]  # pyright: ignore[reportReturnType]
+        elif schema_info is not None and schema_info.get("enum"):
+            return schema_info["enum"]
         else:
             return type_mapping.get(openapi_type, str)
 
