@@ -330,16 +330,14 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 index = tool_call.index
 
                 if tool_call.function is not None:
-                    # Tool call delta either contains the function header or the partial input.
-                    if tool_call.id is not None and tool_call.function.name is not None:
-                        return ActionCallDeltaMessageContent(
-                            index=index,
-                            tag=tool_call.id,
-                            name=ToolAction.from_native_tool_name(tool_call.function.name)[0],
-                            path=ToolAction.from_native_tool_name(tool_call.function.name)[1],
-                        )
-                    else:
-                        return ActionCallDeltaMessageContent(index=index, partial_input=tool_call.function.arguments)
+                    function_name = tool_call.function.name
+                    return ActionCallDeltaMessageContent(
+                        index=index,
+                        tag=tool_call.id,
+                        name=ToolAction.from_native_tool_name(function_name)[0] if function_name else None,
+                        path=ToolAction.from_native_tool_name(function_name)[1] if function_name else None,
+                        partial_input=tool_call.function.arguments,
+                    )
                 else:
                     raise ValueError(f"Unsupported tool call delta: {tool_call}")
             else:
