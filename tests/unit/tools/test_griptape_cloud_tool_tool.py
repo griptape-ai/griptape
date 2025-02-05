@@ -68,6 +68,25 @@ MOCK_SCHEMA = {
                 "security": [{"bearerAuth": []}],
             }
         },
+        "/activities/processEnum": {
+            "post": {
+                "tags": ["Activities"],
+                "summary": "Process Enum",
+                "description": "Processes a enum input",
+                "operationId": "processEnum",
+                "requestBody": {
+                    "content": {"application/json": {"schema": {"$ref": "#/components/schemas/EnumInput"}}},
+                    "required": True,
+                },
+                "responses": {
+                    "200": {
+                        "description": "Enum processed",
+                        "content": {"application/json": {"schema": {"$ref": "#/components/schemas/BaseArtifact"}}},
+                    }
+                },
+                "security": [{"bearerAuth": []}],
+            }
+        },
         "/activities/processArray": {
             "post": {
                 "tags": ["Activities"],
@@ -230,6 +249,13 @@ MOCK_SCHEMA = {
                 "type": "object",
                 "title": "BooleanInput",
             },
+            "EnumInput": {
+                "properties": {
+                    "flag": {"enum": ["true", "false"], "title": "Enum", "description": "The enum to process"},
+                },
+                "type": "object",
+                "title": "EnumInput",
+            },
             "ArrayInput": {
                 "properties": {
                     "items": {
@@ -328,6 +354,18 @@ class TestGriptapeCloudToolTool:
                 "description": "Processes a boolean input",
                 "schema": schema.Schema(
                     {schema.Optional(schema.Literal("flag", description="The boolean to process")): bool}
+                ),
+            },
+            "processEnum": {
+                "name": "processEnum",
+                "description": "Processes a enum input",
+                "schema": schema.Schema(
+                    {
+                        schema.Optional(schema.Literal("flag", description="The enum to process")): schema.Or(
+                            "true",  # pyright: ignore[reportArgumentType]
+                            "false",  # pyright: ignore[reportArgumentType]
+                        )
+                    }
                 ),
             },
             "processArray": {
