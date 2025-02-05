@@ -68,22 +68,16 @@ class TestRuleMixin:
                     "rules": [{"type": "Rule", "value": "baz"}],
                     "type": "Ruleset",
                 },
+            ],
+            "rules": [
+                {"type": "Rule", "value": "foo"},
                 {
-                    "name": "Default Ruleset",
-                    "id": mixin.rulesets[1].id,
-                    "meta": {},
-                    "rules": [
-                        {"type": "Rule", "value": "foo"},
-                        {
-                            "type": "JsonSchemaRule",
-                            "value": {
-                                "properties": {"foo": {"type": "string"}},
-                                "required": ["foo"],
-                                "type": "object",
-                            },
-                        },
-                    ],
-                    "type": "Ruleset",
+                    "type": "JsonSchemaRule",
+                    "value": {
+                        "properties": {"foo": {"type": "string"}},
+                        "required": ["foo"],
+                        "type": "object",
+                    },
                 },
             ],
             "type": "RuleMixin",
