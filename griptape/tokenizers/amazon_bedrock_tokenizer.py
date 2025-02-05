@@ -16,8 +16,8 @@ class AmazonBedrockTokenizer(BaseTokenizer):
         "cohere.command": 4000,
         "cohere": 1024,
         "ai21": 8192,
-        "meta-llama3": 8000,
-        "meta-llama2": 4096,
+        "meta.llama3": 8000,
+        "meta.llama2": 4096,
         "mistral": 32000,
         "amazon": 4096,
     }
