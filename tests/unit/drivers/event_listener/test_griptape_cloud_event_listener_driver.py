@@ -83,7 +83,17 @@ class TestGriptapeCloudEventListenerDriver:
             headers={"Authorization": "Bearer foo bar"},
         )
 
-    def try_publish_event_payload_batch(self, mock_post, driver):
+    def test_validate_api_key(self):
+        with pytest.raises(ValueError, match="No value was found"):
+            GriptapeCloudEventListenerDriver()
+
+    def test_validate_run_id(self):
+        os.environ["GT_CLOUD_API_KEY"] = "foo bar"
+
+        with pytest.raises(ValueError, match="structure_run_id must be set"):
+            GriptapeCloudEventListenerDriver()
+
+    def test_try_publish_event_payload_batch(self, mock_post, driver):
         for _ in range(3):
             event = MockEvent()
             driver.try_publish_event_payload(event.to_dict())
