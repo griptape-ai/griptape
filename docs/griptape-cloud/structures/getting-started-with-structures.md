@@ -1,7 +1,7 @@
 # Getting Started with Structures
 
 When building AI-powered software, prompting or chatting with an LLM directly will only take you so far. You'll want programmatic control over application logic and the flow of data. In other words, you'll want to run code.
- 
+
 Here are some examples:
 
 - Ensuring agents perform specific tasks consistently.
@@ -47,7 +47,7 @@ Follow these steps to create, deploy, and run a Structure. You can follow simila
 
 Once you have created the Structure, it will automatically begin deploying to Griptape Cloud. This process should take just a minute or two. While deployment is in progress, you will be directed to the Structure detail page where you can observe and track the deployment status as well as other details such as the GitHub repository and invocation URL.
 
-After deployment is complete, your Structure is ready to run! 
+After deployment is complete, your Structure is ready to run!
 
 ### Running your sample Structure
 
@@ -56,10 +56,14 @@ You can run Structures directly from the Griptape Cloud web console, via API, or
 Follow these steps to run your structure.
 
 1. Navigate to the Structures screen.
+
 1. Select the structure you created from the list.
+
 1. Click the *Runs* tab.
+
 1. Click *Create run*.
-1. In the Arguments field, enter the following text. If you want to use a different model, replace the argument `openai` with `anthropic` or `claude`. Note that arguments must be entered one per line, so be sure to perserve the line breaks as shown here. 
+
+1. In the Arguments field, enter the following text. If you want to use a different model, replace the argument `openai` with `anthropic` or `claude`. Note that arguments must be entered one per line, so be sure to perserve the line breaks as shown here.
 
     ```bash
     -p

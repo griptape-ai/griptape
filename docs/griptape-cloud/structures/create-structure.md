@@ -12,7 +12,7 @@ For production use-cases, we recommend connecting Griptape Cloud to GitHub and s
 1. Select the GitHub Organization, Repository and Branch that you wish to deploy from.
 1. Specify the `structure_config.yaml` for this deployment
 1. Optionally, Enable Webhook and/or add Environment Variables
-1. Click *Create* to create your Structure using the configuration details that you have entered 
+1. Click *Create* to create your Structure using the configuration details that you have entered
 
 You can now [create a Structure in the Griptape Cloud console](https://cloud.griptape.ai/structures/create) by providing your GitHub repository information.
 
