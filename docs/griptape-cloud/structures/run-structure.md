@@ -6,7 +6,7 @@ To learn more about Structure Run details and output, look at the [Structure Run
 
 ## From the Cloud Console
 
-In the cloud console, click on the name of the Structure you wish to run and then go to the `Test` tab. Here you can specify arguments to pass to your Structure run and any run-specific environment variables you need.
+In the cloud console, click on the name of the Structure you wish to run and then go to the *Runs* tab. Then hit the *Create Run* button. Here you can specify arguments to pass to your Structure run and any run-specific environment variables you need.
 
 When passing arguments through the cloud console, pass each new argument on a new line. For example if your local code is ran with the inputs `-i input_file.txt` then the arguments you would pass in the cloud would be:
 

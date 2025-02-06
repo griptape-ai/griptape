@@ -92,7 +92,9 @@ nav:
           - Create a Knowledge Base: "griptape-cloud/knowledge-bases/create-knowledge-base.md"
           - Accessing Your Data: "griptape-cloud/knowledge-bases/accessing-data.md"
       - Structures:
-          - Create a Structure: "griptape-cloud/structures/create-structure.md"
+          - What are Structures?: "griptape-cloud/structures/what-are-structures.md"
+          - Getting Started with Structures: "griptape-cloud/structures/getting-started-with-structures.md"
+          - Creating a Structure from a GitHub Repo: "griptape-cloud/structures/create-structure.md"
           - Structure Config YAML: "griptape-cloud/structures/structure-config.md"
           - Running Your Structure: "griptape-cloud/structures/run-structure.md"
           - Structure Run Events: "griptape-cloud/structures/structure-run-events.md"
