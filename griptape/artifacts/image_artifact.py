@@ -20,8 +20,8 @@ class ImageArtifact(BlobArtifact):
     """
 
     format: str = field(kw_only=True, metadata={"serializable": True})
-    width: int = field(kw_only=True, metadata={"serializable": True})
-    height: int = field(kw_only=True, metadata={"serializable": True})
+    width: int = field(kw_only=True, default=0, metadata={"serializable": True})
+    height: int = field(kw_only=True, default=0, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
         # Generating the name string requires attributes set by child classes.

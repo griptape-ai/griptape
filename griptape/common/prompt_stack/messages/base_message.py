@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import uuid
 from abc import ABC
 from typing import TYPE_CHECKING, Optional, Union
 
@@ -32,6 +33,7 @@ class BaseMessage(ABC, SerializableMixin):
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
     content: list[Union[BaseMessageContent, BaseDeltaMessageContent]] = field(metadata={"serializable": True})
     role: str = field(kw_only=True, metadata={"serializable": True})
     usage: Usage = field(kw_only=True, default=Factory(lambda: BaseMessage.Usage()), metadata={"serializable": True})
