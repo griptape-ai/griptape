@@ -86,6 +86,8 @@ nav:
           - Getting Started With Data Sources: "griptape-cloud/data-sources/getting-started-with-data-sources.md"
           - Create a Data Source: "griptape-cloud/data-sources/create-data-source.md"
           - Refreshing Your Data: "griptape-cloud/data-sources/refresh-data.md"
+      - Data Lakes:
+          - Data Lakes: "griptape-cloud/data-lakes/data-lakes.md"
       - Knowledge Bases:
           - Create a Knowledge Base: "griptape-cloud/knowledge-bases/create-knowledge-base.md"
           - Accessing Your Data: "griptape-cloud/knowledge-bases/accessing-data.md"

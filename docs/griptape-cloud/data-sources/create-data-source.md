@@ -23,9 +23,13 @@ You can connect Amazon S3 buckets, objects, and prefixes by providing their S3 U
 
 Connect individual Google Drive files or entire folders. Supported file types include Google Apps file types such as Docs, Sheets, and Slides, as well as most text-based file types such as PDF, CSV, and Markdown.
 
-### Confluence
+### Atlassian Confluence
 
 You can connect to your personal or company Confluence by providing a URL, [Atlassian API Token](https://id.atlassian.com/manage-profile/security/api-tokens), and the email address for the token holder's account. Each Confluence Data Source can be limited to a single Space in Confluence by specifying the [specific URL for that Space](https://support.atlassian.com/confluence-cloud/docs/use-spaces-to-organize-your-work/).
+
+### Griptape Cloud Data Lake
+
+You can connect a [Bucket](../data-lakes/data-lakes.md#buckets) and a list of [Asset Paths](../data-lakes/data-lakes.md#asset-paths) as a Data Source. Supported file types include PDF, CSV, Markdown, and most text-based file types.
 
 ### Custom Data Sourcses via Structures (Experimental)
 

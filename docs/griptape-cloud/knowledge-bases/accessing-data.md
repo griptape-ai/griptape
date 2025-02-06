@@ -17,7 +17,7 @@ The following example commands will send the string `"test question"` and return
 ```shell
 export GT_CLOUD_API_KEY=<your API key here>
 export KNOWLEDGE_BASE_ID=<your knowledge base id here>
-curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test question"}' https://cloud.griptape.ai/api/knowledge-bases/${KNOWLEDGE_BASE_ID}/search
+curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test question"}' "https://cloud.griptape.ai/api/knowledge-bases/${KNOWLEDGE_BASE_ID}/search"
 ```
 
 ### Query
@@ -25,7 +25,7 @@ curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test ques
 ```shell
 export GT_CLOUD_API_KEY=<your API key here>
 export KNOWLEDGE_BASE_ID=<your knowledge base id here>
-curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test question"}' https://cloud.griptape.ai/api/knowledge-bases/${KNOWLEDGE_BASE_ID}/query
+curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test question"}' "https://cloud.griptape.ai/api/knowledge-bases/${KNOWLEDGE_BASE_ID}/query"
 ```
 
 ## Using the Griptape Framework
