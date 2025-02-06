@@ -4,7 +4,7 @@
 
 ## Build Your Own RAG Pipeline
 
-Connect to your data with our [Data Sources](data-sources/create-data-source.md) and prepare them for retrieval with [Knowledge Bases](knowledge-bases/create-knowledge-base.md).
+Connect to your data with our [Data Sources](data-sources/what-are-data-sources.md) and prepare them for retrieval with [Knowledge Bases](knowledge-bases/create-knowledge-base.md).
 
 ## Host and Run Your Code
 
