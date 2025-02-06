@@ -7,7 +7,7 @@ For production use-cases, we recommend connecting Griptape Cloud to GitHub and s
     - Be sure to allow the app access to `All Repositories` or select the specific repositories you need
 1. Ensure your repository has a Structure Config YAML file. If your repository contains multiple Structures, each Structure must have a separate Structure Config YAML file.
     - To learn more see [Structure Config YAML](structure-config.md)
-1. Navigate to the [Create Stucture](https://cloud.griptape.ai/structures/create) page in the Griptape Console
+1. Navigate to the [Create Structure](https://cloud.griptape.ai/structures/create) page in the Griptape Console
 1. Select *Griptape Structure from GitHub Repo*
 1. Select the GitHub Organization, Repository and Branch that you wish to deploy from.
 1. Specify the `structure_config.yaml` for this deployment

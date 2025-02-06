@@ -63,7 +63,7 @@ Follow these steps to run your structure.
 
 1. Click *Create run*.
 
-1. In the Arguments field, enter the following text. If you want to use a different model, replace the argument `openai` with `anthropic` or `claude`. Note that arguments must be entered one per line, so be sure to perserve the line breaks as shown here.
+1. In the Arguments field, enter the following text. If you want to use a different model, replace the argument `openai` with `anthropic` or `claude`. Note that arguments must be entered one per line, so be sure to preserve the line breaks as shown here.
 
     ```bash
     -p
