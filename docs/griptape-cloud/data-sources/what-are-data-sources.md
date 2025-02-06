@@ -1,5 +1,7 @@
 # What are Data Sources?
 
+All AI-powered software applications require data to perform their jobs. Large language models (LLMs) are already infused with a considerable volume of publicly accessible information, and so a basic chatbot application may not need anything other than a user's input 'prompt' to generate a useful output.
+
 Data Sources allow you to bring your own data to Griptape Cloud. By pointing Griptape Cloud at your data, you can make it accessible to your LLM-powered applications.
 
 Data Sources are the first step to Griptape's retrieval-augemented generation (RAG) pipeline. They allow you to bring your own data to ingest and transform. You can then make one or more Data Source available to your AI applications via [Knowledge Bases](../knowledge-bases/create-knowledge-base.md)
