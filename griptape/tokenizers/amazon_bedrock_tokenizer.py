@@ -10,8 +10,7 @@ class AmazonBedrockTokenizer(BaseTokenizer):
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
         "anthropic.claude-3": 200000,
         "anthropic.claude-v2:1": 200000,
-        "anthropic.claude-v2": 100000,
-        "anthropic.claude-instant": 100000,
+        "anthropic.claude": 100000,
         "cohere.command-r": 128000,
         "cohere.embed": 512,
         "cohere.command": 4000,
