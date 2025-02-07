@@ -1,6 +1,6 @@
 # What are Structures?
 
-Griptape structures are Python applications that use the [Griptape Framework](/griptape-framework/) to bring LLMs into your software environment. You can create structures in the form of agents, sequential task pipelines, and parallelized workflows.
+Griptape structures are Python applications that use the [Griptape Framework](../../griptape-framework/index.md) to bring LLMs into your software environment. You can create structures in the form of agents, sequential task pipelines, and parallelized workflows.
 
 Structures can invoke other Structures, enabling Agents to interact with other Agents to create multi-agent systems, or to invoke pipelines or workflows.
 

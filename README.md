@@ -39,6 +39,7 @@ Drivers facilitate interactions with external resources and services:
 - 🗣️ **Prompt Drivers** manage textual and image interactions with LLMs.
 - 🔢 **Embedding Drivers** generate vector embeddings from textual inputs.
 - 💾 **Vector Store Drivers** manage the storage and retrieval of embeddings.
+- 🔀 **Rerank Drivers** rerank search results based for relevance.
 - 🎨 **Image Generation Drivers** create images from text descriptions.
 - 💼 **SQL Drivers** interact with SQL databases.
 - 🌐 **Web Scraper Drivers** extract information from web pages.

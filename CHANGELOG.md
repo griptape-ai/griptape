@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for new serialization metadata, `serialization_key` and `deserialization_key` for more granular control over serialization. 
 - Support for OpenAi reasoning models, `o1` and `o3`.
 - Support for enums in `GriptapeCloudToolTool`.
+- `LocalRerankDriver` for reranking locally.
 
 ### Changed
 

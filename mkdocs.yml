@@ -132,6 +132,7 @@ nav:
           - Prompt Drivers: "griptape-framework/drivers/prompt-drivers.md"
           - Embedding Drivers: "griptape-framework/drivers/embedding-drivers.md"
           - Vector Store Drivers: "griptape-framework/drivers/vector-store-drivers.md"
+          - Rerank Drivers: "griptape-framework/drivers/rerank-drivers.md"
           - Image Generation Drivers: "griptape-framework/drivers/image-generation-drivers.md"
           - SQL Drivers: "griptape-framework/drivers/sql-drivers.md"
           - Web Scraper Drivers: "griptape-framework/drivers/web-scraper-drivers.md"
