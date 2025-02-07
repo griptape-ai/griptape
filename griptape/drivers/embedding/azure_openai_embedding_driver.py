@@ -36,7 +36,7 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
         default=None,
         metadata={"serializable": False},
     )
-    api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
+    api_version: str = field(default="2024-10-21", kw_only=True, metadata={"serializable": True})
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,

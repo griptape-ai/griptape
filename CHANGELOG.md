@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved mime type detection in `FileManagerTool`.
 - Improve `SqlDriver.get_table_schema` speed.
 - Cache `SqlDriver.get_table_schema` results.
+- Updated Azure Drivers to use the latest Azure OpenAI API version, `2024-10-21`.
 
 ### Deprecated
 

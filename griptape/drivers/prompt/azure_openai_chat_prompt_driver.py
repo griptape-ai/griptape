@@ -37,7 +37,7 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
         default=None,
         metadata={"serializable": False},
     )
-    api_version: str = field(default="2023-05-15", kw_only=True, metadata={"serializable": True})
+    api_version: str = field(default="2024-10-21", kw_only=True, metadata={"serializable": True})
     _client: openai.AzureOpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
@@ -54,13 +54,11 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = super()._base_params(prompt_stack)
-        # TODO: Add `seed` parameter once Azure supports it.
-        if "seed" in params:
+        if self.api_version < "2024-02-01" and "seed" in params:
             del params["seed"]
-        # TODO: Add `stream_options` parameter once Azure supports it.
-        if "stream_options" in params:
-            del params["stream_options"]
-        # TODO: Add `parallel_tool_calls` parameter once Azure supports it.
-        if "parallel_tool_calls" in params:
-            del params["parallel_tool_calls"]
+        if self.api_version < "2024-10-21":
+            if "stream_options" in params:
+                del params["stream_options"]
+            if "parallel_tool_calls" in params:
+                del params["parallel_tool_calls"]
         return params
