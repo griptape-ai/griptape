@@ -68,6 +68,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
+    @pytest.mark.parametrize("api_version", ["2023-05-15", "2024-02-01", "2024-06-01", "2024-10-21"])
     def test_try_run(
         self,
         mock_chat_completion_create,
@@ -75,6 +76,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         messages,
         use_native_tools,
         structured_output_strategy,
+        api_version,
     ):
         # Given
         driver = AzureOpenAiChatPromptDriver(
@@ -84,6 +86,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
+            api_version=api_version,
         )
 
         # When
@@ -95,6 +98,16 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             user=driver.user,
             messages=messages,
+            **{
+                "seed": driver.seed,
+            }
+            if driver.api_version >= "2024-02-01"
+            else {},
+            **{
+                "parallel_tool_calls": driver.parallel_tool_calls,
+            }
+            if driver.api_version >= "2024-10-21" and prompt_stack.tools and driver.use_native_tools
+            else {},
             **{
                 "tools": self.OPENAI_TOOLS,
                 "tool_choice": "required" if structured_output_strategy == "tool" else driver.tool_choice,
@@ -125,6 +138,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
+    @pytest.mark.parametrize("api_version", ["2023-05-15", "2024-02-01", "2024-06-01", "2024-10-21"])
     def test_try_stream_run(
         self,
         mock_chat_completion_stream_create,
@@ -132,6 +146,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         messages,
         use_native_tools,
         structured_output_strategy,
+        api_version,
     ):
         # Given
         driver = AzureOpenAiChatPromptDriver(
@@ -142,6 +157,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
+            api_version=api_version,
         )
 
         # When
@@ -162,6 +178,16 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             if use_native_tools
             else {},
             **{
+                "seed": driver.seed,
+            }
+            if driver.api_version >= "2024-02-01"
+            else {},
+            **{
+                "parallel_tool_calls": driver.parallel_tool_calls,
+            }
+            if driver.api_version >= "2024-10-21" and prompt_stack.tools and driver.use_native_tools
+            else {},
+            **{
                 "response_format": {
                     "type": "json_schema",
                     "json_schema": {
@@ -174,6 +200,11 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             if structured_output_strategy == "native"
             else {},
             foo="bar",
+            **{
+                "stream_options": {"include_usage": True},
+            }
+            if driver.api_version >= "2024-10-21"
+            else {},
         )
 
         assert isinstance(event.content, TextDeltaMessageContent)
