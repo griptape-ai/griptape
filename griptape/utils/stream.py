@@ -35,9 +35,7 @@ class Stream:
         for event in self.structure.run_stream(
             *args, event_types=[TextChunkEvent, ActionChunkEvent, FinishPromptEvent, FinishStructureRunEvent]
         ):
-            if isinstance(event, FinishStructureRunEvent):
-                break
-            elif isinstance(event, FinishPromptEvent):
+            if isinstance(event, FinishPromptEvent):
                 yield TextArtifact(value="\n")
             elif isinstance(event, TextChunkEvent):
                 yield TextArtifact(value=event.token)
