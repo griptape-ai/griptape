@@ -40,11 +40,7 @@ class AmazonBedrockTokenizer(BaseTokenizer):
     }
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {
         "anthropic.claude-3-5": 8192,
-        "anthropic.claude-3-haiku": 4096,
-        "anthropic.claude-3-opus": 4096,
-        "anthropic.claude-3-sonnet": 4096,
-        "anthropic.claude-v2": 4096,
-        "anthropic.claude-instant": 4096,
+        "anthropic.claude": 4096,
         "cohere": 4096,
         "ai21.j2": 8191,
         "meta": 2048,
