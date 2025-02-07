@@ -220,7 +220,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
 
             while True:
                 event = self._event_queue.get()
-                if isinstance(event, FinishStructureRunEvent):
+                if isinstance(event, FinishStructureRunEvent) and event.structure_id == self.id:
                     break
                 else:
                     yield event
