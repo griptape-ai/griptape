@@ -5,10 +5,11 @@ search:
 
 ## Overview
 
-Rerank Drivers can be used to rerank search results for a particular query. Every Rerank Driver implements the following methods:
-They can be used directly or with a [RagEngine's Rerank Module](../engines/rag-engines/#retrievalrerank-modules).
+Rerank Drivers can be used to rerank search results for a particular query. Every Rerank Driver implements the following methods that can be used directly:
 
 - `run(query: str, artifacts: list[TextArtifact])` reranks a list of [TextArtifact](../../reference/griptape/artifacts/text_artifact.md) based on the original query.
+
+Rerank Drivers can also be used with a [RagEngine's Rerank Module](../engines/rag-engines.md#retrievalrerank-modules).
 
 ## Rerank Drivers
 
