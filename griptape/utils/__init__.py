@@ -24,6 +24,7 @@ from .reference_utils import references_from_artifacts
 from .file_utils import get_mime_type
 from .contextvars_utils import with_contextvars
 from .json_schema_utils import build_strict_schema, resolve_refs
+from .griptape_cloud import GriptapeCloudStructure
 
 
 def minify_json(value: str) -> str:
@@ -58,4 +59,5 @@ __all__ = [
     "with_contextvars",
     "build_strict_schema",
     "resolve_refs",
+    "GriptapeCloudStructure",
 ]

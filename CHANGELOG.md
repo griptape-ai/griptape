@@ -32,6 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for OpenAi reasoning models, `o1` and `o3`.
 - Support for enums in `GriptapeCloudToolTool`.
 - `LocalRerankDriver` for reranking locally.
+- `griptape.utils.griptape_cloud.GriptapeCloudStructure` for automatically configuring Cloud-specific Drivers when in the Griptape Cloud Structures Runtime.
 
 ### Changed
 

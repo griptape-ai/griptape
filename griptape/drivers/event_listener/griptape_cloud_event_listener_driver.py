@@ -26,7 +26,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
         kw_only=True,
     )
-    api_key: str = field(default=Factory(lambda: os.environ["GT_CLOUD_API_KEY"]), kw_only=True)
+    api_key: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")), kw_only=True)
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         kw_only=True,
@@ -36,10 +36,20 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     )
 
     @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_run_id(self, _: Attribute, structure_run_id: str) -> None:
+    def validate_run_id(self, _: Attribute, structure_run_id: Optional[str]) -> None:
         if structure_run_id is None:
             raise ValueError(
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID).",
+            )
+
+    @api_key.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
+    def validate_api_key(self, _: Attribute, api_key: Optional[str]) -> None:
+        if api_key is None:
+            raise ValueError(
+                "No value was found for the 'GT_CLOUD_API_KEY' environment variable. "
+                "This environment variable is required when running in Griptape Cloud for authorization. "
+                "You can generate a Griptape Cloud API Key by visiting https://cloud.griptape.ai/keys . "
+                "Specify it as an environment variable when creating a Managed Structure in Griptape Cloud."
             )
 
     def publish_event(self, event: BaseEvent | dict) -> None:
