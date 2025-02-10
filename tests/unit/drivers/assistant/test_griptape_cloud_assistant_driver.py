@@ -1,4 +1,5 @@
-from unittest.mock import ANY, call
+import json
+from unittest.mock import ANY, MagicMock, call
 
 import pytest
 import requests
@@ -43,51 +44,58 @@ class TestGriptapeCloudAssistantDriver:
         def request(*args, **kwargs):
             if "events" in args[0]:
                 mock_response = mocker.Mock()
-                mock_response.json.return_value = {
-                    "events": [
-                        {
-                            "origin": "ASSISTANT",
-                            "type": "FooBarEvent",
-                            "payload": {
+                mock_response.iter_lines.return_value = [
+                    *[
+                        f"data: {json.dumps(event)}".encode()
+                        for event in [
+                            {
+                                "origin": "ASSISTANT",
                                 "type": "FooBarEvent",
+                                "payload": {
+                                    "type": "FooBarEvent",
+                                },
                             },
-                        },
-                        {
-                            "origin": "ASSISTANT",
-                            "type": "FinishStructureRunEvent",
-                            "payload": {
+                            {
+                                "origin": "ASSISTANT",
                                 "type": "FinishStructureRunEvent",
-                                "output_task_input": {
-                                    "type": "TextArtifact",
-                                    "value": "foo bar",
-                                },
-                                "output_task_output": {
-                                    "type": "TextArtifact",
-                                    "value": "foo bar",
-                                },
-                            },
-                        },
-                        {
-                            "origin": "ASSISTANT",
-                            "type": "FOO",
-                            "payload": {
-                                "type": "FinishStructureRunEvent",
-                                "output_task_input": {
-                                    "type": "TextArtifact",
-                                    "value": "foo bar",
-                                },
-                                "output_task_output": {
-                                    "type": "TextArtifact",
-                                    "value": "foo bar",
+                                "payload": {
+                                    "type": "FinishStructureRunEvent",
+                                    "output_task_input": {
+                                        "type": "TextArtifact",
+                                        "value": "foo bar",
+                                    },
+                                    "output_task_output": {
+                                        "type": "TextArtifact",
+                                        "value": "foo bar",
+                                    },
                                 },
                             },
-                        },
-                        {
-                            "origin": "FOO",
-                        },
+                            {
+                                "origin": "ASSISTANT",
+                                "type": "FOO",
+                                "payload": {
+                                    "type": "FinishStructureRunEvent",
+                                    "output_task_input": {
+                                        "type": "TextArtifact",
+                                        "value": "foo bar",
+                                    },
+                                    "output_task_output": {
+                                        "type": "TextArtifact",
+                                        "value": "foo bar",
+                                    },
+                                },
+                            },
+                            {
+                                "origin": "FOO",
+                            },
+                        ]
                     ],
-                    "next_offset": 0,
-                }
+                    "",
+                    "title:",
+                ]
+
+                mock_response.__enter__ = MagicMock(return_value=mock_response)
+                mock_response.__exit__ = MagicMock()
 
                 return mock_response
             elif "threads" in args[0]:
@@ -113,15 +121,6 @@ class TestGriptapeCloudAssistantDriver:
             "requests.get",
             side_effect=request,
         )
-
-    @pytest.fixture()
-    def mock_requests_get_empty(self, mocker):
-        mock_response = mocker.Mock()
-        mock_response.json.return_value = {
-            "events": [],
-            "next_offset": 0,
-        }
-        return mocker.patch("requests.get", return_value=mock_response)
 
     @pytest.fixture()
     def driver(self):
@@ -206,28 +205,23 @@ class TestGriptapeCloudAssistantDriver:
                 "additional_tool_ids": [],
             }
 
-    def test_timeout_run(self, driver, mocker):
+    def test_no_output_run(self, driver, mocker):
         mock_response = mocker.Mock()
-        mock_response.json.return_value = {
-            "events": [],
-            "next_offset": 0,
-        }
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock()
+        mock_response.iter_lines.return_value = []
         mock_requests_get_empty = mocker.patch("requests.get", return_value=mock_response)
 
         driver.max_attempts = 1
-        with pytest.raises(TimeoutError):
+        with pytest.raises(ValueError, match="Output not found."):
             driver.run(TextArtifact("foo bar"))
 
         expected_calls = [
             call(
-                "https://cloud-foo.griptape.ai/api/assistant-runs/1/events",
-                params={"offset": 0},
+                "https://cloud-foo.griptape.ai/api/assistant-runs/1/events/stream",
                 headers={"Authorization": "Bearer foo bar"},
-            ),
-            call(
-                "https://cloud-foo.griptape.ai/api/assistant-runs/1/events",
-                params={"offset": 0},
-                headers={"Authorization": "Bearer foo bar"},
+                stream=True,
             ),
         ]
+
         mock_requests_get_empty.assert_has_calls(expected_calls)
