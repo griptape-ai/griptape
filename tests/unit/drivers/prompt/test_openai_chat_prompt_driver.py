@@ -483,7 +483,11 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             messages=reasoning_messages if driver.is_reasoning_model else messages,
             seed=driver.seed,
-            modalities=driver.modalities,
+            **{
+                "modalities": driver.modalities,
+            }
+            if not driver.is_reasoning_model
+            else {},
             **{
                 "audio": driver.audio,
             }
