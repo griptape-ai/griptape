@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from griptape.artifacts.text_artifact import TextArtifact
+from griptape.artifacts import BooleanArtifact, JsonArtifact, TextArtifact
 from griptape.drivers.event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
 from griptape.events import EventListener
 from griptape.events.event_bus import EventBus
@@ -53,7 +53,16 @@ class TestGriptapeCloudUtils:
             event_listener=EventListener(event_listener_driver=MockEventListenerDriver())
         ) as context:
             context.output = "foo"
+            assert isinstance(context.output, TextArtifact)
             assert context.output.value == "foo"
+
+            context.output = True
+            assert isinstance(context.output, BooleanArtifact)
+            assert context.output.value is True
+
+            context.output = {"foo": "bar"}
+            assert isinstance(context.output, JsonArtifact)
+            assert context.output.value == {"foo": "bar"}
 
             output = TextArtifact("bar")
             context.output = output
