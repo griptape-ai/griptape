@@ -6,7 +6,15 @@ from typing import TYPE_CHECKING, Any, Optional, TypeVar
 from attrs import define, field
 from typing_extensions import ParamSpec
 
-from griptape.artifacts import BaseArtifact, GenericArtifact
+from griptape.artifacts import (
+    BaseArtifact,
+    BlobArtifact,
+    BooleanArtifact,
+    GenericArtifact,
+    JsonArtifact,
+    ListArtifact,
+    TextArtifact,
+)
 from griptape.events import EventBus, EventListener, FinishStructureRunEvent
 from griptape.utils.decorators import lazy_property
 
@@ -53,10 +61,13 @@ class GriptapeCloudStructure:
 
     @output.setter
     def output(self, value: BaseArtifact | Any) -> None:
-        if not isinstance(value, BaseArtifact):
-            self._output = GenericArtifact(value)
-        else:
+        if isinstance(value, BaseArtifact):
             self._output = value
+        else:
+            if isinstance(value, list):
+                self._output = ListArtifact([self._to_artifact(item) for item in value])
+            else:
+                self._output = self._to_artifact(value)
 
     @property
     def structure_run_id(self) -> str:
@@ -94,3 +105,15 @@ class GriptapeCloudStructure:
             if self.observe:
                 Observability.set_global_driver(None)
                 self.observability.observability_driver.__exit__(exc_type, exc_value, exc_traceback)
+
+    def _to_artifact(self, value: Any) -> BaseArtifact:
+        if isinstance(value, str):
+            return TextArtifact(value)
+        elif isinstance(value, bool):
+            return BooleanArtifact(value)
+        elif isinstance(value, dict):
+            return JsonArtifact(value)
+        elif isinstance(value, bytes):
+            return BlobArtifact(value)
+        else:
+            return GenericArtifact(value)
