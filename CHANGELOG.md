@@ -22,6 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [1.3.0] - 2025-02-07
+
 ### Added
 
 - Provider-specific Driver namespaces (e.g., `griptape.drivers.prompt.openai`, `griptape.drivers.embedding.cohere`).
@@ -31,6 +33,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for new serialization metadata, `serialization_key` and `deserialization_key` for more granular control over serialization. 
 - Support for OpenAi reasoning models, `o1` and `o3`.
 - Support for enums in `GriptapeCloudToolTool`.
+- `LocalRerankDriver` for reranking locally.
+- `griptape.utils.griptape_cloud.GriptapeCloudStructure` for automatically configuring Cloud-specific Drivers when in the Griptape Cloud Structures Runtime.
+- Support for `AudioArtifact` inputs/outputs in `OpenAiChatPromptDriver`.
 
 ### Changed
 
@@ -41,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved mime type detection in `FileManagerTool`.
 - Improve `SqlDriver.get_table_schema` speed.
 - Cache `SqlDriver.get_table_schema` results.
+- Updated Azure Drivers to use the latest Azure OpenAI API version, `2024-10-21`.
 
 ### Deprecated
 
@@ -55,6 +61,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `GriptapeCloudAssistantDriver` not initializing `thread_id` when providing a `thread_alias` and `auto_create_thread=True`.
 - Default Rulesets being duplicated when serializing `PromptTask`.
 - Structured output with `tool` strategy not working with certain OpenAI-compatible Prompt Drivers during streaming.
+- `Stream` cutting off early when running multiple Structures.
 
 
 ## [1.2.0] - 2025-01-21

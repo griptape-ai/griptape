@@ -26,7 +26,9 @@ class TestAzureOpenAiDriversConfig:
                 "model": "gpt-4o",
                 "azure_deployment": "gpt-4o",
                 "azure_endpoint": "http://localhost:8080",
-                "api_version": "2023-05-15",
+                "audio": {"format": "pcm16", "voice": "alloy"},
+                "modalities": ["text"],
+                "api_version": "2024-10-21",
                 "organization": None,
                 "parallel_tool_calls": True,
                 "reasoning_effort": "medium",
@@ -47,7 +49,7 @@ class TestAzureOpenAiDriversConfig:
             "embedding_driver": {
                 "base_url": None,
                 "model": "text-embedding-3-small",
-                "api_version": "2023-05-15",
+                "api_version": "2024-10-21",
                 "azure_deployment": "text-embedding-3-small",
                 "azure_endpoint": "http://localhost:8080",
                 "organization": None,
@@ -70,7 +72,7 @@ class TestAzureOpenAiDriversConfig:
                 "embedding_driver": {
                     "base_url": None,
                     "model": "text-embedding-3-small",
-                    "api_version": "2023-05-15",
+                    "api_version": "2024-10-21",
                     "azure_deployment": "text-embedding-3-small",
                     "azure_endpoint": "http://localhost:8080",
                     "organization": None,

@@ -1,17 +1,21 @@
 from __future__ import annotations
 
+import base64
 import json
 import logging
+import time
 from typing import TYPE_CHECKING, Literal, Optional
 
 import openai
 from attrs import Factory, define, field
 
-from griptape.artifacts import ActionArtifact, TextArtifact
+from griptape.artifacts import ActionArtifact, AudioArtifact, TextArtifact
 from griptape.common import (
     ActionCallDeltaMessageContent,
     ActionCallMessageContent,
     ActionResultMessageContent,
+    AudioDeltaMessageContent,
+    AudioMessageContent,
     BaseDeltaMessageContent,
     BaseMessageContent,
     DeltaMessage,
@@ -96,6 +100,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
+    modalities: list[str] = field(default=Factory(lambda: ["text"]), kw_only=True, metadata={"serializable": True})
+    audio: dict = field(
+        default=Factory(lambda: {"voice": "alloy", "format": "pcm16"}), kw_only=True, metadata={"serializable": True}
+    )
     _client: openai.OpenAI = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
@@ -150,15 +158,20 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 choice = chunk.choices[0]
                 delta = choice.delta
 
-                yield DeltaMessage(content=self.__to_prompt_stack_delta_message_content(delta))
+                content = self.__to_prompt_stack_delta_message_content(delta)
+
+                if content is not None:
+                    yield DeltaMessage(content=content)
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
             "model": self.model,
             "user": self.user,
             "seed": self.seed,
+            "modalities": self.modalities,
             **({"reasoning_effort": self.reasoning_effort} if self.is_reasoning_model else {}),
             **({"temperature": self.temperature} if not self.is_reasoning_model else {}),
+            **({"audio": self.audio} if "audio" in self.modalities else {}),
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
@@ -204,17 +217,17 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         for message in messages:
             # If the message only contains textual content we can send it as a single content.
-            if message.is_text():
+            if message.has_all_content_type(TextMessageContent):
                 openai_messages.append({"role": self.__to_openai_role(message), "content": message.to_text()})
             # Action results must be sent as separate messages.
-            elif message.has_any_content_type(ActionResultMessageContent):
+            elif action_result_contents := message.get_content_type(ActionResultMessageContent):
                 openai_messages.extend(
                     {
-                        "role": self.__to_openai_role(message, action_result),
-                        "content": self.__to_openai_message_content(action_result),
-                        "tool_call_id": action_result.action.tag,
+                        "role": self.__to_openai_role(message, action_result_content),
+                        "content": self.__to_openai_message_content(action_result_content),
+                        "tool_call_id": action_result_content.action.tag,
                     }
-                    for action_result in message.get_content_type(ActionResultMessageContent)
+                    for action_result_content in action_result_contents
                 )
 
                 if message.has_any_content_type(TextMessageContent):
@@ -222,25 +235,29 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             else:
                 openai_message = {
                     "role": self.__to_openai_role(message),
-                    "content": [
-                        self.__to_openai_message_content(content)
-                        for content in [
-                            content for content in message.content if not isinstance(content, ActionCallMessageContent)
-                        ]
-                    ],
+                    "content": [],
                 }
+
+                for content in message.content:
+                    if isinstance(content, ActionCallMessageContent):
+                        if "tool_calls" not in openai_message:
+                            openai_message["tool_calls"] = []
+                        openai_message["tool_calls"].append(self.__to_openai_message_content(content))
+                    elif (
+                        isinstance(content, AudioMessageContent)
+                        and message.is_assistant()
+                        and time.time() < content.artifact.meta["expires_at"]
+                    ):
+                        # For assistant audio messages, we reference the audio id instead of sending audio message content.
+                        openai_message["audio"] = {
+                            "id": content.artifact.meta["audio_id"],
+                        }
+                    else:
+                        openai_message["content"].append(self.__to_openai_message_content(content))
+
                 # Some OpenAi-compatible services don't accept an empty array for content
                 if not openai_message["content"]:
                     openai_message["content"] = ""
-
-                # Action calls must be attached to the message, not sent as content.
-                action_call_content = [
-                    content for content in message.content if isinstance(content, ActionCallMessageContent)
-                ]
-                if action_call_content:
-                    openai_message["tool_calls"] = [
-                        self.__to_openai_message_content(action_call) for action_call in action_call_content
-                    ]
 
                 openai_messages.append(openai_message)
 
@@ -282,6 +299,31 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 "type": "image_url",
                 "image_url": {"url": f"data:{content.artifact.mime_type};base64,{content.artifact.base64}"},
             }
+        elif isinstance(content, AudioMessageContent):
+            artifact = content.artifact
+            metadata = artifact.meta
+
+            # If there's an expiration date, we can assume it's an assistant message.
+            if "expires_at" in metadata:
+                # If it's expired, we send the transcript instead.
+                if time.time() >= metadata["expires_at"]:
+                    return {
+                        "type": "text",
+                        "text": artifact.meta.get("transcript"),
+                    }
+                else:
+                    # This should never occur, since a non-expired audio content
+                    # should have already been referenced by the audio id.
+                    raise ValueError("Assistant audio messages should be sent as audio ids.")
+            else:
+                # If there's no expiration date, we can assume it's a user message where we send the audio every time.
+                return {
+                    "type": "input_audio",
+                    "input_audio": {
+                        "data": base64.b64encode(artifact.value).decode("utf-8"),
+                        "format": artifact.format,
+                    },
+                }
         elif isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
@@ -300,6 +342,20 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         if response.content is not None:
             content.append(TextMessageContent(TextArtifact(response.content)))
+        if response.audio is not None:
+            content.append(
+                AudioMessageContent(
+                    AudioArtifact(
+                        value=base64.b64decode(response.audio.data),
+                        format="wav",
+                        meta={
+                            "audio_id": response.audio.id,
+                            "transcript": response.audio.transcript,
+                            "expires_at": response.audio.expires_at,
+                        },
+                    )
+                )
+            )
         if response.tool_calls is not None:
             content.extend(
                 [
@@ -319,7 +375,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return content
 
-    def __to_prompt_stack_delta_message_content(self, content_delta: ChoiceDelta) -> BaseDeltaMessageContent:
+    def __to_prompt_stack_delta_message_content(self, content_delta: ChoiceDelta) -> Optional[BaseDeltaMessageContent]:
         if content_delta.content is not None:
             return TextDeltaMessageContent(content_delta.content)
         elif content_delta.tool_calls is not None:
@@ -342,5 +398,13 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     raise ValueError(f"Unsupported tool call delta: {tool_call}")
             else:
                 raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
-        else:
-            return TextDeltaMessageContent("")
+        # OpenAi doesn't have types for audio deltas so we need to use hasattr and getattr.
+        elif hasattr(content_delta, "audio") and getattr(content_delta, "audio") is not None:
+            audio_chunk: dict = getattr(content_delta, "audio")
+            return AudioDeltaMessageContent(
+                id=audio_chunk.get("id"),
+                data=audio_chunk.get("data"),
+                expires_at=audio_chunk.get("expires_at"),
+                transcript=audio_chunk.get("transcript"),
+            )
+        return None

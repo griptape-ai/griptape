@@ -1,11 +1,14 @@
+import base64
 from copy import deepcopy
-from unittest.mock import Mock
+from unittest.mock import ANY, MagicMock, Mock
 
 import pytest
 import schema
 
 from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.common.prompt_stack.contents.audio_delta_message_content import AudioDeltaMessageContent
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.tokenizers import OpenAiTokenizer
 from tests.mocks.mock_tokenizer import MockTokenizer
@@ -200,7 +203,18 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         mock_chat_create.return_value = Mock(
             headers={},
             choices=[
-                Mock(message=Mock(content="model-output", tool_calls=[Mock(id="mock-id", function=mock_function)]))
+                Mock(
+                    message=Mock(
+                        content="model-output",
+                        audio=Mock(
+                            id="audio-id",
+                            data=base64.b64encode(b"assistant-audio-data"),
+                            transcript="assistant-audio-transcription",
+                            expires_at=float("inf"),
+                        ),
+                        tool_calls=[Mock(id="mock-id", function=mock_function)],
+                    )
+                )
             ],
             usage=Mock(prompt_tokens=5, completion_tokens=10),
         )
@@ -240,7 +254,50 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     usage=None,
                 ),
                 Mock(choices=None, usage=Mock(prompt_tokens=5, completion_tokens=10)),
-                Mock(choices=[Mock(delta=Mock(content=None, tool_calls=None))], usage=None),
+                Mock(choices=[Mock(delta=Mock(content=None, tool_calls=None, audio=None))], usage=None),
+                Mock(
+                    choices=[
+                        Mock(
+                            delta=MagicMock(
+                                content=None,
+                                tool_calls=None,
+                                audio={
+                                    "id": "audio-id",
+                                },
+                            )
+                        )
+                    ],
+                    usage=None,
+                ),
+                Mock(
+                    choices=[
+                        Mock(
+                            delta=MagicMock(
+                                content=None,
+                                tool_calls=None,
+                                audio={
+                                    "data": base64.b64encode(b"assistant-audio-data").decode("utf-8"),
+                                },
+                            )
+                        )
+                    ],
+                    usage=None,
+                ),
+                Mock(
+                    choices=[
+                        Mock(
+                            delta=MagicMock(
+                                content=None,
+                                tool_calls=None,
+                                audio={
+                                    "expires_at": float("inf"),
+                                    "transcript": "assistant-audio-transcription",
+                                },
+                            )
+                        )
+                    ],
+                    usage=None,
+                ),
             ]
         )
         return mock_chat_create
@@ -281,6 +338,34 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 ]
             )
         )
+        prompt_stack.add_user_message(
+            AudioArtifact(
+                value=b"user-audio-data",
+                format="wav",
+            ),
+        )
+        prompt_stack.add_assistant_message(
+            AudioArtifact(
+                value=b"assistant-audio-data",
+                format="wav",
+                meta={
+                    "audio_id": "audio-id",
+                    "transcript": "assistant-audio-transcription",
+                    "expires_at": float("inf"),
+                },
+            ),
+        )
+        prompt_stack.add_assistant_message(
+            AudioArtifact(
+                value=b"assistant-audio-data",
+                format="wav",
+                meta={
+                    "audio_id": "audio-id",
+                    "transcript": "assistant-audio-transcription",
+                    "expires_at": float("-inf"),
+                },
+            ),
+        )
         return prompt_stack
 
     @pytest.fixture()
@@ -309,6 +394,14 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             },
             {"content": "tool-output", "role": "tool", "tool_call_id": "MockTool_test"},
             {"content": "keep-going", "role": "user"},
+            {
+                "content": [
+                    {"type": "input_audio", "input_audio": {"data": "dXNlci1hdWRpby1kYXRh", "format": "wav"}},
+                ],
+                "role": "user",
+            },
+            {"audio": {"id": "audio-id"}, "content": "", "role": "assistant"},
+            {"content": [{"type": "text", "text": "assistant-audio-transcription"}], "role": "assistant"},
         ]
 
     @pytest.fixture()
@@ -360,6 +453,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3"])
+    @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
     def test_try_run(
         self,
         mock_chat_completion_create,
@@ -369,12 +463,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         use_native_tools,
         structured_output_strategy,
         model,
+        modalities,
     ):
         # Given
         driver = OpenAiChatPromptDriver(
             model=model,
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
+            modalities=modalities,
             extra_params={"foo": "bar"},
         )
 
@@ -387,6 +483,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             messages=reasoning_messages if driver.is_reasoning_model else messages,
             seed=driver.seed,
+            modalities=driver.modalities,
+            **{
+                "audio": driver.audio,
+            }
+            if "audio" in driver.modalities
+            else {},
             **{
                 "reasoning_effort": driver.reasoning_effort,
             }
@@ -420,11 +522,19 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         )
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
-        assert isinstance(message.value[1], ActionArtifact)
-        assert message.value[1].value.tag == "mock-id"
-        assert message.value[1].value.name == "MockTool"
-        assert message.value[1].value.path == "test"
-        assert message.value[1].value.input == {"foo": "bar"}
+        assert isinstance(message.value[1], AudioArtifact)
+        assert message.value[1].value == b"assistant-audio-data"
+        assert message.value[1].format == "wav"
+        assert message.value[1].meta == {
+            "audio_id": "audio-id",
+            "transcript": "assistant-audio-transcription",
+            "expires_at": ANY,
+        }
+        assert isinstance(message.value[2], ActionArtifact)
+        assert message.value[2].value.tag == "mock-id"
+        assert message.value[2].value.name == "MockTool"
+        assert message.value[2].value.path == "test"
+        assert message.value[2].value.input == {"foo": "bar"}
 
     def test_try_run_response_format_json_object(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
@@ -444,6 +554,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             messages=[*messages, {"role": "system", "content": "Provide your response as a valid JSON object."}],
             seed=driver.seed,
+            **{
+                "audio": driver.audio,
+            }
+            if "audio" in driver.modalities
+            else {},
+            modalities=driver.modalities,
             response_format={"type": "json_object"},
         )
         assert message.value[0].value == "model-output"
@@ -475,6 +591,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             messages=[*messages],
             seed=driver.seed,
+            **{
+                "audio": driver.audio,
+            }
+            if "audio" in driver.modalities
+            else {},
+            modalities=driver.modalities,
             response_format={
                 "json_schema": {
                     "schema": {
@@ -498,6 +620,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3"])
+    @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
     def test_try_stream_run(
         self,
         mock_chat_completion_stream_create,
@@ -507,6 +630,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         use_native_tools,
         structured_output_strategy,
         model,
+        modalities,
     ):
         # Given
         driver = OpenAiChatPromptDriver(
@@ -515,6 +639,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
             extra_params={"foo": "bar"},
+            modalities=modalities,
         )
 
         # When
@@ -529,6 +654,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             messages=reasoning_messages if driver.is_reasoning_model else messages,
             seed=driver.seed,
             stream_options={"include_usage": True},
+            **{
+                "audio": driver.audio,
+            }
+            if "audio" in driver.modalities
+            else {},
+            modalities=driver.modalities,
             **{
                 "reasoning_effort": driver.reasoning_effort,
             }
@@ -577,9 +708,19 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         event = next(stream)
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 10
+
         event = next(stream)
-        assert isinstance(event.content, TextDeltaMessageContent)
-        assert event.content.text == ""
+        assert isinstance(event.content, AudioDeltaMessageContent)
+        assert event.content.id == "audio-id"
+
+        event = next(stream)
+        assert isinstance(event.content, AudioDeltaMessageContent)
+        assert event.content.data == "YXNzaXN0YW50LWF1ZGlvLWRhdGE="
+
+        event = next(stream)
+        assert isinstance(event.content, AudioDeltaMessageContent)
+        assert event.content.expires_at == ANY
+        assert event.content.transcript == "assistant-audio-transcription"
 
     def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
@@ -601,6 +742,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             messages=messages,
             max_tokens=1,
             seed=driver.seed,
+            **{
+                "audio": driver.audio,
+            }
+            if "audio" in driver.modalities
+            else {},
+            modalities=driver.modalities,
         )
         assert event.value[0].value == "model-output"
 
@@ -636,6 +783,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             user=driver.user,
             messages=messages,
             seed=driver.seed,
+            **{
+                "audio": driver.audio,
+            }
+            if "audio" in driver.modalities
+            else {},
+            modalities=driver.modalities,
             max_tokens=1,
         )
         assert event.value[0].value == "model-output"

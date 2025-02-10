@@ -37,13 +37,13 @@ This can be useful for forcing the LLM to output in a parsable format that can b
 
 ### Prompt Task
 
-The easiest way to get started with structured output is by using a [PromptTask](../structures/tasks.md#prompt)'s [output_schema](../../reference/griptape/tasks/prompt_task.md#griptape.tasks.PromptTask.output_schema) parameter.
+The easiest way to get started with structured output is by using a [PromptTask](../structures/tasks.md#prompt-task)'s [output_schema](../../reference/griptape/tasks/prompt_task.md#griptape.tasks.prompt_task.PromptTask.output_schema) parameter.
 
 You can change _how_ the output is structured by setting the Driver's [structured_output_strategy](../../reference/griptape/drivers/prompt/base_prompt_driver.md#griptape.drivers.prompt.base_prompt_driver.BasePromptDriver.structured_output_strategy) to one of:
 
 - `native`: The Driver will use the LLM's structured output functionality provided by the API.
 - `tool`: The Driver will add a special tool, [StructuredOutputTool](../../reference/griptape/tools/structured_output/tool.md), and will try to force the LLM to use the Tool.
-- `rule`: The Driver will add a [JsonSchemaRule](../structures/rulesets.md#json-schema-rule) to the Task's system prompt. This strategy does not guarantee that the LLM will output JSON and should only be used as a last resort.
+- `rule`: The Driver will add a [JsonSchemaRule](../structures/rulesets.md#json-schema) to the Task's system prompt. This strategy does not guarantee that the LLM will output JSON and should only be used as a last resort.
 
 You can specify `output_schema` using either `pydantic` or `schema` libraries, though `pydantic` is recommended.
 
