@@ -1,8 +1,9 @@
 import os
+from unittest.mock import Mock
 
 import pytest
 
-from griptape.artifacts import BooleanArtifact, JsonArtifact, TextArtifact
+from griptape.artifacts import BlobArtifact, BooleanArtifact, GenericArtifact, JsonArtifact, ListArtifact, TextArtifact
 from griptape.drivers.event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
 from griptape.events import EventListener
 from griptape.events.event_bus import EventBus
@@ -64,6 +65,21 @@ class TestGriptapeCloudUtils:
             assert isinstance(context.output, JsonArtifact)
             assert context.output.value == {"foo": "bar"}
 
+            context.output = b"foo"
+            assert isinstance(context.output, BlobArtifact)
+            assert context.output.value == b"foo"
+
+            context.output = ["foo", b"bar"]
+            assert isinstance(context.output, ListArtifact)
+            assert isinstance(context.output.value[0], TextArtifact)
+            assert context.output.value[0].value == "foo"
+            assert isinstance(context.output.value[1], BlobArtifact)
+            assert context.output.value[1].value == b"bar"
+
             output = TextArtifact("bar")
             context.output = output
             assert context.output is output
+
+            context.output = Mock(foo="bar")
+            assert isinstance(context.output, GenericArtifact)
+            assert context.output.value.foo == "bar"
