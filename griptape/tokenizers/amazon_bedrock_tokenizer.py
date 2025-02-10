@@ -28,7 +28,7 @@ class AmazonBedrockTokenizer(BaseTokenizer):
         "meta.llama3-3-70b-instruct": 128000,
         "mistral.large-2407": 128000,
         "mistral.mistral": 32000,
-        "mistral.mixtral-8x7b-instruct": 32000,
+        "mistral.mixtral": 32000,
         "amazon.nova-pro-v1": 300000,
         "amazon.nova-lite-v1": 300000,
         "amazon.nova-micro-v1": 128000,
