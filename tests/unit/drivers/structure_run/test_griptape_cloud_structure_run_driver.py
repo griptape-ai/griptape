@@ -1,4 +1,5 @@
-from unittest.mock import Mock
+import json
+from unittest.mock import MagicMock, Mock
 
 import pytest
 
@@ -13,43 +14,64 @@ class TestGriptapeCloudStructureRunDriver:
     @pytest.fixture(autouse=True)
     def mock_requests_get(self, mocker):
         mock_response = mocker.Mock()
-        mock_response.json.return_value = {
-            "events": [
-                {
-                    "origin": "USER",
-                    "type": "FooBarEvent",
-                    "payload": {
+        mock_response.iter_lines.return_value = [
+            *[
+                f"data: {json.dumps(event)}".encode()
+                for event in [
+                    {
+                        "origin": "USER",
                         "type": "FooBarEvent",
+                        "payload": {
+                            "type": "FooBarEvent",
+                            "span_id": "1",
+                        },
                     },
-                },
-                {
-                    "origin": "USER",
-                    "type": "FinishStructureRunEvent",
-                    "payload": {
+                    {
+                        "origin": "USER",
                         "type": "FinishStructureRunEvent",
-                        "output_task_input": {
-                            "type": "TextArtifact",
-                            "value": "foo bar",
-                        },
-                        "output_task_output": {
-                            "type": "TextArtifact",
-                            "value": "foo bar",
-                        },
-                    },
-                },
-                {"origin": "FOO", "type": "BAR"},
-                {
-                    "origin": "SYSTEM",
-                    "type": "StructureRunError",
-                    "payload": {
-                        "status_detail": {
-                            "error": "foo bar",
+                        "payload": {
+                            "type": "FinishStructureRunEvent",
+                            "span_id": "1",
+                            "output_task_input": {
+                                "type": "TextArtifact",
+                                "value": "foo bar",
+                            },
+                            "output_task_output": {
+                                "type": "TextArtifact",
+                                "value": "foo bar",
+                            },
+                            "meta": {
+                                "foo": "bar",
+                            },
                         },
                     },
-                },
+                    {"origin": "FOO", "type": "BAR"},
+                    {
+                        "origin": "SYSTEM",
+                        "type": "StructureRunError",
+                        "payload": {
+                            "status_detail": {
+                                "error": "foo bar",
+                            },
+                        },
+                    },
+                    {
+                        "origin": "SYSTEM",
+                        "type": "StructureRunCompleted",
+                        "payload": {
+                            "status": "SUCCEEDED",
+                            "started_at": "2024-09-11T23:15:47",
+                            "completed_at": "2024-09-11T23:15:50",
+                            "status_detail": {"reason": "Completed", "message": None, "exit_code": 0},
+                        },
+                    },
+                ]
             ],
-            "next_offset": 0,
-        }
+            "",
+            "title:",
+        ]
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock()
 
         return mocker.patch(
             "requests.get",
@@ -84,6 +106,10 @@ class TestGriptapeCloudStructureRunDriver:
         events = mock_on_event.call_args[0]
         assert len(events) == 1
         assert events[0].type == "FinishStructureRunEvent"
+        assert events[0].meta == {
+            "foo": "bar",
+            "span_id": "1",
+        }
 
         assert isinstance(result, ErrorArtifact)
         assert result.value == "foo bar"
@@ -95,16 +121,11 @@ class TestGriptapeCloudStructureRunDriver:
         assert result.value == "Run started successfully"
 
     def test_run_timeout(self, driver, mocker):
-        mocker.patch(
-            "requests.get",
-            return_value=Mock(
-                json=Mock(
-                    return_value={
-                        "events": [],
-                    }
-                )
-            ),
-        )
+        mock_response = mocker.Mock()
+        mock_response.__enter__ = MagicMock(return_value=mock_response)
+        mock_response.__exit__ = MagicMock()
+        mock_response.iter_lines.return_value = []
+        mocker.patch("requests.get", return_value=mock_response)
 
-        with pytest.raises(TimeoutError):
+        with pytest.raises(ValueError, match="Output not found."):
             driver.run(TextArtifact("foo bar"))
