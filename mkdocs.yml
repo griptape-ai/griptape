@@ -89,6 +89,8 @@ nav:
       - Data Lakes:
           - Data Lakes: "griptape-cloud/data-lakes/data-lakes.md"
       - Knowledge Bases:
+          - What are Knowledge Bases?: "griptape-cloud/knowledge-bases/what-are-knowledge-bases.md"
+          - Getting Started with Knowledge Bases: "griptape-cloud/knowledge-bases/getting-started-with-knowledge-bases.md"
           - Create a Knowledge Base: "griptape-cloud/knowledge-bases/create-knowledge-base.md"
           - Accessing Your Data: "griptape-cloud/knowledge-bases/accessing-data.md"
       - Structures:
