@@ -169,7 +169,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "user": self.user,
             "seed": self.seed,
             **({"modalities": self.modalities} if self.modalities and not self.is_reasoning_model else {}),
-            **({"reasoning_effort": self.reasoning_effort} if self.model in ("o1", "o3-mini") else {}),
+            **(
+                {"reasoning_effort": self.reasoning_effort}
+                if self.is_reasoning_model and self.model != "o1-mini"
+                else {}
+            ),
             **({"temperature": self.temperature} if not self.is_reasoning_model else {}),
             **({"audio": self.audio} if "audio" in self.modalities else {}),
             **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
