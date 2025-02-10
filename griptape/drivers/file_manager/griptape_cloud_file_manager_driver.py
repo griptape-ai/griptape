@@ -73,7 +73,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         if postfix:
             data["postfix"] = postfix
         list_assets_response = self._call_api(
-            method="get", path=f"/buckets/{self.bucket_id}/assets", json=data, raise_for_status=False
+            method="get", path=f"/buckets/{self.bucket_id}/assets", params=data, raise_for_status=False
         ).json()
 
         return [asset["name"] for asset in list_assets_response.get("assets", [])]
@@ -124,9 +124,15 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         return urljoin(self.base_url, f"/api/{path}")
 
     def _call_api(
-        self, method: str, path: str, json: Optional[dict] = None, *, raise_for_status: bool = True
+        self,
+        method: str,
+        path: str,
+        json: Optional[dict] = None,
+        params: Optional[dict] = None,
+        *,
+        raise_for_status: bool = True,
     ) -> requests.Response:
-        res = requests.request(method, self._get_url(path), json=json, headers=self.headers)
+        res = requests.request(method, self._get_url(path), json=json, params=params, headers=self.headers)
         if raise_for_status:
             res.raise_for_status()
         return res
