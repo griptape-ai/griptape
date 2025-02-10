@@ -452,7 +452,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
-    @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3"])
+    @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3", "o3-mini"])
     @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
     def test_try_run(
         self,
@@ -496,7 +496,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "reasoning_effort": driver.reasoning_effort,
             }
-            if driver.model in ("o1", "o3-mini")
+            if driver.is_reasoning_model and model != "o1-mini"
             else {},
             **{
                 "temperature": driver.temperature,
@@ -631,7 +631,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
-    @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3"])
+    @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3", "o3-mini"])
     @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
     def test_try_stream_run(
         self,
@@ -671,16 +671,8 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            **{
-                "modalities": driver.modalities,
-            }
-            if not driver.is_reasoning_model
-            else {},
-            **{
-                "reasoning_effort": driver.reasoning_effort,
-            }
-            if driver.model in ("o1", "o3-mini")
-            else {},
+            **{"modalities": driver.modalities} if not driver.is_reasoning_model else {},
+            **{"reasoning_effort": driver.reasoning_effort} if driver.is_reasoning_model and model != "o1-mini" else {},
             **{
                 "temperature": driver.temperature,
             }
