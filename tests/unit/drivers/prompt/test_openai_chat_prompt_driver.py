@@ -496,7 +496,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "reasoning_effort": driver.reasoning_effort,
             }
-            if driver.is_reasoning_model
+            if driver.model in ("o1", "o3-mini")
             else {},
             **{
                 "temperature": driver.temperature,
@@ -563,7 +563,11 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            modalities=driver.modalities,
+            **{
+                "modalities": driver.modalities,
+            }
+            if not driver.is_reasoning_model
+            else {},
             response_format={"type": "json_object"},
         )
         assert message.value[0].value == "model-output"
@@ -600,7 +604,11 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            modalities=driver.modalities,
+            **{
+                "modalities": driver.modalities,
+            }
+            if not driver.is_reasoning_model
+            else {},
             response_format={
                 "json_schema": {
                     "schema": {
@@ -663,11 +671,15 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            modalities=driver.modalities,
+            **{
+                "modalities": driver.modalities,
+            }
+            if not driver.is_reasoning_model
+            else {},
             **{
                 "reasoning_effort": driver.reasoning_effort,
             }
-            if driver.is_reasoning_model
+            if driver.model in ("o1", "o3-mini")
             else {},
             **{
                 "temperature": driver.temperature,
@@ -751,7 +763,11 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            modalities=driver.modalities,
+            **{
+                "modalities": driver.modalities,
+            }
+            if not driver.is_reasoning_model
+            else {},
         )
         assert event.value[0].value == "model-output"
 
@@ -792,7 +808,11 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            modalities=driver.modalities,
+            **{
+                "modalities": driver.modalities,
+            }
+            if not driver.is_reasoning_model
+            else {},
             max_tokens=1,
         )
         assert event.value[0].value == "model-output"
