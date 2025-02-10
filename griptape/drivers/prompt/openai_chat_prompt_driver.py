@@ -168,7 +168,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "model": self.model,
             "user": self.user,
             "seed": self.seed,
-            "modalities": self.modalities,
+            **({"modalities": self.modalities} if self.modalities and not self.is_reasoning_model else {}),
             **({"reasoning_effort": self.reasoning_effort} if self.is_reasoning_model else {}),
             **({"temperature": self.temperature} if not self.is_reasoning_model else {}),
             **({"audio": self.audio} if "audio" in self.modalities else {}),
