@@ -19,6 +19,8 @@ updates:
     allow:
       - dependency-type: production
       - dependency-type: development
+    commit-message:
+      prefix: chore(deps)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
