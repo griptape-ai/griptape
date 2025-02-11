@@ -61,4 +61,8 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
                 del params["stream_options"]
             if "parallel_tool_calls" in params:
                 del params["parallel_tool_calls"]
+
+        # TODO: Add once Azure supports modalities
+        if "modalities" in params:
+            del params["modalities"]
         return params
