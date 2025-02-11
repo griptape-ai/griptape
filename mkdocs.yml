@@ -81,9 +81,13 @@ nav:
       - Contributing: "contributing.md"
   - Cloud:
       - Overview: "griptape-cloud/index.md"
+      - Assistants:
+          - What are Assistants?: "griptape-cloud/assistants/what-are-assistants.md"
+          - Getting Started with Assistants: "griptape-cloud/assistants/getting-started-with-assistants.md"
+          - Assistant Runs: "griptape-cloud/assistants/assistant-runs.md"
       - Data Sources:
           - What are Data Sources?: "griptape-cloud/data-sources/what-are-data-sources.md"
-          - Getting Started With Data Sources: "griptape-cloud/data-sources/getting-started-with-data-sources.md"
+          - Getting Started with Data Sources: "griptape-cloud/data-sources/getting-started-with-data-sources.md"
           - Create a Data Source: "griptape-cloud/data-sources/create-data-source.md"
           - Refreshing Your Data: "griptape-cloud/data-sources/refresh-data.md"
       - Data Lakes:
