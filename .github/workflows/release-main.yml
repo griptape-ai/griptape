@@ -14,5 +14,5 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           release-type: python
-          versioning-strategy: always-bump-minor
+          versioning: always-bump-minor
           target-branch: ${{ github.ref_name }}
