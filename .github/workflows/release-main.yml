@@ -1,8 +1,6 @@
 name: Release Main
 on:
   push:
-    branches:
-      - main
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -14,5 +12,5 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           release-type: python
-          versioning: always-bump-minor
           target-branch: ${{ github.ref_name }}
+          manifest-file: .release-please-manifest-main.json
