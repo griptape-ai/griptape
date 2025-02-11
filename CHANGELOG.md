@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!--
 ## Unreleased
 
+## [1.3.1](https://github.com/griptape-ai/griptape/compare/v1.3.0...v1.3.1) (2025-02-11)
+
+
+### Bug Fixes
+
+* **drivers-files-griptape-cloud:** pass correct parameters when listing files ([#1674](https://github.com/griptape-ai/griptape/issues/1674)) ([4b2f618](https://github.com/griptape-ai/griptape/commit/4b2f618616b1f1ba2110d6a27c2f6b486eb9d7cf))
+* **drivers-prompt-azure-openai:** fix AzureOpenAiChatPromptDriver by removing unsupported "modalities" ([#1694](https://github.com/griptape-ai/griptape/issues/1694)) ([6699a3d](https://github.com/griptape-ai/griptape/commit/6699a3d5f91b63904b1134081c9148466faf7a14))
+* **drivers-prompt-openai:** conditionally add modalities/reasoning_effort based on model ([#1668](https://github.com/griptape-ai/griptape/issues/1668)) ([b9311c1](https://github.com/griptape-ai/griptape/commit/b9311c114588d80229ad4b17f6539c9a2222cea7))
+* **utils:** wrap primitives with more specific artifact types ([#1676](https://github.com/griptape-ai/griptape/issues/1676)) ([91800ad](https://github.com/griptape-ai/griptape/commit/91800ad60b36c5bdf6a0c258df161ee5daee114f))
+
+
+### Documentation
+
+* **assistants:** add section to cloud docs, update nav, add docs pages for what is, getting started, and runs ([#1686](https://github.com/griptape-ai/griptape/issues/1686)) ([4f6f8ce](https://github.com/griptape-ai/griptape/commit/4f6f8cefe75c460ae691b230a14aab885eb0af6b))
+
 ## [major.minor.patch] - YYYY-MM-DD
 
 ### Added 
