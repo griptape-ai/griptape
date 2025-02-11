@@ -7,7 +7,7 @@ Follow these steps to create and use a simple chat Assistant.
 1. Navigate to the Assistants page.
 1. Click *Create Assistant*.
 1. Give your Assistant a name and description (optional).
-1. Select your [Knowledge Base](/griptape-cloud/knowledge-bases/what-are-knowledge-bases/) from the *Knowledge Bases* dropdown menu.
+1. Select your [Knowledge Base](../knowledge-bases/what-are-knowledge-bases.md) from the *Knowledge Bases* dropdown menu.
 1. Click *Create* to submit the form.
 
 ## How to use an Assistant
