@@ -2,7 +2,7 @@ name: Release Backport
 on:
   push:
     branches:
-      - releases/*
+      - release/*
 jobs:
   release:
     runs-on: ubuntu-latest
