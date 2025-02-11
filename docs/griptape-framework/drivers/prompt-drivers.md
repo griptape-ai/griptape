@@ -98,6 +98,14 @@ This driver uses [Azure OpenAi function calling](https://learn.microsoft.com/en-
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_5.py"
 ```
 
+### Griptape Cloud
+
+The [GriptapeCloudPromptDriver](../../reference/griptape/drivers/prompt/griptape_cloud_prompt_driver.md) connects to the [Griptape Cloud](https://www.griptape.ai/cloud) chat messages API.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_griptape_cloud.py"
+```
+
 ### Cohere
 
 The [CoherePromptDriver](../../reference/griptape/drivers/prompt/cohere_prompt_driver.md) connects to the Cohere [Chat](https://docs.cohere.com/docs/chat-api) API.
