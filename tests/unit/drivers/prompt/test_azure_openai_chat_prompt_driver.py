@@ -143,7 +143,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model="gpt-4",
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
-            modalities=modalities,
             extra_params={"foo": "bar"},
             api_version=api_version,
         )
@@ -157,7 +156,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             user=driver.user,
             messages=messages,
-            modalities=driver.modalities,
             **{
                 "audio": driver.audio,
             }
@@ -231,7 +229,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stream=True,
             use_native_tools=use_native_tools,
             structured_output_strategy=structured_output_strategy,
-            modalities=modalities,
             extra_params={"foo": "bar"},
             api_version=api_version,
         )
@@ -250,7 +247,6 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            modalities=driver.modalities,
             stream=True,
             messages=messages,
             **{
