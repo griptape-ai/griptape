@@ -195,7 +195,20 @@ class BaseSchema(Schema):
         from pydantic import BaseModel
         from schema import Schema
 
-        from griptape.artifacts import BaseArtifact, TextArtifact
+        from griptape.artifacts import (
+            ActionArtifact,
+            AudioArtifact,
+            BaseArtifact,
+            BlobArtifact,
+            BooleanArtifact,
+            ErrorArtifact,
+            GenericArtifact,
+            ImageArtifact,
+            InfoArtifact,
+            JsonArtifact,
+            ListArtifact,
+            TextArtifact,
+        )
         from griptape.common import (
             BaseDeltaMessageContent,
             BaseMessageContent,
@@ -249,6 +262,16 @@ class BaseSchema(Schema):
                 "BaseTool": BaseTool,
                 "BaseTask": BaseTask,
                 "TextArtifact": TextArtifact,
+                "ImageArtifact": ImageArtifact,
+                "ErrorArtifact": ErrorArtifact,
+                "InfoArtifact": InfoArtifact,
+                "JsonArtifact": JsonArtifact,
+                "BlobArtifact": BlobArtifact,
+                "BooleanArtifact": BooleanArtifact,
+                "ListArtifact": ListArtifact,
+                "AudioArtifact": AudioArtifact,
+                "ActionArtifact": ActionArtifact,
+                "GenericArtifact": GenericArtifact,
                 "Usage": Message.Usage,
                 "Structure": Structure,
                 "BaseTokenizer": BaseTokenizer,
