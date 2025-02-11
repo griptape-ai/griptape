@@ -1,8 +1,8 @@
-name: Release Backport
+name: Release Main
 on:
   push:
     branches:
-      - release/*
+      - main
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -11,7 +11,8 @@ jobs:
       pull-requests: write
     steps:
       - name: Release
-        uses: googleapis/release-please-action@v4
+        uses: googleapis/release-please-action@v3
         with:
           release-type: python
-          versioning-strategy: always-bump-patch
+          versioning-strategy: always-bump-minor
+          default-branch: ${{ github.ref_name }} 
