@@ -9,6 +9,37 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!--
 ## Unreleased
 
+## [1.7.0](https://github.com/griptape-ai/griptape/compare/v1.6.0...v1.7.0) (2025-02-11)
+
+
+### Features
+
+* **drivers-azure:** bump api_version in Azure Prompt/Embedding Drivers ([#1662](https://github.com/griptape-ai/griptape/issues/1662)) ([cf5ba1f](https://github.com/griptape-ai/griptape/commit/cf5ba1feee452742212a38870dfef4fd84d9afd9))
+* **drivers-prompt-openai:** add audio input/output support to OpenAiChatPromptDriver ([#1617](https://github.com/griptape-ai/griptape/issues/1617)) ([614ab1f](https://github.com/griptape-ai/griptape/commit/614ab1f146c2db6c0a94456ff31211dcf40bca6d))
+* **drivers-rerank-local:** add LocalRerankDriver ([#1658](https://github.com/griptape-ai/griptape/issues/1658)) ([a3723a1](https://github.com/griptape-ai/griptape/commit/a3723a191e006aba0555fdfee85884e7a22a41d9))
+* **drivers-sql:** cache SqlDriver.get_table_schema ([#1644](https://github.com/griptape-ai/griptape/issues/1644)) ([58753a6](https://github.com/griptape-ai/griptape/commit/58753a617b702b8b4c049d81a45f06311dd917dd))
+* **drivers:** add support for openai reasoning models in OpenAiChatPromptDriver ([#1641](https://github.com/griptape-ai/griptape/issues/1641)) ([960a22c](https://github.com/griptape-ai/griptape/commit/960a22ce5ad542acf690af5e8270b1252ee34b70))
+* **serialization:** add support for new serialization metadata ([#1645](https://github.com/griptape-ai/griptape/issues/1645)) ([6ca7ad8](https://github.com/griptape-ai/griptape/commit/6ca7ad8a3de5ab3a086d97294faaa146fd009e0c))
+* **tools:** add support for list of enums in GriptapeCloudToolTool ([#1646](https://github.com/griptape-ai/griptape/issues/1646)) ([00fd9fc](https://github.com/griptape-ai/griptape/commit/00fd9fca60e45ecc9478c496c2659a1fba4276fc))
+* **utils:** add utility function for configuring Event Bus with GTC ([#1651](https://github.com/griptape-ai/griptape/issues/1651)) ([1e39d26](https://github.com/griptape-ai/griptape/commit/1e39d264668e10bece24309fd7808e006f27f95d))
+
+
+### Bug Fixes
+
+* **drivers-assistants:** assign thread to driver after finding ([#1647](https://github.com/griptape-ai/griptape/issues/1647)) ([8ecf8fc](https://github.com/griptape-ai/griptape/commit/8ecf8fc39b5f94700d826735f20a44522910f3cd))
+* **drivers-files-griptape-cloud:** pass correct parameters when listing files ([#1674](https://github.com/griptape-ai/griptape/issues/1674)) ([4b2f618](https://github.com/griptape-ai/griptape/commit/4b2f618616b1f1ba2110d6a27c2f6b486eb9d7cf))
+* **drivers-prompt-azure-openai:** fix AzureOpenAiChatPromptDriver by removing unsupported "modalities" ([#1694](https://github.com/griptape-ai/griptape/issues/1694)) ([7fa4b44](https://github.com/griptape-ai/griptape/commit/7fa4b44364b3824919037a967c5d72adb35ecc88))
+* **drivers-prompt-openai:** conditionally add modalities/reasoning_effort based on model ([#1668](https://github.com/griptape-ai/griptape/issues/1668)) ([b9311c1](https://github.com/griptape-ai/griptape/commit/b9311c114588d80229ad4b17f6539c9a2222cea7))
+* **drivers:** don't make assumptions about what tool delta will contain ([#1643](https://github.com/griptape-ai/griptape/issues/1643)) ([eb3457a](https://github.com/griptape-ai/griptape/commit/eb3457a9e5905b8be03510694346ba3d2ce734b0))
+* Qdrant query count not optional ([#972](https://github.com/griptape-ai/griptape/issues/972)) ([0a8e178](https://github.com/griptape-ai/griptape/commit/0a8e178e70791ac324dbcac67edc7eb258f0eb70))
+* **stream:** check that structure id is self before ending stream ([#1660](https://github.com/griptape-ai/griptape/issues/1660)) ([86cfedb](https://github.com/griptape-ai/griptape/commit/86cfedb5f5b1982b56c2d1c9a5fb87b160be4d09))
+* **utils:** wrap primitives with more specific artifact types ([#1676](https://github.com/griptape-ai/griptape/issues/1676)) ([91800ad](https://github.com/griptape-ai/griptape/commit/91800ad60b36c5bdf6a0c258df161ee5daee114f))
+
+
+### Documentation
+
+* **assistants:** add section to cloud docs, update nav, add docs pages for what is, getting started, and runs ([#1686](https://github.com/griptape-ai/griptape/issues/1686)) ([cacc17e](https://github.com/griptape-ai/griptape/commit/cacc17e8c9d2de298359b9a9ee9c059068932141))
+
 ## [major.minor.patch] - YYYY-MM-DD
 
 ### Added 
