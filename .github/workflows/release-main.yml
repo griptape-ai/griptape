@@ -15,3 +15,4 @@ jobs:
         with:
           release-type: python
           versioning-strategy: always-bump-minor
+          target-branch: ${{ github.ref_name }}
