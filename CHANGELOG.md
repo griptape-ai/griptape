@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.2](https://github.com/griptape-ai/griptape/compare/v1.3.1...v1.3.2) (2025-02-11)
+
+
+### Bug Fixes
+
+* **drivers-prompt-azure-openai:** fix AzureOpenAiChatPromptDriver by removing unsupported "modalities" ([#1694](https://github.com/griptape-ai/griptape/issues/1694)) ([7fa4b44](https://github.com/griptape-ai/griptape/commit/7fa4b44364b3824919037a967c5d72adb35ecc88))
+* **schema:** declare all artifacts for deserialization ([#1698](https://github.com/griptape-ai/griptape/issues/1698)) ([2ab452f](https://github.com/griptape-ai/griptape/commit/2ab452fc22b4f3e249cc9c802eb9cd2e022bab01))
+
+
+### Documentation
+
+* **assistants:** add section to cloud docs, update nav, add docs pages for what is, getting started, and runs ([#1686](https://github.com/griptape-ai/griptape/issues/1686)) ([cacc17e](https://github.com/griptape-ai/griptape/commit/cacc17e8c9d2de298359b9a9ee9c059068932141))
+
 ## [1.3.0] - 2025-02-07
 
 ### Added
