@@ -13,6 +13,7 @@ from .prompt.amazon_bedrock import AmazonBedrockPromptDriver
 from .prompt.google import GooglePromptDriver
 from .prompt.dummy import DummyPromptDriver
 from .prompt.ollama import OllamaPromptDriver
+from .prompt.griptape_cloud import GriptapeCloudPromptDriver
 
 from .memory.conversation import BaseConversationMemoryDriver
 from .memory.conversation.local import LocalConversationMemoryDriver
@@ -139,6 +140,7 @@ __all__ = [
     "GooglePromptDriver",
     "DummyPromptDriver",
     "OllamaPromptDriver",
+    "GriptapeCloudPromptDriver",
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "AmazonDynamoDbConversationMemoryDriver",
