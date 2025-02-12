@@ -16,7 +16,7 @@ Griptape Topic Guides discuss key topics at a high level and provide useful back
 
 ### Griptape Tools
 
-[Griptape Tools](griptape-tools/index.md) provides and overview of the tools available within Griptape, and how you can use them to extend the capability of LLMs.
+[Griptape Tools](griptape-framework/tools/index.md) provides and overview of the tools available within Griptape, and how you can use them to extend the capability of LLMs.
 
 ## Griptape Recipes
 

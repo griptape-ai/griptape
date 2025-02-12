@@ -2,7 +2,7 @@
 
 Tools are run by sending HTTP POST requests to the Tool's activity endpoints. Activities are defined by decorating your tool's methods with the `@activity` decorator. The activity name is the name of the method.
 
-For example, if you deployed Griptape's provided [`CalculatorTool`](../../griptape-tools/official-tools/calculator-tool.md), the endpoint for the `calculate` activity would be `https://cloud.griptape.ai/api/tools/{tool_id}/activities/calculate`. The request body would be a JSON object with the key `expression` and the value as the expression to calculate.
+For example, if you deployed Griptape's provided [`CalculatorTool`](../../griptape-framework/tools/official-tools/calculator-tool.md), the endpoint for the `calculate` activity would be `https://cloud.griptape.ai/api/tools/{tool_id}/activities/calculate`. The request body would be a JSON object with the key `expression` and the value as the expression to calculate.
 
 ```json
 {
@@ -33,4 +33,4 @@ echo "my_activity response: ${response}"
 
 ## Using the Griptape Framework
 
-The Griptape framework provides a [`GriptapeCloudToolTool`](../../griptape-tools/official-tools/griptape-cloud-tool-tool.md) for interacting with your deployed Tools. Simply pass your Tool resource UUID as the [`tool_id` kwarg](../../reference/griptape/tools/griptape_cloud_tool/tool#griptape.tools.griptape_cloud_tool.tool.GriptapeCloudToolTool.tool_id), and the schema and activity methods will be dynamically set on the Tool.
+The Griptape framework provides a [`GriptapeCloudToolTool`](../../griptape-framework/tools/official-tools/griptape-cloud-tool-tool.md) for interacting with your deployed Tools. Simply pass your Tool resource UUID as the [`tool_id` kwarg](../../reference/griptape/tools/griptape_cloud_tool/tool#griptape.tools.griptape_cloud_tool.tool.GriptapeCloudToolTool.tool_id), and the schema and activity methods will be dynamically set on the Tool.

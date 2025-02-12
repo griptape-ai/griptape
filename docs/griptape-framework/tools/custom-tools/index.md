@@ -2,15 +2,15 @@
 
 Building your own tools is easy with Griptape!
 
-Tools are nothing more than Python classes that inherit from [BaseTool](../../reference/griptape/tools/base_tool.md).
-Each method in the class is decorated with an [activity](../../reference/griptape/utils/decorators.md#griptape.utils.decorators.activity) decorator which informs the LLM how and when it should use that Tool Activity.
+Tools are nothing more than Python classes that inherit from [BaseTool](../../../reference/griptape/tools/base_tool.md).
+Each method in the class is decorated with an [activity](../../../reference/griptape/utils/decorators.md#griptape.utils.decorators.activity) decorator which informs the LLM how and when it should use that Tool Activity.
 
 ## Random Number Generator Tool
 
 Here is a simple random number generator Tool:
 
 ```python
---8<-- "docs/griptape-tools/custom-tools/src/index_1.py"
+--8<-- "docs/griptape-framework/tools/custom-tools/src/index_2.py"
 ```
 
 Check out other [Griptape Tools](https://github.com/griptape-ai/griptape/tree/main/griptape/tools) to learn more about tool implementation details.

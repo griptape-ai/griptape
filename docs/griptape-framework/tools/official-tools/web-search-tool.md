@@ -3,7 +3,7 @@
 This tool enables LLMs to search the web.
 
 ```python
---8<-- "docs/griptape-tools/official-tools/src/web_search_tool_1.py"
+--8<-- "docs/griptape-framework/tools/official-tools/src/web_search_tool_1.py"
 ```
 
 ```
@@ -94,5 +94,5 @@ Extra schema properties can be added to the Tool to allow for more customization
 In this example, we add a `sort` property to the `search` Activity which will be added as a [Google custom search query parameter](https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list).
 
 ```python
---8<-- "docs/griptape-tools/official-tools/src/web_search_tool_2.py"
+--8<-- "docs/griptape-framework/tools/official-tools/src/web_search_tool_2.py"
 ```

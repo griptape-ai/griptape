@@ -1,11 +1,11 @@
 # Rag Tool
 
-The [RagTool](../../reference/griptape/tools/rag/tool.md) enables LLMs to query modular RAG engines.
+The [RagTool](../../../reference/griptape/tools/rag/tool.md) enables LLMs to query modular RAG engines.
 
 Here is an example of how it can be used with a local vector store driver:
 
 ```python
---8<-- "docs/griptape-tools/official-tools/src/rag_tool_1.py"
+--8<-- "docs/griptape-framework/tools/official-tools/src/rag_tool_1.py"
 ```
 
 ```
