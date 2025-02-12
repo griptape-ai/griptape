@@ -4,6 +4,18 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.3](https://github.com/griptape-ai/griptape/compare/v1.3.2...v1.3.3) (2025-02-12)
+
+
+### Bug Fixes
+
+* **tasks:** remove deprecation warning on CodeExecutionTask.input ([#1709](https://github.com/griptape-ai/griptape/issues/1709)) ([a5840b8](https://github.com/griptape-ai/griptape/commit/a5840b838d906ade7b023f0a3f7a6f3cd0428eb8))
+
+
+### Documentation
+
+* **tasks:** improve CodeExecutionTask example ([#1710](https://github.com/griptape-ai/griptape/issues/1710)) ([006e289](https://github.com/griptape-ai/griptape/commit/006e289464c15c61643ca8e62943e4de3f7e76a8))
+
 ## [1.3.2](https://github.com/griptape-ai/griptape/compare/v1.3.1...v1.3.2) (2025-02-11)
 
 
