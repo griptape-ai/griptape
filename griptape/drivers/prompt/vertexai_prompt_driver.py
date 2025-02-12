@@ -171,15 +171,15 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
 
         messages = self.__to_google_messages(prompt_stack)
         params = self._base_params(prompt_stack)
-        system_messages = vertexai.Content(
-            role="user",
-            parts=[
-                vertexai.Part.from_text(text=system_message.to_text())
-                for system_message in prompt_stack.system_messages
-            ],
-        )
-        messages.append(system_messages)
-        logger.debug(messages)
+        # system_messages = vertexai.Content(
+        #     role="user",
+        #     parts=[
+        #         vertexai.Part.from_text(text=system_message.to_text())
+        #         for system_message in prompt_stack.system_messages
+        #     ],
+        # )
+        # messages.append(system_messages)
+        # logger.debug(messages)
         response: GenerationResponse = self.client.generate_content(messages, **params)
         usage_metadata = response.usage_metadata
         # TODO: modify for function calls
@@ -233,16 +233,16 @@ class VertexAIGooglePromptDriver(BasePromptDriver):
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         vertexai = import_optional_dependency("vertexai.generative_models")
-        # system_messages = prompt_stack.system_messages
-        # if system_messages:
-        #     # Fix this it is kind of hacky - system instruction. Want to set system rules at the time we run, not before.
-        #     self.client._system_instruction = vertexai.Content(
-        #         role="system",
-        #         parts=[
-        #             vertexai.Part.from_text(text=system_message.to_text())
-        #             for system_message in system_messages
-        #         ],
-        #     )
+        system_messages = prompt_stack.system_messages
+        if system_messages:
+            # Fix this it is kind of hacky - system instruction. Want to set system rules at the time we run, not before.
+            self.client._system_instruction = vertexai.Content(
+                role="system",
+                parts=[
+                    vertexai.Part.from_text(text=system_message.to_text())
+                    for system_message in system_messages
+                ],
+            )
         #     logger.debug(self.client._system_instruction)
         params = {
             "generation_config": vertexai.GenerationConfig(
