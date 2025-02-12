@@ -1,19 +1,41 @@
----
-search:
-  boost: 2
----
+# Tools in Griptape
 
 ## Overview
 
-One of the most powerful features of Griptape is the ability to use tools that can interact with the outside world.
-Many of our [Prompt Drivers](../drivers/prompt-drivers.md) leverage the native function calling built into the LLMs.
-For LLMs that don't support this, Griptape provides its own implementation using the [ReAct](https://arxiv.org/abs/2210.03629) technique.
+One of the most powerful features of Griptape is the ability to use tools that interact with the outside world. Tools give the LLM abilities to invoke APIs, reference data sets, and expand their capabilities beyond simple text generation.
 
-You can switch between the two strategies by setting `use_native_tools` to `True` (LLM-native tool calling) or `False` (Griptape tool calling) on your [Prompt Driver](../drivers/prompt-drivers.md).
+Many of our [Prompt Drivers](../drivers/prompt-drivers.md) leverage the native function calling built into LLMs. For models that do not support this, Griptape provides its own implementation using the [ReAct](https://arxiv.org/abs/2210.03629) technique.
 
-## Tools
+You can switch between these strategies by setting `use_native_tools` to `True` (LLM-native tool calling) or `False` (Griptape tool calling) on your [Prompt Driver](../drivers/prompt-drivers.md).
 
-Here is an example of a Pipeline using Tools:
+## Griptape Tools
+
+Griptape tools are special Python classes that LLMs can use to accomplish specific goals. A tool consists of multiple "activities," each represented by a function decorated with `@activity`. This decorator provides context to the LLM through descriptions and defines the input schema that the LLM must follow.
+
+When a function is decorated with `@activity`, the decorator injects keyword arguments into the function according to the schema. Additionally, Griptape provides two special keyword arguments:
+
+- `params: dict`
+- `values: dict`
+
+!!! info
+
+    If your schema defines any parameters named `params` or `values`, they will be overwritten by the Griptape-provided arguments.
+
+Here is an example of a custom tool for generating a random number:
+
+```python
+--8<-- "docs/griptape-framework/tools/src/index_1.py"
+```
+
+## Tool Output and Task Memory
+
+Output artifacts from all tool activities (except `InfoArtifact` and `ErrorArtifact`) are stored in short-term `TaskMemory`. To disable this behavior, set the `off_prompt` tool parameter to `False`.
+
+## Using Tools in Pipelines
+
+Griptape provides a set of official tools for accessing and processing data. You can also [build your own tools](./custom-tools/index.md).
+
+Here is an example of a Pipeline using tools:
 
 ```python
 --8<-- "docs/griptape-framework/tools/src/index_1.py"

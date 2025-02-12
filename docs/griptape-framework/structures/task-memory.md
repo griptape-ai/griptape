@@ -75,7 +75,7 @@ This is an example of [not providing a Task Memory compatible Tool](#not-providi
 
 ## Prompt Summary Tool
 
-The [PromptSummaryTool](../../griptape-tools/official-tools/prompt-summary-tool.md) is a Tool that allows an Agent to summarize the Artifacts in Task Memory. It has the following methods:
+The [PromptSummaryTool](../../griptape-framework/tools/official-tools/prompt-summary-tool.md) is a Tool that allows an Agent to summarize the Artifacts in Task Memory. It has the following methods:
 
 Let's add `PromptSummaryTool` to the Agent and run the same task.
 Note that on the `PromptSummaryTool` we've set `off_prompt` to `False` so that the results of the query can be returned directly to the LLM.
@@ -276,11 +276,11 @@ As seen in the previous example, certain Tools are designed to read directly fro
 
 Today, these include:
 
-- [PromptSummaryTool](../../griptape-tools/official-tools/prompt-summary-tool.md)
-- [ExtractionTool](../../griptape-tools/official-tools/extraction-tool.md)
-- [RagClient](../../griptape-tools/official-tools/rag-tool.md)
-- [FileManagerTool](../../griptape-tools/official-tools/file-manager-tool.md)
-- [ImageQueryTool](../../griptape-tools/official-tools/image-query-tool.md)
+- [PromptSummaryTool](../../griptape-framework/tools/official-tools/prompt-summary-tool.md)
+- [ExtractionTool](../../griptape-framework/tools/official-tools/extraction-tool.md)
+- [RagClient](../../griptape-framework/tools/official-tools/rag-tool.md)
+- [FileManagerTool](../../griptape-framework/tools/official-tools/file-manager-tool.md)
+- [ImageQueryTool](../../griptape-framework/tools/official-tools/image-query-tool.md)
 
 ## Task Memory Considerations
 

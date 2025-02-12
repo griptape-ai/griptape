@@ -1,6 +1,6 @@
 # Tools
 
-You can host your [Griptape framework Tools](../../griptape-tools/index.md) on Griptape Cloud. This allows you to run your Tools without needing to manage infrastructure.
+You can host your [Griptape framework Tools](../../griptape-framework/tools/index.md) on Griptape Cloud. This allows you to run your Tools without needing to manage infrastructure.
 
 ## Create a Tool
 

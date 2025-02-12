@@ -1,9 +1,0 @@
-# Griptape Cloud Tool Tool
-
-The [GriptapeCloudToolTool](../../reference/griptape/tools/griptape_cloud_tool/tool.md) integrates with Griptape Cloud's hosted Tools.
-
-**Note:** This tool requires a [Tool](https://cloud.griptape.ai/tools) hosted in Griptape Cloud and an [API Key](https://cloud.griptape.ai/configuration/api-keys) for access.
-
-```python
---8<-- "docs/griptape-tools/official-tools/src/griptape_cloud_tool_tool.py"
-```

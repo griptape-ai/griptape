@@ -1,7 +1,7 @@
-The [PromptSummaryTool](../../reference/griptape/tools/prompt_summary/tool.md) enables LLMs summarize text data.
+The [PromptSummaryTool](../../../reference/griptape/tools/prompt_summary/tool.md) enables LLMs summarize text data.
 
 ```python
---8<-- "docs/griptape-tools/official-tools/src/prompt_summary_tool_1.py"
+--8<-- "docs/griptape-framework/tools/official-tools/src/prompt_summary_tool_1.py"
 ```
 
 ````

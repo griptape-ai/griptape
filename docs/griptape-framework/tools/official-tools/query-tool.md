@@ -1,7 +1,7 @@
-The [QueryTool](../../reference/griptape/tools/query/tool.md) enables Agents to query unstructured data for specific information.
+The [QueryTool](../../../reference/griptape/tools/query/tool.md) enables Agents to query unstructured data for specific information.
 
 ```python
---8<-- "docs/griptape-tools/official-tools/src/query_tool_1.py"
+--8<-- "docs/griptape-framework/tools/official-tools/src/query_tool_1.py"
 ```
 
 ```

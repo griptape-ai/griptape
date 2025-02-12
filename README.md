@@ -171,7 +171,7 @@ And here is the output:
                              Output: The content from https://griptape.ai has been summarized and stored in a file called `griptape.txt`.
 ```
 
-During the run, the Griptape Agent loaded a webpage with a [Tool](https://docs.griptape.ai/stable/griptape-tools/), stored its full content in [Task Memory](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md), queried it to answer the original question, and finally saved the answer to a file.
+During the run, the Griptape Agent loaded a webpage with a [Tool](https://docs.griptape.ai/stable/griptape-framework/tools/), stored its full content in [Task Memory](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md), queried it to answer the original question, and finally saved the answer to a file.
 
 The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content of the page never goes back to the LLM. Additionally, no data from the subsequent subtasks were returned back to the prompt either. So, how does it work?
 

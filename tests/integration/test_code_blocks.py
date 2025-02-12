@@ -4,7 +4,7 @@ import subprocess
 import pytest
 
 SKIP_FILES = [
-    "docs/griptape-tools/official-tools/src/computer_tool_1.py",
+    "docs/griptape-framework/tools/official-tools/src/computer_tool_1.py",
     "docs/examples/src/load_query_and_chat_marqo_1.py",
     "docs/griptape-framework/drivers/src/embedding_drivers_2.py",
     "docs/griptape-framework/drivers/src/embedding_drivers_6.py",
