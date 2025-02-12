@@ -6,7 +6,7 @@ from attrs import define, field
 
 from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.tasks.base_task import BaseTask
-from griptape.utils import J2, deprecation_warn
+from griptape.utils import J2
 
 T = TypeVar("T", bound=BaseArtifact)  # Return type of task
 
@@ -22,7 +22,6 @@ class CodeExecutionTask(BaseTask[T]):
 
     @property
     def input(self) -> TextArtifact:
-        deprecation_warn("CodeExecutionTask.input is deprecated and will be removed in a future release.")
         if isinstance(self._input, TextArtifact):
             return self._input
         elif callable(self._input):
