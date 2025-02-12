@@ -309,19 +309,52 @@ This task takes a [RAG Engine](../../griptape-framework/engines/rag-engines.md),
 To execute an arbitrary Python function, use the [CodeExecutionTask](../../reference/griptape/tasks/code_execution_task.md).
 This task takes a python function, and authors can elect to return a custom artifact.
 
+In this example, the `generate_title` function combines a hero's name and setting from previous tasks with a random title, returning a `TextArtifact` that contains the generated fantasy title.
+The output of this task can then be referenced by subsequent tasks using the `parent_outputs` templating variable, as shown in the final `PromptTask`.
+
 ```python
 --8<-- "docs/griptape-framework/structures/src/tasks_10.py"
 ```
 
 ```
-[01/09/24 15:23:54] INFO     CodeExecutionTask 048b1f548683475187064dde90055f72 
-                             Input: Write me a line in a poem                   
-                    INFO     CodeExecutionTask 048b1f548683475187064dde90055f72 
-                             Output: 25                                         
-                    INFO     PromptTask b6156dc5c0c6404488ab925989e78b01        
-                             Input: Write me a line in a poem using 25          
-                             characters                                         
-[01/09/24 15:24:03] INFO     PromptTask b6156dc5c0c6404488ab925989e78b01        
+https://mermaid.ink/svg/Z3JhcGggVEQ7CglIZXJvLS0+IEdlbmVyYXRlX1RpdGxlOwoJU2V0dGluZy0tPiBHZW5lcmF0ZV9UaXRsZTsKCUdlbmVyYXRlX1RpdGxlLS0+IFN0b3J5OwoJU3Rvcnk7
+[02/12/25 09:45:02] INFO     PromptTask hero
+                             Input: Name a fantasy hero (e.g., 'Eldric')
+                    INFO     PromptTask setting
+                             Input: Describe a mystical setting in a couple sentences (e.g., 'the Shattered Isles')
+[02/12/25 09:45:03] INFO     PromptTask setting
+                             Output: In the heart of the Enchanted Glade, ancient trees with luminescent leaves form a canopy that filters the moonlight into a kaleidoscope of
+                             colors. Ethereal creatures, half-seen and shimmering, flit between the shadows, while a gentle mist rises from the crystal-clear brook that winds
+                             through the moss-covered stones, whispering secrets of forgotten magic.
+[02/12/25 09:45:07] INFO     PromptTask hero
+                             Output: Arinor Stormblade
+                    INFO     PromptTask story
+                             Input: Write a brief, yet heroic tale about Arinor Stormblade the Eternal of In the heart of the Enchanted Glade, ancient trees with luminescent
+                             leaves form a canopy that filters the moonlight into a kaleidoscope of colors. Ethereal creatures, half-seen and shimmering, flit between the
+                             shadows, while a gentle mist rises from the crystal-clear brook that winds through the moss-covered stones, whispering secrets of forgotten magic..
+[02/12/25 09:45:26] INFO     PromptTask story
+                             Output: In the heart of the Enchanted Glade, where ancient trees with luminescent leaves formed a canopy that filtered the moonlight into a
+                             kaleidoscope of colors, Arinor Stormblade the Eternal stood resolute. His armor, a gleaming testament to battles fought and won, shimmered in the
+                             ethereal glow. The gentle mist rising from the crystal-clear brook whispered secrets of forgotten magic, secrets that Arinor had vowed to protect.
+
+                             Ethereal creatures, half-seen and shimmering, flitted between the shadows, their eyes reflecting the courage and determination etched into Arinor's
+                             soul. He was the guardian of this sacred place, chosen by the ancients to wield the Stormblade, a sword forged from the heart of a fallen star. Its
+                             edge crackled with the power of the storm, a beacon of hope against the encroaching darkness.
+
+                             A sinister force, known only as the Shadowmancer, sought to corrupt the glade's magic, to twist its beauty into a realm of despair. Arinor, with
+                             his unwavering spirit, stood as the last bastion against this malevolence. As the Shadowmancer emerged from the depths of the forest, cloaked in
+                             shadows and malice, the glade held its breath.
+
+                             With a roar that echoed through the ages, Arinor charged, the Stormblade singing through the air. Lightning danced along its edge, illuminating the
+                             glade in a brilliant flash. The battle was fierce, a clash of light and darkness, of hope and despair. The creatures of the glade watched in awe,
+                             their faith in Arinor unwavering.
+
+                             In a final, desperate strike, Arinor plunged the Stormblade into the heart of the Shadowmancer, releasing a torrent of light that banished the
+                             darkness. The glade erupted in a symphony of colors, the trees singing a song of victory and renewal. The ethereal creatures danced in celebration,
+                             their joy a testament to Arinor's heroism.
+
+                             As the first light of dawn broke through the canopy, Arinor stood victorious, the eternal guardian of the Enchanted Glade. His legend would be
+                             whispered by the brook and sung by the trees, a tale of courage and sacrifice, of a hero who stood against the darkness and emerged triumphant.
                              Output: "Silent code, loud impact."  
 ```
 
