@@ -20,8 +20,12 @@ class CsvExtractionEngine(BaseExtractionEngine):
     column_names: list[str] = field(kw_only=True)
     generate_system_template: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/system.j2")), kw_only=True)
     generate_user_template: J2 = field(default=Factory(lambda: J2("engines/extraction/csv/user.j2")), kw_only=True)
-    format_header: Callable[[list[str]], str] = field(default=lambda value: ",".join(value), kw_only=True)
-    format_row: Callable[[dict], str] = field(default=lambda value: ",".join(value.values()), kw_only=True)
+    format_header: Callable[[list[str]], str] = field(
+        default=Factory(lambda: lambda value: ",".join(value)), kw_only=True
+    )
+    format_row: Callable[[dict], str] = field(
+        default=Factory(lambda: lambda value: ",".join([value or "" for value in value.values()])), kw_only=True
+    )
 
     def extract_artifacts(
         self,
