@@ -13,6 +13,7 @@ SKIP_FILES = [
     "docs/griptape-framework/drivers/src/image_generation_drivers_8.py",
     "docs/griptape-framework/drivers/src/image_generation_drivers_9.py",
     "docs/griptape-framework/drivers/src/prompt_drivers_4.py",
+    "docs/griptape-framework/drivers/src/prompt_drivers_10.py",
     "docs/griptape-framework/drivers/src/prompt_drivers_12.py",
     "docs/griptape-framework/drivers/src/prompt_drivers_14.py",
     "docs/griptape-framework/drivers/src/observability_drivers_1.py",
