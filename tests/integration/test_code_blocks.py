@@ -45,4 +45,5 @@ def test_python_file_execution(python_file):
         input="Hi\nexit\n",
     )
 
-    assert result.returncode == 0, f"Execution failed for {python_file} with error: {result.stderr}"
+    assert result.returncode == 0
+    assert "ERROR" not in result.stdout
