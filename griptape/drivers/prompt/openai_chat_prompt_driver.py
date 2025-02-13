@@ -346,7 +346,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         if response.content is not None:
             content.append(TextMessageContent(TextArtifact(response.content)))
-        if response.audio is not None:
+        if hasattr(response, "audio") and response.audio is not None:
             content.append(
                 AudioMessageContent(
                     AudioArtifact(
