@@ -10,7 +10,7 @@ driver = AmazonBedrockImageGenerationDriver(
     image_generation_model_driver=BedrockStableDiffusionImageGenerationModelDriver(
         style_preset="pixel-art",
     ),
-    model="stability.stable-diffusion-xl-v0",
+    model="stability.stable-diffusion-xl-v1",
 )
 
 # Create a tool configured to use the engine.
