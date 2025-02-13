@@ -112,6 +112,12 @@ Loads data from a SQL database using a [SQLDriver](../drivers/sql-drivers.md) an
 
 Loads data from an imap email server into a [ListArtifact](../../reference/griptape/artifacts/list_artifact.md)s, where each element is a [TextArtifact](../../reference/griptape/artifacts/text_artifact.md) containing an email.
 
-```python
---8<-- "docs/griptape-framework/data/src/loaders_9.py"
-```
+=== "Code"
+    ```python
+    --8<-- "docs/griptape-framework/data/src/loaders_9.py"
+    ```
+
+=== "Logs"
+    ```python
+    --8<-- "docs/griptape-framework/data/logs/loaders_9.txt"
+    ```

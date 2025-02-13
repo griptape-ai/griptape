@@ -1,0 +1,32 @@
+
+Traceback (most recent call last):
+  File "/home/runner/work/griptape/griptape/docs/griptape-framework/data/src/loaders_9.py", line 5, in <module>
+    loader.load(EmailLoader.EmailQuery(label="INBOX"))
+  File "/home/runner/work/griptape/griptape/griptape/loaders/base_loader.py", line 35, in load
+    data = self.fetch(source)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/griptape/griptape/griptape/loaders/email_loader.py", line 39, in fetch
+    with imaplib.IMAP4_SSL(self.imap_url) as client:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/imaplib.py", line 1306, in __init__
+    IMAP4.__init__(self, host, port, timeout)
+  File "/usr/lib/python3.12/imaplib.py", line 202, in __init__
+    self.open(host, port, timeout)
+  File "/usr/lib/python3.12/imaplib.py", line 1319, in open
+    IMAP4.open(self, host, port, timeout)
+  File "/usr/lib/python3.12/imaplib.py", line 312, in open
+    self.sock = self._create_socket(timeout)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/imaplib.py", line 1309, in _create_socket
+    sock = IMAP4._create_socket(self, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/imaplib.py", line 302, in _create_socket
+    return socket.create_connection(address)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 828, in create_connection
+    for res in getaddrinfo(host, port, 0, SOCK_STREAM):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/socket.py", line 963, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+socket.gaierror: [Errno -2] Name or service not known
