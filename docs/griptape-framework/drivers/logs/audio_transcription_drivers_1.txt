@@ -1,0 +1,174 @@
+[02/13/25 02:58:42] INFO     PromptTask 9b90ac281b5f4ae4beb55e259a2c3836        
+                             Input: Transcribe the following audio file:        
+                             tests/resources/sentences.wav                      
+[02/13/25 02:58:45] INFO     Subtask a2b39008165e4f6ba55c73e3d1b2129f           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_kcJ85HWqxdfpvZxUhVD8V1WF",        
+                                 "name": "AudioTranscriptionTool",              
+                                 "path": "transcribe_audio_from_disk",          
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "path": "tests/resources/sentences.wav"    
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[02/13/25 02:58:48] INFO     Subtask a2b39008165e4f6ba55c73e3d1b2129f           
+                             Response: Output of                                
+                             "AudioTranscriptionTool.transcribe_audio_from_disk"
+                             was stored in memory with memory_name "TaskMemory" 
+                             and artifact_namespace                             
+                             "7a15871dea3d4d76a6f239e9fe2340d0"                 
+[02/13/25 02:58:49] INFO     Subtask e6c42897202b4c6297c4cfbb8edcad41           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_GiaBxhthRtKeJFqKfam0L4Dx",        
+                                 "name": "AudioTranscriptionTool",              
+                                 "path": "transcribe_audio_from_memory",        
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "schema": {                                
+                                       "memory_name": "TaskMemory",             
+                                       "artifact_namespace":                    
+                             "7a15871dea3d4d76a6f239e9fe2340d0",                
+                                       "artifact_name": "transcription"         
+                                     }                                          
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask e6c42897202b4c6297c4cfbb8edcad41           
+                             Response: 'memory_name'                            
+[02/13/25 02:58:50] INFO     Subtask d06fdc3f9b42426eb2d96d53051dd752           
+                             Thought: It seems there was an issue retrieving the
+                             transcription from memory. Let me try to transcribe
+                             the audio file again.                              
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_dlg3bwbgskCjTgBtcnSZtgDb",        
+                                 "name": "AudioTranscriptionTool",              
+                                 "path": "transcribe_audio_from_disk",          
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "path": "tests/resources/sentences.wav"    
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[02/13/25 02:58:52] INFO     Subtask d06fdc3f9b42426eb2d96d53051dd752           
+                             Response: Output of                                
+                             "AudioTranscriptionTool.transcribe_audio_from_disk"
+                             was stored in memory with memory_name "TaskMemory" 
+                             and artifact_namespace                             
+                             "8765a987f386457ca3e9ef7c06a816ed"                 
+[02/13/25 02:58:54] INFO     Subtask 72a3773526224cd5a3e58cd2bb02ade8           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_859XZas7KKHuCmbmZfNODDJl",        
+                                 "name": "AudioTranscriptionTool",              
+                                 "path": "transcribe_audio_from_memory",        
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "schema": {                                
+                                       "memory_name": "TaskMemory",             
+                                       "artifact_namespace":                    
+                             "8765a987f386457ca3e9ef7c06a816ed",                
+                                       "artifact_name": "transcription"         
+                                     }                                          
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 72a3773526224cd5a3e58cd2bb02ade8           
+                             Response: 'memory_name'                            
+[02/13/25 02:58:55] INFO     Subtask 86df4ffff6334fa383dc871966c4b45b           
+                             Thought: I encountered an issue retrieving the     
+                             transcription from memory again. Let me attempt a  
+                             different approach to obtain the transcription.    
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_o0UdG0npo1uaT5HMd9ETTwtP",        
+                                 "name": "AudioTranscriptionTool",              
+                                 "path": "transcribe_audio_from_disk",          
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "path": "tests/resources/sentences.wav"    
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[02/13/25 02:58:57] INFO     Subtask 86df4ffff6334fa383dc871966c4b45b           
+                             Response: Output of                                
+                             "AudioTranscriptionTool.transcribe_audio_from_disk"
+                             was stored in memory with memory_name "TaskMemory" 
+                             and artifact_namespace                             
+                             "b8ad77d3c76a424f809ddb773bd938cf"                 
+[02/13/25 02:58:59] INFO     Subtask fb954a87b785444b8400ff92d8e5982a           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_ZRwUoiZP1xSuTWjYdf4tHHL7",        
+                                 "name": "AudioTranscriptionTool",              
+                                 "path": "transcribe_audio_from_memory",        
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "schema": {                                
+                                       "memory_name": "TaskMemory",             
+                                       "artifact_namespace":                    
+                             "b8ad77d3c76a424f809ddb773bd938cf",                
+                                       "artifact_name": "transcription"         
+                                     }                                          
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask fb954a87b785444b8400ff92d8e5982a           
+                             Response: 'memory_name'                            
+[02/13/25 02:59:01] INFO     Subtask 537790a10ec644538de8a247bb114763           
+                             Thought: I am currently unable to retrieve the     
+                             transcription from memory due to a persistent      
+                             issue. Let me try a different method to transcribe 
+                             the audio file.                                    
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_AhvlnAMXmEcpd92gYRTV4Zqz",        
+                                 "name": "AudioTranscriptionTool",              
+                                 "path": "transcribe_audio_from_disk",          
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "path": "tests/resources/sentences.wav"    
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[02/13/25 02:59:03] INFO     Subtask 537790a10ec644538de8a247bb114763           
+                             Response: Output of                                
+                             "AudioTranscriptionTool.transcribe_audio_from_disk"
+                             was stored in memory with memory_name "TaskMemory" 
+                             and artifact_namespace                             
+                             "7ce6fb03d5f4483da58447082d6f9ee7"                 
+[02/13/25 02:59:05] INFO     Subtask 05f8ce035d72491c94f232034aa4edf2           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_PWPzNiAcyUYBZwGwWu10H1Cd",        
+                                 "name": "AudioTranscriptionTool",              
+                                 "path": "transcribe_audio_from_memory",        
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "schema": {                                
+                                       "memory_name": "TaskMemory",             
+                                       "artifact_namespace":                    
+                             "7ce6fb03d5f4483da58447082d6f9ee7",                
+                                       "artifact_name": "transcription"         
+                                     }                                          
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 05f8ce035d72491c94f232034aa4edf2           
+                             Response: 'memory_name'                            
+[02/13/25 02:59:06] INFO     PromptTask 9b90ac281b5f4ae4beb55e259a2c3836        
+                             Output: I am unable to retrieve the transcription  
+                             from memory due to a persistent issue.             
+                             Unfortunately, I cannot provide the transcription  
+                             at this time.                                      
