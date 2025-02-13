@@ -305,9 +305,7 @@ class PromptTask(
         task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact],
     ) -> BaseArtifact:
         if isinstance(task_input, TextArtifact):
-            task_input.value = J2().render_from_string(task_input.value, **self.full_context)
-
-            return task_input
+            return TextArtifact(J2().render_from_string(task_input.value, **self.full_context), meta=task_input.meta)
         elif isinstance(task_input, Callable):
             return self._process_task_input(task_input(self))
         elif isinstance(task_input, ListArtifact):

@@ -10,7 +10,7 @@ from griptape.memory.structure.run import Run
 from griptape.rules import Rule
 from griptape.rules.json_schema_rule import JsonSchemaRule
 from griptape.rules.ruleset import Ruleset
-from griptape.structures import Pipeline
+from griptape.structures import Agent, Pipeline
 from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -133,6 +133,19 @@ class TestPromptTask:
         task = PromptTask({"default": "test"})
 
         assert task.input.value == str({"default": "test"})
+
+    def test_input_run(self):
+        agent = Agent(tasks=[PromptTask(TextArtifact("{{ args[0] }}", meta={"foo": "bar"}))])
+
+        agent.run("1")
+
+        assert agent.task.input.value == "1"
+        assert agent.task.input.meta["foo"] == "bar"
+
+        agent.run("2")
+
+        assert agent.task.input.value == "2"
+        assert agent.task.input.meta["foo"] == "bar"
 
     def test_input_context(self):
         pipeline = Pipeline(
