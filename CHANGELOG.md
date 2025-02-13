@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.4](https://github.com/griptape-ai/griptape/compare/v1.3.3...v1.3.4) (2025-02-13)
+
+
+### Bug Fixes
+
+* **drivers:** check existence of "audio" attribute ([#1730](https://github.com/griptape-ai/griptape/issues/1730)) ([db914a3](https://github.com/griptape-ai/griptape/commit/db914a3715e20fecd84be41eeb9c4d84914e1300))
+* **tasks:** fix task input being lost on multiple Structure runs ([#1732](https://github.com/griptape-ai/griptape/issues/1732)) ([f24d5fc](https://github.com/griptape-ai/griptape/commit/f24d5fcd14b1f7a84eb13a2e917c98d0f2caab7b))
+
 ## [1.3.3](https://github.com/griptape-ai/griptape/compare/v1.3.2...v1.3.3) (2025-02-12)
 
 
