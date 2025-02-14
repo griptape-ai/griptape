@@ -17,7 +17,7 @@ search:
 
 ### RAG Modules
 
-RAG modules are used to implement actions in the different stages of the RAG pipeline. `RagEngine` enables developers to easily add new modules to experiment with novel RAG strategies. 
+RAG modules are used to implement actions in the different stages of the RAG pipeline. `RagEngine` enables developers to easily add new modules to experiment with novel RAG strategies.
 
 The three stages of the pipeline implemented in RAG Engines, together with their purposes and associated modules, are as follows:
 
@@ -31,7 +31,7 @@ This stage is used for modifying input queries before they are submitted.
 
 ### Retrieval Stage
 
-Results are retrieved in this stage, either from a vector store in the form of chunks, or with a text loader. You may optionally use a rerank module in this stage to rerank results in order of their relevance to the original query.  
+Results are retrieved in this stage, either from a vector store in the form of chunks, or with a text loader. You may optionally use a rerank module in this stage to rerank results in order of their relevance to the original query.
 
 #### Retrieval Stage Modules
 
@@ -41,7 +41,7 @@ Results are retrieved in this stage, either from a vector store in the form of c
 
 ### Response Stage
 
-Responses are generated in this final stage. 
+Responses are generated in this final stage.
 
 #### Response Stage Modules
 
