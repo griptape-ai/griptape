@@ -23,17 +23,29 @@ search:
 
 RAG modules are used to implement concrete actions in the different stages of the RAG pipeline. `RagEngine` enables developers to easily add new modules to experiment with novel RAG strategies. The stages of the pipeline and associated modules are as follows:
 
-#### Query RAG Stage
+#### Query Stage
+
+This stage is used for modifying input queries before they are submitted.
+
+**Query Modules**
 
 - `TranslateQueryRagModule` is for translating the query into another language.
 
-#### Retrieval RAG Stage
+#### Retrieval Stage
+
+Results are retrieved in this stage, either from a vector store in the form of chunks, or with a text loader. You may optionally use a rerank module in this stage to rerank results in order of their relevance to the original query.  
+
+**Retrieval Modules**
 
 - `TextChunksRerankRagModule` is for re-ranking retrieved results.
 - `TextLoaderRetrievalRagModule` is for retrieving data with text loaders in real time.
 - `VectorStoreRetrievalRagModule` is for retrieving text chunks from a vector store.
 
-#### Response RAG Stage
+#### Response Stage
+
+Responses are generated in this final stage of the RAG pipeline. 
+
+**Response Modules**
 
 - `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
 - `TextChunksResponseRagModule` is for responding with retrieved text chunks.
