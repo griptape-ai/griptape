@@ -21,19 +21,19 @@ search:
 
 ### RAG Modules
 
-RAG modules are used to implement concrete actions in the RAG pipeline. `RagEngine` enables developers to easily add new modules to experiment with novel RAG strategies.
+RAG modules are used to implement concrete actions in the different stages of the RAG pipeline. `RagEngine` enables developers to easily add new modules to experiment with novel RAG strategies. The stages of the pipeline and associated modules are as follows:
 
-#### Query Modules
+#### Query RAG Stage
 
 - `TranslateQueryRagModule` is for translating the query into another language.
 
-#### Retrieval/Rerank Modules
+#### Retrieval RAG Stage
 
 - `TextChunksRerankRagModule` is for re-ranking retrieved results.
 - `TextLoaderRetrievalRagModule` is for retrieving data with text loaders in real time.
 - `VectorStoreRetrievalRagModule` is for retrieving text chunks from a vector store.
 
-#### Response Modules
+#### Response RAG Stage
 
 - `PromptResponseRagModule` is for generating responses based on retrieved text chunks.
 - `TextChunksResponseRagModule` is for responding with retrieved text chunks.
@@ -45,7 +45,7 @@ RAG modules are used to implement concrete actions in the RAG pipeline. `RagEngi
 
 ### Example
 
-The following example shows a simple RAG pipeline that translates incoming queries into English, retrieves data from a local vector store, and generates a response:
+The following example shows a simple RAG pipeline that translates incoming queries into English, retrieves data from a local vector store, reranks the results using the local rerank driver, and generates a response:
 
 ```python
 --8<-- "docs/griptape-framework/engines/src/rag_engines_1.py"

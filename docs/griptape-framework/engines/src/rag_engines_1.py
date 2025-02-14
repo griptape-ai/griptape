@@ -1,10 +1,20 @@
 from griptape.chunkers import TextChunker
 from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
+from griptape.drivers.rerank.local import LocalRerankDriver
 from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.engines.rag import RagContext, RagEngine
-from griptape.engines.rag.modules import PromptResponseRagModule, TranslateQueryRagModule, VectorStoreRetrievalRagModule
-from griptape.engines.rag.stages import QueryRagStage, ResponseRagStage, RetrievalRagStage
+from griptape.engines.rag.modules import (
+    PromptResponseRagModule,
+    TextChunksRerankRagModule,
+    TranslateQueryRagModule,
+    VectorStoreRetrievalRagModule,
+)
+from griptape.engines.rag.stages import (
+    QueryRagStage,
+    ResponseRagStage,
+    RetrievalRagStage,
+)
 from griptape.loaders import WebLoader
 from griptape.rules import Rule, Ruleset
 
@@ -26,14 +36,18 @@ rag_engine = RagEngine(
         max_chunks=5,
         retrieval_modules=[
             VectorStoreRetrievalRagModule(
-                name="MyAwesomeRetriever", vector_store_driver=vector_store, query_params={"top_n": 20}
+                name="MyAwesomeRetriever",
+                vector_store_driver=vector_store,
+                query_params={"top_n": 20},
             )
         ],
+        rerank_module=TextChunksRerankRagModule(rerank_driver=LocalRerankDriver()),
     ),
     response_stage=ResponseRagStage(
         response_modules=[
             PromptResponseRagModule(
-                prompt_driver=prompt_driver, rulesets=[Ruleset(name="persona", rules=[Rule("Talk like a pirate")])]
+                prompt_driver=prompt_driver,
+                rulesets=[Ruleset(name="persona", rules=[Rule("Talk like a pirate")])],
             )
         ]
     ),
