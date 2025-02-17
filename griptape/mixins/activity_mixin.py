@@ -31,9 +31,6 @@ class ActivityMixin:
         if allowlist is None:
             return
 
-        if self.denylist is not None:
-            raise ValueError("can't have both allowlist and denylist specified")
-
         for activity_name in allowlist:
             self._validate_tool_activity(activity_name)
 
@@ -41,9 +38,6 @@ class ActivityMixin:
     def validate_denylist(self, _: Attribute, denylist: Optional[list[str]]) -> None:
         if denylist is None:
             return
-
-        if self.allowlist is not None:
-            raise ValueError("can't have both allowlist and denylist specified")
 
         for activity_name in denylist:
             self._validate_tool_activity(activity_name)
