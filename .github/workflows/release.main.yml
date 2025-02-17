@@ -11,7 +11,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Release
-        uses: googleapis/release-please-action@v3
+        uses: googleapis/release-please-action@v4
         with:
           release-type: python
           versioning-strategy: always-bump-minor
