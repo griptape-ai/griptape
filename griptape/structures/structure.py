@@ -48,7 +48,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     )
     meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    _execution_args: tuple = ()
+    _execution_args: tuple = field(factory=tuple, init=False)
     _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()), init=False)
 
     def __attrs_post_init__(self) -> None:
@@ -154,7 +154,6 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     @observable
     def before_run(self, args: Any) -> None:
         super().before_run(args)
-        self._execution_args = args
 
         [task.reset() for task in self.tasks]
 
@@ -197,7 +196,8 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     def add_task(self, task: BaseTask) -> BaseTask: ...
 
     @observable
-    def run(self, *args) -> Structure:
+    def run(self, *args, **kwargs) -> Structure:
+        self._execution_args = args
         self.before_run(args)
 
         result = self.try_run(*args)

@@ -739,7 +739,7 @@ class TestWorkflow:
 
         assert context["parent_outputs"] == {}
 
-        workflow.run()
+        workflow.run("hello", foo="bar")
 
         context = workflow.context(task)
 
@@ -749,6 +749,7 @@ class TestWorkflow:
         assert context["structure"] == workflow
         assert context["parents"] == {parent.id: parent}
         assert context["children"] == {child.id: child}
+        assert context["args"] == ("hello",)
 
     def test_run_with_error_artifact(self, error_artifact_task, waiting_task):
         end_task = PromptTask("end")
