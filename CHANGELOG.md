@@ -4,6 +4,34 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0](https://github.com/griptape-ai/griptape/compare/v1.3.0...v1.4.0) (2025-02-18)
+
+
+### Features
+
+* **drivers:** use cloud server events for GriptapeCloudStructureRunDriver and GriptapeCloudAssistantDriver ([#1684](https://github.com/griptape-ai/griptape/issues/1684)) ([f0fef4c](https://github.com/griptape-ai/griptape/commit/f0fef4c54bc2692b7f422f76b40449e938528850))
+
+
+### Bug Fixes
+
+* **drivers-files-griptape-cloud:** pass correct parameters when listing files ([#1674](https://github.com/griptape-ai/griptape/issues/1674)) ([4b2f618](https://github.com/griptape-ai/griptape/commit/4b2f618616b1f1ba2110d6a27c2f6b486eb9d7cf))
+* **drivers-prompt-azure-openai:** fix AzureOpenAiChatPromptDriver by removing unsupported "modalities" ([#1694](https://github.com/griptape-ai/griptape/issues/1694)) ([6699a3d](https://github.com/griptape-ai/griptape/commit/6699a3d5f91b63904b1134081c9148466faf7a14))
+* **drivers-prompt-openai:** conditionally add modalities/reasoning_effort based on model ([#1668](https://github.com/griptape-ai/griptape/issues/1668)) ([b9311c1](https://github.com/griptape-ai/griptape/commit/b9311c114588d80229ad4b17f6539c9a2222cea7))
+* **drivers:** check existence of "audio" attribute ([#1730](https://github.com/griptape-ai/griptape/issues/1730)) ([23ca1c5](https://github.com/griptape-ai/griptape/commit/23ca1c5cc596894a4072afbb22f6f2b955cab759))
+* **drivers:** lower max_attempts in ExponentialBackoffMixin to reasonable value ([#1725](https://github.com/griptape-ai/griptape/issues/1725)) ([29e4575](https://github.com/griptape-ai/griptape/commit/29e4575cd39adf3e6793a80ddf3d21caedc39def))
+* **schema:** declare all artifacts for deserialization ([#1698](https://github.com/griptape-ai/griptape/issues/1698)) ([4904309](https://github.com/griptape-ai/griptape/commit/49043097980b4c30c5c378f71db40b11edd1623c))
+* **tasks:** fix task input being lost on multiple Structure runs ([#1732](https://github.com/griptape-ai/griptape/issues/1732)) ([f9ac289](https://github.com/griptape-ai/griptape/commit/f9ac289715eeb24cb15cbb31e8e32c0e9fb00d45))
+* **tasks:** remove deprecation warning on CodeExecutionTask.input ([#1709](https://github.com/griptape-ai/griptape/issues/1709)) ([0427296](https://github.com/griptape-ai/griptape/commit/04272965fdd6e332afba6c1f91695168bb72edc0))
+* **utils:** wrap primitives with more specific artifact types ([#1676](https://github.com/griptape-ai/griptape/issues/1676)) ([91800ad](https://github.com/griptape-ai/griptape/commit/91800ad60b36c5bdf6a0c258df161ee5daee114f))
+
+
+### Documentation
+
+* **assistants:** add section to cloud docs, update nav, add docs pages for what is, getting started, and runs ([#1686](https://github.com/griptape-ai/griptape/issues/1686)) ([4f6f8ce](https://github.com/griptape-ai/griptape/commit/4f6f8cefe75c460ae691b230a14aab885eb0af6b))
+* fix integration test examples ([#1724](https://github.com/griptape-ai/griptape/issues/1724)) ([4fe4558](https://github.com/griptape-ai/griptape/commit/4fe45586b0c3ab83b878e5aa4bfde28637adcdd6))
+* **tasks:** improve CodeExecutionTask example ([#1710](https://github.com/griptape-ai/griptape/issues/1710)) ([8c61d91](https://github.com/griptape-ai/griptape/commit/8c61d91a53d49444e4e1ac355f5804d5455d80c9))
+* **tools:** move tools to framework portion of docs ([#1713](https://github.com/griptape-ai/griptape/issues/1713)) ([c2b23bb](https://github.com/griptape-ai/griptape/commit/c2b23bbd3847de325bac96f7e22a339dfb97fa1b))
+
 ## [1.3.0] - 2025-02-07
 
 ### Added
