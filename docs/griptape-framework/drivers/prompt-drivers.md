@@ -222,3 +222,11 @@ If your model does not fit this use-case, we suggest sub-classing [AmazonSageMak
 ```python
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_14.py"
 ```
+
+### Grok
+
+The [GrokPromptDriver](../../reference/griptape/drivers/prompt/grok_prompt_driver.md) uses [Grok's chat completion](https://docs.x.ai/docs/api-reference#chat-completions) endpoint.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_grok.py"
+```
