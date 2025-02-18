@@ -9,6 +9,7 @@ from attrs import define, field
 
 from griptape import utils
 from griptape.artifacts import BaseArtifact, ListArtifact, TextArtifact
+from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils import with_contextvars
@@ -49,9 +50,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
             if isinstance(artifacts, list):
                 return utils.execute_futures_list(
                     [
-                        futures_executor.submit(
-                            with_contextvars(self.upsert_text_artifact), a, namespace=None, meta=meta, **kwargs
-                        )
+                        futures_executor.submit(with_contextvars(self.upsert), a, namespace=None, meta=meta, **kwargs)
                         for a in artifacts
                     ],
                 )
@@ -65,7 +64,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
                         futures_dict[namespace].append(
                             futures_executor.submit(
-                                with_contextvars(self.upsert_text_artifact), a, namespace=namespace, meta=meta, **kwargs
+                                with_contextvars(self.upsert), a, namespace=namespace, meta=meta, **kwargs
                             )
                         )
 
@@ -80,6 +79,30 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         vector_id: Optional[str] = None,
         **kwargs,
     ) -> str:
+        return self.upsert(artifact, namespace=namespace, meta=meta, vector_id=vector_id, **kwargs)
+
+    def upsert_text(
+        self,
+        string: str,
+        *,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        vector_id: Optional[str] = None,
+        **kwargs,
+    ) -> str:
+        return self.upsert(string, namespace=namespace, meta=meta, vector_id=vector_id, **kwargs)
+
+    def upsert(
+        self,
+        value: str | TextArtifact | ImageArtifact,
+        *,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        vector_id: Optional[str] = None,
+        **kwargs,
+    ) -> str:
+        artifact = TextArtifact(value) if isinstance(value, str) else value
+
         meta = {} if meta is None else meta
 
         if vector_id is None:
@@ -91,22 +114,9 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         else:
             meta["artifact"] = artifact.to_json()
 
-            vector = artifact.embedding or artifact.generate_embedding(self.embedding_driver)
+            vector = self.embedding_driver.embed_artifact(artifact)
 
             return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
-
-    def upsert_text(
-        self,
-        string: str,
-        *,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        vector_id: Optional[str] = None,
-        **kwargs,
-    ) -> str:
-        return self.upsert_text_artifact(
-            TextArtifact(string), vector_id=vector_id, namespace=namespace, meta=meta, **kwargs
-        )
 
     def does_entry_exist(self, vector_id: str, *, namespace: Optional[str] = None) -> bool:
         try:
@@ -154,14 +164,19 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
     def query(
         self,
-        query: str,
+        query: str | BaseArtifact,
         *,
         count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         **kwargs,
     ) -> list[Entry]:
-        vector = self.embedding_driver.embed_string(query)
+        if isinstance(query, str):
+            vector = self.embedding_driver.embed_string(query)
+        elif isinstance(query, (TextArtifact, ImageArtifact)):
+            vector = self.embedding_driver.embed_artifact(query)
+        else:
+            raise ValueError(f"Unsupported query type: {type(query)}")
         return self.query_vector(vector, count=count, namespace=namespace, include_vectors=include_vectors, **kwargs)
 
     def _get_default_vector_id(self, value: str) -> str:

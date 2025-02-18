@@ -6,12 +6,12 @@ from typing import TYPE_CHECKING, Optional
 import numpy as np
 from attrs import define, field
 
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.mixins.exponential_backoff_mixin import ExponentialBackoffMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.artifacts import TextArtifact
     from griptape.tokenizers import BaseTokenizer
 
 
@@ -31,6 +31,15 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def __attrs_post_init__(self) -> None:
         self.chunker = TextChunker(tokenizer=self.tokenizer) if self.tokenizer else None
 
+    def embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
+        if isinstance(artifact, TextArtifact):
+            return self.embed_text_artifact(artifact)
+        else:
+            return self.embed_image_artifact(artifact)
+
+    def embed_image_artifact(self, artifact: ImageArtifact) -> list[float]:
+        return self.try_embed_chunk(artifact.value)
+
     def embed_text_artifact(self, artifact: TextArtifact) -> list[float]:
         return self.embed_string(artifact.to_text())
 
@@ -46,7 +55,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             raise RuntimeError("Failed to embed string.")
 
     @abstractmethod
-    def try_embed_chunk(self, chunk: str) -> list[float]: ...
+    def try_embed_chunk(self, chunk: str | bytes) -> list[float]: ...
 
     def _embed_long_string(self, string: str) -> list[float]:
         """Embeds a string that is too long to embed in one go.
