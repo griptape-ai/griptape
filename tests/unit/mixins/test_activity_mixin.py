@@ -43,17 +43,33 @@ class TestActivityMixin:
 
     def test_allowlist_and_denylist_validation(self):
         with pytest.raises(ValueError):
-            MockTool(test_field="hello", test_int=5, allowlist=[], denylist=[])
+            MockTool(test_field="hello", test_int=5, allowlist=["not_an_activity"], denylist=[])
 
-    def test_allowlist(self):
-        tool = MockTool(test_field="hello", test_int=5, allowlist=["test"])
+    @pytest.mark.parametrize(
+        ("allowlist", "denylist", "expected_activities"),
+        [
+            (["test"], None, ["test"]),
+            (["test"], ["test"], []),
+            (
+                None,
+                ["test"],
+                [
+                    "test_callable_schema",
+                    "test_error",
+                    "test_exception",
+                    "test_list_output",
+                    "test_no_schema",
+                    "test_str_output",
+                    "test_without_default_memory",
+                ],
+            ),
+            ([], ["test"], []),
+        ],
+    )
+    def test_allowdenylist(self, allowlist, denylist, expected_activities):
+        tool = MockTool(test_field="hello", test_int=5, allowlist=allowlist, denylist=denylist)
 
-        assert len(tool.activities()) == 1
-
-    def test_denylist(self):
-        tool = MockTool(test_field="hello", test_int=5, denylist=["test"])
-
-        assert len(tool.activities()) == 7
+        assert [getattr(activity, "name") for activity in tool.activities()] == expected_activities
 
     def test_invalid_allowlist(self):
         with pytest.raises(ValueError):
