@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
-import time
 import uuid
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 from urllib.parse import urljoin
 
 import requests
@@ -14,6 +14,9 @@ from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.assistant import BaseAssistantDriver
 from griptape.events import BaseEvent, EventBus
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -104,42 +107,33 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         return response.json()["assistant_run_id"]
 
     def _get_run_result(self, assistant_run_id: str) -> TextArtifact:
-        events, next_offset = self._get_run_events(assistant_run_id)
-        attempts = 0
+        events = self._get_run_events(assistant_run_id)
         output = None
 
-        while output is None and attempts < self.max_attempts:
-            for event in events:
-                if event["origin"] == "ASSISTANT":
-                    event_payload = event["payload"]
-                    try:
-                        EventBus.publish_event(BaseEvent.from_dict(event_payload))
-                    except ValueError as e:
-                        logger.warning("Failed to deserialize event: %s", e)
-                    if event["type"] == "FinishStructureRunEvent":
-                        output = TextArtifact.from_dict(event_payload["output_task_output"])
-
-            if output is None and not events:
-                time.sleep(self.poll_interval)
-                attempts += 1
-            events, next_offset = self._get_run_events(assistant_run_id, offset=next_offset)
+        for event in events:
+            if event["origin"] == "ASSISTANT":
+                event_payload = event["payload"]
+                try:
+                    EventBus.publish_event(BaseEvent.from_dict(event_payload))
+                except ValueError as e:
+                    logger.warning("Failed to deserialize event: %s", e)
+                if event["type"] == "FinishStructureRunEvent":
+                    output = TextArtifact.from_dict(event_payload["output_task_output"])
 
         if output is None:
-            raise TimeoutError("The assistant run did not finish in time.")
+            raise ValueError("Output not found.")
 
         return output
 
-    def _get_run_events(self, assistant_run_id: str, offset: int = 0) -> tuple[list[dict], int]:
-        url = urljoin(self.base_url.strip("/"), f"/api/assistant-runs/{assistant_run_id}/events")
-        response = requests.get(url, headers=self.headers, params={"offset": offset})
-        response.raise_for_status()
-
-        response_json = response.json()
-
-        events = response_json.get("events", [])
-        next_offset = response_json.get("next_offset", 0)
-
-        return events, next_offset
+    def _get_run_events(self, assistant_run_id: str) -> Iterator[dict]:
+        url = urljoin(self.base_url.strip("/"), f"/api/assistant-runs/{assistant_run_id}/events/stream")
+        with requests.get(url, headers=self.headers, stream=True) as response:
+            response.raise_for_status()
+            for line in response.iter_lines():
+                if line:
+                    decoded_line = line.decode("utf-8")
+                    if decoded_line.startswith("data:"):
+                        yield json.loads(decoded_line.removeprefix("data:").strip())
 
     def _find_thread_by_alias(self, thread_alias: str) -> Optional[dict]:
         url = urljoin(self.base_url.strip("/"), "/api/threads")
