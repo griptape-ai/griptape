@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.5](https://github.com/griptape-ai/griptape/compare/v1.3.4...v1.3.5) (2025-02-19)
+
+
+### Bug Fixes
+
+* **engines-eval:** fix evaluation parameters not being included in prompt ([#1751](https://github.com/griptape-ai/griptape/issues/1751)) ([e267d45](https://github.com/griptape-ai/griptape/commit/e267d45136e2e5f967014bb85f426d3b36f44bb8))
+
 ## [1.3.4](https://github.com/griptape-ai/griptape/compare/v1.3.3...v1.3.4) (2025-02-13)
 
 
