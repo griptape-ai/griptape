@@ -48,6 +48,12 @@ Tokenizers are a low level abstraction that you will rarely interact with direct
 --8<-- "docs/griptape-framework/misc/src/tokenizers_6.py"
 ```
 
+### Grok
+
+```python
+--8<-- "docs/griptape-framework/misc/src/tokenizers_grok.py"
+```
+
 ### Simple
 
 Not all LLM providers have a public tokenizer API. In this case, you can use the `SimpleTokenizer` to count tokens based on a simple heuristic.
