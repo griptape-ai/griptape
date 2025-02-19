@@ -28,6 +28,7 @@ from .embedding.amazon_sagemaker_jumpstart import AmazonSageMakerJumpstartEmbedd
 from .embedding.amazon_bedrock import AmazonBedrockTitanEmbeddingDriver, AmazonBedrockCohereEmbeddingDriver
 from .embedding.voyageai import VoyageAiEmbeddingDriver
 from .embedding.huggingface_hub import HuggingFaceHubEmbeddingDriver
+from .embedding.huggingface_pipeline import HuggingFacePipelineEmbeddingDriver
 from .embedding.google import GoogleEmbeddingDriver
 from .embedding.dummy import DummyEmbeddingDriver
 from .embedding.cohere import CohereEmbeddingDriver
@@ -154,6 +155,7 @@ __all__ = [
     "AmazonBedrockCohereEmbeddingDriver",
     "VoyageAiEmbeddingDriver",
     "HuggingFaceHubEmbeddingDriver",
+    "HuggingFacePipelineEmbeddingDriver",
     "GoogleEmbeddingDriver",
     "DummyEmbeddingDriver",
     "CohereEmbeddingDriver",
