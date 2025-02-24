@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import time
 from typing import Optional
 from urllib.parse import urljoin
 
@@ -72,8 +73,8 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     def _get_event_request(self, event_payload: dict) -> dict:
         return {
             "payload": event_payload,
-            "timestamp": event_payload["timestamp"],
-            "type": event_payload["type"],
+            "timestamp": event_payload.get("timestamp", time.time()),
+            "type": event_payload.get("type", "UserEvent"),
         }
 
     def _post_event(self, json: list[dict] | dict) -> None:

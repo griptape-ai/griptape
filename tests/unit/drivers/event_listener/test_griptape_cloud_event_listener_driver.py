@@ -1,6 +1,6 @@
 import os
 import time
-from unittest.mock import MagicMock, Mock
+from unittest.mock import ANY, MagicMock, Mock
 
 import pytest
 
@@ -104,3 +104,27 @@ class TestGriptapeCloudEventListenerDriver:
                 json=driver._get_event_request(event.to_dict()),
                 headers={"Authorization": "Bearer foo bar"},
             )
+
+    @pytest.mark.parametrize(
+        ("event", "expected"),
+        [
+            (
+                MockEvent().to_dict(),
+                {
+                    "payload": {
+                        "id": ANY,
+                        "meta": {},
+                        "timestamp": ANY,
+                        "type": "MockEvent",
+                    },
+                    "timestamp": ANY,
+                    "type": "MockEvent",
+                },
+            ),
+            ({}, {"payload": {}, "timestamp": ANY, "type": "UserEvent"}),
+        ],
+    )
+    def test__get_event_request(self, driver, event, expected):
+        result = driver._get_event_request(event)
+
+        assert result == expected
