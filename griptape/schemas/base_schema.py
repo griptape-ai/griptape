@@ -7,8 +7,10 @@ from typing import Any, Literal, Optional, TypeVar, Union, _SpecialForm, get_arg
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
+from pydantic import BaseModel
 
 from griptape.schemas.bytes_field import Bytes
+from griptape.schemas.pydantic_model_field import PydanticModel
 from griptape.schemas.union_field import Union as UnionField
 
 
@@ -16,7 +18,13 @@ class BaseSchema(Schema):
     class Meta:
         unknown = INCLUDE
 
-    DATACLASS_TYPE_MAPPING = {**Schema.TYPE_MAPPING, dict: fields.Dict, bytes: Bytes, Any: fields.Raw}
+    DATACLASS_TYPE_MAPPING = {
+        **Schema.TYPE_MAPPING,
+        dict: fields.Dict,
+        bytes: Bytes,
+        Any: fields.Raw,
+        BaseModel: PydanticModel,
+    }
 
     @classmethod
     def from_attrs_cls(cls, attrs_cls: type) -> type:

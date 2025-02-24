@@ -6,5 +6,7 @@ from .bytes_field import Bytes
 
 from .union_field import Union
 
+from .pydantic_model_field import PydanticModel
 
-__all__ = ["BaseSchema", "PolymorphicSchema", "Bytes", "Union"]
+
+__all__ = ["BaseSchema", "PolymorphicSchema", "Bytes", "Union", "PydanticModel"]
