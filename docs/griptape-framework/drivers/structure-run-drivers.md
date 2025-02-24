@@ -6,7 +6,7 @@ search:
 ## Overview
 
 Structure Run Drivers can be used to run Griptape Structures in a variety of runtime environments.
-When combined with the [Structure Run Task](../../griptape-framework/structures/tasks.md#structure-run-task) or [Structure Run Tool](../../griptape-framework/tools/official-tools/structure-run-tool.md) you can create complex, multi-agent pipelines that span multiple runtime environments.
+When combined with the [Structure Run Task](../../griptape-framework/structures/tasks.md#structure-run-task) or [Structure Run Tool](../../griptape-framework/tools/official-tools/index.md#structure-run) you can create complex, multi-agent pipelines that span multiple runtime environments.
 
 ## Structure Run Drivers
 
