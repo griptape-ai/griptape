@@ -9,9 +9,17 @@ from pydantic import BaseModel, TypeAdapter
 from schema import Schema
 
 from griptape import utils
-from griptape.artifacts import ActionArtifact, BaseArtifact, ErrorArtifact, JsonArtifact, ListArtifact, TextArtifact
-from griptape.artifacts.audio_artifact import AudioArtifact
-from griptape.artifacts.generic_artifact import GenericArtifact
+from griptape.artifacts import (
+    ActionArtifact,
+    AudioArtifact,
+    BaseArtifact,
+    ErrorArtifact,
+    GenericArtifact,
+    JsonArtifact,
+    ListArtifact,
+    ModelArtifact,
+    TextArtifact,
+)
 from griptape.common import PromptStack, ToolAction
 from griptape.configs import Defaults
 from griptape.memory.structure import Run
@@ -216,7 +224,7 @@ class PromptTask(
             if isinstance(self.output_schema, Schema):
                 return JsonArtifact(output.value)
             elif isinstance(self.output_schema, type) and issubclass(self.output_schema, BaseModel):
-                return GenericArtifact(TypeAdapter(self.output_schema).validate_json(output.value))
+                return ModelArtifact(TypeAdapter(self.output_schema).validate_json(output.value))
             else:
                 raise ValueError(f"Unsupported output schema type: {type(self.output_schema)}")
         elif isinstance(output, (TextArtifact, AudioArtifact, JsonArtifact, ErrorArtifact)):

@@ -6,12 +6,14 @@ from typing import Literal, Optional, Union
 
 import pytest
 from marshmallow import fields
+from pydantic import BaseModel
 
 from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.loaders import TextLoader
 from griptape.schemas import PolymorphicSchema
 from griptape.schemas.base_schema import BaseSchema
 from griptape.schemas.bytes_field import Bytes
+from griptape.schemas.pydantic_model_field import PydanticModel
 from griptape.schemas.union_field import Union as UnionField
 from tests.mocks.mock_serializable import MockSerializable
 
@@ -24,6 +26,10 @@ class MockEnum(Enum):
 
 class UnsupportedType:
     pass
+
+
+class MockModel(BaseModel):
+    foo: str
 
 
 class TestBaseSchema:
@@ -64,6 +70,8 @@ class TestBaseSchema:
         assert isinstance(BaseSchema._get_field_for_type(bool), fields.Bool)
         assert isinstance(BaseSchema._get_field_for_type(tuple), fields.Raw)
         assert isinstance(BaseSchema._get_field_for_type(dict), fields.Dict)
+
+        assert isinstance(BaseSchema._get_field_for_type(BaseModel), PydanticModel)
         with pytest.raises(ValueError):
             BaseSchema._get_field_for_type(list)
 
