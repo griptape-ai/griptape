@@ -29,4 +29,4 @@ structure = Agent(
     )
 )
 
-print(structure.run(user_input).output_task.output.value)
+print(structure.run(user_input).output.value)
