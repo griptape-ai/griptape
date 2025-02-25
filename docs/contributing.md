@@ -16,15 +16,15 @@ We welcome and encourage pull requests. To streamline the process, please follow
 
 ## Getting Started
 
-Griptape docs are built using [MkDocs](https://squidfunk.github.io/mkdocs-material/getting-started/). Dependencies are managed using [Poetry](https://python-poetry.org/).
+Griptape docs are built using [MkDocs](https://squidfunk.github.io/mkdocs-material/getting-started/). Dependencies are managed using [uv](https://docs.astral.sh/uv/).
 
 To contribute to Griptape docs, install the `docs` extra with:
 
-`poetry install --with docs`
+`uv install --group docs`
 
 Then serve the documentation locally with:
 
-`poetry run mkdocs serve`
+`uv run mkdocs serve`
 
 You should see something similar to the following:
 

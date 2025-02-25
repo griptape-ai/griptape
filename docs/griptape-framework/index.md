@@ -26,18 +26,18 @@ Install **griptape**:
 pip install "griptape[all]" -U
 ```
 
-### Using Poetry
+### Using Uv
 
-To get started with Griptape using Poetry first create a new poetry project from the terminal:
-
-```
-poetry new griptape-quickstart
-```
-
-Change your working directory to the new `griptape-quickstart` directory created by Poetry and add the the `griptape` dependency.
+To get started with Griptape using [uv](https://docs.astral.sh/uv/), first create a new `uv` project from the terminal:
 
 ```
-poetry add "griptape[all]"
+uv init griptape-quickstart
+```
+
+Change your working directory to the new `griptape-quickstart` directory created by `uv` and add the the `griptape` dependency.
+
+```
+uv add "griptape[all]"
 ```
 
 ### Extras
@@ -53,16 +53,16 @@ However, if you wish to optimize the installation size or only require specific 
 To install just the core dependencies:
 
 ```
-poetry add griptape
+uv add griptape
 ```
 
 To install specific extras (e.g., drivers for [AnthropicPromptDriver](./drivers/prompt-drivers.md#anthropic) and [PineconeVectorStoreDriver](./drivers/vector-store-drivers.md#pinecone)):
 
 ```
-poetry add "griptape[drivers-prompt-anthropic,drivers-vector-pinecone]"
+uv add "griptape[drivers-prompt-anthropic,drivers-vector-pinecone]"
 ```
 
-For a comprehensive list of extras, please refer to the `[tool.poetry.extras]` section of Griptape's [pyproject.toml](https://github.com/griptape-ai/griptape/blob/main/pyproject.toml).
+For a comprehensive list of extras, please refer to the `[project.optional-dependencies]` section of Griptape's [pyproject.toml](https://github.com/griptape-ai/griptape/blob/main/pyproject.toml).
 
 ## Build a Simple Agent
 

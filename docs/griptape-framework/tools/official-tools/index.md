@@ -54,7 +54,7 @@ You can specify a local working directory and environment variables during tool 
 ```
 
 ```
-❮ poetry run python src/docs/task-memory.py
+❮ uv run python src/docs/task-memory.py
 [08/12/24 15:13:56] INFO     PromptTask 203ee958d1934811afe0bb86fb246e86
                              Input: Make 2 files and then list the files in the current directory
 [08/12/24 15:13:58] INFO     Subtask eb4e843b6f37498f9f0e85ada68114ac

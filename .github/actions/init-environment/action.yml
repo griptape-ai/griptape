@@ -12,34 +12,20 @@ runs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install and configure Poetry
-        uses: snok/install-poetry@v1
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
         with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
-      - name: Load cached venv
-        id: cached-poetry-dependencies
-        uses: actions/cache@v4
-        with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
 
       - name: Install dependencies
-        if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --with test --with dev --with docs --all-extras
         shell: bash
-      - name: Activate venv 
-        run: |
-          source $VENV
-          echo PATH=$PATH >> $GITHUB_ENV
-        shell: bash
+        run: uv sync --all-extras --all-groups
 
       - name: Get installed Playwright version
         id: playwright-version
         run: |
-          version=$(poetry run playwright/ -V | awk '{print $2}' | tr -d '\n')
+          version=$(uv run playwright -V | awk '{print $2}' | tr -d '\n')
           echo "version=$version" >> $GITHUB_OUTPUT
         shell: bash
       
@@ -51,5 +37,5 @@ runs:
 
       - name: Install playwright
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: playwright install --with-deps
+        run: uv run playwright install --with-deps
         shell: bash

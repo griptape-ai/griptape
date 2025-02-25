@@ -38,7 +38,7 @@ jobs:
       - name: Init environment 
         uses: ./.github/actions/init-bare-environment 
       - name: Run unit tests
-        run: poetry run pytest -n auto tests/unit/structures
+        run: uv run pytest -n auto tests/unit/structures
   test-windows:
     runs-on: windows-latest
     strategy:
@@ -55,7 +55,7 @@ jobs:
         uses: ./.github/actions/init-environment
       - name: Run unit tests
         # TODO: make test/unit fails with the following error:
-        # process_begin: CreateProcess(NULL, poetry run pytest -n auto tests/unit, ...) failed.
+        # process_begin: CreateProcess(NULL, uv run pytest -n auto tests/unit, ...) failed.
         # make (e=2): The system cannot find the file specified.
         # make: *** [Makefile:24: test/unit] Error 2
-        run: poetry run pytest -n auto tests/unit
+        run: uv run pytest -n auto tests/unit
