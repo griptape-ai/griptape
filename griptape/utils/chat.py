@@ -86,9 +86,7 @@ class Chat:
                     self._call_handle_output(chunk.value, stream=True)
             else:
                 self._call_handle_output(self.processing_text)
-                self._call_handle_output(
-                    f"{self.response_prefix}{self.structure.run(question).output_task.output.to_text()}"
-                )
+                self._call_handle_output(f"{self.response_prefix}{self.structure.run(question).output.to_text()}")
 
         # Restore the original logger level
         logging.getLogger(Defaults.logging_config.logger_name).setLevel(old_logger_level)

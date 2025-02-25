@@ -1,15 +1,32 @@
 from __future__ import annotations
 
-from typing import Any, Callable, TypeVar, cast
+import functools
+from typing import Any, Callable, Optional, TypeVar, cast, overload
 
 import wrapt
+from typing_extensions import ParamSpec
 
 T = TypeVar("T")
+P = ParamSpec("P")
 
 
-def observable(*dargs: Any, **dkwargs: Any) -> Callable:
+@overload
+def observable(wrapped: None = None, **dkwargs: Any) -> Callable[[Callable[P, T]], Callable[P, T]]: ...
+
+
+@overload
+def observable(wrapped: Callable[P, T], **dkwargs: Any) -> Callable[P, T]: ...
+
+
+def observable(wrapped: Optional[Callable[P, T] | Any] = None, **dkwargs: Any) -> Any:
+    if wrapped is None:
+        return functools.partial(observable, **dkwargs)
+
+    if not callable(wrapped):
+        raise ValueError("Non-callable positional argument passed. Use kwargs to pass arguments to the decorator.")
+
     @wrapt.decorator
-    def decorator(wrapped: Callable[..., T], instance: Any, args: Any, kwargs: Any) -> T:
+    def wrapper(wrapped: Callable[P, T], instance: Any, args: Any, kwargs: Any) -> T:
         from griptape.common.observable import Observable
         from griptape.observability.observability import Observability
 
@@ -21,19 +38,10 @@ def observable(*dargs: Any, **dkwargs: Any) -> Callable:
                     instance=instance,
                     args=args,
                     kwargs=kwargs,
-                    decorator_args=dargs,
+                    decorator_args=(),
                     decorator_kwargs=dkwargs,
                 )
             ),
         )
 
-    # Check if it's being called as @observable or @observable(...)
-    if len(dargs) == 1 and callable(dargs[0]) and not dkwargs:  # pyright: ignore[reportArgumentType]
-        # Case when decorator is used without arguments
-        func = dargs[0]
-        dargs = ()
-        dkwargs = {}
-        return decorator(func)  # pyright: ignore[reportCallIssue]
-    else:
-        # Case when decorator is used with arguments
-        return decorator
+    return wrapper(wrapped)  # pyright: ignore[reportCallIssue]
