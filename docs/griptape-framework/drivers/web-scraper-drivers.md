@@ -29,7 +29,7 @@ Example using `ProxyWebScraperDriver` directly:
     playwright browsers to be installed.
 
     To install the playwright browsers, run `playwright install` in your terminal. If you are using
-    poetry, run `poetry run playwright install` instead. The `playwright` command should already be
+    uv, run `uv run playwright install` instead. The `playwright` command should already be
     installed as a dependency of the `drivers-web-scraper-markdownify` extra. For more details about
     playwright, see [the playwright docs](https://playwright.dev/python/docs/library).
 

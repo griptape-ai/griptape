@@ -40,7 +40,7 @@ def discover_python_files(directory):
 def test_python_file_execution(python_file):
     """Test that the Python file executes successfully."""
     result = subprocess.run(
-        ["poetry", "run", "python", python_file],
+        ["uv", "run", "python", python_file],
         capture_output=True,
         text=True,
         input="Hi\nexit\n",
