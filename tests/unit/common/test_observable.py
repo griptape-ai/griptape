@@ -71,7 +71,7 @@ class TestObservable:
     def test_observable_function_args(self, observe_spy):
         from griptape.common import observable
 
-        @observable("one", 2, {"th": "ree"}, a="b", b=6)
+        @observable(a="one", b=2, c={"th": "ree"}, d="b", e=6)
         def bar(*args, **kwargs):
             if args:
                 return args[0]
@@ -91,24 +91,39 @@ class TestObservable:
                     Observable.Call(
                         func=original_bar,
                         args=(),
-                        decorator_args=("one", 2, {"th": "ree"}),
-                        decorator_kwargs={"a": "b", "b": 6},
+                        decorator_kwargs={
+                            "a": "one",
+                            "b": 2,
+                            "c": {"th": "ree"},
+                            "d": "b",
+                            "e": 6,
+                        },
                     )
                 ),
                 call(
                     Observable.Call(
                         func=original_bar,
                         args=("a",),
-                        decorator_args=("one", 2, {"th": "ree"}),
-                        decorator_kwargs={"a": "b", "b": 6},
+                        decorator_kwargs={
+                            "a": "one",
+                            "b": 2,
+                            "c": {"th": "ree"},
+                            "d": "b",
+                            "e": 6,
+                        },
                     )
                 ),
                 call(
                     Observable.Call(
                         func=original_bar,
                         args=("b", "2"),
-                        decorator_args=("one", 2, {"th": "ree"}),
-                        decorator_kwargs={"a": "b", "b": 6},
+                        decorator_kwargs={
+                            "a": "one",
+                            "b": 2,
+                            "c": {"th": "ree"},
+                            "d": "b",
+                            "e": 6,
+                        },
                     )
                 ),
                 call(
@@ -116,8 +131,13 @@ class TestObservable:
                         func=original_bar,
                         args=("c",),
                         kwargs={"x": "y"},
-                        decorator_args=("one", 2, {"th": "ree"}),
-                        decorator_kwargs={"a": "b", "b": 6},
+                        decorator_kwargs={
+                            "a": "one",
+                            "b": 2,
+                            "c": {"th": "ree"},
+                            "d": "b",
+                            "e": 6,
+                        },
                     )
                 ),
             ]
@@ -183,7 +203,7 @@ class TestObservable:
         from griptape.common import observable
 
         class Foo:
-            @observable("one", 2, {"th": "ree"}, a="b", b=6)
+            @observable(a="one", b=2, c={"th": "ree"}, d="b", e=6)
             def bar(self, *args, **kwargs):
                 if args:
                     return args[0]
@@ -205,8 +225,13 @@ class TestObservable:
                         func=original_bar,
                         instance=foo,
                         args=(),
-                        decorator_args=("one", 2, {"th": "ree"}),
-                        decorator_kwargs={"a": "b", "b": 6},
+                        decorator_kwargs={
+                            "a": "one",
+                            "b": 2,
+                            "c": {"th": "ree"},
+                            "d": "b",
+                            "e": 6,
+                        },
                     )
                 ),
                 call(
@@ -214,8 +239,13 @@ class TestObservable:
                         func=original_bar,
                         instance=foo,
                         args=("a",),
-                        decorator_args=("one", 2, {"th": "ree"}),
-                        decorator_kwargs={"a": "b", "b": 6},
+                        decorator_kwargs={
+                            "a": "one",
+                            "b": 2,
+                            "c": {"th": "ree"},
+                            "d": "b",
+                            "e": 6,
+                        },
                     )
                 ),
                 call(
@@ -223,8 +253,13 @@ class TestObservable:
                         func=original_bar,
                         instance=foo,
                         args=("b", "2"),
-                        decorator_args=("one", 2, {"th": "ree"}),
-                        decorator_kwargs={"a": "b", "b": 6},
+                        decorator_kwargs={
+                            "a": "one",
+                            "b": 2,
+                            "c": {"th": "ree"},
+                            "d": "b",
+                            "e": 6,
+                        },
                     )
                 ),
                 call(
@@ -233,9 +268,23 @@ class TestObservable:
                         instance=foo,
                         args=("c",),
                         kwargs={"x": "y"},
-                        decorator_args=("one", 2, {"th": "ree"}),
-                        decorator_kwargs={"a": "b", "b": 6},
+                        decorator_kwargs={
+                            "a": "one",
+                            "b": 2,
+                            "c": {"th": "ree"},
+                            "d": "b",
+                            "e": 6,
+                        },
                     )
                 ),
             ]
         )
+
+    def test_positional_arg(self):
+        from griptape.common import observable
+
+        with pytest.raises(ValueError, match="Non-callable positional argument passed."):
+
+            @observable("foo")
+            def bar() -> None:
+                pass
