@@ -20,7 +20,7 @@ class TestGoogleDriversConfig:
                 "temperature": 0.1,
                 "max_tokens": None,
                 "stream": False,
-                "model": "gemini-1.5-pro",
+                "model": "gemini-2.0-flash",
                 "top_p": None,
                 "top_k": None,
                 "tool_choice": "auto",
@@ -31,7 +31,7 @@ class TestGoogleDriversConfig:
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "embedding_driver": {
                 "type": "GoogleEmbeddingDriver",
-                "model": "models/embedding-001",
+                "model": "models/embedding-004",
                 "task_type": "retrieval_document",
                 "title": None,
             },
@@ -39,7 +39,7 @@ class TestGoogleDriversConfig:
                 "type": "LocalVectorStoreDriver",
                 "embedding_driver": {
                     "type": "GoogleEmbeddingDriver",
-                    "model": "models/embedding-001",
+                    "model": "models/embedding-004",
                     "task_type": "retrieval_document",
                     "title": None,
                 },

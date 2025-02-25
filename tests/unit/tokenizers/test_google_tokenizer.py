@@ -19,18 +19,22 @@ class TestGoogleTokenizer:
     def tokenizer(self, request):
         return GoogleTokenizer(model=request.param, api_key="1234")
 
-    @pytest.mark.parametrize(("tokenizer", "expected"), [("gemini-pro", 5)], indirect=["tokenizer"])
+    @pytest.mark.parametrize(("tokenizer", "expected"), [("gemini-2.0-flash", 5)], indirect=["tokenizer"])
     def test_token_count(self, tokenizer, expected):
         assert tokenizer.count_tokens("foo bar huzzah") == expected
         assert tokenizer.count_tokens(PromptStack(messages=[Message(content="foo", role="user")])) == expected
         assert tokenizer.count_tokens(["foo", "bar", "huzzah"]) == expected
 
-    @pytest.mark.parametrize(("tokenizer", "expected"), [("gemini-pro", 30715)], indirect=["tokenizer"])
+    @pytest.mark.parametrize(
+        ("tokenizer", "expected"), [("gemini-1.5-pro", 2097147), ("gemini-2.0-flash", 1048571)], indirect=["tokenizer"]
+    )
     def test_input_tokens_left(self, tokenizer, expected):
         assert tokenizer.count_input_tokens_left("foo bar huzzah") == expected
         assert tokenizer.count_input_tokens_left(["foo", "bar", "huzzah"]) == expected
 
-    @pytest.mark.parametrize(("tokenizer", "expected"), [("gemini-pro", 2043)], indirect=["tokenizer"])
+    @pytest.mark.parametrize(
+        ("tokenizer", "expected"), [("gemini-1.5-pro", 8187), ("gemini-2.0-flash", 8187)], indirect=["tokenizer"]
+    )
     def test_output_tokens_left(self, tokenizer, expected):
         assert tokenizer.count_output_tokens_left("foo bar huzzah") == expected
         assert tokenizer.count_output_tokens_left(["foo", "bar", "huzzah"]) == expected

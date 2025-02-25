@@ -164,7 +164,7 @@ class TestGooglePromptDriver:
         ]
 
     def test_init(self):
-        driver = GooglePromptDriver(model="gemini-pro", api_key="1234")
+        driver = GooglePromptDriver(model="gemini-2.0-flash", api_key="1234")
         assert driver
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
@@ -172,7 +172,7 @@ class TestGooglePromptDriver:
     def test_try_run(self, mock_generative_model, prompt_stack, messages, use_native_tools, structured_output_strategy):
         # Given
         driver = GooglePromptDriver(
-            model="gemini-pro",
+            model="gemini-2.0-flash",
             api_key="api-key",
             top_p=0.5,
             top_k=50,
@@ -222,7 +222,7 @@ class TestGooglePromptDriver:
     ):
         # Given
         driver = GooglePromptDriver(
-            model="gemini-pro",
+            model="gemini-2.0-flash",
             api_key="api-key",
             stream=True,
             top_p=0.5,
