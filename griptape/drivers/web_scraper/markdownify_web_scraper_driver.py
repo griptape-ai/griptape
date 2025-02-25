@@ -74,9 +74,9 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
         # Custom MarkdownConverter to optionally linked urls. If include_links is False only
         # the text of the link is returned.
         class OptionalLinksMarkdownConverter(markdownify.MarkdownConverter):
-            def convert_a(self, el: Any, text: str, convert_as_inline: Any) -> str:
+            def convert_a(self, el: Any, text: str, parent_tags: Any) -> str:
                 if include_links:
-                    return super().convert_a(el, text, convert_as_inline)
+                    return super().convert_a(el, text, parent_tags)
                 return text
 
         soup = bs4.BeautifulSoup(page, "html.parser")

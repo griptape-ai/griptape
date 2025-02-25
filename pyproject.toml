@@ -74,7 +74,7 @@ drivers-web-scraper-trafilatura = ["trafilatura>=2.0"]
 drivers-web-scraper-markdownify = [
   "playwright>=1.42",
   "beautifulsoup4>=4.12.3",
-  "markdownify>=0.14.1,<1.0",
+  "markdownify>=1.0.0",
 ]
 drivers-web-search-duckduckgo = ["duckduckgo-search>=7.0.1"]
 drivers-web-search-tavily = ["tavily-python>=0.5.0"]
@@ -133,7 +133,7 @@ all = [
   "trafilatura>=2.0",
   "playwright>=1.42",
   "beautifulsoup4>=4.12.3",
-  "markdownify>=0.14,<1.0",
+  "markdownify>=1.0.0",
   "voyageai>=0.2.1",
   "elevenlabs>=1.1.2",
   "pusher>=3.3.2",
