@@ -9,7 +9,7 @@ Rerank Drivers can be used to rerank search results for a particular query. Ever
 
 - `run(query: str, artifacts: list[TextArtifact])` reranks a list of [TextArtifact](../../reference/griptape/artifacts/text_artifact.md) based on the original query.
 
-Rerank Drivers can also be used with a [RagEngine's Rerank Module](../engines/rag-engines.md#retrievalrerank-modules).
+Rerank Drivers can also be used with a [RagEngine's Rerank Module](../engines/rag-engines.md#retrieval-stage-modules).
 
 ## Rerank Drivers
 
