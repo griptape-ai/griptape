@@ -199,7 +199,8 @@ class StructureTester:
             enabled=False,
         ),
         "GOOGLE_GEMINI_PRO": TesterPromptDriverOption(
-            prompt_driver=GooglePromptDriver(model="gemini-pro", api_key=os.environ["GOOGLE_API_KEY"]), enabled=True
+            prompt_driver=GooglePromptDriver(model="gemini-2.0-flash", api_key=os.environ["GOOGLE_API_KEY"]),
+            enabled=True,
         ),
     }
     TOOLKIT_TASK_CAPABLE_PROMPT_DRIVERS = get_enabled_prompt_drivers(

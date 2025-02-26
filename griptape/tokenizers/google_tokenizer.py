@@ -14,8 +14,8 @@ if TYPE_CHECKING:
 
 @define()
 class GoogleTokenizer(BaseTokenizer):
-    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"gemini": 30720}
-    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"gemini": 2048}
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"gemini-1.5-pro": 2097152, "gemini": 1048576}
+    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"gemini": 8192}
 
     api_key: str = field(kw_only=True, metadata={"serializable": True})
     _client: GenerativeModel = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
