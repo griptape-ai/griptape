@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1](https://github.com/griptape-ai/griptape/compare/v1.4.0...v1.4.1) (2025-02-27)
+
+
+### Bug Fixes
+
+* **decorators:** preserve type hints on `[@observable](https://github.com/observable)` decorator ([#1767](https://github.com/griptape-ai/griptape/issues/1767)) ([7001121](https://github.com/griptape-ai/griptape/commit/700112179cb165de90fc3c407c40e622da203d65))
+* **drivers-prompt-openai:** remove modalities default ([#1774](https://github.com/griptape-ai/griptape/issues/1774)) ([6348c9a](https://github.com/griptape-ai/griptape/commit/6348c9a5097dd80e5dbdf7603d522a1db462e888))
+
 ## [1.4.0](https://github.com/griptape-ai/griptape/compare/v1.3.0...v1.4.0) (2025-02-24)
 
 
