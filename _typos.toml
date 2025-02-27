@@ -8,4 +8,4 @@ ND = "ND"
 mornin = "mornin"
 
 [files]
-extend-exclude = ["docs/assets", "tests/resources/"]
+extend-exclude = ["docs/assets", "tests/resources/", "docs/**/logs/*.txt"]
