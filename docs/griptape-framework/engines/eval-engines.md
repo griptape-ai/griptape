@@ -12,15 +12,16 @@ If `criteria` is set, Griptape will generate `evaluation_steps` for you. This is
 Either `criteria` or `evaluation_steps` must be set, but not both.
 
 === "Code"
+
     ```python
     --8<-- "docs/griptape-framework/engines/src/eval_engines_1.py"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "docs/griptape-framework/engines/logs/eval_engines_1.txt"
     ```
-
 
 ```
 Eval Steps [

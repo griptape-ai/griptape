@@ -59,15 +59,16 @@ Example using `MarkdownifyWebScraperDriver` directly:
 Example of using `MarkdownifyWebScraperDriver` with an agent:
 
 === "Code"
+
     ```python
     --8<-- "docs/griptape-framework/drivers/src/web_scraper_drivers_3.py"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/web_scraper_drivers_3.txt"
     ```
-
 
 ### Trafilatura
 

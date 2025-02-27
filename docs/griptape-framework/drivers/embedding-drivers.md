@@ -21,15 +21,16 @@ You can optionally provide a [Tokenizer](../misc/tokenizers.md) via the [tokeniz
 The [OpenAiEmbeddingDriver](../../reference/griptape/drivers/embedding/openai_embedding_driver.md) uses the [OpenAI Embeddings API](https://platform.openai.com/docs/guides/embeddings).
 
 === "Code"
+
     ```python
     --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_1.py"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_1.txt"
     ```
-
 
 ```
 [0.0017853748286142945, 0.006118456833064556, -0.005811543669551611]
@@ -62,15 +63,16 @@ with updated defaults.
 The [AmazonBedrockTitanEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_bedrock_titan_embedding_driver.md) uses the [Amazon Bedrock Embeddings API](https://docs.aws.amazon.com/bedrock/latest/userguide/embeddings.html).
 
 === "Code"
+
     ```python
     --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_3.py"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_3.txt"
     ```
-
 
 ```
 [-0.234375, -0.024902344, -0.14941406]
@@ -85,15 +87,16 @@ The [AmazonBedrockTitanEmbeddingDriver](../../reference/griptape/drivers/embeddi
 The [GoogleEmbeddingDriver](../../reference/griptape/drivers/embedding/google_embedding_driver.md) uses the [Google Embeddings API](https://ai.google.dev/tutorials/python_quickstart#use_embeddings).
 
 === "Code"
+
     ```python
     --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_4.py"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_4.txt"
     ```
-
 
 ```
 [0.0588633, 0.0033929371, -0.072810836]
@@ -110,15 +113,16 @@ The [HuggingFaceHubEmbeddingDriver](../../reference/griptape/drivers/embedding/h
 - feature-extraction
 
 === "Code"
+
     ```python
     --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_5.py"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_5.txt"
     ```
-
 
 ### Ollama
 
@@ -153,15 +157,16 @@ The [VoyageAiEmbeddingDriver](../../reference/griptape/drivers/embedding/voyagea
     This driver requires the `drivers-embedding-voyageai` [extra](../index.md#extras).
 
 === "Code"
+
     ```python
     --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_8.py"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_8.txt"
     ```
-
 
 ### Cohere
 
@@ -172,27 +177,29 @@ The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_em
     This driver requires the `drivers-embedding-cohere` [extra](../index.md#extras).
 
 === "Code"
+
     ```python
     --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_9.py"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_9.txt"
     ```
-
 
 ### Override Default Structure Embedding Driver
 
 Here is how you can override the Embedding Driver that is used by default in Structures.
 
 === "Code"
+
     ```python
     --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_10.py"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_10.txt"
     ```
-
