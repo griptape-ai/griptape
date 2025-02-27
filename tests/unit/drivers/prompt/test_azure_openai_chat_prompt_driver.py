@@ -125,7 +125,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
     @pytest.mark.parametrize("api_version", ["2023-05-15", "2024-02-01", "2024-06-01", "2024-10-21"])
-    @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
+    @pytest.mark.parametrize("modalities", [[], ["text"], ["text", "audio"], ["audio"]])
     def test_try_run(
         self,
         mock_chat_completion_create,
@@ -210,7 +210,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool"])
     @pytest.mark.parametrize("api_version", ["2023-05-15", "2024-02-01", "2024-06-01", "2024-10-21"])
-    @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
+    @pytest.mark.parametrize("modalities", [[], ["text"], ["text", "audio"], ["audio"]])
     def test_try_stream_run(
         self,
         mock_chat_completion_stream_create,

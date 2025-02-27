@@ -100,7 +100,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         ),
         kw_only=True,
     )
-    modalities: list[str] = field(default=Factory(lambda: ["text"]), kw_only=True, metadata={"serializable": True})
+    modalities: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
     audio: dict = field(
         default=Factory(lambda: {"voice": "alloy", "format": "pcm16"}), kw_only=True, metadata={"serializable": True}
     )

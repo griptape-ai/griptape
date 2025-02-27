@@ -29,7 +29,7 @@ class TestOpenAiDriversConfig:
                 "stream": False,
                 "user": "",
                 "audio": {"format": "pcm16", "voice": "alloy"},
-                "modalities": ["text"],
+                "modalities": [],
                 "use_native_tools": True,
                 "structured_output_strategy": "native",
                 "extra_params": {},
