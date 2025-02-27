@@ -1,0 +1,8 @@
+[02/27/25 20:26:33] INFO     PromptTask af6050aa04784fc8b95083c25f7fd573        
+                             Input: My name is Jeff.                            
+[02/27/25 20:26:34] INFO     PromptTask af6050aa04784fc8b95083c25f7fd573        
+                             Output: Hello, Jeff! How can I assist you today?   
+[02/27/25 20:26:35] INFO     PromptTask af6050aa04784fc8b95083c25f7fd573        
+                             Input: What is my name?                            
+[02/27/25 20:26:36] INFO     PromptTask af6050aa04784fc8b95083c25f7fd573        
+                             Output: Your name is Jeff.                         

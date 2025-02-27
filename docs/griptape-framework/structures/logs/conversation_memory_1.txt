@@ -1,0 +1,16 @@
+[02/27/25 20:28:09] INFO     PromptTask acc8b8a0a736413791238b1d7c320d4d        
+                             Input: My favorite animal is a Liger.              
+[02/27/25 20:28:11] INFO     PromptTask acc8b8a0a736413791238b1d7c320d4d        
+                             Output: That's interesting! Ligers are fascinating 
+                             creatures. They are a hybrid offspring of a male   
+                             lion and a female tiger. Ligers typically inherit  
+                             physical and behavioral traits from both parents,  
+                             often growing larger than either parent species.   
+                             They are known for their unique appearance and are 
+                             usually found in captivity, as lions and tigers do 
+                             not share the same habitats in the wild. What do   
+                             you find most interesting about ligers?            
+                    INFO     PromptTask acc8b8a0a736413791238b1d7c320d4d        
+                             Input: What is my favorite animal?                 
+[02/27/25 20:28:12] INFO     PromptTask acc8b8a0a736413791238b1d7c320d4d        
+                             Output: Your favorite animal is a liger.           

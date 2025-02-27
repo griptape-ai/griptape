@@ -1,0 +1,19 @@
+[02/27/25 20:27:44] INFO     PromptTask 5134e714f84c455786ffc7e95dba309b        
+                             Input: Respond to this user: Hello! My favorite    
+                             color is blue, and my social security number is    
+                             xxx-xx-xxxx.                                       
+[02/27/25 20:27:45] INFO     PromptTask 5134e714f84c455786ffc7e95dba309b        
+                             Output: {                                          
+                               "original_input": "Respond to this user: Hello!  
+                             My favorite color is blue, and my social security  
+                             number is 123-45-6789.",                           
+                               "masked_input": "Respond to this user: Hello! My 
+                             favorite color is blue, and my social security     
+                             number is xxx-xx-xxxx.",                           
+                               "output": "Hello! It's great to hear that your   
+                             favorite color is blue. However, it's important to 
+                             keep your personal information, like your social   
+                             security number, private and secure. If you have   
+                             any questions or need assistance, feel free to     
+                             ask!"                                              
+                             }                                                  

@@ -1,0 +1,5 @@
+[02/27/25 20:24:18] INFO     PromptTask e1f83989cf764ee5bb8bc096fed3cb17        
+                             Input: I want to fly from Orlando to Boston        
+[02/27/25 20:24:19] INFO     PromptTask e1f83989cf764ee5bb8bc096fed3cb17        
+                             Output: The airport codes for Orlando and Boston   
+                             are MCO and BOS, respectively.                     

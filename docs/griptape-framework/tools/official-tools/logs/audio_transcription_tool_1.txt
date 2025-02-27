@@ -1,0 +1,28 @@
+[02/27/25 20:22:12] INFO     PromptTask 6df3a8e1f8844ae7af548ce7f1f1ea0d        
+                             Input: Transcribe the following audio file:        
+                             /Users/andrew/code/griptape/tests/resources/sentenc
+                             es2.wav                                            
+[02/27/25 20:22:19] INFO     Subtask 08edb8cc71564b899a5f46de6ac17a97           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_U7n23CxlaGWxABUXTnAp0fqQ",        
+                                 "name": "AudioTranscriptionTool",              
+                                 "path": "transcribe_audio_from_disk",          
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "path":                                    
+                             "/Users/andrew/code/griptape/tests/resources/senten
+                             ces2.wav"                                          
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 08edb8cc71564b899a5f46de6ac17a97           
+                             Response: [Errno 2] No such file or directory:     
+                             '/Users/andrew/code/griptape/tests/resources/senten
+                             ces2.wav'                                          
+[02/27/25 20:22:20] INFO     PromptTask 6df3a8e1f8844ae7af548ce7f1f1ea0d        
+                             Output: It seems that the specified audio file path
+                             does not exist or is incorrect. Please ensure that 
+                             the file path is correct and that the file is      
+                             accessible.                                        
