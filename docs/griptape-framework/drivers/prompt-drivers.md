@@ -81,8 +81,16 @@ This driver uses [OpenAi function calling](https://platform.openai.com/docs/guid
 Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) provide OpenAI-compatible APIs. You can use the [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) to interact with these services.
 Simply set the `base_url` to the service's API endpoint and the `model` to the model name. If the service requires an API key, you can set it in the `api_key` field.
 
+For example, here is how we can connect to LMStudio's API:
+
 ```python
 --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_4.py"
+```
+
+Or Groq's API:
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_groq.py"
 ```
 
 !!! tip

@@ -453,7 +453,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3", "o3-mini"])
-    @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
+    @pytest.mark.parametrize("modalities", [[], ["text"], ["text", "audio"], ["audio"]])
     def test_try_run(
         self,
         mock_chat_completion_create,
@@ -486,7 +486,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if not driver.is_reasoning_model
+            if driver.modalities and not driver.is_reasoning_model
             else {},
             **{
                 "audio": driver.audio,
@@ -566,7 +566,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if not driver.is_reasoning_model
+            if driver.modalities and not driver.is_reasoning_model
             else {},
             response_format={"type": "json_object"},
         )
@@ -607,7 +607,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if not driver.is_reasoning_model
+            if driver.modalities and not driver.is_reasoning_model
             else {},
             response_format={
                 "json_schema": {
@@ -632,7 +632,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3", "o3-mini"])
-    @pytest.mark.parametrize("modalities", [["text"], ["text", "audio"], ["audio"]])
+    @pytest.mark.parametrize("modalities", [[], ["text"], ["text", "audio"], ["audio"]])
     def test_try_stream_run(
         self,
         mock_chat_completion_stream_create,
@@ -671,7 +671,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            **{"modalities": driver.modalities} if not driver.is_reasoning_model else {},
+            **{"modalities": driver.modalities} if driver.modalities and not driver.is_reasoning_model else {},
             **{"reasoning_effort": driver.reasoning_effort} if driver.is_reasoning_model and model != "o1-mini" else {},
             **{
                 "temperature": driver.temperature,
@@ -758,7 +758,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if not driver.is_reasoning_model
+            if driver.modalities and not driver.is_reasoning_model
             else {},
         )
         assert event.value[0].value == "model-output"
@@ -803,7 +803,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if not driver.is_reasoning_model
+            if driver.modalities and not driver.is_reasoning_model
             else {},
             max_tokens=1,
         )
