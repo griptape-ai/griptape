@@ -116,10 +116,6 @@ if __name__ == "__main__":
 
     changed_snippet_paths = [Path(snippet) for snippet in changed_snippets]
 
-    # TODO: Replace, this should only run once to bootstrap the logs
-    if not changed_snippet_paths:
-        changed_snippet_paths = Path(root_dir).rglob("*.py")
-
     for changed_snippet_path in changed_snippet_paths:
         logger.debug("Changed snippet %s", changed_snippet_path)
         logs = _get_logs_for_snippet_path(changed_snippet_path)
