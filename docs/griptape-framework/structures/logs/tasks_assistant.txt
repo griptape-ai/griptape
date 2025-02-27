@@ -1,0 +1,4 @@
+[02/27/25 20:26:52] INFO     AssistantTask a951a028b50e4349856c21c8eb916ebe     
+                             Input: Hello!                                      
+[02/27/25 20:26:55] INFO     AssistantTask a951a028b50e4349856c21c8eb916ebe     
+                             Output: Hello! 😊 How can I assist you today?      
