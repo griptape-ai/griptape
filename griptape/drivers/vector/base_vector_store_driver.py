@@ -89,7 +89,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         if self.does_entry_exist(vector_id, namespace=namespace):
             return vector_id
         else:
-            meta["artifact"] = artifact.to_json()
+            meta = {**meta, "artifact": artifact.to_json()}
 
             vector = artifact.embedding or artifact.generate_embedding(self.embedding_driver)
 
