@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from io import BytesIO
 from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers.embedding import BaseEmbeddingDriver
 from griptape.tokenizers import VoyageAiTokenizer
 from griptape.utils import import_optional_dependency
@@ -39,6 +41,16 @@ class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
     @lazy_property()
     def client(self) -> Any:
         return import_optional_dependency("voyageai").Client(api_key=self.api_key)
+
+    def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
+        if isinstance(artifact, TextArtifact):
+            return self.try_embed_chunk(artifact.value)
+        else:
+            pil_image = import_optional_dependency("PIL.Image")
+
+            return self.client.multimodal_embed(
+                [[pil_image.open(BytesIO(artifact.value))]], model=self.model
+            ).embeddings[0]
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         return self.client.embed([chunk], model=self.model, input_type=self.input_type).embeddings[0]
