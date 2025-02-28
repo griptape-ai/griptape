@@ -91,7 +91,7 @@ class TestQdrantVectorStoreDriver:
         ]
 
         with (
-            patch.object(driver.embedding_driver, "embed_string", return_value=[0.1, 0.2, 0.3]) as mock_embed,
+            patch.object(driver.embedding_driver, "embed", return_value=[0.1, 0.2, 0.3]) as mock_embed,
             patch.object(driver.client, "search", return_value=mock_query_result) as mock_search,
         ):
             query = "test"
