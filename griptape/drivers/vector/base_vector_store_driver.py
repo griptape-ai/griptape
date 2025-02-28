@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
 
@@ -21,17 +20,13 @@ if TYPE_CHECKING:
 class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
     DEFAULT_QUERY_COUNT = 5
 
-    @dataclass
-    class Entry:
-        id: str
-        vector: Optional[list[float]] = None
-        score: Optional[float] = None
-        meta: Optional[dict] = None
-        namespace: Optional[str] = None
-
-        @staticmethod
-        def from_dict(data: dict[str, Any]) -> BaseVectorStoreDriver.Entry:
-            return BaseVectorStoreDriver.Entry(**data)
+    @define
+    class Entry(SerializableMixin):
+        id: str = field(metadata={"serializable": True})
+        vector: Optional[list[float]] = field(default=None, metadata={"serializable": True})
+        score: Optional[float] = field(default=None, metadata={"serializable": True})
+        meta: Optional[dict] = field(default=None, metadata={"serializable": True})
+        namespace: Optional[str] = field(default=None, metadata={"serializable": True})
 
         def to_artifact(self) -> BaseArtifact:
             return BaseArtifact.from_json(self.meta["artifact"])  # pyright: ignore[reportOptionalSubscript]
