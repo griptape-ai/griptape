@@ -1,7 +1,9 @@
+from contextlib import nullcontext
 from unittest import mock
 
 import pytest
 
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers.embedding.amazon_bedrock import AmazonBedrockTitanEmbeddingDriver
 
 
@@ -24,5 +26,22 @@ class TestAmazonBedrockTitanEmbeddingDriver:
     def test_init(self):
         assert AmazonBedrockTitanEmbeddingDriver()
 
-    def test_try_embed_chunk(self):
-        assert AmazonBedrockTitanEmbeddingDriver().try_embed_chunk("foobar") == [0, 1, 0]
+    @pytest.mark.parametrize(
+        ("value", "expected_output", "expected_error"),
+        [
+            ("foobar", [0, 1, 0], nullcontext()),
+            (
+                TextArtifact("foobar"),
+                [0, 1, 0],
+                nullcontext(),
+            ),
+            (
+                ImageArtifact(b"foobar", format="jpeg", width=1, height=1),
+                [0, 1, 0],
+                nullcontext(),
+            ),
+        ],
+    )
+    def test_embed(self, value, expected_output, expected_error):
+        with expected_error:
+            assert AmazonBedrockTitanEmbeddingDriver().embed(value) == expected_output

@@ -8,7 +8,7 @@ embedding_driver = CohereEmbeddingDriver(
     input_type="search_document",
 )
 
-embeddings = embedding_driver.embed_string("Hello world!")
+embeddings = embedding_driver.embed("Hello world!")
 
 # display the first 3 embeddings
 print(embeddings[:3])
