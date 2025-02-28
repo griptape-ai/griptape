@@ -181,40 +181,6 @@ The [PromptSummaryTool](../../../reference/griptape/tools/prompt_summary/tool.md
     --8<-- "docs/griptape-framework/tools/official-tools/logs/prompt_summary_tool_1.txt"
     ```
 
-sh
-brew install ninja libtool automake cmake pkg-config gettext curl
-\`\`\`
-
-````
-                         2. **Clone the Neovim Repository**:
-                            Clone the Neovim repository from GitHub:
-                            ```sh
-                            git clone https://github.com/neovim/neovim.git
-                            cd neovim
-                            ```
-
-                         3. **Checkout the Stable Branch (Optional)**:
-                            If you want to build the stable release, checkout the stable branch:
-                            ```sh
-                            git checkout stable
-                            ```
-
-                         4. **Build Neovim**:
-                            Use `make` to build Neovim. You can specify the build type (Release, Debug, RelWithDebInfo):
-                            ```sh
-                            make CMAKE_BUILD_TYPE=Release
-                            ```
-
-                         5. **Install Neovim**:
-                            After building, install Neovim. The default install location is `/usr/local`:
-                            ```sh
-                            sudo make install
-                            ```
-
-                         By following these steps, you should be able to build and install Neovim from source on macOS. For more detailed instructions and
-                         troubleshooting tips, refer to the [BUILD.md](https://github.com/neovim/neovim/blob/master/BUILD.md) file in the Neovim repository. 
-````
-
 ### Rag
 
 The [RagTool](../../../reference/griptape/tools/rag/tool.md) enables LLMs to query modular RAG engines.
