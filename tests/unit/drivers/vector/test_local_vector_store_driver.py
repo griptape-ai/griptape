@@ -47,3 +47,11 @@ class TestLocalVectorStoreDriver(TestBaseVectorStoreDriver):
         assert result[0].vector == [0, 1]
         assert result[0].score is not None
         assert result[0].namespace == "foo"
+
+    def test_upsert_text_artifacts_meta(self, driver, mocker):
+        spy = mocker.spy(driver, "upsert_vector")
+        artifact_1 = TextArtifact("foo bar")
+        artifact_2 = TextArtifact("bar foo")
+        driver.upsert_text_artifacts({"foo": [artifact_1, artifact_2]}, meta={"foo": "bar"})
+        assert spy.call_args_list[0].kwargs["meta"]["artifact"] == artifact_1.to_json()
+        assert spy.call_args_list[1].kwargs["meta"]["artifact"] == artifact_2.to_json()
