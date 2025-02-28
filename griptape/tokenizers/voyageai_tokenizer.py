@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 @define()
 class VoyageAiTokenizer(BaseTokenizer):
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
+        "voyage-3": 32000,
         "voyage-large-2": 16000,
         "voyage-code-2": 16000,
         "voyage-2": 4000,
@@ -31,4 +32,4 @@ class VoyageAiTokenizer(BaseTokenizer):
     )
 
     def count_tokens(self, text: str) -> int:
-        return self.client.count_tokens([text])
+        return self.client.count_tokens([text], model=self.model)
