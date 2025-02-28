@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.2](https://github.com/griptape-ai/griptape/compare/v1.4.1...v1.4.2) (2025-02-28)
+
+
+### Bug Fixes
+
+* **drivers-vector:** don't mutate same instance of meta ([#1782](https://github.com/griptape-ai/griptape/issues/1782)) ([bfaaf03](https://github.com/griptape-ai/griptape/commit/bfaaf032b42188e2724830801d9e903a11f47198))
+
 ## [1.4.1](https://github.com/griptape-ai/griptape/compare/v1.4.0...v1.4.1) (2025-02-27)
 
 
