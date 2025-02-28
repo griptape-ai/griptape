@@ -12,7 +12,7 @@ driver = HuggingFaceHubEmbeddingDriver(
     ),
 )
 
-embeddings = driver.embed_string("Hello world!")
+embeddings = driver.embed("Hello world!")
 
 # display the first 3 embeddings
 print(embeddings[:3])

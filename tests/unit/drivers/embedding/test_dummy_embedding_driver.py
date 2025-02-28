@@ -12,6 +12,6 @@ class TestDummyEmbeddingDriver:
     def test_init(self, embedding_driver):
         assert embedding_driver
 
-    def test_try_embed_chunk(self, embedding_driver):
+    def test_embed(self, embedding_driver):
         with pytest.raises(DummyError):
-            embedding_driver.try_embed_chunk("prompt-stack")
+            embedding_driver.embed("prompt-stack")
