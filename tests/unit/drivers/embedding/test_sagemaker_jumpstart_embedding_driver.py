@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 
+from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.drivers.embedding.amazon_sagemaker_jumpstart import AmazonSageMakerJumpstartEmbeddingDriver
 from griptape.tokenizers.openai_tokenizer import OpenAiTokenizer
 
@@ -27,20 +28,20 @@ class TestAmazonSageMakerJumpstartEmbeddingDriver:
             tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
         )
 
-    def test_try_embed_chunk(self, mock_client):
+    def test_embed(self, mock_client):
         mock_client.get().read.return_value = b'{"embedding": [[0, 1, 0]]}'
         assert AmazonSageMakerJumpstartEmbeddingDriver(
             endpoint="test-endpoint",
             model="test-model",
             tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
-        ).try_embed_chunk("foobar") == [0, 1, 0]
+        ).embed("foobar") == [0, 1, 0]
 
         mock_client.get().read.return_value = b'{"embedding": [0, 2, 0]}'
         assert AmazonSageMakerJumpstartEmbeddingDriver(
             endpoint="test-endpoint",
             model="test-model",
             tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
-        ).try_embed_chunk("foobar") == [0, 2, 0]
+        ).embed("foobar") == [0, 2, 0]
 
         mock_client.get().read.return_value = b'{"embedding": []}'
         with pytest.raises(ValueError, match="model response is empty"):
@@ -48,7 +49,7 @@ class TestAmazonSageMakerJumpstartEmbeddingDriver:
                 endpoint="test-endpoint",
                 model="test-model",
                 tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
-            ).try_embed_chunk("foobar") == [0, 2, 0]
+            ).embed("foobar") == [0, 2, 0]
 
         mock_client.get().read.return_value = b"{}"
         with pytest.raises(ValueError, match="invalid response from model"):
@@ -56,4 +57,16 @@ class TestAmazonSageMakerJumpstartEmbeddingDriver:
                 endpoint="test-endpoint",
                 model="test-model",
                 tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
-            ).try_embed_chunk("foobar") == [0, 2, 0]
+            ).embed("foobar") == [0, 2, 0]
+
+        with pytest.raises(
+            ValueError, match="AmazonSageMakerJumpstartEmbeddingDriver does not support embedding images."
+        ):
+            assert (
+                AmazonSageMakerJumpstartEmbeddingDriver(
+                    endpoint="test-endpoint",
+                    model="test-model",
+                    tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
+                ).embed(ImageArtifact(b"foo", format="jpg", width=200, height=200))
+                == []
+            )

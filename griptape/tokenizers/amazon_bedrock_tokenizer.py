@@ -26,6 +26,8 @@ class AmazonBedrockTokenizer(BaseTokenizer):
         "mistral.mixtral": 32000,
         "amazon.nova-micro-v1": 128000,
         "amazon.nova": 300000,
+        "amazon.titan-embed-image": 128000,
+        "amazon.titan-embed-text": 8000,
         "amazon.titan-text-express-v1": 8000,
         "amazon.titan-text-lite-v1": 4000,
         "amazon.titan-text-premier-v1": 32000,

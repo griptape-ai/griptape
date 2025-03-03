@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import base64
 import json
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 from attrs import Factory, define, field
 
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers.embedding import BaseEmbeddingDriver
 from griptape.tokenizers.amazon_bedrock_tokenizer import AmazonBedrockTokenizer
 from griptape.utils import import_optional_dependency
@@ -44,15 +46,24 @@ class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     def client(self) -> BedrockClient:
         return self.session.client("bedrock-runtime")
 
-    def try_embed_chunk(self, chunk: str) -> list[float]:
-        payload = {"inputText": chunk}
+    def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
+        if isinstance(artifact, TextArtifact):
+            return self.try_embed_chunk(artifact.value)
+        else:
+            return self._invoke_model({"inputImage": base64.b64encode(artifact.value).decode()})["embedding"]
 
+    def try_embed_chunk(self, chunk: str) -> list[float]:
+        return self._invoke_model(
+            {
+                "inputText": chunk,
+            }
+        )["embedding"]
+
+    def _invoke_model(self, payload: dict) -> dict[str, Any]:
         response = self.client.invoke_model(
             body=json.dumps(payload),
             modelId=self.model,
             accept="application/json",
             contentType="application/json",
         )
-        response_body = json.loads(response.get("body").read())
-
-        return response_body.get("embedding")
+        return json.loads(response.get("body").read())

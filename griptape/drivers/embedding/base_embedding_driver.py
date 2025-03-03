@@ -1,17 +1,18 @@
 from __future__ import annotations
 
+import warnings
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 from attrs import define, field
 
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.chunkers import BaseChunker, TextChunker
 from griptape.mixins.exponential_backoff_mixin import ExponentialBackoffMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
-    from griptape.artifacts import TextArtifact
     from griptape.tokenizers import BaseTokenizer
 
 
@@ -32,21 +33,50 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         self.chunker = TextChunker(tokenizer=self.tokenizer) if self.tokenizer else None
 
     def embed_text_artifact(self, artifact: TextArtifact) -> list[float]:
-        return self.embed_string(artifact.to_text())
+        warnings.warn(
+            "`BaseEmbeddingDriver.embed_text_artifact` is deprecated and will be removed in a future release. `BaseEmbeddingDriver.embed` is a drop-in replacement.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.embed(artifact)
 
     def embed_string(self, string: str) -> list[float]:
+        warnings.warn(
+            "`BaseEmbeddingDriver.embed_string` is deprecated and will be removed in a future release. `BaseEmbeddingDriver.embed` is a drop-in replacement.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        return self.embed(string)
+
+    def embed(self, value: str | TextArtifact | ImageArtifact) -> list[float]:
         for attempt in self.retrying():
             with attempt:
-                if self.tokenizer is not None and self.tokenizer.count_tokens(string) > self.tokenizer.max_input_tokens:
-                    return self._embed_long_string(string)
-                else:
-                    return self.try_embed_chunk(string)
-
+                if isinstance(value, str):
+                    if (
+                        self.tokenizer is not None
+                        and self.tokenizer.count_tokens(value) > self.tokenizer.max_input_tokens
+                    ):
+                        return self._embed_long_string(value)
+                    else:
+                        return self.try_embed_chunk(value)
+                elif isinstance(value, TextArtifact):
+                    return self.embed(value.to_text())
+                elif isinstance(value, ImageArtifact):
+                    return self.try_embed_artifact(value)
         else:
             raise RuntimeError("Failed to embed string.")
 
+    def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
+        # TODO: Mark as abstract method for griptape 2.0
+        if isinstance(artifact, TextArtifact):
+            return self.try_embed_chunk(artifact.value)
+        else:
+            raise ValueError(f"{self.__class__.__name__} does not support embedding images.")
+
     @abstractmethod
-    def try_embed_chunk(self, chunk: str) -> list[float]: ...
+    def try_embed_chunk(self, chunk: str) -> list[float]:
+        # TODO: Remove for griptape 2.0, subclasses should implement `try_embed_artifact` instead
+        ...
 
     def _embed_long_string(self, string: str) -> list[float]:
         """Embeds a string that is too long to embed in one go.
@@ -58,7 +88,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         embedding_chunks = []
         length_chunks = []
         for chunk in chunks:
-            embedding_chunks.append(self.try_embed_chunk(chunk.value))
+            embedding_chunks.append(self.embed(chunk.value))
             length_chunks.append(len(chunk))
 
         # generate weighted averages
