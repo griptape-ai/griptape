@@ -27,3 +27,21 @@ The Griptape Cloud Observability Driver instruments `@observable` functions and 
     or locally via the [Skatepark Emulator](https://github.com/griptape-ai/griptape-cli?tab=readme-ov-file#skatepark-emulator).
 
 Here is an example of how to use the `GriptapeCloudObservabilityDriver` with the `Observability` context manager to send the telemetry to Griptape Cloud:
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/observability_drivers_1.py"
+```
+
+### OpenTelemetry
+
+!!! info
+
+    This driver requires the `drivers-observability-opentelemetry` [extra](../index.md#extras).
+
+The [OpenTelemetry](https://opentelemetry.io/) Observability Driver instruments `@observable` functions and methods with metrics and traces for use with OpenTelemetry. You must configure a destination for the telemetry by providing a `SpanProcessor` to the Driver.
+
+Here is an example of how to use the `OpenTelemetryObservabilityDriver` with the `Observability` context manager to output the telemetry directly to the console:
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/observability_drivers_2.py"
+```
