@@ -8,32 +8,9 @@ Many of our [Prompt Drivers](../drivers/prompt-drivers.md) leverage the native f
 
 You can switch between these strategies by setting `use_native_tools` to `True` (LLM-native tool calling) or `False` (Griptape tool calling) on your [Prompt Driver](../drivers/prompt-drivers.md).
 
-## Griptape Tools
+## Custom Tools
 
-Griptape tools are special Python classes that LLMs can use to accomplish specific goals. A tool consists of multiple "activities," each represented by a function decorated with `@activity`. This decorator provides context to the LLM through descriptions and defines the input schema that the LLM must follow.
-
-When a function is decorated with `@activity`, the decorator injects keyword arguments into the function according to the schema. Additionally, Griptape provides two special keyword arguments:
-
-- `params: dict`
-- `values: dict`
-
-!!! info
-
-    If your schema defines any parameters named `params` or `values`, they will be overwritten by the Griptape-provided arguments.
-
-Here is an example of a custom tool for generating a random number:
-
-=== "Code"
-
-    ```python
-    --8<-- "docs/griptape-framework/tools/src/index_1.py"
-    ```
-
-=== "Logs"
-
-    ```text
-    --8<-- "docs/griptape-framework/tools/logs/index_1.txt"
-    ```
+See [Custom Tools](./custom-tools/index.md) for more information on building your own tools.
 
 ## Tool Output and Task Memory
 
