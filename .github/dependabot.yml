@@ -1,11 +1,11 @@
 version: 2
+enable-beta-ecosystems: true
 updates:
   - package-ecosystem: "uv"
     directory: "/"
     schedule:
       interval: "weekly"
     versioning-strategy: "auto"
-    enable-beta-ecosystems: true
     groups:
       production-dependencies:
         dependency-type: "production"
