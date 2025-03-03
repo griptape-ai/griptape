@@ -4,22 +4,20 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    versioning-strategy: increase-if-necessary
+    versioning-strategy: "auto"
     enable-beta-ecosystems: true
     groups:
-      dependencies:
+      production-dependencies:
         dependency-type: "production"
         update-types:
-        - "minor"
         - "patch"
-      group-dependencies:
+        - "minor"
+      development-dependencies:
         dependency-type: "development"
         update-types:
         - "minor"
         - "patch"
-    allow:
-      - dependency-type: production
-      - dependency-type: development
+        - "major"
     commit-message:
       prefix: chore(deps)
   - package-ecosystem: "github-actions"
