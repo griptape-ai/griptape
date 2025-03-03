@@ -90,6 +90,11 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
             if tags is not None:
                 span.set_attribute("tags", tags)
 
+            for i, arg in enumerate(call.args):
+                span.set_attribute(f"arg_{i}", str(arg))
+            for key, value in call.kwargs.items():
+                span.set_attribute(key, str(value))
+
             try:
                 result = call()
                 span.set_status(open_telemetry_trace.Status(open_telemetry_trace.StatusCode.OK))
