@@ -5,14 +5,13 @@ from typing import TYPE_CHECKING, Any, NoReturn, Optional
 from attrs import define, field
 
 from griptape import utils
+from griptape.artifacts import ImageArtifact, TextArtifact
 from griptape.drivers.vector import BaseVectorStoreDriver
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import marqo
-
-    from griptape.artifacts import ImageArtifact, TextArtifact
 
 
 @define
@@ -37,28 +36,40 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     def client(self) -> marqo.Client:
         return import_optional_dependency("marqo").Client(self.url, api_key=self.api_key)
 
-    def upsert_text(
+    def upsert(
         self,
-        string: str,
+        value: str | TextArtifact | ImageArtifact,
         *,
-        vector_id: Optional[str] = None,
         namespace: Optional[str] = None,
         meta: Optional[dict] = None,
+        vector_id: Optional[str] = None,
         **kwargs: Any,
     ) -> str:
         """Upsert a text document into the Marqo index.
 
         Args:
-            string: The string to be indexed.
-            vector_id: The ID for the vector. If None, Marqo will generate an ID.
+            value: The value to be indexed.
             namespace: An optional namespace for the document.
             meta: An optional dictionary of metadata for the document.
+            vector_id: The ID for the vector. If None, Marqo will generate an ID.
             kwargs: Additional keyword arguments to pass to the Marqo client.
 
         Returns:
             str: The ID of the document that was added.
         """
-        doc = {"_id": vector_id, "Description": string}  # Description will be treated as tensor field
+        if isinstance(value, TextArtifact):
+            artifact_json = value.to_json()
+            vector_id = utils.str_to_hash(value.value) if vector_id is None else vector_id
+
+            doc = {
+                "_id": vector_id,
+                "Description": value.value,
+                "artifact": str(artifact_json),
+            }
+        elif isinstance(value, ImageArtifact):
+            raise NotImplementedError("`MarqoVectorStoreDriver` does not upserting Image Artifacts.")
+        else:
+            doc = {"_id": vector_id, "Description": value}
 
         # Non-tensor fields
         if meta:
@@ -67,43 +78,6 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             doc["namespace"] = namespace
 
         response = self.client.index(self.index).add_documents([doc], tensor_fields=["Description"])
-        if isinstance(response, dict) and "items" in response and response["items"]:
-            return response["items"][0]["_id"]
-        else:
-            raise ValueError(f"Failed to upsert text: {response}")
-
-    def upsert_text_artifact(
-        self,
-        artifact: TextArtifact,
-        *,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        vector_id: Optional[str] = None,
-        **kwargs: Any,
-    ) -> str:
-        """Upsert a text artifact into the Marqo index.
-
-        Args:
-            artifact: The text artifact to be indexed.
-            namespace: An optional namespace for the artifact.
-            meta: An optional dictionary of metadata for the artifact.
-            vector_id: An optional explicit vector_id.
-            kwargs: Additional keyword arguments to pass to the Marqo client.
-
-        Returns:
-            str: The ID of the artifact that was added.
-        """
-        artifact_json = artifact.to_json()
-        vector_id = utils.str_to_hash(artifact.value) if vector_id is None else vector_id
-
-        doc = {
-            "_id": vector_id,
-            "Description": artifact.value,  # Description will be treated as tensor field
-            "artifact": str(artifact_json),
-            "namespace": namespace,
-        }
-
-        response = self.client.index(self.index).add_documents([doc], tensor_fields=["Description", "artifact"])
         if isinstance(response, dict) and "items" in response and response["items"]:
             return response["items"][0]["_id"]
         else:

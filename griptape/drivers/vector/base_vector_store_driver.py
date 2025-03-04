@@ -42,7 +42,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         **kwargs,
     ) -> list[str] | dict[str, list[str]]:
         warnings.warn(
-            "`BaseVectorStoreDriver.upsert_text_artifacts` is deprecated and will be removed in a future release. `BaseEmbeddingDriver.upsert_collection` is a drop-in replacement.",
+            "`BaseVectorStoreDriver.upsert_text_artifacts` is deprecated and will be removed in a future release. `BaseVectorStoreDriver.upsert_collection` is a drop-in replacement.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -58,7 +58,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         **kwargs,
     ) -> str:
         warnings.warn(
-            "`BaseVectorStoreDriver.upsert_text_artifacts` is deprecated and will be removed in a future release. `BaseEmbeddingDriver.upsert` is a drop-in replacement.",
+            "`BaseVectorStoreDriver.upsert_text_artifacts` is deprecated and will be removed in a future release. `BaseVectorStoreDriver.upsert` is a drop-in replacement.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -74,7 +74,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         **kwargs,
     ) -> str:
         warnings.warn(
-            "`BaseVectorStoreDriver.upsert_text` is deprecated and will be removed in a future release. `BaseEmbeddingDriver.upsert` is a drop-in replacement.",
+            "`BaseVectorStoreDriver.upsert_text` is deprecated and will be removed in a future release. `BaseVectorStoreDriver.upsert` is a drop-in replacement.",
             DeprecationWarning,
             stacklevel=2,
         )
