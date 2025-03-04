@@ -1,3 +1,4 @@
+import warnings
 from unittest.mock import Mock
 
 import pytest
@@ -294,6 +295,16 @@ class TestAgent:
     def test_validate_tasks(self):
         with pytest.warns(UserWarning, match="`Agent.tasks` is set, but `Agent.prompt_driver` was provided."):
             Agent(prompt_driver=MockPromptDriver(), tasks=[PromptTask()])
+
+    def test_valid_agent_no_warnings(self):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            assert Agent()
+            assert Agent(
+                tasks=[PromptTask()],
+            )
+            assert Agent(stream=True)
+            assert Agent(prompt_driver=MockPromptDriver())
 
     def test_field_hierarchy(self):
         # Test that stream on its own propagates to the task.
