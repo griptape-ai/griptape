@@ -56,12 +56,12 @@ class TestTextChunker:
             assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("foo-0!")
-        assert chunks[1].value.startswith("foo-11!")
-        assert chunks[2].value.startswith("foo-17!")
+        assert chunks[1].value.startswith("foo-7!")
+        assert chunks[2].value.startswith("foo-13!")
         assert chunks[3].value.startswith("foo-0.")
 
-        assert chunks[0].value.endswith("! foo-10!")
-        assert chunks[1].value.endswith("! foo-16!")
+        assert chunks[0].value.endswith("! foo-6!")
+        assert chunks[1].value.endswith("! foo-12!")
         assert chunks[2].value.endswith("! foo-24!")
         assert chunks[3].value.endswith(". foo-11.")
 
@@ -92,19 +92,19 @@ class TestTextChunker:
             assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
 
         assert chunks[0].value.startswith("foo-0!")
-        assert chunks[1].value.startswith("foo-11!")
-        assert chunks[2].value.startswith("foo-17!")
+        assert chunks[1].value.startswith("foo-7!")
+        assert chunks[2].value.startswith("foo-13!")
         assert chunks[3].value.startswith("foo-0.")
         assert chunks[4].value.startswith("foo-0?")
-        assert chunks[5].value.startswith("foo-9?")
+        assert chunks[5].value.startswith("foo-7?")
         assert chunks[6].value.startswith("foo-0")
         assert chunks[7].value.startswith("foo-8")
 
-        assert chunks[0].value.endswith("! foo-10!")
-        assert chunks[1].value.endswith("! foo-16!")
+        assert chunks[0].value.endswith("! foo-6!")
+        assert chunks[1].value.endswith("! foo-12!")
         assert chunks[2].value.endswith("! foo-24!")
         assert chunks[3].value.endswith(". foo-11.")
-        assert chunks[4].value.endswith("? foo-8?")
+        assert chunks[4].value.endswith("? foo-6?")
         assert chunks[5].value.endswith("? foo-12?")
         assert chunks[6].value.endswith(" foo-7")
         assert chunks[7].value.endswith(" foo-16")
@@ -138,3 +138,15 @@ class TestTextChunker:
 
         for chunk in chunks:
             assert chunk.reference is None
+
+    def test_midpoint_index_empty_subchunks(self, chunker):
+        # This tests that a midpoint index is correctly found when there are some empty subchunks
+        # Previously ["foo", '', "bar", 'baz'] would be token counted as 'foobarbaz' rather than 'foo  bar baz'
+        #  when calculating the midpoint index.
+        # https://github.com/griptape-ai/griptape/issues/1796
+        chunker.max_tokens = 3
+
+        assert len(chunker.chunk("foo bar baz")) == 1
+        assert len(chunker.chunk("foo bar baz ")) == 2
+
+        assert len(chunker.chunk("foo  bar baz")) == 2
