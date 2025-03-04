@@ -1,4 +1,3 @@
-import os
 from uuid import UUID
 
 import pytest
@@ -13,23 +12,9 @@ from tests.utils.expected_spans import ExpectedSpan, ExpectedSpans
 class TestGriptapeCloudObservabilityDriver:
     @pytest.fixture()
     def driver(self):
-        environ = {
-            "GT_CLOUD_BASE_URL": "http://base-url:1234",
-            "GT_CLOUD_API_KEY": "api-key",
-            "GT_CLOUD_STRUCTURE_RUN_ID": "structure-run-id",
-        }
-        original_environ = {}
-        for key in environ:
-            original_environ[key] = environ.get(key)
-            os.environ[key] = environ[key]
-
-        yield GriptapeCloudObservabilityDriver()
-
-        for key, value in original_environ.items():
-            if value is None:
-                del os.environ[key]
-            else:
-                os.environ[key] = value
+        return GriptapeCloudObservabilityDriver(
+            base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
+        )
 
     @pytest.fixture(autouse=True)
     def mock_span_exporter_class(self, mocker):
