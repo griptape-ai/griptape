@@ -5,10 +5,6 @@ search:
 
 ## RAG Engines
 
-!!! note
-
-    This section is a work in progress.
-
 [Rag Engine](../../reference/griptape/engines/rag/index.md) is an abstraction for implementing modular retrieval augmented generation (RAG) pipelines.
 
 ### RAG Stages
@@ -53,18 +49,27 @@ Responses are generated in this final stage.
 
 `RagContext` is a container object for passing around queries, text chunks, module configs, and other metadata. `RagContext` is modified by modules when appropriate. Some modules support runtime config overrides through `RagContext.module_configs`.
 
-### Example
+### Simple Example
 
-The following example shows a simple RAG pipeline that translates incoming queries into English, retrieves data from a local vector store, reranks the results using the local rerank driver, and generates a response:
+The following example shows a simple RAG pipeline that retrieves data from a local vector store and generates a response:
 
-=== "Code"
+```python
+--8<-- "docs/griptape-framework/engines/src/rag_engines_simple.py"
+```
 
-    ```python
-    --8<-- "docs/griptape-framework/engines/src/rag_engines_1.py"
-    ```
+### Advanced Example
 
-=== "Logs"
+The following example shows an advanced RAG pipeline that does the following:
 
-    ```text
-    --8<-- "docs/griptape-framework/engines/logs/rag_engines_1.txt"
-    ```
+- Translates incoming queries into English.
+- Retrieves data from a local vector store and a local file.
+- Reranks the results using the local rerank driver.
+- Generates multiple types of response.
+
+```python
+--8<-- "docs/griptape-framework/engines/src/rag_engines_advanced.py"
+```
+
+### RAG Tool
+
+See [RagTool](../tools/official-tools/index.md#rag) for an example of how to integrate the RAG Tool with an Agent.
