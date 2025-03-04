@@ -62,7 +62,7 @@ class BaseChunker(ABC):
 
                 if len(non_empty_subchunks) > 1:
                     # Find what combination of subchunks results in the most balanced split of the chunk.
-                    midpoint_index = self.__find_midpoint_index(subchunks, half_token_count)
+                    midpoint_index = self.__find_midpoint_index(separator, subchunks, half_token_count)
 
                     # Create the two subchunks based on the best separator.
                     first_subchunk, second_subchunk = self.__get_subchunks(separator, subchunks, midpoint_index)
@@ -98,12 +98,12 @@ class BaseChunker(ABC):
 
         return first_subchunk, second_subchunk
 
-    def __find_midpoint_index(self, subchunks: list[str], half_token_count: int) -> int:
+    def __find_midpoint_index(self, separator: ChunkSeparator, subchunks: list[str], half_token_count: int) -> int:
         midpoint_index = -1
         best_midpoint_distance = float("inf")
 
         for index, _ in enumerate(subchunks):
-            subchunk_tokens_count = self.tokenizer.count_tokens("".join(subchunks[: index + 1]))
+            subchunk_tokens_count = self.tokenizer.count_tokens(separator.value.join(subchunks[: index + 1]))
 
             midpoint_distance = abs(subchunk_tokens_count - half_token_count)
             if midpoint_distance < best_midpoint_distance:

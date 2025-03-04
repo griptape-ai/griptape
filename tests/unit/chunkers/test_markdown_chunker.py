@@ -24,7 +24,7 @@ class TestTextChunker:
         ]
         chunks = chunker.chunk("".join(text))
 
-        assert len(chunks) == 6
+        assert len(chunks) == 7
 
         for chunk in chunks:
             assert chunker.tokenizer.count_tokens(chunk.value) <= MAX_TOKENS
@@ -33,12 +33,14 @@ class TestTextChunker:
         assert chunks[1].value.startswith("## Header 2\nfoo-0")
         assert chunks[2].value.startswith("foo-0.")
         assert chunks[3].value.startswith("## Header 3\nfoo-0")
-        assert chunks[4].value.startswith("foo-10.")
-        assert chunks[5].value.startswith("foo-16.")
+        assert chunks[4].value.startswith("foo-5.")
+        assert chunks[5].value.startswith("foo-12.")
+        assert chunks[6].value.startswith("foo-19.")
 
         assert chunks[0].value.endswith(". foo-5.")
         assert chunks[1].value.endswith(". foo-5.")
         assert chunks[2].value.endswith(". foo-5.")
-        assert chunks[3].value.endswith(". foo-9.")
-        assert chunks[4].value.endswith(". foo-15.")
-        assert chunks[5].value.endswith(". foo-24.")
+        assert chunks[3].value.endswith(". foo-4.")
+        assert chunks[4].value.endswith(". foo-11.")
+        assert chunks[5].value.endswith(". foo-18.")
+        assert chunks[6].value.endswith(". foo-24.")
