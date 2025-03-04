@@ -47,6 +47,10 @@ This tool enables LLMs to execute Python code and run shell commands inside a Do
 
 You can specify a local working directory and environment variables during tool initialization:
 
+```python
+--8<-- "docs/griptape-framework/tools/official-tools/src/computer_tool_1.py"
+```
+
 ### Date Time
 
 This tool enables LLMs to get current date and time.
@@ -66,6 +70,24 @@ This tool enables LLMs to get current date and time.
 ### Email
 
 The [EmailTool](../../../reference/griptape/tools/email/tool.md) enables LLMs to send emails.
+
+```python
+--8<-- "docs/griptape-framework/tools/official-tools/src/email_tool_1.py"
+```
+
+For debugging purposes, you can run a local SMTP server that the LLM can send emails to:
+
+```shell
+python -m smtpd -c DebuggingServer -n localhost:1025
+```
+
+### Extraction
+
+The [ExractionTool](../../../reference/griptape/tools/extraction/tool.md) enables LLMs to extract structured text from unstructured data.
+
+```python
+--8<-- "docs/griptape-framework/tools/official-tools/src/extraction_tool_1.py"
+```
 
 ### File Manager
 
@@ -198,6 +220,14 @@ Here is an example of how it can be used with a local vector store driver:
     ```text
     --8<-- "docs/griptape-framework/tools/official-tools/logs/rag_tool_1.txt"
     ```
+
+### Query
+
+The [QueryTool](../../../reference/griptape/tools/query/tool.md) enables Agents to query unstructured data for specific information.
+
+```python
+--8<-- "docs/griptape-framework/tools/official-tools/src/query_tool_1.py"
+```
 
 ### Rest Api
 

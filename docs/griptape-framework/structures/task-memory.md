@@ -95,6 +95,29 @@ Let's say we want to query the contents of a very large webpage.
 
 When running this example, we get the following error:
 
+```
+[04/26/24 13:20:02] ERROR    PromptTask 67e2f907f95d4850ae79f9da67df54c1
+                             Error code: 400 - {'error': {'message': "This model's maximum context length is 8192 tokens. However, your messages resulted in 73874 tokens.
+                             Please reduce the length of the messages.", 'type': 'invalid_request_error', 'param': 'messages', 'code': 'context_length_exceeded'}}
+```
+
+This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `QueryTool`.
+Note that we're setting `off_prompt` to `False` on the `QueryTool` so that the _queried_ content can be returned directly to the LLM.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/task_memory_5.py"
+```
+
+And now we get the expected output.
+
+```
+[08/12/24 14:56:29] INFO     Subtask 8669ee523bb64550850566011bcd14e2
+                             Response: "Elden Ring" sold 13.4 million copies worldwide by the end of March 2022 and 25 million by June 2024. The downloadable content (DLC)
+                             "Shadow of the Erdtree" sold five million copies within three days of its release.
+[08/12/24 14:56:30] INFO     PromptTask d3ce58587dc944b0a30a205631b82944
+                             Output: Elden Ring sold 13.4 million copies worldwide by the end of March 2022 and 25 million by June 2024.
+```
+
 ## Sensitive Data
 
 Because Task Memory splits up the storage and retrieval of data, you can use different models for each step.

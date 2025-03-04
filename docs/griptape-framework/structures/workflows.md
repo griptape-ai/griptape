@@ -167,8 +167,6 @@ Imperatively insert parallel tasks between a parent and child:
     --8<-- "docs/griptape-framework/structures/logs/workflows_9.txt"
     ```
 
-output:
-
 ### Bitshift Composition
 
 Task relationships can also be set up with the Python bitshift operators `>>` and `<<`. The following statements are all functionally equivalent:
