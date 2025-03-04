@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.3](https://github.com/griptape-ai/griptape/compare/v1.4.2...v1.4.3) (2025-03-04)
+
+
+### Bug Fixes
+
+* **chunker:** correctly determine chunk midpoint when empty chunks are present ([#1800](https://github.com/griptape-ai/griptape/issues/1800)) ([0c1935d](https://github.com/griptape-ai/griptape/commit/0c1935d807a8789bda44de383d3843cb4a4cef22))
+
 ## [1.4.2](https://github.com/griptape-ai/griptape/compare/v1.4.1...v1.4.2) (2025-02-28)
 
 
