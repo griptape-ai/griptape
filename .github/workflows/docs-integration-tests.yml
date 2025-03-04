@@ -163,5 +163,6 @@ jobs:
           body: "This PR was automatically generated to update the code snippets logs in the documentation."
           commit-message: "chore(docs): update code snippets logs"
           base: "main"
+          labels: "docs"
           add-paths: |
             docs/**/*
