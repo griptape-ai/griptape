@@ -35,6 +35,9 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
+    from openai import Stream
+    from openai.types.chat import ChatCompletionChunk
+    from openai.types.chat.chat_completion import ChatCompletion
     from openai.types.chat.chat_completion_chunk import ChoiceDelta
     from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
@@ -127,19 +130,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         result = self.client.chat.completions.create(**params)
 
         logger.debug(result.model_dump())
-        if len(result.choices) == 1:
-            message = result.choices[0].message
-
-            return Message(
-                content=self.__to_prompt_stack_message_content(message),
-                role=Message.ASSISTANT_ROLE,
-                usage=Message.Usage(
-                    input_tokens=result.usage.prompt_tokens,
-                    output_tokens=result.usage.completion_tokens,
-                ),
-            )
-        else:
-            raise Exception("Completion with more than one choice is not supported yet.")
+        return self._to_message(result)
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
@@ -147,17 +138,37 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         logger.debug({"stream": True, **params})
         result = self.client.chat.completions.create(**params, stream=True)
 
-        for chunk in result:
-            logger.debug(chunk.model_dump())
-            if chunk.usage is not None:
+        return self._to_delta_message_stream(result)
+
+    def _to_message(self, result: ChatCompletion) -> Message:
+        if len(result.choices) == 1:
+            choice_message = result.choices[0].message
+
+            message = Message(
+                content=self.__to_prompt_stack_message_content(choice_message),
+                role=Message.ASSISTANT_ROLE,
+            )
+            if result.usage is not None:
+                message.usage = Message.Usage(
+                    input_tokens=result.usage.prompt_tokens,
+                    output_tokens=result.usage.completion_tokens,
+                )
+
+            return message
+        else:
+            raise Exception("Completion with more than one choice is not supported yet.")
+
+    def _to_delta_message_stream(self, result: Stream[ChatCompletionChunk]) -> Iterator[DeltaMessage]:
+        for message in result:
+            if message.usage is not None:
                 yield DeltaMessage(
                     usage=DeltaMessage.Usage(
-                        input_tokens=chunk.usage.prompt_tokens,
-                        output_tokens=chunk.usage.completion_tokens,
+                        input_tokens=message.usage.prompt_tokens,
+                        output_tokens=message.usage.completion_tokens,
                     ),
                 )
-            if chunk.choices:
-                choice = chunk.choices[0]
+            if message.choices:
+                choice = message.choices[0]
                 delta = choice.delta
 
                 content = self.__to_prompt_stack_delta_message_content(delta)
