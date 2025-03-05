@@ -1,0 +1,62 @@
+[
+│   TextArtifact(
+│   │   type='TextArtifact',
+│   │   module_name='griptape.artifacts.text_artifact',
+│   │   id='e50f9ff84f834d7ca13bec309c221fa8',
+│   │   reference=None,
+│   │   meta={},
+│   │   name='e50f9ff84f834d7ca13bec309c221fa8',
+│   │   encoding_error_handler='strict',
+│   │   encoding='utf-8',
+│   │   value='foo0foo1foo2foo3foo4foo5foo6foo7foo8foo9foo10foo11foo12foo13foo14foo15foo16foo17foo18foo19foo20foo21foo22foo23foo24foo25foo26foo27foo28foo29foo30foo31foo32foo33foo34foo35foo36foo37foo38foo39foo40foo41foo42foo43foo44foo45foo46foo47foo48foo49foo50foo51foo52foo53foo54foo55foo56foo57foo58foo59foo60foo61foo62foo63foo64foo65foo66foo67foo68foo69foo70foo71foo72foo73foo74foo',
+│   │   embedding=None
+│   ),
+│   TextArtifact(
+│   │   type='TextArtifact',
+│   │   module_name='griptape.artifacts.text_artifact',
+│   │   id='25996c53db0f416b96be7ec6be78f7f3',
+│   │   reference=None,
+│   │   meta={},
+│   │   name='25996c53db0f416b96be7ec6be78f7f3',
+│   │   encoding_error_handler='strict',
+│   │   encoding='utf-8',
+│   │   value='75foo76foo77foo78foo79foo80foo81foo82foo83foo84foo85foo86foo87foo88foo89foo90foo91foo92foo93foo94foo95foo96foo97foo98foo99foo100foo101foo102foo103foo104foo105foo106foo107foo108foo109foo110foo111foo112foo113foo114foo115foo116foo117foo118foo119foo120foo121foo122foo123foo124foo125foo126foo127foo128foo129foo130foo131foo132foo133foo134foo135foo136foo137foo138foo139foo140',
+│   │   embedding=None
+│   ),
+│   TextArtifact(
+│   │   type='TextArtifact',
+│   │   module_name='griptape.artifacts.text_artifact',
+│   │   id='0da7d5e950aa4c48bb23227139f32562',
+│   │   reference=None,
+│   │   meta={},
+│   │   name='0da7d5e950aa4c48bb23227139f32562',
+│   │   encoding_error_handler='strict',
+│   │   encoding='utf-8',
+│   │   value='foo141foo142foo143foo144foo145foo146foo147foo148foo149foo150foo151foo152foo153foo154foo155foo156foo157foo158foo159foo160foo161foo162foo163foo164foo165foo166foo167foo168foo169foo170foo171foo172foo173foo174foo175foo176foo177foo178foo179foo180foo181foo182foo183foo184foo185foo186foo187foo188foo189foo190foo191foo192foo193foo194foo195foo196foo197foo198foo199foo200foo201foo202foo203foo204foo205foo206foo207foo208foo209foo210foo211foo212foo213foo214foo215foo216foo217foo218foo219foo220foo221foo222foo223foo224foo225foo226foo227foo228foo229foo230foo231foo232foo233foo234foo235foo236foo237foo238foo239foo240foo241foo242foo243foo244foo245foo246foo247foo248foo249foo250foo251foo252foo253foo254foo255foo256foo257foo258foo259foo260foo261foo262foo2',
+│   │   embedding=None
+│   ),
+│   TextArtifact(
+│   │   type='TextArtifact',
+│   │   module_name='griptape.artifacts.text_artifact',
+│   │   id='926c00b34c2443148325b17a0b192910',
+│   │   reference=None,
+│   │   meta={},
+│   │   name='926c00b34c2443148325b17a0b192910',
+│   │   encoding_error_handler='strict',
+│   │   encoding='utf-8',
+│   │   value='63foo264foo265foo266foo267foo268foo269foo270foo271foo272foo273foo274foo275foo276foo277foo278foo279foo280foo281foo282foo283foo284foo285foo286foo287foo288foo289foo290foo291foo292foo293foo294foo295foo296foo297foo298foo299foo300foo301foo302foo303foo304foo305foo306foo307foo308foo309foo310foo311foo312foo313foo314foo315foo316foo317foo318foo319foo320foo321foo322foo323foo324foo325foo326foo327foo328foo329foo330foo331foo332foo333foo334foo335foo336foo337foo338foo339foo340foo341foo342foo343foo344foo345foo346foo347foo348foo349foo350foo351foo352foo353foo354foo355foo356foo357foo358foo359foo360foo361foo362foo363foo364foo365foo366foo367foo368foo369foo370foo371foo372foo373foo374foo375foo376foo377foo378foo379foo380foo381foo382foo383foo384foo385fo',
+│   │   embedding=None
+│   ),
+│   TextArtifact(
+│   │   type='TextArtifact',
+│   │   module_name='griptape.artifacts.text_artifact',
+│   │   id='4cbe43604a0a4538852726008b9df427',
+│   │   reference=None,
+│   │   meta={},
+│   │   name='4cbe43604a0a4538852726008b9df427',
+│   │   encoding_error_handler='strict',
+│   │   encoding='utf-8',
+│   │   value='o386foo387foo388foo389foo390foo391foo392foo393foo394foo395foo396foo397foo398foo399foo400foo401foo402foo403foo404foo405foo406foo407foo408foo409foo410foo411foo412foo413foo414foo415foo416foo417foo418foo419foo420foo421foo422foo423foo424foo425foo426foo427foo428foo429foo430foo431foo432foo433foo434foo435foo436foo437foo438foo439foo440foo441foo442foo443foo444foo445foo446foo447foo448foo449foo450foo451foo452foo453foo454foo455foo456foo457foo458foo459foo460foo461foo462foo463foo464foo465foo466foo467foo468foo469foo470foo471foo472foo473foo474foo475foo476foo477foo478foo479foo480foo481foo482foo483foo484foo485foo486foo487foo488foo489foo490foo491foo492foo493foo494foo495foo496foo497foo498foo499foo500foo501foo502foo503foo504foo505foo506foo507foo508f',
+│   │   embedding=None
+│   )
+]
