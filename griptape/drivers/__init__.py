@@ -15,6 +15,7 @@ from .prompt.dummy import DummyPromptDriver
 from .prompt.ollama import OllamaPromptDriver
 from .prompt.grok import GrokPromptDriver
 from .prompt.griptape_cloud import GriptapeCloudPromptDriver
+from .prompt.perplexity import PerplexityPromptDriver
 
 from .memory.conversation import BaseConversationMemoryDriver
 from .memory.conversation.local import LocalConversationMemoryDriver
@@ -83,6 +84,7 @@ from .web_search.google import GoogleWebSearchDriver
 from .web_search.duck_duck_go import DuckDuckGoWebSearchDriver
 from .web_search.exa import ExaWebSearchDriver
 from .web_search.tavily import TavilyWebSearchDriver
+from .web_search.perplexity import PerplexityWebSearchDriver
 
 from .event_listener import BaseEventListenerDriver
 from .event_listener.amazon_sqs import AmazonSqsEventListenerDriver
@@ -143,6 +145,7 @@ __all__ = [
     "OllamaPromptDriver",
     "GrokPromptDriver",
     "GriptapeCloudPromptDriver",
+    "PerplexityPromptDriver",
     "BaseConversationMemoryDriver",
     "LocalConversationMemoryDriver",
     "AmazonDynamoDbConversationMemoryDriver",
@@ -202,6 +205,7 @@ __all__ = [
     "DuckDuckGoWebSearchDriver",
     "ExaWebSearchDriver",
     "TavilyWebSearchDriver",
+    "PerplexityWebSearchDriver",
     "BaseEventListenerDriver",
     "AmazonSqsEventListenerDriver",
     "WebhookEventListenerDriver",
