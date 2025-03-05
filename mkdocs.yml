@@ -170,6 +170,7 @@ nav:
           - Talk to a Video: "examples/talk-to-a-video.md"
           - Talk to an Image: "examples/talk-to-an-image.md"
           - Talk to a Document: "examples/talk-to-a-document.md"
+          - Talk to an Audio: "examples/talk-to-an-audio.md"
           - Multi Agent Workflows: "examples/multi-agent-workflow.md"
           - Shared Memory Between Agents: "examples/multiple-agent-shared-memory.md"
           - Chat Sessions with Amazon DynamoDB: "examples/amazon-dynamodb-sessions.md"
