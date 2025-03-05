@@ -35,6 +35,7 @@ class BaseMessage(ABC, SerializableMixin):
     content: list[Union[BaseMessageContent, BaseDeltaMessageContent]] = field(metadata={"serializable": True})
     role: str = field(kw_only=True, metadata={"serializable": True})
     usage: Usage = field(kw_only=True, default=Factory(lambda: BaseMessage.Usage()), metadata={"serializable": True})
+    meta: dict = field(kw_only=True, factory=dict, metadata={"serializable": True})
 
     def is_system(self) -> bool:
         return self.role == self.SYSTEM_ROLE

@@ -350,3 +350,13 @@ The [GrokPromptDriver](../../reference/griptape/drivers/prompt/grok_prompt_drive
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/prompt_drivers_grok.txt"
     ```
+
+### Perplexity
+
+The [PerplexityPromptDriver](../../reference/griptape/drivers/prompt/perplexity_prompt_driver.md) uses [Perplexity Sonar's chat completion](https://docs.perplexity.ai/api-reference/chat-completions) endpoint.
+
+While you can use this Driver directly, we recommend using it through its accompanying [Web Search Driver](../drivers/web-search-drivers.md#perplexity).
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_perplexity.py"
+```

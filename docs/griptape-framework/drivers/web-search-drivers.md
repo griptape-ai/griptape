@@ -65,8 +65,6 @@ Or use them independently:
 
 The [GoogleWebSearchDriver](../../reference/griptape/drivers/web_search/google_web_search_driver.md) uses the [Google Custom Search JSON API](https://developers.google.com/custom-search/v1/reference/rest/v1/cse/list) for web searching.
 
-Example using `GoogleWebSearchDriver` directly:
-
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_1.py"
 ```
@@ -79,8 +77,6 @@ Example using `GoogleWebSearchDriver` directly:
 
 The [DuckDuckGoWebSearchDriver](../../reference/griptape/drivers/web_search/duck_duck_go_web_search_driver.md) uses the [duckduckgo_search](https://github.com/deedy5/duckduckgo_search) SDK for web searching.
 
-Example of using `DuckDuckGoWebSearchDriver` directly:
-
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_3.py"
 ```
@@ -90,8 +86,6 @@ Example of using `DuckDuckGoWebSearchDriver` directly:
 !!! info
 
     This driver requires the `drivers-web-search-tavily` [extra](../index.md#extras), and a Tavily [api key](https://app.tavily.com).
-
-Example of using `TavilyWebSearchDriver` directly:
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_4.py"
@@ -104,8 +98,18 @@ Example of using `TavilyWebSearchDriver` directly:
     This driver requires the `drivers-web-search-exa` [extra](../index.md#extras),
     and an Exa [api key](https://dashboard.exa.ai/api-keys)
 
-Example of using `ExaWebSearchDriver` directly:
-
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_6.py"
+```
+
+### Perplexity
+
+The [PerplexityWebSearchDriver](../../reference/griptape/drivers/web_search/perplexity_web_search_driver.md) uses the [Perplexity Prompt Driver](../drivers/prompt-drivers.md#perplexity) internally.
+
+!!! info
+
+    This driver requires a Perplexity Sonar [api key](https://www.perplexity.ai/settings/api)
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/web_search_drivers_perplexity.py"
 ```
