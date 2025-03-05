@@ -53,9 +53,18 @@ Responses are generated in this final stage.
 
 The following example shows a simple RAG pipeline that retrieves data from a local vector store and generates a response:
 
-```python
---8<-- "docs/griptape-framework/engines/src/rag_engines_simple.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/engines/src/rag_engines_simple.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/engines/logs/rag_engines_simple.txt"
+    ```
+
 
 ### Advanced Example
 
@@ -66,9 +75,18 @@ The following example shows an advanced RAG pipeline that does the following:
 - Reranks the results using the local rerank driver.
 - Generates multiple types of response.
 
-```python
---8<-- "docs/griptape-framework/engines/src/rag_engines_advanced.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/engines/src/rag_engines_advanced.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/engines/logs/rag_engines_advanced.txt"
+    ```
+
 
 ### RAG Tool
 

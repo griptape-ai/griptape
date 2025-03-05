@@ -15,9 +15,18 @@ Different types of chunkers provide lists of separators for specific text shapes
 
 Here is how to use a chunker:
 
-```python
---8<-- "docs/griptape-framework/data/src/chunkers_1.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/data/src/chunkers_1.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/data/logs/chunkers_1.txt"
+    ```
+
 
 The most common use of a Chunker is to split up a long text into smaller chunks for inserting into a Vector Database when doing Retrieval Augmented Generation (RAG).
 
