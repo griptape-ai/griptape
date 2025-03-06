@@ -65,7 +65,6 @@ The following example shows a simple RAG pipeline that retrieves data from a loc
     --8<-- "docs/griptape-framework/engines/logs/rag_engines_simple.txt"
     ```
 
-
 ### Advanced Example
 
 The following example shows an advanced RAG pipeline that does the following:
@@ -86,7 +85,6 @@ The following example shows an advanced RAG pipeline that does the following:
     ```text
     --8<-- "docs/griptape-framework/engines/logs/rag_engines_advanced.txt"
     ```
-
 
 ### RAG Tool
 

@@ -34,7 +34,6 @@ Griptape provides predefined [DriversConfig](../../reference/griptape/configs/dr
     --8<-- "docs/griptape-framework/structures/logs/drivers_config_with.txt"
     ```
 
-
 #### OpenAI
 
 The [OpenAI Driver config](../../reference/griptape/configs/drivers/openai_drivers_config.md) provides default Drivers for OpenAI's APIs. This is the default config for all Structures.
@@ -121,7 +120,6 @@ You can enable debug logs to view more granular information such as request/resp
     ```text
     --8<-- "docs/griptape-framework/structures/logs/debug_logs.txt"
     ```
-
 
 ### Loading/Saving Configs
 

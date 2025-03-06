@@ -116,7 +116,6 @@ Note that we're setting `off_prompt` to `False` on the `QueryTool` so that the _
     --8<-- "docs/griptape-framework/structures/logs/task_memory_5.txt"
     ```
 
-
 And now we get the expected output.
 
 ```
