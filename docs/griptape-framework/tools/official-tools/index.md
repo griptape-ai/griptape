@@ -97,7 +97,6 @@ The [ExractionTool](../../../reference/griptape/tools/extraction/tool.md) enable
     --8<-- "docs/griptape-framework/tools/official-tools/logs/extraction_tool_1.txt"
     ```
 
-
 ### File Manager
 
 This tool enables LLMs to save and load files.
@@ -245,7 +244,6 @@ The [QueryTool](../../../reference/griptape/tools/query/tool.md) enables Agents 
     ```text
     --8<-- "docs/griptape-framework/tools/official-tools/logs/query_tool_1.txt"
     ```
-
 
 ### Rest Api
 

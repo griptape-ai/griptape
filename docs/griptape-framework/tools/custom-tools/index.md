@@ -44,7 +44,6 @@ Griptape will convert the Tool and its Activities into the appropriate format fo
     --8<-- "docs/griptape-framework/tools/custom-tools/logs/to_json_schema.txt"
     ```
 
-
 Each Activity takes a `config` keyword argument that contains the configuration for the Activity. The configuration can contain:
 
 - `description` (str): A plain text description of the Activity. Ensure that the description is clear and concise as it will help inform the LLM of when to pick this Activity.
