@@ -11,7 +11,20 @@ logging.basicConfig(level=logging.DEBUG, handlers=[RichHandler()])
 logger = logging.getLogger(__name__)
 
 
-def _convert_md_file_snippets(md_file_path: Path, updated_md_content: str, changed_snippet_path: Path) -> None:
+def _needs_converting(md_content: str, snippet_path: Path) -> bool:
+    """Check if the snippet in the markdown file needs converting.
+
+    Args:
+        md_content (str): The content of the markdown file.
+        snippet_path (Path): The path to the snippet.
+
+    Returns:
+        bool: True if the snippet needs converting, False otherwise.
+    """
+    return f'```python\n--8<-- "{snippet_path}"\n```' in md_content
+
+
+def _convert_md_file_snippets(md_file_path: Path, updated_md_content: str, snippet_path: Path) -> None:
     """Update the snippet in the markdown file with the logs.
 
     Converts this:
@@ -32,21 +45,23 @@ def _convert_md_file_snippets(md_file_path: Path, updated_md_content: str, chang
     Args:
         md_file_path (Path): The path to the markdown file.
         updated_md_content (str): The content of the markdown file.
-        changed_snippet_path (Path): The path to the snippet that was changed.
+        snippet_path (Path): The path to the snippet that was changed.
 
     Returns:
         None
     """
-    full_code_block = f'```python\n--8<-- "{changed_snippet_path}"\n```'
-    logs_path = __snippet_path_to_logs_path(Path(changed_snippet_path))
+    full_code_block = f'```python\n--8<-- "{snippet_path}"\n```'
+    logs_path = __snippet_path_to_logs_path(Path(snippet_path))
 
     updated_block = f"""\
 === "Code"
+
     ```python
-    --8<-- "{changed_snippet_path}"
+    --8<-- "{snippet_path}"
     ```
 
 === "Logs"
+
     ```text
     --8<-- "{logs_path}"
     ```
@@ -54,7 +69,7 @@ def _convert_md_file_snippets(md_file_path: Path, updated_md_content: str, chang
 
     updated_md_content = updated_md_content.replace(full_code_block, updated_block)
     md_file_path.write_text(updated_md_content, encoding="utf-8")
-    logger.debug("Updated snippet in %s", md_file_path)
+    logger.debug("Updated %s snippet in %s", snippet_path, md_file_path)
 
 
 def _get_logs_for_snippet_path(snippet_path: Path, logs_dir: Optional[Path] = None) -> Optional[str]:
@@ -116,13 +131,16 @@ if __name__ == "__main__":
 
     changed_snippet_paths = [Path(snippet) for snippet in changed_snippets]
 
-    for changed_snippet_path in changed_snippet_paths:
-        logger.debug("Changed snippet %s", changed_snippet_path)
-        logs = _get_logs_for_snippet_path(changed_snippet_path)
+    for snippet_path in Path(root_dir).rglob("*.py"):
+        logs = _get_logs_for_snippet_path(snippet_path)
         if logs:
-            logger.debug("Found logs for %s", changed_snippet_path)
+            logger.debug("Snippet with logs %s", snippet_path)
             for md_path in Path(root_dir).rglob("*.md"):
                 md_content = md_path.read_text(encoding="utf-8")
-                if str(changed_snippet_path) in md_content:
-                    _convert_md_file_snippets(md_path, md_content, changed_snippet_path)
-                    _save_logs_for_snippet(changed_snippet_path, logs)
+                if _needs_converting(md_content, snippet_path):
+                    logger.debug("Snippet needs converting %s", snippet_path)
+                    _convert_md_file_snippets(md_path, md_content, snippet_path)
+                    _save_logs_for_snippet(snippet_path, logs)
+                elif snippet_path in changed_snippet_paths:
+                    logger.debug("Snippet needs updating %s", snippet_path)
+                    _save_logs_for_snippet(snippet_path, logs)
