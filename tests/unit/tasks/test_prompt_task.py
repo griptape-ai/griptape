@@ -285,3 +285,18 @@ class TestPromptTask:
             assert output.value.model_dump_json() == expected_output.model_dump_json()
         else:
             assert output.value == expected_output
+
+    @pytest.mark.parametrize(
+        ("reflect_on_tool_use", "expected"),
+        [(True, "mock output"), (False, "ack test-value")],
+    )
+    def test_reflect_on_tool_use(self, reflect_on_tool_use, expected):
+        task = PromptTask(
+            tools=[MockTool()],
+            prompt_driver=MockPromptDriver(use_native_tools=True),
+            reflect_on_tool_use=reflect_on_tool_use,
+        )
+
+        result = task.run()
+
+        assert result.to_text() == expected

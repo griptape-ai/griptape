@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import warnings
 from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
@@ -64,6 +65,11 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
         return self._actions_schema_for_tools([self.tool])
 
     def try_run(self) -> ListArtifact | TextArtifact | ErrorArtifact:
+        warnings.warn(
+            "`ToolTask` is deprecated and will be removed in a future release. Use `PromptTask` with `reflect_on_tool_use=False` instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         result = self.prompt_driver.run(self.prompt_stack)
 
         if self.prompt_driver.use_native_tools:

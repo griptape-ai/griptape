@@ -80,6 +80,22 @@ You can pass in one or more Tools which the LLM will decide to use through Chain
     --8<-- "docs/griptape-framework/structures/logs/tasks_4.txt"
     ```
 
+#### Reflect On Tool Use
+
+By default, Griptape will pass the results of Tool runs back to the LLM for reflection. This enables the LLM to reason about the results and potentially use additional tools.
+
+However, there may be times where you may want the LLM to give you back the results directly, without reflection.
+You can disable this behavior by setting [reflect_on_tool_use](../../reference/griptape/tasks/prompt_task.md#griptape.tasks.prompt_task.PromptTask.reflect_on_tool_use) to `False`.
+
+```python
+--8<-- "docs/griptape-framework/structures/src/tasks_reflect_on_tool_use.py"
+```
+
+!!! important
+
+    Disabling reflection will prevent the LLM from using one Tool to inform the use of another Tool.
+    Instead, you must coordinate the Tool uses yourself.
+
 ### Images
 
 If the model supports it, you can also pass image inputs:
@@ -97,6 +113,10 @@ If the model supports it, you can also pass image inputs:
     ```
 
 ## Tool Task
+
+!!! warning
+
+    `ToolTask` is deprecated and will be removed in a future version. Use [Prompt Task](./tasks.md#prompt-task) with [reflect_on_tool_use](./tasks.md#reflect-on-tool-use) set to `False` instead.
 
 Another way to use [Griptape Tools](../../griptape-framework/tools/index.md), is with a [Tool Task](../../reference/griptape/tasks/tool_task.md).
 This Task takes in a single Tool which the LLM will use without Chain of Thought (CoT) reasoning. Because this Task does not use CoT, it is better suited for less capable models.
