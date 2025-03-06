@@ -85,9 +85,18 @@ python -m smtpd -c DebuggingServer -n localhost:1025
 
 The [ExractionTool](../../../reference/griptape/tools/extraction/tool.md) enables LLMs to extract structured text from unstructured data.
 
-```python
---8<-- "docs/griptape-framework/tools/official-tools/src/extraction_tool_1.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/tools/official-tools/src/extraction_tool_1.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/tools/official-tools/logs/extraction_tool_1.txt"
+    ```
+
 
 ### File Manager
 
@@ -225,9 +234,18 @@ Here is an example of how it can be used with a local vector store driver:
 
 The [QueryTool](../../../reference/griptape/tools/query/tool.md) enables Agents to query unstructured data for specific information.
 
-```python
---8<-- "docs/griptape-framework/tools/official-tools/src/query_tool_1.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/tools/official-tools/src/query_tool_1.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/tools/official-tools/logs/query_tool_1.txt"
+    ```
+
 
 ### Rest Api
 

@@ -104,9 +104,18 @@ When running this example, we get the following error:
 This is because the content of the webpage is too large to fit in the LLM's input token limit. We can fix this by storing the content in Task Memory, and then querying it with the `QueryTool`.
 Note that we're setting `off_prompt` to `False` on the `QueryTool` so that the _queried_ content can be returned directly to the LLM.
 
-```python
---8<-- "docs/griptape-framework/structures/src/task_memory_5.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/structures/src/task_memory_5.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/structures/logs/task_memory_5.txt"
+    ```
+
 
 And now we get the expected output.
 
