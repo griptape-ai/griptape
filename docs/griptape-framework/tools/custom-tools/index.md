@@ -32,9 +32,18 @@ Technically, each Activity is a method in the tool class that's decorated with t
 
 Griptape will convert the Tool and its Activities into the appropriate format for the LLM to use. You can see the schema for a particular Activity by calling [to_json_schema](../../../reference/griptape/mixins/activity_mixin.md#griptape.mixins.activity_mixin.ActivityMixin.to_activity_json_schema).
 
-```python
---8<-- "docs/griptape-framework/tools/custom-tools/src/to_json_schema.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/tools/custom-tools/src/to_json_schema.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/tools/custom-tools/logs/to_json_schema.txt"
+    ```
+
 
 Each Activity takes a `config` keyword argument that contains the configuration for the Activity. The configuration can contain:
 
