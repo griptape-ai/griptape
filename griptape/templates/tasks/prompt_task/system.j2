@@ -12,10 +12,14 @@ Actions: <JSON array of actions that MUST follow this schema: {{ actions_schema 
 You must use the following format when providing your final answer:
 Answer: <final answer>
 {% endif %}
+
+{% if reflect_on_tool_use %}
 Repeat executing actions as many times as you need.
 If an action's output contains an error, you MUST ALWAYS try to fix the error by executing another action. 
 
-Be truthful. ALWAYS be proactive and NEVER ask the user for more information input. Keep using actions until you have your final answer.
+Keep using actions until you have your final answer.
+{% endif %}
+Be truthful. ALWAYS be proactive and NEVER ask the user for more information input.
 NEVER make up actions, action names, or action paths. NEVER make up facts. NEVER reference tags in other action input values.
 {% endif %}
 {% if meta_memory %}
