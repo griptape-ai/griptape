@@ -1,0 +1,70 @@
+{
+  "versioning": "always-bump-minor",
+  "release-type": "simple",
+  "pull-request-title-pattern": "chore(release): hotfix release ${version}",
+  "pull-request-header": "🚨 Hotfix Release",
+  "label": "hotfix",
+  "release-label": "hotfix",
+  "changelog-sections": [
+    {
+      "type": "fix",
+      "section": "🐛 Bug Fixes"
+    },
+    {
+      "type": "hfix",
+      "section": "🤫 Bug Fixes",
+      "hidden": false
+    },
+    {
+      "type": "perf",
+      "section": "🚀 Performance Improvements"
+    },
+    {
+      "type": "revert",
+      "section": "🗑 Reverts"
+    },
+    {
+      "type": "hrevert",
+      "section": "🤫 Reverts",
+      "hidden": false
+    },
+    {
+      "type": "docs",
+      "section": "📚 Documentation",
+      "hidden": true
+    },
+    {
+      "type": "style",
+      "section": "💎 Styles",
+      "hidden": true
+    },
+    {
+      "type": "chore",
+      "section": "♻️ Miscellaneous Chores",
+      "hidden": true
+    },
+    {
+      "type": "refactor",
+      "section": "📦 Code Refactoring",
+      "hidden": true
+    },
+    {
+      "type": "test",
+      "section": "🚨 Tests",
+      "hidden": true
+    },
+    {
+      "type": "build",
+      "section": "🛠 Build System",
+      "hidden": true
+    },
+    {
+      "type": "ci",
+      "section": "⚙️ Continuous Integration",
+      "hidden": true
+    }
+  ],
+  "packages": {
+    ".": {}
+  }
+}
