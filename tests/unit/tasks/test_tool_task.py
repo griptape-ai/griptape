@@ -285,3 +285,11 @@ class TestToolTask:
 
         deserialized_tool_task = ToolTask.from_dict(serialized_tool_task)
         assert isinstance(deserialized_tool_task, ToolTask)
+
+    def test_deprecated_warning(self, agent):
+        task = ToolTask(tool=MockTool())
+
+        agent.add_task(task)
+
+        with pytest.warns(DeprecationWarning):
+            task.run()

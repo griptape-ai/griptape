@@ -77,6 +77,7 @@ class PromptTask(
         kw_only=True,
     )
     response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
+    reflect_on_tool_use: bool = field(default=True, kw_only=True)
 
     @property
     def rulesets(self) -> list:
@@ -202,19 +203,17 @@ class PromptTask(
         if self.tools:
             subtask = self.add_subtask(ActionsSubtask(output))
 
-            while True:
-                if subtask.output is None:
-                    if len(self.subtasks) >= self.max_subtasks:
-                        subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
-                    else:
-                        subtask.run()
+            while subtask.output is None:
+                if len(self.subtasks) >= self.max_subtasks:
+                    subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
+                else:
+                    subtask.run()
 
+                    if self.reflect_on_tool_use:
                         output = self.prompt_driver.run(self.prompt_stack).to_artifact(
                             meta={"is_react_prompt": not self.prompt_driver.use_native_tools}
                         )
                         subtask = self.add_subtask(ActionsSubtask(output))
-                else:
-                    break
 
             output = subtask.output
 
@@ -227,7 +226,7 @@ class PromptTask(
                 return ModelArtifact(TypeAdapter(self.output_schema).validate_json(output.value))
             else:
                 raise ValueError(f"Unsupported output schema type: {type(self.output_schema)}")
-        elif isinstance(output, (TextArtifact, AudioArtifact, JsonArtifact, ErrorArtifact)):
+        elif isinstance(output, (ListArtifact, TextArtifact, AudioArtifact, JsonArtifact, ErrorArtifact)):
             return output
         else:
             raise ValueError(f"Unsupported output type: {type(output)}")
@@ -251,6 +250,7 @@ class PromptTask(
             meta_memory=J2("memory/meta/meta_memory.j2").render(meta_memories=self.meta_memories),
             use_native_tools=self.prompt_driver.use_native_tools,
             stop_sequence=self.response_stop_sequence,
+            reflect_on_tool_use=self.reflect_on_tool_use,
         )
 
     def default_generate_assistant_subtask_template(self, subtask: ActionsSubtask) -> str:

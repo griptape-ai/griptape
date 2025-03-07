@@ -178,8 +178,9 @@ The important thing to note here is that no matter how big the webpage is it can
 In the above example, we set [off_prompt](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md#off-prompt) to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
 
 > [!IMPORTANT]
-> This example uses Griptape's [PromptTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#prompt-task) with `tools`, which requires a highly capable LLM to function correctly. By default, Griptape uses the [OpenAiChatPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#openai-chat); for another powerful LLM try swapping to the [AnthropicPromptDriver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/#anthropic)!
-> If you're using a less powerful LLM, consider using the [ToolTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#tool-task) instead, as the `PromptTask` with `tools` might not work properly or at all.
+> This example uses Griptape's [PromptTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#prompt-task) with multiple `tools`, which requires a highly capable LLM to function correctly.
+> If you're using a less powerful LLM, consider setting [reflect_on_tool_use](https://docs.griptape.ai/latest/griptape-framework/structures/tasks/#reflect-on-tool-use) to `False` to have the LLM return tool outputs directly.
+> You can then make the same tool calls yourself rather than having the LLM coordinate them.
 
 [Check out our docs](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
 
