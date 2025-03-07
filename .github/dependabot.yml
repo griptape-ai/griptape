@@ -19,7 +19,7 @@ updates:
         - "patch"
         - "major"
     commit-message:
-      prefix: build(deps)
+      prefix: deps
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
