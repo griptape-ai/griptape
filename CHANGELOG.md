@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0](https://github.com/griptape-ai/griptape/compare/v1.4.0...v1.5.0) (2025-03-07)
+
+
+### 🐛 Bug Fixes
+
+* **chunker:** correctly determine chunk midpoint when empty chunks are present ([#1800](https://github.com/griptape-ai/griptape/issues/1800)) ([8ec2a8a](https://github.com/griptape-ai/griptape/commit/8ec2a8a38b2bfb03a6e75c0396a7cd40b278e1c4))
+* **decorators:** preserve type hints on `[@observable](https://github.com/observable)` decorator ([#1767](https://github.com/griptape-ai/griptape/issues/1767)) ([0e5a15c](https://github.com/griptape-ai/griptape/commit/0e5a15c7645db65a928aa5fb25d8be35bd8c9fba))
+* **drivers-prompt-openai:** remove modalities default ([#1774](https://github.com/griptape-ai/griptape/issues/1774)) ([7e061b5](https://github.com/griptape-ai/griptape/commit/7e061b56963a9fe31a06c1eae4e62fe0094dc3a1))
+* **drivers-vector-marqo:** fix upsert failing due to inability to upsert_vectors ([#1803](https://github.com/griptape-ai/griptape/issues/1803)) ([9b6bfff](https://github.com/griptape-ai/griptape/commit/9b6bfffaa8640ba7277c287be4fa0a125b94d772))
+* **drivers-vector:** don't mutate same instance of meta ([#1782](https://github.com/griptape-ai/griptape/issues/1782)) ([dd138ca](https://github.com/griptape-ai/griptape/commit/dd138caea9dabd74c515592c697415d645fdca4d))
+
+
+### 🤫 Reverts
+
+* don't use lazy_property on Agent, it erroneously triggers deprecation warnings ([2d0238d](https://github.com/griptape-ai/griptape/commit/2d0238dd5a9ccddc197536194751e08276d6a2c1))
+
 ## [1.4.0](https://github.com/griptape-ai/griptape/compare/v1.3.0...v1.4.0) (2025-02-24)
 
 
