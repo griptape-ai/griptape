@@ -48,6 +48,8 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 @define
 class AmazonBedrockPromptDriver(BasePromptDriver):
+    OTEL_SYSTEM = "aws.bedrock"
+
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     additional_model_request_fields: dict = field(default=Factory(dict), kw_only=True)
     tokenizer: BaseTokenizer = field(

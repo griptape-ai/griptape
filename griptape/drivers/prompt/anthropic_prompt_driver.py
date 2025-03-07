@@ -58,6 +58,8 @@ class AnthropicPromptDriver(BasePromptDriver):
         client: Custom `Anthropic` client.
     """
 
+    OTEL_SYSTEM = "anthropic"
+
     api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(

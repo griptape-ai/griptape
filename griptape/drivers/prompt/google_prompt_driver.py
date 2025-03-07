@@ -54,6 +54,8 @@ class GooglePromptDriver(BasePromptDriver):
         top_k: Optional value for top_k.
     """
 
+    OTEL_SYSTEM = "gemini"
+
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(

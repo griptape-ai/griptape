@@ -81,7 +81,46 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             ),
         )
 
-    @observable(tags=["PromptDriver.run()"])
+    @observable(
+        tags=["PromptDriver.run()"],
+        create_attributes=lambda call: {
+            "gen_ai.operation.name": "chat",
+            "gen_ai.request.model": call.instance.model,
+            "gen_ai.request.temperature": call.instance.temperature,
+            "gen_ai.request.max_tokens": call.instance.max_tokens,
+            "gen_ai.request.stop_sequences": call.instance.tokenizer.stop_sequences,
+            "gen_ai.usage.input_tokens": call.func_result.usage.input_tokens,
+            "gen_ai.usage.output_tokens": call.func_result.usage.output_tokens,
+        },
+        create_before_call_events=lambda call: [
+            {
+                "event_name": "gen_ai.system.message",
+                "event_attributes": {
+                    "gen_ai.system": "griptape",
+                    "role": "system",
+                    "content": "\n".join([system_message.to_text() for system_message in call.args[0].system_messages]),
+                },
+            },
+            {
+                "event_name": "gen_ai.user.message",
+                "event_attributes": {
+                    "gen_ai.system": "griptape",
+                    "role": "user",
+                    "content": call.args[0].user_messages[-1].to_text(),
+                },
+            },
+        ],
+        create_after_call_events=lambda call: [
+            {
+                "event_name": "gen_ai.assistant.message",
+                "event_attributes": {
+                    "gen_ai.system": "griptape",
+                    "role": "assistant",
+                    "content": call.func_result.to_text(),
+                },
+            }
+        ],
+    )
     def run(self, prompt_input: PromptStack | BaseArtifact) -> Message:
         if isinstance(prompt_input, BaseArtifact):
             prompt_stack = PromptStack.from_artifact(prompt_input)

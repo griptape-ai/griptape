@@ -48,6 +48,8 @@ class CoherePromptDriver(BasePromptDriver):
         client: Custom `cohere.Client`.
     """
 
+    OTEL_SYSTEM = "cohere"
+
     api_key: str = field(metadata={"serializable": False})
     model: str = field(metadata={"serializable": True})
     force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})

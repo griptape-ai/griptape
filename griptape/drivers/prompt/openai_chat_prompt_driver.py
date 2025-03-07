@@ -63,6 +63,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         parallel_tool_calls: A flag to enable parallel tool calls. Defaults to `True`.
     """
 
+    OTEL_SYSTEM = "openai"
+
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -120,7 +122,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def is_reasoning_model(self) -> bool:
         return any(model in self.model for model in ("o1", "o3"))
 
-    @observable
+    @observable(create_attributes=lambda _: {"gen_ai.system": "openai"})
     def try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
         logger.debug(params)

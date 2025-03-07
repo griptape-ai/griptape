@@ -25,6 +25,8 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
         client: An `openai.AzureOpenAI` client.
     """
 
+    OTEL_SYSTEM = "az.ai.openai"
+
     azure_deployment: str = field(
         kw_only=True,
         default=Factory(lambda self: self.model, takes_self=True),

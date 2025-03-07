@@ -91,7 +91,22 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
                 span.set_attribute("tags", tags)
 
             try:
+                events = call.before_call_events
+                for event in events:
+                    span.add_event(event["event_name"], event["event_attributes"])
+
                 result = call()
+
+                events = call.after_call_events
+                for event in events:
+                    span.add_event(event["event_name"], event["event_attributes"])
+
+                attributes = call.attributes
+                if attributes is not None:
+                    for key, value in attributes.items():
+                        if value is not None:
+                            span.set_attribute(key, value)
+
                 span.set_status(open_telemetry_trace.Status(open_telemetry_trace.StatusCode.OK))
                 return result
             except Exception as e:
