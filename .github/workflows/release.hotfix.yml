@@ -14,7 +14,7 @@ jobs:
         uses: googleapis/release-please-action@v4
         with:
           release-type: python
-          target-branch: ${{ github.ref_name }} 
+          target-branch: ${{ github.ref_name }}
           token: ${{ secrets.GH_RELEASE_PAT }}
           config-file: .github/release-please-config.hotfix.json
           manifest-file: .github/.release-please-manifest.json
