@@ -225,16 +225,22 @@ class BaseSchema(Schema):
             Reference,
             ToolAction,
         )
+        from griptape.drivers.assistant import BaseAssistantDriver
         from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
         from griptape.drivers.embedding import BaseEmbeddingDriver
+        from griptape.drivers.file_manager import BaseFileManagerDriver
         from griptape.drivers.image_generation import BaseImageGenerationDriver, BaseMultiModelImageGenerationDriver
         from griptape.drivers.image_generation_model import BaseImageGenerationModelDriver
         from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
+        from griptape.drivers.observability import BaseObservabilityDriver
         from griptape.drivers.prompt import BasePromptDriver
         from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
         from griptape.drivers.ruleset import BaseRulesetDriver
+        from griptape.drivers.sql import BaseSqlDriver
         from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
         from griptape.drivers.vector import BaseVectorStoreDriver
+        from griptape.drivers.web_scraper import BaseWebScraperDriver
+        from griptape.drivers.web_search import BaseWebSearchDriver
         from griptape.engines.rag import RagContext
         from griptape.events import EventListener
         from griptape.memory import TaskMemory
@@ -262,6 +268,12 @@ class BaseSchema(Schema):
                 "BaseImageGenerationDriver": BaseImageGenerationDriver,
                 "BaseMultiModelImageGenerationDriver": BaseMultiModelImageGenerationDriver,
                 "BaseImageGenerationModelDriver": BaseImageGenerationModelDriver,
+                "BaseWebSearchDriver": BaseWebSearchDriver,
+                "BaseWebScraperDriver": BaseWebScraperDriver,
+                "BaseFileManagerDriver": BaseFileManagerDriver,
+                "BaseSqlDriver": BaseSqlDriver,
+                "BaseObservabilityDriver": BaseObservabilityDriver,
+                "BaseAssistantDriver": BaseAssistantDriver,
                 "BaseArtifact": BaseArtifact,
                 "PromptStack": PromptStack,
                 "EventListener": EventListener,
