@@ -194,5 +194,5 @@ nav:
               - Load and Query Marqo: "recipes/load-query-and-chat-marqo.md"
               - Query a Webpage: "recipes/query-webpage.md"
               - RAG with Astra DB vector store: "recipes/query-webpage-astra-db.md"
-  - Framework API Reference: "reference/"
+  - Framework Reference: "reference/"
   - Trade School: "https://learn.griptape.ai"
