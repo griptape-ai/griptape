@@ -1,5 +1,7 @@
-from griptape.structures import Agent
-from griptape.utils import Chat
+from griptape.tasks import PromptTask
 
-agent = Agent()
-Chat(agent).start()
+task = PromptTask()
+
+output = task.run("Hello there!")
+
+print(output)

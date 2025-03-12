@@ -1,9 +1,6 @@
-from griptape.structures import Agent
-from griptape.tools import CalculatorTool
+from griptape.drivers.prompt.openai_chat_prompt_driver import OpenAiChatPromptDriver
+from griptape.tasks import PromptTask
 
-calculator = CalculatorTool()
+task = PromptTask(prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"))
 
-agent = Agent(tools=[calculator])
-
-agent.run("what is 7^12")
-print("Answer:", agent.output)
+task.run("Hello there!")
