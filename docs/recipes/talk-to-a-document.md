@@ -5,7 +5,7 @@ In this example, we pass a PDF document to the Agent using Anthropic's document 
 We use [Task hooks](../griptape-framework/structures/tasks.md#hooks) to add and remove a log filter to truncate the logs before printing the large document content.
 
 ```python
---8<-- "docs/examples/src/talk_to_a_document.py"
+--8<-- "docs/recipes/src/talk_to_a_document.py"
 ```
 
 ```
