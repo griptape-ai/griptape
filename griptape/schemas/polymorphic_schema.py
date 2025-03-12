@@ -1,4 +1,6 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import Any, Optional
 
 from marshmallow import Schema, ValidationError
 
@@ -8,10 +10,11 @@ from griptape.schemas import BaseSchema
 class PolymorphicSchema(BaseSchema):
     """PolymorphicSchema is based on https://github.com/marshmallow-code/marshmallow-oneofschema."""
 
-    def __init__(self, inner_class: Any, **kwargs) -> None:
+    def __init__(self, inner_class: Any, types_overrides: Optional[dict[str, type]] = None, **kwargs) -> None:
         super().__init__(**kwargs)
 
         self.inner_class = inner_class
+        self.types_overrides = types_overrides
 
     type_field = "type"
     type_field_remove = True
@@ -58,7 +61,7 @@ class PolymorphicSchema(BaseSchema):
         if not obj_type:
             return (None, {"_schema": f"Unknown object class: {obj.__class__.__name__}"})
 
-        type_schema = BaseSchema.from_attrs_cls(obj.__class__)
+        type_schema = BaseSchema.from_attrs_cls(obj.__class__, types_overrides=self.types_overrides)
 
         if not type_schema:
             return None, {"_schema": f"Unsupported object type: {obj_type}"}
