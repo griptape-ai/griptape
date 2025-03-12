@@ -8,23 +8,20 @@
 [![codecov](https://codecov.io/github/griptape-ai/griptape/graph/badge.svg?token=HUBqUpl3NB)](https://codecov.io/github/griptape-ai/griptape)
 [![Griptape Discord](https://dcbadge.vercel.app/api/server/gnWRz88eym?compact=true&style=flat)](https://discord.gg/griptape)
 
-Griptape is a modular Python framework for building AI-powered applications that securely connect to your enterprise data and APIs. It offers developers the ability to maintain control and flexibility at every step.
+Griptape is a Python framework designed to simplify the development of generative AI (genAI) applications.
+It offers a set of straightforward, flexible abstractions for working with areas such as Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), and much more.
 
 ## 🛠️ Core Components
 
 ### 🏗️ Structures
 
-- 🤖 **Agents** consist of a single Task.
+- 🤖 **Agents** consist of a single Task, configured for Agent-specific behavior.
 - 🔄 **Pipelines** organize a sequence of Tasks so that the output from one Task may flow into the next.
 - 🌐 **Workflows** configure Tasks to operate in parallel.
 
 ### 📝 Tasks
 
 Tasks are the core building blocks within Structures, enabling interaction with Engines, Tools, and other Griptape components.
-
-### 🔧 Tools
-
-Tools provide capabilities for LLMs to interact with data and services. Griptape includes a variety of built-in Tools, and makes it easy to create custom Tools.
 
 ### 🧠 Memory
 
@@ -34,25 +31,40 @@ Tools provide capabilities for LLMs to interact with data and services. Griptape
 
 ### 🚗 Drivers
 
-Drivers facilitate interactions with external resources and services:
+Drivers facilitate interactions with external resources and services in Griptape. 
+They allow you to swap out functionality and providers with minimal changes to your business logic.
 
-- 🗣️ **Prompt Drivers** manage textual and image interactions with LLMs.
-- 🔢 **Embedding Drivers** generate vector embeddings from textual inputs.
-- 💾 **Vector Store Drivers** manage the storage and retrieval of embeddings.
-- 🔀 **Rerank Drivers** rerank search results based for relevance.
-- 🎨 **Image Generation Drivers** create images from text descriptions.
-- 💼 **SQL Drivers** interact with SQL databases.
-- 🌐 **Web Scraper Drivers** extract information from web pages.
-- 🧠 **Conversation Memory Drivers** manage the storage and retrieval of conversational data.
-- 📡 **Event Listener Drivers** forward framework events to external services.
-- 🏗️ **Structure Run Drivers** execute structures both locally and in the cloud.
-- 🤖 **Assistant Drivers** enable interactions with various "assistant" services.
-- 🗣️ **Text to Speech Drivers** convert text to speech.
-- 🎙️ **Audio Transcription Drivers** convert audio to text.
-- 🔍 **Web Search Drivers** search the web for information.
-- 📈 **Observability Drivers** send trace and event data to observability platforms.
-- 📜 **Ruleset Drivers** load and apply rulesets from external sources.
-- 🗂️ **File Manager Drivers** handle file operations on local and remote storage.
+#### LLM & Orchestration
+- 🗣️ **Prompt Drivers**: Manage textual and image interactions with LLMs.
+- 🤖 **Assistant Drivers**: Enable interactions with various “assistant” services.
+- 📜 **Ruleset Drivers**: Load and apply rulesets from external sources.
+- 🧠 **Conversation Memory Drivers**: Store and retrieve conversational data.
+- 📡 **Event Listener Drivers**: Forward framework events to external services.
+- 🏗️ **Structure Run Drivers**: Execute structures locally or in the cloud.
+
+#### Retrieval & Storage
+- 🔢 **Embedding Drivers**: Generate vector embeddings from textual inputs.
+- 🔀 **Rerank Drivers**: Rerank search results for improved relevance.
+- 💾 **Vector Store Drivers**: Manage the storage and retrieval of embeddings.
+- 🗂️ **File Manager Drivers**: Handle file operations on local and remote storage.
+- 💼 **SQL Drivers**: Interact with SQL databases.
+
+#### Multimodal
+- 🎨 **Image Generation Drivers**: Create images from text descriptions.
+- 🗣️ **Text to Speech Drivers**: Convert text to speech.
+- 🎙️ **Audio Transcription Drivers**: Convert audio to text.
+
+#### Web
+- 🔍 **Web Search Drivers**: Search the web for information.
+- 🌐 **Web Scraper Drivers**: Extract data from web pages.
+
+#### Observability
+- 📈 **Observability Drivers**: Send trace and event data to observability platforms.
+
+### 🔧 Tools
+
+Tools provide capabilities for LLMs to interact with data and services.
+Griptape includes a variety of [built-in Tools](https://docs.griptape.ai/stable/griptape-framework/tools/official-tools/), and makes it easy to create [custom Tools](https://docs.griptape.ai/stable/griptape-framework/tools/custom-tools/).
 
 ### 🚂 Engines
 
@@ -73,116 +85,137 @@ Engines wrap Drivers and provide use-case-specific functionality:
 
 ## Documentation
 
-Please refer to [Griptape Docs](https://docs.griptape.ai/) for:
+Please visit the [docs](https://docs.griptape.ai/) for information on installation and usage.
 
-- Getting started guides.
-- Core concepts and design overviews.
-- Examples.
-- Contribution guidelines.
+Check out [Griptape Trade School](https://learn.griptape.ai/) for free online courses.
 
-Please check out [Griptape Trade School](https://learn.griptape.ai/) for free online courses.
+## Hello World Example
 
-## Quick Start
+Here's a minimal example of griptape:
 
-First, install **griptape**:
-
-```
-pip install "griptape[all]" -U
-```
-
-Second, configure an OpenAI client by [getting an API key](https://platform.openai.com/account/api-keys) and adding it to your environment as `OPENAI_API_KEY`. By default, Griptape uses [OpenAI Chat Completions API](https://platform.openai.com/docs/guides/gpt/chat-completions-api) to execute LLM prompts.
-
-With Griptape, you can create Structures, such as Agents, Pipelines, and Workflows, composed of different types of Tasks. Let's build a simple creative Agent that dynamically uses three tools and moves the data around in Task Memory.
 
 ```python
-from griptape.structures import Agent
-from griptape.tools import WebScraperTool, FileManagerTool, PromptSummaryTool
+from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
+from griptape.rules import Rule
+from griptape.tasks import PromptTask
 
-agent = Agent(
-    input="Load {{ args[0] }}, summarize it, and store it in a file called {{ args[1] }}.",
-    tools=[
-        WebScraperTool(off_prompt=True),
-        PromptSummaryTool(off_prompt=True),
-        FileManagerTool()
+task = PromptTask(
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
+    rules=[Rule("Keep your answer to a few sentences.")],
+)
+
+result = task.run("How do I do a kickflip?")
+
+print(result.value)
+```
+
+```text
+To do a kickflip, start by positioning your front foot slightly angled near the middle of the board and your back foot on the tail.
+Pop the tail down with your back foot while flicking the edge of the board with your front foot to make it spin.
+Jump and keep your body centered over the board, then catch it with your feet and land smoothly. Practice and patience are key!
+```
+
+
+## Task and Workflow Example
+
+Here is a concise example using griptape to research open source projects:
+
+```python
+from griptape.drivers.prompt.openai_chat_prompt_driver import OpenAiChatPromptDriver
+from griptape.drivers.web_search.duck_duck_go import DuckDuckGoWebSearchDriver
+from griptape.rules import Rule, Ruleset
+from griptape.structures import Workflow
+from griptape.tasks import PromptTask, TextSummaryTask
+from griptape.tools import WebScraperTool, WebSearchTool
+from griptape.utils import StructureVisualizer
+from pydantic import BaseModel
+
+
+class Feature(BaseModel):
+    name: str
+    description: str
+    emoji: str
+
+
+class Output(BaseModel):
+    answer: str
+    key_features: list[Feature]
+
+
+projects = ["griptape", "langchain", "crew-ai", "pydantic-ai"]
+
+prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
+workflow = Workflow(
+    tasks=[
+        [
+            PromptTask(
+                id=f"project-{project}",
+                input="Tell me about the open source project: {{ project }}.",
+                prompt_driver=prompt_driver,
+                context={"project": projects},
+                output_schema=Output,
+                tools=[
+                    WebSearchTool(
+                        web_search_driver=DuckDuckGoWebSearchDriver(),
+                    ),
+                    WebScraperTool(),
+                ],
+                child_ids=["summary"],
+            )
+            for project in projects
+        ],
+        TextSummaryTask(
+            input="{{ parents_output_text }}",
+            id="summary",
+            rulesets=[
+                Ruleset(
+                    name="Format", rules=[Rule("Be detailed."), Rule("Include emojis.")]
+                )
+            ],
+        ),
     ]
 )
-agent.run("https://griptape.ai", "griptape.txt")
+
+workflow.run()
+
+print(StructureVisualizer(workflow).to_url())
 ```
 
-And here is the output:
+```text
+ Output: Here's a detailed summary of the open-source projects mentioned:
 
-```
-[08/12/24 14:48:15] INFO     PromptTask c90d263ec69046e8b30323c131ae4ba0
-                             Input: Load https://griptape.ai, summarize it, and store it in a file called griptape.txt.
-[08/12/24 14:48:16] INFO     Subtask ebe23832cbe2464fb9ecde9fcee7c30f
-                             Actions: [
-                               {
-                                 "tag": "call_62kBnkswnk9Y6GH6kn1GIKk6",
-                                 "name": "WebScraperTool",
-                                 "path": "get_content",
-                                 "input": {
-                                   "values": {
-                                     "url": "https://griptape.ai"
-                                   }
-                                 }
-                               }
-                             ]
-[08/12/24 14:48:17] INFO     Subtask ebe23832cbe2464fb9ecde9fcee7c30f
-                             Response: Output of "WebScraperTool.get_content" was stored in memory with memory_name "TaskMemory" and artifact_namespace
-                             "cecca28eb0c74bcd8c7119ed7f790c95"
-[08/12/24 14:48:18] INFO     Subtask dca04901436d49d2ade86cd6b4e1038a
-                             Actions: [
-                               {
-                                 "tag": "call_o9F1taIxHty0mDlWLcAjTAAu",
-                                 "name": "PromptSummaryTool",
-                                 "path": "summarize",
-                                 "input": {
-                                   "values": {
-                                     "summary": {
-                                       "memory_name": "TaskMemory",
-                                       "artifact_namespace": "cecca28eb0c74bcd8c7119ed7f790c95"
-                                     }
-                                   }
-                                 }
-                               }
-                             ]
-[08/12/24 14:48:21] INFO     Subtask dca04901436d49d2ade86cd6b4e1038a
-                             Response: Output of "PromptSummaryTool.summarize" was stored in memory with memory_name "TaskMemory" and artifact_namespace
-                             "73765e32b8404e32927822250dc2ae8b"
-[08/12/24 14:48:22] INFO     Subtask c233853450fb4fd6a3e9c04c52b33bf6
-                             Actions: [
-                               {
-                                 "tag": "call_eKvIUIw45aRYKDBpT1gGKc9b",
-                                 "name": "FileManagerTool",
-                                 "path": "save_memory_artifacts_to_disk",
-                                 "input": {
-                                   "values": {
-                                     "dir_name": ".",
-                                     "file_name": "griptape.txt",
-                                     "memory_name": "TaskMemory",
-                                     "artifact_namespace": "73765e32b8404e32927822250dc2ae8b"
-                                   }
-                                 }
-                               }
-                             ]
-                    INFO     Subtask c233853450fb4fd6a3e9c04c52b33bf6
-                             Response: Successfully saved memory artifacts to disk
-[08/12/24 14:48:23] INFO     PromptTask c90d263ec69046e8b30323c131ae4ba0
-                             Output: The content from https://griptape.ai has been summarized and stored in a file called `griptape.txt`.
+ 1. **Griptape** 🛠️:                                                                                                            
+    - Griptape is a modular Python framework designed for creating AI-powered applications. It focuses on securely connecting to
+ enterprise data and APIs. The framework provides structured components like Agents, Pipelines, and Workflows, allowing for both
+ parallel and sequential operations. It includes built-in tools and supports custom tool creation for data and service
+ interaction.
+
+ 2. **LangChain** 🔗:
+    - LangChain is a framework for building applications powered by Large Language Models (LLMs). It offers a standard interface
+ for models, embeddings, and vector stores, facilitating real-time data augmentation and model interoperability. LangChain
+ integrates with various data sources and external systems, making it adaptable to evolving technologies.
+
+ 3. **CrewAI** 🤖:
+    - CrewAI is a standalone Python framework for orchestrating multi-agent AI systems. It allows developers to create and
+ manage AI agents that collaborate on complex tasks. CrewAI emphasizes ease of use and scalability, providing tools and
+ documentation to help developers build AI-powered solutions.
+
+ 4. **Pydantic-AI** 🧩:
+    - Pydantic-AI is a Python agent framework that simplifies the development of production-grade applications with Generative
+ AI. Built on Pydantic, it supports various AI models and provides features like type-safe design, structured response
+ validation, and dependency injection. Pydantic-AI aims to bring the ease of FastAPI development to AI applications.
+
+ These projects offer diverse tools and frameworks for developing AI applications, each with unique features and capabilities
+ tailored to different aspects of AI development.
 ```
 
-During the run, the Griptape Agent loaded a webpage with a [Tool](https://docs.griptape.ai/stable/griptape-framework/tools/), stored its full content in [Task Memory](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md), queried it to answer the original question, and finally saved the answer to a file.
-
-The important thing to note here is that no matter how big the webpage is it can never blow up the prompt token limit because the full content of the page never goes back to the LLM. Additionally, no data from the subsequent subtasks were returned back to the prompt either. So, how does it work?
-
-In the above example, we set [off_prompt](https://docs.griptape.ai/stable/griptape-framework/structures/task-memory.md#off-prompt) to `True`, which means that the LLM can never see the data it manipulates, but can send it to other Tools.
-
-> [!IMPORTANT]
-> This example uses Griptape's [PromptTask](https://docs.griptape.ai/stable/griptape-framework/structures/tasks/#prompt-task) with multiple `tools`, which requires a highly capable LLM to function correctly.
-> If you're using a less powerful LLM, consider setting [reflect_on_tool_use](https://docs.griptape.ai/latest/griptape-framework/structures/tasks/#reflect-on-tool-use) to `False` to have the LLM return tool outputs directly.
-> You can then make the same tool calls yourself rather than having the LLM coordinate them.
-
-[Check out our docs](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers/) to learn more about how to use Griptape with other LLM providers like Anthropic, Claude, Hugging Face, and Azure.
+```mermaid
+    graph TD;
+    griptape-->summary;
+    langchain-->summary;
+    pydantic-ai-->summary;
+    crew-ai-->summary;
+```
 
 ## Versioning
 
