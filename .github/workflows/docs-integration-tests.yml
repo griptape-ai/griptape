@@ -167,3 +167,4 @@ jobs:
           labels: "docs"
           add-paths: |
             docs/**/*
+          token: ${{ secrets.GH_RELEASE_PAT }}
