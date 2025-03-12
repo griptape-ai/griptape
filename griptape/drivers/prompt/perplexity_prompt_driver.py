@@ -23,8 +23,8 @@ class PerplexityPromptDriver(OpenAiChatPromptDriver):
     @override
     def _to_message(self, result: ChatCompletion) -> Message:
         message = super()._to_message(result)
-        if hasattr(result, "citations"):
-            message.meta["citations"] = getattr(result, "citations")
+
+        message.content[0].artifact.meta["citations"] = getattr(result, "citations", [])
 
         return message
 
