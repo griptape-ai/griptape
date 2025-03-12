@@ -1,5 +1,5 @@
 [default]
-extend-ignore-re = ["call_[[:alnum:]]+"]
+extend-ignore-re = ["call_[[:alnum:]]+", "\\(\\[([a-f0-9]+)\\]\\([^)]+\\)\\)"]
 
 [default.extend-words]
 # Don't correct the state ND
