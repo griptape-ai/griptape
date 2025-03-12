@@ -7,6 +7,7 @@ import schema
 
 from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.audio_artifact import AudioArtifact
+from griptape.artifacts.generic_artifact import GenericArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.common.prompt_stack.contents.audio_delta_message_content import AudioDeltaMessageContent
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
@@ -366,6 +367,8 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 },
             ),
         )
+
+        prompt_stack.add_user_message(GenericArtifact(value="generic-value"))
         return prompt_stack
 
     @pytest.fixture()
@@ -402,6 +405,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             },
             {"audio": {"id": "audio-id"}, "content": "", "role": "assistant"},
             {"content": [{"type": "text", "text": "assistant-audio-transcription"}], "role": "assistant"},
+            {"content": [{"type": "text", "text": "generic-value"}], "role": "user"},
         ]
 
     @pytest.fixture()

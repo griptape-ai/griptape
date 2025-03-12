@@ -352,7 +352,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         elif isinstance(content, ActionResultMessageContent):
             return content.artifact.to_text()
         else:
-            raise ValueError(f"Unsupported content type: {type(content)}")
+            return {"type": "text", "text": content.artifact.to_text()}
 
     def __to_prompt_stack_message_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
         content = []
