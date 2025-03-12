@@ -1,22 +1,11 @@
 # Contributing
 
-Thank you for considering contributing to Griptape documentation! Before you start, please read the following guidelines.
-
-## Submitting Issues
-
-If you have identified a documentation issue, want to propose new documentation, or have a question, please submit an issue through our public [issue tracker](https://github.com/griptape-ai/griptape/issues). Before submitting a new issue, please check the existing issues to ensure it hasn't been reported or discussed before.
-
-## Submitting Pull Requests
-
-We welcome and encourage pull requests. To streamline the process, please follow these guidelines:
-
-1. **Existing Issues:** Please submit pull requests only for existing issues. If you want to add new documentation or fix a documentation issue that hasn't been addressed yet, please first submit an issue. This allows the Griptape team to internally process the request and provide a public response.
-
-1. **Branch:** Submit all pull requests to the `dev` branch. This helps us manage changes and integrate them smoothly.
+Thank you for considering contributing to Griptape documentation! Before you start, please read our [contributing guidelines](https://github.com/griptape-ai/griptape/blob/main/CONTRIBUTING.md).
 
 ## Getting Started
 
-Griptape docs are built using [MkDocs](https://squidfunk.github.io/mkdocs-material/getting-started/). Dependencies are managed using [uv](https://docs.astral.sh/uv/).
+Griptape docs are built using [MkDocs](https://squidfunk.github.io/mkdocs-material/getting-started/).
+Dependencies are managed using [uv](https://docs.astral.sh/uv/).
 
 To contribute to Griptape docs, install the `docs` extra with:
 
