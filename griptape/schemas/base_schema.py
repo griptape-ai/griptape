@@ -27,15 +27,24 @@ class BaseSchema(Schema):
     }
 
     @classmethod
-    def from_attrs_cls(cls, attrs_cls: type) -> type:
+    def from_attrs_cls(
+        cls,
+        attrs_cls: type,
+        *,
+        types_overrides: Optional[dict[str, type]] = None,
+        serializable_overrides: Optional[dict[str, bool]] = None,
+    ) -> type:
         """Generate a Schema from an attrs class.
 
         Args:
             attrs_cls: An attrs class.
+            types_overrides: A dictionary of types to override when resolving types.
+            serializable_overrides: A dictionary of field names to whether they are serializable.
         """
         from marshmallow import post_load
 
-        from griptape.mixins.serializable_mixin import SerializableMixin
+        if serializable_overrides is None:
+            serializable_overrides = {}
 
         class SubSchema(cls):
             @post_load
@@ -50,30 +59,31 @@ class BaseSchema(Schema):
 
                 return attrs_cls(**data)
 
-        if issubclass(attrs_cls, SerializableMixin):
-            cls._resolve_types(attrs_cls)
-            return SubSchema.from_dict(
-                {
-                    a.alias or a.name: cls._get_field_for_type(
-                        a.type, serialization_key=a.metadata.get("serialization_key")
-                    )
-                    for a in attrs.fields(attrs_cls)
-                    if a.metadata.get("serializable")
-                },
-                name=f"{attrs_cls.__name__}Schema",
-            )
-        else:
-            raise ValueError(f"Class must implement SerializableMixin: {attrs_cls}")
+        cls._resolve_types(attrs_cls, types_override=types_overrides)
+        fields = {}
+        for field in attrs.fields(attrs_cls):
+            field_key = field.alias or field.name
+            if serializable_overrides.get(field_key, field.metadata.get("serializable", False)):
+                fields[field_key] = cls._get_field_for_type(
+                    field.type,
+                    serialization_key=field.metadata.get("serialization_key"),
+                    types_overrides=types_overrides,
+                )
+        return SubSchema.from_dict(fields, name=f"{attrs_cls.__name__}Schema")
 
     @classmethod
     def _get_field_for_type(
-        cls, field_type: type, serialization_key: Optional[str] = None
+        cls,
+        field_type: type,
+        serialization_key: Optional[str] = None,
+        types_overrides: Optional[dict[str, type]] = None,
     ) -> fields.Field | fields.Nested:
         """Generate a marshmallow Field instance from a Python type.
 
         Args:
             field_type: A field type.
             serialization_key: The key to pull the data from before serializing.
+            types_overrides: A dictionary of types to override when resolving types.
         """
         from griptape.schemas.polymorphic_schema import PolymorphicSchema
 
@@ -95,8 +105,11 @@ class BaseSchema(Schema):
                 serialization_key=serialization_key,
             )
         elif attrs.has(field_class):
-            schema = PolymorphicSchema if ABC in field_class.__bases__ else cls.from_attrs_cls
-            return fields.Nested(schema(field_class), allow_none=optional, attribute=serialization_key)
+            if ABC in field_class.__bases__:
+                schema = PolymorphicSchema(field_class, types_overrides=types_overrides)
+            else:
+                schema = cls.from_attrs_cls(field_class, types_overrides=types_overrides)
+            return fields.Nested(schema, allow_none=optional, attribute=serialization_key)
         elif cls._is_enum(field_type):
             return fields.String(allow_none=optional, attribute=serialization_key)
         elif cls._is_list_sequence(field_class):
@@ -191,11 +204,12 @@ class BaseSchema(Schema):
         return origin, args, optional
 
     @classmethod
-    def _resolve_types(cls, attrs_cls: type) -> None:
+    def _resolve_types(cls, attrs_cls: type, types_override: Optional[dict[str, type]] = None) -> None:
         """Resolve types in an attrs class.
 
         Args:
             attrs_cls: An attrs class.
+            types_override: A dictionary of types to override.
         """
         from collections.abc import Sequence
         from typing import Any
@@ -225,19 +239,26 @@ class BaseSchema(Schema):
             Reference,
             ToolAction,
         )
+        from griptape.drivers.assistant import BaseAssistantDriver
         from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
         from griptape.drivers.embedding import BaseEmbeddingDriver
+        from griptape.drivers.file_manager import BaseFileManagerDriver
         from griptape.drivers.image_generation import BaseImageGenerationDriver, BaseMultiModelImageGenerationDriver
         from griptape.drivers.image_generation_model import BaseImageGenerationModelDriver
         from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
+        from griptape.drivers.observability import BaseObservabilityDriver
         from griptape.drivers.prompt import BasePromptDriver
         from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
         from griptape.drivers.ruleset import BaseRulesetDriver
+        from griptape.drivers.sql import BaseSqlDriver
         from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
         from griptape.drivers.vector import BaseVectorStoreDriver
+        from griptape.drivers.web_scraper import BaseWebScraperDriver
+        from griptape.drivers.web_search import BaseWebSearchDriver
         from griptape.engines.rag import RagContext
         from griptape.events import EventListener
         from griptape.memory import TaskMemory
+        from griptape.memory.meta import BaseMetaEntry
         from griptape.memory.structure import BaseConversationMemory, Run
         from griptape.memory.task.storage import BaseArtifactStorage
         from griptape.rules.base_rule import BaseRule
@@ -247,6 +268,9 @@ class BaseSchema(Schema):
         from griptape.tokenizers import BaseTokenizer
         from griptape.tools import BaseTool
         from griptape.utils import import_optional_dependency, is_dependency_installed
+
+        if types_override is None:
+            types_override = {}
 
         attrs.resolve_types(
             attrs_cls,
@@ -262,7 +286,14 @@ class BaseSchema(Schema):
                 "BaseImageGenerationDriver": BaseImageGenerationDriver,
                 "BaseMultiModelImageGenerationDriver": BaseMultiModelImageGenerationDriver,
                 "BaseImageGenerationModelDriver": BaseImageGenerationModelDriver,
+                "BaseWebSearchDriver": BaseWebSearchDriver,
+                "BaseWebScraperDriver": BaseWebScraperDriver,
+                "BaseFileManagerDriver": BaseFileManagerDriver,
+                "BaseSqlDriver": BaseSqlDriver,
+                "BaseObservabilityDriver": BaseObservabilityDriver,
+                "BaseAssistantDriver": BaseAssistantDriver,
                 "BaseArtifact": BaseArtifact,
+                "BaseMetaEntry": BaseMetaEntry,
                 "PromptStack": PromptStack,
                 "EventListener": EventListener,
                 "BaseMessageContent": BaseMessageContent,
@@ -311,6 +342,7 @@ class BaseSchema(Schema):
                 "voyageai": import_optional_dependency("voyageai") if is_dependency_installed("voyageai") else Any,
                 "Schema": Schema,
                 "BaseModel": BaseModel,
+                **types_override,
             },
         )
 

@@ -161,6 +161,7 @@ nav:
       - Misc:
           - Events: "griptape-framework/misc/events.md"
           - Tokenizers: "griptape-framework/misc/tokenizers.md"
+          - Serialization: "griptape-framework/misc/serialization.md"
   - Recipes:
       - Overview: "examples/index.md"
       - Agents:

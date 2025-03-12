@@ -29,12 +29,21 @@ class SerializableMixin(Generic[T]):
     )
 
     @classmethod
-    def get_schema(cls: type[T], subclass_name: Optional[str] = None, *, module_name: Optional[str] = None) -> Schema:
+    def get_schema(
+        cls: type[T],
+        subclass_name: Optional[str] = None,
+        *,
+        module_name: Optional[str] = None,
+        types_overrides: Optional[dict[str, type]] = None,
+        serializable_overrides: Optional[dict[str, bool]] = None,
+    ) -> Schema:
         """Generates a Marshmallow schema for the class.
 
         Args:
             subclass_name: An optional subclass name. Required if the class is abstract.
             module_name: An optional module name. Defaults to the class's module.
+            types_overrides: An optional dictionary of field names to override type.
+            serializable_overrides: An optional dictionary of field names to override serializable status.
         """
         if ABC in cls.__bases__:
             if subclass_name is None:
@@ -43,28 +52,66 @@ class SerializableMixin(Generic[T]):
             module_name = module_name or cls.__module__
             subclass_cls = cls._import_cls_rec(module_name, subclass_name)
 
-            schema_class = BaseSchema.from_attrs_cls(subclass_cls)
+            schema_class = BaseSchema.from_attrs_cls(
+                subclass_cls, types_overrides=types_overrides, serializable_overrides=serializable_overrides
+            )
         else:
-            schema_class = BaseSchema.from_attrs_cls(cls)
+            schema_class = BaseSchema.from_attrs_cls(
+                cls, types_overrides=types_overrides, serializable_overrides=serializable_overrides
+            )
 
         return schema_class()
 
     @classmethod
-    def from_dict(cls: type[T], data: dict) -> T:
-        return cast(T, cls.get_schema(subclass_name=data.get("type"), module_name=data.get("module_name")).load(data))
+    def from_dict(
+        cls: type[T],
+        data: dict,
+        *,
+        types_overrides: Optional[dict[str, type]] = None,
+        serializable_overrides: Optional[dict[str, bool]] = None,
+    ) -> T:
+        return cast(
+            T,
+            cls.get_schema(
+                subclass_name=data.get("type"),
+                module_name=data.get("module_name"),
+                types_overrides=types_overrides,
+                serializable_overrides=serializable_overrides,
+            ).load(data),
+        )
 
     @classmethod
-    def from_json(cls: type[T], data: str) -> T:
-        return cls.from_dict(json.loads(data))
+    def from_json(
+        cls: type[T],
+        data: str,
+        *,
+        types_overrides: Optional[dict[str, type]] = None,
+        serializable_overrides: Optional[dict[str, bool]] = None,
+    ) -> T:
+        return cls.from_dict(
+            json.loads(data), types_overrides=types_overrides, serializable_overrides=serializable_overrides
+        )
 
     def __str__(self) -> str:
         return json.dumps(self.to_dict())
 
-    def to_json(self) -> str:
-        return json.dumps(self.to_dict())
+    def to_json(
+        self,
+        *,
+        types_overrides: Optional[dict[str, type]] = None,
+        serializable_overrides: Optional[dict[str, bool]] = None,
+    ) -> str:
+        return json.dumps(self.to_dict(types_overrides=types_overrides, serializable_overrides=serializable_overrides))
 
-    def to_dict(self) -> dict:
-        schema = BaseSchema.from_attrs_cls(self.__class__)
+    def to_dict(
+        self,
+        *,
+        types_overrides: Optional[dict[str, type]] = None,
+        serializable_overrides: Optional[dict[str, bool]] = None,
+    ) -> dict:
+        schema = BaseSchema.from_attrs_cls(
+            self.__class__, types_overrides=types_overrides, serializable_overrides=serializable_overrides
+        )
 
         return dict(schema().dump(self))
 

@@ -9,7 +9,6 @@ from marshmallow import fields
 from pydantic import BaseModel
 
 from griptape.artifacts import BaseArtifact, TextArtifact
-from griptape.loaders import TextLoader
 from griptape.schemas import PolymorphicSchema
 from griptape.schemas.base_schema import BaseSchema
 from griptape.schemas.bytes_field import Bytes
@@ -47,9 +46,6 @@ class TestBaseSchema:
         assert isinstance(schema.fields["baz"]._candidate_fields[0], fields.List)
         assert isinstance(schema.fields["baz"]._candidate_fields[0].inner, fields.Integer)
         assert schema.fields["baz"].allow_none is True
-
-        with pytest.raises(ValueError):
-            BaseSchema.from_attrs_cls(TextLoader)
 
     def test_get_field_for_type(self):
         assert isinstance(BaseSchema._get_field_for_type(BaseArtifact), fields.Nested)
@@ -170,3 +166,11 @@ class TestBaseSchema:
         field = BaseSchema._handle_union(Union[str, None], optional=True)
         assert isinstance(field, UnionField)
         assert field.allow_none is True
+
+    def test_serialization_override(self):
+        assert "bar" in MockSerializable().to_dict(serializable_overrides={"bar": True})
+        assert "bar" not in MockSerializable().to_dict(serializable_overrides={"bar": False})
+        assert MockSerializable().to_dict(serializable_overrides={"not_a_key": True})
+
+    def test_types_override(self):
+        assert MockSerializable().to_dict(types_overrides={"foo": int})
