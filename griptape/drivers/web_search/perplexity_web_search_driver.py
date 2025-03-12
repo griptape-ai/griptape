@@ -26,7 +26,4 @@ class PerplexityWebSearchDriver(BaseWebSearchDriver):
     def search(self, query: str, **kwargs) -> ListArtifact:
         message = self.prompt_driver.run(PromptStack.from_artifact(TextArtifact(query)))
 
-        artifact = message.to_artifact()
-        artifact.meta["citations"] = message.meta.get("citations", [])
-
         return ListArtifact([message.to_artifact()])
