@@ -110,6 +110,14 @@ The [PerplexityWebSearchDriver](../../reference/griptape/drivers/web_search/perp
 
     This driver requires a Perplexity Sonar [api key](https://www.perplexity.ai/settings/api)
 
-```python
---8<-- "docs/griptape-framework/drivers/src/web_search_drivers_perplexity.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_perplexity.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/drivers/logs/web_search_drivers_perplexity.txt"
+    ```

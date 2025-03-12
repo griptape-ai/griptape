@@ -87,9 +87,17 @@ By default, Griptape will pass the results of Tool runs back to the LLM for refl
 However, there may be times where you may want the LLM to give you back the results directly, without reflection.
 You can disable this behavior by setting [reflect_on_tool_use](../../reference/griptape/tasks/prompt_task.md#griptape.tasks.prompt_task.PromptTask.reflect_on_tool_use) to `False`.
 
-```python
---8<-- "docs/griptape-framework/structures/src/tasks_reflect_on_tool_use.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/structures/src/tasks_reflect_on_tool_use.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/structures/logs/tasks_reflect_on_tool_use.txt"
+    ```
 
 !!! important
 
