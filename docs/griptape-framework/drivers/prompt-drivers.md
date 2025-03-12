@@ -357,6 +357,14 @@ The [PerplexityPromptDriver](../../reference/griptape/drivers/prompt/perplexity_
 
 While you can use this Driver directly, we recommend using it through its accompanying [Web Search Driver](../drivers/web-search-drivers.md#perplexity).
 
-```python
---8<-- "docs/griptape-framework/drivers/src/prompt_drivers_perplexity.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_perplexity.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/drivers/logs/prompt_drivers_perplexity.txt"
+    ```

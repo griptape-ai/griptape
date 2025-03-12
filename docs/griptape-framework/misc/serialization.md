@@ -10,9 +10,17 @@ There are also [to_json](../../reference/griptape/mixins/serializable_mixin.md#g
 
 Here is how we can serialize an `Agent` and then deserialize it back:
 
-```python
---8<-- "docs/griptape-framework/misc/src/serialization_1.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/misc/src/serialization_1.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/misc/logs/serialization_1.txt"
+    ```
 
 ## Serialization Overrides
 
@@ -20,9 +28,17 @@ All classes that implement the [SerializableMixin](../../reference/griptape/mixi
 However, only fields marked with `metadata={"serializable": True}` will be included in the serialization process.
 If you need to add or remove fields in the serialization process, you can pass [serialization_overrides](../../reference/griptape/mixins/serializable_mixin.md#griptape.mixins.serializable_mixin.SerializableMixin.serialization_overrides) to any of the serialization methods.
 
-```python
---8<-- "docs/griptape-framework/misc/src/serialization_2.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/misc/src/serialization_2.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/misc/logs/serialization_2.txt"
+    ```
 
 ## Types Overrides
 
@@ -36,6 +52,14 @@ This is something we're [actively working](https://github.com/griptape-ai/gripta
 
 Here is an example of how you can use `types_overrides`:
 
-```python
---8<-- "docs/griptape-framework/misc/src/serialization_3.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/misc/src/serialization_3.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/misc/logs/serialization_3.txt"
+    ```
