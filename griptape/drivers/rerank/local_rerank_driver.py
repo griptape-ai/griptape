@@ -25,7 +25,7 @@ class LocalRerankDriver(BaseRerankDriver, FuturesExecutorMixin):
     )
 
     def run(self, query: str, artifacts: list[TextArtifact]) -> list[TextArtifact]:
-        query_embedding = self.embedding_driver.embed_string(query)
+        query_embedding = self.embedding_driver.embed(query)
 
         with self.create_futures_executor() as futures_executor:
             artifact_embeddings = execute_futures_list(

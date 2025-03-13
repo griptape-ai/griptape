@@ -18,7 +18,7 @@ class TestBaseEmbeddingDriver:
         assert embedding == [0, 1]
 
     def test_embed_string(self, driver):
-        embedding = driver.embed_string("foobar")
+        embedding = driver.embed("foobar")
 
         assert embedding == [0, 1]
 
@@ -39,7 +39,7 @@ class TestBaseEmbeddingDriver:
     def test_no_tokenizer(self, driver):
         driver.tokenizer = None
 
-        embedding = driver.embed_string("foobar")
+        embedding = driver.embed("foobar")
 
         assert embedding == [0, 1]
 
@@ -48,6 +48,6 @@ class TestBaseEmbeddingDriver:
         try_embed_chunk.side_effect = Exception("nope")
 
         with pytest.raises(Exception) as e:
-            driver.embed_string("foobar")
+            driver.embed("foobar")
 
         assert e.value.args[0] == "nope"

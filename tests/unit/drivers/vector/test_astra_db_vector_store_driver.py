@@ -137,7 +137,7 @@ class TestAstraDbVectorStoreDriver:
     def test_query_allparams(self, driver, mock_collection, one_query_entry):
         entries1 = driver.query("some query", count=999, namespace="some_namespace", include_vectors=True)
         assert entries1 == [one_query_entry]
-        query_vector = driver.embedding_driver.embed_string("some query")
+        query_vector = driver.embedding_driver.embed("some query")
         mock_collection.return_value.find.assert_called_once_with(
             filter={"namespace": "some_namespace"},
             sort={"$vector": query_vector},
@@ -149,7 +149,7 @@ class TestAstraDbVectorStoreDriver:
     def test_query_minparams(self, driver, mock_collection, one_query_entry):
         entries0 = driver.query("some query")
         assert entries0 == [one_query_entry]
-        query_vector = driver.embedding_driver.embed_string("some query")
+        query_vector = driver.embedding_driver.embed("some query")
         mock_collection.return_value.find.assert_called_once_with(
             filter={},
             sort={"$vector": query_vector},
