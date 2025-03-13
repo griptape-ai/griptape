@@ -15,7 +15,7 @@ artifact = TextArtifact(
     "Griptape Agents provide incredible power and flexibility when working with large language models."
 )
 
-vector_store_driver.upsert_text_artifact(artifact=artifact, namespace="griptape")
+vector_store_driver.upsert(artifact, namespace="griptape")
 
 rag_tool = RagTool(
     description="Contains information about Griptape",

@@ -41,6 +41,6 @@ class TextLoaderRetrievalRagModule(BaseRetrievalRagModule):
         loader_output = self.loader.load(source)
         chunks = self.chunker.chunk(loader_output)
 
-        self.vector_store_driver.upsert_text_artifacts({namespace: chunks})
+        self.vector_store_driver.upsert_collection({namespace: chunks})
 
         return self.process_query_output(self.vector_store_driver.query(context.query, **query_params))

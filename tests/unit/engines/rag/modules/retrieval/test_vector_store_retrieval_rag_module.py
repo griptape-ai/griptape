@@ -11,10 +11,8 @@ class TestVectorStoreRetrievalRagModule:
         vector_store_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
         module = VectorStoreRetrievalRagModule(vector_store_driver=vector_store_driver)
 
-        vector_store_driver.upsert_text_artifact(
-            TextArtifact("foobar1", reference=Reference(title="boo")), namespace="test"
-        )
-        vector_store_driver.upsert_text_artifact(TextArtifact("foobar2"), namespace="test")
+        vector_store_driver.upsert(TextArtifact("foobar1", reference=Reference(title="boo")), namespace="test")
+        vector_store_driver.upsert(TextArtifact("foobar2"), namespace="test")
 
         result = module.run(RagContext(query="test"))
 
@@ -28,8 +26,8 @@ class TestVectorStoreRetrievalRagModule:
             vector_store_driver=vector_store_driver, query_params={"namespace": "test"}
         )
 
-        vector_store_driver.upsert_text_artifact(TextArtifact("foobar1"), namespace="test")
-        vector_store_driver.upsert_text_artifact(TextArtifact("foobar2"), namespace="test")
+        vector_store_driver.upsert(TextArtifact("foobar1"), namespace="test")
+        vector_store_driver.upsert(TextArtifact("foobar2"), namespace="test")
 
         result = module.run(RagContext(query="test"))
 
@@ -43,8 +41,8 @@ class TestVectorStoreRetrievalRagModule:
             name="TestModule", vector_store_driver=vector_store_driver, query_params={"namespace": "test"}
         )
 
-        vector_store_driver.upsert_text_artifact(TextArtifact("foobar1"), namespace="test")
-        vector_store_driver.upsert_text_artifact(TextArtifact("foobar2"), namespace="test")
+        vector_store_driver.upsert(TextArtifact("foobar1"), namespace="test")
+        vector_store_driver.upsert(TextArtifact("foobar2"), namespace="test")
 
         result1 = module.run(
             RagContext(query="test", module_configs={"TestModule": {"query_params": {"namespace": "empty"}}})

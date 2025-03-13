@@ -38,15 +38,15 @@ class TestPineconeVectorStorageDriver:
     def test_upsert_text_artifact(self, driver):
         artifact = TextArtifact("foo")
 
-        assert driver.upsert_text_artifact(artifact) == driver._get_default_vector_id("foo")
+        assert driver.upsert(artifact) == driver._get_default_vector_id("foo")
 
     def test_upsert_vector(self, driver):
         assert driver.upsert_vector([0, 1, 2], vector_id="foo") == "foo"
         assert isinstance(driver.upsert_vector([0, 1, 2]), str)
 
     def test_upsert_text(self, driver):
-        assert driver.upsert_text("foo", vector_id="foo") == "foo"
-        assert isinstance(driver.upsert_text("foo"), str)
+        assert driver.upsert("foo", vector_id="foo") == "foo"
+        assert isinstance(driver.upsert("foo"), str)
 
     def test_query_vector(self, driver):
         results = driver.query_vector([0.0, 0.5])

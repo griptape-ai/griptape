@@ -31,7 +31,7 @@ engine = RagEngine(
 artifacts = WebLoader().load("https://en.wikipedia.org/wiki/Physics")
 chunks = TextChunker().chunk(artifacts)
 
-vector_store_driver.upsert_text_artifacts({namespace: chunks})
+vector_store_driver.upsert_collection({namespace: chunks})
 
 rag_tool = RagTool(
     description="Contains information about physics. Use it to answer any physics-related questions.",

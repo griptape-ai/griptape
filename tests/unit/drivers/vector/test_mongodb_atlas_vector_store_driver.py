@@ -29,13 +29,13 @@ class TestMongoDbAtlasVectorStoreDriver:
 
     def test_upsert_text_artifact(self, driver):
         artifact = TextArtifact("foo")
-        test_id = driver.upsert_text_artifact(artifact)
+        test_id = driver.upsert(artifact)
         assert test_id is not None
 
     def test_upsert_text(self, driver):
         text = "foo"
         vector_id_str = "foo"
-        test_id = driver.upsert_text(text, vector_id=vector_id_str)
+        test_id = driver.upsert(text, vector_id=vector_id_str)
         assert test_id == vector_id_str
 
     def test_query_vector(self, driver, monkeypatch):

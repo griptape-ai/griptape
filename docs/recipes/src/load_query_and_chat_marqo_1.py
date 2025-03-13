@@ -29,7 +29,7 @@ artifacts = WebLoader().load("https://www.griptape.ai")
 chunks = TextChunker().chunk(artifacts)
 
 # Upsert the artifacts into the vector store
-vector_store.upsert_text_artifacts(
+vector_store.upsert_collection(
     {
         namespace: chunks,
     }

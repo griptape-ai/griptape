@@ -91,7 +91,7 @@ class TestMarqoVectorStorageDriver:
         )
 
     def test_upsert_text(self, driver, mock_marqo):
-        result = driver.upsert_text("test text", vector_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d")
+        result = driver.upsert("test text", vector_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d")
         mock_marqo.index().add_documents.assert_called()
         assert result == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
 
@@ -106,7 +106,7 @@ class TestMarqoVectorStorageDriver:
         }
 
         # Act
-        result = driver.upsert_text_artifact(text)
+        result = driver.upsert(text)
 
         # Check that the return value is as expected
         expected_return_value = {

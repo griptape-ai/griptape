@@ -24,7 +24,7 @@ class TestPersistentLocalVectorStoreDriver(TestBaseVectorStoreDriver):
     def test_persistence(self, driver, temp_dir):
         persist_file = os.path.join(temp_dir, "store.json")
 
-        driver.upsert_text_artifact(TextArtifact("persistent foobar"))
+        driver.upsert(TextArtifact("persistent foobar"))
 
         new_driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver(), persist_file=persist_file)
 

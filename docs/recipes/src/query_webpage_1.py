@@ -10,7 +10,7 @@ vector_store = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver(api
 artifacts = WebLoader().load("https://www.griptape.ai")
 chunks = TextChunker().chunk(artifacts)
 
-vector_store.upsert_text_artifacts({"griptape": chunks})
+vector_store.upsert_collection({"griptape": chunks})
 
 results = vector_store.query("creativity", count=3, namespace="griptape")
 

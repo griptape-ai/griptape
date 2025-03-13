@@ -23,7 +23,7 @@ class TextArtifactStorage(BaseArtifactStorage):
 
     def store_artifact(self, namespace: str, artifact: BaseArtifact) -> None:
         if isinstance(artifact, TextArtifact):
-            self.vector_store_driver.upsert_text_artifact(artifact, namespace=namespace)
+            self.vector_store_driver.upsert(artifact, namespace=namespace)
         else:
             raise ValueError("Artifact must be of instance TextArtifact")
 
