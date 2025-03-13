@@ -98,7 +98,7 @@ class OutpaintingImageGenerationTool(BaseImageGenerationTool):
             return ErrorArtifact(str(e))
 
         return self._generate_outpainting(
-            prompt, negative_prompt, cast(ImageArtifact, image_artifact), cast(ImageArtifact, mask_artifact)
+            prompt, negative_prompt, cast("ImageArtifact", image_artifact), cast("ImageArtifact", mask_artifact)
         )
 
     def _generate_outpainting(

@@ -182,7 +182,7 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
         except Exception as e:
             logger.exception("%s %s\n%s", self.__class__.__name__, self.id, e)
 
-            self.output = cast(T, ErrorArtifact(str(e), exception=e))
+            self.output = cast("T", ErrorArtifact(str(e), exception=e))
         finally:
             self.state = BaseTask.State.FINISHED
 

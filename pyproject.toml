@@ -261,6 +261,7 @@ ignore = [
   "ANN401", # any-type
   "PT011",  # pytest-raises-too-broad
   "RET505", # superfluous-else-return
+  "LOG015", # root-logger-call
 ]
 
 [tool.ruff.lint.pydocstyle]

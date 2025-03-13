@@ -51,7 +51,7 @@ class AudioTranscriptionTool(BaseTool):
             return ErrorArtifact("memory not found")
 
         audio_artifact = cast(
-            AudioArtifact,
+            "AudioArtifact",
             load_artifact_from_memory(memory, artifact_namespace, artifact_name, AudioArtifact),
         )
 

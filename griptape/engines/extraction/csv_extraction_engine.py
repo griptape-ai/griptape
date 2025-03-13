@@ -36,7 +36,7 @@ class CsvExtractionEngine(BaseExtractionEngine):
     ) -> ListArtifact[TextArtifact]:
         return ListArtifact(
             self._extract_rec(
-                cast(list[TextArtifact], artifacts.value),
+                cast("list[TextArtifact]", artifacts.value),
                 [TextArtifact(self.format_header(self.column_names))],
                 rulesets=rulesets,
             ),

@@ -71,7 +71,7 @@ class SerializableMixin(Generic[T]):
         serializable_overrides: Optional[dict[str, bool]] = None,
     ) -> T:
         return cast(
-            T,
+            "T",
             cls.get_schema(
                 subclass_name=data.get("type"),
                 module_name=data.get("module_name"),

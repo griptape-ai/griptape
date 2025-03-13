@@ -25,11 +25,11 @@ class RunnableMixin(ABC, Generic[T]):
 
     def before_run(self, *args, **kwargs) -> Any:
         if self.on_before_run is not None:
-            self.on_before_run(cast(T, self))
+            self.on_before_run(cast("T", self))
 
     @abstractmethod
     def run(self, *args, **kwargs) -> Any: ...
 
     def after_run(self, *args, **kwargs) -> Any:
         if self.on_after_run is not None:
-            self.on_after_run(cast(T, self))
+            self.on_after_run(cast("T", self))

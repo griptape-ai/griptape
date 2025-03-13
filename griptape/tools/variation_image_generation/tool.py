@@ -81,7 +81,7 @@ class VariationImageGenerationTool(BaseImageGenerationTool):
         except ValueError as e:
             return ErrorArtifact(str(e))
 
-        return self._generate_variation(prompt, negative_prompt, cast(ImageArtifact, image_artifact))
+        return self._generate_variation(prompt, negative_prompt, cast("ImageArtifact", image_artifact))
 
     def _generate_variation(
         self, prompt: str, negative_prompt: str, image_artifact: ImageArtifact

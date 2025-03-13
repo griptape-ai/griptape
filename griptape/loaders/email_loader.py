@@ -44,7 +44,7 @@ class EmailLoader(BaseLoader["EmailLoader.EmailQuery", list[bytes], ListArtifact
                 raise Exception(mailbox[1][0].decode())  # pyright: ignore[reportOptionalMemberAccess] Unsure what mailbox[1][0] is, so leaving as-is
 
             if key and search_criteria:
-                _typ, [message_numbers] = client.search(None, key, f'"{search_criteria}"')
+                _, [message_numbers] = client.search(None, key, f'"{search_criteria}"')
                 messages_count = self._count_messages(message_numbers)
             elif len(mailbox) > 1 and mailbox[1] and mailbox[1][0] is not None:
                 messages_count = int(mailbox[1][0])

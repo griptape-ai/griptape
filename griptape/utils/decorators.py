@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import functools
 import inspect
-from collections import OrderedDict
-from typing import Any, Callable, Optional, cast
+from typing import TYPE_CHECKING, Any, Callable, Optional, cast
 
 import schema
 from pydantic import BaseModel
 from schema import Schema
+
+if TYPE_CHECKING:
+    from collections import OrderedDict
 
 CONFIG_SCHEMA = Schema(
     {
@@ -62,7 +64,7 @@ def lazy_property(attr_name: Optional[str] = None) -> Callable[[Callable[[Any], 
 
 
 def _build_kwargs(func: Callable, params: dict) -> dict:
-    func_params = cast(OrderedDict, inspect.signature(func).parameters.copy())
+    func_params = cast("OrderedDict", inspect.signature(func).parameters.copy())
     func_params.popitem(last=False)
 
     kwarg_var = None

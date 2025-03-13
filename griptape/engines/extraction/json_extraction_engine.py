@@ -32,7 +32,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
         **kwargs,
     ) -> ListArtifact[JsonArtifact]:
         return ListArtifact(
-            self._extract_rec(cast(list[TextArtifact], artifacts.value), [], rulesets=rulesets),
+            self._extract_rec(cast("list[TextArtifact]", artifacts.value), [], rulesets=rulesets),
             item_separator="\n",
         )
 

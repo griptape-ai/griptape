@@ -31,7 +31,7 @@ def observable(wrapped: Optional[Callable[P, T] | Any] = None, **dkwargs: Any) -
         from griptape.observability.observability import Observability
 
         return cast(
-            T,
+            "T",
             Observability.observe(
                 Observable.Call(
                     func=wrapped,
