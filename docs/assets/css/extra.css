@@ -5,3 +5,9 @@
 .md-typeset table:not([class]) {
     display: table;
 }
+
+/* Add scrollbars to large text code blocks (logs) */
+.language-text pre {
+    max-height: 500px;
+    overflow-y: scroll;
+}
