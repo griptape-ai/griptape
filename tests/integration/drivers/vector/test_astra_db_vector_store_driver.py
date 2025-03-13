@@ -58,16 +58,16 @@ class TestAstraDbVectorStoreDriver:
         """Test basic vector CRUD, various call patterns."""
         vector_store_collection.delete_many({})
 
-        vec1 = embedding_driver.embed_string("0.012")
+        vec1 = embedding_driver.embed("0.012")
         id1 = vector_store_driver.upsert_vector(vec1, vector_id="v1")
 
-        vec2 = embedding_driver.embed_string("0.024")
+        vec2 = embedding_driver.embed("0.024")
         id2 = vector_store_driver.upsert_vector(vec2, vector_id="v2", namespace="ns")
 
-        vec3 = embedding_driver.embed_string("0.036")
+        vec3 = embedding_driver.embed("0.036")
         id3 = vector_store_driver.upsert_vector(vec3)
 
-        vec4 = embedding_driver.embed_string("0.048")
+        vec4 = embedding_driver.embed("0.048")
         id4 = vector_store_driver.upsert_vector(vec4, vector_id="v4", meta={"i": 4}, namespace="ns")
 
         assert id1 == "v1"

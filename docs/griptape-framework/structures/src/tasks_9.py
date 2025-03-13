@@ -15,7 +15,7 @@ artifacts = [
     TextArtifact("Griptape builds AI-powered applications that connect securely to your enterprise data and APIs."),
     TextArtifact("Griptape Agents provide incredible power and flexibility when working with large language models."),
 ]
-vector_store_driver.upsert_text_artifacts({"griptape": artifacts})
+vector_store_driver.upsert_collection({"griptape": artifacts})
 
 # Instantiate the agent and add RagTask with the RagEngine
 agent = Agent()

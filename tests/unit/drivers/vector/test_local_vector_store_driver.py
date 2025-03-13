@@ -11,20 +11,20 @@ class TestLocalVectorStoreDriver(TestBaseVectorStoreDriver):
     def driver(self):
         return LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
 
-    def test_upsert_text_artifacts_dict(self, driver):
-        driver.upsert_text_artifacts({"foo": [TextArtifact("bar"), TextArtifact("baz")], "bar": [TextArtifact("bar")]})
+    def test_upsert_collection_dict(self, driver):
+        driver.upsert_collection({"foo": [TextArtifact("bar"), TextArtifact("baz")], "bar": [TextArtifact("bar")]})
 
         assert len(driver.load_artifacts(namespace="foo")) == 2
         assert len(driver.load_artifacts(namespace="bar")) == 1
 
-    def test_upsert_text_artifacts_list(self, driver):
-        driver.upsert_text_artifacts([TextArtifact("bar"), TextArtifact("baz")])
+    def test_upsert_collection_list(self, driver):
+        driver.upsert_collection([TextArtifact("bar"), TextArtifact("baz")])
 
         assert len(driver.load_artifacts(namespace="foo")) == 0
         assert len(driver.load_artifacts()) == 2
 
-    def test_upsert_text_artifacts_stress_test(self, driver):
-        driver.upsert_text_artifacts(
+    def test_upsert_collection_stress_test(self, driver):
+        driver.upsert_collection(
             {
                 "test1": [TextArtifact(f"foo-{i}") for i in range(0, 1000)],
                 "test2": [TextArtifact(f"foo-{i}") for i in range(0, 1000)],
@@ -37,7 +37,7 @@ class TestLocalVectorStoreDriver(TestBaseVectorStoreDriver):
         assert len(driver.query("foo", namespace="test3")) == 1000
 
     def test_query_vector(self, driver):
-        driver.upsert_text_artifacts({"foo": [TextArtifact("foo bar")]})
+        driver.upsert_collection({"foo": [TextArtifact("foo bar")]})
 
         result = driver.query_vector([1.0, 1.0], count=1, include_vectors=True)
 
@@ -49,11 +49,11 @@ class TestLocalVectorStoreDriver(TestBaseVectorStoreDriver):
         assert result[0].namespace == "foo"
 
     @pytest.mark.parametrize("execution_number", range(1000))
-    def test_upsert_text_artifacts_meta(self, driver, mocker, execution_number):
+    def test_upsert_collection_meta(self, driver, mocker, execution_number):
         spy = mocker.spy(driver, "upsert_vector")
         artifact_1 = TextArtifact("foo bar", id="foo")
         artifact_2 = TextArtifact("bar foo", id="bar")
 
-        driver.upsert_text_artifacts({"foo": [artifact_1, artifact_2]}, meta={"foo": "bar"})
+        driver.upsert_collection({"foo": [artifact_1, artifact_2]}, meta={"foo": "bar"})
 
         assert spy.call_args_list[0].kwargs["meta"]["artifact"] != spy.call_args_list[1].kwargs["meta"]["artifact"]

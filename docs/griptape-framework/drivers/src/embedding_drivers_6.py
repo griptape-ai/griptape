@@ -4,7 +4,7 @@ driver = OllamaEmbeddingDriver(
     model="all-minilm",
 )
 
-results = driver.embed_string("Hello world!")
+results = driver.embed("Hello world!")
 
 # display the first 3 embeddings
 print(results[:3])

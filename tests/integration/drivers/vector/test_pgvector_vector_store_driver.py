@@ -123,7 +123,7 @@ class TestPgVectorVectorStoreDriver:
     def test_can_query(self, vector_store_driver):
         value = "my string here"
         namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
+        embedding = vector_store_driver.embedding_driver.embed(value)
 
         vector_id = vector_store_driver.upsert_vector(embedding, namespace=namespace)
         results = vector_store_driver.query(value, namespace=namespace)
@@ -134,7 +134,7 @@ class TestPgVectorVectorStoreDriver:
     def test_can_query_by_cosine_distance(self, vector_store_driver):
         value = "my string here"
         namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
+        embedding = vector_store_driver.embedding_driver.embed(value)
 
         vector_store_driver.upsert_vector(embedding, namespace=namespace)
         results = vector_store_driver.query(value, namespace=namespace, distance_metric="cosine_distance")
@@ -144,7 +144,7 @@ class TestPgVectorVectorStoreDriver:
     def test_can_query_by_l2_distance(self, vector_store_driver):
         value = "my string here"
         namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
+        embedding = vector_store_driver.embedding_driver.embed(value)
 
         vector_store_driver.upsert_vector(embedding, namespace=namespace)
         results = vector_store_driver.query(value, namespace=namespace, distance_metric="l2_distance")
@@ -154,7 +154,7 @@ class TestPgVectorVectorStoreDriver:
     def test_can_query_by_inner_product(self, vector_store_driver):
         value = "my string here"
         namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
+        embedding = vector_store_driver.embedding_driver.embed(value)
 
         vector_store_driver.upsert_vector(embedding, namespace=namespace)
         results = vector_store_driver.query(value, namespace=namespace, distance_metric="inner_product")
@@ -164,7 +164,7 @@ class TestPgVectorVectorStoreDriver:
     def test_query_returns_vectors_when_requested(self, vector_store_driver):
         value = "my string here"
         namespace = str(uuid.uuid4())
-        embedding = vector_store_driver.embedding_driver.embed_string(value)
+        embedding = vector_store_driver.embedding_driver.embed(value)
 
         vector_store_driver.upsert_vector(embedding, namespace=namespace)
         results = vector_store_driver.query(value, namespace=namespace, include_vectors=True)

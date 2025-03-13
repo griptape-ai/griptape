@@ -13,7 +13,7 @@ def load_data(driver: PineconeVectorStoreDriver) -> None:
     )
 
     for product in json.loads(response.read()):
-        driver.upsert_text(
+        driver.upsert(
             product["description"],
             vector_id=hashlib.md5(product["title"].encode()).hexdigest(),
             meta={

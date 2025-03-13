@@ -44,7 +44,7 @@ engine = RagEngine(
 
 artifacts = WebLoader().load(input_blogpost)
 chunks = TextChunker(max_tokens=256).chunk(artifacts)
-vector_store_driver.upsert_text_artifacts({namespace: chunks})
+vector_store_driver.upsert_collection({namespace: chunks})
 
 rag_tool = RagTool(
     description="A DataStax blog post",

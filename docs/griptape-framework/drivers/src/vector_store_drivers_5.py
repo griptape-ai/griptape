@@ -31,7 +31,7 @@ artifact = WebLoader().load("https://www.griptape.ai")
 chunks = TextChunker(max_tokens=200).chunk(artifact)
 
 # Upsert Artifacts into the Vector Store Driver
-vector_store_driver.upsert_text_artifacts({"griptape": chunks})
+vector_store_driver.upsert_collection({"griptape": chunks})
 
 results = vector_store_driver.query(query="What is griptape?")
 

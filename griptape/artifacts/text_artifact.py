@@ -26,7 +26,7 @@ class TextArtifact(BaseArtifact):
         return self.value
 
     def generate_embedding(self, driver: BaseEmbeddingDriver) -> list[float]:
-        embedding = driver.embed_string(str(self.value))
+        embedding = driver.embed(str(self.value))
 
         if self.embedding is None:
             self.embedding = []

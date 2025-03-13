@@ -22,7 +22,7 @@ class TestRagTask:
         artifact = TextArtifact("John Doe works as as software engineer at Griptape.")
         rag_engine_instance = rag_engine(MockPromptDriver(), vector_store_driver)
 
-        vector_store_driver.upsert_text_artifact(artifact=artifact)
+        vector_store_driver.upsert(artifact=artifact)
 
         agent = Agent(prompt_driver=request.param)
         agent.add_task(RagTask("Respond to the users following query: {{ args[0] }}", rag_engine=rag_engine_instance))

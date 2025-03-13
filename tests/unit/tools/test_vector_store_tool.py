@@ -9,7 +9,7 @@ class TestVectorStoreTool:
         driver = LocalVectorStoreDriver(embedding_driver=MockEmbeddingDriver())
         tool = VectorStoreTool(description="Test", vector_store_driver=driver)
 
-        driver.upsert_text_artifacts({"test": [TextArtifact("foo"), TextArtifact("bar")]})
+        driver.upsert_collection({"test": [TextArtifact("foo"), TextArtifact("bar")]})
 
         assert {a.value for a in tool.search({"values": {"query": "test"}})} == {"foo", "bar"}
 
@@ -18,7 +18,7 @@ class TestVectorStoreTool:
         tool1 = VectorStoreTool(description="Test", vector_store_driver=driver, query_params={"namespace": "test"})
         tool2 = VectorStoreTool(description="Test", vector_store_driver=driver, query_params={"namespace": "test2"})
 
-        driver.upsert_text_artifacts({"test": [TextArtifact("foo"), TextArtifact("bar")]})
+        driver.upsert_collection({"test": [TextArtifact("foo"), TextArtifact("bar")]})
 
         assert len(tool1.search({"values": {"query": "test"}})) == 2
         assert len(tool2.search({"values": {"query": "test"}})) == 0
@@ -32,6 +32,6 @@ class TestVectorStoreTool:
             query_params={"include_vectors": True},
         )
 
-        driver.upsert_text_artifacts({"test": [TextArtifact("foo"), TextArtifact("bar")]})
+        driver.upsert_collection({"test": [TextArtifact("foo"), TextArtifact("bar")]})
 
         assert tool1.search({"values": {"query": "test"}}).value == [[0, 1], [0, 1]]
