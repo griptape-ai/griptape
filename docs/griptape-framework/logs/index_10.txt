@@ -1,0 +1,13 @@
+[03/13/25 21:09:05] INFO     PromptTask 58d0e340cc884f57949a93ec3167c6a6        
+                             Input: You are speaking to: Collin. User said: Hi  
+                             there, my name is Collin!                          
+[03/13/25 21:09:06] INFO     PromptTask 58d0e340cc884f57949a93ec3167c6a6        
+                             Output: {"answer":"{\"answer\":\"Hello Collin! My  
+                             name is Oswald. It's a pleasure to meet you. How   
+                             can I assist you today?\"}"}                       
+                    INFO     PromptTask 58d0e340cc884f57949a93ec3167c6a6        
+                             Input: You are speaking to: Collin. User said: Do  
+                             you remember my name?                              
+[03/13/25 21:09:07] INFO     PromptTask 58d0e340cc884f57949a93ec3167c6a6        
+                             Output: {"answer":"{\"answer\":\"Of course, Collin!
+                             My name is Oswald. How can I help you today?\"}"}  

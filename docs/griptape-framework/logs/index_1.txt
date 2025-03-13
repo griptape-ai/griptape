@@ -1,3 +1,5 @@
-User: Thinking...
-Assistant: Hello! How can I assist you today?
-User: Exiting...
+[03/13/25 21:07:24] INFO     PromptTask 5430ce6244cb4b379a66e3c6854ad0a6        
+                             Input: Hello there!                                
+                    INFO     PromptTask 5430ce6244cb4b379a66e3c6854ad0a6        
+                             Output: Hello! How can I assist you today?         
+Hello! How can I assist you today?
