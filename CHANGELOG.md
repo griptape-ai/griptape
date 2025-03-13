@@ -4,6 +4,59 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0](https://github.com/griptape-ai/griptape/compare/v1.4.0...v1.5.0) (2025-03-13)
+
+
+### ✨ Features
+
+* **configs-drivers-gemini:** update default embedding driver model to ([9ba2496](https://github.com/griptape-ai/griptape/commit/9ba249658f1f087739ff1d8b37852f790f676d3e))
+* **configs-drivers-gemini:** update default prompt driver model to `gemini-2.0-flash` ([9ba2496](https://github.com/griptape-ai/griptape/commit/9ba249658f1f087739ff1d8b37852f790f676d3e))
+* **drivers-embedding-titan:** add support for generating image embeddings ([1841f0f](https://github.com/griptape-ai/griptape/commit/1841f0f8e36dc3500400a69e8e1dff8bc63e0345))
+* **drivers-embedding-voyageai:** add support for generating image embeddings ([1841f0f](https://github.com/griptape-ai/griptape/commit/1841f0f8e36dc3500400a69e8e1dff8bc63e0345))
+* **drivers-embedding:** add support for embedding ImageArtifacts ([1841f0f](https://github.com/griptape-ai/griptape/commit/1841f0f8e36dc3500400a69e8e1dff8bc63e0345))
+* **drivers-local-vector:** support persisting multi-modal entries ([1841f0f](https://github.com/griptape-ai/griptape/commit/1841f0f8e36dc3500400a69e8e1dff8bc63e0345))
+* **drivers-vector:** support upserting/querying with ImageArtifacts ([1841f0f](https://github.com/griptape-ai/griptape/commit/1841f0f8e36dc3500400a69e8e1dff8bc63e0345))
+* **drivers:** add PerplexityPromptDriver and PerplexityWebSearchDriver ([#1755](https://github.com/griptape-ai/griptape/issues/1755)) ([7163bf3](https://github.com/griptape-ai/griptape/commit/7163bf3402bcf5da1045b36e05ec1ee0b3bd357b))
+* **drivers:** update default models to latest for Anthropic/Bedrock Driver Configs ([b3e4b68](https://github.com/griptape-ai/griptape/commit/b3e4b6817528536dd81b0a847f45c7296212d1b1))
+* **serialization:** add `serializable_overrides` and `types_overrides` parameters to `to_dict/json` and `from_dict/json` methods ([c383ba6](https://github.com/griptape-ai/griptape/commit/c383ba6e26531eea65c99d9e85a29978eb0ba133))
+* **tasks-prompt:** add `reflect_on_tool_use` flag to disable LLM reflection ([#1810](https://github.com/griptape-ai/griptape/issues/1810)) ([ecb665d](https://github.com/griptape-ai/griptape/commit/ecb665d067e74b82cd4cc0cebcb3c8b4734cec1b))
+
+
+### 🐛 Bug Fixes
+
+* **chunker:** correctly determine chunk midpoint when empty chunks are present ([#1800](https://github.com/griptape-ai/griptape/issues/1800)) ([8ec2a8a](https://github.com/griptape-ai/griptape/commit/8ec2a8a38b2bfb03a6e75c0396a7cd40b278e1c4))
+* **decorators:** preserve type hints on `[@observable](https://github.com/observable)` decorator ([#1767](https://github.com/griptape-ai/griptape/issues/1767)) ([0e5a15c](https://github.com/griptape-ai/griptape/commit/0e5a15c7645db65a928aa5fb25d8be35bd8c9fba))
+* **drivers-prompt-openai:** convert to text rather than error when passing GenericArtifacts ([#1830](https://github.com/griptape-ai/griptape/issues/1830)) ([fb3f2c4](https://github.com/griptape-ai/griptape/commit/fb3f2c46a0ef32b04da9d2b92a1b99af719da77f))
+* **drivers-prompt-openai:** remove modalities default ([#1774](https://github.com/griptape-ai/griptape/issues/1774)) ([7e061b5](https://github.com/griptape-ai/griptape/commit/7e061b56963a9fe31a06c1eae4e62fe0094dc3a1))
+* **drivers-vector-marqo:** fix upsert failing due to inability to upsert_vectors ([#1803](https://github.com/griptape-ai/griptape/issues/1803)) ([9b6bfff](https://github.com/griptape-ai/griptape/commit/9b6bfffaa8640ba7277c287be4fa0a125b94d772))
+* **drivers-vector:** don't mutate same instance of meta ([#1782](https://github.com/griptape-ai/griptape/issues/1782)) ([dd138ca](https://github.com/griptape-ai/griptape/commit/dd138caea9dabd74c515592c697415d645fdca4d))
+* **serialization:** support serializing more Driver types ([c383ba6](https://github.com/griptape-ai/griptape/commit/c383ba6e26531eea65c99d9e85a29978eb0ba133))
+
+
+### 📦 Dependencies
+
+* relax dependencies by removing upper bound constraint ([5171332](https://github.com/griptape-ai/griptape/commit/5171332bf7217841eea44d84133fb00ecee6322a))
+
+
+### 📚 Documentation
+
+* add light/dark mode toggle ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* add log output to every example that produces it ([0407fc7](https://github.com/griptape-ai/griptape/commit/0407fc747c177ce6e31c58058d590e23f02c81ac))
+* categorize driver nav links ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* **custom-tools:** improve docs for creating custom tools ([#1791](https://github.com/griptape-ai/griptape/issues/1791)) ([25b1276](https://github.com/griptape-ai/griptape/commit/25b12769ba75f5e806b834e25570e3c698d53389))
+* **engines:** improve documentation on Rag Engines. ([bdc1921](https://github.com/griptape-ai/griptape/commit/bdc19214501a80006d5ff44ff4c90707c04086b1))
+* improve docs landing page ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* improve framework overview ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* improve overview page ([#1832](https://github.com/griptape-ai/griptape/issues/1832)) ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* improve README ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* move recipes into framework section ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* move recipes into framework section ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* **recipes:** add example of talking to audio file ([#1794](https://github.com/griptape-ai/griptape/issues/1794)) ([fe27585](https://github.com/griptape-ai/griptape/commit/fe27585cf81dea16127f43840a76b7b5b74af3c9))
+* rename examples to recipes ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* **serialization:** add dedication page on serialization ([c383ba6](https://github.com/griptape-ai/griptape/commit/c383ba6e26531eea65c99d9e85a29978eb0ba133))
+* simplify docs landing page ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+* update contributing guide ([ff3d2b6](https://github.com/griptape-ai/griptape/commit/ff3d2b620e20dbf8224e303ccbf5eafd02723869))
+
 ## [1.4.0](https://github.com/griptape-ai/griptape/compare/v1.3.0...v1.4.0) (2025-02-24)
 
 
