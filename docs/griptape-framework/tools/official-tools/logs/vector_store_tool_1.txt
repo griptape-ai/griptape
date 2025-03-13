@@ -1,9 +1,9 @@
-[02/27/25 20:22:24] INFO     PromptTask dd35a11f3e124a7782d74ab640af695a        
+[03/13/25 22:43:20] INFO     PromptTask ac3d6c38ed584532826b3315a1d64f77        
                              Input: what is Griptape?                           
-[02/27/25 20:22:25] INFO     Subtask d0d952a6ea0149199a8bce23b2758041           
+[03/13/25 22:43:22] INFO     Subtask c17b31eade2b45b0bfa07d368549406d           
                              Actions: [                                         
                                {                                                
-                                 "tag": "call_kHdFxiNeI4olZmt2u9Y8BiiR",        
+                                 "tag": "call_2GMiEBfhWoyXqYwOPHtnQmpy",        
                                  "name": "VectorStoreTool",                     
                                  "path": "search",                              
                                  "input": {                                     
@@ -13,7 +13,7 @@
                                  }                                              
                                }                                                
                              ]                                                  
-                    INFO     Subtask d0d952a6ea0149199a8bce23b2758041           
+                    INFO     Subtask c17b31eade2b45b0bfa07d368549406d           
                              Response: Build, Deploy, and Scale End-to-End      
                              Solutions, from LLM-Powered Data Prep and Retrieval
                              to AI Agents, Pipelines, and Workflows.            
@@ -83,34 +83,39 @@
                              Real-time interfaces, transactional processes,     
                              batch workloads. Plug them into client             
                              applications.                                      
-[02/27/25 20:22:28] INFO     PromptTask dd35a11f3e124a7782d74ab640af695a        
+[03/13/25 22:43:25] INFO     PromptTask ac3d6c38ed584532826b3315a1d64f77        
                              Output: Griptape is a comprehensive framework      
                              designed to help developers build, deploy, and     
                              scale end-to-end solutions, particularly those     
                              powered by large language models (LLMs). It        
                              provides tools for data preparation, retrieval, AI 
-                             agents, pipelines, and workflows. The framework    
-                             includes:                                          
+                             agents, pipelines, and workflows. The framework is 
+                             divided into two main components:                  
                                                                                 
-                             1. **Griptape AI Framework**: Offers clean         
-                             abstractions for building generative AI agents,    
-                             systems of agents, pipelines, workflows, and       
-                             retrieval-augmented generation (RAG)               
-                             implementations. It allows developers to build     
-                             business logic using predictable, programmable     
-                             Python without needing to learn prompt engineering.
+                             1. **Griptape AI Framework**: This open-source     
+                             framework offers clean abstractions for building   
+                             generative AI agents, systems of agents, pipelines,
+                             workflows, and retrieval-augmented generation (RAG)
+                             implementations. It allows developers to build ETL 
+                             pipelines for data preparation, compose retrieval  
+                             patterns for fast and accurate information, and    
+                             write agents and workflows to integrate business   
+                             logic without needing extensive knowledge of       
+                             generative AI or prompt engineering.               
                                                                                 
-                             2. **Griptape AI Cloud**: Provides infrastructure  
-                             management, hosting, and operation services for    
-                             data processing pipelines, retrieval-ready         
+                             2. **Griptape AI Cloud**: This component handles   
+                             infrastructure management, hosting, and operation  
+                             of data processing pipelines, retrieval-ready      
                              databases, and serverless application runtimes. It 
-                             supports automated data preparation (ETL),         
-                             retrieval as a service (RAG), and structure runtime
-                             (RUN) for building AI agents, pipelines, and       
-                             workflows.                                         
+                             offers automated data preparation (ETL), retrieval 
+                             as a service (RAG), and a structure runtime for    
+                             building AI agents, pipelines, and workflows.      
                                                                                 
-                             Griptape aims to simplify the development process, 
-                             enhance security and performance, and reduce costs 
-                             by offering Off-Prompt™ technology. It also        
-                             provides tools for monitoring, managing, and       
-                             scaling applications seamlessly.                   
+                             Griptape aims to turn any developer into an AI     
+                             developer by providing predictable, programmable   
+                             Python tools, enhancing security, performance, and 
+                             cost-efficiency. It also offers monitoring and     
+                             management capabilities through Griptape Cloud or  
+                             third-party integrations, allowing users to measure
+                             performance, reliability, and spending across their
+                             organization.                                      
