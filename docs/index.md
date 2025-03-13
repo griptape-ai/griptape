@@ -1,31 +1,25 @@
-# Griptape Docs
+# Griptape Documentation
 
-Welcome to Griptape Docs! This documentation is organized into the following sections:
+Welcome to the official Griptape Documentation!
+Here, you’ll find everything you need to build, deploy, and scale generative AI applications with Griptape.
+The documentation is divided into the following sections:
 
-## Griptape Topic Guides
+## Griptape Cloud
 
-Griptape Topic Guides discuss key topics at a high level and provide useful background information and explanation.
+The Griptape Cloud [docs](griptape-cloud/index.md) cover our cloud offering, [Griptape Cloud](https://www.griptape.ai/cloud).
+Learn how to set up RAG pipelines, code hosting, custom Tools for LLM Agents, and more. All features are accessible through a [powerful API](./griptape-cloud/api/api-reference.md).
 
-### Griptape Cloud
+## Griptape Framework
 
-[Griptape Cloud](griptape-cloud/index.md) provides an overview of the features in Griptape's cloud offering.
+The Griptape Framework [docs](griptape-framework/index.md) cover our open-source library, [Griptape](https://github.com/griptape-ai/griptape).
+Explore how to create robust generative AI (genAI) applications using Griptape’s flexible abstractions and built-in tools.
 
-### Griptape Framework
+## Griptape Framework Reference
 
-[Griptape Framework](griptape-framework/index.md) provides an overview of the key topics within Griptape, and how you can get started building agents.
-
-### Griptape Tools
-
-[Griptape Tools](griptape-framework/tools/index.md) provides and overview of the tools available within Griptape, and how you can use them to extend the capability of LLMs.
-
-## Griptape Recipes
-
-[Griptape Recipes](examples/index.md) are ready-to-go examples built around common use-cases like data retrieval and more. They are more advanced than Griptape Trade School, and require some understanding of how Griptape works.
-
-## Griptape Reference Guide
-
-[Griptape Reference Guide](reference/griptape/index.md) contains low level technical reference of Griptape's APIs.
+The Griptape Framework Reference [docs](reference/griptape/index.md) provide auto-generated, detailed documentation of the Griptape codebase.
+Here, you can look up classes, methods, and modules to better understand how to use Griptape.
 
 ## Griptape Trade School
 
-[Griptape Trade School](https://learn.griptape.ai) takes you through the steps of building a variety of projects with Griptape. Start here if you are new to Griptape or programming.
+[Griptape Trade School](https://learn.griptape.ai) provides guided tutorials for building a range of projects with Griptape.
+This is a great starting point if you’re new to genAI or coding in general.

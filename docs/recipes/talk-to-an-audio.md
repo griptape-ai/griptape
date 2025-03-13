@@ -11,7 +11,7 @@ In this example, we'll use OpenAI's [gpt-4o-audio-preview](https://platform.open
     Try playing around with the available [voice options](https://platform.openai.com/docs/guides/text-to-speech#voice-options).
 
 ```python
---8<-- "docs/examples/src/talk_to_an_audio_1.py"
+--8<-- "docs/recipes/src/talk_to_an_audio_1.py"
 ```
 
 !!! note
@@ -26,5 +26,5 @@ Although playing audio streams isn't a core `griptape` feature, we can implement
     Griptape does not include `pyaudio` as a dependency. See `pyaudio`'s [installation instructions](https://pypi.org/project/PyAudio/) for details.
 
 ```python
---8<-- "docs/examples/src/talk_to_an_audio_2.py"
+--8<-- "docs/recipes/src/talk_to_an_audio_2.py"
 ```

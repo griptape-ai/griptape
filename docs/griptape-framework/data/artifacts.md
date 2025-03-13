@@ -51,4 +51,4 @@ When `ListArtifact`s are returned from Tools, their elements will be stored in [
 
 ## Generic
 
-[GenericArtifact](../../reference/griptape/artifacts/generic_artifact.md)s provide a flexible way to pass data that does not fit into any other artifact category. While not generally recommended, they can be useful for specific use cases. For instance, see [talking to a video](../../examples/talk-to-a-video.md), which demonstrates using a `GenericArtifact` to pass a Gemini-specific video file.
+[GenericArtifact](../../reference/griptape/artifacts/generic_artifact.md)s provide a flexible way to pass data that does not fit into any other artifact category. While not generally recommended, they can be useful for specific use cases. For instance, see [talking to a video](../../recipes/talk-to-a-video.md), which demonstrates using a `GenericArtifact` to pass a Gemini-specific video file.

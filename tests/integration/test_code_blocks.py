@@ -6,7 +6,7 @@ import pytest
 
 SKIP_FILES = [
     "docs/griptape-framework/tools/official-tools/src/computer_tool_1.py",
-    "docs/examples/src/load_query_and_chat_marqo_1.py",
+    "docs/recipes/src/load_query_and_chat_marqo_1.py",
     "docs/griptape-framework/drivers/src/embedding_drivers_2.py",
     "docs/griptape-framework/drivers/src/embedding_drivers_6.py",
     "docs/griptape-framework/drivers/src/embedding_drivers_7.py",
@@ -22,7 +22,7 @@ SKIP_FILES = [
     "docs/griptape-framework/structures/src/observability_1.py",
     "docs/griptape-framework/structures/src/observability_2.py",
     "docs/griptape-framework/data/src/loaders_9.py",
-    "docs/examples/src/talk_to_an_audio_2.py",
+    "docs/recipes/src/talk_to_an_audio_2.py",
 ]
 
 

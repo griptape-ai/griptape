@@ -4,5 +4,5 @@ By splitting up our workloads across multiple Structures, we can parallelize the
 Additionally, this architecture opens us up to using services such as [Griptape Cloud](https://www.griptape.ai/cloud) to have each Agent run completely independently, allowing us to scale our Workflow as needed 🤯. To try out how this would work, you can deploy this example as multiple structures from our [Sample Structures](https://github.com/griptape-ai/griptape-sample-structures/tree/main/griptape-multi-agent-workflows) repo.
 
 ```python
---8<-- "docs/examples/src/multi_agent_workflow_1.py"
+--8<-- "docs/recipes/src/multi_agent_workflow_1.py"
 ```

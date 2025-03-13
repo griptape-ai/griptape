@@ -48,9 +48,20 @@ theme:
   custom_dir: docs/overrides
   logo: assets/img/griptape-mark-square-light.svg
   palette:
-    scheme: slate
-    primary: black
-    accent: deep orange
+    # Dark mode
+    - scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to light mode
+    # Light mode
+    - scheme: default
+      primary: deep indigo
+      accent: deep orange
+      toggle:
+        icon: material/lightbulb
+        name: Switch to dark mode
   features:
     - content.code.copy
     - content.code.annotate
@@ -136,23 +147,28 @@ nav:
           - Summary Engine: "griptape-framework/engines/summary-engines.md"
           - Eval Engine: "griptape-framework/engines/eval-engines.md"
       - Drivers:
-          - Prompt Drivers: "griptape-framework/drivers/prompt-drivers.md"
-          - Embedding Drivers: "griptape-framework/drivers/embedding-drivers.md"
-          - Vector Store Drivers: "griptape-framework/drivers/vector-store-drivers.md"
-          - Rerank Drivers: "griptape-framework/drivers/rerank-drivers.md"
-          - Image Generation Drivers: "griptape-framework/drivers/image-generation-drivers.md"
-          - SQL Drivers: "griptape-framework/drivers/sql-drivers.md"
-          - Web Scraper Drivers: "griptape-framework/drivers/web-scraper-drivers.md"
-          - Conversation Memory Drivers: "griptape-framework/drivers/conversation-memory-drivers.md"
-          - Event Listener Drivers: "griptape-framework/drivers/event-listener-drivers.md"
-          - Structure Run Drivers: "griptape-framework/drivers/structure-run-drivers.md"
-          - Assistant Drivers: "griptape-framework/drivers/assistant-drivers.md"
-          - Text to Speech Drivers: "griptape-framework/drivers/text-to-speech-drivers.md"
-          - Audio Transcription Drivers: "griptape-framework/drivers/audio-transcription-drivers.md"
-          - Web Search Drivers: "griptape-framework/drivers/web-search-drivers.md"
-          - Observability Drivers: "griptape-framework/drivers/observability-drivers.md"
-          - Ruleset Drivers: "griptape-framework/drivers/ruleset-drivers.md"
-          - File Manager Drivers: "griptape-framework/drivers/file-manager-drivers.md"
+        - LLM & Orchestration:
+          - Prompt: "griptape-framework/drivers/prompt-drivers.md"
+          - Conversation Memory: "griptape-framework/drivers/conversation-memory-drivers.md"
+          - Assistant: "griptape-framework/drivers/assistant-drivers.md"
+          - Ruleset: "griptape-framework/drivers/ruleset-drivers.md"
+          - Event Listener: "griptape-framework/drivers/event-listener-drivers.md"
+          - Structure Run: "griptape-framework/drivers/structure-run-drivers.md"
+        - Retrieval & Storage:
+          - Embedding: "griptape-framework/drivers/embedding-drivers.md"
+          - Rerank: "griptape-framework/drivers/rerank-drivers.md"
+          - Vector Store: "griptape-framework/drivers/vector-store-drivers.md"
+          - File Manager: "griptape-framework/drivers/file-manager-drivers.md"
+          - SQL: "griptape-framework/drivers/sql-drivers.md"
+        - Multimodal:
+          - Image Generation: "griptape-framework/drivers/image-generation-drivers.md"
+          - Text to Speech: "griptape-framework/drivers/text-to-speech-drivers.md"
+          - Audio Transcription: "griptape-framework/drivers/audio-transcription-drivers.md"
+        - Web:
+          - Web Search: "griptape-framework/drivers/web-search-drivers.md"
+          - Web Scraper: "griptape-framework/drivers/web-scraper-drivers.md"
+        - Observability:
+          - Observability: "griptape-framework/drivers/observability-drivers.md"
       - Data:
           - Overview: "griptape-framework/data/index.md"
           - Artifacts: "griptape-framework/data/artifacts.md"
@@ -161,24 +177,22 @@ nav:
       - Misc:
           - Events: "griptape-framework/misc/events.md"
           - Tokenizers: "griptape-framework/misc/tokenizers.md"
-          - Serialization: "griptape-framework/misc/serialization.md"
-  - Recipes:
-      - Overview: "examples/index.md"
-      - Agents:
-          - Talk to Redshift: "examples/talk-to-redshift.md"
-          - Talk to a Webpage: "examples/talk-to-a-webpage.md"
-          - Talk to a PDF: "examples/talk-to-a-pdf.md"
-          - Talk to a Video: "examples/talk-to-a-video.md"
-          - Talk to an Image: "examples/talk-to-an-image.md"
-          - Talk to a Document: "examples/talk-to-a-document.md"
-          - Talk to an Audio: "examples/talk-to-an-audio.md"
-          - Multi Agent Workflows: "examples/multi-agent-workflow.md"
-          - Shared Memory Between Agents: "examples/multiple-agent-shared-memory.md"
-          - Chat Sessions with Amazon DynamoDB: "examples/amazon-dynamodb-sessions.md"
-      - Data:
-          - Load and Query Pinecone: "examples/load-and-query-pinecone.md"
-          - Load and Query Marqo: "examples/load-query-and-chat-marqo.md"
-          - Query a Webpage: "examples/query-webpage.md"
-          - RAG with Astra DB vector store: "examples/query-webpage-astra-db.md"
-  - Reference Guide: "reference/"
+      - Recipes:
+          - Agents:
+              - Talk to Redshift: "recipes/talk-to-redshift.md"
+              - Talk to a Webpage: "recipes/talk-to-a-webpage.md"
+              - Talk to a PDF: "recipes/talk-to-a-pdf.md"
+              - Talk to a Video: "recipes/talk-to-a-video.md"
+              - Talk to an Image: "recipes/talk-to-an-image.md"
+              - Talk to a Document: "recipes/talk-to-a-document.md"
+              - Talk to an Audio: "recipes/talk-to-an-audio.md"
+              - Multi Agent Workflows: "recipes/multi-agent-workflow.md"
+              - Shared Memory Between Agents: "recipes/multiple-agent-shared-memory.md"
+              - Chat Sessions with Amazon DynamoDB: "recipes/amazon-dynamodb-sessions.md"
+          - Data:
+              - Load and Query Pinecone: "recipes/load-and-query-pinecone.md"
+              - Load and Query Marqo: "recipes/load-query-and-chat-marqo.md"
+              - Query a Webpage: "recipes/query-webpage.md"
+              - RAG with Astra DB vector store: "recipes/query-webpage-astra-db.md"
+  - Framework Reference: "reference/"
   - Trade School: "https://learn.griptape.ai"
