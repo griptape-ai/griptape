@@ -1,0 +1,6 @@
+[03/13/25 21:09:49] INFO     PromptTask 5fdebd5f438b44149ed2cc32c2896335        
+                             Input: You are speaking to: Collin. User said: Hi  
+                             there!                                             
+                    INFO     PromptTask 5fdebd5f438b44149ed2cc32c2896335        
+                             Output: Hello Collin! My name is Oswald. How can I 
+                             assist you today?                                  

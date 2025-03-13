@@ -111,9 +111,17 @@ With everything set up, let’s start building! One of Griptape’s core abstrac
 
 Create a file named `app.py` and add:
 
-```python
---8<-- "docs/griptape-framework/src/index_1.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_1.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_1.txt"
+    ```
 
 Then run:
 
@@ -142,17 +150,33 @@ export ANTHROPIC_API_KEY="your-api-key"
 
 Then import [Anthropic Prompt Driver](./drivers/prompt-drivers.md#anthropic) and pass it to your Task:
 
-```python
---8<-- "docs/griptape-framework/src/index_2.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_2.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_2.txt"
+    ```
 
 Run the script again to see a similar output. Notice you didn’t have to change any of the application-level logic; you only changed the driver.
 
 For the remainder of this guide, we’ll revert to the [OpenAI Chat Prompt Driver](https://docs.griptape.ai/stable/griptape-framework/drivers/prompt-drivers.mdopenai-chat):
 
-```python
---8<-- "docs/griptape-framework/src/index_3.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_3.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_3.txt"
+    ```
 
 If you’d like to keep using Anthropic, be sure to adjust code accordingly.
 
@@ -160,9 +184,17 @@ If you’d like to keep using Anthropic, be sure to adjust code accordingly.
 
 Griptape uses the popular [Jinja](https://jinja.palletsprojects.com/en/stable/) templating engine to help create dynamic prompts. Let’s adapt our Prompt Task to utilize a Jinja template:
 
-```python
---8<-- "docs/griptape-framework/src/index_4.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_4.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_4.txt"
+    ```
 
 Here, `{{ args }}` is rendered at runtime, allowing you to dynamically insert data into the prompt.
 
@@ -172,9 +204,17 @@ Here, `{{ args }}` is rendered at runtime, allowing you to dynamically insert da
 
 For static, key-value data, we can add `context` to our Task:
 
-```python
---8<-- "docs/griptape-framework/src/index_5.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_5.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_5.txt"
+    ```
 
 These two methods allow you to build more versatile, data-driven prompts. Next, we’ll discuss steering the LLM’s output using Griptape’s Rule system.
 
@@ -184,9 +224,17 @@ LLMs can be unpredictable. Getting them to follow specific instructions can be c
 
 For example, we can create a simple Rule that gives the LLM a name:
 
-```python
---8<-- "docs/griptape-framework/src/index_6.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_6.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_6.txt"
+    ```
 
 !!! info
 
@@ -200,9 +248,17 @@ For example, we can create a simple Rule that gives the LLM a name:
 
 Multiple rules can be grouped into `Ruleset`s. Let’s refactor our code to use more than one Ruleset:
 
-```python
---8<-- "docs/griptape-framework/src/index_7.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_7.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_7.txt"
+    ```
 
 !!! info
 
@@ -210,9 +266,17 @@ Multiple rules can be grouped into `Ruleset`s. Let’s refactor our code to use 
 
 Griptape also includes a specialized Rule, [JsonSchemaRule](./structures/rulesets.md#json-schema), which inserts a JSON Schema into the system prompt, ensuring the LLM attempts to return structured, machine-readable data:
 
-```python
---8<-- "docs/griptape-framework/src/index_8.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_8.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_8.txt"
+    ```
 
 !!! note
 
@@ -228,9 +292,17 @@ Structured Output uses the LLM provider’s built-in API features to produce out
 
 Let’s update our Task to use Structured Output:
 
-```python
---8<-- "docs/griptape-framework/src/index_9.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_9.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_9.txt"
+    ```
 
 The LLM response is not only formatted correctly, but automatically parsed into a Python object.
 
@@ -248,9 +320,17 @@ Now that we can generate structured responses, let’s make our Task more conver
 
 By default, each LLM call is stateless. If you want the model to recall previous interactions, use [Conversation Memory](./structures/conversation-memory.md). It tracks Task run history, providing context for the current run.
 
-```python
---8<-- "docs/griptape-framework/src/index_10.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_10.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_10.txt"
+    ```
 
 !!! tip
 
@@ -264,9 +344,17 @@ LLMs themselves cannot browse the internet or perform external actions. You can 
 
 Griptape comes with a collection of built-in Tools. Below is an example that uses a web search and scrape Tool:
 
-```python
---8<-- "docs/griptape-framework/src/index_11.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_11.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_11.txt"
+    ```
 
 !!! info
 
@@ -290,9 +378,17 @@ Of the three, `Workflow` is generally the most versatile. `Agent` and `Pipeline`
 
 Let’s place our `project-research` Task into a `Workflow` so multiple Tasks can run in parallel:
 
-```python
---8<-- "docs/griptape-framework/src/index_12.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_12.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_12.txt"
+    ```
 
 !!! warning
 
@@ -330,9 +426,17 @@ Griptape’s Engines provide higher-level patterns for common generative AI task
 
 Engines can be used standalone or integrated into Tasks. To illustrate, let’s summarize the outputs of our Workflow:
 
-```python
---8<-- "docs/griptape-framework/src/index_13.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_13.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_13.txt"
+    ```
 
 This produces a concise summary. But one strength of a Workflow is its ability to fan out and converge results. Let’s remove the direct `PromptSummaryEngine` usage and use a built-in summary Task instead.
 
@@ -340,9 +444,17 @@ This produces a concise summary. But one strength of a Workflow is its ability t
 
 The [TextSummaryTask](./structures/tasks.md#text-summary-task) leverages the `PromptSummaryEngine` behind the scenes. We’ll have our project-research Tasks converge into one summary Task:
 
-```python
---8<-- "docs/griptape-framework/src/index_14.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_14.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_14.txt"
+    ```
 
 !!! info
 
@@ -354,9 +466,17 @@ The [TextSummaryTask](./structures/tasks.md#text-summary-task) leverages the `Pr
 
 Finally, let’s visualize our Workflow:
 
-```python
---8<-- "docs/griptape-framework/src/index_15.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/src/index_15.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/logs/index_15.txt"
+    ```
 
 Visit the printed URL in your logs to view a diagram illustrating the Workflow’s structure:
 
