@@ -45,7 +45,7 @@ class ImageQueryTool(BaseTool):
             image_artifacts.append(self.image_loader.load(image_path))
 
         return cast(
-            TextArtifact,
+            "TextArtifact",
             self.prompt_driver.run(
                 PromptStack.from_artifact(
                     ListArtifact([TextArtifact(query), *image_artifacts]),
@@ -88,7 +88,7 @@ class ImageQueryTool(BaseTool):
                     ImageArtifact,
                 )
 
-                image_artifacts.append(cast(ImageArtifact, image_artifact))
+                image_artifacts.append(cast("ImageArtifact", image_artifact))
             except ValueError:
                 # If we're unable to parse the artifact as an ImageArtifact, attempt to
                 # parse a BlobArtifact and load it as an ImageArtifact.
@@ -104,7 +104,7 @@ class ImageQueryTool(BaseTool):
                 return ErrorArtifact(str(e))
 
         return cast(
-            TextArtifact,
+            "TextArtifact",
             self.prompt_driver.run(
                 PromptStack.from_artifact(
                     ListArtifact([TextArtifact(query), *image_artifacts]),

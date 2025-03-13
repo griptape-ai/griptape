@@ -52,7 +52,7 @@ class PromptSummaryEngine(BaseSummaryEngine):
         )
 
     def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
-        return self.summarize_artifacts_rec(cast(list[TextArtifact], artifacts.value), None, rulesets=rulesets)
+        return self.summarize_artifacts_rec(cast("list[TextArtifact]", artifacts.value), None, rulesets=rulesets)
 
     def summarize_artifacts_rec(
         self,

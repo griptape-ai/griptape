@@ -139,7 +139,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         if self.image_size not in {"256x256", "512x512", "1024x1024"}:
             raise ValueError(f"support image sizes for {method} are 256x256, 512x512, and 1024x1024")
 
-        return cast(Literal["256x256", "512x512", "1024x1024"], self.image_size)
+        return cast("Literal['256x256', '512x512', '1024x1024']", self.image_size)
 
     def _parse_image_response(self, response: ImagesResponse, prompt: str) -> ImageArtifact:
         if response.data is None or response.data[0] is None or response.data[0].b64_json is None:

@@ -32,6 +32,6 @@ task = PromptTask(
     output_schema=Output,
 )
 
-task_output_value = cast(Output, task.run("Hi there!").value)
+task_output_value = cast("Output", task.run("Hi there!").value)
 
 print(task_output_value.answer)

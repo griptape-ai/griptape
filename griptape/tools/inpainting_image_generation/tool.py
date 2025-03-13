@@ -54,7 +54,7 @@ class InpaintingImageGenerationTool(BaseImageGenerationTool):
         mask_artifact = self.image_loader.load(mask_file)
 
         return self._generate_inpainting(
-            prompt, negative_prompt, cast(ImageArtifact, input_artifact), cast(ImageArtifact, mask_artifact)
+            prompt, negative_prompt, cast("ImageArtifact", input_artifact), cast("ImageArtifact", mask_artifact)
         )
 
     @activity(
@@ -102,7 +102,7 @@ class InpaintingImageGenerationTool(BaseImageGenerationTool):
             return ErrorArtifact(str(e))
 
         return self._generate_inpainting(
-            prompt, negative_prompt, cast(ImageArtifact, image_artifact), cast(ImageArtifact, mask_artifact)
+            prompt, negative_prompt, cast("ImageArtifact", image_artifact), cast("ImageArtifact", mask_artifact)
         )
 
     def _generate_inpainting(
