@@ -37,8 +37,7 @@ class StructureRunTask(BaseTask):
     def try_run(self) -> BaseArtifact:
         if isinstance(self.input, ListArtifact):
             return self.structure_run_driver.run(*self.input.value)
-        else:
-            return self.structure_run_driver.run(self.input)
+        return self.structure_run_driver.run(self.input)
 
     def _process_task_input(
         self,
@@ -48,13 +47,12 @@ class StructureRunTask(BaseTask):
             task_input.value = J2().render_from_string(task_input.value, **self.full_context)
 
             return task_input
-        elif isinstance(task_input, Callable):
+        if isinstance(task_input, Callable):
             return self._process_task_input(task_input(self))
-        elif isinstance(task_input, ListArtifact):
+        if isinstance(task_input, ListArtifact):
             return ListArtifact([self._process_task_input(elem) for elem in task_input.value])
-        elif isinstance(task_input, BaseArtifact):
+        if isinstance(task_input, BaseArtifact):
             return task_input
-        elif isinstance(task_input, (list, tuple)):
+        if isinstance(task_input, (list, tuple)):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
-        else:
-            return self._process_task_input(TextArtifact(task_input))
+        return self._process_task_input(TextArtifact(task_input))

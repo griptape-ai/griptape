@@ -211,36 +211,7 @@ build-backend = "hatchling.build"
 line-length = 120
 
 [tool.ruff.lint]
-select = [
-  "F",     # pyflakes
-  "E",     # pycodestyle-errors
-  "W",     # pycodestyle-warnings
-  "C90",   # mccabe
-  "I",     # isort
-  "N",     # pep8-naming
-  "D",     # pydocstyle
-  "UP",    # pyupgrade
-  "YTT",   # flake8-2020
-  "ANN",   # flake8-annotations
-  "ASYNC", # flake8-async
-  "FBT",   # flake8-boolean-trap
-  "A",     # flake8-builtins
-  "B",     # flake8-bugbear
-  "COM",   # flake8-commas
-  "C4",    # flake8-comprehensions
-  "FA",    # flake8-future-annotations
-  "LOG",   # flake8-logging
-  "G",     # flake8-logging-format
-  "T20",   # flake8-print
-  "PT",    # flake8-pytest-style
-  "RET",   # flake8-return
-  "SIM",   # flake8-simplify
-  "TID",   # flake8-tidy-imports
-  "TCH",   # flake8-type-checking
-  "ERA",   # eradicate
-  "PGH",   # pygrep-hooks
-  "FURB",  # refurb
-]
+select = ["ALL"]
 ignore = [
   "UP007",  # non-pep604-annotation
   "E501",   # line-too-long
@@ -260,8 +231,22 @@ ignore = [
   "ANN003", # missing-type-kwargs
   "ANN401", # any-type
   "PT011",  # pytest-raises-too-broad
-  "RET505", # superfluous-else-return
   "LOG015", # root-logger-call
+  "EM101",  # raw-string-in-exception
+  "BLE001", # blind-except
+  "S",      # flake8-bandit
+  "PTH",    # flake8-use-pathlib
+  "TRY",    # tryceratops
+  "PLR",    # pylint-refactor
+  "RUF",    # ruff
+  "PERF",   # perflint
+  "ARG",    # flake8-unused-arguments
+  "DTZ",    # flake8-datetimez
+  "FIX002", # flake8-fixme
+  "TD003",  # missing-todo-links
+  "TD002",  # missing-todo-author
+  "SLF001", # private-member-access
+  "EM102",  # f-string-in-exception
 ]
 
 [tool.ruff.lint.pydocstyle]
@@ -275,12 +260,18 @@ fixture-parentheses = true
   "I", # isort
 ]
 "tests/*" = [
-  "ANN001", # missing-type-function-argument
-  "ANN201", # missing-return-type-undocumented-public-function
-  "ANN202", # missing-return-type-private-function
+  "ANN001",  # missing-type-function-argument
+  "ANN201",  # missing-return-type-undocumented-public-function
+  "ANN202",  # missing-return-type-private-function
+  "S101",    # assert
+  "PLR2004", # magic-value-comparison
+  "PYI024",  # collections-named-tuple
+  "INP001",  # implicit-namespace-package
+  "FIX004",  # line-contains-hack
 ]
 "docs/*" = [
-  "T20", # flake8-print
+  "T20",    # flake8-print
+  "INP001", # implicit-namespace-package
 ]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]

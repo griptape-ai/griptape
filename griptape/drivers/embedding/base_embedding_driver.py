@@ -57,21 +57,18 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                         and self.tokenizer.count_tokens(value) > self.tokenizer.max_input_tokens
                     ):
                         return self._embed_long_string(value)
-                    else:
-                        return self.try_embed_chunk(value)
-                elif isinstance(value, TextArtifact):
+                    return self.try_embed_chunk(value)
+                if isinstance(value, TextArtifact):
                     return self.embed(value.to_text())
-                elif isinstance(value, ImageArtifact):
+                if isinstance(value, ImageArtifact):
                     return self.try_embed_artifact(value)
-        else:
-            raise RuntimeError("Failed to embed string.")
+        raise RuntimeError("Failed to embed string.")
 
     def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
         # TODO: Mark as abstract method for griptape 2.0
         if isinstance(artifact, TextArtifact):
             return self.try_embed_chunk(artifact.value)
-        else:
-            raise ValueError(f"{self.__class__.__name__} does not support embedding images.")
+        raise ValueError(f"{self.__class__.__name__} does not support embedding images.")
 
     @abstractmethod
     def try_embed_chunk(self, chunk: str) -> list[float]:

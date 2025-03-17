@@ -11,5 +11,4 @@ class BlobLoader(BaseFileLoader[BlobArtifact]):
     def try_parse(self, data: bytes) -> BlobArtifact:
         if self.encoding is None:
             return BlobArtifact(data)
-        else:
-            return BlobArtifact(data, encoding=self.encoding)
+        return BlobArtifact(data, encoding=self.encoding)

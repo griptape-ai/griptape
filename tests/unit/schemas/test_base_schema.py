@@ -97,7 +97,7 @@ class TestBaseSchema:
 
     def test_is_union(self):
         assert BaseSchema._is_union(Union[str, int])
-        assert BaseSchema._is_union(Union[str, Union[int, str]])
+        assert BaseSchema._is_union(Union[str, int])
         assert not BaseSchema._is_union(tuple)
         assert not BaseSchema._is_union(bytes)
         assert not BaseSchema._is_union(str)

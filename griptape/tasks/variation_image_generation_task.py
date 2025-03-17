@@ -43,17 +43,16 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
     def input(self) -> ListArtifact:
         if isinstance(self._input, ListArtifact):
             return self._input
-        elif isinstance(self._input, tuple):
+        if isinstance(self._input, tuple):
             if isinstance(self._input[0], TextArtifact):
                 input_text = self._input[0]
             else:
                 input_text = TextArtifact(J2().render_from_string(self._input[0], **self.full_context))
 
             return ListArtifact([input_text, self._input[1]])
-        elif isinstance(self._input, Callable):
+        if isinstance(self._input, Callable):
             return self._input(self)
-        else:
-            raise ValueError("Input must be a tuple of (text, image) or a callable that returns such a tuple.")
+        raise ValueError("Input must be a tuple of (text, image) or a callable that returns such a tuple.")
 
     @input.setter
     def input(self, value: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact]) -> None:

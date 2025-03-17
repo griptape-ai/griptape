@@ -191,7 +191,7 @@ class TestToolkitSubtask:
 
         try:
             ToolkitTask("test", tools=[MockTool(), MockTool()])
-            raise AssertionError()
+            raise AssertionError
         except ValueError:
             assert True
 

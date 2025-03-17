@@ -11,8 +11,7 @@ class TestBaseFileLoader:
         encoding = request.param
         if encoding is None:
             return TextLoader()
-        else:
-            return TextLoader(encoding=encoding)
+        return TextLoader(encoding=encoding)
 
     @pytest.fixture(params=["path_from_resource_path"])
     def create_source(self, request):

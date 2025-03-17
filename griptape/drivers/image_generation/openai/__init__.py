@@ -2,4 +2,4 @@ from griptape.drivers.image_generation.openai_image_generation_driver import Ope
 from griptape.drivers.image_generation.azure_openai_image_generation_driver import AzureOpenAiImageGenerationDriver
 
 
-__all__ = ["OpenAiImageGenerationDriver", "AzureOpenAiImageGenerationDriver"]
+__all__ = ["AzureOpenAiImageGenerationDriver", "OpenAiImageGenerationDriver"]

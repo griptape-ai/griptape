@@ -26,7 +26,7 @@ class TestActivityMixin:
     def test_activity_schema(self, tool):
         schema = tool.activity_schema(tool.test).json_schema("InputSchema")
 
-        assert schema == Schema({"values": getattr(tool.test, "config")["schema"]}).json_schema("InputSchema")
+        assert schema == Schema({"values": tool.test.config["schema"]}).json_schema("InputSchema")
         assert schema["properties"].get("artifact") is None
 
     def test_activity_with_no_schema(self, tool):
@@ -69,7 +69,7 @@ class TestActivityMixin:
     def test_allowdenylist(self, allowlist, denylist, expected_activities):
         tool = MockTool(test_field="hello", test_int=5, allowlist=allowlist, denylist=denylist)
 
-        assert [getattr(activity, "name") for activity in tool.activities()] == expected_activities
+        assert [activity.name for activity in tool.activities()] == expected_activities
 
     def test_invalid_allowlist(self):
         with pytest.raises(ValueError):

@@ -80,8 +80,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         response = self.client.index(self.index).add_documents([doc], tensor_fields=["Description"])
         if isinstance(response, dict) and "items" in response and response["items"]:
             return response["items"][0]["_id"]
-        else:
-            raise ValueError(f"Failed to upsert text: {response}")
+        raise ValueError(f"Failed to upsert text: {response}")
 
     def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Load a document entry from the Marqo index.
@@ -101,8 +100,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
                 meta={k: v for k, v in result.items() if k != "_id"},
                 vector=result["_tensor_facets"][0]["_embedding"],
             )
-        else:
-            return None
+        return None
 
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Load all document entries from the Marqo index.

@@ -45,8 +45,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
     def workdir(self) -> str:
         if self._workdir.startswith("/"):
             return self._workdir
-        else:
-            return f"/{self._workdir}"
+        return f"/{self._workdir}"
 
     @workdir.setter
     def workdir(self, value: str) -> None:

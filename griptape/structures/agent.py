@@ -42,7 +42,7 @@ class Agent(Structure):
             raise ValueError("Agents cannot fail fast, as they can only have 1 task.")
 
     @prompt_driver.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_prompt_driver(self, _: Attribute, prompt_driver: Optional[BasePromptDriver]) -> None:  # noqa: FBT001
+    def validate_prompt_driver(self, _: Attribute, prompt_driver: Optional[BasePromptDriver]) -> None:
         if prompt_driver is not None and self.stream is not None:
             warnings.warn(
                 "`Agent.prompt_driver` is set, but `Agent.stream` was provided. `Agent.stream` will be ignored. This will be an error in the future.",

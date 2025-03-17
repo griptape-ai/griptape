@@ -116,21 +116,20 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
                         for a in artifacts
                     ],
                 )
-            else:
-                futures_dict = {}
+            futures_dict = {}
 
-                for namespace, artifact_list in artifacts.items():
-                    for a in artifact_list:
-                        if not futures_dict.get(namespace):
-                            futures_dict[namespace] = []
+            for namespace, artifact_list in artifacts.items():
+                for a in artifact_list:
+                    if not futures_dict.get(namespace):
+                        futures_dict[namespace] = []
 
-                        futures_dict[namespace].append(
-                            futures_executor.submit(
-                                with_contextvars(self.upsert), a, namespace=namespace, meta=meta, **kwargs
-                            )
+                    futures_dict[namespace].append(
+                        futures_executor.submit(
+                            with_contextvars(self.upsert), a, namespace=namespace, meta=meta, **kwargs
                         )
+                    )
 
-                return utils.execute_futures_list_dict(futures_dict)
+            return utils.execute_futures_list_dict(futures_dict)
 
     def upsert(
         self,
@@ -151,12 +150,11 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
         if self.does_entry_exist(vector_id, namespace=namespace):
             return vector_id
-        else:
-            meta = {**meta, "artifact": artifact.to_json()}
+        meta = {**meta, "artifact": artifact.to_json()}
 
-            vector = self.embedding_driver.embed(artifact)
+        vector = self.embedding_driver.embed(artifact)
 
-            return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
+        return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
 
     def does_entry_exist(self, vector_id: str, *, namespace: Optional[str] = None) -> bool:
         try:

@@ -46,8 +46,7 @@ class RagTool(BaseTool):
 
             if len(outputs) > 0:
                 return ListArtifact(outputs)
-            else:
-                return ErrorArtifact("query output is empty")
+            return ErrorArtifact("query output is empty")
 
         except Exception as e:
             return ErrorArtifact(f"error querying: {e}")

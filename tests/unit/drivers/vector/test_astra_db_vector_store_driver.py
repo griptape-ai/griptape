@@ -23,7 +23,6 @@ class TestAstraDbVectorStoreDriver:
         base_mock_collection.return_value.find_one.return_value = one_document
         # find
         base_mock_collection.return_value.find.return_value = [one_document]
-        #
         return base_mock_collection
 
     @pytest.fixture()

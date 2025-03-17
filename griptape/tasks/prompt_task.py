@@ -108,10 +108,8 @@ class PromptTask(
         if self._conversation_memory is NOTHING:
             if self.structure is None:
                 return None
-            else:
-                return self.structure.conversation_memory
-        else:
-            return self._conversation_memory
+            return self.structure.conversation_memory
+        return self._conversation_memory
 
     @conversation_memory.setter
     def conversation_memory(self, value: Optional[BaseConversationMemory]) -> None:
@@ -222,14 +220,12 @@ class PromptTask(
         if self.output_schema is not None and self.prompt_driver.structured_output_strategy in ("native", "rule"):
             if isinstance(self.output_schema, Schema):
                 return JsonArtifact(output.value)
-            elif isinstance(self.output_schema, type) and issubclass(self.output_schema, BaseModel):
+            if isinstance(self.output_schema, type) and issubclass(self.output_schema, BaseModel):
                 return ModelArtifact(TypeAdapter(self.output_schema).validate_json(output.value))
-            else:
-                raise ValueError(f"Unsupported output schema type: {type(self.output_schema)}")
-        elif isinstance(output, (ListArtifact, TextArtifact, AudioArtifact, JsonArtifact, ErrorArtifact)):
+            raise ValueError(f"Unsupported output schema type: {type(self.output_schema)}")
+        if isinstance(output, (ListArtifact, TextArtifact, AudioArtifact, JsonArtifact, ErrorArtifact)):
             return output
-        else:
-            raise ValueError(f"Unsupported output type: {type(output)}")
+        raise ValueError(f"Unsupported output type: {type(output)}")
 
     def preprocess(self, structure: Structure) -> BaseTask:
         super().preprocess(structure)
@@ -314,16 +310,15 @@ class PromptTask(
     ) -> BaseArtifact:
         if isinstance(task_input, TextArtifact):
             return TextArtifact(J2().render_from_string(task_input.value, **self.full_context), meta=task_input.meta)
-        elif isinstance(task_input, Callable):
+        if isinstance(task_input, Callable):
             return self._process_task_input(task_input(self))
-        elif isinstance(task_input, ListArtifact):
+        if isinstance(task_input, ListArtifact):
             return ListArtifact([self._process_task_input(elem) for elem in task_input.value])
-        elif isinstance(task_input, BaseArtifact):
+        if isinstance(task_input, BaseArtifact):
             return task_input
-        elif isinstance(task_input, (list, tuple)):
+        if isinstance(task_input, (list, tuple)):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
-        else:
-            return self._process_task_input(TextArtifact(task_input))
+        return self._process_task_input(TextArtifact(task_input))
 
     def _add_subtasks_to_prompt_stack(self, stack: PromptStack) -> None:
         for s in self.subtasks:

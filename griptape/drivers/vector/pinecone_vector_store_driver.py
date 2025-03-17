@@ -66,8 +66,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
                 vector=vector["values"],
                 namespace=result["namespace"],
             )
-        else:
-            return None
+        return None
 
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         # This is a hacky way to query up to 10,000 values from Pinecone. Waiting on an official API for fetching

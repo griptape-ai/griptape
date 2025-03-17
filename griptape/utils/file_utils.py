@@ -28,19 +28,15 @@ def get_mime_type(file_path_or_bytes: str | bytes) -> str:
             if _is_text(file_path_or_bytes):
                 if _is_json(file_path_or_bytes):
                     return "application/json"
-                elif _is_csv(file_path_or_bytes):
+                if _is_csv(file_path_or_bytes):
                     return "text/csv"
                 return "text/plain"
-            else:
-                return "application/octet-stream"
-        else:
-            return filetype_guess.mime
-    else:
-        type_, _ = mimetypes.guess_type(file_path_or_bytes)
-        if type_ is None:
             return "application/octet-stream"
-        else:
-            return type_
+        return filetype_guess.mime
+    type_, _ = mimetypes.guess_type(file_path_or_bytes)
+    if type_ is None:
+        return "application/octet-stream"
+    return type_
 
 
 def _is_text(data: bytes) -> bool:

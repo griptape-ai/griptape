@@ -4,7 +4,7 @@ import os
 from typing import TYPE_CHECKING, Any, Optional, TypeVar
 
 from attrs import define, field
-from typing_extensions import ParamSpec
+from typing_extensions import ParamSpec, Self
 
 from griptape.artifacts import (
     BaseArtifact,
@@ -63,11 +63,10 @@ class GriptapeCloudStructure:
     def output(self, value: BaseArtifact | Any) -> None:
         if isinstance(value, BaseArtifact):
             self._output = value
+        elif isinstance(value, list):
+            self._output = ListArtifact([self._to_artifact(item) for item in value])
         else:
-            if isinstance(value, list):
-                self._output = ListArtifact([self._to_artifact(item) for item in value])
-            else:
-                self._output = self._to_artifact(value)
+            self._output = self._to_artifact(value)
 
     @property
     def structure_run_id(self) -> str:
@@ -77,7 +76,7 @@ class GriptapeCloudStructure:
     def in_managed_environment(self) -> bool:
         return "GT_CLOUD_STRUCTURE_RUN_ID" in os.environ
 
-    def __enter__(self) -> GriptapeCloudStructure:
+    def __enter__(self) -> Self:
         from griptape.observability.observability import Observability
 
         if self.in_managed_environment:
@@ -109,11 +108,10 @@ class GriptapeCloudStructure:
     def _to_artifact(self, value: Any) -> BaseArtifact:
         if isinstance(value, str):
             return TextArtifact(value)
-        elif isinstance(value, bool):
+        if isinstance(value, bool):
             return BooleanArtifact(value)
-        elif isinstance(value, dict):
+        if isinstance(value, dict):
             return JsonArtifact(value)
-        elif isinstance(value, bytes):
+        if isinstance(value, bytes):
             return BlobArtifact(value)
-        else:
-            return GenericArtifact(value)
+        return GenericArtifact(value)

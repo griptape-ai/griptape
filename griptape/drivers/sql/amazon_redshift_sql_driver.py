@@ -59,8 +59,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         rows = self.execute_query_raw(query)
         if rows:
             return [BaseSqlDriver.RowResult(row) for row in rows]
-        else:
-            return None
+        return None
 
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, Optional[Any]]]]:
         function_kwargs = {"Sql": query, "Database": self.database}
@@ -95,7 +94,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
 
             return self._post_process(statement_result["ColumnMetadata"], results)
 
-        elif statement["Status"] in ["FAILED", "ABORTED"]:
+        if statement["Status"] in ["FAILED", "ABORTED"]:
             return None
         return None
 

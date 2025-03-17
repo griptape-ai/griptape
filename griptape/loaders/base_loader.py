@@ -40,8 +40,6 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
     def fetch(self, source: S) -> F:
         """Fetches data from the source."""
 
-    ...
-
     def parse(self, data: F) -> A:
         """Parses the fetched data and returns an Artifact."""
         artifact = self.try_parse(data)
@@ -53,7 +51,7 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
     def try_parse(self, data: F) -> A:
         """Parses the fetched data and returns an Artifact."""
         # TODO: Mark as abstract method for griptape 2.0
-        raise NotImplementedError()
+        raise NotImplementedError
 
     def load_collection(
         self,
@@ -76,5 +74,4 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
         """Converts the source to a key for the collection."""
         if isinstance(source, bytes):
             return bytes_to_hash(source)
-        else:
-            return str_to_hash(str(source))
+        return str_to_hash(str(source))

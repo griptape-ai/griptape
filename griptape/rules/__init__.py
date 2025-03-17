@@ -4,4 +4,4 @@ from griptape.rules.json_schema_rule import JsonSchemaRule
 from griptape.rules.ruleset import Ruleset
 
 
-__all__ = ["BaseRule", "Rule", "JsonSchemaRule", "Ruleset"]
+__all__ = ["BaseRule", "JsonSchemaRule", "Rule", "Ruleset"]

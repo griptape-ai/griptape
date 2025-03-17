@@ -9,8 +9,7 @@ class TestJsonLoader:
         encoding = request.param
         if encoding is None:
             return JsonLoader()
-        else:
-            return JsonLoader(encoding=encoding)
+        return JsonLoader(encoding=encoding)
 
     @pytest.fixture(params=["path_from_resource_path"])
     def create_source(self, request):

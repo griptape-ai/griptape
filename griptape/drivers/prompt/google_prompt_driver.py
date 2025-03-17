@@ -189,8 +189,7 @@ class GooglePromptDriver(BasePromptDriver):
     def __to_google_role(self, message: Message) -> str:
         if message.is_assistant():
             return "model"
-        else:
-            return "user"
+        return "user"
 
     def __to_google_tools(self, tools: list[BaseTool]) -> list[dict]:
         types = import_optional_dependency("google.generativeai.types")
@@ -230,13 +229,13 @@ class GooglePromptDriver(BasePromptDriver):
 
         if isinstance(content, TextMessageContent):
             return content.artifact.to_text()
-        elif isinstance(content, ImageMessageContent):
+        if isinstance(content, ImageMessageContent):
             return types.ContentDict(mime_type=content.artifact.mime_type, data=content.artifact.value)
-        elif isinstance(content, ActionCallMessageContent):
+        if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
             return protos.Part(function_call=protos.FunctionCall(name=action.tag, args=action.input))
-        elif isinstance(content, ActionResultMessageContent):
+        if isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
             return protos.Part(
@@ -245,17 +244,16 @@ class GooglePromptDriver(BasePromptDriver):
                     response=artifact.to_dict(),
                 ),
             )
-        elif isinstance(content, GenericMessageContent):
+        if isinstance(content, GenericMessageContent):
             return content.artifact.value
-        else:
-            raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
+        raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
 
     def __to_prompt_stack_message_content(self, content: Part) -> BaseMessageContent:
         json_format = import_optional_dependency("google.protobuf.json_format")
 
         if content.text:
             return TextMessageContent(TextArtifact(content.text))
-        elif content.function_call:
+        if content.function_call:
             function_call = content.function_call
 
             name, path = ToolAction.from_native_tool_name(function_call.name)
@@ -264,15 +262,14 @@ class GooglePromptDriver(BasePromptDriver):
             return ActionCallMessageContent(
                 artifact=ActionArtifact(value=ToolAction(tag=function_call.name, name=name, path=path, input=args)),
             )
-        else:
-            raise ValueError(f"Unsupported message content type {content}")
+        raise ValueError(f"Unsupported message content type {content}")
 
     def __to_prompt_stack_delta_message_content(self, content: Part) -> BaseDeltaMessageContent:
         json_format = import_optional_dependency("google.protobuf.json_format")
 
         if content.text:
             return TextDeltaMessageContent(content.text)
-        elif content.function_call:
+        if content.function_call:
             function_call = content.function_call
 
             name, path = ToolAction.from_native_tool_name(function_call.name)
@@ -284,5 +281,4 @@ class GooglePromptDriver(BasePromptDriver):
                 path=path,
                 partial_input=json.dumps(args),
             )
-        else:
-            raise ValueError(f"Unsupported message content type {content}")
+        raise ValueError(f"Unsupported message content type {content}")

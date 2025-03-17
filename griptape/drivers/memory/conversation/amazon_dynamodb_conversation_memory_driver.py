@@ -47,8 +47,7 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
         if "Item" in response and self.value_attribute_key in response["Item"]:
             memory_dict = json.loads(response["Item"][self.value_attribute_key])
             return self._from_params_dict(memory_dict)
-        else:
-            return [], {}
+        return [], {}
 
     def _get_key(self) -> dict[str, str | int]:
         key: dict[str, str | int] = {self.partition_key: self.partition_key_value}

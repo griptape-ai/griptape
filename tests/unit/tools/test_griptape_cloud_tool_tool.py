@@ -407,23 +407,21 @@ class TestGriptapeCloudToolTool:
             assert hasattr(tool, activity_name), f"Method {activity_name} does not exist in the tool."
             activity = getattr(tool, activity_name)
 
-            assert getattr(activity, "name") == details["name"]
-            assert getattr(activity, "config")["name"] == details["name"]
-            assert getattr(activity, "config")["description"] == details["description"]
-            assert getattr(activity, "config")["schema"].json_schema("Schema") == details["schema"].json_schema(
-                "Schema"
-            )
+            assert activity.name == details["name"]
+            assert activity.config["name"] == details["name"]
+            assert activity.config["description"] == details["description"]
+            assert activity.config["schema"].json_schema("Schema") == details["schema"].json_schema("Schema")
 
-            assert getattr(activity, "is_activity") is True
+            assert activity.is_activity is True
 
     def test_multiple_init(self, mock_schema):
         tool_1 = GriptapeCloudToolTool(tool_id="tool_id_1")
         mock_schema["paths"]["/activities/processString"]["post"]["description"] = "new description"
         tool_2 = GriptapeCloudToolTool(tool_id="tool_id_2")
 
-        assert getattr(tool_1, "processString") != getattr(tool_2, "processString")
-        assert getattr(tool_1, "processString").config["description"] == "Processes a string input"
-        assert getattr(tool_2, "processString").config["description"] == "new description"
+        assert tool_1.processString != tool_2.processString
+        assert tool_1.processString.config["description"] == "Processes a string input"
+        assert tool_2.processString.config["description"] == "new description"
 
     def test_run_activity(self):
         tool = GriptapeCloudToolTool(tool_id="tool_id")

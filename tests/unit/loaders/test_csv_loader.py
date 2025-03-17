@@ -9,8 +9,7 @@ class TestCsvLoader:
         encoding = request.param
         if encoding is None:
             return CsvLoader()
-        else:
-            return CsvLoader(encoding=encoding)
+        return CsvLoader(encoding=encoding)
 
     @pytest.fixture()
     def loader_with_pipe_delimiter(self):

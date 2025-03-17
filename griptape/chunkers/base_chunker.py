@@ -44,46 +44,44 @@ class BaseChunker(ABC):
 
         if token_count <= self.max_tokens:
             return [chunk]
-        else:
-            # If a separator is provided, only use separators after it.
-            separators = (
-                self.separators[self.separators.index(current_separator) :] if current_separator else self.separators
-            )
+        # If a separator is provided, only use separators after it.
+        separators = (
+            self.separators[self.separators.index(current_separator) :] if current_separator else self.separators
+        )
 
-            # Loop through available separators to find the best split.
-            for separator in separators:
-                # Split the chunk into subchunks using the current separator.
-                subchunks = chunk.strip().split(separator.value)
+        # Loop through available separators to find the best split.
+        for separator in separators:
+            # Split the chunk into subchunks using the current separator.
+            subchunks = chunk.strip().split(separator.value)
 
-                # We should not operate on the filtered, non-empty subchunks because the joins will be incorrect.
-                # However, we only want to process chunks that have multiple non-empty subchunks.
-                # Therefore, we use the non-empty subchunks to decide if we should proceed, but we operate on the original subchunks.
-                non_empty_subchunks = list(filter(None, subchunks))
+            # We should not operate on the filtered, non-empty subchunks because the joins will be incorrect.
+            # However, we only want to process chunks that have multiple non-empty subchunks.
+            # Therefore, we use the non-empty subchunks to decide if we should proceed, but we operate on the original subchunks.
+            non_empty_subchunks = list(filter(None, subchunks))
 
-                if len(non_empty_subchunks) > 1:
-                    # Find what combination of subchunks results in the most balanced split of the chunk.
-                    midpoint_index = self.__find_midpoint_index(separator, subchunks, half_token_count)
+            if len(non_empty_subchunks) > 1:
+                # Find what combination of subchunks results in the most balanced split of the chunk.
+                midpoint_index = self.__find_midpoint_index(separator, subchunks, half_token_count)
 
-                    # Create the two subchunks based on the best separator.
-                    first_subchunk, second_subchunk = self.__get_subchunks(separator, subchunks, midpoint_index)
+                # Create the two subchunks based on the best separator.
+                first_subchunk, second_subchunk = self.__get_subchunks(separator, subchunks, midpoint_index)
 
-                    # Continue recursively chunking the subchunks.
-                    first_subchunk_rec = self._chunk_recursively(first_subchunk.strip(), separator)
-                    second_subchunk_rec = self._chunk_recursively(second_subchunk.strip(), separator)
+                # Continue recursively chunking the subchunks.
+                first_subchunk_rec = self._chunk_recursively(first_subchunk.strip(), separator)
+                second_subchunk_rec = self._chunk_recursively(second_subchunk.strip(), separator)
 
-                    # Return the concatenated results of the subchunks if both are non-empty.
-                    if first_subchunk_rec and second_subchunk_rec:
-                        return first_subchunk_rec + second_subchunk_rec
-                    # If only one subchunk is non-empty, return it.
-                    elif first_subchunk_rec:
-                        return first_subchunk_rec
-                    elif second_subchunk_rec:
-                        return second_subchunk_rec
-                    else:
-                        return []
-            # If none of the separators result in a balanced split, split the chunk in half.
-            midpoint = len(chunk) // 2
-            return self._chunk_recursively(chunk[:midpoint]) + self._chunk_recursively(chunk[midpoint:])
+                # Return the concatenated results of the subchunks if both are non-empty.
+                if first_subchunk_rec and second_subchunk_rec:
+                    return first_subchunk_rec + second_subchunk_rec
+                # If only one subchunk is non-empty, return it.
+                if first_subchunk_rec:
+                    return first_subchunk_rec
+                if second_subchunk_rec:
+                    return second_subchunk_rec
+                return []
+        # If none of the separators result in a balanced split, split the chunk in half.
+        midpoint = len(chunk) // 2
+        return self._chunk_recursively(chunk[:midpoint]) + self._chunk_recursively(chunk[midpoint:])
 
     def __get_subchunks(self, separator: ChunkSeparator, subchunks: list[str], balance_index: int) -> tuple[str, str]:
         # Create the two subchunks based on the best separator

@@ -134,5 +134,4 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
 
         if isinstance(tokens, list):
             return tokens  # pyright: ignore[reportReturnType] According to the [docs](https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template), the return type is List[int].
-        else:
-            raise ValueError("Invalid output type.")
+        raise ValueError("Invalid output type.")

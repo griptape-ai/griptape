@@ -31,14 +31,13 @@ class TestStream:
                     next(chat_stream_run)
             else:
                 assert next(chat_stream_run).value == "mock output"
+        # MockPromptDriver produces some extra events because it simulates CoT when using native tools.
+        elif use_native_tools:
+            assert next(chat_stream_run).value == "\n"
+            assert next(chat_stream_run).value == "\n"
+            with pytest.raises(StopIteration):
+                next(chat_stream_run)
         else:
-            # MockPromptDriver produces some extra events because it simulates CoT when using native tools.
-            if use_native_tools:
-                assert next(chat_stream_run).value == "\n"
-                assert next(chat_stream_run).value == "\n"
-                with pytest.raises(StopIteration):
-                    next(chat_stream_run)
-            else:
-                assert next(chat_stream_run).value == "\n"
-                with pytest.raises(StopIteration):
-                    next(chat_stream_run)
+            assert next(chat_stream_run).value == "\n"
+            with pytest.raises(StopIteration):
+                next(chat_stream_run)

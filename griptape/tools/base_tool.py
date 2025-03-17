@@ -184,8 +184,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
                 value = memory.process_output(activity, subtask, value)
 
             return value
-        else:
-            return value
+        return value
 
     def validate(self) -> bool:
         if not os.path.exists(self.requirements_path):
@@ -213,13 +212,13 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
             cwd=self.tool_dir(),
             stdout=None if self.verbose else subprocess.DEVNULL,
             stderr=None if self.verbose else subprocess.DEVNULL,
+            check=False,
         )
 
     def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if self.input_memory:
             return next((m for m in self.input_memory if m.name == memory_name), None)
-        else:
-            return None
+        return None
 
     def to_native_tool_name(self, activity: Callable) -> str:
         """Converts a Tool's name and an Activity into to a native tool name.

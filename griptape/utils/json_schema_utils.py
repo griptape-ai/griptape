@@ -57,13 +57,12 @@ def resolve_refs(schema: dict[str, Any]) -> dict[str, Any]:
                 if def_name in defs:
                     # Replace the entire node with the referenced definition.
                     return _resolve(deepcopy(defs[def_name]))
-                else:
-                    raise KeyError(f"Definition '{def_name}' not found in $defs.")
+                raise KeyError(f"Definition '{def_name}' not found in $defs.")
 
             # If not a ref, or doesn't start with #/$defs/, just walk deeper.
             return {key: _resolve(value) for key, value in node.items()}
 
-        elif isinstance(node, list):
+        if isinstance(node, list):
             # Recurse into each item of the list
             return [_resolve(item) for item in node]
 
