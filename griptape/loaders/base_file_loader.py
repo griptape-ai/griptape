@@ -29,8 +29,7 @@ class BaseFileLoader(BaseLoader[Union[str, PathLike], bytes, A], ABC):
         data = self.file_manager_driver.load_file(str(source)).value
         if isinstance(data, str):
             return data.encode(self.encoding)
-        else:
-            return data
+        return data
 
     def save(self, destination: str | PathLike, artifact: A) -> None:
         """Saves the Artifact to a destination."""

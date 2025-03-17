@@ -36,7 +36,7 @@ class TestPromptImageGenerationTool:
         assert image_artifact
 
     def test_generate_image_with_outfile(self, image_generation_driver) -> None:
-        outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
+        outfile = f"{tempfile.gettempdir()}/{uuid.uuid4()!s}.png"
         image_generator = PromptImageGenerationTool(
             image_generation_driver=image_generation_driver, output_file=outfile
         )

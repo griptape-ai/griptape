@@ -17,7 +17,7 @@ class TestGriptapeCloudAssistantDriver:
                 mock_response.json.return_value = {"assistant_run_id": "1"}
 
                 return mock_response
-            elif "threads" in args[0]:
+            if "threads" in args[0]:
                 mock_response = mocker.Mock()
                 if "alias" in kwargs["json"] and kwargs["json"]["alias"] in (
                     "already_exists",
@@ -29,10 +29,9 @@ class TestGriptapeCloudAssistantDriver:
                 else:
                     mock_response.json.return_value = {"thread_id": "1"}
                 return mock_response
-            else:
-                return mocker.Mock(
-                    raise_for_status=lambda: None,
-                )
+            return mocker.Mock(
+                raise_for_status=lambda: None,
+            )
 
         return mocker.patch(
             "requests.post",
@@ -98,7 +97,7 @@ class TestGriptapeCloudAssistantDriver:
                 mock_response.__exit__ = MagicMock()
 
                 return mock_response
-            elif "threads" in args[0]:
+            if "threads" in args[0]:
                 mock_response = mocker.Mock()
                 if "alias" in kwargs["params"] and kwargs["params"]["alias"] in ("gone_and_then_exists"):
                     mock_response.json.return_value = {"threads": []}
@@ -112,10 +111,9 @@ class TestGriptapeCloudAssistantDriver:
                         ]
                     }
                 return mock_response
-            else:
-                return mocker.Mock(
-                    raise_for_status=lambda: None,
-                )
+            return mocker.Mock(
+                raise_for_status=lambda: None,
+            )
 
         return mocker.patch(
             "requests.get",

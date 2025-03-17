@@ -11,7 +11,7 @@ original_input = None
 
 
 def on_before_run(task: BaseTask) -> None:
-    global original_input
+    global original_input  # noqa: PLW0603
 
     original_input = task.input.value
 

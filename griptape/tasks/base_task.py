@@ -98,10 +98,8 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
         if self.structure is not None and self.structure.meta_memory:
             if self.max_meta_memory_entries:
                 return self.structure.meta_memory.entries[: self.max_meta_memory_entries]
-            else:
-                return self.structure.meta_memory.entries
-        else:
-            return []
+            return self.structure.meta_memory.entries
+        return []
 
     def __str__(self) -> str:
         return str(self.output.value) if self.output is not None else ""

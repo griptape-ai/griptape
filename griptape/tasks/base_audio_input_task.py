@@ -24,10 +24,9 @@ class BaseAudioInputTask(RuleMixin, BaseTask[T], ABC):
     def input(self) -> AudioArtifact:
         if isinstance(self._input, AudioArtifact):
             return self._input
-        elif isinstance(self._input, Callable):
+        if isinstance(self._input, Callable):
             return self._input(self)
-        else:
-            raise ValueError("Input must be an AudioArtifact.")
+        raise ValueError("Input must be an AudioArtifact.")
 
     @input.setter
     def input(self, value: AudioArtifact | Callable[[BaseTask], AudioArtifact]) -> None:

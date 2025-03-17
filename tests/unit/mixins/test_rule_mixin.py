@@ -102,9 +102,9 @@ class TestRuleMixin:
 
         new_mixin = RuleMixin.from_dict(mixin.to_dict())
 
-        for idx, _ in enumerate(new_mixin.rulesets):
-            rules = mixin.rulesets[idx].rules
-            new_rules = new_mixin.rulesets[idx].rules
-            for idx, _ in enumerate(rules):
-                assert rules[idx].value == new_rules[idx].value
-                assert rules[idx].meta == new_rules[idx].meta
+        for i, _ in enumerate(new_mixin.rulesets):
+            rules = mixin.rulesets[i].rules
+            new_rules = new_mixin.rulesets[i].rules
+            for j, _ in enumerate(rules):
+                assert rules[j].value == new_rules[j].value
+                assert rules[j].meta == new_rules[j].meta

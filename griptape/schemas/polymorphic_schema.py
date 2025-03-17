@@ -51,9 +51,8 @@ class PolymorphicSchema(BaseSchema):
 
         if not errors:
             return result
-        else:
-            exc = ValidationError(errors, data=obj, valid_data=result)  # pyright: ignore[reportArgumentType]
-            raise exc
+        exc = ValidationError(errors, data=obj, valid_data=result)  # pyright: ignore[reportArgumentType]
+        raise exc
 
     def _dump(self, obj: Any, *, update_fields: bool = True, **kwargs) -> Any:
         obj_type = self.get_obj_type(obj)
@@ -104,9 +103,8 @@ class PolymorphicSchema(BaseSchema):
 
         if not errors:
             return result
-        else:
-            exc = ValidationError(errors, data=data, valid_data=result)
-            raise exc
+        exc = ValidationError(errors, data=data, valid_data=result)
+        raise exc
 
     def _load(self, data: Any, *, partial: Any = None, unknown: Any = None, **kwargs) -> Any:
         if not isinstance(data, dict):

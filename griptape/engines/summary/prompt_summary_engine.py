@@ -89,22 +89,20 @@ class PromptSummaryEngine(BaseSummaryEngine):
 
             if isinstance(result, TextArtifact):
                 return result
-            else:
-                raise ValueError("Prompt driver did not return a TextArtifact")
-        else:
-            chunks = self.chunker.chunk(artifacts_text)
+            raise ValueError("Prompt driver did not return a TextArtifact")
+        chunks = self.chunker.chunk(artifacts_text)
 
-            partial_text = self.generate_user_template.render(text=chunks[0].value)
+        partial_text = self.generate_user_template.render(text=chunks[0].value)
 
-            return self.summarize_artifacts_rec(
-                chunks[1:],
-                self.prompt_driver.run(
-                    PromptStack(
-                        messages=[
-                            Message(system_prompt, role=Message.SYSTEM_ROLE),
-                            Message(partial_text, role=Message.USER_ROLE),
-                        ],
-                    ),
-                ).value,
-                rulesets=rulesets,
-            )
+        return self.summarize_artifacts_rec(
+            chunks[1:],
+            self.prompt_driver.run(
+                PromptStack(
+                    messages=[
+                        Message(system_prompt, role=Message.SYSTEM_ROLE),
+                        Message(partial_text, role=Message.USER_ROLE),
+                    ],
+                ),
+            ).value,
+            rulesets=rulesets,
+        )

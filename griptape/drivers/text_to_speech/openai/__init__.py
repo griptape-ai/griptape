@@ -2,4 +2,4 @@ from griptape.drivers.text_to_speech.openai_text_to_speech_driver import OpenAiT
 from griptape.drivers.text_to_speech.azure_openai_text_to_speech_driver import AzureOpenAiTextToSpeechDriver
 
 
-__all__ = ["OpenAiTextToSpeechDriver", "AzureOpenAiTextToSpeechDriver"]
+__all__ = ["AzureOpenAiTextToSpeechDriver", "OpenAiTextToSpeechDriver"]

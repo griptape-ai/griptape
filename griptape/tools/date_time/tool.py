@@ -42,8 +42,7 @@ class DateTimeTool(BaseTool):
 
             if relative_datetime:
                 return TextArtifact(str(relative_datetime))
-            else:
-                return ErrorArtifact("invalid date string")
+            return ErrorArtifact("invalid date string")
         except Exception as e:
             return ErrorArtifact(f"error getting current datetime: {e}")
 

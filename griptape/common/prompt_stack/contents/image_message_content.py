@@ -18,4 +18,4 @@ class ImageMessageContent(BaseMessageContent):
 
     @classmethod
     def from_deltas(cls, deltas: Sequence[BaseDeltaMessageContent]) -> ImageMessageContent:
-        raise NotImplementedError()
+        raise NotImplementedError

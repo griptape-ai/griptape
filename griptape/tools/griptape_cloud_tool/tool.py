@@ -114,13 +114,11 @@ class GriptapeCloudToolTool(BaseGriptapeCloudTool):
             enum = schema_info["items"].get("enum")
             if enum:
                 return enum
-            else:
-                items_type = schema_info["items"].get("type", "string")
+            items_type = schema_info["items"].get("type", "string")
             return [self._map_openapi_type_to_python(items_type)]  # pyright: ignore[reportReturnType]
-        elif schema_info is not None and schema_info.get("enum"):
+        if schema_info is not None and schema_info.get("enum"):
             return Or(*schema_info["enum"])
-        else:
-            return type_mapping.get(openapi_type, str)
+        return type_mapping.get(openapi_type, str)
 
     def _create_activity_handler(self, activity_name: str, description: str, activity_schema: Schema) -> Callable:
         """Creates an activity handler method for the tool."""

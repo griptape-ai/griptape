@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from attrs import Factory, define, field
 from schema import Literal, Schema
 
-import griptape.loaders as loaders
+from griptape import loaders
 from griptape.artifacts import ErrorArtifact, InfoArtifact, ListArtifact, TextArtifact
 from griptape.drivers.file_manager.local import LocalFileManagerDriver
 from griptape.loaders.blob_loader import BlobLoader
@@ -129,7 +129,7 @@ class FileManagerTool(BaseTool):
             except NotADirectoryError:
                 return ErrorArtifact("Not a directory")
             except Exception as e:
-                return ErrorArtifact(f"Failed to load file: {str(e)}")
+                return ErrorArtifact(f"Failed to load file: {e!s}")
 
         return InfoArtifact("Successfully saved memory artifacts to disk")
 

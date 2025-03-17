@@ -106,11 +106,10 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
 
         if include_vectors:
             return result
-        else:
-            return [
-                BaseVectorStoreDriver.Entry(id=r.id, vector=[], score=r.score, meta=r.meta, namespace=r.namespace)
-                for r in result
-            ]
+        return [
+            BaseVectorStoreDriver.Entry(id=r.id, vector=[], score=r.score, meta=r.meta, namespace=r.namespace)
+            for r in result
+        ]
 
     def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")

@@ -33,7 +33,7 @@ class TestGriptapeCloudConversationMemoryDriver:
                         else {"messages": []},
                         status_code=200,
                     )
-                elif "/threads/" in str(args[1]):
+                if "/threads/" in str(args[1]):
                     thread_id = args[1].split("/")[-1]
                     return mocker.Mock(
                         # raise for status if thread_id is == not_found
@@ -45,7 +45,7 @@ class TestGriptapeCloudConversationMemoryDriver:
                         },
                         status_code=200 if thread_id != "not_found" else 404,
                     )
-                elif "/threads?alias=" in str(args[1]):
+                if "/threads?alias=" in str(args[1]):
                     alias = args[1].split("=")[-1]
                     return mocker.Mock(
                         raise_for_status=lambda: None,
@@ -54,9 +54,8 @@ class TestGriptapeCloudConversationMemoryDriver:
                         else {"threads": []},
                         status_code=200,
                     )
-                else:
-                    return mocker.Mock()
-            elif args[0] == "post":
+                return mocker.Mock()
+            if args[0] == "post":
                 if str(args[1]).endswith("/threads"):
                     body = kwargs["json"]
                     body["thread_id"] = "test"
@@ -64,15 +63,13 @@ class TestGriptapeCloudConversationMemoryDriver:
                         raise_for_status=lambda: None,
                         json=lambda: body,
                     )
-                else:
-                    return mocker.Mock(
-                        raise_for_status=lambda: None,
-                        json=lambda: {"message_id": "test"},
-                    )
-            else:
                 return mocker.Mock(
                     raise_for_status=lambda: None,
+                    json=lambda: {"message_id": "test"},
                 )
+            return mocker.Mock(
+                raise_for_status=lambda: None,
+            )
 
         mocker.patch(
             "requests.request",

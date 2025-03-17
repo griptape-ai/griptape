@@ -7,8 +7,7 @@ from griptape.tasks import BranchTask, PromptTask
 def on_run(task: BranchTask) -> InfoArtifact:
     if "hot dog" in task.input.value:
         return InfoArtifact("hot_dog")
-    else:
-        return InfoArtifact("not_hot_dog")
+    return InfoArtifact("not_hot_dog")
 
 
 image_artifact = ImageLoader().load("tests/resources/mountain.png")

@@ -32,8 +32,7 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
 
                 return result
 
-        else:
-            raise Exception("Failed to run text to image generation")
+        raise Exception("Failed to run text to image generation")
 
     def run_image_variation(
         self,
@@ -49,8 +48,7 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
 
                 return result
 
-        else:
-            raise Exception("Failed to generate image variations")
+        raise Exception("Failed to generate image variations")
 
     def run_image_inpainting(
         self,
@@ -67,8 +65,7 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
 
                 return result
 
-        else:
-            raise Exception("Failed to run image inpainting")
+        raise Exception("Failed to run image inpainting")
 
     def run_image_outpainting(
         self,
@@ -85,8 +82,7 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
 
                 return result
 
-        else:
-            raise Exception("Failed to run image outpainting")
+        raise Exception("Failed to run image outpainting")
 
     @abstractmethod
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact: ...

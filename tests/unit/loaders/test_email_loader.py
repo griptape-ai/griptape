@@ -145,5 +145,4 @@ def to_value_set(artifacts: ListArtifact | dict[str, ListArtifact]) -> set[str]:
         return set(
             {text_artifact.value for list_artifact in artifacts.values() for text_artifact in list_artifact.value}
         )
-    else:
-        return {artifact.value for artifact in artifacts.value}
+    return {artifact.value for artifact in artifacts.value}

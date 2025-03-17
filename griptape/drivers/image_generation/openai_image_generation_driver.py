@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import base64
-from typing import TYPE_CHECKING, Literal, Optional, Union, cast
+from typing import TYPE_CHECKING, Literal, Optional, cast
 
 import openai
 from attrs import define, field
@@ -40,18 +40,14 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
     style: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    quality: Union[Literal["standard"], Literal["hd"]] = field(
+    quality: Literal["standard", "hd"] = field(
         default="standard",
         kw_only=True,
         metadata={"serializable": True},
     )
-    image_size: Union[
-        Literal["256x256"],
-        Literal["512x512"],
-        Literal["1024x1024"],
-        Literal["1024x1792"],
-        Literal["1792x1024"],
-    ] = field(default="1024x1024", kw_only=True, metadata={"serializable": True})
+    image_size: Literal["256x256", "512x512", "1024x1024", "1024x1792", "1792x1024"] = field(
+        default="1024x1024", kw_only=True, metadata={"serializable": True}
+    )
     response_format: Literal["b64_json"] = field(default="b64_json", kw_only=True, metadata={"serializable": True})
     _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}

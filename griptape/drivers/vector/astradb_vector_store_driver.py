@@ -102,9 +102,8 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
         if vector_id is not None:
             self.collection.find_one_and_replace({"_id": vector_id}, document, upsert=True)
             return vector_id
-        else:
-            insert_result = self.collection.insert_one(document)
-            return insert_result.inserted_id
+        insert_result = self.collection.insert_one(document)
+        return insert_result.inserted_id
 
     def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
         """Load a single vector entry from the Astra DB store given its ID.
@@ -122,8 +121,7 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
             return BaseVectorStoreDriver.Entry(
                 id=match["_id"], vector=match.get("$vector"), meta=match.get("meta"), namespace=match.get("namespace")
             )
-        else:
-            return None
+        return None
 
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Load entries from the Astra DB store.

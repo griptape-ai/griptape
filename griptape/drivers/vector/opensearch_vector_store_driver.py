@@ -90,8 +90,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                     vector=vector_data.get("vector"),
                     namespace=vector_data.get("namespace"),
                 )
-            else:
-                return None
+            return None
         except Exception as e:
             logging.exception("Error while loading entry: %s", e)
             return None

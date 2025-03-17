@@ -89,24 +89,22 @@ class PromptStack(SerializableMixin):
     def __to_message_content(self, artifact: str | BaseArtifact) -> list[BaseMessageContent]:
         if isinstance(artifact, str):
             return [TextMessageContent(TextArtifact(artifact))]
-        elif isinstance(artifact, TextArtifact):
+        if isinstance(artifact, TextArtifact):
             return [TextMessageContent(artifact)]
-        elif isinstance(artifact, ImageArtifact):
+        if isinstance(artifact, ImageArtifact):
             return [ImageMessageContent(artifact)]
-        elif isinstance(artifact, AudioArtifact):
+        if isinstance(artifact, AudioArtifact):
             return [AudioMessageContent(artifact)]
-        elif isinstance(artifact, GenericArtifact):
+        if isinstance(artifact, GenericArtifact):
             return [GenericMessageContent(artifact)]
-        elif isinstance(artifact, ActionArtifact):
+        if isinstance(artifact, ActionArtifact):
             action = artifact.value
             output = action.output
             if output is None:
                 return [ActionCallMessageContent(artifact)]
-            else:
-                return [ActionResultMessageContent(output, action=action)]
-        elif isinstance(artifact, ListArtifact):
+            return [ActionResultMessageContent(output, action=action)]
+        if isinstance(artifact, ListArtifact):
             processed_contents = [self.__to_message_content(artifact) for artifact in artifact.value]
 
             return [sub_content for processed_content in processed_contents for sub_content in processed_content]
-        else:
-            return [TextMessageContent(TextArtifact(artifact.to_text()))]
+        return [TextMessageContent(TextArtifact(artifact.to_text()))]

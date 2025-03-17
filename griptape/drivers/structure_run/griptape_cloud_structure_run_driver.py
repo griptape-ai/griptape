@@ -37,8 +37,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
 
         if self.async_run:
             return InfoArtifact("Run started successfully")
-        else:
-            return self._get_run_result(structure_run_id)
+        return self._get_run_result(structure_run_id)
 
     def _create_run(self, *args: BaseArtifact) -> str:
         url = urljoin(self.base_url.strip("/"), f"/api/structures/{self.structure_id}/runs")

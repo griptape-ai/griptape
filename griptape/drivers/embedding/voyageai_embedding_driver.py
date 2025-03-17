@@ -45,12 +45,9 @@ class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
     def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
         if isinstance(artifact, TextArtifact):
             return self.try_embed_chunk(artifact.value)
-        else:
-            pil_image = import_optional_dependency("PIL.Image")
+        pil_image = import_optional_dependency("PIL.Image")
 
-            return self.client.multimodal_embed(
-                [[pil_image.open(BytesIO(artifact.value))]], model=self.model
-            ).embeddings[0]
+        return self.client.multimodal_embed([[pil_image.open(BytesIO(artifact.value))]], model=self.model).embeddings[0]
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         return self.client.embed([chunk], model=self.model, input_type=self.input_type).embeddings[0]

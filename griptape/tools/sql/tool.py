@@ -52,5 +52,4 @@ class SqlTool(BaseTool):
 
         if len(rows) > 0:
             return rows
-        else:
-            return InfoArtifact("No results found")
+        return InfoArtifact("No results found")

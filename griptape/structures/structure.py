@@ -210,9 +210,8 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     def run_stream(self, *args, event_types: Optional[list[type[BaseEvent]]] = None) -> Iterator[BaseEvent]:
         if event_types is None:
             event_types = [BaseEvent]
-        else:
-            if FinishStructureRunEvent not in event_types:
-                event_types = [*event_types, FinishStructureRunEvent]
+        elif FinishStructureRunEvent not in event_types:
+            event_types = [*event_types, FinishStructureRunEvent]
 
         with EventListener(self._event_queue.put, event_types=event_types):
             t = Thread(target=with_contextvars(self.run), args=args)

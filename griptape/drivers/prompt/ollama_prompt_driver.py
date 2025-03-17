@@ -172,9 +172,9 @@ class OllamaPromptDriver(BasePromptDriver):
     def __to_ollama_message_content(self, content: BaseMessageContent) -> str | dict:
         if isinstance(content, TextMessageContent):
             return content.artifact.to_text()
-        elif isinstance(content, ImageMessageContent):
+        if isinstance(content, ImageMessageContent):
             return content.artifact.base64
-        elif isinstance(content, ActionCallMessageContent):
+        if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
             return {
@@ -182,10 +182,9 @@ class OllamaPromptDriver(BasePromptDriver):
                 "id": action.tag,
                 "function": {"name": action.to_native_tool_name(), "arguments": action.input},
             }
-        elif isinstance(content, ActionResultMessageContent):
+        if isinstance(content, ActionResultMessageContent):
             return content.artifact.to_text()
-        else:
-            raise ValueError(f"Unsupported content type: {type(content)}")
+        raise ValueError(f"Unsupported content type: {type(content)}")
 
     def __to_ollama_tools(self, tools: list[BaseTool]) -> list[dict]:
         ollama_tools = []
@@ -212,19 +211,17 @@ class OllamaPromptDriver(BasePromptDriver):
     def __to_ollama_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
         if message.is_system():
             return "system"
-        elif message.is_assistant():
+        if message.is_assistant():
             return "assistant"
-        else:
-            if isinstance(message_content, ActionResultMessageContent):
-                return "tool"
-            else:
-                return "user"
+        if isinstance(message_content, ActionResultMessageContent):
+            return "tool"
+        return "user"
 
     def __to_prompt_stack_message_content(self, response: ChatResponse) -> list[BaseMessageContent]:
         content = []
         message = response["message"]
 
-        if "content" in message and message["content"]:
+        if message.get("content"):
             content.append(TextMessageContent(TextArtifact(response["message"]["content"])))
         if "tool_calls" in message:
             content.extend(
@@ -247,9 +244,9 @@ class OllamaPromptDriver(BasePromptDriver):
 
     def __to_prompt_stack_delta_message_content(self, content_delta: ChatResponse) -> BaseDeltaMessageContent:
         message = content_delta["message"]
-        if "content" in message and message["content"]:
+        if message.get("content"):
             return TextDeltaMessageContent(message["content"])
-        elif "tool_calls" in message and len(message["tool_calls"]):
+        if "tool_calls" in message and len(message["tool_calls"]):
             tool_calls = message["tool_calls"]
 
             # Ollama doesn't _really_ support Tool streaming. They provide the full tool call at once.
@@ -263,5 +260,4 @@ class OllamaPromptDriver(BasePromptDriver):
                 path=ToolAction.from_native_tool_name(tool_call["function"]["name"])[1],
                 partial_input=json.dumps(tool_call["function"]["arguments"]),
             )
-        else:
-            return TextDeltaMessageContent("")
+        return TextDeltaMessageContent("")

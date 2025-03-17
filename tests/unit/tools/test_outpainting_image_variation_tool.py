@@ -58,7 +58,7 @@ class TestOutpaintingImageGenerationTool:
     def test_image_outpainting_with_outfile(
         self, image_generation_driver, image_loader, path_from_resource_path
     ) -> None:
-        outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.png"
+        outfile = f"{tempfile.gettempdir()}/{uuid.uuid4()!s}.png"
         image_generator = OutpaintingImageGenerationTool(
             image_generation_driver=image_generation_driver, output_file=outfile, image_loader=image_loader
         )

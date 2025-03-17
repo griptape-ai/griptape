@@ -89,10 +89,8 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
                     role=Message.ASSISTANT_ROLE,
                     usage=Message.Usage(input_tokens=input_tokens, output_tokens=output_tokens),
                 )
-            else:
-                raise Exception("completion with more than one choice is not supported yet")
-        else:
-            raise Exception("invalid output format")
+            raise Exception("completion with more than one choice is not supported yet")
+        raise Exception("invalid output format")
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
@@ -123,5 +121,4 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
 
         if isinstance(tokens, list):
             return tokens  # pyright: ignore[reportReturnType] According to the [docs](https://huggingface.co/docs/transformers/main/en/internal/tokenization_utils#transformers.PreTrainedTokenizerBase.apply_chat_template), the return type is List[int].
-        else:
-            raise ValueError("Invalid output type.")
+        raise ValueError("Invalid output type.")

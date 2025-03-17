@@ -35,8 +35,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
     def workdir(self) -> str:
         if self._workdir.startswith("/"):
             return self._workdir
-        else:
-            return f"/{self._workdir}"
+        return f"/{self._workdir}"
 
     @workdir.setter
     def workdir(self, value: str) -> None:
@@ -133,8 +132,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
         except botocore.exceptions.ClientError as e:
             if e.response["Error"]["Code"] in {"NoSuchKey", "404"}:
                 return len(self._list_files_and_dirs(full_key, max_items=1)) > 0
-            else:
-                raise e
+            raise e
 
         return False
 

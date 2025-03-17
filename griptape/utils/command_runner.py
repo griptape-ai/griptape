@@ -14,5 +14,4 @@ class CommandRunner:
 
         if len(stderr) == 0:
             return TextArtifact(stdout.strip().decode())
-        else:
-            return ErrorArtifact(f"error: {stderr.strip()}")
+        return ErrorArtifact(f"error: {stderr.strip()}")

@@ -2,8 +2,8 @@ from unittest.mock import call
 
 import pytest
 
-import griptape.observability.observability as observability
 from griptape.common.observable import Observable
+from griptape.observability import observability
 
 
 class TestObservable:

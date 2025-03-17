@@ -7,6 +7,8 @@ from attrs import define, field
 from .base_event import BaseEvent
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from griptape.drivers.event_listener import BaseEventListenerDriver
 
 
@@ -30,7 +32,7 @@ class EventListener(Generic[T]):
     event_types: Optional[list[type[T]]] = field(default=None, kw_only=True)
     event_listener_driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
 
-    def __enter__(self) -> EventListener:
+    def __enter__(self) -> Self:
         from griptape.events import EventBus
 
         EventBus.add_event_listener(self)

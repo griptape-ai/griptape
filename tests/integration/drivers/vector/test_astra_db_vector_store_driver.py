@@ -126,7 +126,6 @@ class TestAstraDbVectorStoreDriver:
         query_all = vector_store_driver.query("0.060", include_vectors=True)
         query_2_novectors = vector_store_driver.query("0.060", count=2)
         query_all_ns = vector_store_driver.query("0.060", include_vectors=True, namespace="ns")
-        #
         d_query_2 = [self._descore_entry(ent) for ent in query_2]
         assert d_query_2 == [e3, e2]
 

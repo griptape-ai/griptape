@@ -13,5 +13,4 @@ class TextLoader(BaseFileLoader[TextArtifact]):
     def try_parse(self, data: str | bytes) -> TextArtifact:
         if isinstance(data, str):
             return TextArtifact(data, encoding=self.encoding)
-        else:
-            return TextArtifact(data.decode(self.encoding), encoding=self.encoding)
+        return TextArtifact(data.decode(self.encoding), encoding=self.encoding)

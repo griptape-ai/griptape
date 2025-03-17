@@ -18,4 +18,4 @@ class GenericMessageContent(BaseMessageContent):
 
     @classmethod
     def from_deltas(cls, deltas: Sequence[BaseDeltaMessageContent]) -> GenericMessageContent:
-        raise NotImplementedError()
+        raise NotImplementedError

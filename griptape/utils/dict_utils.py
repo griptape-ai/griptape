@@ -6,15 +6,13 @@ from typing import Any, Callable, Optional
 def remove_null_values_in_dict_recursively(d: dict) -> dict:
     if isinstance(d, dict):
         return {k: remove_null_values_in_dict_recursively(v) for k, v in d.items() if v is not None}
-    else:
-        return d
+    return d
 
 
 def remove_key_in_dict_recursively(d: dict, key: str) -> dict:
     if isinstance(d, dict):
         return {k: remove_key_in_dict_recursively(v, key) for k, v in d.items() if k != key}
-    else:
-        return d
+    return d
 
 
 def add_key_in_dict_recursively(
@@ -32,8 +30,7 @@ def add_key_in_dict_recursively(
         if criteria is None or criteria(d):
             d[key] = value
         return {k: add_key_in_dict_recursively(v, key, value, criteria) for k, v in d.items()}
-    else:
-        return d
+    return d
 
 
 def dict_merge(dct: Optional[dict], merge_dct: Optional[dict], *, add_keys: bool = True) -> dict:

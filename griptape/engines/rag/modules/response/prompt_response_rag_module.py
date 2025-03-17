@@ -50,8 +50,7 @@ class PromptResponseRagModule(BaseResponseRagModule, RuleMixin):
 
         if isinstance(output, TextArtifact):
             return output
-        else:
-            raise ValueError("Prompt driver did not return a TextArtifact")
+        raise ValueError("Prompt driver did not return a TextArtifact")
 
     def default_generate_system_template(self, context: RagContext, artifacts: list[TextArtifact]) -> str:
         params: dict[str, Any] = {"text_chunks": [c.to_text() for c in artifacts]}
