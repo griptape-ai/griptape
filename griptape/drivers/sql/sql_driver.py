@@ -28,8 +28,7 @@ class SqlDriver(BaseSqlDriver):
 
         if rows:
             return [BaseSqlDriver.RowResult(row) for row in rows]
-        else:
-            return None
+        return None
 
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, Optional[Any]]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
@@ -40,11 +39,9 @@ class SqlDriver(BaseSqlDriver):
             if results is not None:
                 if results.returns_rows:
                     return [dict(result._mapping) for result in results]
-                else:
-                    con.commit()
-                    return None
-            else:
-                raise ValueError("No result found")
+                con.commit()
+                return None
+            raise ValueError("No result found")
 
     def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy_exc = import_optional_dependency("sqlalchemy.exc")

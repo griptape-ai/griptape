@@ -43,16 +43,14 @@ class BaseTokenizer(ABC):
 
         if diff > 0:
             return diff
-        else:
-            return 0
+        return 0
 
     def count_output_tokens_left(self, text: str) -> int:
         diff = self.max_output_tokens - self.count_tokens(text)
 
         if diff > 0:
             return diff
-        else:
-            return 0
+        return 0
 
     @abstractmethod
     def count_tokens(self, text: str) -> int: ...
@@ -74,8 +72,7 @@ class BaseTokenizer(ABC):
                 self.DEFAULT_MAX_INPUT_TOKENS,
             )
             return self.DEFAULT_MAX_INPUT_TOKENS
-        else:
-            return tokens
+        return tokens
 
     def _default_max_output_tokens(self) -> int:
         tokens = next(
@@ -94,5 +91,4 @@ class BaseTokenizer(ABC):
                 self.DEFAULT_MAX_OUTPUT_TOKENS,
             )
             return self.DEFAULT_MAX_OUTPUT_TOKENS
-        else:
-            return tokens
+        return tokens

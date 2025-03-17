@@ -59,22 +59,19 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
     def origin_task(self) -> BaseTask:
         if self._origin_task is not None:
             return self._origin_task
-        else:
-            raise Exception("ActionSubtask has no origin task.")
+        raise Exception("ActionSubtask has no origin task.")
 
     @property
     def parents(self) -> list[BaseTask]:
         if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
             return [self.origin_task.find_subtask(parent_id) for parent_id in self.parent_ids]
-        else:
-            raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
+        raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
     @property
     def children(self) -> list[BaseTask]:
         if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
             return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
-        else:
-            raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
+        raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
     def add_child(self, child: BaseTask) -> BaseTask:
         if child.id not in self.child_ids:
@@ -153,8 +150,7 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
             self.output = ErrorArtifact(str(e), exception=e)
         if self.output is not None:
             return self.output
-        else:
-            return ErrorArtifact("no tool output")
+        return ErrorArtifact("no tool output")
 
     def run_actions(self, actions: list[ToolAction]) -> list[tuple[str, BaseArtifact]]:
         with self.create_futures_executor() as futures_executor:
@@ -222,16 +218,15 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
     ) -> Union[TextArtifact, AudioArtifact, ListArtifact]:
         if isinstance(task_input, (TextArtifact, AudioArtifact, ListArtifact)):
             return task_input
-        elif isinstance(task_input, ActionArtifact):
+        if isinstance(task_input, ActionArtifact):
             return ListArtifact([task_input])
-        elif isinstance(task_input, Callable):
+        if isinstance(task_input, Callable):
             return self._process_task_input(task_input(self))
-        elif isinstance(task_input, str):
+        if isinstance(task_input, str):
             return self._process_task_input(TextArtifact(task_input))
-        elif isinstance(task_input, (list, tuple)):
+        if isinstance(task_input, (list, tuple)):
             return ListArtifact([self._process_task_input(elem) for elem in task_input])
-        else:
-            raise ValueError(f"Invalid input type: {type(task_input)} ")
+        raise ValueError(f"Invalid input type: {type(task_input)} ")
 
     def __init_from_prompt(self, value: str) -> None:
         thought_matches = re.findall(self.THOUGHT_PATTERN, value, re.MULTILINE)
@@ -280,9 +275,8 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
             thoughts = [artifact.value for artifact in artifact.value if isinstance(artifact, TextArtifact)]
             if thoughts:
                 self.thought = thoughts[0]
-        else:
-            if self.output is None:
-                self.output = TextArtifact(artifact.to_text())
+        elif self.output is None:
+            self.output = TextArtifact(artifact.to_text())
 
     def __parse_actions(self, actions_matches: list[str]) -> list[ToolAction]:
         if len(actions_matches) == 0:

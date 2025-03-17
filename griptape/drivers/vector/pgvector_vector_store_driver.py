@@ -92,7 +92,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             obj = session.merge(obj)
             session.commit()
 
-            return str(getattr(obj, "id"))
+            return str(obj.id)
 
     def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
@@ -102,10 +102,10 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             result = session.get(self._model, vector_id)
 
             return BaseVectorStoreDriver.Entry(
-                id=getattr(result, "id"),
-                vector=getattr(result, "vector"),
-                namespace=getattr(result, "namespace"),
-                meta=getattr(result, "meta"),
+                id=result.id,
+                vector=result.vector,
+                namespace=result.namespace,
+                meta=result.meta,
             )
 
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:

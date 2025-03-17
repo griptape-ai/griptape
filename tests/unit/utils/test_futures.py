@@ -25,9 +25,9 @@ class TestFutures:
         with futures.ThreadPoolExecutor() as executor:
             result = utils.execute_futures_list_dict(
                 {
-                    "test1": [executor.submit(self.foobar, f"foo-{i}") for i in range(0, 1000)],
-                    "test2": [executor.submit(self.foobar, f"foo-{i}") for i in range(0, 1000)],
-                    "test3": [executor.submit(self.foobar, f"foo-{i}") for i in range(0, 1000)],
+                    "test1": [executor.submit(self.foobar, f"foo-{i}") for i in range(1000)],
+                    "test2": [executor.submit(self.foobar, f"foo-{i}") for i in range(1000)],
+                    "test3": [executor.submit(self.foobar, f"foo-{i}") for i in range(1000)],
                 }
             )
 

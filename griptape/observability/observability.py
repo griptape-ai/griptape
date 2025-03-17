@@ -25,12 +25,11 @@ class Observability:
 
     @staticmethod
     def get_global_driver() -> Optional[BaseObservabilityDriver]:
-        global _global_observability_driver
         return _global_observability_driver
 
     @staticmethod
     def set_global_driver(driver: Optional[BaseObservabilityDriver]) -> None:
-        global _global_observability_driver
+        global _global_observability_driver  # noqa: PLW0603
         _global_observability_driver = driver
 
     @staticmethod

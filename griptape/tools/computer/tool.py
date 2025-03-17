@@ -120,10 +120,8 @@ class ComputerTool(BaseTool):
 
                 if stderr:
                     return ErrorArtifact(stderr)
-                else:
-                    return TextArtifact(stdout)
-            else:
-                return ErrorArtifact("error running container")
+                return TextArtifact(stdout)
+            return ErrorArtifact("error running container")
         except Exception as e:
             return ErrorArtifact(f"error executing command: {e}")
 
@@ -155,7 +153,7 @@ class ComputerTool(BaseTool):
         try:
             return docker.from_env()
         except Exception as e:
-            logging.error(e)
+            logging.exception(e)
 
             return None
 

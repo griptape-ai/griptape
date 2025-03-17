@@ -30,10 +30,9 @@ class BaseTextInputTask(RuleMixin, BaseTask[T], ABC):
     def input(self) -> TextArtifact:
         if isinstance(self._input, TextArtifact):
             return self._input
-        elif isinstance(self._input, Callable):
+        if isinstance(self._input, Callable):
             return self._input(self)
-        else:
-            return TextArtifact(J2().render_from_string(self._input, **self.full_context))
+        return TextArtifact(J2().render_from_string(self._input, **self.full_context))
 
     @input.setter
     def input(self, value: str | TextArtifact | Callable[[BaseTask], TextArtifact]) -> None:

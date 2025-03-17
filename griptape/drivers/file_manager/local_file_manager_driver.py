@@ -24,8 +24,7 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
     def workdir(self) -> str:
         if os.path.isabs(self._workdir):
             return self._workdir
-        else:
-            return os.path.join(os.getcwd(), self._workdir)
+        return os.path.join(os.getcwd(), self._workdir)
 
     @workdir.setter
     def workdir(self, value: str) -> None:

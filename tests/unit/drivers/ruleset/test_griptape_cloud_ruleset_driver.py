@@ -27,7 +27,7 @@ class TestGriptapeCloudRulesetDriver:
                     else {"rules": []},
                     status_code=200,
                 )
-            elif "/rulesets/" in str(args[1]):
+            if "/rulesets/" in str(args[1]):
                 ruleset_id = args[1].split("/")[-1]
                 return mocker.Mock(
                     # raise for status if ruleset_id is == not_found
@@ -39,7 +39,7 @@ class TestGriptapeCloudRulesetDriver:
                     },
                     status_code=200 if ruleset_id != "not_found" else 404,
                 )
-            elif "/rulesets?alias=" in str(args[1]):
+            if "/rulesets?alias=" in str(args[1]):
                 alias = args[1].split("=")[-1]
                 return mocker.Mock(
                     raise_for_status=lambda: None,
@@ -48,8 +48,7 @@ class TestGriptapeCloudRulesetDriver:
                     else {"rulesets": []},
                     status_code=200,
                 )
-            else:
-                return mocker.Mock()
+            return mocker.Mock()
 
         mocker.patch(
             "requests.request",

@@ -41,8 +41,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
 
         if json_matches:
             return [JsonArtifact(e) for e in json.loads(json_matches[-1])]
-        else:
-            return []
+        return []
 
     def _extract_rec(
         self,
@@ -78,23 +77,22 @@ class JsonExtractionEngine(BaseExtractionEngine):
             )
 
             return extractions
-        else:
-            chunks = self.chunker.chunk(artifacts_text)
-            partial_text = self.generate_user_template.render(
-                text=chunks[0].value,
-            )
+        chunks = self.chunker.chunk(artifacts_text)
+        partial_text = self.generate_user_template.render(
+            text=chunks[0].value,
+        )
 
-            extractions.extend(
-                self.json_to_text_artifacts(
-                    self.prompt_driver.run(
-                        PromptStack(
-                            messages=[
-                                Message(system_prompt, role=Message.SYSTEM_ROLE),
-                                Message(partial_text, role=Message.USER_ROLE),
-                            ]
-                        )
-                    ).value,
-                ),
-            )
+        extractions.extend(
+            self.json_to_text_artifacts(
+                self.prompt_driver.run(
+                    PromptStack(
+                        messages=[
+                            Message(system_prompt, role=Message.SYSTEM_ROLE),
+                            Message(partial_text, role=Message.USER_ROLE),
+                        ]
+                    )
+                ).value,
+            ),
+        )
 
-            return self._extract_rec(chunks[1:], extractions, rulesets=rulesets)
+        return self._extract_rec(chunks[1:], extractions, rulesets=rulesets)

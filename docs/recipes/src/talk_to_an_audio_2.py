@@ -13,6 +13,8 @@ from griptape.structures.agent import Agent
 if TYPE_CHECKING:
     from types import TracebackType
 
+    from typing_extensions import Self
+
 
 @attrs.define
 class AudioPlayer:
@@ -26,7 +28,7 @@ class AudioPlayer:
     audio: pyaudio.PyAudio = attrs.field(default=attrs.Factory(lambda: pyaudio.PyAudio()))
     stream: pyaudio.Stream = attrs.field(init=False)
 
-    def __enter__(self) -> AudioPlayer:
+    def __enter__(self) -> Self:
         self.stream = self.audio.open(
             format=self.format,
             channels=self.channels,

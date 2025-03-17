@@ -40,8 +40,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
 
         if rows:
             return [BaseSqlDriver.RowResult(row) for row in rows]
-        else:
-            return None
+        return None
 
     def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
         sqlalchemy = import_optional_dependency("sqlalchemy")
@@ -52,10 +51,8 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             if results is not None:
                 if results.returns_rows:
                     return [dict(result._mapping) for result in results]
-                else:
-                    return None
-            else:
-                raise ValueError("No results found")
+                return None
+            raise ValueError("No results found")
 
     def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
         sqlalchemy = import_optional_dependency("sqlalchemy")

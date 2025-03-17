@@ -48,10 +48,8 @@ class SummaryConversationMemory(BaseConversationMemory):
 
             if len(summary_index_runs) > len(last_n_runs):
                 return last_n_runs
-            else:
-                return summary_index_runs
-        else:
             return summary_index_runs
+        return summary_index_runs
 
     def try_add_run(self, run: Run) -> None:
         self.runs.append(run)
@@ -69,8 +67,7 @@ class SummaryConversationMemory(BaseConversationMemory):
                 return self.prompt_driver.run(
                     PromptStack(messages=[Message(summary, role=Message.USER_ROLE)]),
                 ).to_text()
-            else:
-                return previous_summary
+            return previous_summary
         except Exception as e:
             logging.exception("Error summarizing memory: %s(%s)", type(e).__name__, e)
 

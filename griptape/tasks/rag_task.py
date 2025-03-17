@@ -18,5 +18,4 @@ class RagTask(BaseTextInputTask[Union[ListArtifact, ErrorArtifact]]):
 
         if len(outputs) > 0:
             return ListArtifact(outputs)
-        else:
-            return ErrorArtifact("empty output")
+        return ErrorArtifact("empty output")

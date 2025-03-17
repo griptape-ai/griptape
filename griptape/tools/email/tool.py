@@ -126,11 +126,10 @@ class EmailTool(BaseTool):
                 client.sendmail(msg["From"], [msg["To"]], msg.as_string())
                 return InfoArtifact("email was successfully sent")
         except Exception as e:
-            logging.error(e)
+            logging.exception(e)
             return ErrorArtifact(f"error sending email: {e}")
 
     def _create_smtp_client(self, smtp_host: str, smtp_port: int) -> smtplib.SMTP | smtplib.SMTP_SSL:
         if self.smtp_use_ssl:
             return smtplib.SMTP_SSL(smtp_host, smtp_port)
-        else:
-            return smtplib.SMTP(smtp_host, smtp_port)
+        return smtplib.SMTP(smtp_host, smtp_port)

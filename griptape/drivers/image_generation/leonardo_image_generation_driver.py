@@ -192,8 +192,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
                 continue
 
             return response["generations_by_pk"]["generated_images"][0]["url"]
-        else:
-            raise Exception("image generation failed to complete")
+        raise Exception("image generation failed to complete")
 
     def _download_image(self, url: str) -> bytes:
         response = self.requests_session.get(url=url, headers={"Authorization": f"Bearer {self.api_key}"})

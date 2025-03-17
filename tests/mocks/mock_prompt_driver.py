@@ -52,46 +52,43 @@ class MockPromptDriver(BasePromptDriver):
                     role=Message.ASSISTANT_ROLE,
                     usage=Message.Usage(input_tokens=100, output_tokens=100),
                 )
-            else:
-                if self.structured_output_strategy == "tool":
-                    tool_action = ToolAction(
-                        tag="mock-tag",
-                        name="StructuredOutputTool",
-                        path="provide_output",
-                        input={"values": self.mock_structured_output},
-                    )
-                else:
-                    tool_action = ToolAction(
-                        tag="mock-tag",
-                        name="MockTool",
-                        path="test",
-                        input={"values": {"test": "test-value"}},
-                    )
-
-                return Message(
-                    content=[ActionCallMessageContent(ActionArtifact(tool_action))],
-                    role=Message.ASSISTANT_ROLE,
-                    usage=Message.Usage(input_tokens=100, output_tokens=100),
-                )
-        else:
-            if prompt_stack.output_schema is not None:
-                return Message(
-                    content=[TextMessageContent(TextArtifact(json.dumps(self.mock_structured_output)))],
-                    role=Message.ASSISTANT_ROLE,
-                    usage=Message.Usage(input_tokens=100, output_tokens=100),
+            if self.structured_output_strategy == "tool":
+                tool_action = ToolAction(
+                    tag="mock-tag",
+                    name="StructuredOutputTool",
+                    path="provide_output",
+                    input={"values": self.mock_structured_output},
                 )
             else:
-                content = []
-                if "text" in self.modalities:
-                    content.append(TextMessageContent(TextArtifact(output)))
-                if "audio" in self.modalities:
-                    content.append(AudioMessageContent(AudioArtifact(b"mock-audio", format="wav")))
-
-                return Message(
-                    content=content,
-                    role=Message.ASSISTANT_ROLE,
-                    usage=Message.Usage(input_tokens=100, output_tokens=100),
+                tool_action = ToolAction(
+                    tag="mock-tag",
+                    name="MockTool",
+                    path="test",
+                    input={"values": {"test": "test-value"}},
                 )
+
+            return Message(
+                content=[ActionCallMessageContent(ActionArtifact(tool_action))],
+                role=Message.ASSISTANT_ROLE,
+                usage=Message.Usage(input_tokens=100, output_tokens=100),
+            )
+        if prompt_stack.output_schema is not None:
+            return Message(
+                content=[TextMessageContent(TextArtifact(json.dumps(self.mock_structured_output)))],
+                role=Message.ASSISTANT_ROLE,
+                usage=Message.Usage(input_tokens=100, output_tokens=100),
+            )
+        content = []
+        if "text" in self.modalities:
+            content.append(TextMessageContent(TextArtifact(output)))
+        if "audio" in self.modalities:
+            content.append(AudioMessageContent(AudioArtifact(b"mock-audio", format="wav")))
+
+        return Message(
+            content=content,
+            role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(input_tokens=100, output_tokens=100),
+        )
 
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
@@ -103,47 +100,45 @@ class MockPromptDriver(BasePromptDriver):
             if any(action_messages):
                 yield DeltaMessage(content=TextDeltaMessageContent(output))
                 yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=100, output_tokens=100))
-            else:
-                if self.structured_output_strategy == "tool":
-                    yield DeltaMessage(
-                        content=ActionCallDeltaMessageContent(
-                            tag="mock-tag",
-                            name="StructuredOutputTool",
-                            path="provide_output",
-                        )
-                    )
-                    yield DeltaMessage(
-                        content=ActionCallDeltaMessageContent(
-                            partial_input=json.dumps({"values": self.mock_structured_output})
-                        )
-                    )
-                else:
-                    yield DeltaMessage(
-                        content=ActionCallDeltaMessageContent(
-                            tag="mock-tag",
-                            name="MockTool",
-                            path="test",
-                        )
-                    )
-                    yield DeltaMessage(
-                        content=ActionCallDeltaMessageContent(partial_input='{ "values": { "test": "test-value" } }')
-                    )
-        else:
-            if prompt_stack.output_schema is not None:
+            elif self.structured_output_strategy == "tool":
                 yield DeltaMessage(
-                    content=TextDeltaMessageContent(json.dumps(self.mock_structured_output)),
-                    role=Message.ASSISTANT_ROLE,
-                    usage=Message.Usage(input_tokens=100, output_tokens=100),
+                    content=ActionCallDeltaMessageContent(
+                        tag="mock-tag",
+                        name="StructuredOutputTool",
+                        path="provide_output",
+                    )
+                )
+                yield DeltaMessage(
+                    content=ActionCallDeltaMessageContent(
+                        partial_input=json.dumps({"values": self.mock_structured_output})
+                    )
                 )
             else:
-                if "text" in self.modalities:
-                    yield DeltaMessage(content=TextDeltaMessageContent(output))
-                if "audio" in self.modalities:
-                    yield DeltaMessage(
-                        content=AudioDeltaMessageContent(
-                            id="mock-audio",
-                            data=base64.b64encode(b"mock-audio-data").decode(),
-                            transcript="mock-transcript",
-                            expires_at=int(time.time()),
-                        )
+                yield DeltaMessage(
+                    content=ActionCallDeltaMessageContent(
+                        tag="mock-tag",
+                        name="MockTool",
+                        path="test",
                     )
+                )
+                yield DeltaMessage(
+                    content=ActionCallDeltaMessageContent(partial_input='{ "values": { "test": "test-value" } }')
+                )
+        elif prompt_stack.output_schema is not None:
+            yield DeltaMessage(
+                content=TextDeltaMessageContent(json.dumps(self.mock_structured_output)),
+                role=Message.ASSISTANT_ROLE,
+                usage=Message.Usage(input_tokens=100, output_tokens=100),
+            )
+        else:
+            if "text" in self.modalities:
+                yield DeltaMessage(content=TextDeltaMessageContent(output))
+            if "audio" in self.modalities:
+                yield DeltaMessage(
+                    content=AudioDeltaMessageContent(
+                        id="mock-audio",
+                        data=base64.b64encode(b"mock-audio-data").decode(),
+                        transcript="mock-transcript",
+                        expires_at=int(time.time()),
+                    )
+                )

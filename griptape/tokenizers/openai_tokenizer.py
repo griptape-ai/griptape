@@ -76,8 +76,7 @@ class OpenAiTokenizer(BaseTokenizer):
 
         if tokens is None:
             return self.DEFAULT_MAX_OUTPUT_TOKENS
-        else:
-            return tokens
+        return tokens
 
     def count_tokens(self, text: str | list[dict], model: Optional[str] = None) -> int:  # noqa: C901
         """Handles the special case of ChatML.
@@ -140,5 +139,4 @@ class OpenAiTokenizer(BaseTokenizer):
             num_tokens += 3
 
             return num_tokens
-        else:
-            return len(self.encoding.encode(text, allowed_special=set(self.stop_sequences)))
+        return len(self.encoding.encode(text, allowed_special=set(self.stop_sequences)))

@@ -174,7 +174,7 @@ class CoherePromptDriver(BasePromptDriver):
                     "arguments": json.dumps(action.input),
                 },
             }
-        elif isinstance(content, ActionResultMessageContent):
+        if isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
             if isinstance(artifact, ListArtifact):
@@ -183,19 +183,16 @@ class CoherePromptDriver(BasePromptDriver):
                 message_content = {"type": "text", "text": artifact.to_text()}
 
             return message_content
-        else:
-            return {"type": "text", "text": content.artifact.to_text()}
+        return {"type": "text", "text": content.artifact.to_text()}
 
     def __to_cohere_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
         if message.is_system():
             return "system"
-        elif message.is_assistant():
+        if message.is_assistant():
             return "assistant"
-        else:
-            if isinstance(message_content, ActionResultMessageContent):
-                return "tool"
-            else:
-                return "user"
+        if isinstance(message_content, ActionResultMessageContent):
+            return "tool"
+        return "user"
 
     def __to_cohere_tools(self, tools: list[BaseTool]) -> list[dict]:
         return [
@@ -243,16 +240,15 @@ class CoherePromptDriver(BasePromptDriver):
     def __to_prompt_stack_delta_message_content(self, event: Any) -> BaseDeltaMessageContent:
         if event.type == "content-delta":
             return TextDeltaMessageContent(event.delta.message.content.text, index=0)
-        elif event.type == "tool-plan-delta":
+        if event.type == "tool-plan-delta":
             return TextDeltaMessageContent(event.delta.message["tool_plan"])
-        elif event.type == "tool-call-start":
+        if event.type == "tool-call-start":
             tool_call_delta = event.delta.message["tool_calls"]
             name, path = ToolAction.from_native_tool_name(tool_call_delta["function"]["name"])
 
             return ActionCallDeltaMessageContent(tag=tool_call_delta["id"], name=name, path=path)
-        elif event.type == "tool-call-delta":
+        if event.type == "tool-call-delta":
             tool_call_delta = event.delta.message["tool_calls"]["function"]
 
             return ActionCallDeltaMessageContent(partial_input=tool_call_delta["arguments"])
-        else:
-            raise ValueError(f"Unsupported event type: {event.type}")
+        raise ValueError(f"Unsupported event type: {event.type}")

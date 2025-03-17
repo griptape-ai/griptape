@@ -155,8 +155,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 )
 
             return message
-        else:
-            raise Exception("Completion with more than one choice is not supported yet.")
+        raise Exception("Completion with more than one choice is not supported yet.")
 
     def _to_delta_message_stream(self, result: Stream[ChatCompletionChunk]) -> Iterator[DeltaMessage]:
         for message in result:
@@ -284,15 +283,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         if message.is_system():
             if self.is_reasoning_model:
                 return "developer"
-            else:
-                return "system"
-        elif message.is_assistant():
+            return "system"
+        if message.is_assistant():
             return "assistant"
-        else:
-            if isinstance(message_content, ActionResultMessageContent):
-                return "tool"
-            else:
-                return "user"
+        if isinstance(message_content, ActionResultMessageContent):
+            return "tool"
+        return "user"
 
     def __to_openai_tools(self, tools: list[BaseTool]) -> list[dict]:
         return [
@@ -311,12 +307,12 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def __to_openai_message_content(self, content: BaseMessageContent) -> str | dict:
         if isinstance(content, TextMessageContent):
             return {"type": "text", "text": content.artifact.to_text()}
-        elif isinstance(content, ImageMessageContent):
+        if isinstance(content, ImageMessageContent):
             return {
                 "type": "image_url",
                 "image_url": {"url": f"data:{content.artifact.mime_type};base64,{content.artifact.base64}"},
             }
-        elif isinstance(content, AudioMessageContent):
+        if isinstance(content, AudioMessageContent):
             artifact = content.artifact
             metadata = artifact.meta
 
@@ -328,20 +324,18 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         "type": "text",
                         "text": artifact.meta.get("transcript"),
                     }
-                else:
-                    # This should never occur, since a non-expired audio content
-                    # should have already been referenced by the audio id.
-                    raise ValueError("Assistant audio messages should be sent as audio ids.")
-            else:
-                # If there's no expiration date, we can assume it's a user message where we send the audio every time.
-                return {
-                    "type": "input_audio",
-                    "input_audio": {
-                        "data": base64.b64encode(artifact.value).decode("utf-8"),
-                        "format": artifact.format,
-                    },
-                }
-        elif isinstance(content, ActionCallMessageContent):
+                # This should never occur, since a non-expired audio content
+                # should have already been referenced by the audio id.
+                raise ValueError("Assistant audio messages should be sent as audio ids.")
+            # If there's no expiration date, we can assume it's a user message where we send the audio every time.
+            return {
+                "type": "input_audio",
+                "input_audio": {
+                    "data": base64.b64encode(artifact.value).decode("utf-8"),
+                    "format": artifact.format,
+                },
+            }
+        if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
             return {
@@ -349,10 +343,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 "id": action.tag,
                 "function": {"name": action.to_native_tool_name(), "arguments": json.dumps(action.input)},
             }
-        elif isinstance(content, ActionResultMessageContent):
+        if isinstance(content, ActionResultMessageContent):
             return content.artifact.to_text()
-        else:
-            return {"type": "text", "text": content.artifact.to_text()}
+        return {"type": "text", "text": content.artifact.to_text()}
 
     def __to_prompt_stack_message_content(self, response: ChatCompletionMessage) -> list[BaseMessageContent]:
         content = []
@@ -395,7 +388,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def __to_prompt_stack_delta_message_content(self, content_delta: ChoiceDelta) -> Optional[BaseDeltaMessageContent]:
         if content_delta.content is not None:
             return TextDeltaMessageContent(content_delta.content)
-        elif content_delta.tool_calls is not None:
+        if content_delta.tool_calls is not None:
             tool_calls = content_delta.tool_calls
 
             if len(tool_calls) == 1:
@@ -411,12 +404,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         path=ToolAction.from_native_tool_name(function_name)[1] if function_name else None,
                         partial_input=tool_call.function.arguments,
                     )
-                else:
-                    raise ValueError(f"Unsupported tool call delta: {tool_call}")
-            else:
-                raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
+                raise ValueError(f"Unsupported tool call delta: {tool_call}")
+            raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
         # OpenAi doesn't have types for audio deltas so we need to use hasattr and getattr.
-        elif hasattr(content_delta, "audio") and getattr(content_delta, "audio") is not None:
+        if hasattr(content_delta, "audio") and getattr(content_delta, "audio") is not None:
             audio_chunk: dict = getattr(content_delta, "audio")
             return AudioDeltaMessageContent(
                 id=audio_chunk.get("id"),

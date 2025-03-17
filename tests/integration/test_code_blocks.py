@@ -47,6 +47,7 @@ def test_python_file_execution(python_file):
         capture_output=True,
         text=True,
         input="Hi\nexit\n",
+        check=False,
     )
 
     assert result.returncode == 0
