@@ -35,6 +35,7 @@ class BaseTokenizer(ABC):
                 self.max_input_tokens = self._default_max_input_tokens()
 
             if self.max_output_tokens is None:
+                # TODO(collin): https://github.com/griptape-ai/griptape/issues/1844
                 self.max_output_tokens = self._default_max_output_tokens()
 
     def count_input_tokens_left(self, text: str) -> int:
@@ -87,7 +88,7 @@ class BaseTokenizer(ABC):
         )
 
         if tokens is None:
-            logging.warning(
+            logging.debug(
                 "Model %s not found in MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS, using default value of %s.",
                 self.model,
                 self.DEFAULT_MAX_OUTPUT_TOKENS,
