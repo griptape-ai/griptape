@@ -9,7 +9,7 @@ This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### ✨ Features
 
-* **configs-drivers-gemini:** update default embedding driver model to ([9ba2496](https://github.com/griptape-ai/griptape/commit/9ba249658f1f087739ff1d8b37852f790f676d3e))
+* **configs-drivers-gemini:** update default embedding driver model to `embedding-004` ([9ba2496](https://github.com/griptape-ai/griptape/commit/9ba249658f1f087739ff1d8b37852f790f676d3e))
 * **configs-drivers-gemini:** update default prompt driver model to `gemini-2.0-flash` ([9ba2496](https://github.com/griptape-ai/griptape/commit/9ba249658f1f087739ff1d8b37852f790f676d3e))
 * **drivers-embedding-titan:** add support for generating image embeddings ([1841f0f](https://github.com/griptape-ai/griptape/commit/1841f0f8e36dc3500400a69e8e1dff8bc63e0345))
 * **drivers-embedding-voyageai:** add support for generating image embeddings ([1841f0f](https://github.com/griptape-ai/griptape/commit/1841f0f8e36dc3500400a69e8e1dff8bc63e0345))
