@@ -8,4 +8,4 @@ Retrievers include a standard set of modules known as Retreiver Components (to a
 
 ## Response Component Configuration
 
-If you are using your Retriever with a Griptape Cloud Assistant, set the *Response* *Type* to *Text Chunks*. If your use-case requires a natural language response, set the *Response* *Type* to *Prompt with Rulesets* and specific which *Rulesets* you wish to apply.
+If you are using your Retriever with a Griptape Cloud Assistant, set the *Response* *Type* to *Text Chunks*. If your use-case requires a natural language response, set the *Response* *Type* to *Prompt with Rulesets* and specify which *Rulesets* you wish to apply.
