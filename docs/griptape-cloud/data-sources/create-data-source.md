@@ -11,6 +11,8 @@ Follow these steps to create a data source. For this example, we will create a d
 1. Enter the URL of a web page that you want to use as a data source, for example https://www.griptape.ai.
 1. Click Create to submit the form and create your data source.
 
+## Data Source Types
+
 ### Web Page
 
 You can scrape and ingest a single, public web page by providing a URL. If you wish to scrape multiple pages, you must create multiple Data Sources. However, you can then add all of the pages to the same Knowledge Base if you wish to access all content from the pages together.

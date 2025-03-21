@@ -1,6 +1,6 @@
 # Getting Started with Data Sources
 
-In many cases, you need an application to use highly specific and detailed data, data that is very recent or constantly updating, or sensitive data that simply isn't available to LLMs.
+In many cases, you need an application to use highly specific and detailed data, data that is very recent or constantly updating, or sensitive data that simply isn't available to LLMs during training.
 
 Here are some examples:
 
