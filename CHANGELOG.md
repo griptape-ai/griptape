@@ -4,6 +4,20 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1](https://github.com/griptape-ai/griptape/compare/v1.5.0...v1.5.1) (2025-03-24)
+
+
+### Bug Fixes
+
+* demote tokenizer log from warning to debug ([#1845](https://github.com/griptape-ai/griptape/issues/1845)) ([fc27554](https://github.com/griptape-ai/griptape/commit/fc27554baae436cc2bfbb476b8c99bb651c7c6cc))
+* **deps:** bump minimum attrs version to one with attrs.NothingType ([#1855](https://github.com/griptape-ai/griptape/issues/1855)) ([6e06214](https://github.com/griptape-ai/griptape/commit/6e062148e4a28ed7026b3b33ded4a6b6a4229e4f))
+
+
+### Documentation
+
+* add docs on openai's reasoning models ([#1843](https://github.com/griptape-ai/griptape/issues/1843)) ([a4e91e1](https://github.com/griptape-ai/griptape/commit/a4e91e1faef67a91f6ce23a24d814774a5dea7f7)), closes [#1688](https://github.com/griptape-ai/griptape/issues/1688)
+* remove duplicate log output ([#1841](https://github.com/griptape-ai/griptape/issues/1841)) ([da9f9de](https://github.com/griptape-ai/griptape/commit/da9f9dea05df4782f798422bff7f2d001486130f))
+
 ## [1.5.0](https://github.com/griptape-ai/griptape/compare/v1.4.0...v1.5.0) (2025-03-13)
 
 
