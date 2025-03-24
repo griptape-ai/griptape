@@ -1,0 +1,131 @@
+[03/24/25 21:31:22] INFO     PromptTask b11591ea8cda497981df35b7ed7c36bd        
+                             Input: Write a bash script that takes a matrix     
+                             represented as a string with                       
+                             format '[1,2],[3,4],[5,6]' and prints the transpose
+                             in the same format.                                
+[03/24/25 21:31:33] INFO     PromptTask b11591ea8cda497981df35b7ed7c36bd        
+                             Output: Below is one complete solution. Save the   
+                             following script (say as transpose.sh), make it    
+                             executable (chmod +x transpose.sh) and run it with 
+                             a quoted matrix string argument. For example:      
+                                                                                
+                               ./transpose.sh '[1,2],[3,4],[5,6]'               
+                                                                                
+                             It will print out:                                 
+                                                                                
+                               [1,3,5],[2,4,6]                                  
+                                                                                
+                             Below is the full bash script:                     
+                                                                                
+                             ---------------------------------------------------
+                             ------------                                       
+                             #!/bin/bash                                        
+                             #                                                  
+                             # This script accepts one argument: a string       
+                             representing a matrix,                             
+                             # e.g. '[1,2],[3,4],[5,6]'                         
+                             # It prints the transpose of the matrix in the same
+                             format.                                            
+                             #                                                  
+                             if [ "$#" -ne 1 ]; then                            
+                                 echo "Usage: $0 '<matrix>'"                    
+                                 exit 1                                         
+                             fi                                                 
+                                                                                
+                             input="$1"                                         
+                                                                                
+                             # Split the input into rows. The rows are separated
+                             by "],"                                            
+                             # We insert a newline after each "],", so each row 
+                             ends with a ']'                                    
+                             rows=()                                            
+                             while IFS= read -r line; do                        
+                                 rows+=("$line")                                
+                             done < <(echo "$input" | sed 's/],/]\n/g')         
+                                                                                
+                             nrows=${#rows[@]}                                  
+                             if [ "$nrows" -eq 0 ]; then                        
+                                 echo "Empty matrix!"                           
+                                 exit 1                                         
+                             fi                                                 
+                                                                                
+                             # Declare an associative array to hold the matrix  
+                             entries.                                           
+                             declare -A matrix                                  
+                             ncols=0                                            
+                                                                                
+                             # Parse each row: Remove the '[' and ']', then     
+                             split by comma.                                    
+                             for i in "${!rows[@]}"; do                         
+                                 row="${rows[$i]}"                              
+                                 # Remove leading '[' and trailing ']'          
+                                 row="${row#[}"                                 
+                                 row="${row%]}"                                 
+                                                                                
+                                 # Split the row into numbers (assuming         
+                             comma-separated)                                   
+                                 IFS=',' read -ra nums <<< "$row"               
+                                                                                
+                                 # Set the number of columns using the first    
+                             row.                                               
+                                 if [ $i -eq 0 ]; then                          
+                                     ncols=${#nums[@]}                          
+                                 fi                                             
+                                                                                
+                                 # Check that all rows have the same number of  
+                             columns.                                           
+                                 if [ "${#nums[@]}" -ne "$ncols" ]; then        
+                                     echo "Error: inconsistent number of columns
+                             in row $((i+1))."                                  
+                                     exit 1                                     
+                                 fi                                             
+                                                                                
+                                 # Store each number in our associative array   
+                             using key "i,j"                                    
+                                 for j in $(seq 0 $((ncols-1))); do             
+                                     matrix["$i,$j"]="${nums[$j]}"              
+                                 done                                           
+                             done                                               
+                                                                                
+                             # Build the transposed matrix.                     
+                             # The transpose will have ncols rows and nrows     
+                             columns.                                           
+                             result=""                                          
+                             for j in $(seq 0 $((ncols-1))); do                 
+                                 rowStr="["                                     
+                                 for i in $(seq 0 $((nrows-1))); do             
+                                     rowStr+="${matrix["$i,$j"]}"               
+                                     if [ $i -lt $((nrows-1)) ]; then           
+                                         rowStr+=","                            
+                                     fi                                         
+                                 done                                           
+                                 rowStr+="]"                                    
+                                 # Append a comma if this is not the last row.  
+                                 if [ $j -lt $((ncols-1)) ]; then               
+                                     result+="${rowStr},"                       
+                                 else                                           
+                                     result+="${rowStr}"                        
+                                 fi                                             
+                             done                                               
+                                                                                
+                             echo "$result"                                     
+                                                                                
+                             ---------------------------------------------------
+                             ------------                                       
+                                                                                
+                             Explanation:                                       
+                                                                                
+                             1. The script accepts a single argument, the matrix
+                             string.                                            
+                             2. It uses sed to replace every "]," with "]\n" so 
+                             that each row appears on its own line.             
+                             3. For each row the script strips the leading '['  
+                             and trailing ']' then splits the row by commas.    
+                             4. The matrix elements are stored in an associative
+                             array indexed by "row,column".                     
+                             5. Finally, the script builds the transpose by     
+                             swapping row and column indices and prints the     
+                             result in the same format.                         
+                                                                                
+                             This solution assumes that the input is well-formed
+                             and that the matrix is rectangular.                
