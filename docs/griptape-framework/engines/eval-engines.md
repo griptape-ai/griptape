@@ -22,14 +22,3 @@ Either `criteria` or `evaluation_steps` must be set, but not both.
     ```text
     --8<-- "docs/griptape-framework/engines/logs/eval_engines_1.txt"
     ```
-
-```
-Eval Steps [
-  "Compare the actual output to the expected output to identify any discrepancies.",
-  "Verify the factual accuracy of the actual output by cross-referencing with the expected output.",
-  "Assess whether the actual output meets the criteria outlined in the expected output.",
-  "Determine if any information in the actual output contradicts the expected output."
-]
-Score: 1.0
-Reason: The actual output 'Glass' matches the expected output 'Glass', with no discrepancies or contradictions.
-```
