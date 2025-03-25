@@ -4,7 +4,7 @@ You can `Search` or `Query` the Knowledge Base for information contained in your
 
 ## From the Cloud Console
 
-You can explore your data with a natural language question on the `Test` tab of your Knowledge Base. Compare and contrast the results of `Search` vs. `Query` to understand which is correct for your application.
+You can explore your data with a natural language question on the `Query` tab of your Knowledge Base. You can use *+ Add Schema Argument* to add schema arguments to query structured data in a Hybrid Knowledge Base. Selecting a *count* schema argument allows you to specify the number of results that you wish to return in the response to your query.
 
 ## From the API
 
