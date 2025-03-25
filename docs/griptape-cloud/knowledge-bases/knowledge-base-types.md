@@ -10,7 +10,7 @@ Queries made against Vector Knowledge Bases are vector search queries.
 
 ## Hybrid Knowledge Bases
 
-Hybrid Knowledge Bases also generate embeddings for unstructured data. They differ from Vector Knowledge Bases in that they are also able to store structured data alongside vectors and unstructured data. Hybrid Knowledge Bases are accessed via a Tool within Griptape Cloud that supports hybrid queries combining structured and unstructured data.
+Hybrid Knowledge Bases also generate embeddings for unstructured data. They differ from Vector Knowledge Bases in that they are also able to store structured data alongside vectors and unstructured data. 
 
 Griptape Cloud currently supports the creation of Hybrid Knowledge Bases from CSV data (via the Amazon S3, Google Drive & Griptape Cloud Data Lake Data Source types), and from Google Sheets through the Google Drive Data Source type.
 

@@ -6,7 +6,7 @@ Knowledge Bases are way to organize and access your data ingested from [Data Sou
 
 You can create a Griptape Cloud Vector Knowledge Base on the [Create Knowledge Base](https://cloud.griptape.ai/knowledge-bases/create) page in Griptape Cloud console. When doing so, you will asked provide a name and to select the Data Sources that you wish to include in your new Knowledge Base. Once created, you can [access your data](accessing-data.md).
 
-If you wish to provide your own Postgres & pgvector endpoint, you will be prompted to provide your database Connection String and Password, as well as to select the Data Sources that you wish to use to populate this Knowledge Base.
+If you wish to provide your own Postgres & pgvector endpoint, you will be prompted to provide your database connection string and password, as well as to select the Data Sources that you wish to use to populate this Knowledge Base.
 
 ## Creating a Hybrid Knowledge Base
 
