@@ -102,9 +102,17 @@ This driver uses [OpenAi function calling](https://platform.openai.com/docs/guid
 
 OpenAi's [reasoning models](https://platform.openai.com/docs/guides/reasoning?api-mode=chat) can also be used, and come with an additional parameter: [reasoning_effort](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md#griptape.drivers.prompt.openai_chat_prompt_driver.OpenAiChatPromptDriver.reasoning_effort).
 
-```python
---8<-- "docs/griptape-framework/drivers/src/prompt_drivers_openai_reasoning.py"
-```
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_openai_reasoning.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/drivers/logs/prompt_drivers_openai_reasoning.txt"
+    ```
 
 ### OpenAI Compatible
 
