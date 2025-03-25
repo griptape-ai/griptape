@@ -1522,7 +1522,7 @@ requires-dist = [
     { name = "anthropic", marker = "extra == 'drivers-prompt-anthropic'", specifier = ">=0.45.1" },
     { name = "astrapy", marker = "extra == 'all'", specifier = ">=1.4" },
     { name = "astrapy", marker = "extra == 'drivers-vector-astra-db'", specifier = ">=1.4" },
-    { name = "attrs", specifier = ">=23.2.0" },
+    { name = "attrs", specifier = ">=24.3.0" },
     { name = "beautifulsoup4", marker = "extra == 'all'", specifier = ">=4.12.3" },
     { name = "beautifulsoup4", marker = "extra == 'drivers-web-scraper-markdownify'", specifier = ">=4.12.3" },
     { name = "boto3", marker = "extra == 'all'", specifier = ">=1.34.119" },
