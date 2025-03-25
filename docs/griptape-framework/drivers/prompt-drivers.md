@@ -100,6 +100,12 @@ This driver uses [OpenAi function calling](https://platform.openai.com/docs/guid
 
     `response_format` and `seed` are unique to the OpenAI Chat Prompt Driver and Azure OpenAi Chat Prompt Driver.
 
+OpenAi's [reasoning models](https://platform.openai.com/docs/guides/reasoning?api-mode=chat) can also be used, and come with an additional parameter: [reasoning_effort](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md#griptape.drivers.prompt.openai_chat_prompt_driver.OpenAiChatPromptDriver.reasoning_effort).
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_openai_reasoning.py"
+```
+
 ### OpenAI Compatible
 
 Many services such as [LMStudio](https://lmstudio.ai/) and [OhMyGPT](https://www.ohmygpt.com/) provide OpenAI-compatible APIs. You can use the [OpenAiChatPromptDriver](../../reference/griptape/drivers/prompt/openai_chat_prompt_driver.md) to interact with these services.
