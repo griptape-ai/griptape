@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.2](https://github.com/griptape-ai/griptape/compare/v1.5.1...v1.5.2) (2025-03-25)
+
+
+### Documentation
+
+* update docs to reflect the the addition of Libraries and the Hybrid Knowledge Base type ([#1853](https://github.com/griptape-ai/griptape/issues/1853)) ([3acaf18](https://github.com/griptape-ai/griptape/commit/3acaf18ded8cb33e637df4abd11372377d4d1d97))
+
 ## [1.5.1](https://github.com/griptape-ai/griptape/compare/v1.5.0...v1.5.1) (2025-03-24)
 
 
