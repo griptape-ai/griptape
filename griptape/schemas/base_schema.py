@@ -104,23 +104,22 @@ class BaseSchema(Schema):
                 optional=optional,
                 serialization_key=serialization_key,
             )
-        elif attrs.has(field_class):
+        if attrs.has(field_class):
             if ABC in field_class.__bases__:
                 schema = PolymorphicSchema(field_class, types_overrides=types_overrides)
             else:
                 schema = cls.from_attrs_cls(field_class, types_overrides=types_overrides)
             return fields.Nested(schema, allow_none=optional, attribute=serialization_key)
-        elif cls._is_enum(field_type):
+        if cls._is_enum(field_type):
             return fields.String(allow_none=optional, attribute=serialization_key)
-        elif cls._is_list_sequence(field_class):
+        if cls._is_list_sequence(field_class):
             if args:
                 return cls._handle_list(
                     args[0],
                     optional=optional,
                     serialization_key=serialization_key,
                 )
-            else:
-                raise ValueError(f"Missing type for list field: {field_type}")
+            raise ValueError(f"Missing type for list field: {field_type}")
         field_class = cls.DATACLASS_TYPE_MAPPING.get(field_class, fields.Raw)
 
         return field_class(allow_none=optional, attribute=serialization_key)
@@ -351,10 +350,8 @@ class BaseSchema(Schema):
         if isinstance(field_type, type):
             if issubclass(field_type, str) or issubclass(field_type, bytes) or issubclass(field_type, tuple):
                 return False
-            else:
-                return issubclass(field_type, Sequence)
-        else:
-            return False
+            return issubclass(field_type, Sequence)
+        return False
 
     @classmethod
     def _is_union(cls, field_type: type) -> bool:

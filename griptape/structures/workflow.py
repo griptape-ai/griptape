@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import concurrent.futures as futures
+from concurrent import futures
 from graphlib import TopologicalSorter
 from typing import TYPE_CHECKING, Any, Optional
 
@@ -187,7 +187,6 @@ class Workflow(Structure, FuturesExecutorMixin):
             except ValueError as exc:
                 raise ValueError(f"Parent task {parent_task.id} not found in workflow.") from exc
             else:
-                if parent_index > last_parent_index:
-                    last_parent_index = parent_index
+                last_parent_index = max(last_parent_index, parent_index)
 
         return last_parent_index

@@ -97,8 +97,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 self.after_run(result)
 
                 return result
-        else:
-            raise Exception("prompt driver failed after all retry attempts")
+        raise Exception("prompt driver failed after all retry attempts")
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         """Converts a Prompt Stack to a string for token counting or model prompt_input.

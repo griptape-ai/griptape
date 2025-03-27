@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-import griptape.observability.observability as observability
+from griptape.observability import observability
 from griptape.observability.observability import Observability
 
 

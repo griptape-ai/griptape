@@ -24,7 +24,7 @@ class BooleanArtifact(BaseArtifact):
             if isinstance(value, str):
                 if value.lower() == "true":
                     return BooleanArtifact(value=True)
-                elif value.lower() == "false":
+                if value.lower() == "false":
                     return BooleanArtifact(value=False)
             elif isinstance(value, bool):
                 return BooleanArtifact(value)

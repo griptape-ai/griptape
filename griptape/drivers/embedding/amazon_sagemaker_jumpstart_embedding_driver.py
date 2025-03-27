@@ -51,9 +51,6 @@ class AmazonSageMakerJumpstartEmbeddingDriver(BaseEmbeddingDriver):
             if embedding:
                 if isinstance(embedding[0], list):
                     return embedding[0]
-                else:
-                    return embedding
-            else:
-                raise ValueError("model response is empty")
-        else:
-            raise ValueError("invalid response from model")
+                return embedding
+            raise ValueError("model response is empty")
+        raise ValueError("invalid response from model")

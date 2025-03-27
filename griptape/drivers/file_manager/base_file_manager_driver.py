@@ -38,8 +38,7 @@ class BaseFileManagerDriver(ABC):
     def load_file(self, path: str) -> BlobArtifact | TextArtifact:
         if self.encoding is None:
             return BlobArtifact(self.try_load_file(path))
-        else:
-            return TextArtifact(self.try_load_file(path).decode(encoding=self.encoding), encoding=self.encoding)
+        return TextArtifact(self.try_load_file(path).decode(encoding=self.encoding), encoding=self.encoding)
 
     @abstractmethod
     def try_load_file(self, path: str) -> bytes: ...

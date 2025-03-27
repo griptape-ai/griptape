@@ -32,7 +32,7 @@ class TestTextToSpeechTool:
         assert audio_artifact
 
     def test_text_to_speech_with_outfile(self, text_to_speech_driver) -> None:
-        outfile = f"{tempfile.gettempdir()}/{str(uuid.uuid4())}.mp3"
+        outfile = f"{tempfile.gettempdir()}/{uuid.uuid4()!s}.mp3"
         text_to_speech_client = TextToSpeechTool(text_to_speech_driver=text_to_speech_driver, output_file=outfile)
 
         text_to_speech_client.text_to_speech_driver.run_text_to_audio.return_value = AudioArtifact(  # pyright: ignore[reportFunctionMemberAccess]

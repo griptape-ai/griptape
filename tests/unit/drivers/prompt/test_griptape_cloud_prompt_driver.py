@@ -242,7 +242,7 @@ class TestGriptapeCloudPromptDriver:
                 mock_response.__enter__ = MagicMock(return_value=mock_response)
                 mock_response.__exit__ = MagicMock()
                 return mock_response
-            elif "chat/messages" in args[0]:
+            if "chat/messages" in args[0]:
                 mock_response.json.return_value = {
                     "role": "assistant",
                     "content": [
@@ -274,10 +274,9 @@ class TestGriptapeCloudPromptDriver:
                     ],
                 }
                 return mock_response
-            else:
-                return mocker.Mock(
-                    raise_for_status=lambda: None,
-                )
+            return mocker.Mock(
+                raise_for_status=lambda: None,
+            )
 
         return mocker.patch("requests.post", side_effect=request)
 

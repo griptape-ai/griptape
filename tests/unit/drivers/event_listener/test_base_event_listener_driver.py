@@ -22,7 +22,7 @@ class TestBaseEventListenerDriver:
         mock_event_payload = MockEvent().to_dict()
 
         # Publish 9 events to fill the batch
-        mock_event_payloads = [mock_event_payload for _ in range(0, 9)]
+        mock_event_payloads = [mock_event_payload for _ in range(9)]
         for mock_event_payload in mock_event_payloads:
             driver.publish_event(mock_event_payload)
 
@@ -44,7 +44,7 @@ class TestBaseEventListenerDriver:
         driver.flush_events()
         driver.try_publish_event_payload_batch.assert_not_called()
         assert driver.batch == []
-        mock_event_payloads = [MockEvent().to_dict() for _ in range(0, 3)]
+        mock_event_payloads = [MockEvent().to_dict() for _ in range(3)]
         for mock_event_payload in mock_event_payloads:
             driver.publish_event(mock_event_payload)
         assert len(driver.batch) == 3
@@ -71,7 +71,7 @@ class TestBaseEventListenerDriver:
             batched=True,
             on_event_payload_batch_publish=mock_fn,
         )
-        mock_event_payloads = [MockEvent().to_dict() for _ in range(0, 3)]
+        mock_event_payloads = [MockEvent().to_dict() for _ in range(3)]
 
         driver._safe_publish_event_payload_batch(mock_event_payloads)
 
@@ -104,7 +104,7 @@ class TestBaseEventListenerDriver:
             min_retry_delay=0.1,
         )
         mock_fn.side_effect = Exception("Test Exception")
-        mock_event_payloads = [MockEvent().to_dict() for _ in range(0, 3)]
+        mock_event_payloads = [MockEvent().to_dict() for _ in range(3)]
 
         driver._safe_publish_event_payload_batch(mock_event_payloads)
 

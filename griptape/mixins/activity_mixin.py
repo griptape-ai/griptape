@@ -98,10 +98,8 @@ class ActivityMixin:
                     config_schema.schema.update(self.extra_schema_properties[activity_name])
 
                 return Schema({"values": config_schema})
-            else:
-                return create_model(config_schema.__name__, values=(config_schema, Field(config_schema)))
-        else:
-            return None
+            return create_model(config_schema.__name__, values=(config_schema, Field(config_schema)))
+        return None
 
     def to_activity_json_schema(self, activity: Callable, schema_id: str) -> dict:
         schema = self.activity_schema(activity)

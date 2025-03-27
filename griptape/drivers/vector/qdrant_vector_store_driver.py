@@ -189,8 +189,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
                 vector=entry.vector,
                 meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
             )
-        else:
-            return None
+        return None
 
     def load_entries(self, *, namespace: Optional[str] = None, **kwargs) -> list[BaseVectorStoreDriver.Entry]:
         """Load vector entries from the Qdrant collection.

@@ -49,8 +49,7 @@ class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
         if isinstance(artifact, TextArtifact):
             return self.try_embed_chunk(artifact.value)
-        else:
-            return self._invoke_model({"inputImage": base64.b64encode(artifact.value).decode()})["embedding"]
+        return self._invoke_model({"inputImage": base64.b64encode(artifact.value).decode()})["embedding"]
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
         return self._invoke_model(

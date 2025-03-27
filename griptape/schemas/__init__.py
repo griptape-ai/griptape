@@ -9,4 +9,4 @@ from .union_field import Union
 from .pydantic_model_field import PydanticModel
 
 
-__all__ = ["BaseSchema", "PolymorphicSchema", "Bytes", "Union", "PydanticModel"]
+__all__ = ["BaseSchema", "Bytes", "PolymorphicSchema", "PydanticModel", "Union"]

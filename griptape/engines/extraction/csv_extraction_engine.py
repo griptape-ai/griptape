@@ -86,23 +86,22 @@ class CsvExtractionEngine(BaseExtractionEngine):
             )
 
             return rows
-        else:
-            chunks = self.chunker.chunk(artifacts_text)
-            partial_text = self.generate_user_template.render(
-                text=chunks[0].value,
-            )
+        chunks = self.chunker.chunk(artifacts_text)
+        partial_text = self.generate_user_template.render(
+            text=chunks[0].value,
+        )
 
-            rows.extend(
-                self.text_to_csv_rows(
-                    self.prompt_driver.run(
-                        PromptStack(
-                            messages=[
-                                Message(system_prompt, role=Message.SYSTEM_ROLE),
-                                Message(partial_text, role=Message.USER_ROLE),
-                            ]
-                        )
-                    ).value,
-                ),
-            )
+        rows.extend(
+            self.text_to_csv_rows(
+                self.prompt_driver.run(
+                    PromptStack(
+                        messages=[
+                            Message(system_prompt, role=Message.SYSTEM_ROLE),
+                            Message(partial_text, role=Message.USER_ROLE),
+                        ]
+                    )
+                ).value,
+            ),
+        )
 
-            return self._extract_rec(chunks[1:], rows, rulesets=rulesets)
+        return self._extract_rec(chunks[1:], rows, rulesets=rulesets)

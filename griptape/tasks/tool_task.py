@@ -102,8 +102,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     def find_tool(self, tool_name: str) -> BaseTool:
         if self.tool.name == tool_name:
             return self.tool
-        else:
-            raise ValueError(f"Tool with name {tool_name} not found.")
+        raise ValueError(f"Tool with name {tool_name} not found.")
 
     def find_memory(self, memory_name: str) -> TaskMemory:
         raise NotImplementedError("ToolTask does not support Task Memory.")
@@ -111,8 +110,7 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     def find_subtask(self, subtask_id: str) -> ActionsSubtask:
         if self.subtask and self.subtask.id == subtask_id:
             return self.subtask
-        else:
-            raise ValueError(f"Subtask with id {subtask_id} not found.")
+        raise ValueError(f"Subtask with id {subtask_id} not found.")
 
     def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
         self.subtask = subtask

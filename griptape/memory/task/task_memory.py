@@ -53,10 +53,8 @@ class TaskMemory(ActivityMixin, SerializableMixin):
         if isinstance(artifact, ListArtifact):
             if artifact.has_items():
                 return find_storage(artifact.value[0])
-            else:
-                return None
-        else:
-            return find_storage(artifact)
+            return None
+        return find_storage(artifact)
 
     def process_output(
         self,
@@ -75,28 +73,26 @@ class TaskMemory(ActivityMixin, SerializableMixin):
 
             if result:
                 return result
-            else:
-                self.namespace_metadata[namespace] = subtask.actions_to_json()
+            self.namespace_metadata[namespace] = subtask.actions_to_json()
 
-                output = J2("memory/tool.j2").render(
-                    memory_name=self.name,
-                    tool_name=tool_name,
-                    activity_name=activity_name,
-                    artifact_namespace=namespace,
+            output = J2("memory/tool.j2").render(
+                memory_name=self.name,
+                tool_name=tool_name,
+                activity_name=activity_name,
+                artifact_namespace=namespace,
+            )
+
+            if subtask.structure and subtask.structure.meta_memory:
+                subtask.structure.meta_memory.add_entry(
+                    ActionSubtaskMetaEntry(
+                        thought=subtask.thought,
+                        actions=subtask.actions_to_json(),
+                        answer=output,
+                    ),
                 )
 
-                if subtask.structure and subtask.structure.meta_memory:
-                    subtask.structure.meta_memory.add_entry(
-                        ActionSubtaskMetaEntry(
-                            thought=subtask.thought,
-                            actions=subtask.actions_to_json(),
-                            answer=output,
-                        ),
-                    )
-
-                return InfoArtifact(output, name=namespace)
-        else:
-            return InfoArtifact("tool output is empty")
+            return InfoArtifact(output, name=namespace)
+        return InfoArtifact("tool output is empty")
 
     def store_artifact(self, namespace: str, artifact: BaseArtifact) -> Optional[BaseArtifact]:
         namespace_storage = self.namespace_storage.get(namespace)
@@ -104,38 +100,33 @@ class TaskMemory(ActivityMixin, SerializableMixin):
 
         if not storage:
             return artifact
-        elif namespace_storage and namespace_storage != storage:
+        if namespace_storage and namespace_storage != storage:
             return ErrorArtifact("error storing tool output in memory")
-        else:
-            if storage:
-                if isinstance(artifact, ListArtifact):
-                    for a in artifact.value:
-                        storage.store_artifact(namespace, a)
+        if storage:
+            if isinstance(artifact, ListArtifact):
+                for a in artifact.value:
+                    storage.store_artifact(namespace, a)
 
-                    self.namespace_storage[namespace] = storage
+                self.namespace_storage[namespace] = storage
 
-                    return None
-                elif isinstance(artifact, BaseArtifact):
-                    storage.store_artifact(namespace, artifact)
+                return None
+            if isinstance(artifact, BaseArtifact):
+                storage.store_artifact(namespace, artifact)
 
-                    self.namespace_storage[namespace] = storage
+                self.namespace_storage[namespace] = storage
 
-                    return None
-                else:
-                    return ErrorArtifact("error storing tool output in memory")
-            else:
-                return ErrorArtifact("error storing tool output in memory")
+                return None
+            return ErrorArtifact("error storing tool output in memory")
+        return ErrorArtifact("error storing tool output in memory")
 
     def load_artifacts(self, namespace: str) -> ListArtifact:
         storage = self.namespace_storage.get(namespace)
 
         if storage:
             return storage.load_artifacts(namespace)
-        else:
-            return ListArtifact()
+        return ListArtifact()
 
     def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
         if memory_name == self.name:
             return self
-        else:
-            return None
+        return None

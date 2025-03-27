@@ -24,8 +24,7 @@ class JsonArtifact(BaseArtifact):
     def value_to_json(cls, value: Any) -> Json:
         if isinstance(value, str):
             return json.loads(value)
-        else:
-            return json.loads(json.dumps(value))
+        return json.loads(json.dumps(value))
 
     def to_text(self) -> str:
         return json.dumps(self.value)

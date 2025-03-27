@@ -44,5 +44,4 @@ class CohereEmbeddingDriver(BaseEmbeddingDriver):
 
         if isinstance(result.embeddings, list):
             return result.embeddings[0]
-        else:
-            raise ValueError("Non-float embeddings are not supported.")
+        raise ValueError("Non-float embeddings are not supported.")

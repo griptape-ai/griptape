@@ -152,8 +152,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     def __to_bedrock_role(self, message: Message) -> str:
         if message.is_assistant():
             return "assistant"
-        else:
-            return "user"
+        return "user"
 
     def __to_bedrock_tools(self, tools: list[BaseTool]) -> list[dict]:
         return [
@@ -173,11 +172,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     def __to_bedrock_message_content(self, content: BaseMessageContent) -> dict:
         if isinstance(content, TextMessageContent):
             return {"text": content.artifact.to_text()}
-        elif isinstance(content, ImageMessageContent):
+        if isinstance(content, ImageMessageContent):
             artifact = content.artifact
 
             return {"image": {"format": artifact.format, "source": {"bytes": artifact.value}}}
-        elif isinstance(content, ActionCallMessageContent):
+        if isinstance(content, ActionCallMessageContent):
             action_call = content.artifact.value
 
             return {
@@ -187,7 +186,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     "input": action_call.input,
                 },
             }
-        elif isinstance(content, ActionResultMessageContent):
+        if isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
             if isinstance(artifact, ListArtifact):
@@ -202,21 +201,19 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     "status": "error" if isinstance(artifact, ErrorArtifact) else "success",
                 },
             }
-        else:
-            return content.artifact.value
+        return content.artifact.value
 
     def __to_bedrock_tool_use_content(self, artifact: BaseArtifact) -> dict:
         if isinstance(artifact, ImageArtifact):
             return {"image": {"format": artifact.format, "source": {"bytes": artifact.value}}}
-        elif isinstance(artifact, (TextArtifact, ErrorArtifact, InfoArtifact)):
+        if isinstance(artifact, (TextArtifact, ErrorArtifact, InfoArtifact)):
             return {"text": artifact.to_text()}
-        else:
-            raise ValueError(f"Unsupported artifact type: {type(artifact)}")
+        raise ValueError(f"Unsupported artifact type: {type(artifact)}")
 
     def __to_prompt_stack_message_content(self, content: dict) -> BaseMessageContent:
         if "text" in content:
             return TextMessageContent(TextArtifact(content["text"]))
-        elif "toolUse" in content:
+        if "toolUse" in content:
             name, path = ToolAction.from_native_tool_name(content["toolUse"]["name"])
             return ActionCallMessageContent(
                 artifact=ActionArtifact(
@@ -228,8 +225,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     ),
                 ),
             )
-        else:
-            raise ValueError(f"Unsupported message content type: {content}")
+        raise ValueError(f"Unsupported message content type: {content}")
 
     def __to_prompt_stack_delta_message_content(self, event: dict) -> BaseDeltaMessageContent:
         if "contentBlockStart" in event:
@@ -244,14 +240,13 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     name=name,
                     path=path,
                 )
-            elif "text" in content_block:
+            if "text" in content_block:
                 return TextDeltaMessageContent(
                     content_block["text"],
                     index=event["contentBlockStart"]["contentBlockIndex"],
                 )
-            else:
-                raise ValueError(f"Unsupported message content type: {event}")
-        elif "contentBlockDelta" in event:
+            raise ValueError(f"Unsupported message content type: {event}")
+        if "contentBlockDelta" in event:
             content_block_delta = event["contentBlockDelta"]
 
             if "text" in content_block_delta["delta"]:
@@ -259,12 +254,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     content_block_delta["delta"]["text"],
                     index=content_block_delta["contentBlockIndex"],
                 )
-            elif "toolUse" in content_block_delta["delta"]:
+            if "toolUse" in content_block_delta["delta"]:
                 return ActionCallDeltaMessageContent(
                     index=content_block_delta["contentBlockIndex"],
                     partial_input=content_block_delta["delta"]["toolUse"]["input"],
                 )
-            else:
-                raise ValueError(f"Unsupported message content type: {event}")
-        else:
             raise ValueError(f"Unsupported message content type: {event}")
+        raise ValueError(f"Unsupported message content type: {event}")

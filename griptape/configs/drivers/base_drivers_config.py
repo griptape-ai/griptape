@@ -9,6 +9,8 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
     from griptape.drivers.embedding import BaseEmbeddingDriver
     from griptape.drivers.image_generation import BaseImageGenerationDriver
@@ -48,7 +50,7 @@ class BaseDriversConfig(ABC, SerializableMixin):
 
     _last_drivers_config: Optional[BaseDriversConfig] = field(default=None)
 
-    def __enter__(self) -> BaseDriversConfig:
+    def __enter__(self) -> Self:
         from griptape.configs import Defaults
 
         self._last_drivers_config = Defaults.drivers_config

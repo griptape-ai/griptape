@@ -88,13 +88,12 @@ class MongoDbAtlasVectorStoreDriver(BaseVectorStoreDriver):
 
         if doc is None:
             return doc
-        else:
-            return BaseVectorStoreDriver.Entry(
-                id=str(doc["_id"]),
-                vector=doc[self.vector_path],
-                namespace=doc["namespace"],
-                meta=doc["meta"],
-            )
+        return BaseVectorStoreDriver.Entry(
+            id=str(doc["_id"]),
+            vector=doc[self.vector_path],
+            namespace=doc["namespace"],
+            meta=doc["meta"],
+        )
 
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
         """Loads all document entries from the MongoDB collection.

@@ -24,10 +24,9 @@ class CodeExecutionTask(BaseTask[T]):
     def input(self) -> TextArtifact:
         if isinstance(self._input, TextArtifact):
             return self._input
-        elif callable(self._input):
+        if callable(self._input):
             return self._input(self)
-        else:
-            return TextArtifact(J2().render_from_string(self._input, **self.full_context))
+        return TextArtifact(J2().render_from_string(self._input, **self.full_context))
 
     def try_run(self) -> T:
         return self.on_run(self)

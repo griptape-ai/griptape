@@ -221,7 +221,7 @@ class TestBaseTool:
         try:
             from tests.mocks.invalid_mock_tool.tool import InvalidMockTool  # noqa: F401
 
-            raise AssertionError()
+            raise AssertionError
         except SchemaMissingKeyError:
             assert True
 

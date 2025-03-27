@@ -142,5 +142,4 @@ class SerializableMixin(Generic[T]):
             if not len(module_dirs):
                 raise ValueError(f"Unable to import class: {class_name}")
             return cls._import_cls_rec(module_name, class_name)
-        else:
-            return test
+        return test
