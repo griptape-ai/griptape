@@ -23,6 +23,16 @@ Provide a Driver to a [Tool](../tools/index.md) for use by an [Agent](../structu
 
 ## Image Generation Drivers
 
+### Griptape Cloud
+
+The [Griptape Cloud Image Generation Driver](../../reference/griptape/drivers/image_generation/griptape_cloud_image_generation_driver.md) provides access to image generation models hosted by Griptape Cloud.
+
+Today, the only accessible model is `dall-e-3`.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/image_generation_drivers_griptape_cloud.py"
+```
+
 ### Amazon Bedrock
 
 The [Amazon Bedrock Image Generation Driver](../../reference/griptape/drivers/image_generation/amazon_bedrock_image_generation_driver.md) provides multi-model access to image generation models hosted by Amazon Bedrock. This Driver manages API calls to the Bedrock API, while the specific Model Drivers below format the API requests and parse the responses.

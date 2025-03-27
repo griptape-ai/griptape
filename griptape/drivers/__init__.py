@@ -73,6 +73,7 @@ from .image_generation.leonardo import LeonardoImageGenerationDriver
 from .image_generation.amazon_bedrock import AmazonBedrockImageGenerationDriver
 from .image_generation.dummy import DummyImageGenerationDriver
 from .image_generation.huggingface_pipeline import HuggingFacePipelineImageGenerationDriver
+from .image_generation.griptape_cloud import GriptapeCloudImageGenerationDriver
 
 from .web_scraper import BaseWebScraperDriver
 from .web_scraper.trafilatura import TrafilaturaWebScraperDriver
@@ -237,6 +238,24 @@ __all__ = [
     "StableDiffusion3ControlNetImageGenerationPipelineDriver",
     "StableDiffusion3ImageGenerationPipelineDriver",
     "StableDiffusion3Img2ImgImageGenerationPipelineDriver",
+    "StableDiffusion3ControlNetImageGenerationPipelineDriver",
+    "BaseImageGenerationDriver",
+    "BaseMultiModelImageGenerationDriver",
+    "OpenAiImageGenerationDriver",
+    "LeonardoImageGenerationDriver",
+    "AmazonBedrockImageGenerationDriver",
+    "AzureOpenAiImageGenerationDriver",
+    "DummyImageGenerationDriver",
+    "HuggingFacePipelineImageGenerationDriver",
+    "GriptapeCloudImageGenerationDriver",
+    "BaseWebScraperDriver",
+    "TrafilaturaWebScraperDriver",
+    "MarkdownifyWebScraperDriver",
+    "ProxyWebScraperDriver",
+    "BaseWebSearchDriver",
+    "GoogleWebSearchDriver",
+    "DuckDuckGoWebSearchDriver",
+    "ExaWebSearchDriver",
     "TavilyWebSearchDriver",
     "TrafilaturaWebScraperDriver",
     "VoyageAiEmbeddingDriver",
