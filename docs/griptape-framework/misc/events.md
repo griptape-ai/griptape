@@ -125,6 +125,20 @@ Make sure to enable streaming on the Drivers or else `Stream` will yield no iter
     --8<-- "docs/griptape-framework/misc/logs/events_4.txt"
     ```
 
+Sometimes, streaming can be too verbose. You can use `Stream.event_types` to only listen to specific event types. A good example is to remove the `ActionChunkEvent` from the stream if you don't need to see events related to Tool usage.
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/misc/src/events_4_filtered.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/misc/logs/events_4_filtered.txt"
+    ```
+
 ## Counting Tokens
 
 To count tokens, you can use Event Listeners and the [TokenCounter](../../reference/griptape/utils/token_counter.md) util:
