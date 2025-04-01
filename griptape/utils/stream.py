@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from attrs import define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.events import (
@@ -30,7 +30,7 @@ class Stream:
 
     structure: Structure = field()
     event_types: list[type[BaseEvent]] = field(
-        default=[TextChunkEvent, ActionChunkEvent, FinishPromptEvent, FinishStructureRunEvent]
+        default=Factory(lambda: [TextChunkEvent, ActionChunkEvent, FinishPromptEvent, FinishStructureRunEvent])
     )
 
     def run(self, *args) -> Iterator[TextArtifact]:
