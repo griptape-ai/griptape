@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING
 
-from attrs import define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts.text_artifact import TextArtifact
 from griptape.events import (
@@ -16,6 +16,7 @@ from griptape.events import (
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
+    from griptape.events.base_event import BaseEvent
     from griptape.structures import Structure
 
 
@@ -28,13 +29,14 @@ class Stream:
     """
 
     structure: Structure = field()
+    event_types: list[type[BaseEvent]] = field(
+        default=Factory(lambda: [TextChunkEvent, ActionChunkEvent, FinishPromptEvent, FinishStructureRunEvent])
+    )
 
     def run(self, *args) -> Iterator[TextArtifact]:
         action_str = ""
 
-        for event in self.structure.run_stream(
-            *args, event_types=[TextChunkEvent, ActionChunkEvent, FinishPromptEvent, FinishStructureRunEvent]
-        ):
+        for event in self.structure.run_stream(*args, event_types=self.event_types):
             if isinstance(event, FinishPromptEvent):
                 yield TextArtifact(value="\n")
             elif isinstance(event, TextChunkEvent):
