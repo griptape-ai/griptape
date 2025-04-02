@@ -1,6 +1,8 @@
 from .base_task import BaseTask
+from .base_subtask import BaseSubtask
 from .base_text_input_task import BaseTextInputTask
 from .actions_subtask import ActionsSubtask
+from .output_schema_validation_subtask import OutputSchemaValidationSubtask
 from .prompt_task import PromptTask
 from .toolkit_task import ToolkitTask
 from .text_summary_task import TextSummaryTask
@@ -22,11 +24,13 @@ from .branch_task import BranchTask
 
 __all__ = [
     "ActionsSubtask",
+    "OutputSchemaValidationSubtask",
     "AssistantTask",
     "AudioTranscriptionTask",
     "BaseAudioGenerationTask",
     "BaseImageGenerationTask",
     "BaseTask",
+    "BaseSubtask",
     "BaseTextInputTask",
     "BranchTask",
     "CodeExecutionTask",
