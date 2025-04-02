@@ -75,6 +75,11 @@ You can specify `output_schema` using either `pydantic` or `schema` libraries, t
     --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_structured_output_schema.py"
     ```
 
+!!! info
+
+    `PromptTask`s will automatically validate the LLM's output against the `output_schema` you provide. If the LLM fails to output valid JSON, the Task will automatically re-prompt the LLM to try again.
+    You can configure how many times it will retry by setting the `max_subtasks` parameter on the Task.
+
 ## Prompt Drivers
 
 Griptape offers the following Prompt Drivers for interacting with LLMs.

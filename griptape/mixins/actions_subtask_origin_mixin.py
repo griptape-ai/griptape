@@ -8,7 +8,7 @@ from schema import Literal, Schema
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
-    from griptape.tasks import ActionsSubtask
+    from griptape.tasks import BaseSubtask
     from griptape.tools import BaseTool
 
 
@@ -21,10 +21,10 @@ class ActionsSubtaskOriginMixin:
     def find_memory(self, memory_name: str) -> TaskMemory: ...
 
     @abstractmethod
-    def find_subtask(self, subtask_id: str) -> ActionsSubtask: ...
+    def find_subtask(self, subtask_id: str) -> BaseSubtask: ...
 
     @abstractmethod
-    def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask: ...
+    def add_subtask(self, subtask: BaseSubtask) -> BaseSubtask: ...
 
     @abstractmethod
     def actions_schema(self) -> Schema: ...

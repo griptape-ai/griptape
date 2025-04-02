@@ -1,3 +1,5 @@
+from contextlib import nullcontext
+
 import pytest
 import schema
 from pydantic import BaseModel, create_model
@@ -260,31 +262,32 @@ class TestPromptTask:
 
     @pytest.mark.parametrize("structured_output_strategy", ["native"])
     @pytest.mark.parametrize(
-        ("output_schema", "expected_output"),
+        ("output_schema", "expected_output", "expected_context"),
         [
-            (schema.Schema({"foo": str}), {"foo": "bar"}),
-            (create_model("Test", foo=(str, ...)), create_model("Test", foo=(str, ...))(foo="bar")),
-            (None, "mock output"),
-            ("foo", "Unsupported output schema type: <class 'str'>"),
+            (schema.Schema({"foo": str}), {"foo": "bar"}, nullcontext()),
+            (create_model("Test", foo=(str, ...)), create_model("Test", foo=(str, ...))(foo="bar"), nullcontext()),
+            (None, "mock output", nullcontext()),
+            ("foo", None, pytest.raises(ValueError, match="Unsupported output schema type: <class 'str'>")),
         ],
     )
-    def test_parse_output_schema(self, structured_output_strategy, output_schema, expected_output):
-        task = PromptTask(
-            input="foo",
-            prompt_driver=MockPromptDriver(
-                structured_output_strategy=structured_output_strategy,
-                mock_structured_output={"foo": "bar"},
-                max_attempts=0,
-            ),
-            output_schema=output_schema,
-        )
+    def test_parse_output_schema(self, structured_output_strategy, output_schema, expected_output, expected_context):
+        with expected_context:
+            task = PromptTask(
+                input="foo",
+                prompt_driver=MockPromptDriver(
+                    structured_output_strategy=structured_output_strategy,
+                    mock_structured_output={"foo": "bar"},
+                    max_attempts=0,
+                ),
+                output_schema=output_schema,
+            )
 
-        output = task.run()
+            output = task.run()
 
-        if isinstance(output.value, BaseModel) and isinstance(expected_output, BaseModel):
-            assert output.value.model_dump_json() == expected_output.model_dump_json()
-        else:
-            assert output.value == expected_output
+            if isinstance(output.value, BaseModel) and isinstance(expected_output, BaseModel):
+                assert output.value.model_dump_json() == expected_output.model_dump_json()
+            else:
+                assert output.value == expected_output
 
     @pytest.mark.parametrize(
         ("reflect_on_tool_use", "expected"),
