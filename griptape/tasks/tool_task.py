@@ -10,7 +10,7 @@ from attrs import define, field
 from griptape import utils
 from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
-from griptape.tasks import ActionsSubtask, PromptTask
+from griptape.tasks import ActionsSubtask, BaseSubtask, PromptTask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
@@ -112,7 +112,10 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
             return self.subtask
         raise ValueError(f"Subtask with id {subtask_id} not found.")
 
-    def add_subtask(self, subtask: ActionsSubtask) -> ActionsSubtask:
+    def add_subtask(self, subtask: BaseSubtask) -> ActionsSubtask:
+        if not isinstance(subtask, ActionsSubtask):
+            raise TypeError("Subtask must be an instance of ActionsSubtask.")
+
         self.subtask = subtask
         self.subtask.attach_to(self)
 
