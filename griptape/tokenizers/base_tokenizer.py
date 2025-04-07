@@ -30,7 +30,7 @@ class BaseTokenizer(ABC):
         return self._default_max_output_tokens()
 
     def __attrs_post_init__(self) -> None:
-        if hasattr(self, "model"):
+        if self.model is not None:
             if self.max_input_tokens is None:
                 self.max_input_tokens = self._default_max_input_tokens()
 

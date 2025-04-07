@@ -7,7 +7,7 @@ from griptape.tokenizers import BaseTokenizer
 
 @define()
 class SimpleTokenizer(BaseTokenizer):
-    model: str = field(init=False, kw_only=True)
+    model: str | None = field(init=False, default=None, kw_only=True)
     characters_per_token: int = field(kw_only=True)
 
     def count_tokens(self, text: str) -> int:
