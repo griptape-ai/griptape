@@ -25,3 +25,4 @@ class MockSerializable(SerializableMixin):
         default=None, kw_only=True, metadata={"serializable": True}
     )
     model: Optional[BaseModel] = field(default=None, kw_only=True, metadata={"serializable": True})
+    buzz: Optional[dict[str, MockSerializable]] = field(default=None, kw_only=True, metadata={"serializable": True})
