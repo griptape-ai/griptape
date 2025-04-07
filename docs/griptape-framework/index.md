@@ -83,15 +83,15 @@ If `uv` isn’t your style, you can always install Griptape using `pip`:
 pip install "griptape[all]" -U
 ```
 
-#### Installing Extras
+#### Installing Optional Dependencies
 
-Griptape provides "extras" that enable specific features and third-party integrations. If you're new to Griptape, consider installing `[all]` to unlock its full functionality. This ensures you have everything you need right from the start.
+Griptape provides optional dependencies that enable specific features and third-party integrations. If you're new to Griptape, consider installing `[all]` to unlock its full functionality. This ensures you have everything you need right from the start.
 
 However, for a more streamlined setup or if you only need certain features, you have two primary options:
 
 1. **Core Dependencies**: These provide the minimal, foundational set of libraries for Griptape to run most default features.
 
-1. **Extras**: These are additional, vendor-specific drivers (e.g., for Anthropic or Pinecone). Any driver requiring an extra will indicate this in the documentation.
+1. **Optional Dependencies**: These are additional, vendor-specific drivers (e.g., for Anthropic or Pinecone). Any driver requiring an extra will indicate this in the documentation.
 
 For a core-only installation:
 
@@ -99,11 +99,13 @@ For a core-only installation:
 uv add griptape
 ```
 
-To install specific extras—such as Anthropic and Pinecone drivers—use:
+To install specific optional dependencies such as Anthropic and Pinecone drivers—use:
 
 ```bash
 uv add "griptape[drivers-prompt-anthropic,drivers-vector-pinecone]"
 ```
+
+To see all available optional dependencies, see Griptape's [pyproject.toml](https://github.com/griptape-ai/griptape/blob/050d949ef423287f52c3307b18bc41703a8af953/pyproject.toml#L29).
 
 ## Prompt Task
 
