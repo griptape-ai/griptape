@@ -37,8 +37,26 @@ class TestSerializableMixin:
         assert isinstance(TextArtifact.from_json('{"value": "foobar"}'), TextArtifact)
 
     def test_str(self):
-        assert str(MockSerializable()) == json.dumps(
-            {"type": "MockSerializable", "foo": "bar", "bar": None, "baz": None, "nested": None, "model": None}
+        assert str(MockSerializable(buzz={"foo": MockSerializable()})) == json.dumps(
+            {
+                "type": "MockSerializable",
+                "foo": "bar",
+                "bar": None,
+                "baz": None,
+                "nested": None,
+                "model": None,
+                "buzz": {
+                    "foo": {
+                        "type": "MockSerializable",
+                        "foo": "bar",
+                        "bar": None,
+                        "baz": None,
+                        "nested": None,
+                        "model": None,
+                        "buzz": None,
+                    }
+                },
+            }
         )
 
     def test_to_json(self):
@@ -50,6 +68,7 @@ class TestSerializableMixin:
                 "baz": None,
                 "nested": None,
                 "model": {"foo": "bar"},
+                "buzz": None,
             }
         )
 
@@ -61,6 +80,7 @@ class TestSerializableMixin:
             "baz": None,
             "nested": None,
             "model": {"foo": "bar"},
+            "buzz": None,
         }
 
     def test_import_class_rec(self):

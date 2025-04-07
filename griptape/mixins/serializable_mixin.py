@@ -3,7 +3,8 @@ from __future__ import annotations
 import json
 from abc import ABC
 from importlib import import_module
-from typing import TYPE_CHECKING, Generic, Optional, TypeVar, cast
+from json import JSONEncoder
+from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar, cast
 
 from attrs import Factory, define, field
 
@@ -13,6 +14,16 @@ if TYPE_CHECKING:
     from marshmallow import Schema
 
 T = TypeVar("T", bound="SerializableMixin")
+
+
+def _default(_self: Any, obj: Any) -> Any:
+    """Fallback method for JSONEncoder to handle custom serialization."""
+    return getattr(obj.__class__, "to_dict", getattr(_default, "default"))(obj)
+
+
+# Adapted from https://stackoverflow.com/questions/18478287/making-object-json-serializable-with-regular-encoder/18561055#18561055
+setattr(_default, "default", JSONEncoder.default)
+setattr(JSONEncoder, "default", _default)
 
 
 @define(slots=False)
