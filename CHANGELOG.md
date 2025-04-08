@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0](https://github.com/griptape-ai/griptape/compare/v1.5.0...v1.6.0) (2025-04-08)
+
+
+### ✨ Features
+
+* add output schema validation subtask ([#1865](https://github.com/griptape-ai/griptape/issues/1865)) ([0c68e8f](https://github.com/griptape-ai/griptape/commit/0c68e8f7a2960ca8214d95c6445e590db70b37af))
+* **drivers:** Add GriptapeCloudImageGenerationDriver ([#1862](https://github.com/griptape-ai/griptape/issues/1862)) ([a589028](https://github.com/griptape-ai/griptape/commit/a589028ae90d4bce9988b6ccfe4bd2de4a012c65))
+* parameterize event types on Stream util ([#1863](https://github.com/griptape-ai/griptape/issues/1863)) ([260269d](https://github.com/griptape-ai/griptape/commit/260269d340da538372e798c8fa1ae9f79df9b2e4))
+
+
+### 🐛 Bug Fixes
+
+* demote tokenizer log from warning to debug ([#1845](https://github.com/griptape-ai/griptape/issues/1845)) ([fc27554](https://github.com/griptape-ai/griptape/commit/fc27554baae436cc2bfbb476b8c99bb651c7c6cc))
+* **deps:** bump minimum attrs version to one with attrs.NothingType ([#1855](https://github.com/griptape-ai/griptape/issues/1855)) ([6e06214](https://github.com/griptape-ai/griptape/commit/6e062148e4a28ed7026b3b33ded4a6b6a4229e4f))
+* **serialization:** add fallback JSON encoder for SerializableMixin ([#1870](https://github.com/griptape-ai/griptape/issues/1870)) ([c43134d](https://github.com/griptape-ai/griptape/commit/c43134d6c91f1e7ec10887635f05bcb1753c2b10))
+* **tokenizers-simple:** set model to None to avoid serialization issues ([#1867](https://github.com/griptape-ai/griptape/issues/1867)) ([050d949](https://github.com/griptape-ai/griptape/commit/050d949ef423287f52c3307b18bc41703a8af953))
+
+
+### 📚 Documentation
+
+* add docs on openai's reasoning models ([#1843](https://github.com/griptape-ai/griptape/issues/1843)) ([a4e91e1](https://github.com/griptape-ai/griptape/commit/a4e91e1faef67a91f6ce23a24d814774a5dea7f7)), closes [#1688](https://github.com/griptape-ai/griptape/issues/1688)
+* add info on Libraries and the Hybrid Knowledge Base types ([022ac77](https://github.com/griptape-ai/griptape/commit/022ac77dddd138bd57ca7d38938fef1f357727e9))
+* add link back to optional dependencies ([#1871](https://github.com/griptape-ai/griptape/issues/1871)) ([bc19553](https://github.com/griptape-ai/griptape/commit/bc1955301a8fb4cf3b3ea62073a7ecbd13f861c1))
+* fix duplicated word typo ([#1861](https://github.com/griptape-ai/griptape/issues/1861)) ([718d2a3](https://github.com/griptape-ai/griptape/commit/718d2a3553652764c88d451f3f7a53649803d0ba))
+* remove duplicate log output ([#1841](https://github.com/griptape-ai/griptape/issues/1841)) ([da9f9de](https://github.com/griptape-ai/griptape/commit/da9f9dea05df4782f798422bff7f2d001486130f))
+
 ## [1.5.0](https://github.com/griptape-ai/griptape/compare/v1.4.0...v1.5.0) (2025-03-13)
 
 
