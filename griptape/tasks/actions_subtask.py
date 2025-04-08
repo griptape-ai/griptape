@@ -5,7 +5,7 @@ import logging
 import re
 from typing import TYPE_CHECKING, Callable, Optional, Union
 
-from attrs import define, field
+from attrs import Factory, define, field
 
 from griptape import utils
 from griptape.artifacts import (
@@ -17,29 +17,41 @@ from griptape.artifacts import (
     ListArtifact,
     TextArtifact,
 )
-from griptape.common import ToolAction
+from griptape.common import PromptStack, ToolAction
 from griptape.configs import Defaults
 from griptape.events import EventBus, FinishActionsSubtaskEvent, StartActionsSubtaskEvent
 from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMixin
-from griptape.tasks import BaseTask
+from griptape.tasks.base_subtask import BaseSubtask
 from griptape.tools.structured_output.tool import StructuredOutputTool
-from griptape.utils import remove_null_values_in_dict_recursively, with_contextvars
+from griptape.utils import J2, remove_null_values_in_dict_recursively, with_contextvars
 
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
+    from griptape.tasks import BaseTask
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
+class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
 
+    RESPONSE_STOP_SEQUENCE = "<|Response|>"
+
     thought: Optional[str] = field(default=None, kw_only=True)
     actions: list[ToolAction] = field(factory=list, kw_only=True)
     output: Optional[BaseArtifact] = field(default=None, init=False)
+    generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
+        default=Factory(lambda self: self.default_generate_assistant_subtask_template, takes_self=True),
+        kw_only=True,
+    )
+    generate_user_subtask_template: Callable[[ActionsSubtask], str] = field(
+        default=Factory(lambda self: self.default_generate_user_subtask_template, takes_self=True),
+        kw_only=True,
+    )
+    response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
     _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
@@ -55,36 +67,8 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
     def input(self, value: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact]) -> None:
         self._input = value
 
-    @property
-    def origin_task(self) -> BaseTask:
-        if self._origin_task is not None:
-            return self._origin_task
-        raise Exception("ActionSubtask has no origin task.")
-
-    @property
-    def parents(self) -> list[BaseTask]:
-        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
-            return [self.origin_task.find_subtask(parent_id) for parent_id in self.parent_ids]
-        raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
-
-    @property
-    def children(self) -> list[BaseTask]:
-        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
-            return [self.origin_task.find_subtask(child_id) for child_id in self.child_ids]
-        raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
-
-    def add_child(self, child: BaseTask) -> BaseTask:
-        if child.id not in self.child_ids:
-            self.child_ids.append(child.id)
-        return child
-
-    def add_parent(self, parent: BaseTask) -> BaseTask:
-        if parent.id not in self.parent_ids:
-            self.parent_ids.append(parent.id)
-        return parent
-
     def attach_to(self, parent_task: BaseTask) -> None:
-        self._origin_task = parent_task
+        super().attach_to(parent_task)
         self.structure = parent_task.structure
 
         task_input = self.input
@@ -122,7 +106,7 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
         )
 
         parts = [
-            f"Subtask {self.id}",
+            f"{self.__class__.__name__} {self.id}",
             *([f"\nThought: {self.thought}"] if self.thought else []),
             f"\nActions: {self.actions_to_json()}",
         ]
@@ -185,7 +169,7 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
                 subtask_actions=self.actions_to_dicts(),
             ),
         )
-        logger.info("Subtask %s\nResponse: %s", self.id, response)
+        logger.info("%s %s\nResponse: %s", self.__class__.__name__, self.id, response)
 
     def actions_to_dicts(self) -> list[dict]:
         json_list = []
@@ -211,6 +195,56 @@ class ActionsSubtask(BaseTask[Union[ListArtifact, ErrorArtifact]]):
 
     def actions_to_json(self) -> str:
         return json.dumps(self.actions_to_dicts(), indent=2)
+
+    def add_to_prompt_stack(self, stack: PromptStack) -> None:
+        from griptape.tasks import PromptTask
+
+        if isinstance(self.origin_task, PromptTask) and self.origin_task.prompt_driver.use_native_tools:
+            action_calls = [
+                ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
+                for action in self.actions
+            ]
+            action_results = [
+                ToolAction(
+                    name=action.name,
+                    path=action.path,
+                    tag=action.tag,
+                    output=action.output if action.output is not None else self.output,
+                )
+                for action in self.actions
+            ]
+
+            stack.add_assistant_message(
+                ListArtifact(
+                    [
+                        *([TextArtifact(self.thought)] if self.thought else []),
+                        *[ActionArtifact(a) for a in action_calls],
+                    ],
+                ),
+            )
+            stack.add_user_message(
+                ListArtifact(
+                    [
+                        *[ActionArtifact(a) for a in action_results],
+                        *([] if self.output else [TextArtifact("Please keep going")]),
+                    ],
+                ),
+            )
+        else:
+            stack.add_assistant_message(self.generate_assistant_subtask_template(self))
+            stack.add_user_message(self.generate_user_subtask_template(self))
+
+    def default_generate_assistant_subtask_template(self, subtask: ActionsSubtask) -> str:
+        return J2("tasks/prompt_task/assistant_actions_subtask.j2").render(
+            stop_sequence=self.response_stop_sequence,
+            subtask=subtask,
+        )
+
+    def default_generate_user_subtask_template(self, subtask: ActionsSubtask) -> str:
+        return J2("tasks/prompt_task/user_actions_subtask.j2").render(
+            stop_sequence=self.response_stop_sequence,
+            subtask=subtask,
+        )
 
     def _process_task_input(
         self,
