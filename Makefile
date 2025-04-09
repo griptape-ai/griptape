@@ -9,7 +9,6 @@ install/core: ## Install core dependencies.
 .PHONY: install/all
 install/all: ## Install all dependencies.
 	@uv sync --all-groups --all-extras
-	@uv run pre-commit install
 
 .PHONY: install/dev
 install/dev: ## Install dev dependencies.
