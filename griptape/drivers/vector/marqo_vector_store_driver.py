@@ -201,7 +201,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             "filter_string": f"namespace:{namespace}" if namespace else None,
         } | kwargs
 
-        results = self.client.index(self.index).search(query, **params)
+        results = self.client.index(self.index).search(str(query), **params)
         return self.__process_results(results, include_vectors=include_vectors)
 
     def delete_index(self, name: str) -> dict[str, Any]:

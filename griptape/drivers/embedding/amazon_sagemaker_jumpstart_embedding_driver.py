@@ -11,7 +11,7 @@ from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
-    from mypy_boto3_sagemaker import SageMakerClient
+    from mypy_boto3_sagemaker_runtime import SageMakerRuntimeClient
 
 
 @define
@@ -20,12 +20,12 @@ class AmazonSageMakerJumpstartEmbeddingDriver(BaseEmbeddingDriver):
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
     inference_component_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _client: Optional[SageMakerClient] = field(
+    _client: Optional[SageMakerRuntimeClient] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> SageMakerClient:
+    def client(self) -> SageMakerRuntimeClient:
         return self.session.client("sagemaker-runtime")
 
     def try_embed_chunk(self, chunk: str) -> list[float]:
