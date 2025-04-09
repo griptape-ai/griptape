@@ -26,8 +26,8 @@ class ExaWebSearchDriver(BaseWebSearchDriver):
         return import_optional_dependency("exa_py").Exa(api_key=self.api_key)
 
     def search(self, query: str, **kwargs) -> ListArtifact[JsonArtifact]:
-        response = self.client.search_and_contents(
-            highlights=self.highlights,
+        response = self.client.search_and_contents(  # pyright: ignore[reportCallIssue]
+            highlights=self.highlights,  # pyright: ignore[reportArgumentType]
             use_autoprompt=self.use_autoprompt,
             query=query,
             num_results=self.results_count,
