@@ -3,7 +3,7 @@ from __future__ import annotations
 import functools
 import inspect
 from collections import OrderedDict
-from typing import Any, Callable, Optional, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Callable, Optional, TypeVar, cast
 
 import schema
 from pydantic import BaseModel
@@ -63,7 +63,7 @@ def lazy_property(attr_name: Optional[str] = None) -> Callable[[Callable[P, R]],
         def wrapper(self: Any, value: Any) -> None:
             setattr(self, actual_attr_name, value)
 
-        return cast(R, wrapper)
+        return cast("R", wrapper)
 
     return decorator
 

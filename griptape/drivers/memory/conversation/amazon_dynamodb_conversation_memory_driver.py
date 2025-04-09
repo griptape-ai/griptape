@@ -45,7 +45,7 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
         response = self.table.get_item(Key=self._get_key())
 
         if "Item" in response and self.value_attribute_key in response["Item"]:
-            memory_dict = json.loads(response["Item"][self.value_attribute_key])
+            memory_dict = json.loads(str(response["Item"][self.value_attribute_key]))
             return self._from_params_dict(memory_dict)
         return [], {}
 
