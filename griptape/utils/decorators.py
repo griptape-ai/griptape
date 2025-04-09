@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import functools
 import inspect
-from typing import TYPE_CHECKING, Any, Callable, Optional, cast
+from collections import OrderedDict
+from typing import TYPE_CHECKING, Any, Callable, Optional, TypeVar, cast
 
 import schema
 from pydantic import BaseModel
 from schema import Schema
+from typing_extensions import ParamSpec
 
 if TYPE_CHECKING:
     from collections import OrderedDict
@@ -19,6 +21,9 @@ CONFIG_SCHEMA = Schema(
         or (isinstance(data, type) and issubclass(data, BaseModel)),
     }
 )
+
+P = ParamSpec("P")
+R = TypeVar("R")
 
 
 def activity(config: dict) -> Any:
@@ -43,22 +48,22 @@ def activity(config: dict) -> Any:
     return decorator
 
 
-def lazy_property(attr_name: Optional[str] = None) -> Callable[[Callable[[Any], Any]], property]:
-    def decorator(func: Callable[[Any], Any]) -> property:
+def lazy_property(attr_name: Optional[str] = None) -> Callable[[Callable[P, R]], R]:
+    def decorator(func: Callable[P, R]) -> R:
         actual_attr_name = f"_{func.__name__}" if attr_name is None else attr_name
 
         @property
         @functools.wraps(func)
-        def lazy_attr(self: Any) -> Any:
+        def wrapper(self: Any) -> R:
             if getattr(self, actual_attr_name) is None:
-                setattr(self, actual_attr_name, func(self))
+                setattr(self, actual_attr_name, func(self))  # pyright: ignore[reportCallIssue]
             return getattr(self, actual_attr_name)
 
-        @lazy_attr.setter
-        def lazy_attr(self: Any, value: Any) -> None:
+        @wrapper.setter
+        def wrapper(self: Any, value: Any) -> None:
             setattr(self, actual_attr_name, value)
 
-        return lazy_attr
+        return cast("R", wrapper)
 
     return decorator
 

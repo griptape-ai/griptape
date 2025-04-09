@@ -34,7 +34,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         )
 
     @lazy_property()
-    def index(self) -> pinecone.Index:
+    def index(self) -> pinecone.data.index.Index:
         return self.client.Index(self.index_name)
 
     def upsert_vector(
@@ -49,12 +49,12 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
 
         params: dict[str, Any] = {"namespace": namespace} | kwargs
 
-        self.index.upsert(vectors=[(vector_id, vector, meta)], **params)
+        self.index.upsert(vectors=[(vector_id, vector, meta)], **params)  # pyright: ignore[reportArgumentType]
 
         return vector_id
 
     def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
-        result = self.index.fetch(ids=[vector_id], namespace=namespace).to_dict()
+        result = self.index.fetch(ids=[vector_id], namespace=namespace).to_dict()  # pyright: ignore[reportAttributeAccessIssue]
         vectors = list(result["vectors"].values())
 
         if len(vectors) > 0:
@@ -85,9 +85,9 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
                 id=r["id"],
                 vector=r["values"],
                 meta=r["metadata"],
-                namespace=results["namespace"],
+                namespace=results["namespace"],  # pyright: ignore[reportIndexIssue]
             )
-            for r in results["matches"]
+            for r in results["matches"]  # pyright: ignore[reportIndexIssue]
         ]
 
     def query_vector(
@@ -115,9 +115,9 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
                 vector=r["values"],
                 score=r["score"],
                 meta=r["metadata"],
-                namespace=results["namespace"],
+                namespace=results["namespace"],  # pyright: ignore[reportIndexIssue]
             )
-            for r in results["matches"]
+            for r in results["matches"]  # pyright: ignore[reportIndexIssue]
         ]
 
     def delete_vector(self, vector_id: str) -> NoReturn:

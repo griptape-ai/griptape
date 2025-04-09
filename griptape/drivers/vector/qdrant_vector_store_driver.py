@@ -123,12 +123,13 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         # Convert results to QueryResult objects
         return [
             BaseVectorStoreDriver.Entry(
-                id=result.id,
-                vector=result.vector if include_vectors else [],
+                id=str(result.id),
+                vector=result.vector if include_vectors else [],  # pyright: ignore[reportArgumentType]
                 score=result.score,
                 meta={k: v for k, v in result.payload.items() if k not in ["_score", "_tensor_facets"]},
             )
             for result in results
+            if result.payload is not None
         ]
 
     def upsert_vector(
@@ -184,9 +185,11 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         results = self.client.retrieve(collection_name=self.collection_name, ids=[vector_id])
         if results:
             entry = results[0]
+            if entry.payload is None:
+                entry.payload = {}
             return BaseVectorStoreDriver.Entry(
-                id=entry.id,
-                vector=entry.vector,
+                id=str(entry.id),
+                vector=entry.vector if entry.vector is not None else [],  # pyright: ignore[reportArgumentType]
                 meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
             )
         return None
@@ -209,9 +212,10 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
 
         return [
             BaseVectorStoreDriver.Entry(
-                id=entry.id,
-                vector=entry.vector if kwargs.get("with_vectors", True) else [],
+                id=str(entry.id),
+                vector=entry.vector if kwargs.get("with_vectors", True) else [],  # pyright: ignore[reportArgumentType]
                 meta={k: v for k, v in entry.payload.items() if k not in ["_score", "_tensor_facets"]},
             )
             for entry in results
+            if entry.payload is not None
         ]
