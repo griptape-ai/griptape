@@ -85,8 +85,8 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         """
         key = self._generate_key(vector_id, namespace)
         result = self.client.hgetall(key)
-        vector = np.frombuffer(result[b"vector"], dtype=np.float32).tolist()
-        meta = json.loads(result[b"metadata"]) if b"metadata" in result else None
+        vector = np.frombuffer(result[b"vector"], dtype=np.float32).tolist()  # pyright: ignore[reportIndexIssue] https://github.com/redis/redis-py/issues/2399
+        meta = json.loads(result[b"metadata"]) if b"metadata" in result else None  # pyright: ignore[reportIndexIssue, reportOperatorIssue]
 
         return BaseVectorStoreDriver.Entry(id=vector_id, meta=meta, vector=vector, namespace=namespace)
 
@@ -100,7 +100,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         keys = self.client.keys(pattern)
 
         entries = []
-        for key in keys:
+        for key in keys:  # pyright: ignore[reportGeneralTypeIssues] https://github.com/redis/redis-py/issues/2399
             entry = self.load_entry(key.decode("utf-8"), namespace=namespace)
             if entry:
                 entries.append(entry)
@@ -136,7 +136,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         query_params = {"vector": np.array(vector, dtype=np.float32).tobytes()}
 
-        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore[reportArgumentType]
+        results = self.client.ft(self.index).search(query_expression, query_params).docs  # pyright: ignore[reportArgumentType, reportAttributeAccessIssue]
 
         query_results = []
         for document in results:

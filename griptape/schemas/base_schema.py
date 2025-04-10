@@ -335,8 +335,8 @@ class BaseSchema(Schema):
                 "Anthropic": import_optional_dependency("anthropic").Anthropic
                 if is_dependency_installed("anthropic")
                 else Any,
-                "BedrockClient": import_optional_dependency("mypy_boto3_bedrock").BedrockClient
-                if is_dependency_installed("mypy_boto3_bedrock")
+                "BedrockRuntimeClient": import_optional_dependency("mypy_boto3_bedrock_runtime").BedrockRuntimeClient
+                if is_dependency_installed("mypy_boto3_bedrock_runtime")
                 else Any,
                 "voyageai": import_optional_dependency("voyageai") if is_dependency_installed("voyageai") else Any,
                 "Schema": Schema,

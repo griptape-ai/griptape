@@ -10,8 +10,11 @@ from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
+    from collections.abc import Sequence
+
     import boto3
     from mypy_boto3_sqs import SQSClient
+    from mypy_boto3_sqs.type_defs import SendMessageBatchRequestEntryTypeDef
 
 
 @define
@@ -28,7 +31,7 @@ class AmazonSqsEventListenerDriver(BaseEventListenerDriver):
         self.client.send_message(QueueUrl=self.queue_url, MessageBody=json.dumps(event_payload))
 
     def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None:
-        entries = [
+        entries: Sequence[SendMessageBatchRequestEntryTypeDef] = [
             {"Id": str(event_payload["id"]), "MessageBody": json.dumps(event_payload)}
             for event_payload in event_payload_batch
         ]

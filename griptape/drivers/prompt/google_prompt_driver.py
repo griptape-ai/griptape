@@ -4,7 +4,8 @@ import json
 import logging
 from typing import TYPE_CHECKING, Optional
 
-from attrs import Attribute, Factory, define, field
+from attrs import Factory, define, field
+from pydantic import BaseModel
 
 from griptape.artifacts import ActionArtifact, TextArtifact
 from griptape.common import (
@@ -32,9 +33,8 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from google.generativeai.generative_models import GenerativeModel
-    from google.generativeai.protos import Part
-    from google.generativeai.types import ContentDict, ContentsType, GenerateContentResponse
+    from google.genai import Client
+    from google.genai.types import Content, ContentDict, GenerateContentResponse, Part, Tool
 
     from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tools import BaseTool
@@ -64,123 +64,114 @@ class GooglePromptDriver(BasePromptDriver):
     top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     structured_output_strategy: StructuredOutputStrategy = field(
-        default="tool", kw_only=True, metadata={"serializable": True}
+        default="native", kw_only=True, metadata={"serializable": True}
     )
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
-    _client: Optional[GenerativeModel] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
 
-    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
-        if value == "native":
-            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
-
-        return value
+    _client: Client = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
-    def client(self) -> GenerativeModel:
-        genai = import_optional_dependency("google.generativeai")
-        genai.configure(api_key=self.api_key)
-
-        return genai.GenerativeModel(self.model)
+    def client(self) -> Client:
+        genai = import_optional_dependency("google.genai")
+        return genai.Client(api_key=self.api_key)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        messages = self.__to_google_messages(prompt_stack)
         params = self._base_params(prompt_stack)
-        logging.debug((messages, params))
-        response: GenerateContentResponse = self.client.generate_content(messages, **params)
-        logging.debug(response.to_dict())
+        logging.debug(params)
+        response = self.client.models.generate_content(**params)
+        logging.debug(response.model_dump())
 
         usage_metadata = response.usage_metadata
 
         return Message(
-            content=[self.__to_prompt_stack_message_content(part) for part in response.parts],
+            content=self.__to_prompt_stack_message_content(response),
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(
-                input_tokens=usage_metadata.prompt_token_count,
-                output_tokens=usage_metadata.candidates_token_count,
+                input_tokens=usage_metadata.prompt_token_count if usage_metadata else None,
+                output_tokens=usage_metadata.candidates_token_count if usage_metadata else None,
             ),
         )
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        messages = self.__to_google_messages(prompt_stack)
-        params = {**self._base_params(prompt_stack), "stream": True}
-        logging.debug((messages, params))
-        response: GenerateContentResponse = self.client.generate_content(
-            messages,
-            **params,
-        )
+        params = self._base_params(prompt_stack)
+        logging.debug(params)
+        response = self.client.models.generate_content_stream(**params)
 
         prompt_token_count = None
         for chunk in response:
-            logger.debug(chunk.to_dict())
+            logger.debug(chunk.model_dump())
             usage_metadata = chunk.usage_metadata
 
-            content = self.__to_prompt_stack_delta_message_content(chunk.parts[0]) if chunk.parts else None
+            content = self.__to_prompt_stack_delta_message_content(chunk)
             # Only want to output the prompt token count once since it is static each chunk
             if prompt_token_count is None:
-                prompt_token_count = usage_metadata.prompt_token_count
                 yield DeltaMessage(
                     content=content,
                     usage=DeltaMessage.Usage(
-                        input_tokens=usage_metadata.prompt_token_count,
-                        output_tokens=usage_metadata.candidates_token_count,
+                        input_tokens=usage_metadata.prompt_token_count if usage_metadata else None,
+                        output_tokens=usage_metadata.candidates_token_count if usage_metadata else None,
                     ),
                 )
             else:
                 yield DeltaMessage(
                     content=content,
-                    usage=DeltaMessage.Usage(output_tokens=usage_metadata.candidates_token_count),
+                    usage=DeltaMessage.Usage(
+                        output_tokens=usage_metadata.candidates_token_count if usage_metadata else None
+                    ),
                 )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
-        types = import_optional_dependency("google.generativeai.types")
-        protos = import_optional_dependency("google.generativeai.protos")
+        types = import_optional_dependency("google.genai.types")
 
         system_messages = prompt_stack.system_messages
+        system_instruction = None
         if system_messages:
-            self.client._system_instruction = types.ContentDict(
-                role="system",
-                parts=[protos.Part(text=system_message.to_text()) for system_message in system_messages],
-            )
+            system_instruction = "".join([system_message.to_text() for system_message in system_messages])
 
         params = {
-            "generation_config": types.GenerationConfig(
-                **{
-                    # For some reason, providing stop sequences when streaming breaks native functions
-                    # https://github.com/google-gemini/generative-ai-python/issues/446
-                    "stop_sequences": [] if self.stream and self.use_native_tools else self.tokenizer.stop_sequences,
-                    "max_output_tokens": self.max_tokens,
-                    "temperature": self.temperature,
-                    "top_p": self.top_p,
-                    "top_k": self.top_k,
-                    **self.extra_params,
-                },
-            ),
+            "model": self.model,
+            "contents": self.__to_google_messages(prompt_stack),
         }
 
+        config = {
+            "stop_sequences": [] if self.use_native_tools else self.tokenizer.stop_sequences,
+            "max_output_tokens": self.max_tokens,
+            "temperature": self.temperature,
+            "top_p": self.top_p,
+            "top_k": self.top_k,
+            "system_instruction": system_instruction,
+            "automatic_function_calling": types.AutomaticFunctionCallingConfig(disable=True),
+            **self.extra_params,
+        }
+
+        if (
+            self.structured_output_strategy == "native"
+            and isinstance(prompt_stack.output_schema, type)
+            and issubclass(prompt_stack.output_schema, BaseModel)
+        ):
+            config["response_schema"] = prompt_stack.output_schema
+
         if prompt_stack.tools and self.use_native_tools:
-            params["tool_config"] = {"function_calling_config": {"mode": self.tool_choice}}
+            config["tool_config"] = {"function_calling_config": {"mode": self.tool_choice}}
 
             if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
-                params["tool_config"]["function_calling_config"]["mode"] = "auto"
+                config["tool_config"]["function_calling_config"]["mode"] = "auto"
 
-            params["tools"] = self.__to_google_tools(prompt_stack.tools)
+            config["tools"] = self.__to_google_tools(prompt_stack.tools)
+
+        params["config"] = types.GenerateContentConfig(**config)
 
         return params
 
-    def __to_google_messages(self, prompt_stack: PromptStack) -> ContentsType:
-        types = import_optional_dependency("google.generativeai.types")
+    def __to_google_messages(self, prompt_stack: PromptStack) -> list[Content]:
+        types = import_optional_dependency("google.genai.types")
 
         return [
-            types.ContentDict(
-                {
-                    "role": self.__to_google_role(message),
-                    "parts": [self.__to_google_message_content(content) for content in message.content],
-                },
+            types.Content(
+                role=self.__to_google_role(message),
+                parts=[self.__to_google_message_content(content) for content in message.content],
             )
             for message in prompt_stack.messages
             if not message.is_system()
@@ -191,8 +182,8 @@ class GooglePromptDriver(BasePromptDriver):
             return "model"
         return "user"
 
-    def __to_google_tools(self, tools: list[BaseTool]) -> list[dict]:
-        types = import_optional_dependency("google.generativeai.types")
+    def __to_google_tools(self, tools: list[BaseTool]) -> list[Tool]:
+        types = import_optional_dependency("google.genai.types")
 
         tool_declarations = []
         for tool in tools:
@@ -203,7 +194,7 @@ class GooglePromptDriver(BasePromptDriver):
                     schema = schema["properties"]["values"]
 
                 schema = remove_key_in_dict_recursively(schema, "additionalProperties")
-                tool_declaration = types.FunctionDeclaration(
+                function_declaration = types.FunctionDeclaration(
                     name=tool.to_native_tool_name(activity),
                     description=tool.activity_description(activity),
                     **(
@@ -218,67 +209,69 @@ class GooglePromptDriver(BasePromptDriver):
                         else {}
                     ),
                 )
+                google_tool = types.Tool(function_declarations=[function_declaration])
 
-                tool_declarations.append(tool_declaration)
+                tool_declarations.append(google_tool)
 
         return tool_declarations
 
     def __to_google_message_content(self, content: BaseMessageContent) -> ContentDict | Part | str:
-        types = import_optional_dependency("google.generativeai.types")
-        protos = import_optional_dependency("google.generativeai.protos")
+        types = import_optional_dependency("google.genai.types")
 
         if isinstance(content, TextMessageContent):
-            return content.artifact.to_text()
+            return types.Part.from_text(text=content.artifact.to_text())
         if isinstance(content, ImageMessageContent):
-            return types.ContentDict(mime_type=content.artifact.mime_type, data=content.artifact.value)
+            return types.Part.from_bytes(mime_type=content.artifact.mime_type, data=content.artifact.value)
         if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
-            return protos.Part(function_call=protos.FunctionCall(name=action.tag, args=action.input))
+            return types.Part(function_call=types.FunctionCall(name=action.tag, args=action.input))
         if isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
-            return protos.Part(
-                function_response=protos.FunctionResponse(
+            return types.Part(
+                function_response=types.FunctionResponse(
                     name=content.action.to_native_tool_name(),
                     response=artifact.to_dict(),
                 ),
             )
         if isinstance(content, GenericMessageContent):
-            return content.artifact.value
+            file = content.artifact.value
+            return types.Part.from_uri(file_uri=file.uri, mime_type=file.mime_type)
         raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
 
-    def __to_prompt_stack_message_content(self, content: Part) -> BaseMessageContent:
-        json_format = import_optional_dependency("google.protobuf.json_format")
-
+    def __to_prompt_stack_message_content(self, content: GenerateContentResponse) -> list[BaseMessageContent]:
         if content.text:
-            return TextMessageContent(TextArtifact(content.text))
-        if content.function_call:
-            function_call = content.function_call
+            return [TextMessageContent(TextArtifact(content.text))]
+        if content.function_calls:
+            return [
+                ActionCallMessageContent(
+                    ActionArtifact(
+                        ToolAction(
+                            tag=function_call.name,
+                            name=ToolAction.from_native_tool_name(function_call.name)[0],
+                            path=ToolAction.from_native_tool_name(function_call.name)[1],
+                            input=function_call.args or {},
+                        ),
+                    ),
+                )
+                for function_call in content.function_calls
+                if function_call.name
+            ]
 
-            name, path = ToolAction.from_native_tool_name(function_call.name)
+        return []
 
-            args = json_format.MessageToDict(function_call._pb).get("args", {})
-            return ActionCallMessageContent(
-                artifact=ActionArtifact(value=ToolAction(tag=function_call.name, name=name, path=path, input=args)),
-            )
-        raise ValueError(f"Unsupported message content type {content}")
-
-    def __to_prompt_stack_delta_message_content(self, content: Part) -> BaseDeltaMessageContent:
-        json_format = import_optional_dependency("google.protobuf.json_format")
-
+    def __to_prompt_stack_delta_message_content(self, content: GenerateContentResponse) -> BaseDeltaMessageContent:
         if content.text:
             return TextDeltaMessageContent(content.text)
-        if content.function_call:
-            function_call = content.function_call
+        if content.function_calls:
+            function_call = content.function_calls[0]
 
-            name, path = ToolAction.from_native_tool_name(function_call.name)
-
-            args = json_format.MessageToDict(function_call._pb).get("args", {})
+            args = function_call.args
             return ActionCallDeltaMessageContent(
                 tag=function_call.name,
-                name=name,
-                path=path,
-                partial_input=json.dumps(args),
+                name=ToolAction.from_native_tool_name(function_call.name)[0] if function_call.name else None,
+                path=ToolAction.from_native_tool_name(function_call.name)[1] if function_call.name else None,
+                partial_input=json.dumps(args) if args else None,
             )
         raise ValueError(f"Unsupported message content type {content}")

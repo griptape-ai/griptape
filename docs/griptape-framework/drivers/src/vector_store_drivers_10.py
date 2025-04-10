@@ -1,5 +1,7 @@
 import os
 
+from qdrant_client.http.models import Distance, VectorParams
+
 from griptape.chunkers import TextChunker
 from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
 from griptape.drivers.vector.qdrant import QdrantVectorStoreDriver
@@ -27,7 +29,7 @@ chunks = TextChunker(max_tokens=100).chunk(artifact)
 # Recreate Qdrant collection
 vector_store_driver.client.recreate_collection(
     collection_name=vector_store_driver.collection_name,
-    vectors_config={"size": 1536, "distance": vector_store_driver.distance},
+    vectors_config=VectorParams(size=1536, distance=Distance.COSINE),
 )
 
 # Upsert Artifacts into the Vector Store Driver

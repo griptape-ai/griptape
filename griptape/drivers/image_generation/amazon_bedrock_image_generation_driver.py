@@ -12,7 +12,7 @@ from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
     import boto3
-    from mypy_boto3_bedrock import BedrockClient
+    from mypy_boto3_bedrock_runtime import BedrockRuntimeClient
 
 
 @define
@@ -32,12 +32,12 @@ class AmazonBedrockImageGenerationDriver(BaseMultiModelImageGenerationDriver):
     image_width: int = field(default=512, kw_only=True, metadata={"serializable": True})
     image_height: int = field(default=512, kw_only=True, metadata={"serializable": True})
     seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _client: Optional[BedrockClient] = field(
+    _client: Optional[BedrockRuntimeClient] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> BedrockClient:
+    def client(self) -> BedrockRuntimeClient:
         return self.session.client("bedrock-runtime")
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
