@@ -21,5 +21,5 @@ class TestModelArtifact:
 
     def test_deserialization(self, model_artifact):
         artifact_dict = model_artifact.to_dict()
-        with pytest.raises(NotImplementedError):
-            BaseArtifact.from_dict(artifact_dict)
+        model = BaseArtifact.from_dict(artifact_dict)
+        assert isinstance(model, ModelArtifact)
