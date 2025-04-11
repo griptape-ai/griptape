@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
 from marshmallow import fields
-
-if TYPE_CHECKING:
-    from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 
 
 class PydanticModel(fields.Field):
@@ -14,8 +12,5 @@ class PydanticModel(fields.Field):
             return None
         return value.model_dump()
 
-    def _deserialize(self, value: dict, attr: Any, data: Any, **kwargs) -> dict:
-        # Not implemented as it is non-trivial to deserialize json back into a model
-        # since we need to know the model class to instantiate it.
-        # Would rather not implement right now rather than implement incorrectly.
-        raise NotImplementedError("Model fields cannot be deserialized directly.")
+    def _deserialize(self, value: dict, attr: Any, data: Any, **kwargs) -> BaseModel:
+        return RootModel(value)
