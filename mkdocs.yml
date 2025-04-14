@@ -201,3 +201,4 @@ nav:
               - RAG with Astra DB vector store: "recipes/query-webpage-astra-db.md"
   - Framework Reference: "reference/"
   - Trade School: "https://learn.griptape.ai"
+  - Nodes: "https://docs.griptapenodes.com"
