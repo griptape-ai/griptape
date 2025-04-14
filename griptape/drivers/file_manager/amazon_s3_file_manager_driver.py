@@ -12,6 +12,7 @@ from .base_file_manager_driver import BaseFileManagerDriver
 if TYPE_CHECKING:
     import boto3
     from mypy_boto3_s3 import S3Client
+    from mypy_boto3_s3.type_defs import PaginatorConfigTypeDef
 
 
 @define
@@ -98,7 +99,7 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
 
     def _list_files_and_dirs(self, full_key: str, **kwargs) -> list[str]:
         max_items = kwargs.get("max_items")
-        pagination_config = {}
+        pagination_config: PaginatorConfigTypeDef = {}
         if max_items is not None:
             pagination_config["MaxItems"] = max_items
 
@@ -112,12 +113,12 @@ class AmazonS3FileManagerDriver(BaseFileManagerDriver):
         files_and_dirs = []
         for page in pages:
             for obj in page.get("CommonPrefixes", []):
-                prefix = obj.get("Prefix")
+                prefix = obj.get("Prefix", "")
                 directory = prefix[len(full_key) :].rstrip("/")
                 files_and_dirs.append(directory)
 
             for obj in page.get("Contents", []):
-                key = obj.get("Key")
+                key = obj.get("Key", "")
                 file = key[len(full_key) :]
                 files_and_dirs.append(file)
         return files_and_dirs

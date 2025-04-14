@@ -72,7 +72,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         if self.database_credentials_secret_arn:
             function_kwargs["SecretArn"] = self.database_credentials_secret_arn
 
-        response = self.client.execute_statement(**function_kwargs)
+        response = self.client.execute_statement(**function_kwargs)  # pyright: ignore[reportArgumentType]
         response_id = response["Id"]
 
         statement = self.client.describe_statement(Id=response_id)
@@ -92,7 +92,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
                 )
                 results = results + response.get("Records", [])
 
-            return self._post_process(statement_result["ColumnMetadata"], results)
+            return self._post_process(statement_result["ColumnMetadata"], results)  # pyright: ignore[reportArgumentType]
 
         if statement["Status"] in ["FAILED", "ABORTED"]:
             return None
@@ -110,5 +110,5 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
             function_kwargs["DbUser"] = self.db_user
         if self.database_credentials_secret_arn:
             function_kwargs["SecretArn"] = self.database_credentials_secret_arn
-        response = self.client.describe_table(**function_kwargs)
-        return str([col["name"] for col in response["ColumnList"]])
+        response = self.client.describe_table(**function_kwargs)  # pyright: ignore[reportArgumentType]
+        return str([col["name"] for col in response["ColumnList"] if "name" in col])

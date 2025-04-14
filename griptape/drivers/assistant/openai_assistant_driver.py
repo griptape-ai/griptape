@@ -59,19 +59,26 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
         )
 
     def try_run(self, *args: BaseArtifact) -> TextArtifact:
-        if self.thread_id is None and self.auto_create_thread:
-            self.thread_id = self.client.beta.threads.create().id
-        response = self._create_run(*args)
+        if self.thread_id is None:
+            if self.auto_create_thread:
+                thread_id = self.client.beta.threads.create().id
+                self.thread_id = thread_id
+            else:
+                raise ValueError("Thread ID is required but not provided and auto_create_thread is disabled.")
+        else:
+            thread_id = self.thread_id
+
+        response = self._create_run(thread_id, *args)
 
         response.meta.update({"assistant_id": self.assistant_id, "thread_id": self.thread_id})
 
         return response
 
-    def _create_run(self, *args: BaseArtifact) -> TextArtifact:
+    def _create_run(self, thread_id: str, *args: BaseArtifact) -> TextArtifact:
         content = "\n".join(arg.value for arg in args)
-        message_id = self.client.beta.threads.messages.create(thread_id=self.thread_id, role="user", content=content)
+        message_id = self.client.beta.threads.messages.create(thread_id=thread_id, role="user", content=content)
         with self.client.beta.threads.runs.stream(
-            thread_id=self.thread_id,
+            thread_id=thread_id,
             assistant_id=self.assistant_id,
             event_handler=self.event_handler,
         ) as stream:
@@ -80,7 +87,9 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
 
             message_contents = []
             for message in last_messages:
-                message_contents.append("".join(content.text.value for content in message.content))
+                message_contents.append(
+                    "".join(content.text.value for content in message.content if content.type == "TextContentBlock")
+                )
             message_text = "\n".join(message_contents)
 
             response = TextArtifact(message_text)

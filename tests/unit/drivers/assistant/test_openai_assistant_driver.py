@@ -16,8 +16,18 @@ class TestOpenAiAssistantDriver:
             event_handler,
             "get_final_messages",
             return_value=[
-                Mock(content=[Mock(text=Mock(value="foo")), Mock(text=Mock(value=" bar"))]),
-                Mock(content=[Mock(text=Mock(value="foo")), Mock(text=Mock(value=" bar"))]),
+                Mock(
+                    content=[
+                        Mock(type="TextContentBlock", text=Mock(value="foo")),
+                        Mock(type="TextContentBlock", text=Mock(value=" bar")),
+                    ]
+                ),
+                Mock(
+                    content=[
+                        Mock(type="TextContentBlock", text=Mock(value="foo")),
+                        Mock(type="TextContentBlock", text=Mock(value=" bar")),
+                    ]
+                ),
             ],
         )
         mocker.patch.object(event_handler, "until_done")
