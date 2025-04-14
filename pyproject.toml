@@ -1,6 +1,6 @@
 [project]
 name = "griptape"
-version = "1.6.0"
+version = "1.6.1"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = [{ name = "Griptape", email = "hello@griptape.ai" }]
 requires-python = "~=3.9"
