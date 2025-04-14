@@ -56,8 +56,10 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
 
     @lazy_property()
     def collection(self) -> astrapy.Collection:
+        if self.token is None:
+            raise ValueError("Astra DB token must be provided.")
         return self.client.get_database(
-            self.api_endpoint, token=self.token, namespace=self.astra_db_namespace
+            self.api_endpoint, token=self.token, keyspace=self.astra_db_namespace
         ).get_collection(self.collection_name)
 
     def delete_vector(self, vector_id: str) -> None:
@@ -96,7 +98,7 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
         """
         document = {
             k: v
-            for k, v in {"$vector": vector, "_id": vector_id, "namespace": namespace, "meta": meta}.items()
+            for k, v in {"$vector": vector, "_id": vector_id, "keyspace": namespace, "meta": meta}.items()
             if v is not None
         }
         if vector_id is not None:
@@ -115,11 +117,11 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             The vector entry (a `BaseVectorStoreDriver.Entry`) if found, otherwise None.
         """
-        find_filter = {k: v for k, v in {"_id": vector_id, "namespace": namespace}.items() if v is not None}
+        find_filter = {k: v for k, v in {"_id": vector_id, "keyspace": namespace}.items() if v is not None}
         match = self.collection.find_one(filter=find_filter, projection={"*": 1})
         if match is not None:
             return BaseVectorStoreDriver.Entry(
-                id=match["_id"], vector=match.get("$vector"), meta=match.get("meta"), namespace=match.get("namespace")
+                id=match["_id"], vector=match.get("$vector"), meta=match.get("meta"), namespace=match.get("keyspace")
             )
         return None
 
@@ -132,10 +134,10 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             A list of vector (`BaseVectorStoreDriver.Entry`) entries.
         """
-        find_filter: dict[str, str] = {} if namespace is None else {"namespace": namespace}
+        find_filter: dict[str, str] = {} if namespace is None else {"keyspace": namespace}
         return [
             BaseVectorStoreDriver.Entry(
-                id=match["_id"], vector=match.get("$vector"), meta=match.get("meta"), namespace=match.get("namespace")
+                id=match["_id"], vector=match.get("$vector"), meta=match.get("meta"), namespace=match.get("keyspace")
             )
             for match in self.collection.find(filter=find_filter, projection={"*": 1})
         ]
@@ -165,7 +167,7 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
             with their `score` attribute set to the vector similarity to the query.
         """
         query_filter: Optional[dict[str, Any]] = kwargs.get("filter")
-        find_filter_ns: dict[str, Any] = {} if namespace is None else {"namespace": namespace}
+        find_filter_ns: dict[str, Any] = {} if namespace is None else {"keyspace": namespace}
         find_filter = {**(query_filter or {}), **find_filter_ns}
         find_projection: Optional[dict[str, int]] = {"*": 1} if include_vectors else None
         ann_limit = count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
@@ -182,7 +184,7 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
                 vector=match.get("$vector"),
                 score=match["$similarity"],
                 meta=match.get("meta"),
-                namespace=match.get("namespace"),
+                namespace=match.get("keyspace"),
             )
             for match in matches
         ]

@@ -50,7 +50,7 @@ class TestAstraDbVectorStoreDriver:
             "_id": "doc_id",
             "$vector": [3.0, 2.0, 1.0],
             "meta": "doc_meta",
-            "namespace": "doc_namespace",
+            "keyspace": "doc_namespace",
             "$similarity": 10,
         }
 
@@ -60,7 +60,7 @@ class TestAstraDbVectorStoreDriver:
             id=one_document["_id"],
             vector=one_document["$vector"],
             meta=one_document["meta"],
-            namespace=one_document["namespace"],
+            namespace=one_document["keyspace"],
         )
 
     @pytest.fixture()
@@ -69,7 +69,7 @@ class TestAstraDbVectorStoreDriver:
             id=one_document["_id"],
             vector=one_document["$vector"],
             meta=one_document["meta"],
-            namespace=one_document["namespace"],
+            namespace=one_document["keyspace"],
             score=one_document["$similarity"],
         )
 
@@ -91,7 +91,7 @@ class TestAstraDbVectorStoreDriver:
         entry = driver.load_entry("vector_id", namespace="some_namespace")
         assert entry == one_entry
         mock_collection.return_value.find_one.assert_called_once_with(
-            filter={"_id": "vector_id", "namespace": "some_namespace"},
+            filter={"_id": "vector_id", "keyspace": "some_namespace"},
             projection={"*": 1},
         )
 
@@ -99,7 +99,7 @@ class TestAstraDbVectorStoreDriver:
         entry = driver.load_entry("vector_id", namespace="some_namespace")
         assert entry is None
         mock_collection_findnothing.return_value.find_one.assert_called_once_with(
-            filter={"_id": "vector_id", "namespace": "some_namespace"},
+            filter={"_id": "vector_id", "keyspace": "some_namespace"},
             projection={"*": 1},
         )
 
@@ -107,7 +107,7 @@ class TestAstraDbVectorStoreDriver:
         entries = driver.load_entries(namespace="some_namespace")
         assert entries == [one_entry]
         mock_collection.return_value.find.assert_called_once_with(
-            filter={"namespace": "some_namespace"},
+            filter={"keyspace": "some_namespace"},
             projection={"*": 1},
         )
 
@@ -115,7 +115,7 @@ class TestAstraDbVectorStoreDriver:
         entries1 = driver.query_vector([0.0, 0.5], count=999, namespace="some_namespace", include_vectors=True)
         assert entries1 == [one_query_entry]
         mock_collection.return_value.find.assert_called_once_with(
-            filter={"namespace": "some_namespace"},
+            filter={"keyspace": "some_namespace"},
             sort={"$vector": [0.0, 0.5]},
             limit=999,
             projection={"*": 1},
@@ -138,7 +138,7 @@ class TestAstraDbVectorStoreDriver:
         assert entries1 == [one_query_entry]
         query_vector = driver.embedding_driver.embed("some query")
         mock_collection.return_value.find.assert_called_once_with(
-            filter={"namespace": "some_namespace"},
+            filter={"keyspace": "some_namespace"},
             sort={"$vector": query_vector},
             limit=999,
             projection={"*": 1},
