@@ -58,7 +58,7 @@ Griptape can be installed via multiple methods. Below are two popular approaches
 1. Add Griptape as a dependency:
 
     ```bash
-    uv add griptape[all]
+    uv add "griptape[all]"
     ```
 
 1. A [virtual environment](https://docs.astral.sh/uv/pip/environments/#python-environments) will be automatically created. Activate it:
