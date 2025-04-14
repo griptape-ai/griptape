@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1](https://github.com/griptape-ai/griptape/compare/v1.6.0...v1.6.1) (2025-04-14)
+
+
+### Bug Fixes
+
+* implement pydantic model deserialization ([#1877](https://github.com/griptape-ai/griptape/issues/1877)) ([7345b49](https://github.com/griptape-ai/griptape/commit/7345b495febee1ac3b0d2b13048adbddc2c8156a))
+
 ## [1.6.0](https://github.com/griptape-ai/griptape/compare/v1.5.0...v1.6.0) (2025-04-08)
 
 
