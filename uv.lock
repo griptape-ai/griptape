@@ -190,18 +190,19 @@ wheels = [
 
 [[package]]
 name = "astrapy"
-version = "1.5.2"
+version = "2.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "deprecation" },
     { name = "httpx", extra = ["http2"] },
     { name = "pymongo" },
     { name = "toml" },
+    { name = "typing-extensions" },
     { name = "uuid6" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/29/cc/5996efd0598b97d44699f04b5c025080fb1665f30794010f06543f3322a7/astrapy-1.5.2.tar.gz", hash = "sha256:eaf703628b0d03891ae7c391ef04ff3aec1005837fdfa47c19f2ed4478c45a4a", size = 163233 }
+sdist = { url = "https://files.pythonhosted.org/packages/0c/c9/5c9488664f99f2b9738d8e4823f8a0474897f39a17c0676430f548834adb/astrapy-2.0.1.tar.gz", hash = "sha256:3a35ebd7af5c24f0abe400f9b2778dc5e8812c78ae247f97704be27e6cb9dc5a", size = 252460 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/db/48/684c270724bc3f8d12714556d201aa4610623da919505a6a09e56f50ef6a/astrapy-1.5.2-py3-none-any.whl", hash = "sha256:598b86de723727a11ec43e1c7fe682ecb42d63d37a94165fb08de41c20103f56", size = 177128 },
+    { url = "https://files.pythonhosted.org/packages/90/6d/1481615ec3b97e1b8c9058c43c804e02612642d5114a26812894e42fb9b4/astrapy-2.0.1-py3-none-any.whl", hash = "sha256:4fa37f2955e7543a29e78565833de0dc8e39316ccc2f66263a4665b5871b7739", size = 300495 },
 ]
 
 [[package]]
@@ -1521,7 +1522,7 @@ requires-dist = [
     { name = "anthropic", marker = "extra == 'drivers-prompt-amazon-bedrock'", specifier = ">=0.45.1" },
     { name = "anthropic", marker = "extra == 'drivers-prompt-anthropic'", specifier = ">=0.45.1" },
     { name = "astrapy", marker = "extra == 'all'", specifier = ">=1.4" },
-    { name = "astrapy", marker = "extra == 'drivers-vector-astra-db'", specifier = ">=1.4" },
+    { name = "astrapy", marker = "extra == 'drivers-vector-astra-db'", specifier = ">=2.0" },
     { name = "attrs", specifier = ">=24.3.0" },
     { name = "beautifulsoup4", marker = "extra == 'all'", specifier = ">=4.12.3" },
     { name = "beautifulsoup4", marker = "extra == 'drivers-web-scraper-markdownify'", specifier = ">=4.12.3" },
