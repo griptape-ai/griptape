@@ -2,7 +2,7 @@ import os
 
 from griptape.drivers.vector.pgai import PGAIKnowledgeBaseVectorStoreDriver
 
-# Astra DB secrets and connection parameters
+# PG.AI connection parameters
 connection_string = os.environ["PGAI_CONNECTION_STRING"]
 knowledge_base_name = os.environ["PGAI_KNOWLEDGE_BASE_NAME"]
 

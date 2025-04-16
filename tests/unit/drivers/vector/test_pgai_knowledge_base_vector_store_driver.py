@@ -1,9 +1,6 @@
-import uuid
-from typing import Any
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock
 
 import pytest
-from sqlalchemy import create_engine
 
 from griptape.drivers.vector.pgai import PGAIKnowledgeBaseVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
