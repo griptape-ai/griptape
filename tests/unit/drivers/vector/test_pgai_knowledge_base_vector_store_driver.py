@@ -1,6 +1,6 @@
+import json
 from unittest.mock import MagicMock
 
-import json
 import pytest
 
 from griptape.drivers.vector.pgai import PGAIKnowledgeBaseVectorStoreDriver
