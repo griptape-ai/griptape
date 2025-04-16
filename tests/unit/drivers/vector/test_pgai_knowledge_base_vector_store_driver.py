@@ -46,11 +46,13 @@ class TestPGAIKnowledgeBaseVectorVectorStoreDriver:
             engine=mock_engine, connection_string=self.connection_string, knowledge_base_name=self.knowledge_base_name
         )
 
-        result = driver.query("some query", include_vectors=True)
+        result = driver.query("some query")
 
         assert result[0].id == test_ids[0]
         assert result[1].id == test_ids[1]
-        assert result[0].meta and result[0].meta["artifact"]["value"] == test_values[0]
-        assert result[1].meta and result[1].meta["artifact"]["value"] == test_values[1]
+        assert result[0].meta
+        assert result[0].meta["artifact"]["value"] == test_values[0]
+        assert result[1].meta
+        assert result[1].meta["artifact"]["value"] == test_values[1]
         assert result[0].score == test_scores[0]
         assert result[1].score == test_scores[1]
