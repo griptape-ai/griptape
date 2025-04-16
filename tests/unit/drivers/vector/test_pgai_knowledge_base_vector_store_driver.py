@@ -49,9 +49,6 @@ class TestPGAIKnowledgeBaseVectorVectorStoreDriver:
 
         result = driver.query("some query")
 
-        print("BAKER")
-        print(result[0])
-
         assert result[0].id == str(test_ids[0])
         assert result[1].id == str(test_ids[1])
         assert result[0].meta
