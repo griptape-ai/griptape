@@ -49,6 +49,7 @@ from .vector.dummy import DummyVectorStoreDriver
 from .vector.qdrant import QdrantVectorStoreDriver
 from .vector.astradb import AstraDbVectorStoreDriver
 from .vector.griptape_cloud import GriptapeCloudVectorStoreDriver
+from .vector.pgai import PGAIKnowledgeBaseVectorStoreDriver
 
 from .sql import BaseSqlDriver
 from .sql.sql_driver import SqlDriver
@@ -226,6 +227,7 @@ __all__ = [
     "OpenTelemetryObservabilityDriver",
     "PerplexityPromptDriver",
     "PerplexityWebSearchDriver",
+    "PGAIKnowledgeBaseVectorStoreDriver",
     "PgVectorVectorStoreDriver",
     "PineconeVectorStoreDriver",
     "ProxyWebScraperDriver",
