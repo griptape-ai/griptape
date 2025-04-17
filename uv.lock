@@ -1563,7 +1563,7 @@ requires-dist = [
     { name = "markdownify", marker = "extra == 'drivers-web-scraper-markdownify'", specifier = ">=1.0.0" },
     { name = "marqo", marker = "extra == 'all'", specifier = ">=3.9.2" },
     { name = "marqo", marker = "extra == 'drivers-vector-marqo'", specifier = ">=3.9.2" },
-    { name = "marshmallow", specifier = ">=3.21.3" },
+    { name = "marshmallow", specifier = ">=3.21.3,<4" },
     { name = "marshmallow-enum", specifier = ">=1.5.1" },
     { name = "numpy", specifier = ">=1.26.4,<3" },
     { name = "ollama", marker = "extra == 'all'", specifier = ">=0.4.1" },
