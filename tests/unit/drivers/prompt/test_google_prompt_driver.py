@@ -1,8 +1,7 @@
 from unittest.mock import MagicMock, Mock
 
 import pytest
-from google.generativeai.protos import FunctionCall, FunctionResponse, Part
-from google.generativeai.types import ContentDict, GenerationConfig
+from google.genai.types import ContentDict, FunctionCall, FunctionResponse, GenerationConfig, Part
 from google.protobuf.json_format import MessageToDict
 from schema import Schema
 
@@ -51,7 +50,7 @@ class TestGooglePromptDriver:
 
     @pytest.fixture()
     def mock_generative_model(self, mocker):
-        mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
+        mock_generative_model = mocker.patch("google.genai.Client")
         mocker.patch("google.protobuf.json_format.MessageToDict").return_value = {
             "args": {"foo": "bar"},
         }
@@ -60,10 +59,8 @@ class TestGooglePromptDriver:
         )
         mock_function_call.name = "MockTool_test"
         mock_generative_model.return_value.generate_content.return_value = Mock(
-            parts=[
-                Mock(text="model-output", function_call=None),
-                MagicMock(name="foo", text=None, function_call=mock_function_call),
-            ],
+            text="model-output",
+            function_calls=[mock_function_call],
             usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=10),
         )
 
@@ -71,7 +68,7 @@ class TestGooglePromptDriver:
 
     @pytest.fixture()
     def mock_stream_generative_model(self, mocker):
-        mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
+        mock_generative_model = mocker.patch("google.genai.Client")
         mocker.patch("google.protobuf.json_format.MessageToDict").return_value = {
             "args": {"foo": "bar"},
         }
@@ -82,15 +79,17 @@ class TestGooglePromptDriver:
         mock_generative_model.return_value.generate_content.return_value = iter(
             [
                 MagicMock(
-                    parts=[MagicMock(text="model-output")],
+                    text="model-output",
+                    function_calls=[],
                     usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
                 ),
                 MagicMock(
-                    parts=[MagicMock(text=None, function_call=mock_function_call_delta)],
+                    text=None,
+                    function_calls=[mock_function_call_delta],
                     usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
                 ),
                 MagicMock(
-                    parts=[MagicMock(text="model-output", id="3")],
+                    text="model-output",
                     usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
                 ),
             ]
@@ -271,11 +270,3 @@ class TestGooglePromptDriver:
 
         event = next(stream)
         assert event.usage.output_tokens == 5
-
-    def test_verify_structured_output_strategy(self):
-        assert GooglePromptDriver(model="foo", structured_output_strategy="tool")
-
-        with pytest.raises(
-            ValueError, match="GooglePromptDriver does not support `native` structured output strategy."
-        ):
-            GooglePromptDriver(model="foo", structured_output_strategy="native")

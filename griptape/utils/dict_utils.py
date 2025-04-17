@@ -12,6 +12,8 @@ def remove_null_values_in_dict_recursively(d: dict) -> dict:
 def remove_key_in_dict_recursively(d: dict, key: str) -> dict:
     if isinstance(d, dict):
         return {k: remove_key_in_dict_recursively(v, key) for k, v in d.items() if k != key}
+    if isinstance(d, list):
+        return [remove_key_in_dict_recursively(v, key) for v in d]
     return d
 
 
