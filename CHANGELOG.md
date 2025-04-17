@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.2](https://github.com/griptape-ai/griptape/compare/v1.6.1...v1.6.2) (2025-04-17)
+
+
+### Bug Fixes
+
+* **deps:** pin marshmallow &lt;4 to avoid backwards incompatible changes ([#1891](https://github.com/griptape-ai/griptape/issues/1891)) ([cec5199](https://github.com/griptape-ai/griptape/commit/cec5199dc29758796a6fe28fd5d208cf6dd23fc5))
+
 ## [1.6.1](https://github.com/griptape-ai/griptape/compare/v1.6.0...v1.6.1) (2025-04-14)
 
 
