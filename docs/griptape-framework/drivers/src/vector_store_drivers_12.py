@@ -1,12 +1,12 @@
 import os
 
-from griptape.drivers.vector.pgai import PGAIKnowledgeBaseVectorStoreDriver
+from griptape.drivers.vector.pgai import PgAiKnowledgeBaseVectorStoreDriver
 
 # PG.AI connection parameters
 connection_string = os.environ["PGAI_CONNECTION_STRING"]
 knowledge_base_name = os.environ["PGAI_KNOWLEDGE_BASE_NAME"]
 
-vector_store_driver = PGAIKnowledgeBaseVectorStoreDriver(
+vector_store_driver = PgAiKnowledgeBaseVectorStoreDriver(
     connection_string=connection_string,
     knowledge_base_name=knowledge_base_name,  # optional
 )

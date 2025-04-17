@@ -1,3 +1,3 @@
-from griptape.drivers.vector.pgai_knowledge_base_vector_store_driver import PGAIKnowledgeBaseVectorStoreDriver
+from griptape.drivers.vector.pgai_knowledge_base_vector_store_driver import PgAiKnowledgeBaseVectorStoreDriver
 
-__all__ = ["PGAIKnowledgeBaseVectorStoreDriver"]
+__all__ = ["PgAiKnowledgeBaseVectorStoreDriver"]

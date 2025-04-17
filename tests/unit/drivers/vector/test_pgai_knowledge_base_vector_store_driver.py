@@ -3,17 +3,13 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from griptape.drivers.vector.pgai import PGAIKnowledgeBaseVectorStoreDriver
+from griptape.drivers.vector.pgai import PgAiKnowledgeBaseVectorStoreDriver
 from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
-class TestPGAIKnowledgeBaseVectorVectorStoreDriver:
+class TestPGAIKnowledgeBaseVectorStoreDriver:
     connection_string = "postgresql://postgres:postgres@localhost:5432/postgres"
     knowledge_base_name = "example_knowledge_base"
-
-    @pytest.fixture()
-    def embedding_driver(self):
-        return MockEmbeddingDriver()
 
     @pytest.fixture()
     def mock_engine(self):
@@ -28,22 +24,23 @@ class TestPGAIKnowledgeBaseVectorVectorStoreDriver:
 
         return session
 
-    def test_initialize(self, embedding_driver):
-        PGAIKnowledgeBaseVectorStoreDriver(
+    def test_initialize(self):
+        PgAiKnowledgeBaseVectorStoreDriver(
             connection_string=self.connection_string, knowledge_base_name=self.knowledge_base_name
         )
 
-    def test_query(self, mock_engine):
+    def test_query(self, mock_engine, mock_session):
         test_ids = [17, 23]
-        test_values = ["foo", "bar"]
+        test_values = ['"foo"', "bar"]
         test_scores = [0.4, 0.6]
-        test_result = [
-            [test_ids[0], test_values[0], test_scores[0]],
-            [test_ids[1], test_values[1], test_scores[1]],
+        mock_query = MagicMock()
+        mock_query.all.return_value = [
+            (f"{test_ids[0]},{test_values[0]},{test_scores[0]}", ),
+            (f"{test_ids[1]},{test_values[1]},{test_scores[1]}", ),
         ]
-        mock_engine.begin.return_value.__enter__.return_value.execute.return_value = test_result
+        mock_session.query.return_value = mock_query
 
-        driver = PGAIKnowledgeBaseVectorStoreDriver(
+        driver = PgAiKnowledgeBaseVectorStoreDriver(
             engine=mock_engine, connection_string=self.connection_string, knowledge_base_name=self.knowledge_base_name
         )
 

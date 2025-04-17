@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 @define
-class PGAIKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
+class PgAiKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     connection_string: str = field(kw_only=True, metadata={"serializable": True})
     knowledge_base_name: str = field(kw_only=True, metadata={"serializable": True})
     embedding_driver: BaseEmbeddingDriver = field(
@@ -46,19 +46,24 @@ class PGAIKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
             raise ValueError(f"{self.__class__.__name__} does not support querying with Image Artifacts.")
 
         sqlalchemy = import_optional_dependency("sqlalchemy")
-        with self.engine.begin() as conn:
-            rows = conn.execute(
-                sqlalchemy.text(f"SELECT * FROM aidb.retrieve_text('{self.knowledge_base_name}', '{query}', {count});")
+
+        with sqlalchemy.orm.Session(self.engine) as session:
+            rows = session.query(sqlalchemy.func.aidb.retrieve_text(self.knowledge_base_name, query, count)).all()
+
+        entries = []
+        for (row,) in rows:
+            # Remove the first and last parentheses from the row and list by commas
+            # Example: '(foo,bar)' -> ['foo', 'bar']
+            row_list = "".join(row.replace("(", "", 1).rsplit(")", 1)).split(",")
+            entries.append(
+                BaseVectorStoreDriver.Entry(
+                    id=row_list[0],
+                    score=float(row_list[2]),
+                    meta={"artifact": TextArtifact(row_list[1]).to_json()},
+                )
             )
 
-        return [
-            BaseVectorStoreDriver.Entry(
-                id=str(row[0]),
-                score=row[2],
-                meta={"artifact": TextArtifact(row[1]).to_json()},
-            )
-            for row in rows
-        ]
+        return entries
 
     def upsert_vector(
         self,

@@ -301,7 +301,7 @@ The following example shows how to store vector entries and query the informatio
 
     This Driver requires the `drivers-vector-pgai` [extra](../index.md#extras).
 
-The PGAIKnowledgeBaseVectorVectorStoreDriver integrates with PG.AI, a managed postgres platform from [EnterpriseDB](https://www.enterprisedb.com/).
+The PGAIKnowledgeBaseVectorStoreDriver integrates with PG.AI, a managed postgres platform from [EnterpriseDB](https://www.enterprisedb.com/).
 
 Here is an example of how the Driver can be used to load and query information in a PG.AI Knowledge Base:
 
