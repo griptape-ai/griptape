@@ -4,6 +4,26 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0](https://github.com/griptape-ai/griptape/compare/v1.6.0...v1.7.0) (2025-04-17)
+
+
+### 🐛 Bug Fixes
+
+* **deps:** pin marshmallow &lt;4 to avoid backwards incompatible changes ([#1891](https://github.com/griptape-ai/griptape/issues/1891)) ([521f22b](https://github.com/griptape-ai/griptape/commit/521f22b9cc3d164383670e3161b6d7675ae2fda0))
+* implement pydantic model deserialization ([#1877](https://github.com/griptape-ai/griptape/issues/1877)) ([f7640f6](https://github.com/griptape-ai/griptape/commit/f7640f68b472c8b61f22ca72b2cc6c3ef267009c))
+* **types:** preserve type hints on [@lazy](https://github.com/lazy)_property decorator ([#1836](https://github.com/griptape-ai/griptape/issues/1836)) ([a008de7](https://github.com/griptape-ai/griptape/commit/a008de7f3d485f59c02dab4e8ca5aaacf54d19ab))
+
+
+### 📦 Dependencies
+
+* bump astrapy from 1.5.2 to 2.0.1 ([#1881](https://github.com/griptape-ai/griptape/issues/1881)) ([b607c47](https://github.com/griptape-ai/griptape/commit/b607c474a207c0bd6913aa7891c75fb7d1da48fd))
+* bump duckduckgo-search from 7.5.2 to 8.0.0 ([#1880](https://github.com/griptape-ai/griptape/issues/1880)) ([a98fdf6](https://github.com/griptape-ai/griptape/commit/a98fdf6aece1379fc8618b5ce8fc939af851366e))
+
+
+### 📚 Documentation
+
+* add top level link to griptape nodes ([#1887](https://github.com/griptape-ai/griptape/issues/1887)) ([8d36c44](https://github.com/griptape-ai/griptape/commit/8d36c442cdaa58e15bd27d7a0a185aeb9a236dbd))
+
 ## [1.6.0](https://github.com/griptape-ai/griptape/compare/v1.5.0...v1.6.0) (2025-04-08)
 
 
