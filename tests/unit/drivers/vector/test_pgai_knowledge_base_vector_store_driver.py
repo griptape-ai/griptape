@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 import pytest
 
 from griptape.drivers.vector.pgai import PgAiKnowledgeBaseVectorStoreDriver
-from tests.mocks.mock_embedding_driver import MockEmbeddingDriver
 
 
 class TestPGAIKnowledgeBaseVectorStoreDriver:
@@ -35,8 +34,8 @@ class TestPGAIKnowledgeBaseVectorStoreDriver:
         test_scores = [0.4, 0.6]
         mock_query = MagicMock()
         mock_query.all.return_value = [
-            (f"{test_ids[0]},{test_values[0]},{test_scores[0]}", ),
-            (f"{test_ids[1]},{test_values[1]},{test_scores[1]}", ),
+            (f"{test_ids[0]},{test_values[0]},{test_scores[0]}",),
+            (f"{test_ids[1]},{test_values[1]},{test_scores[1]}",),
         ]
         mock_session.query.return_value = mock_query
 
