@@ -273,7 +273,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
                 # Some OpenAi-compatible services don't accept an empty array for content
                 if not openai_message["content"]:
-                    openai_message["content"] = ""
+                    del openai_message["content"]
 
                 openai_messages.append(openai_message)
 
