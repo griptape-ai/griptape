@@ -385,7 +385,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
             },
             {"role": "assistant", "content": "assistant-input"},
             {
-                "content": "",
                 "role": "assistant",
                 "tool_calls": [
                     {
@@ -403,7 +402,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 ],
                 "role": "user",
             },
-            {"audio": {"id": "audio-id"}, "content": "", "role": "assistant"},
+            {"audio": {"id": "audio-id"}, "role": "assistant"},
             {"content": [{"type": "text", "text": "assistant-audio-transcription"}], "role": "assistant"},
             {"content": [{"type": "text", "text": "generic-value"}], "role": "user"},
         ]
