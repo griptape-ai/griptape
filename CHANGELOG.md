@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3](https://github.com/griptape-ai/griptape/compare/v1.6.2...v1.6.3) (2025-04-21)
+
+
+### Bug Fixes
+
+* remove  from Message if  is an empty array ([9c066c3](https://github.com/griptape-ai/griptape/commit/9c066c3f572faa005f52ce1bda352207ba0cd9fc))
+* remove `content` from Message if `content` is an empty array ([#1895](https://github.com/griptape-ai/griptape/issues/1895)) ([9c066c3](https://github.com/griptape-ai/griptape/commit/9c066c3f572faa005f52ce1bda352207ba0cd9fc))
+
 ## [1.6.2](https://github.com/griptape-ai/griptape/compare/v1.6.1...v1.6.2) (2025-04-17)
 
 
