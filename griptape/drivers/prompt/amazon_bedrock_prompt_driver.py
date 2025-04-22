@@ -10,7 +10,6 @@ from griptape.artifacts import (
     BaseArtifact,
     ErrorArtifact,
     ImageArtifact,
-    InfoArtifact,
     ListArtifact,
     TextArtifact,
 )
@@ -206,9 +205,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     def __to_bedrock_tool_use_content(self, artifact: BaseArtifact) -> dict:
         if isinstance(artifact, ImageArtifact):
             return {"image": {"format": artifact.format, "source": {"bytes": artifact.value}}}
-        if isinstance(artifact, (TextArtifact, ErrorArtifact, InfoArtifact)):
-            return {"text": artifact.to_text()}
-        raise ValueError(f"Unsupported artifact type: {type(artifact)}")
+        return {"text": artifact.to_text()}
 
     def __to_prompt_stack_message_content(self, content: dict) -> BaseMessageContent:
         if "text" in content:
