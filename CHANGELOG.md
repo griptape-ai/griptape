@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.4](https://github.com/griptape-ai/griptape/compare/v1.6.3...v1.6.4) (2025-04-22)
+
+
+### Bug Fixes
+
+* **drivers-prompt-amazon-bedrock:** don't error when passing non-text ([fea3068](https://github.com/griptape-ai/griptape/commit/fea30687734071b7c461e097d144b1fa2c0e018c))
+* **drivers-prompt-amazon-bedrock:** support reasoning content ([#1900](https://github.com/griptape-ai/griptape/issues/1900)) ([63ba1bb](https://github.com/griptape-ai/griptape/commit/63ba1bbeda6c127cb650984b314b22ee44a4668d)), closes [#1897](https://github.com/griptape-ai/griptape/issues/1897)
+* **subtasks:** handle non-string inputs during schema validation subtask ([fea3068](https://github.com/griptape-ai/griptape/commit/fea30687734071b7c461e097d144b1fa2c0e018c))
+
 ## [1.6.3](https://github.com/griptape-ai/griptape/compare/v1.6.2...v1.6.3) (2025-04-21)
 
 
