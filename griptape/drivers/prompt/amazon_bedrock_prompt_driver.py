@@ -81,8 +81,18 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         usage = response["usage"]
         output_message = response["output"]["message"]
 
+        message_content = output_message.get("content", [])
+
+        # Move reasoning content to the beginning of the content to have it appear first in output
+        reasoning_content_index = next(
+            (i for i, content in enumerate(message_content) if "reasoningContent" in content),
+            None,
+        )
+        if reasoning_content_index is not None:
+            message_content.insert(0, message_content.pop(reasoning_content_index))
+
         return Message(
-            content=[self.__to_prompt_stack_message_content(content) for content in output_message["content"]],
+            content=[self.__to_prompt_stack_message_content(content) for content in message_content],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
@@ -222,6 +232,8 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     ),
                 ),
             )
+        if "reasoningContent" in content:
+            return TextMessageContent(TextArtifact(content["reasoningContent"]["reasoningText"]["text"]))
         raise ValueError(f"Unsupported message content type: {content}")
 
     def __to_prompt_stack_delta_message_content(self, event: dict) -> BaseDeltaMessageContent:
