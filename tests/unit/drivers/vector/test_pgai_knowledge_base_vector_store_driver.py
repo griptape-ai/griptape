@@ -6,7 +6,7 @@ import pytest
 from griptape.drivers.vector.pgai import PgAiKnowledgeBaseVectorStoreDriver
 
 
-class TestPGAIKnowledgeBaseVectorStoreDriver:
+class TestPgAiKnowledgeBaseVectorStoreDriver:
     connection_string = "postgresql://postgres:postgres@localhost:5432/postgres"
     knowledge_base_name = "example_knowledge_base"
 
