@@ -133,7 +133,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+        count: Optional[int] = None,
         namespace: Optional[str] = None,
         include_vectors: bool = False,
         distance_metric: str = "cosine_distance",
@@ -141,6 +141,8 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
     ) -> list[BaseVectorStoreDriver.Entry]:
         """Performs a search on the collection to find vectors similar to the provided input vector, optionally filtering to only those that match the provided namespace."""
         sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
+
+        count = count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
 
         distance_metrics = {
             "cosine_distance": self._model.vector.cosine_distance,
