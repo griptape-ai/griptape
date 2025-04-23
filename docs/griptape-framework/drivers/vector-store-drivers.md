@@ -294,3 +294,25 @@ The following example shows how to store vector entries and query the informatio
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/vector_store_drivers_11.txt"
     ```
+
+### PG.AI
+
+!!! info
+
+    This Driver requires the `drivers-vector-pgai` [extra](../index.md#extras).
+
+The PgAiKnowledgeBaseVectorStoreDriver integrates with PG.AI, a managed postgres platform from [EnterpriseDB](https://www.enterprisedb.com/).
+
+Here is an example of how the Driver can be used to load and query information in a PG.AI Knowledge Base:
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_12.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/drivers/logs/vector_store_drivers_12.txt"
+    ```

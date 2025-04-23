@@ -23,6 +23,7 @@ SKIP_FILES = [
     "docs/griptape-framework/structures/src/observability_2.py",
     "docs/griptape-framework/data/src/loaders_9.py",
     "docs/recipes/src/talk_to_an_audio_2.py",
+    "docs/griptape-framework/drivers/src/vector_store_drivers_12.py",
 ]
 
 
