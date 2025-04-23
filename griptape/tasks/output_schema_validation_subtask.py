@@ -57,11 +57,14 @@ class OutputSchemaValidationSubtask(BaseSubtask):
             # With `native` or `rule` strategies, the output will be a json string that can be parsed.
             # With the `tool` strategy, the output will already be a `JsonArtifact`.
             if self.structured_output_strategy in ("native", "rule"):
+                value_to_validate = (
+                    self.input.value if isinstance(self.input.value, str) else json.dumps(self.input.value)
+                )
                 if isinstance(self.output_schema, Schema):
-                    self.output_schema.validate(json.loads(self.input.value))
+                    self.output_schema.validate(json.loads(value_to_validate))
                     self.output = JsonArtifact(self.input.value)
                 else:
-                    model = TypeAdapter(self.output_schema).validate_json(self.input.value)
+                    model = TypeAdapter(self.output_schema).validate_json(value_to_validate)
                     self.output = ModelArtifact(model)
             else:
                 self.output = self.input
