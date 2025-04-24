@@ -5,8 +5,8 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import define, field
 
 from griptape.drivers.vector import BaseVectorStoreDriver
-from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
+from griptape.utils.import_utils import import_optional_dependency
 
 if TYPE_CHECKING:
     import astrapy
@@ -49,9 +49,11 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
 
     @lazy_property()
     def client(self) -> astrapy.DataAPIClient:
-        return import_optional_dependency("astrapy").DataAPIClient(
-            caller_name=self.caller_name,
-            environment=self.environment,
+        astrapy = import_optional_dependency("astrapy")
+
+        return astrapy.DataAPIClient(
+            callers=[(self.caller_name, None)],
+            environment=self.environment or astrapy.utils.unset.UnsetType(),
         )
 
     @lazy_property()
