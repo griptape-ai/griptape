@@ -178,8 +178,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {
             "model": self.model,
-            "user": self.user,
-            "seed": self.seed,
+            **({"user": self.user} if self.user else {}),
+            **({"seed": self.seed} if self.seed is not None else {}),
             **({"modalities": self.modalities} if self.modalities and not self.is_reasoning_model else {}),
             **(
                 {"reasoning_effort": self.reasoning_effort}

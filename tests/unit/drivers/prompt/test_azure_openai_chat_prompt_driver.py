@@ -154,7 +154,11 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            }
+            if driver.user
+            else {},
             messages=messages,
             **{
                 "audio": driver.audio,
@@ -164,7 +168,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "seed": driver.seed,
             }
-            if driver.api_version >= "2024-02-01"
+            if driver.api_version >= "2024-02-01" and driver.seed is not None
             else {},
             **{
                 "parallel_tool_calls": driver.parallel_tool_calls,
@@ -241,7 +245,11 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_stream_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            }
+            if driver.user
+            else {},
             **{
                 "audio": driver.audio,
             }
@@ -258,7 +266,7 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "seed": driver.seed,
             }
-            if driver.api_version >= "2024-02-01"
+            if driver.api_version >= "2024-02-01" and driver.seed is not None
             else {},
             **{
                 "parallel_tool_calls": driver.parallel_tool_calls,
