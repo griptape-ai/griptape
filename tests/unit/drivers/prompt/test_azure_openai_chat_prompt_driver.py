@@ -156,7 +156,9 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             messages=messages,
             **{
                 "audio": driver.audio,
@@ -245,7 +247,9 @@ class TestAzureOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             **{
                 "audio": driver.audio,
             }

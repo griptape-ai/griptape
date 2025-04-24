@@ -42,7 +42,9 @@ class TestGrokPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             messages=messages,
             modalities=modalities,
             **{
@@ -52,7 +54,9 @@ class TestGrokPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             else {},
             **{
                 "seed": driver.seed,
-            } if driver.seed is not None else {},
+            }
+            if driver.seed is not None
+            else {},
             **{
                 "parallel_tool_calls": driver.parallel_tool_calls,
             }
@@ -126,7 +130,9 @@ class TestGrokPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             **{
                 "audio": driver.audio,
             }
@@ -143,7 +149,9 @@ class TestGrokPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             else {},
             **{
                 "seed": driver.seed,
-            } if driver.seed is not None else {},
+            }
+            if driver.seed is not None
+            else {},
             **{
                 "parallel_tool_calls": driver.parallel_tool_calls,
             }

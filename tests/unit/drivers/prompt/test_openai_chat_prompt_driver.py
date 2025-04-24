@@ -485,11 +485,15 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model=driver.model,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             messages=reasoning_messages if driver.is_reasoning_model else messages,
             **{
                 "seed": driver.seed,
-            } if driver.seed is not None else {},
+            }
+            if driver.seed is not None
+            else {},
             **{
                 "modalities": driver.modalities,
             }
@@ -564,11 +568,15 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             messages=[*messages, {"role": "system", "content": "Provide your response as a valid JSON object."}],
             **{
                 "seed": driver.seed,
-            } if driver.seed is not None else {},
+            }
+            if driver.seed is not None
+            else {},
             **{
                 "audio": driver.audio,
             }
@@ -609,11 +617,15 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             messages=[*messages],
             **{
                 "seed": driver.seed,
-            } if driver.seed is not None else {},
+            }
+            if driver.seed is not None
+            else {},
             **{
                 "audio": driver.audio,
             }
@@ -678,12 +690,16 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model=driver.model,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             stream=True,
             messages=reasoning_messages if driver.is_reasoning_model else messages,
             **{
                 "seed": driver.seed,
-            } if driver.seed is not None else {},
+            }
+            if driver.seed is not None
+            else {},
             stream_options={"include_usage": True},
             **{
                 "audio": driver.audio,
@@ -767,12 +783,16 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             temperature=driver.temperature,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             messages=messages,
             max_tokens=1,
             **{
                 "seed": driver.seed,
-            } if driver.seed is not None else {},
+            }
+            if driver.seed is not None
+            else {},
             **{
                 "audio": driver.audio,
             }
@@ -817,11 +837,15 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             stop=driver.tokenizer.stop_sequences,
             **{
                 "user": driver.user,
-            } if driver.user else {},
+            }
+            if driver.user
+            else {},
             messages=messages,
             **{
                 "seed": driver.seed,
-            } if driver.seed is not None else {},
+            }
+            if driver.seed is not None
+            else {},
             **{
                 "audio": driver.audio,
             }
