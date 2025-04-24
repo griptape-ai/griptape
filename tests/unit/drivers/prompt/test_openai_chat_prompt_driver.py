@@ -483,9 +483,13 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         # Then
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            } if driver.user else {},
             messages=reasoning_messages if driver.is_reasoning_model else messages,
-            seed=driver.seed,
+            **{
+                "seed": driver.seed,
+            } if driver.seed is not None else {},
             **{
                 "modalities": driver.modalities,
             }
@@ -558,9 +562,13 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            } if driver.user else {},
             messages=[*messages, {"role": "system", "content": "Provide your response as a valid JSON object."}],
-            seed=driver.seed,
+            **{
+                "seed": driver.seed,
+            } if driver.seed is not None else {},
             **{
                 "audio": driver.audio,
             }
@@ -599,9 +607,13 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            } if driver.user else {},
             messages=[*messages],
-            seed=driver.seed,
+            **{
+                "seed": driver.seed,
+            } if driver.seed is not None else {},
             **{
                 "audio": driver.audio,
             }
@@ -664,10 +676,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         # Then
         mock_chat_completion_stream_create.assert_called_once_with(
             model=driver.model,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            } if driver.user else {},
             stream=True,
             messages=reasoning_messages if driver.is_reasoning_model else messages,
-            seed=driver.seed,
+            **{
+                "seed": driver.seed,
+            } if driver.seed is not None else {},
             stream_options={"include_usage": True},
             **{
                 "audio": driver.audio,
@@ -749,10 +765,14 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            } if driver.user else {},
             messages=messages,
             max_tokens=1,
-            seed=driver.seed,
+            **{
+                "seed": driver.seed,
+            } if driver.seed is not None else {},
             **{
                 "audio": driver.audio,
             }
@@ -795,9 +815,13 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             model=driver.model,
             temperature=driver.temperature,
             stop=driver.tokenizer.stop_sequences,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            } if driver.user else {},
             messages=messages,
-            seed=driver.seed,
+            **{
+                "seed": driver.seed,
+            } if driver.seed is not None else {},
             **{
                 "audio": driver.audio,
             }

@@ -40,7 +40,9 @@ class TestPerplexityPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            } if driver.user else {},
             messages=messages,
             modalities=modalities,
             **{
@@ -48,7 +50,9 @@ class TestPerplexityPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            seed=driver.seed,
+            **{
+                "seed": driver.seed,
+            } if driver.seed is not None else {},
             **{
                 "parallel_tool_calls": driver.parallel_tool_calls,
             }
@@ -120,7 +124,9 @@ class TestPerplexityPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         mock_chat_completion_stream_create.assert_called_once_with(
             model=driver.model,
             temperature=driver.temperature,
-            user=driver.user,
+            **{
+                "user": driver.user,
+            } if driver.user else {},
             **{
                 "audio": driver.audio,
             }
@@ -135,7 +141,9 @@ class TestPerplexityPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if use_native_tools
             else {},
-            seed=driver.seed,
+            **{
+                "seed": driver.seed,
+            } if driver.seed is not None else {},
             **{
                 "parallel_tool_calls": driver.parallel_tool_calls,
             }
