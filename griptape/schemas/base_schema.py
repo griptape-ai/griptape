@@ -250,6 +250,7 @@ class BaseSchema(Schema):
         from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
         from griptape.drivers.ruleset import BaseRulesetDriver
         from griptape.drivers.sql import BaseSqlDriver
+        from griptape.drivers.structure_run import BaseStructureRunDriver
         from griptape.drivers.text_to_speech import BaseTextToSpeechDriver
         from griptape.drivers.vector import BaseVectorStoreDriver
         from griptape.drivers.web_scraper import BaseWebScraperDriver
@@ -291,6 +292,7 @@ class BaseSchema(Schema):
                 "BaseSqlDriver": BaseSqlDriver,
                 "BaseObservabilityDriver": BaseObservabilityDriver,
                 "BaseAssistantDriver": BaseAssistantDriver,
+                "BaseStructureRunDriver": BaseStructureRunDriver,
                 "BaseArtifact": BaseArtifact,
                 "BaseMetaEntry": BaseMetaEntry,
                 "PromptStack": PromptStack,
