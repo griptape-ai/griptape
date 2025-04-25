@@ -23,6 +23,14 @@ When `BlobArtifact`s are returned from Tools, they will be stored in [Task Memor
 
 [ImageArtifact](../../reference/griptape/artifacts/image_artifact.md)s store image data. This includes binary image data along with metadata such as MIME type and dimensions. They are a subclass of [BlobArtifacts](#blob).
 
+### Url
+
+[UrlArtifact](../../reference/griptape/artifacts/url_artifact.md)s store URLs pointing to resources.
+
+### Image Url
+
+[ImageUrlArtifact](../../reference/griptape/artifacts/image_url_artifact.md)s store URLs pointing to images. They are a subclass of [UrlArtifact](#url).
+
 ### Audio
 
 [AudioArtifact](../../reference/griptape/artifacts/audio_artifact.md)s store audio content. This includes binary audio data and metadata such as format, and duration. They are a subclass of [BlobArtifacts](#blob).

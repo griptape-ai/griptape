@@ -49,7 +49,7 @@ class BaseArtifact(SerializableMixin, ABC):
     def __len__(self) -> int:
         return len(self.value)
 
-    def to_bytes(self) -> bytes:
+    def to_bytes(self, **kwargs) -> bytes:
         return self.to_text().encode(encoding=self.encoding, errors=self.encoding_error_handler)
 
     @abstractmethod

@@ -33,7 +33,7 @@ class ImageArtifact(BlobArtifact):
     def mime_type(self) -> str:
         return f"image/{self.format}"
 
-    def to_bytes(self) -> bytes:
+    def to_bytes(self, **kwargs) -> bytes:
         return self.value
 
     def to_text(self) -> str:

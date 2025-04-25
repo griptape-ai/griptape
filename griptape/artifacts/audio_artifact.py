@@ -29,7 +29,7 @@ class AudioArtifact(BlobArtifact):
     def mime_type(self) -> str:
         return f"audio/{self.format}"
 
-    def to_bytes(self) -> bytes:
+    def to_bytes(self, **kwargs) -> bytes:
         return self.value
 
     def to_text(self) -> str:
