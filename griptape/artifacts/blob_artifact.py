@@ -28,7 +28,7 @@ class BlobArtifact(BaseArtifact):
     def mime_type(self) -> str:
         return "application/octet-stream"
 
-    def to_bytes(self) -> bytes:
+    def to_bytes(self, **kwargs) -> bytes:
         return self.value
 
     def to_text(self) -> str:
