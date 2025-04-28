@@ -100,7 +100,7 @@ from griptape.rules import Rule
 from griptape.tasks import PromptTask
 
 task = PromptTask(
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-4.1"),
     rules=[Rule("Keep your answer to a few sentences.")],
 )
 
