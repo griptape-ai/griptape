@@ -16,7 +16,7 @@ class UrlArtifact(BaseArtifact):
 
     value: str = field(metadata={"serializable": True})
 
-    def to_bytes(self, *, headers: dict | None = None, **kwargs) -> bytes:
+    def to_bytes(self, *, headers: dict | None = None, **kwargs: dict) -> bytes:
         """Fetches the content of the URL and returns it as bytes.
 
         Args:
