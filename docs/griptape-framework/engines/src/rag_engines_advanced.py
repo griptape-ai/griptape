@@ -24,7 +24,7 @@ from griptape.engines.rag.stages import (
 from griptape.loaders import TextLoader, WebLoader
 from griptape.rules import Rule, Ruleset
 
-prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
+prompt_driver = OpenAiChatPromptDriver(model="gpt-4.1")
 vector_store = LocalVectorStoreDriver(embedding_driver=OpenAiEmbeddingDriver())
 rerank_driver = LocalRerankDriver()
 web_loader = WebLoader()

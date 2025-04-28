@@ -320,9 +320,9 @@ class TestGriptapeCloudPromptDriver:
         return prompt_stack
 
     def test_init(self):
-        assert GriptapeCloudPromptDriver(api_key="foo", model="gpt-4o")
+        assert GriptapeCloudPromptDriver(api_key="foo", model="gpt-4.1")
 
-    @pytest.mark.parametrize("model", [None, "gpt-4o"])
+    @pytest.mark.parametrize("model", [None, "gpt-4.1"])
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     def test_try_run(
@@ -375,7 +375,7 @@ class TestGriptapeCloudPromptDriver:
         assert message.value[2].value == b"audio-model-output"
         assert message.value[2].format == "wav"
 
-    @pytest.mark.parametrize("model", [None, "gpt-4o"])
+    @pytest.mark.parametrize("model", [None, "gpt-4.1"])
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     def test_try_stream_run(

@@ -23,8 +23,8 @@ class TestAzureOpenAiDriversConfig:
             "prompt_driver": {
                 "type": "AzureOpenAiChatPromptDriver",
                 "base_url": None,
-                "model": "gpt-4o",
-                "azure_deployment": "gpt-4o",
+                "model": "gpt-4.1",
+                "azure_deployment": "gpt-4.1",
                 "azure_endpoint": "http://localhost:8080",
                 "audio": {"format": "pcm16", "voice": "alloy"},
                 "modalities": [],

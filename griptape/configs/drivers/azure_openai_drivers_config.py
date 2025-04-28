@@ -40,7 +40,7 @@ class AzureOpenAiDriversConfig(DriversConfig):
     @lazy_property()
     def prompt_driver(self) -> AzureOpenAiChatPromptDriver:
         return AzureOpenAiChatPromptDriver(
-            model="gpt-4o",
+            model="gpt-4.1",
             azure_endpoint=self.azure_endpoint,
             api_key=self.api_key,
             azure_ad_token=self.azure_ad_token,

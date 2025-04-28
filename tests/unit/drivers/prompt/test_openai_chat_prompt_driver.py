@@ -455,7 +455,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
-    @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3", "o3-mini"])
+    @pytest.mark.parametrize("model", ["gpt-4.1", "o1", "o3", "o3-mini"])
     @pytest.mark.parametrize("modalities", [[], ["text"], ["text", "audio"], ["audio"]])
     def test_try_run(
         self,
@@ -658,7 +658,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
-    @pytest.mark.parametrize("model", ["gpt-4o", "o1", "o3", "o3-mini"])
+    @pytest.mark.parametrize("model", ["gpt-4.1", "o1", "o3", "o3-mini"])
     @pytest.mark.parametrize("modalities", [[], ["text"], ["text", "audio"], ["audio"]])
     def test_try_stream_run(
         self,

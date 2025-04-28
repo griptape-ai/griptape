@@ -6,12 +6,12 @@ from griptape.structures import Agent
 from griptape.tools import PromptSummaryTool, WebScraperTool
 
 Defaults.drivers_config = DriversConfig(
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-4.1"),
     embedding_driver=VoyageAiEmbeddingDriver(),
 )
 
 Defaults.drivers_config = DriversConfig(
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-4.1"),
     embedding_driver=VoyageAiEmbeddingDriver(),
 )
 

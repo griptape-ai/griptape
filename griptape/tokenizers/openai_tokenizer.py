@@ -21,6 +21,7 @@ class OpenAiTokenizer(BaseTokenizer):
 
     # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
+        "gpt-4.1": 1_000_000,
         "gpt-4o": 128000,
         "gpt-4-1106": 128000,
         "gpt-4-32k": 32768,
