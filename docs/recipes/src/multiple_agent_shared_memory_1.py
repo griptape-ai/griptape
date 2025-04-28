@@ -20,7 +20,7 @@ MONGODB_VECTOR_PATH = os.environ["MONGODB_VECTOR_PATH"]
 MONGODB_CONNECTION_STRING = f"mongodb+srv://{MONGODB_USERNAME}:{MONGODB_PASSWORD}@{MONGODB_HOST}/{MONGODB_DATABASE_NAME}?tls=true&authMechanism=SCRAM-SHA-256&retrywrites=false&maxIdleTimeMS=120000"
 
 embedding_driver = AzureOpenAiEmbeddingDriver(
-    model="text-embedding-ada-002",
+    model="text-embedding-3-small",
     azure_endpoint=AZURE_OPENAI_ENDPOINT_1,
     api_key=AZURE_OPENAI_API_KEY_1,
 )
