@@ -36,7 +36,7 @@ drivers-prompt-huggingface-hub = [
 drivers-prompt-huggingface-pipeline = ["transformers>=4.41.1"]
 drivers-prompt-amazon-bedrock = ["boto3>=1.34.119", "anthropic>=0.45.1"]
 drivers-prompt-amazon-sagemaker = ["boto3>=1.34.119", "transformers>=4.41.1"]
-drivers-prompt-google = ["google-generativeai>=0.8.2"]
+drivers-prompt-google = ["google-genai>=1.10.0"]
 drivers-prompt-ollama = ["ollama>=0.4.1"]
 drivers-sql = ["sqlalchemy>=2.0.31"]
 drivers-sql-amazon-redshift = ["boto3>=1.34.119"]
@@ -70,7 +70,7 @@ drivers-embedding-huggingface = [
   "transformers>=4.41.1",
 ]
 drivers-embedding-voyageai = ["voyageai>=0.2.1"]
-drivers-embedding-google = ["google-generativeai>=0.8.2"]
+drivers-embedding-google = ["google-genai>=1.10.0"]
 drivers-embedding-cohere = ["cohere>=5.11.2"]
 drivers-embedding-ollama = ["ollama>=0.4.1"]
 drivers-web-scraper-trafilatura = ["trafilatura>=2.0"]
@@ -132,7 +132,7 @@ all = [
   "opensearch-py>=2.3.1",
   "pgvector>=0.3.4",
   "psycopg2-binary>=2.9.9",
-  "google-generativeai>=0.8.2",
+  "google-genai>=1.10.0",
   "trafilatura>=2.0",
   "playwright>=1.42",
   "beautifulsoup4>=4.12.3",
