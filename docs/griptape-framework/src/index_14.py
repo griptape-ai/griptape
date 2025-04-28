@@ -32,13 +32,12 @@ workflow = Workflow(
         ),
     ],
 )
-prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
 
 for project in projects:
     task = PromptTask(
         id=f"project-research-{project}",
         input="Tell me about the open source project: {{ project }}.",
-        prompt_driver=prompt_driver,
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-4.1"),
         context={"project": project},
         output_schema=Output,
         tools=[

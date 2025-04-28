@@ -2,7 +2,7 @@ from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.structures import Agent
 from griptape.tools import ImageQueryTool
 
-driver = OpenAiChatPromptDriver(model="gpt-4o")
+driver = OpenAiChatPromptDriver(model="gpt-4.1")
 
 # Create an Image Query Tool configured to use the engine.
 tool = ImageQueryTool(

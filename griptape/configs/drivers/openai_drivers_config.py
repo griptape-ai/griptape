@@ -14,7 +14,7 @@ from griptape.utils.decorators import lazy_property
 class OpenAiDriversConfig(DriversConfig):
     @lazy_property()
     def prompt_driver(self) -> OpenAiChatPromptDriver:
-        return OpenAiChatPromptDriver(model="gpt-4o")
+        return OpenAiChatPromptDriver(model="gpt-4.1")
 
     @lazy_property()
     def image_generation_driver(self) -> OpenAiImageGenerationDriver:

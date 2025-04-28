@@ -16,7 +16,7 @@ with AnthropicDriversConfig():  # Agent will be created with Anthropic Drivers
         tasks=[
             ToolTask(
                 "Extract sentiment from this text: {{ args[0] }}",
-                prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),  # Override this particular Task's prompt driver
+                prompt_driver=OpenAiChatPromptDriver(model="gpt-4.1"),  # Override this particular Task's prompt driver
                 tool=ExtractionTool(
                     extraction_engine=JsonExtractionEngine(
                         prompt_driver=AnthropicPromptDriver(  # Override this particular Engine's prompt driver

@@ -10,7 +10,7 @@ from griptape.loaders import WebLoader
 
 # Define a schema for extraction
 json_engine = JsonExtractionEngine(
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-4.1"),
     template_schema=Schema(
         {
             Literal("model", description="Name of an LLM model."): str,

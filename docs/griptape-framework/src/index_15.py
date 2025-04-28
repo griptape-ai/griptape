@@ -33,7 +33,7 @@ workflow = Workflow(
         ),
     ],
 )
-prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
+prompt_driver = OpenAiChatPromptDriver(model="gpt-4.1")
 
 for project in projects:
     task = PromptTask(

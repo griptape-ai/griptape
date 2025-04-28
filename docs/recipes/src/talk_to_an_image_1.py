@@ -24,7 +24,7 @@ agent = Agent(
     tools=[
         FileManagerTool(file_manager_driver=driver),
         ImageQueryTool(
-            prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"), image_loader=ImageLoader(file_manager_driver=driver)
+            prompt_driver=OpenAiChatPromptDriver(model="gpt-4.1"), image_loader=ImageLoader(file_manager_driver=driver)
         ),
     ]
 )

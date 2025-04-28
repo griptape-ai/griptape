@@ -6,7 +6,7 @@ from griptape.structures import Agent
 agent = Agent(
     prompt_driver=OpenAiChatPromptDriver(
         api_key=os.environ["OPENAI_API_KEY"],
-        model="gpt-4o-2024-08-06",
+        model="gpt-4.1",
         temperature=0.1,
         seed=42,
     ),

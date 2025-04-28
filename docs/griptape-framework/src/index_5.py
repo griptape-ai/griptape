@@ -3,7 +3,7 @@ from griptape.tasks import PromptTask
 
 task = PromptTask(
     input="You are speaking to: {{ user_name }}. User said: {{ args[0] }}",
-    prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"),
+    prompt_driver=OpenAiChatPromptDriver(model="gpt-4.1"),
     context={"user_name": "Collin"},
 )
 

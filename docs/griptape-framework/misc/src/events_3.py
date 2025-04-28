@@ -17,7 +17,7 @@ pipeline = Pipeline()
 pipeline.add_tasks(
     PromptTask(
         "Based on https://griptape.ai, tell me what griptape is.",
-        prompt_driver=OpenAiChatPromptDriver(model="gpt-4o", stream=True),
+        prompt_driver=OpenAiChatPromptDriver(model="gpt-4.1", stream=True),
         tools=[WebScraperTool(off_prompt=True), PromptSummaryTool(off_prompt=False)],
     )
 )
