@@ -16,7 +16,7 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from transformers import TextGenerationPipeline
+    from transformers.pipelines.text_generation import TextGenerationPipeline
 
     from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
 
