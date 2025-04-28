@@ -144,7 +144,7 @@ class Output(BaseModel):
 
 projects = ["griptape", "langchain", "crew-ai", "pydantic-ai"]
 
-prompt_driver = OpenAiChatPromptDriver(model="gpt-4o")
+prompt_driver = OpenAiChatPromptDriver(model="gpt-4.1")
 workflow = Workflow(
     tasks=[
         [
