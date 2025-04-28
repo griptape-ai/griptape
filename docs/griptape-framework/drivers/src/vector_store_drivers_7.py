@@ -11,6 +11,7 @@ embedding_driver = OpenAiEmbeddingDriver(api_key=os.environ["OPENAI_API_KEY"])
 vector_store_driver = RedisVectorStoreDriver(
     host=os.environ["REDIS_HOST"],
     port=int(os.environ["REDIS_PORT"]),
+    username=os.environ["REDIS_USERNAME"],
     password=os.environ["REDIS_PASSWORD"],
     index=os.environ["REDIS_INDEX"],
     embedding_driver=embedding_driver,
