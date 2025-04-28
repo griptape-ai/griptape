@@ -1,17 +1,9 @@
 from griptape.drivers.image_generation.openai import OpenAiImageGenerationDriver
 from griptape.structures import Agent
-from griptape.tools import PromptImageGenerationTool
+from griptape.tools import FileManagerTool, PromptImageGenerationTool
 
-driver = OpenAiImageGenerationDriver(
-    model="dall-e-2",
-    image_size="512x512",
-)
+driver = OpenAiImageGenerationDriver(model="gpt-image-1")
 
+agent = Agent(tools=[PromptImageGenerationTool(image_generation_driver=driver, off_prompt=True), FileManagerTool()])
 
-agent = Agent(
-    tools=[
-        PromptImageGenerationTool(image_generation_driver=driver),
-    ]
-)
-
-agent.run("Generate a watercolor painting of a dog riding a skateboard")
+agent.run("Generate a watercolor painting of a dog riding a skateboard and save it to dog.png")

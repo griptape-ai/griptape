@@ -113,7 +113,7 @@ This Driver supports negative prompts. When provided, the image generation reque
 
 The [OpenAI Image Generation Driver](../../reference/griptape/drivers/image_generation/openai_image_generation_driver.md) provides access to OpenAI image generation models. Like other OpenAI Drivers, the image generation Driver will implicitly load an API key in the `OPENAI_API_KEY` environment variable if one is not explicitly provided.
 
-This Driver supports image generation configurations like style presets, image quality preference, and image size. For details on supported configuration values, see the [OpenAI documentation](https://platform.openai.com/docs/guides/images/introduction).
+This Driver supports image generation configurations like style presets, image quality preference, and image size. For details on supported configuration values, see the [OpenAI documentation](https://platform.openai.com/docs/guides/image-generation).
 
 === "Code"
 
