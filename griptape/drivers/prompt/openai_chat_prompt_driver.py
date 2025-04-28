@@ -121,7 +121,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     @property
     def is_reasoning_model(self) -> bool:
-        return any(model in self.model for model in ("o1", "o3"))
+        return self.model.startswith("o")
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -188,7 +188,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             ),
             **({"temperature": self.temperature} if not self.is_reasoning_model else {}),
             **({"audio": self.audio} if "audio" in self.modalities else {}),
-            **({"stop": self.tokenizer.stop_sequences} if self.tokenizer.stop_sequences else {}),
+            **(
+                {"stop": self.tokenizer.stop_sequences}
+                if not self.is_reasoning_model and self.tokenizer.stop_sequences
+                else {}
+            ),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
             **({"stream_options": {"include_usage": True}} if self.stream else {}),
             **self.extra_params,
