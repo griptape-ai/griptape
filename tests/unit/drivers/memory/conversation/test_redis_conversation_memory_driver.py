@@ -10,6 +10,7 @@ CONVERSATION_ID = "117151897f344ff684b553d0655d8f39"
 INDEX = "griptape_conversation"
 HOST = "127.0.0.1"
 PORT = 6379
+USERNAME = "default"
 PASSWORD = ""
 
 
@@ -29,7 +30,9 @@ class TestRedisConversationMemoryDriver:
 
     @pytest.fixture()
     def driver(self):
-        return RedisConversationMemoryDriver(host=HOST, port=PORT, db=0, index=INDEX, conversation_id=CONVERSATION_ID)
+        return RedisConversationMemoryDriver(
+            host=HOST, port=PORT, username=USERNAME, db=0, index=INDEX, conversation_id=CONVERSATION_ID
+        )
 
     def test_store(self, driver):
         memory = BaseConversationMemory.from_json(TEST_MEMORY)

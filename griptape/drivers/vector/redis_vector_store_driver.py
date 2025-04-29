@@ -25,11 +25,13 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         host: The host of the Redis instance.
         port: The port of the Redis instance.
         db: The database of the Redis instance.
+        username: The username of the Redis instance.
         password: The password of the Redis instance.
         index: The name of the index to use.
     """
 
     host: str = field(kw_only=True, metadata={"serializable": True})
+    username: str = field(kw_only=True, default="default", metadata={"serializable": False})
     port: int = field(kw_only=True, metadata={"serializable": True})
     db: int = field(kw_only=True, default=0, metadata={"serializable": True})
     password: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
@@ -42,6 +44,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             host=self.host,
             port=self.port,
             db=self.db,
+            username=self.username,
             password=self.password,
             decode_responses=False,
         )
