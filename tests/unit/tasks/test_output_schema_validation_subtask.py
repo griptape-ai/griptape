@@ -34,7 +34,7 @@ class TestOutputSchemaValidationSubtask:
                 {"key": 123},
                 create_model("OutputSchema", key=(str, ...)),
                 None,
-                "[{'type': 'string_type', 'loc': ('key',), 'msg': 'Input should be a valid string', 'input': 123, 'url': 'https://errors.pydantic.dev/2.10/v/string_type'}]",
+                "[{'type': 'string_type', 'loc': ('key',), 'msg': 'Input should be a valid string', 'input': 123, 'url': 'https://errors.pydantic.dev/2.11/v/string_type'}]",
             ),
             (
                 {"key": "value"},
