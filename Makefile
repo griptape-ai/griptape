@@ -41,6 +41,10 @@ test/integration:
 lint: ## Lint project.
 	@uv run ruff check --fix
 
+.PHONY: lint/fix
+lint/fix: ## Lint project with unsafe fixes.
+	@uv run ruff check --fix --unsafe-fixes
+
 .PHONY: format
 format: ## Format project.
 	@uv run ruff format

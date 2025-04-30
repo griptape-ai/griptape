@@ -182,6 +182,14 @@ The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_em
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_9.txt"
     ```
 
+### Nvidia NIM
+
+The [NvidiaNimEmbeddingDriver](../../reference/griptape/drivers/embedding/nvidia_nim_embedding_driver.md) uses the [Nvidia NIM API](https://developer.nvidia.com/nim).
+
+!!! info
+
+    The Nvidia NIM API is OpenAI compatible, except for a single parameter: `input_type`. This parameter is controlled by the keyword argument `vector_operation` when calling the driver `embed` methods.
+
 ### Override Default Structure Embedding Driver
 
 Here is how you can override the Embedding Driver that is used by default in Structures.

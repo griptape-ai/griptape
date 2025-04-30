@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Literal, Optional
 
 import numpy as np
 from attrs import define, field
@@ -14,6 +14,8 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
     from griptape.tokenizers import BaseTokenizer
+
+VectorOperation = Literal["query", "upsert"]
 
 
 @define
@@ -32,23 +34,27 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     def __attrs_post_init__(self) -> None:
         self.chunker = TextChunker(tokenizer=self.tokenizer) if self.tokenizer else None
 
-    def embed_text_artifact(self, artifact: TextArtifact) -> list[float]:
+    def embed_text_artifact(
+        self, artifact: TextArtifact, *, vector_operation: VectorOperation | None = None
+    ) -> list[float]:
         warnings.warn(
             "`BaseEmbeddingDriver.embed_text_artifact` is deprecated and will be removed in a future release. `BaseEmbeddingDriver.embed` is a drop-in replacement.",
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.embed(artifact)
+        return self.embed(artifact, vector_operation=vector_operation)
 
-    def embed_string(self, string: str) -> list[float]:
+    def embed_string(self, string: str, *, vector_operation: VectorOperation | None = None) -> list[float]:
         warnings.warn(
             "`BaseEmbeddingDriver.embed_string` is deprecated and will be removed in a future release. `BaseEmbeddingDriver.embed` is a drop-in replacement.",
             DeprecationWarning,
             stacklevel=2,
         )
-        return self.embed(string)
+        return self.embed(string, vector_operation=vector_operation)
 
-    def embed(self, value: str | TextArtifact | ImageArtifact) -> list[float]:
+    def embed(
+        self, value: str | TextArtifact | ImageArtifact, *, vector_operation: VectorOperation | None = None
+    ) -> list[float]:
         for attempt in self.retrying():
             with attempt:
                 if isinstance(value, str):
@@ -56,26 +62,28 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                         self.tokenizer is not None
                         and self.tokenizer.count_tokens(value) > self.tokenizer.max_input_tokens
                     ):
-                        return self._embed_long_string(value)
-                    return self.try_embed_chunk(value)
+                        return self._embed_long_string(value, vector_operation=vector_operation)
+                    return self.try_embed_chunk(value, vector_operation=vector_operation)
                 if isinstance(value, TextArtifact):
-                    return self.embed(value.to_text())
+                    return self.embed(value.to_text(), vector_operation=vector_operation)
                 if isinstance(value, ImageArtifact):
-                    return self.try_embed_artifact(value)
+                    return self.try_embed_artifact(value, vector_operation=vector_operation)
         raise RuntimeError("Failed to embed string.")
 
-    def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
+    def try_embed_artifact(
+        self, artifact: TextArtifact | ImageArtifact, *, vector_operation: VectorOperation | None = None
+    ) -> list[float]:
         # TODO: Mark as abstract method for griptape 2.0
         if isinstance(artifact, TextArtifact):
-            return self.try_embed_chunk(artifact.value)
+            return self.try_embed_chunk(artifact.value, vector_operation=vector_operation)
         raise ValueError(f"{self.__class__.__name__} does not support embedding images.")
 
     @abstractmethod
-    def try_embed_chunk(self, chunk: str) -> list[float]:
+    def try_embed_chunk(self, chunk: str, *, vector_operation: VectorOperation | None = None) -> list[float]:
         # TODO: Remove for griptape 2.0, subclasses should implement `try_embed_artifact` instead
         ...
 
-    def _embed_long_string(self, string: str) -> list[float]:
+    def _embed_long_string(self, string: str, *, vector_operation: VectorOperation | None = None) -> list[float]:
         """Embeds a string that is too long to embed in one go.
 
         Adapted from: https://github.com/openai/openai-cookbook/blob/683e5f5a71bc7a1b0e5b7a35e087f53cc55fceea/examples/Embedding_long_inputs.ipynb
@@ -85,7 +93,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         embedding_chunks = []
         length_chunks = []
         for chunk in chunks:
-            embedding_chunks.append(self.embed(chunk.value))
+            embedding_chunks.append(self.embed(chunk.value, vector_operation=vector_operation))
             length_chunks.append(len(chunk))
 
         # generate weighted averages
