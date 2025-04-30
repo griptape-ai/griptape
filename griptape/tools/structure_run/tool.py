@@ -22,8 +22,8 @@ class StructureRunTool(BaseTool):
         structure_run_driver: Driver to run the Structure.
     """
 
-    description: str = field(kw_only=True)
-    structure_run_driver: BaseStructureRunDriver = field(kw_only=True)
+    description: str = field(kw_only=True, metadata={"serializable": True})
+    structure_run_driver: BaseStructureRunDriver = field(kw_only=True, metadata={"serializable": True})
 
     @activity(
         config={
