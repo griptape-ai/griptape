@@ -32,6 +32,7 @@ test/unit/%: ## Run specific unit tests.
 .PHONY: test/unit/coverage
 test/unit/coverage:
 	@uv run pytest -n auto --cov=griptape tests/unit
+	@uv run coverage xml -i 
 
 .PHONY: test/integration
 test/integration:
