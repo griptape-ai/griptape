@@ -48,7 +48,7 @@ class AmazonBedrockCohereEmbeddingDriver(BaseEmbeddingDriver):
     def client(self) -> BedrockRuntimeClient:
         return self.session.client("bedrock-runtime")
 
-    def try_embed_chunk(self, chunk: str) -> list[float]:
+    def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
         payload = {"input_type": self.input_type, "texts": [chunk]}
 
         response = self.client.invoke_model(

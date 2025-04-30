@@ -46,12 +46,12 @@ class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
     def client(self) -> BedrockRuntimeClient:
         return self.session.client("bedrock-runtime")
 
-    def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
+    def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact, **kwargs) -> list[float]:
         if isinstance(artifact, TextArtifact):
             return self.try_embed_chunk(artifact.value)
         return self._invoke_model({"inputImage": base64.b64encode(artifact.value).decode()})["embedding"]
 
-    def try_embed_chunk(self, chunk: str) -> list[float]:
+    def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
         return self._invoke_model(
             {
                 "inputText": chunk,

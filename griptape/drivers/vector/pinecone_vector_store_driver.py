@@ -74,7 +74,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         # https://community.pinecone.io/t/is-there-a-way-to-query-all-the-vectors-and-or-metadata-from-a-namespace/797/5
 
         results = self.index.query(
-            vector=self.embedding_driver.embed(""),
+            vector=self.embedding_driver.embed("", vector_operation="query"),
             top_k=10000,
             include_metadata=True,
             namespace=namespace,

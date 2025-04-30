@@ -152,7 +152,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
             return vector_id
         meta = {**meta, "artifact": artifact.to_json()}
 
-        vector = self.embedding_driver.embed(artifact)
+        vector = self.embedding_driver.embed(artifact, vector_operation="upsert")
 
         return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
 
@@ -210,7 +210,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         **kwargs,
     ) -> list[Entry]:
         try:
-            vector = self.embedding_driver.embed(query)
+            vector = self.embedding_driver.embed(query, vector_operation="query")
         except ValueError as e:
             raise ValueError(
                 "The Embedding Driver, %s, used by the Vector Store does not support embedding the %s type."

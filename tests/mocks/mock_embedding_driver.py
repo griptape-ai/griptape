@@ -22,8 +22,8 @@ class MockEmbeddingDriver(BaseEmbeddingDriver):
         default=lambda chunk: [0, 1], kw_only=True
     )
 
-    def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact) -> list[float]:
+    def try_embed_artifact(self, artifact: TextArtifact | ImageArtifact, **kwargs) -> list[float]:
         return self.mock_output(artifact)
 
-    def try_embed_chunk(self, chunk: str) -> list[float]:
+    def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
         return self.mock_output(chunk)

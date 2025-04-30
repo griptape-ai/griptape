@@ -39,7 +39,7 @@ class CohereEmbeddingDriver(BaseEmbeddingDriver):
     def client(self) -> Client:
         return import_optional_dependency("cohere").Client(self.api_key)
 
-    def try_embed_chunk(self, chunk: str) -> list[float]:
+    def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
         result = self.client.embed(texts=[chunk], model=self.model, input_type=self.input_type)
 
         if isinstance(result.embeddings, list):

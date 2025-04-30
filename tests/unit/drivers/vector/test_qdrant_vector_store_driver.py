@@ -100,7 +100,7 @@ class TestQdrantVectorStoreDriver:
 
             results = driver.query(query, count=count, include_vectors=include_vectors)
 
-            mock_embed.assert_called_once_with(query)
+            mock_embed.assert_called_once_with(query, vector_operation="query")
             mock_search.assert_called_once_with(
                 collection_name=driver.collection_name, query_vector=[0.1, 0.2, 0.3], limit=count
             )
