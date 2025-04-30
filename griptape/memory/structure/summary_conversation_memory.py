@@ -72,3 +72,11 @@ class SummaryConversationMemory(BaseConversationMemory):
             logging.exception("Error summarizing memory: %s(%s)", type(e).__name__, e)
 
             return previous_summary
+
+    def after_add_run(self) -> None:
+        if self.max_runs:
+            while len(self.runs) > self.max_runs:
+                self.runs.pop(0)
+        self.meta["summary"] = self.summary
+        self.meta["summary_index"] = self.summary_index
+        self.conversation_memory_driver.store(self.runs, self.meta)
