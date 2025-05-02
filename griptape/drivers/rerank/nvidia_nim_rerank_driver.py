@@ -26,19 +26,21 @@ class NvidiaNimRerankDriver(BaseRerankDriver):
 
         response = requests.post(
             url=f"{self.base_url.rstrip('/')}/v1/ranking",
-            json=self._body(query, artifacts),
+            json=self._get_body(query, artifacts),
             headers=self.headers,
         )
 
         response.raise_for_status()
 
-        return [
-            artifacts[ranking["index"]].meta.update({"logit": ranking["logit"], "usage": ranking.get("usage")})
-            or artifacts[ranking["index"]]
-            for ranking in response.json()["rankings"]
-        ]
+        ranked_artifacts = []
+        for ranking in response.json()["rankings"]:
+            artifact = artifacts[ranking["index"]]
+            artifact.meta.update({"logit": ranking["logit"], "usage": ranking.get("usage")})
+            ranked_artifacts.append(artifact)
 
-    def _body(self, query: str, artifacts: list[TextArtifact]) -> dict:
+        return ranked_artifacts
+
+    def _get_body(self, query: str, artifacts: list[TextArtifact]) -> dict:
         return {
             "model": self.model,
             "query": {"text": query},
