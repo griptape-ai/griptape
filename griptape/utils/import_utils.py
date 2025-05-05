@@ -24,7 +24,6 @@ def import_optional_dependency(name: str) -> ModuleType:
 
     Returns:
         The imported module, when found.
-        None is returned when the package is not found and `errors` is False.
     """
     package_name = INSTALL_MAPPING.get(name)
     install_name = package_name if package_name is not None else name
