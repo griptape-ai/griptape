@@ -4,6 +4,59 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0](https://github.com/griptape-ai/griptape/compare/v1.6.0...v1.7.0) (2025-05-05)
+
+
+### ✨ Features
+
+* add EDB PG.AI Knowledge Base Vector Store Driver ([6811596](https://github.com/griptape-ai/griptape/commit/6811596414534b4cc249fc9789be92b8a0d1c9f0))
+* add support for gpt-image-1 ([#1921](https://github.com/griptape-ai/griptape/issues/1921)) ([2a6f2a9](https://github.com/griptape-ai/griptape/commit/2a6f2a9713a429ac99816ecae8e89d88e567c347))
+* add support for username in RedisVectorStoreDriver and RedisConversationMemoryDriver ([167dbc8](https://github.com/griptape-ai/griptape/commit/167dbc8114b4d1c1b99c225b40de5994dd772817))
+* add UrlArtifact, ImageUrlArtifact ([#1913](https://github.com/griptape-ai/griptape/issues/1913)) ([366af16](https://github.com/griptape-ai/griptape/commit/366af169196af4593249e8e071bf83f16a427ae6)), closes [#1359](https://github.com/griptape-ai/griptape/issues/1359)
+* **drivers-embedding-nvidia-nim:** add `NvidiaNimEmbeddingDriver`. ([55b1771](https://github.com/griptape-ai/griptape/commit/55b177172a6cf4d353136ef6e21dbfa736d10d6c))
+* **drivers-embedding:** add optional parameter `vector_operation` to methods in `BaseEmbeddingDriver`. ([55b1771](https://github.com/griptape-ai/griptape/commit/55b177172a6cf4d353136ef6e21dbfa736d10d6c))
+* **drivers-prompt-openai:** update default model for `OpenAiChatPromptDriver` and `AzureOpenAiChatPromptDriver` to `gpt-4.1` ([daa7ca4](https://github.com/griptape-ai/griptape/commit/daa7ca44195f0701b141a4884c83ee8c3286a354))
+* **drivers-prompt:** add partial support for ImageUrlArtifact ([04f9eb5](https://github.com/griptape-ai/griptape/commit/04f9eb5ddfd36385a88d6f7ca1222de6173f1c38))
+* **drivers-rerank-nvidia-nim:** add `NvidiaNimRerankDriver` ([b2a900a](https://github.com/griptape-ai/griptape/commit/b2a900a39f477e0a2de04d0a37c8e46a2723f22b))
+* **drivers-vector-store:** pass parameter `vector_operation` to `self.embedding_driver` embed methods. ([55b1771](https://github.com/griptape-ai/griptape/commit/55b177172a6cf4d353136ef6e21dbfa736d10d6c))
+
+
+### 🐛 Bug Fixes
+
+* add type annotation to kwargs to fix docs build ([#1917](https://github.com/griptape-ai/griptape/issues/1917)) ([e49ea76](https://github.com/griptape-ai/griptape/commit/e49ea768f4d3e3a7b3ab128adec7f730baa3ecf3))
+* **deps:** pin marshmallow &lt;4 to avoid backwards incompatible changes ([#1891](https://github.com/griptape-ai/griptape/issues/1891)) ([521f22b](https://github.com/griptape-ai/griptape/commit/521f22b9cc3d164383670e3161b6d7675ae2fda0))
+* **drivers-prompt-amazon-bedrock:** don't error when passing non-text artifacts as input ([04d8de0](https://github.com/griptape-ai/griptape/commit/04d8de0c4ed0df83f0bd461e7e7fad330b66a7aa))
+* **drivers-prompt-amazon-bedrock:** support reasoning content ([8d11365](https://github.com/griptape-ai/griptape/commit/8d113653606b6d5b4c14c6908d15d517d3d67c83))
+* **drivers-prompt-openai:** don't include `user`, `seed` if not set ([#1910](https://github.com/griptape-ai/griptape/issues/1910)) ([8d497c5](https://github.com/griptape-ai/griptape/commit/8d497c5580bb717265c94f18ae0f9a716e271c5b))
+* **drivers-vector-pgvector:** fix behavior of default count parameter ([#1905](https://github.com/griptape-ai/griptape/issues/1905)) ([e3d9f73](https://github.com/griptape-ai/griptape/commit/e3d9f73298395a7a0f2c0e8a5691bd9c4478d48f))
+* **drivers-vector-store-astradb:** pass correct client parameters ([#1907](https://github.com/griptape-ai/griptape/issues/1907)) ([b961a1e](https://github.com/griptape-ai/griptape/commit/b961a1e9bf92f9629100e937da2584e573fdc3f3))
+* implement pydantic model deserialization ([#1877](https://github.com/griptape-ai/griptape/issues/1877)) ([f7640f6](https://github.com/griptape-ai/griptape/commit/f7640f68b472c8b61f22ca72b2cc6c3ef267009c))
+* properly detect openai reasoning models ([#1922](https://github.com/griptape-ai/griptape/issues/1922)) ([f3944f5](https://github.com/griptape-ai/griptape/commit/f3944f5cfa1f6026a2ea1e3ebb200af84fba5c08))
+* remove  from Message if  is an empty array ([95f22bb](https://github.com/griptape-ai/griptape/commit/95f22bb01674ad560623c24d7230903cd9ad971f))
+* remove `content` from Message if `content` is an empty array ([#1895](https://github.com/griptape-ai/griptape/issues/1895)) ([95f22bb](https://github.com/griptape-ai/griptape/commit/95f22bb01674ad560623c24d7230903cd9ad971f))
+* remove inapplicable `errors` reference from `import_optional_dep… ([#1930](https://github.com/griptape-ai/griptape/issues/1930)) ([0d049da](https://github.com/griptape-ai/griptape/commit/0d049da2f8935a5b8d7553b7cd02fe850e72319c))
+* remove inapplicable `errors` reference from `import_optional_dependency` docstring ([#1929](https://github.com/griptape-ai/griptape/issues/1929)) ([0d049da](https://github.com/griptape-ai/griptape/commit/0d049da2f8935a5b8d7553b7cd02fe850e72319c))
+* **serialization:** resolve BaseStructureRunDriver to allow for serialization ([#1914](https://github.com/griptape-ai/griptape/issues/1914)) ([3e9789e](https://github.com/griptape-ai/griptape/commit/3e9789e971b95091142a628389219590acb845e4))
+* serialize StructureRunTool ([#1925](https://github.com/griptape-ai/griptape/issues/1925)) ([314c943](https://github.com/griptape-ai/griptape/commit/314c94395cf9777399a1da31c73af73818df5d39))
+* **subtasks:** handle non-string inputs during schema validation subtask ([04d8de0](https://github.com/griptape-ai/griptape/commit/04d8de0c4ed0df83f0bd461e7e7fad330b66a7aa))
+* **types:** preserve type hints on [@lazy](https://github.com/lazy)_property decorator ([#1836](https://github.com/griptape-ai/griptape/issues/1836)) ([a008de7](https://github.com/griptape-ai/griptape/commit/a008de7f3d485f59c02dab4e8ca5aaacf54d19ab))
+
+
+### 📦 Dependencies
+
+* bump astrapy from 1.5.2 to 2.0.1 ([#1881](https://github.com/griptape-ai/griptape/issues/1881)) ([b607c47](https://github.com/griptape-ai/griptape/commit/b607c474a207c0bd6913aa7891c75fb7d1da48fd))
+* bump duckduckgo-search from 7.5.2 to 8.0.0 ([#1880](https://github.com/griptape-ai/griptape/issues/1880)) ([a98fdf6](https://github.com/griptape-ai/griptape/commit/a98fdf6aece1379fc8618b5ce8fc939af851366e))
+* bump rich from 13.9.4 to 14.0.0 ([#1884](https://github.com/griptape-ai/griptape/issues/1884)) ([9dc0601](https://github.com/griptape-ai/griptape/commit/9dc06017f05c4753d5d89b2dfaaff88d05638109))
+* bump the production-dependencies group across 1 directory with 26 updates ([#1919](https://github.com/griptape-ai/griptape/issues/1919)) ([050396d](https://github.com/griptape-ai/griptape/commit/050396db343ee3b18c555d27c9737ad6ff52e720))
+* bump the production-dependencies group with 7 updates ([#1931](https://github.com/griptape-ai/griptape/issues/1931)) ([325d17e](https://github.com/griptape-ai/griptape/commit/325d17e8360d1a74e5027dd3782382a68f028774))
+
+
+### 📚 Documentation
+
+* add top level link to griptape nodes ([#1887](https://github.com/griptape-ai/griptape/issues/1887)) ([8d36c44](https://github.com/griptape-ai/griptape/commit/8d36c442cdaa58e15bd27d7a0a185aeb9a236dbd))
+* added quotes around griptape ([d5a07ea](https://github.com/griptape-ai/griptape/commit/d5a07ea575877a4dfd3e10e0307c4af0de001606))
+* update example to save images to disk ([#1908](https://github.com/griptape-ai/griptape/issues/1908)) ([c65fe69](https://github.com/griptape-ai/griptape/commit/c65fe69f1ef9e40677fb061043081fe394ece22a))
+
 ## [1.6.0](https://github.com/griptape-ai/griptape/compare/v1.5.0...v1.6.0) (2025-04-08)
 
 
