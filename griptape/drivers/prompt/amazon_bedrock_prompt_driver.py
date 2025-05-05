@@ -13,6 +13,7 @@ from griptape.artifacts import (
     ListArtifact,
     TextArtifact,
 )
+from griptape.artifacts.image_url_artifact import ImageUrlArtifact
 from griptape.common import (
     ActionCallDeltaMessageContent,
     ActionCallMessageContent,
@@ -183,8 +184,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             return {"text": content.artifact.to_text()}
         if isinstance(content, ImageMessageContent):
             artifact = content.artifact
-
-            return {"image": {"format": artifact.format, "source": {"bytes": artifact.value}}}
+            if isinstance(artifact, ImageArtifact):
+                return {"image": {"format": artifact.format, "source": {"bytes": artifact.value}}}
+            if isinstance(artifact, ImageUrlArtifact):
+                return {"image": {"format": "png", "source": {"s3Location": {"uri": artifact.value}}}}
+            raise ValueError(f"Unsupported image artifact type: {type(artifact)}")
         if isinstance(content, ActionCallMessageContent):
             action_call = content.artifact.value
 
