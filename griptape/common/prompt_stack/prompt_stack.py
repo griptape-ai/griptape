@@ -12,6 +12,7 @@ from griptape.artifacts import (
     BaseArtifact,
     GenericArtifact,
     ImageArtifact,
+    ImageUrlArtifact,
     ListArtifact,
     TextArtifact,
 )
@@ -92,6 +93,8 @@ class PromptStack(SerializableMixin):
         if isinstance(artifact, TextArtifact):
             return [TextMessageContent(artifact)]
         if isinstance(artifact, ImageArtifact):
+            return [ImageMessageContent(artifact)]
+        if isinstance(artifact, ImageUrlArtifact):
             return [ImageMessageContent(artifact)]
         if isinstance(artifact, AudioArtifact):
             return [AudioMessageContent(artifact)]

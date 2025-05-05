@@ -8,6 +8,7 @@ import schema
 from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.artifacts.generic_artifact import GenericArtifact
+from griptape.artifacts.image_url_artifact import ImageUrlArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.common.prompt_stack.contents.audio_delta_message_content import AudioDeltaMessageContent
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
@@ -312,7 +313,11 @@ class TestOpenAiChatPromptDriverFixtureMixin:
         prompt_stack.add_user_message("user-input")
         prompt_stack.add_user_message(
             ListArtifact(
-                [TextArtifact("user-input"), ImageArtifact(value=b"image-data", format="png", width=100, height=100)]
+                [
+                    TextArtifact("user-input"),
+                    ImageArtifact(value=b"image-data", format="png", width=100, height=100),
+                    ImageUrlArtifact(value="image-url"),
+                ]
             )
         )
         prompt_stack.add_assistant_message("assistant-input")
@@ -381,6 +386,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "content": [
                     {"type": "text", "text": "user-input"},
                     {"type": "image_url", "image_url": {"url": "data:image/png;base64,aW1hZ2UtZGF0YQ=="}},
+                    {"type": "image_url", "image_url": {"url": "image-url"}},
                 ],
             },
             {"role": "assistant", "content": "assistant-input"},

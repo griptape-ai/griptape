@@ -10,6 +10,7 @@ from griptape.artifacts import (
     BaseArtifact,
     ErrorArtifact,
     ImageArtifact,
+    ImageUrlArtifact,
     InfoArtifact,
     ListArtifact,
     TextArtifact,
@@ -181,11 +182,17 @@ class AnthropicPromptDriver(BasePromptDriver):
             return {"type": "text", "text": content.artifact.value}
         if isinstance(content, ImageMessageContent):
             artifact = content.artifact
-
-            return {
-                "type": "image",
-                "source": {"type": "base64", "media_type": artifact.mime_type, "data": artifact.base64},
-            }
+            if isinstance(artifact, ImageArtifact):
+                return {
+                    "type": "image",
+                    "source": {"type": "base64", "media_type": artifact.mime_type, "data": artifact.base64},
+                }
+            if isinstance(artifact, ImageUrlArtifact):
+                return {
+                    "type": "image",
+                    "source": {"type": "url", "url": artifact.value},
+                }
+            raise ValueError(f"Unsupported image artifact type: {type(artifact)}")
         if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 

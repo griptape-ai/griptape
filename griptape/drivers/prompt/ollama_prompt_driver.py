@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any, Optional
 from attrs import Factory, define, field
 
 from griptape.artifacts import ActionArtifact, TextArtifact
+from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.common import (
     ActionCallDeltaMessageContent,
     ActionCallMessageContent,
@@ -173,7 +174,10 @@ class OllamaPromptDriver(BasePromptDriver):
         if isinstance(content, TextMessageContent):
             return content.artifact.to_text()
         if isinstance(content, ImageMessageContent):
-            return content.artifact.base64
+            if isinstance(content.artifact, ImageArtifact):
+                return content.artifact.base64
+            # TODO: add support for image urls once resolved https://github.com/ollama/ollama/issues/4474
+            raise ValueError(f"Unsupported image artifact type: {type(content.artifact)}")
         if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 

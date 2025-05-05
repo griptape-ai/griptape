@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Optional
 from attrs import Attribute, Factory, define, field
 
 from griptape.artifacts import ActionArtifact, TextArtifact
+from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.common import (
     ActionCallDeltaMessageContent,
     ActionCallMessageContent,
@@ -230,7 +231,11 @@ class GooglePromptDriver(BasePromptDriver):
         if isinstance(content, TextMessageContent):
             return content.artifact.to_text()
         if isinstance(content, ImageMessageContent):
-            return types.ContentDict(mime_type=content.artifact.mime_type, data=content.artifact.value)
+            if isinstance(content.artifact, ImageArtifact):
+                return types.ContentDict(mime_type=content.artifact.mime_type, data=content.artifact.value)
+            # TODO: Google requires uploading to the files endpoint: https://ai.google.dev/gemini-api/docs/image-understanding#upload-image
+            # Can be worked around by using GenericMessageContent, similar to videos.
+            raise ValueError(f"Unsupported image artifact type: {type(content.artifact)}")
         if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 

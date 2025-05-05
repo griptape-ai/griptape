@@ -9,7 +9,8 @@ from typing import TYPE_CHECKING, Literal, Optional
 import openai
 from attrs import Factory, define, field
 
-from griptape.artifacts import ActionArtifact, AudioArtifact, TextArtifact
+from griptape.artifacts import ActionArtifact, AudioArtifact, ImageArtifact, TextArtifact
+from griptape.artifacts.image_url_artifact import ImageUrlArtifact
 from griptape.common import (
     ActionCallDeltaMessageContent,
     ActionCallMessageContent,
@@ -312,10 +313,17 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         if isinstance(content, TextMessageContent):
             return {"type": "text", "text": content.artifact.to_text()}
         if isinstance(content, ImageMessageContent):
-            return {
-                "type": "image_url",
-                "image_url": {"url": f"data:{content.artifact.mime_type};base64,{content.artifact.base64}"},
-            }
+            if isinstance(content.artifact, ImageArtifact):
+                return {
+                    "type": "image_url",
+                    "image_url": {"url": f"data:{content.artifact.mime_type};base64,{content.artifact.base64}"},
+                }
+            if isinstance(content.artifact, ImageUrlArtifact):
+                return {
+                    "type": "image_url",
+                    "image_url": {"url": content.artifact.value},
+                }
+            raise ValueError(f"Unsupported image artifact type: {type(content.artifact)}")
         if isinstance(content, AudioMessageContent):
             artifact = content.artifact
             metadata = artifact.meta
