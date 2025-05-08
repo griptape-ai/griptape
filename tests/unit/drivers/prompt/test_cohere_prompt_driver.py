@@ -432,3 +432,45 @@ class TestCoherePromptDriver:
         event = next(stream)
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 10
+
+    def test_to_dict(self):
+        # Given
+        driver = CoherePromptDriver(
+            model="command",
+            api_key="api-key",
+            use_native_tools=True,
+            structured_output_strategy="native",
+            extra_params={"foo": "bar"},
+        )
+
+        # When
+        result = driver.to_dict()
+
+        # Then
+        assert result == {
+            "extra_params": {"foo": "bar"},
+            "force_single_step": False,
+            "max_tokens": None,
+            "model": "command",
+            "stream": False,
+            "structured_output_strategy": "native",
+            "temperature": 0.1,
+            "type": "CoherePromptDriver",
+            "use_native_tools": True,
+        }
+
+    def test_from_dict(self):
+        # Given
+        driver = CoherePromptDriver(
+            model="command",
+            api_key="api-key",
+            use_native_tools=True,
+            structured_output_strategy="native",
+            extra_params={"foo": "bar"},
+        )
+
+        # When
+        result = CoherePromptDriver.from_dict({**driver.to_dict(), "api_key": "api-key"})
+
+        # Then
+        assert result.to_dict() == driver.to_dict()

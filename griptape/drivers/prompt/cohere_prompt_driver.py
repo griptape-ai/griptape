@@ -48,7 +48,7 @@ class CoherePromptDriver(BasePromptDriver):
         client: Custom `cohere.Client`.
     """
 
-    api_key: str = field(metadata={"serializable": False})
+    api_key: str = field(default=None, metadata={"serializable": False})
     model: str = field(metadata={"serializable": True})
     force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})

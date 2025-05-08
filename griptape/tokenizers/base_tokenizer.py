@@ -6,20 +6,25 @@ from typing import Optional
 
 from attrs import Factory, define, field
 
+from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils.decorators import lazy_property
 
 
 @define()
-class BaseTokenizer(ABC):
+class BaseTokenizer(ABC, SerializableMixin):
     DEFAULT_MAX_INPUT_TOKENS = 4096
     DEFAULT_MAX_OUTPUT_TOKENS = 1000
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {}
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {}
 
-    model: str = field(kw_only=True)
-    stop_sequences: list[str] = field(default=Factory(list), kw_only=True)
-    _max_input_tokens: Optional[int] = field(kw_only=True, default=None, alias="max_input_tokens")
-    _max_output_tokens: Optional[int] = field(kw_only=True, default=None, alias="max_output_tokens")
+    model: str = field(kw_only=True, metadata={"serializable": True})
+    stop_sequences: list[str] = field(default=Factory(list), kw_only=True, metadata={"serializable": True})
+    _max_input_tokens: Optional[int] = field(
+        kw_only=True, default=None, alias="max_input_tokens", metadata={"serializable": True}
+    )
+    _max_output_tokens: Optional[int] = field(
+        kw_only=True, default=None, alias="max_output_tokens", metadata={"serializable": True}
+    )
 
     @lazy_property()
     def max_input_tokens(self) -> int:
