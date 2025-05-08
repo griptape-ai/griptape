@@ -75,6 +75,44 @@ check/spell:
 docs: ## Build documentation.
 	@uv run python -m mkdocs build --clean --strict 
 
+.PHONY: version/get
+version/get: ## Get version.
+	@uv version | awk '{print $$2}'
+	
+.PHONY: version/set
+version/set: ## Set version.
+	@uv version $(v)
+	@make version/commit
+
+.PHONY: version/patch
+version/patch: ## Bump patch version.
+	@uv version --bump patch
+	@make version/commit
+
+.PHONY: version/minor
+version/minor: ## Bump minor version.
+	@uv version --bump minor
+	@make version/commit
+
+.PHONY: version/major
+version/major: ## Bump major version.
+	@uv version --bump major
+	@make version/commit
+
+.PHONY: version/commit
+version/commit: ## Commit version.
+	@uv lock
+	@git add pyproject.toml uv.lock
+	@git commit -m "chore: bump v$$(make version/get)"
+
+.PHONY: version/publish
+version/publish: ## Create and push git tags.
+	@git tag v$$(make version/get)
+	@git tag latest -f
+	@git push -f --tags
+	@git push
+	
+
 .DEFAULT_GOAL := help
 .PHONY: help
 help: ## Print Makefile help text.

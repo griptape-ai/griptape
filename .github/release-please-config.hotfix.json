@@ -1,7 +1,0 @@
-{
-  "versioning": "always-bump-patch",
-  "release-type": "python",
-  "packages": {
-    ".": {}
-  }
-}
