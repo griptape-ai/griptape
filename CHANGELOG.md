@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1](https://github.com/griptape-ai/griptape/compare/v1.7.0...v1.7.1) (2025-05-09)
+
+
+### Bug Fixes
+
+* doc string update for gpt-image-1 in OpenAiImageGenerationDriver ([#1936](https://github.com/griptape-ai/griptape/issues/1936)) ([f931861](https://github.com/griptape-ai/griptape/commit/f9318614b956971df99264e68482e761398fe8a6))
+* properly serialize GrokPromptDriver and CoherePromptDriver ([#1934](https://github.com/griptape-ai/griptape/issues/1934)) ([5757e5a](https://github.com/griptape-ai/griptape/commit/5757e5ab0f182ad7ccf49befc472f50996ee8371))
+
 ## [1.7.0](https://github.com/griptape-ai/griptape/compare/v1.6.0...v1.7.0) (2025-05-05)
 
 
