@@ -14,7 +14,10 @@ class ProxyWebScraperDriver(BaseWebScraperDriver):
     proxies: dict = field(kw_only=True, metadata={"serializable": False})
     params: dict = field(default=Factory(dict), kw_only=True, metadata={"serializable": True})
     _extract_page: Callable[[ProxyWebScraperDriver, str], TextArtifact] = field(
-        default=Factory(lambda: lambda _, page: TextArtifact(page)), kw_only=True, alias="extract_page", metadata={"serializable": False}
+        default=Factory(lambda: lambda _, page: TextArtifact(page)),
+        kw_only=True,
+        alias="extract_page",
+        metadata={"serializable": False},
     )
 
     def fetch_url(self, url: str) -> str:
