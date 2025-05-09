@@ -21,7 +21,7 @@ class GrokTokenizer(BaseTokenizer):
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"grok": 4096}
 
     base_url: str = field(default="https://api.x.ai", kw_only=True, metadata={"serializable": True})
-    api_key: str = field(kw_only=True)
+    api_key: str = field(kw_only=True, default=None)
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
