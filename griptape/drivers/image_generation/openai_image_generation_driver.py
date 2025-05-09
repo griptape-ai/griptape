@@ -31,6 +31,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         image_size: Size of the generated image. Must be one of the following, depending on the requested model:
             dall-e-2: [256x256, 512x512, 1024x1024]
             dall-e-3: [1024x1024, 1024x1792, 1792x1024]
+            gpt-image-1: [1024x1024, 1536x1024, 1024x1536, auto]
         response_format: The response format. Currently only supports 'b64_json' which will return
             a base64 encoded image in a JSON object.
         background: Optional and only supported for gpt-image-1. Can be either 'transparent', 'opaque', or 'auto'.
