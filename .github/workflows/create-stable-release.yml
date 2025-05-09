@@ -1,4 +1,4 @@
-name: Create release
+name: Create Stable Release
 
 on:
   push:
@@ -14,11 +14,11 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Create release
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GH_RELEASE_PAT }}
-          tag: ${{ github.ref_name }}
-        run: |
-          gh release create "$tag" \
-              --repo="$GITHUB_REPOSITORY" \
-              --title="${tag}" \
-              --generate-notes
+        with:
+          generate_release_notes: true
+          make_latest: true
+          prerelease: false
+
