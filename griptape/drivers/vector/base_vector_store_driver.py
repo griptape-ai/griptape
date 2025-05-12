@@ -148,8 +148,6 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
             value = artifact.to_text() if artifact.reference is None else artifact.to_text() + str(artifact.reference)
             vector_id = self._get_default_vector_id(value)
 
-        if self.does_entry_exist(vector_id, namespace=namespace):
-            return vector_id
         meta = {**meta, "artifact": artifact.to_json()}
 
         vector = self.embedding_driver.embed(artifact, vector_operation="upsert")
