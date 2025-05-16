@@ -17,13 +17,7 @@ from griptape.artifacts import (
     ListArtifact,
     TextArtifact,
 )
-from griptape.drivers.assistant.griptape_cloud import GriptapeCloudAssistantDriver
-from griptape.drivers.ruleset.griptape_cloud import GriptapeCloudRulesetDriver
-from griptape.drivers.structure_run.griptape_cloud import GriptapeCloudStructureRunDriver
-from griptape.drivers.vector.griptape_cloud import GriptapeCloudVectorStoreDriver
 from griptape.events import EventBus, EventListener, FinishStructureRunEvent
-from griptape.rules import Ruleset
-from griptape.tools import GriptapeCloudToolTool, QueryTool, StructureRunTool, VectorStoreTool
 from griptape.utils.decorators import lazy_property
 
 P = ParamSpec("P")
@@ -34,7 +28,10 @@ if TYPE_CHECKING:
 
     from griptape.drivers.file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
     from griptape.drivers.prompt.griptape_cloud_prompt_driver import GriptapeCloudPromptDriver
+    from griptape.drivers.assistant.griptape_cloud import GriptapeCloudAssistantDriver
+    from griptape.tools import StructureRunTool, VectorStoreTool
     from griptape.observability.observability import Observability
+    from griptape.rules import Ruleset
     from griptape.tools import BaseTool
 
 
@@ -196,6 +193,8 @@ class GriptapeCloudStructure:
         Returns:
             list[BaseTool]: List of cloud tool instances.
         """
+        from griptape.tools import GriptapeCloudToolTool, QueryTool
+        
         any_off_prompt = False
         tools = []
         for tool_id, tool_parameters in json.loads(os.environ.get("GT_CLOUD_TOOL_DICT", "{}")).items():
@@ -228,6 +227,9 @@ class GriptapeCloudStructure:
         Returns:
             list[Ruleset]: List of Ruleset instances.
         """
+        from griptape.drivers.ruleset.griptape_cloud import GriptapeCloudRulesetDriver
+        from griptape.rules import Ruleset
+        
         return [
             Ruleset(
                 ruleset_driver=GriptapeCloudRulesetDriver(
@@ -245,6 +247,8 @@ class GriptapeCloudStructure:
         Returns:
             GriptapeCloudAssistantDriver: The assistant driver instance.
         """
+        from griptape.drivers.assistant.griptape_cloud import GriptapeCloudAssistantDriver
+
         return GriptapeCloudAssistantDriver(
             assistant_id=os.environ["GT_CLOUD_ASSISTANT_ID"],
         )
@@ -274,6 +278,9 @@ class GriptapeCloudStructure:
         Returns:
             list[VectorStoreTool]: List of VectorStoreTool instances.
         """
+        from griptape.drivers.vector.griptape_cloud import GriptapeCloudVectorStoreDriver
+        from griptape.tools import VectorStoreTool
+        
         return [
             VectorStoreTool(
                 vector_store_driver=GriptapeCloudVectorStoreDriver(
@@ -300,6 +307,9 @@ class GriptapeCloudStructure:
         Returns:
             list[StructureRunTool]: List of StructureRunTool instances.
         """
+        from griptape.drivers.structure_run.griptape_cloud import GriptapeCloudStructureRunDriver
+        from griptape.tools import StructureRunTool
+        
         return [
             StructureRunTool(
                 structure_run_driver=GriptapeCloudStructureRunDriver(
