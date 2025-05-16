@@ -26,13 +26,12 @@ T = TypeVar("T")
 if TYPE_CHECKING:
     from types import TracebackType
 
+    from griptape.drivers.assistant.griptape_cloud import GriptapeCloudAssistantDriver
     from griptape.drivers.file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
     from griptape.drivers.prompt.griptape_cloud_prompt_driver import GriptapeCloudPromptDriver
-    from griptape.drivers.assistant.griptape_cloud import GriptapeCloudAssistantDriver
-    from griptape.tools import StructureRunTool, VectorStoreTool
     from griptape.observability.observability import Observability
     from griptape.rules import Ruleset
-    from griptape.tools import BaseTool
+    from griptape.tools import BaseTool, StructureRunTool, VectorStoreTool
 
 
 @define()
@@ -184,7 +183,7 @@ class GriptapeCloudStructure:
         Returns:
             list[str]: List of tool IDs.
         """
-        return json.loads(os.environ.get("GT_CLOUD_TOOL_DICT", "{}")).keys()
+        return list(json.loads(os.environ.get("GT_CLOUD_TOOL_DICT", "{}")).keys())
 
     @property
     def cloud_tools(self) -> list[BaseTool]:
@@ -194,7 +193,7 @@ class GriptapeCloudStructure:
             list[BaseTool]: List of cloud tool instances.
         """
         from griptape.tools import GriptapeCloudToolTool, QueryTool
-        
+
         any_off_prompt = False
         tools = []
         for tool_id, tool_parameters in json.loads(os.environ.get("GT_CLOUD_TOOL_DICT", "{}")).items():
@@ -218,7 +217,7 @@ class GriptapeCloudStructure:
         Returns:
             list[str]: List of ruleset IDs.
         """
-        return json.loads(os.environ.get("GT_CLOUD_RULESET_DICT", "{}")).keys()
+        return list(json.loads(os.environ.get("GT_CLOUD_RULESET_DICT", "{}")).keys())
 
     @property
     def cloud_rulesets(self) -> list[Ruleset]:
@@ -229,7 +228,7 @@ class GriptapeCloudStructure:
         """
         from griptape.drivers.ruleset.griptape_cloud import GriptapeCloudRulesetDriver
         from griptape.rules import Ruleset
-        
+
         return [
             Ruleset(
                 ruleset_driver=GriptapeCloudRulesetDriver(
@@ -260,7 +259,7 @@ class GriptapeCloudStructure:
         Returns:
             list[str]: List of knowledge base IDs.
         """
-        return json.loads(os.environ.get("GT_CLOUD_KB_DICT", "{}")).keys()
+        return list(json.loads(os.environ.get("GT_CLOUD_KB_DICT", "{}")).keys())
 
     @property
     def knowledge_base_ids(self) -> list[str]:
@@ -269,7 +268,7 @@ class GriptapeCloudStructure:
         Returns:
             list[str]: List of knowledge base IDs.
         """
-        return json.loads(os.environ.get("GT_CLOUD_KB_DICT", "{}")).keys()
+        return list(json.loads(os.environ.get("GT_CLOUD_KB_DICT", "{}")).keys())
 
     @property
     def cloud_knowledge_base_tools(self) -> list[VectorStoreTool]:
@@ -280,7 +279,7 @@ class GriptapeCloudStructure:
         """
         from griptape.drivers.vector.griptape_cloud import GriptapeCloudVectorStoreDriver
         from griptape.tools import VectorStoreTool
-        
+
         return [
             VectorStoreTool(
                 vector_store_driver=GriptapeCloudVectorStoreDriver(
@@ -298,7 +297,7 @@ class GriptapeCloudStructure:
         Returns:
             list[str]: List of structure IDs.
         """
-        return json.loads(os.environ.get("GT_CLOUD_STRUCTURE_DICT", "{}")).keys()
+        return list(json.loads(os.environ.get("GT_CLOUD_STRUCTURE_DICT", "{}")).keys())
 
     @property
     def cloud_structure_tools(self) -> list[StructureRunTool]:
@@ -309,7 +308,7 @@ class GriptapeCloudStructure:
         """
         from griptape.drivers.structure_run.griptape_cloud import GriptapeCloudStructureRunDriver
         from griptape.tools import StructureRunTool
-        
+
         return [
             StructureRunTool(
                 structure_run_driver=GriptapeCloudStructureRunDriver(
