@@ -202,3 +202,61 @@ class TestGrokPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert isinstance(event.content, AudioDeltaMessageContent)
         assert event.content.expires_at == ANY
         assert event.content.transcript == "assistant-audio-transcription"
+
+    def test_to_dict(self):
+        # Given
+        driver = GrokPromptDriver(
+            model="grok-2-latest",
+            use_native_tools=True,
+            structured_output_strategy="native",
+            modalities=["text", "audio"],
+            extra_params={"foo": "bar"},
+        )
+
+        # When
+        result = driver.to_dict()
+
+        # Then
+        assert result == {
+            "audio": {"format": "pcm16", "voice": "alloy"},
+            "base_url": "https://api.x.ai/v1",
+            "extra_params": {"foo": "bar"},
+            "max_tokens": None,
+            "modalities": ["text", "audio"],
+            "model": "grok-2-latest",
+            "organization": None,
+            "parallel_tool_calls": True,
+            "reasoning_effort": "medium",
+            "response_format": None,
+            "seed": None,
+            "stream": False,
+            "structured_output_strategy": "native",
+            "temperature": 0.1,
+            "tokenizer": {
+                "base_url": "https://api.x.ai/v1",
+                "max_input_tokens": 131072,
+                "max_output_tokens": 4096,
+                "model": "grok-2-latest",
+                "stop_sequences": [],
+                "type": "GrokTokenizer",
+            },
+            "type": "GrokPromptDriver",
+            "use_native_tools": True,
+            "user": "",
+        }
+
+    def test_from_dict(self):
+        # Given
+        driver = GrokPromptDriver(
+            model="grok-2-latest",
+            use_native_tools=True,
+            structured_output_strategy="native",
+            modalities=["text", "audio"],
+            extra_params={"foo": "bar"},
+        )
+
+        # When
+        result = GrokPromptDriver.from_dict(driver.to_dict())
+
+        # Then
+        assert result.to_dict() == driver.to_dict()

@@ -10,14 +10,15 @@ from .list_artifact import ListArtifact
 from .image_artifact import ImageArtifact
 from .image_url_artifact import ImageUrlArtifact
 from .audio_artifact import AudioArtifact
+from .audio_url_artifact import AudioUrlArtifact
 from .action_artifact import ActionArtifact
 from .generic_artifact import GenericArtifact
 from .model_artifact import ModelArtifact
 
-
 __all__ = [
     "ActionArtifact",
     "AudioArtifact",
+    "AudioUrlArtifact",
     "BaseArtifact",
     "BlobArtifact",
     "UrlArtifact",

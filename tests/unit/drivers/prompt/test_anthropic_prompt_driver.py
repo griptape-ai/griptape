@@ -5,6 +5,7 @@ from schema import Schema
 
 from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
+from griptape.artifacts.image_url_artifact import ImageUrlArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -207,7 +208,11 @@ class TestAnthropicPromptDriver:
         prompt_stack.add_user_message("user-input")
         prompt_stack.add_user_message(
             ListArtifact(
-                [TextArtifact("user-input"), ImageArtifact(value=b"image-data", format="png", width=100, height=100)]
+                [
+                    TextArtifact("user-input"),
+                    ImageArtifact(value=b"image-data", format="png", width=100, height=100),
+                    ImageUrlArtifact(value="image-url"),
+                ]
             )
         )
         prompt_stack.add_assistant_message("assistant-input")
@@ -285,6 +290,10 @@ class TestAnthropicPromptDriver:
                     {"type": "text", "text": "user-input"},
                     {
                         "source": {"data": "aW1hZ2UtZGF0YQ==", "media_type": "image/png", "type": "base64"},
+                        "type": "image",
+                    },
+                    {
+                        "source": {"type": "url", "url": "image-url"},
                         "type": "image",
                     },
                 ],

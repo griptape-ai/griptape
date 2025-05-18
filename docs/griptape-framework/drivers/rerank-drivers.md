@@ -44,3 +44,13 @@ The [CohereRerankDriver](../../reference/griptape/drivers/rerank/cohere_rerank_d
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/cohere_rerank_driver.txt"
     ```
+
+### Nvidia NIM
+
+The [NvidiaNimRerankDriver](../../reference/griptape/drivers/rerank/nvidia_nim_rerank_driver.md) uses the [Nvidia NIM Reranking API](https://docs.nvidia.com/nim/nemo-retriever/text-reranking/latest/index.html).
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/nvidia_nim_rerank_driver.py"
+    ```

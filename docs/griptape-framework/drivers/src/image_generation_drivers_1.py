@@ -3,7 +3,7 @@ from griptape.structures import Agent
 from griptape.tools import PromptImageGenerationTool
 
 driver = OpenAiImageGenerationDriver(
-    model="dall-e-2",
+    model="gpt-image-1",
 )
 
 agent = Agent(

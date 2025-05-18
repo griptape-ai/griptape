@@ -1,7 +1,15 @@
 import pytest
 from schema import Schema
 
-from griptape.artifacts import ActionArtifact, ErrorArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import (
+    ActionArtifact,
+    ErrorArtifact,
+    GenericArtifact,
+    ImageArtifact,
+    ImageUrlArtifact,
+    ListArtifact,
+    TextArtifact,
+)
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers.prompt.amazon_bedrock import AmazonBedrockPromptDriver
 from tests.mocks.mock_tool.tool import MockTool
@@ -236,7 +244,11 @@ class TestAmazonBedrockPromptDriver:
         prompt_stack.add_user_message("user-input")
         prompt_stack.add_user_message(
             ListArtifact(
-                [TextArtifact("user-input"), ImageArtifact(value=b"image-data", format="png", width=100, height=100)]
+                [
+                    TextArtifact("user-input"),
+                    ImageArtifact(value=b"image-data", format="png", width=100, height=100),
+                    ImageUrlArtifact(value="image-url"),
+                ]
             )
         )
         prompt_stack.add_assistant_message("assistant-input")
@@ -311,7 +323,11 @@ class TestAmazonBedrockPromptDriver:
             {"role": "user", "content": [{"text": "user-input"}]},
             {
                 "role": "user",
-                "content": [{"text": "user-input"}, {"image": {"format": "png", "source": {"bytes": b"image-data"}}}],
+                "content": [
+                    {"text": "user-input"},
+                    {"image": {"format": "png", "source": {"bytes": b"image-data"}}},
+                    {"image": {"format": "png", "source": {"s3Location": {"uri": "image-url"}}}},
+                ],
             },
             {"role": "assistant", "content": [{"text": "assistant-input"}]},
             {
