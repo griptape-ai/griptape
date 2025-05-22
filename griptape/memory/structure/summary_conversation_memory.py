@@ -29,15 +29,18 @@ class SummaryConversationMemory(BaseConversationMemory):
         kw_only=True,
     )
 
+    def __attrs_post_init__(self) -> None:
+        self.meta["summary"] = self.summary
+        self.meta["summary_index"] = self.summary_index
+        super().__attrs_post_init__()
+
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
             stack.add_user_message(self.summary_get_template.render(summary=self.summary))
-
         for r in self.unsummarized_runs(last_n):
             stack.add_user_message(r.input)
             stack.add_assistant_message(r.output)
-
         return stack
 
     def unsummarized_runs(self, last_n: Optional[int] = None) -> list[Run]:
@@ -72,3 +75,14 @@ class SummaryConversationMemory(BaseConversationMemory):
             logging.exception("Error summarizing memory: %s(%s)", type(e).__name__, e)
 
             return previous_summary
+
+    def after_add_run(self) -> None:
+        self.meta["summary"] = self.summary
+        self.meta["summary_index"] = self.summary_index
+        super().after_add_run()
+
+    def load_runs(self) -> list[Run]:
+        runs = super().load_runs()
+        self.summary = self.meta.get("summary")
+        self.summary_index = self.meta.get("summary_index", 0)
+        return runs
