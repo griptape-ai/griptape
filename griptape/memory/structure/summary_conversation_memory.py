@@ -29,15 +29,18 @@ class SummaryConversationMemory(BaseConversationMemory):
         kw_only=True,
     )
 
+    def __attrs_post_init__(self) -> None:
+        self.meta["summary"] = self.summary
+        self.meta["summary_index"] = self.summary_index
+        super().__attrs_post_init__()
+
     def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
             stack.add_user_message(self.summary_get_template.render(summary=self.summary))
-
         for r in self.unsummarized_runs(last_n):
             stack.add_user_message(r.input)
             stack.add_assistant_message(r.output)
-
         return stack
 
     def unsummarized_runs(self, last_n: Optional[int] = None) -> list[Run]:
