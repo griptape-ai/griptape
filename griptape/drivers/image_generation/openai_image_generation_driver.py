@@ -4,7 +4,7 @@ import base64
 from typing import TYPE_CHECKING, Literal, Optional
 
 import openai
-from attrs import define, field, fields_dict
+from attrs import Factory, define, field, fields_dict
 
 from griptape.drivers.image_generation import BaseImageGenerationDriver
 from griptape.utils.decorators import lazy_property
@@ -85,6 +85,19 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
     )
     _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
+    )
+    ignored_exception_types: tuple[type[Exception], ...] = field(
+        default=Factory(
+            lambda: (
+                openai.BadRequestError,
+                openai.AuthenticationError,
+                openai.PermissionDeniedError,
+                openai.NotFoundError,
+                openai.ConflictError,
+                openai.UnprocessableEntityError,
+            ),
+        ),
+        kw_only=True,
     )
 
     @image_size.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
