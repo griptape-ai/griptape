@@ -76,11 +76,6 @@ class SummaryConversationMemory(BaseConversationMemory):
 
             return previous_summary
 
-    def after_add_run(self) -> None:
-        self.meta["summary"] = self.summary
-        self.meta["summary_index"] = self.summary_index
-        super().after_add_run()
-
     def load_runs(self) -> list[Run]:
         runs = super().load_runs()
         self.summary = self.meta.get("summary")
