@@ -22,8 +22,10 @@ You can now [create a Structure in the Griptape Cloud console](https://cloud.gri
 
 ## Create a Structure from a ZIP file
 
-1. Ensure your repository has a Structure Config YAML file. If your repository contains multiple Structures, each Structure must have a separate Structure Config YAML file.
+1. Ensure your Structure folder has a Structure Config YAML file. If your Structure folder contains multiple Structures, each Structure must have a separate Structure Config YAML file.
     - To learn more see [Structure Config YAML](structure-config.md)
+1. Create a functional [Python venv](https://docs.python.org/3/library/venv.html) in your Structure folder
+    - Populating your virtual environment with your Structure's Python dependencies can be done using [pip](https://pip.pypa.io/en/stable/getting-started/#install-multiple-packages-using-a-requirements-file)
 1. Compress the entire Structure folder into a ZIP file
     - On Mac and Linux systems, this can be done with the 'zip' CLI command
     - On Windows systems, this can be done with the 'tar.exe' PowerShell command

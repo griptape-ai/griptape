@@ -16,6 +16,8 @@ You can now [create a Tool in the Griptape Cloud console](https://cloud.griptape
 
 1. Ensure your Tool folder has a Tool Config YAML file
     - To learn more see [Tool Config YAML](tool-config.md)
+1. Create a functional [Python venv](https://docs.python.org/3/library/venv.html) in your Tool folder
+    - Populating your virtual environment with your Tool's Python dependencies can be done using [pip](https://pip.pypa.io/en/stable/getting-started/#install-multiple-packages-using-a-requirements-file)
 1. Compress the entire Tool folder into a ZIP file
     - On Mac and Linux systems, this can be done with the 'zip' CLI command
     - On Windows systems, this can be done with the 'tar.exe' PowerShell command
