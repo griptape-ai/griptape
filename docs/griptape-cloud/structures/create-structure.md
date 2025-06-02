@@ -1,6 +1,6 @@
 # Structures
 
-You can host your Griptape framework [Agents](../../griptape-framework/structures/agents/index.md), [Pipelines](../../griptape-framework/structures/pipelines/index.md), and [Workflows](../../griptape-framework/structures/workflows/index.md) on Griptape Cloud. This allows you to run your Structures without needing to manage infrastructure.
+You can host your Griptape framework [Agents](../../griptape-framework/structures/agents.md), [Pipelines](../../griptape-framework/structures/pipelines.md), and [Workflows](../../griptape-framework/structures/workflows.md) on Griptape Cloud. This allows you to run your Structures without needing to manage infrastructure.
 
 # Creating a Structure from a GitHub Repo
 
