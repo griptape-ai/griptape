@@ -12,14 +12,14 @@ You can host your [Griptape framework Tools](../../griptape-framework/tools/inde
 
 You can now [create a Tool in the Griptape Cloud console](https://cloud.griptape.ai/tools/create/github-creation) by providing your GitHub repository information.
 
-## Create a Tool from a ZIP
+## Create a Tool from a ZIP file
 
 1. Ensure your Tool folder has a Tool Config YAML file
     - To learn more see [Tool Config YAML](tool-config.md)
 1. Compress the entire Tool folder into a ZIP file
     - On Mac and Linux systems, this can be done with the 'zip' CLI command
     - On Windows systems, this can be done with the 'tar.exe' PowerShell command
-1. Upload the created ZIP to a [Data Lake Bucket](../data-lakes/data-lakes.md) and note the Asset Name
+1. Upload the created ZIP file to a [Data Lake Bucket](../data-lakes/data-lakes.md) and note the Asset Name
 
 You can now [create a Tool in the Griptape Cloud console](https://cloud.griptape.ai/tools/create/data-lake-creation) by providing your Bucket and Asset Name from above.
 

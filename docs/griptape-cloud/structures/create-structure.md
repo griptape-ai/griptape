@@ -20,14 +20,14 @@ For production use-cases, we recommend connecting Griptape Cloud to GitHub and s
 
 You can now [create a Structure in the Griptape Cloud console](https://cloud.griptape.ai/structures/create/github-creation) by providing your GitHub repository information.
 
-## Create a Structure from a ZIP
+## Create a Structure from a ZIP file
 
 1. Ensure your repository has a Structure Config YAML file. If your repository contains multiple Structures, each Structure must have a separate Structure Config YAML file.
     - To learn more see [Structure Config YAML](structure-config.md)
 1. Compress the entire Structure folder into a ZIP file
     - On Mac and Linux systems, this can be done with the 'zip' CLI command
     - On Windows systems, this can be done with the 'tar.exe' PowerShell command
-1. Upload the created ZIP to a [Data Lake Bucket](../data-lakes/data-lakes.md) and note the Asset Name
+1. Upload the created ZIP file to a [Data Lake Bucket](../data-lakes/data-lakes.md) and note the Asset Name
 1. Specify the `structure_config.yaml` for this deployment
 1. Optionally, Enable Webhook and/or add Environment Variables
 1. Click *Create* to create your Structure using the configuration details that you have entered
