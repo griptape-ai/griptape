@@ -90,9 +90,9 @@ class GooglePromptDriver(BasePromptDriver):
     def try_run(self, prompt_stack: PromptStack) -> Message:
         messages = self.__to_google_messages(prompt_stack)
         params = self._base_params(prompt_stack)
-        logging.debug((messages, params))
+        logger.debug((messages, params["generation_config"].__dict__))
         response: GenerateContentResponse = self.client.generate_content(messages, **params)
-        logging.debug(response.to_dict())
+        logger.debug(response.to_dict())
 
         usage_metadata = response.usage_metadata
 
@@ -109,7 +109,7 @@ class GooglePromptDriver(BasePromptDriver):
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
         messages = self.__to_google_messages(prompt_stack)
         params = {**self._base_params(prompt_stack), "stream": True}
-        logging.debug((messages, params))
+        logger.debug((messages, params))
         response: GenerateContentResponse = self.client.generate_content(
             messages,
             **params,
