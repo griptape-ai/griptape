@@ -2,7 +2,7 @@
 
 You can host your Griptape framework [Agents](../../griptape-framework/structures/agents.md), [Pipelines](../../griptape-framework/structures/pipelines.md), and [Workflows](../../griptape-framework/structures/workflows.md) on Griptape Cloud. This allows you to run your Structures without needing to manage infrastructure.
 
-# Creating a Structure from a GitHub Repo
+## Creating a Structure from a GitHub Repo
 
 For production use-cases, we recommend connecting Griptape Cloud to GitHub and storing the code for your Structures in one or more a GitHub repos.
 
@@ -36,6 +36,6 @@ You can now [create a Structure in the Griptape Cloud console](https://cloud.gri
 
 You can now [create a Structure in the Griptape Cloud console](https://cloud.griptape.ai/structures/create/data-lake-creation) by providing your Bucket and Asset Name from above.
 
-### Quickstart With Samples and Templates
+## Quickstart With Samples and Templates
 
 To get started with Structures in the Cloud, check out the [managed-structure-template on GitHub](https://github.com/griptape-ai/managed-structure-template) or deploy one of the [griptape-sample-structures from GitHub](https://github.com/griptape-ai/griptape-sample-structures/tree/main).
