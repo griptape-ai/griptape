@@ -25,6 +25,6 @@ You can now [create a Tool in the Griptape Cloud console](https://cloud.griptape
 
 You can now [create a Tool in the Griptape Cloud console](https://cloud.griptape.ai/tools/create/data-lake-creation) by providing your Bucket and Asset Name from above.
 
-### Quickstart With Samples and Templates
+## Quickstart With Samples and Templates
 
 To get started with Tools in the Cloud, deploy one of the [griptape-sample-tools from GitHub](https://github.com/griptape-ai/griptape-sample-tools/tree/main).
