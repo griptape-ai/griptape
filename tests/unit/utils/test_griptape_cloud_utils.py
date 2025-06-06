@@ -9,7 +9,6 @@ from griptape.events import EventListener
 from griptape.events.event_bus import EventBus
 from griptape.observability.observability import Observability
 from griptape.utils import GriptapeCloudStructure
-from griptape.utils.griptape_cloud import griptape_cloud_url
 from tests.mocks.mock_event_listener_driver import MockEventListenerDriver
 
 
