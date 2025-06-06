@@ -5,7 +5,6 @@ import logging
 import os
 import uuid
 from typing import TYPE_CHECKING, Optional
-from urllib.parse import urljoin
 
 import requests
 from attrs import Factory, define, field
