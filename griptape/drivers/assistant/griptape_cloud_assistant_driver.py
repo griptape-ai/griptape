@@ -3,9 +3,9 @@ from __future__ import annotations
 import json
 import logging
 import os
-from urllib.parse import urljoin
 import uuid
 from typing import TYPE_CHECKING, Optional
+from urllib.parse import urljoin
 
 import requests
 from attrs import Factory, define, field
