@@ -24,7 +24,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
     """
 
     base_url: str = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai/")),
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
         kw_only=True,
     )
     api_key: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")), kw_only=True)
@@ -79,7 +79,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
 
     def _post_event(self, json: list[dict] | dict) -> None:
         requests.post(
-            url=urljoin(self.base_url, f"api/structure-runs/{self.structure_run_id}/events"),
+            url=urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/events"),
             json=json,
             headers=self.headers,
         ).raise_for_status()

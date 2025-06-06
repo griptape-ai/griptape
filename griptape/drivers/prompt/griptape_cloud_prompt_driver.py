@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import os
 from typing import TYPE_CHECKING, Optional
-from urllib.parse import urljoin
 
 import requests
 from attrs import Factory, define, field
@@ -12,6 +11,7 @@ from griptape.common import DeltaMessage, Message, PromptStack, observable
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, SimpleTokenizer
+from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -27,7 +27,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 class GriptapeCloudPromptDriver(BasePromptDriver):
     model: Optional[str] = field(default=None, kw_only=True)
     base_url: str = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai/")),
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
     )
     api_key: str = field(default=Factory(lambda: os.environ["GT_CLOUD_API_KEY"]))
     headers: dict = field(
@@ -51,7 +51,7 @@ class GriptapeCloudPromptDriver(BasePromptDriver):
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
-        url = urljoin(self.base_url, "api/chat/messages")
+        url = griptape_cloud_url(self.base_url, "api/chat/messages")
 
         params = self._base_params(prompt_stack)
         logger.debug(params)
@@ -64,7 +64,7 @@ class GriptapeCloudPromptDriver(BasePromptDriver):
 
     @observable
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
-        url = urljoin(self.base_url, "api/chat/messages/stream")
+        url = griptape_cloud_url(self.base_url, "api/chat/messages/stream")
         params = self._base_params(prompt_stack)
         logger.debug(params)
         with requests.post(url, headers=self.headers, json=params, stream=True) as response:

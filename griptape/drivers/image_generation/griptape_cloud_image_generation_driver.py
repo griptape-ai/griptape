@@ -2,20 +2,20 @@ from __future__ import annotations
 
 import os
 from typing import Literal, Optional
-from urllib.parse import urljoin
 
 import requests
 from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers.image_generation import BaseImageGenerationDriver
+from griptape.utils.griptape_cloud import griptape_cloud_url
 
 
 @define
 class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
     model: Optional[str] = field(default=None, kw_only=True)
     base_url: str = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai/")),
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
     )
     api_key: str = field(default=Factory(lambda: os.environ["GT_CLOUD_API_KEY"]))
     headers: dict = field(
@@ -28,7 +28,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
     )
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
-        url = urljoin(self.base_url, "api/images/generations")
+        url = griptape_cloud_url(self.base_url, "api/images/generations")
 
         response = requests.post(
             url,
