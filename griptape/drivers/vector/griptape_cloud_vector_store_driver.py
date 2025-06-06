@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from typing import TYPE_CHECKING, Any, NoReturn, Optional
-from urllib.parse import urljoin
 
 import requests
 from attrs import Factory, define, field
@@ -10,6 +9,7 @@ from attrs import Factory, define, field
 from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.drivers.embedding.dummy import DummyEmbeddingDriver
 from griptape.drivers.vector import BaseVectorStoreDriver
+from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
     from griptape.artifacts import ListArtifact, TextArtifact
@@ -100,7 +100,7 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
         """
         if isinstance(query, ImageArtifact):
             raise ValueError(f"{self.__class__.__name__} does not support querying with Image Artifacts.")
-        url = urljoin(self.base_url.strip("/"), f"/api/knowledge-bases/{self.knowledge_base_id}/query")
+        url = griptape_cloud_url(self.base_url, f"api/knowledge-bases/{self.knowledge_base_id}/query")
 
         query_args = {
             "count": count,

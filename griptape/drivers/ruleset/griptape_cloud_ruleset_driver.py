@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import os
 from typing import TYPE_CHECKING, Any, Optional
-from urllib.parse import urljoin
 
 import requests
 from attrs import Attribute, Factory, define, field
 
 from griptape.drivers.ruleset import BaseRulesetDriver
 from griptape.utils import dict_merge
+from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
     from griptape.rules import BaseRule
@@ -80,7 +80,7 @@ class GriptapeCloudRulesetDriver(BaseRulesetDriver):
 
     def _get_url(self, path: str) -> str:
         path = path.lstrip("/")
-        return urljoin(self.base_url, f"/api/{path}")
+        return griptape_cloud_url(self.base_url, f"api/{path}")
 
     def _call_api(self, method: str, path: str, *, raise_for_status: bool = True) -> requests.Response:
         res = requests.request(method, self._get_url(path), headers=self.headers)

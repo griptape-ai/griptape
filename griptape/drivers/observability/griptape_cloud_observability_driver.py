@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import os
 from typing import TYPE_CHECKING, Optional
-from urllib.parse import urljoin
 from uuid import UUID
 
 import requests
 from attrs import Attribute, Factory, define, field
 
 from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
+from griptape.utils.griptape_cloud import griptape_cloud_url
 from griptape.utils.import_utils import import_optional_dependency
 
 if TYPE_CHECKING:
@@ -73,7 +73,7 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
                 opentelemetry_util = import_optional_dependency("opentelemetry.sdk.util")
                 opentelemetry_trace_export = import_optional_dependency("opentelemetry.sdk.trace.export")
 
-                url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/spans")
+                url = griptape_cloud_url(self.base_url, f"api/structure-runs/{self.structure_run_id}/spans")
                 payload = [
                     {
                         "trace_id": GriptapeCloudObservabilityDriver.format_trace_id(span.context.trace_id),
