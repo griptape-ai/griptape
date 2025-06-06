@@ -28,7 +28,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
     )
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
-        url = griptape_cloud_url(self.base_url, "api/image/generations")
+        url = griptape_cloud_url(self.base_url, "api/images/generations")
 
         response = requests.post(
             url,
