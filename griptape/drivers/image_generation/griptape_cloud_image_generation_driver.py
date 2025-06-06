@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import os
 from typing import Literal, Optional
-from urllib.parse import urljoin
 
 import requests
 from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers.image_generation import BaseImageGenerationDriver
+from griptape.utils.griptape_cloud import griptape_cloud_url
 
 
 @define
@@ -28,7 +28,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
     )
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
-        url = urljoin(self.base_url.strip("/"), "/api/images/generations")
+        url = griptape_cloud_url(self.base_url, "api/image/generations")
 
         response = requests.post(
             url,
