@@ -42,7 +42,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         metadata={"serializable": True},
     )
     base_url: str = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai/")),
     )
     api_key: str = field(default=Factory(lambda: os.environ["GT_CLOUD_API_KEY"]))
     headers: dict = field(
@@ -140,7 +140,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
 
     def _get_url(self, path: str) -> str:
         path = path.lstrip("/")
-        return urljoin(self.base_url, f"/api/{path}")
+        return urljoin(self.base_url, f"api/{path}")
 
     def _call_api(
         self, method: str, path: str, json: Optional[dict] = None, *, raise_for_status: bool = True

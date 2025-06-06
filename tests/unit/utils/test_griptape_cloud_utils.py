@@ -84,37 +84,3 @@ class TestGriptapeCloudUtils:
             context.output = Mock(foo="bar")
             assert isinstance(context.output, GenericArtifact)
             assert context.output.value.foo == "bar"
-
-    def test_griptape_cloud_url(self):
-        assert (
-            griptape_cloud_url("https://cloud.griptape.ai", "api/chat/messages")
-            == "https://cloud.griptape.ai/api/chat/messages"
-        )
-        assert (
-            griptape_cloud_url("https://cloud.griptape.ai/", "api/chat/messages")
-            == "https://cloud.griptape.ai/api/chat/messages"
-        )
-        assert (
-            griptape_cloud_url("https://cloud.griptape.ai/", "/api/chat/messages")
-            == "https://cloud.griptape.ai/api/chat/messages"
-        )
-        assert (
-            griptape_cloud_url("https://cloud.griptape.ai", "/api/chat/messages")
-            == "https://cloud.griptape.ai/api/chat/messages"
-        )
-        assert (
-            griptape_cloud_url("https://cloud.griptape.ai/foo/bar", "api/chat/messages")
-            == "https://cloud.griptape.ai/foo/bar/api/chat/messages"
-        )
-        assert (
-            griptape_cloud_url("https://cloud.griptape.ai/foo/bar/", "api/chat/messages")
-            == "https://cloud.griptape.ai/foo/bar/api/chat/messages"
-        )
-        assert (
-            griptape_cloud_url("https://cloud.griptape.ai/foo/bar/", "/api/chat/messages")
-            == "https://cloud.griptape.ai/foo/bar/api/chat/messages"
-        )
-        assert (
-            griptape_cloud_url("https://cloud.griptape.ai/foo/bar", "/api/chat/messages")
-            == "https://cloud.griptape.ai/foo/bar/api/chat/messages"
-        )

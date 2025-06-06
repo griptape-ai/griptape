@@ -20,7 +20,7 @@ class BaseGriptapeCloudTool(BaseTool, ABC):
     """
 
     base_url: str = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai/")),
         kw_only=True,
     )
     api_key: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")), kw_only=True)

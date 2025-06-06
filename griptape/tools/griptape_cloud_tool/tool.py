@@ -40,7 +40,7 @@ class GriptapeCloudToolTool(BaseGriptapeCloudTool):
             setattr(self, activity_name, MethodType(activity_handler, self))
 
     def _get_schema(self) -> dict:
-        response = requests.get(urljoin(self.base_url, f"/api/tools/{self.tool_id}/openapi"), headers=self.headers)
+        response = requests.get(urljoin(self.base_url, f"api/tools/{self.tool_id}/openapi"), headers=self.headers)
 
         response.raise_for_status()
         schema = response.json()
@@ -131,7 +131,7 @@ class GriptapeCloudToolTool(BaseGriptapeCloudTool):
 
     def _run_activity(self, activity_name: str, params: dict) -> BaseArtifact:
         """Runs an activity on the tool with the provided parameters."""
-        url = urljoin(self.base_url, f"/api/tools/{self.tool_id}/activities/{activity_name}")
+        url = urljoin(self.base_url, f"api/tools/{self.tool_id}/activities/{activity_name}")
 
         response = requests.post(url, json=params, headers=self.headers)
 

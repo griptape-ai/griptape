@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from typing import TYPE_CHECKING, Any, Optional, TypeVar
-from urllib.parse import urljoin
 
 from attrs import define, field
 from typing_extensions import ParamSpec, Self
@@ -26,12 +25,6 @@ if TYPE_CHECKING:
     from types import TracebackType
 
     from griptape.observability.observability import Observability
-
-
-def griptape_cloud_url(base_url: str, route: str) -> str:
-    if not base_url.endswith("/"):
-        base_url += "/"
-    return urljoin(base_url, route.lstrip("/"))
 
 
 @define()

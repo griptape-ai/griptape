@@ -36,7 +36,7 @@ class GriptapeCloudRulesetDriver(BaseRulesetDriver):
         metadata={"serializable": True},
     )
     base_url: str = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai/")),
     )
     api_key: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")))
     headers: dict = field(
@@ -80,7 +80,7 @@ class GriptapeCloudRulesetDriver(BaseRulesetDriver):
 
     def _get_url(self, path: str) -> str:
         path = path.lstrip("/")
-        return urljoin(self.base_url, f"/api/{path}")
+        return urljoin(self.base_url, f"api/{path}")
 
     def _call_api(self, method: str, path: str, *, raise_for_status: bool = True) -> requests.Response:
         res = requests.request(method, self._get_url(path), headers=self.headers)

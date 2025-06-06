@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+from urllib.parse import urljoin
 import uuid
 from typing import TYPE_CHECKING, Optional
 
@@ -13,7 +14,6 @@ from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.assistant import BaseAssistantDriver
 from griptape.events import BaseEvent, EventBus
-from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -24,7 +24,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 @define
 class GriptapeCloudAssistantDriver(BaseAssistantDriver):
     base_url: str = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
+        default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai/")),
     )
     api_key: str = field(default=Factory(lambda: os.environ["GT_CLOUD_API_KEY"]))
     headers: dict = field(
@@ -72,7 +72,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
                 self.thread_id = thread["thread_id"]
 
     def _create_thread(self, thread_alias: Optional[str] = None) -> str:
-        url = griptape_cloud_url(self.base_url, "api/threads")
+        url = urljoin(self.base_url, "api/threads")
 
         body = {"name": uuid.uuid4().hex}
         if thread_alias is not None:
@@ -83,7 +83,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         return response.json()["thread_id"]
 
     def _create_run(self, *args: BaseArtifact) -> str:
-        url = griptape_cloud_url(self.base_url, f"api/assistants/{self.assistant_id}/runs")
+        url = urljoin(self.base_url, f"api/assistants/{self.assistant_id}/runs")
 
         response = requests.post(
             url,
@@ -126,7 +126,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         return output
 
     def _get_run_events(self, assistant_run_id: str) -> Iterator[dict]:
-        url = griptape_cloud_url(self.base_url, f"api/assistant-runs/{assistant_run_id}/events/stream")
+        url = urljoin(self.base_url, f"api/assistant-runs/{assistant_run_id}/events/stream")
         with requests.get(url, headers=self.headers, stream=True) as response:
             response.raise_for_status()
             for line in response.iter_lines():
@@ -136,7 +136,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
                         yield json.loads(decoded_line.removeprefix("data:").strip())
 
     def _find_thread_by_alias(self, thread_alias: str) -> Optional[dict]:
-        url = griptape_cloud_url(self.base_url, "api/threads")
+        url = urljoin(self.base_url, "api/threads")
         response = requests.get(url, params={"alias": thread_alias}, headers=self.headers)
         response.raise_for_status()
 
