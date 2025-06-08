@@ -9,6 +9,7 @@ from griptape.events import EventListener
 from griptape.events.event_bus import EventBus
 from griptape.observability.observability import Observability
 from griptape.utils import GriptapeCloudStructure
+from griptape.utils.griptape_cloud import griptape_cloud_url
 from tests.mocks.mock_event_listener_driver import MockEventListenerDriver
 
 
@@ -83,3 +84,37 @@ class TestGriptapeCloudUtils:
             context.output = Mock(foo="bar")
             assert isinstance(context.output, GenericArtifact)
             assert context.output.value.foo == "bar"
+
+    def test_griptape_cloud_url(self):
+        assert (
+            griptape_cloud_url("https://cloud.griptape.ai", "api/chat/messages")
+            == "https://cloud.griptape.ai/api/chat/messages"
+        )
+        assert (
+            griptape_cloud_url("https://cloud.griptape.ai/", "api/chat/messages")
+            == "https://cloud.griptape.ai/api/chat/messages"
+        )
+        assert (
+            griptape_cloud_url("https://cloud.griptape.ai/", "/api/chat/messages")
+            == "https://cloud.griptape.ai/api/chat/messages"
+        )
+        assert (
+            griptape_cloud_url("https://cloud.griptape.ai", "/api/chat/messages")
+            == "https://cloud.griptape.ai/api/chat/messages"
+        )
+        assert (
+            griptape_cloud_url("https://cloud.griptape.ai/foo/bar", "api/chat/messages")
+            == "https://cloud.griptape.ai/foo/bar/api/chat/messages"
+        )
+        assert (
+            griptape_cloud_url("https://cloud.griptape.ai/foo/bar/", "api/chat/messages")
+            == "https://cloud.griptape.ai/foo/bar/api/chat/messages"
+        )
+        assert (
+            griptape_cloud_url("https://cloud.griptape.ai/foo/bar/", "/api/chat/messages")
+            == "https://cloud.griptape.ai/foo/bar/api/chat/messages"
+        )
+        assert (
+            griptape_cloud_url("https://cloud.griptape.ai/foo/bar", "/api/chat/messages")
+            == "https://cloud.griptape.ai/foo/bar/api/chat/messages"
+        )

@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import logging
 from typing import TYPE_CHECKING
-from urllib.parse import urljoin
 
 import requests
 from attrs import Factory, define, field
@@ -12,6 +11,7 @@ from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.structure_run import BaseStructureRunDriver
 from griptape.events import BaseEvent, EventBus
+from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -40,7 +40,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
         return self._get_run_result(structure_run_id)
 
     def _create_run(self, *args: BaseArtifact) -> str:
-        url = urljoin(self.base_url.strip("/"), f"/api/structures/{self.structure_id}/runs")
+        url = griptape_cloud_url(self.base_url, f"api/structures/{self.structure_id}/runs")
 
         env_vars = [{"name": key, "value": value, "source": "manual"} for key, value in self.env.items()]
 
@@ -84,7 +84,7 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
         return output
 
     def _get_run_events(self, structure_run_id: str) -> Iterator[dict]:
-        url = urljoin(self.base_url.strip("/"), f"/api/structure-runs/{structure_run_id}/events/stream")
+        url = griptape_cloud_url(self.base_url, f"api/structure-runs/{structure_run_id}/events/stream")
         with requests.get(url, headers=self.headers, stream=True) as response:
             response.raise_for_status()
             for line in response.iter_lines():

@@ -1,4 +1,8 @@
-# Creating a Structure from a GitHub Repo
+# Structures
+
+You can host your Griptape framework [Agents](../../griptape-framework/structures/agents.md), [Pipelines](../../griptape-framework/structures/pipelines.md), and [Workflows](../../griptape-framework/structures/workflows.md) on Griptape Cloud. This allows you to run your Structures without needing to manage infrastructure.
+
+## Creating a Structure from a GitHub Repo
 
 For production use-cases, we recommend connecting Griptape Cloud to GitHub and storing the code for your Structures in one or more a GitHub repos.
 
@@ -14,8 +18,24 @@ For production use-cases, we recommend connecting Griptape Cloud to GitHub and s
 1. Optionally, Enable Webhook and/or add Environment Variables
 1. Click *Create* to create your Structure using the configuration details that you have entered
 
-You can now [create a Structure in the Griptape Cloud console](https://cloud.griptape.ai/structures/create) by providing your GitHub repository information.
+You can now [create a Structure in the Griptape Cloud console](https://cloud.griptape.ai/structures/create/github-creation) by providing your GitHub repository information.
 
-### Quickstart With Samples and Templates
+## Create a Structure from a ZIP file
+
+1. Ensure your Structure folder has a Structure Config YAML file. If your Structure folder contains multiple Structures, each Structure must have a separate Structure Config YAML file.
+    - To learn more see [Structure Config YAML](structure-config.md)
+1. Create a functional [Python venv](https://docs.python.org/3/library/venv.html) in your Structure folder
+    - Populating your virtual environment with your Structure's Python dependencies can be done using [pip](https://pip.pypa.io/en/stable/getting-started/#install-multiple-packages-using-a-requirements-file)
+1. Compress the entire Structure folder into a ZIP file
+    - On Mac and Linux systems, this can be done with the 'zip' CLI command
+    - On Windows systems, this can be done with the 'tar.exe' PowerShell command
+1. Upload the created ZIP file to a [Data Lake Bucket](../data-lakes/data-lakes.md) and note the Asset Name
+1. Specify the `structure_config.yaml` for this deployment
+1. Optionally, Enable Webhook and/or add Environment Variables
+1. Click *Create* to create your Structure using the configuration details that you have entered
+
+You can now [create a Structure in the Griptape Cloud console](https://cloud.griptape.ai/structures/create/data-lake-creation) by providing your Bucket and Asset Name from above.
+
+## Quickstart With Samples and Templates
 
 To get started with Structures in the Cloud, check out the [managed-structure-template on GitHub](https://github.com/griptape-ai/managed-structure-template) or deploy one of the [griptape-sample-structures from GitHub](https://github.com/griptape-ai/griptape-sample-structures/tree/main).

@@ -3,13 +3,13 @@ from __future__ import annotations
 import os
 import time
 from typing import Optional
-from urllib.parse import urljoin
 
 import requests
 from attrs import Attribute, Factory, define, field
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
 from griptape.events.base_event import BaseEvent
+from griptape.utils.griptape_cloud import griptape_cloud_url
 
 
 @define
@@ -79,7 +79,7 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
 
     def _post_event(self, json: list[dict] | dict) -> None:
         requests.post(
-            url=urljoin(self.base_url.strip("/"), f"/api/structure-runs/{self.structure_run_id}/events"),
+            url=griptape_cloud_url(self.base_url, f"api/structure-runs/{self.structure_run_id}/events"),
             json=json,
             headers=self.headers,
         ).raise_for_status()

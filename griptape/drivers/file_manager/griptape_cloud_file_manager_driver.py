@@ -3,12 +3,12 @@ from __future__ import annotations
 import logging
 import os
 from typing import Optional
-from urllib.parse import urljoin
 
 import requests
 from attrs import Attribute, Factory, define, field
 
 from griptape.drivers.file_manager import BaseFileManagerDriver
+from griptape.utils.griptape_cloud import griptape_cloud_url
 
 logger = logging.getLogger(__name__)
 
@@ -120,7 +120,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
 
     def _get_url(self, path: str) -> str:
         path = path.lstrip("/")
-        return urljoin(self.base_url, f"/api/{path}")
+        return griptape_cloud_url(self.base_url, f"api/{path}")
 
     def _call_api(
         self,

@@ -3,7 +3,6 @@ from __future__ import annotations
 import os
 import uuid
 from typing import TYPE_CHECKING, Any, Optional
-from urllib.parse import urljoin
 
 import requests
 from attrs import Attribute, Factory, define, field
@@ -11,6 +10,7 @@ from attrs import Attribute, Factory, define, field
 from griptape.artifacts import BaseArtifact
 from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
 from griptape.utils import dict_merge
+from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
     from griptape.memory.structure import Run
@@ -140,7 +140,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
 
     def _get_url(self, path: str) -> str:
         path = path.lstrip("/")
-        return urljoin(self.base_url, f"/api/{path}")
+        return griptape_cloud_url(self.base_url, f"api/{path}")
 
     def _call_api(
         self, method: str, path: str, json: Optional[dict] = None, *, raise_for_status: bool = True
