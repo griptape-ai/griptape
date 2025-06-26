@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 from asyncio import get_event_loop
-from contextlib import _AsyncGeneratorContextManager, asynccontextmanager
 from types import MethodType
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any, Callable
+
+import mcp.types as types
 from attrs import define, field
 from mcp import ClientSession
-import mcp.types as types
 
 from griptape.artifacts import (
     AudioArtifact,
@@ -20,7 +20,10 @@ from griptape.artifacts import (
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
-from .sessions import create_session, Connection
+from .sessions import Connection, create_session
+
+if TYPE_CHECKING:
+    from contextlib import _AsyncGeneratorContextManager
 
 
 @define
