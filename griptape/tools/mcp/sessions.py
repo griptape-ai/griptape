@@ -223,9 +223,11 @@ async def _create_streamable_http_session(
     if httpx_client_factory is not None:
         kwargs["httpx_client_factory"] = httpx_client_factory
 
-    async with streamablehttp_client(
-        url, headers, timeout, sse_read_timeout, terminate_on_close, **kwargs
-    ) as (read, write, _):
+    async with streamablehttp_client(url, headers, timeout, sse_read_timeout, terminate_on_close, **kwargs) as (
+        read,
+        write,
+        _,
+    ):
         async with ClientSession(read, write, **(session_kwargs or {})) as session:
             yield session
 
@@ -321,9 +323,7 @@ async def create_session(
             env=connection.get("env"),
             cwd=connection.get("cwd"),
             encoding=connection.get("encoding", DEFAULT_ENCODING),
-            encoding_error_handler=connection.get(
-                "encoding_error_handler", DEFAULT_ENCODING_ERROR_HANDLER
-            ),
+            encoding_error_handler=connection.get("encoding_error_handler", DEFAULT_ENCODING_ERROR_HANDLER),
             session_kwargs=connection.get("session_kwargs"),
         ) as session:
             yield session
@@ -337,6 +337,5 @@ async def create_session(
             yield session
     else:
         raise ValueError(
-            f"Unsupported transport: {transport}. "
-            f"Must be one of: 'stdio', 'sse', 'websocket', 'streamable_http'"
+            f"Unsupported transport: {transport}. Must be one of: 'stdio', 'sse', 'websocket', 'streamable_http'"
         )

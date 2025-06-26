@@ -8,7 +8,15 @@ from attrs import define, field
 from mcp import ClientSession
 import mcp.types as types
 
-from griptape.artifacts import AudioArtifact, BaseArtifact, BlobArtifact, ErrorArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import (
+    AudioArtifact,
+    BaseArtifact,
+    BlobArtifact,
+    ErrorArtifact,
+    ImageArtifact,
+    ListArtifact,
+    TextArtifact,
+)
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
@@ -22,6 +30,7 @@ class MCPTool(BaseTool):
     Attributes:
         connection: The MCP server connection info.
     """
+
     connection: Connection = field(kw_only=True)
 
     def __attrs_post_init__(self) -> None:
@@ -57,8 +66,10 @@ class MCPTool(BaseTool):
             return self._convert_call_tool_result_to_artifact(tool_result)
         except Exception as e:
             return ErrorArtifact(value=str(e), exception=e)
-        
-    def _convert_call_tool_result_to_artifact(self, call_tool_result: types.CallToolResult) -> ListArtifact | ErrorArtifact:
+
+    def _convert_call_tool_result_to_artifact(
+        self, call_tool_result: types.CallToolResult
+    ) -> ListArtifact | ErrorArtifact:
         if call_tool_result.isError:
             return ErrorArtifact(call_tool_result.content)
 
@@ -67,7 +78,9 @@ class MCPTool(BaseTool):
             if isinstance(content, types.TextContent):
                 response_artifacts.append(TextArtifact(content.text))
             elif isinstance(content, types.ImageContent):
-                response_artifacts.append(ImageArtifact(value=content.data, format=content.mimeType.lstrip("image/"), width=0, height=0))
+                response_artifacts.append(
+                    ImageArtifact(value=content.data, format=content.mimeType.lstrip("image/"), width=0, height=0)
+                )
             elif isinstance(content, types.AudioContent):
                 response_artifacts.append(AudioArtifact(value=content.data, format=content.mimeType.lstrip("audio/")))
             elif isinstance(content, types.EmbeddedResource):
