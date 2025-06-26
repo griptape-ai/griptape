@@ -42,18 +42,20 @@ def json_to_python_type(json_type: str) -> type:
 def get_json_schema_value(original_schema: dict) -> dict:
     json_schema_value = {}
     for property_key, property_value in original_schema["properties"].items():
-        key = Literal(
+        schema_key = Literal(
             property_key,
             description=property_value.get("description", None),
         )
         if property_key not in original_schema.get("required", []):
-            key = Optional(key)
-        value = (
-            get_json_schema_value(property_value)
-            if property_value["type"] == "object"
-            else json_to_python_type(property_value["type"])
-        )
-        json_schema_value[key] = value
+            schema_key = Optional(schema_key)
+        if property_value["type"] == "array":
+            item_type = property_value["items"].get("type", "string")
+            schema_value = list[json_to_python_type(item_type)]
+        elif property_value["type"] == "object":
+            schema_value = get_json_schema_value(property_value)
+        else:
+            schema_value = json_to_python_type(property_value["type"])
+        json_schema_value[schema_key] = schema_value
     return json_schema_value
 
 
