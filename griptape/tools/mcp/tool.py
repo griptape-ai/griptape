@@ -4,9 +4,9 @@ from asyncio import get_event_loop
 from types import MethodType
 from typing import TYPE_CHECKING, Any, Callable
 
-import mcp.types as types
 from attrs import define, field
-from mcp import ClientSession
+from mcp import ClientSession, types
+from schema import Literal, Optional, Schema
 
 from griptape.artifacts import (
     AudioArtifact,
@@ -24,6 +24,37 @@ from .sessions import Connection, create_session
 
 if TYPE_CHECKING:
     from contextlib import _AsyncGeneratorContextManager
+
+
+def json_to_python_type(json_type: str) -> type:
+    conversion_map = {
+        "string": str,
+        "integer": int,
+        "number": float,
+        "boolean": bool,
+        "array": list,
+        "object": dict,
+        "null": type(None),
+    }
+    return conversion_map[json_type]
+
+
+def get_json_schema_value(original_schema: dict) -> dict:
+    json_schema_value = {}
+    for property_key, property_value in original_schema["properties"].items():
+        key = Literal(
+            property_key,
+            description=property_value.get("description", None),
+        )
+        if property_key not in original_schema.get("required", []):
+            key = Optional(key)
+        value = (
+            get_json_schema_value(property_value)
+            if property_value["type"] == "object"
+            else json_to_python_type(property_value["type"])
+        )
+        json_schema_value[key] = value
+    return json_schema_value
 
 
 @define
@@ -54,7 +85,13 @@ class MCPTool(BaseTool):
     def _create_activity_handler(self, tool: types.Tool) -> Callable:
         """Creates an activity handler method for the MCP tool."""
 
-        @activity(config={"name": tool.name, "description": tool.description, "schema": tool.inputSchema})
+        @activity(
+            config={
+                "name": tool.name,
+                "description": tool.description or tool.title or tool.name,
+                "schema": Schema(get_json_schema_value(tool.inputSchema)),
+            }
+        )
         def activity_handler(self: MCPTool, values: dict) -> Any:
             return self._run_activity(tool.name, values)
 
