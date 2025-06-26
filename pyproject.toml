@@ -3,14 +3,14 @@ name = "griptape"
 version = "1.8.0"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = [{ name = "Griptape", email = "hello@griptape.ai" }]
-requires-python = "~=3.10"
+requires-python = "~=3.9"
 readme = "README.md"
 license = "Apache-2.0"
 dependencies = [
   "openai>=1.1.1",
   "attrs>=24.3.0",
   "jinja2>=3.1.4",
-  "marshmallow>=3.21.3,<4", # TODO: Upgrade to 4.0 for griptape 2.0
+  "marshmallow>=3.21.3,<4",     # TODO: Upgrade to 4.0 for griptape 2.0
   "marshmallow-enum>=1.5.1",
   "tiktoken>=0.9",
   "rich>=13.7.1",
@@ -24,7 +24,6 @@ dependencies = [
   "pydantic>=2.7.4",
   "wrapt>=1.16.0",
   "pip>=25.0.1",
-  "mcp>=1.10.0",
 ]
 
 [project.optional-dependencies]
