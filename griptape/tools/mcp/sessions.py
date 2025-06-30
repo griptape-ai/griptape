@@ -5,10 +5,10 @@ from contextlib import asynccontextmanager
 from datetime import timedelta
 from typing import TYPE_CHECKING, Any, Literal, Protocol, TypedDict
 
-from mcp import ClientSession, StdioServerParameters
-from mcp.client.sse import sse_client
-from mcp.client.stdio import stdio_client
-from mcp.client.streamable_http import streamablehttp_client
+from mcp import ClientSession, StdioServerParameters  # type: ignore[reportAttributeAccessIssue]
+from mcp.client.sse import sse_client  # type: ignore[reportMissingImports]
+from mcp.client.stdio import stdio_client  # type: ignore[reportMissingImports]
+from mcp.client.streamable_http import streamablehttp_client  # type: ignore[reportMissingImports]
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
@@ -125,7 +125,7 @@ class WebsocketConnection(TypedDict):
     """Additional keyword arguments to pass to the ClientSession"""
 
 
-Connection = StdioConnection | SSEConnection | StreamableHttpConnection | WebsocketConnection
+Connection = StdioConnection | SSEConnection | StreamableHttpConnection | WebsocketConnection  # type: ignore[reportGeneralTypeIssues]
 
 
 @asynccontextmanager
@@ -254,7 +254,7 @@ async def _create_websocket_session(
         ImportError: If websockets package is not installed
     """
     try:
-        from mcp.client.websocket import websocket_client
+        from mcp.client.websocket import websocket_client  # type: ignore[reportMissingImports]
     except ImportError:
         raise ImportError(
             "Could not import websocket_client. ",

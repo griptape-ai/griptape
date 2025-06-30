@@ -5,7 +5,7 @@ from types import MethodType
 from typing import TYPE_CHECKING, Any, Callable
 
 from attrs import define, field
-from mcp import ClientSession, types
+from mcp import ClientSession, types  # type: ignore[reportAttributeAccessIssue]
 from schema import Literal, Optional, Schema
 
 from griptape.artifacts import (
