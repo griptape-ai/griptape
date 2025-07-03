@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from asyncio import get_event_loop
+import asyncio
 from types import MethodType
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any, Callable, Union
 
 from attrs import define, field
-from mcp import ClientSession, types  # type: ignore[reportAttributeAccessIssue]
+from mcp import ClientSession, types
 from schema import Literal, Optional, Schema
 
 from griptape.artifacts import (
@@ -48,13 +48,18 @@ def get_json_schema_value(original_schema: dict) -> dict:
         )
         if property_key not in original_schema.get("required", []):
             schema_key = Optional(schema_key)
-        if property_value["type"] == "array":
-            item_type = property_value["items"].get("type", "string")
-            schema_value = list[json_to_python_type(item_type)]
-        elif property_value["type"] == "object":
-            schema_value = get_json_schema_value(property_value)
+        if "type" in property_value:
+            if property_value["type"] == "array":
+                item_type = property_value["items"].get("type", "string")
+                schema_value = list[json_to_python_type(item_type)]
+            elif property_value["type"] == "object":
+                schema_value = get_json_schema_value(property_value)
+            else:
+                schema_value = json_to_python_type(property_value["type"])
+        elif "anyOf" in property_value:
+            schema_value = Union[tuple([json_to_python_type(item["type"]) for item in property_value["anyOf"]])]
         else:
-            schema_value = json_to_python_type(property_value["type"])
+            raise ValueError(f"Unsupported JSON schema type for property '{property_key}': {property_value}")
         json_schema_value[schema_key] = schema_value
     return json_schema_value
 
@@ -70,7 +75,7 @@ class MCPTool(BaseTool):
     connection: Connection = field(kw_only=True)
 
     def __attrs_post_init__(self) -> None:
-        get_event_loop().run_until_complete(self._init_activities())
+        asyncio.get_event_loop().run_until_complete(self._init_activities())
 
     async def _init_activities(self) -> None:
         async with self._get_session() as session:
@@ -95,7 +100,7 @@ class MCPTool(BaseTool):
             }
         )
         def activity_handler(self: MCPTool, values: dict) -> Any:
-            return self._run_activity(tool.name, values)
+            return asyncio.run(self._run_activity(tool.name, values))
 
         return activity_handler
 
