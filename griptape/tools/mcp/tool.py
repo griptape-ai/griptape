@@ -118,7 +118,7 @@ class MCPTool(BaseTool):
         self, call_tool_result: types.CallToolResult
     ) -> ListArtifact | ErrorArtifact:
         if call_tool_result.isError:
-            return ErrorArtifact(call_tool_result.content)
+            return ErrorArtifact(call_tool_result.content[0].text or "An unknown error occurred.")
 
         response_artifacts: list[BaseArtifact] = []
         for content in call_tool_result.content:
