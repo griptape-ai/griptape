@@ -117,7 +117,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
             - The field value is not None
             - The model_allowlist is None or the model is in the allowlist
         """
-        values = ["image_size", "quality", "style", "background", "moderation", "output_compression", "output_format"]
+        values = ["model", "image_size", "quality", "style", "background", "moderation", "output_compression", "output_format"]
 
         params = {}
         fields = fields_dict(self.__class__)
