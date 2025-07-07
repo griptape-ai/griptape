@@ -16,7 +16,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for the OpenAI image generation API.
 
     Attributes:
-        model: Image generation model, 'gpt-image-1' or 'dall-e-3'. Defaults to 'gpt-image-1'.
+        model: Image generation model, 'gpt-image-1' or 'dall-e-3'. Defaults to 'dall-e-3'.
         base_url: Griptape Cloud API URL.
         api_key: Griptape Cloud API Key.
         headers: Headers for Griptape Cloud request. Overwrites api_key.
@@ -31,7 +31,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
         output_format: Optional and only supported for gpt-image-1. Can be either 'png' or 'jpeg'.
     """
 
-    model: str = field(default="gpt-image-1", kw_only=True, metadata={"serializable": True})
+    model: str = field(default="dall-e-3", kw_only=True, metadata={"serializable": True})
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
     )
