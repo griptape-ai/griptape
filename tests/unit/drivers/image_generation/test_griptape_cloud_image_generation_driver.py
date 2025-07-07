@@ -74,19 +74,19 @@ class TestGriptapeCloudImageGenerationDriver:
 
     def test_dall_e_3_driver_background(self):
         driver = GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", background="transparent")
-        assert "background" not in driver._build_model_params()
+        assert "background" not in driver._build_driver_configuration()
 
     def test_dall_e_3_driver_moderation(self):
         driver = GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", moderation="low")
-        assert "moderation" not in driver._build_model_params()
+        assert "moderation" not in driver._build_driver_configuration()
 
     def test_dall_e_3_driver_output_compression(self):
         driver = GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", output_compression=0)
-        assert "output_compression" not in driver._build_model_params()
+        assert "output_compression" not in driver._build_driver_configuration()
 
     def test_dall_e_3_driver_output_format(self):
         driver = GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", output_format="png")
-        assert "output_format" not in driver._build_model_params()
+        assert "output_format" not in driver._build_driver_configuration()
 
     def test_dall_e_3_driver_landscape(self):
         with pytest.raises(ValueError):
@@ -98,11 +98,11 @@ class TestGriptapeCloudImageGenerationDriver:
 
     def test_gpt_image_1_driver_style(self):
         driver = GriptapeCloudImageGenerationDriver(model="gpt-image-1", api_key="foo", style="vivid")
-        assert "style" not in driver._build_model_params()
+        assert "style" not in driver._build_driver_configuration()
 
     def test_gpt_image_1_driver_quality(self):
         driver = GriptapeCloudImageGenerationDriver(model="gpt-image-1", api_key="foo", quality="hd")
-        assert "quality" not in driver._build_model_params()
+        assert "quality" not in driver._build_driver_configuration()
 
     def test_gpt_image_1_driver_landscape(self):
         with pytest.raises(ValueError):
