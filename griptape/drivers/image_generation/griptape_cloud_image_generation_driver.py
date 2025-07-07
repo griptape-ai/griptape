@@ -16,15 +16,15 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for the OpenAI image generation API.
 
     Attributes:
-        model: Image generation model, 'gpt-image-1' or 'dall-e-3'.
+        model: Image generation model, 'gpt-image-1' or 'dall-e-3'. Defaults to 'gpt-image-1'.
         base_url: Griptape Cloud API URL.
-        api_key: Griptape Cloud API key.
+        api_key: Griptape Cloud API Key.
         headers: Headers for Griptape Cloud request. Overwrites api_key.
-        style: Optional and only supported for dall-e-3, can be either 'vivid' or 'natural'.
-        quality: Optional and only supported for dall-e-3. Accepts 'standard', 'hd'.
         image_size: Size of the generated image. Must be one of the following, depending on the requested model:
             dall-e-3: [1024x1024, 1024x1792, 1792x1024]
             gpt-image-1: [1024x1024, 1536x1024, 1024x1536, auto]
+        style: Optional and only supported for dall-e-3, can be either 'vivid' or 'natural'.
+        quality: Optional and only supported for dall-e-3. Accepts 'standard', 'hd'.
         background: Optional and only supported for gpt-image-1. Can be either 'transparent', 'opaque', or 'auto'.
         moderation: Optional and only supported for gpt-image-1. Can be either 'low' or 'auto'.
         output_compression: Optional and only supported for gpt-image-1. Can be an integer between 0 and 100.
@@ -39,6 +39,11 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
+    image_size: Optional[Literal["1024x1024", "1536x1024", "1024x1536", "1024x1792", "1792x1024", "auto"]] = field(
+        default=None,
+        kw_only=True,
+        metadata={"serializable": True},
+    )
     style: Optional[Literal["vivid", "natural"]] = field(
         default=None, kw_only=True, metadata={"serializable": True, "model_allowlist": ["dall-e-3"]}
     )
@@ -46,11 +51,6 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
         default=None,
         kw_only=True,
         metadata={"serializable": True, "model_allowlist": ["dall-e-3"]},
-    )
-    image_size: Optional[Literal["1024x1024", "1536x1024", "1024x1536", "1024x1792", "1792x1024", "auto"]] = field(
-        default=None,
-        kw_only=True,
-        metadata={"serializable": True},
     )
     background: Optional[Literal["transparent", "opaque", "auto"]] = field(
         default=None,
@@ -102,7 +102,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
             headers=self.headers,
             json={
                 "prompts": prompts,
-                "driver_configuration": self._build_model_params(),
+                "driver_configuration": self._build_driver_configuration(),
             },
         )
         response.raise_for_status()
@@ -110,14 +110,23 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
 
         return ImageArtifact.from_dict(response["artifact"])
 
-    def _build_model_params(self) -> dict:
+    def _build_driver_configuration(self) -> dict:
         """Builds parameters while considering field metadata and None values.
 
         Field will be added to the params dictionary if all conditions are met:
             - The field value is not None
             - The model_allowlist is None or the model is in the allowlist
         """
-        values = ["model", "image_size", "quality", "style", "background", "moderation", "output_compression", "output_format"]
+        values = [
+            "model",
+            "image_size",
+            "quality",
+            "style",
+            "background",
+            "moderation",
+            "output_compression",
+            "output_format",
+        ]
 
         params = {}
         fields = fields_dict(self.__class__)
