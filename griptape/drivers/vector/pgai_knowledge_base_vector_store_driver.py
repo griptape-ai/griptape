@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 import logging
 from typing import TYPE_CHECKING, NoReturn, Optional
 
@@ -52,14 +53,15 @@ class PgAiKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
 
         entries = []
         for (row,) in rows:
-            # Remove the first and last parentheses from the row and list by commas
-            # Example: '(foo,bar)' -> ['foo', 'bar']
-            row_list = "".join(row.replace("(", "", 1).rsplit(")", 1)).split(",")
+            # Split ID and score from text, accounting for commas in the text itself
+            striped_row = row.strip("()")
+            id, text_and_score = striped_row.split(",", 1)
+            text, score = text_and_score.rsplit(",", 1)
             entries.append(
                 BaseVectorStoreDriver.Entry(
-                    id=row_list[0],
-                    score=float(row_list[2]),
-                    meta={"artifact": TextArtifact(row_list[1]).to_json()},
+                    id=id,
+                    score=float(score),
+                    meta={"artifact": TextArtifact(text).to_json()},
                 )
             )
 
