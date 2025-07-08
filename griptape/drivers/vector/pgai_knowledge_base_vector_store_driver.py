@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import ast
 import logging
 from typing import TYPE_CHECKING, NoReturn, Optional
 
@@ -55,11 +54,11 @@ class PgAiKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         for (row,) in rows:
             # Split ID and score from text, accounting for commas in the text itself
             striped_row = row.strip("()")
-            id, text_and_score = striped_row.split(",", 1)
+            row_id, text_and_score = striped_row.split(",", 1)
             text, score = text_and_score.rsplit(",", 1)
             entries.append(
                 BaseVectorStoreDriver.Entry(
-                    id=id,
+                    id=row_id,
                     score=float(score),
                     meta={"artifact": TextArtifact(text).to_json()},
                 )
