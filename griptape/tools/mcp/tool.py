@@ -57,7 +57,7 @@ def get_json_schema_value(original_schema: dict) -> dict:
             else:
                 schema_value = json_to_python_type(property_value["type"])
         elif "anyOf" in property_value:
-            schema_value = Union[tuple([json_to_python_type(item["type"]) for item in property_value["anyOf"]])]
+            schema_value = [json_to_python_type(item["type"]) for item in property_value["anyOf"]]
         else:
             raise ValueError(f"Unsupported JSON schema type for property '{property_key}': {property_value}")
         json_schema_value[schema_key] = schema_value
