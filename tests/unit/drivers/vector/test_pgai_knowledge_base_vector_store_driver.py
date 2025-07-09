@@ -30,7 +30,7 @@ class TestPgAiKnowledgeBaseVectorStoreDriver:
 
     def test_query(self, mock_engine, mock_session):
         test_ids = [17, 23]
-        test_values = ['"foo"', "bar"]
+        test_values = ['"foo"', "bar, baz"]
         test_scores = [0.4, 0.6]
         mock_query = MagicMock()
         mock_query.all.return_value = [
