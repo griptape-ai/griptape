@@ -5,7 +5,6 @@ from types import MethodType
 from typing import TYPE_CHECKING, Any, Callable
 
 from attrs import define, field
-from mcp import ClientSession, types  # pyright: ignore[reportAttributeAccessIssue]
 from schema import Literal, Optional, Or, Schema
 
 from griptape.artifacts import (
@@ -24,6 +23,8 @@ from .sessions import Connection, create_session
 
 if TYPE_CHECKING:
     from contextlib import _AsyncGeneratorContextManager
+
+    from mcp import ClientSession, types  # pyright: ignore[reportAttributeAccessIssue]
 
 
 def json_to_python_type(json_type: str) -> type:
@@ -107,7 +108,7 @@ class MCPTool(BaseTool):
     async def _run_activity(self, activity_name: str, params: dict) -> BaseArtifact:
         """Runs an activity on the MCP Server with the provided parameters."""
         try:
-            async with create_session(self.connection) as session:
+            async with self._get_session() as session:
                 await session.initialize()
                 tool_result = await session.call_tool(activity_name, params)
             return self._convert_call_tool_result_to_artifact(tool_result)
@@ -117,6 +118,8 @@ class MCPTool(BaseTool):
     def _convert_call_tool_result_to_artifact(
         self, call_tool_result: types.CallToolResult
     ) -> ListArtifact | ErrorArtifact:
+        from mcp import types  # pyright: ignore[reportAttributeAccessIssue]
+
         if call_tool_result.isError:
             return ErrorArtifact(call_tool_result.content[0].text or "An unknown error occurred.")
 

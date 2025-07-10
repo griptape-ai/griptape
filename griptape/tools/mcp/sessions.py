@@ -5,16 +5,12 @@ from contextlib import asynccontextmanager
 from datetime import timedelta
 from typing import TYPE_CHECKING, Any, Literal, Protocol, TypedDict
 
-from mcp import ClientSession, StdioServerParameters  # type: ignore[reportAttributeAccessIssue]
-from mcp.client.sse import sse_client  # type: ignore[reportMissingImports]
-from mcp.client.stdio import stdio_client  # type: ignore[reportMissingImports]
-from mcp.client.streamable_http import streamablehttp_client  # type: ignore[reportMissingImports]
-
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
     from pathlib import Path
 
     import httpx
+    from mcp import ClientSession  # type: ignore[reportAttributeAccessIssue]
 
 EncodingErrorHandler = Literal["strict", "ignore", "replace"]
 
@@ -150,6 +146,9 @@ async def _create_stdio_session(
         encoding_error_handler: How to handle encoding errors
         session_kwargs: Additional keyword arguments to pass to the ClientSession
     """
+    from mcp import ClientSession, StdioServerParameters  # type: ignore[reportAttributeAccessIssue]
+    from mcp.client.stdio import stdio_client  # type: ignore[reportMissingImports]
+
     # NOTE: execution commands (e.g., `uvx` / `npx`) require PATH envvar to be set.
     # To address this, we automatically inject existing PATH envvar into the `env` value,
     # if it's not already set.
@@ -192,6 +191,9 @@ async def _create_sse_session(
         session_kwargs: Additional keyword arguments to pass to the ClientSession
         httpx_client_factory: Custom factory for httpx.AsyncClient (optional)
     """
+    from mcp import ClientSession  # type: ignore[reportAttributeAccessIssue]
+    from mcp.client.sse import sse_client  # type: ignore[reportMissingImports]
+
     # Create and store the connection
     kwargs = {}
     if httpx_client_factory is not None:
@@ -224,6 +226,9 @@ async def _create_streamable_http_session(
         session_kwargs: Additional keyword arguments to pass to the ClientSession
         httpx_client_factory: Custom factory for httpx.AsyncClient (optional)
     """
+    from mcp import ClientSession  # type: ignore[reportAttributeAccessIssue]
+    from mcp.client.streamable_http import streamablehttp_client  # type: ignore[reportMissingImports]
+
     # Create and store the connection
     kwargs = {}
     if httpx_client_factory is not None:
@@ -249,18 +254,9 @@ async def _create_websocket_session(
     Args:
         url: URL of the Websocket endpoint
         session_kwargs: Additional keyword arguments to pass to the ClientSession
-
-    Raises:
-        ImportError: If websockets package is not installed
     """
-    try:
-        from mcp.client.websocket import websocket_client  # type: ignore[reportMissingImports]
-    except ImportError:
-        raise ImportError(
-            "Could not import websocket_client. ",
-            "To use Websocket connections, please install the required dependency with: ",
-            "'pip install mcp[ws]' or 'pip install websockets'",
-        ) from None
+    from mcp import ClientSession  # type: ignore[reportAttributeAccessIssue]
+    from mcp.client.websocket import websocket_client  # type: ignore[reportMissingImports]
 
     async with websocket_client(url) as (read, write):  # noqa: SIM117
         async with ClientSession(read, write, **(session_kwargs or {})) as session:
