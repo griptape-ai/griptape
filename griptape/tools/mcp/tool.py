@@ -27,6 +27,8 @@ if TYPE_CHECKING:
     from mcp import ClientSession, types  # pyright: ignore[reportAttributeAccessIssue]
 
 
+ANY_TYPE = Or(str, int, float, bool, list, dict)
+
 def json_to_python_type(json_type: str) -> type:
     conversion_map = {
         "string": str,
@@ -67,10 +69,10 @@ def get_json_schema_value(original_schema: dict) -> dict:
                     any_of_types.add(json_to_python_type(item["type"]))
                     schema_value = Or(*any_of_types)
                 else:
-                    schema_value = Or(str, int, float, bool, list, dict)
+                    schema_value = ANY_TYPE
                     break
         else:
-            raise ValueError(f"Unsupported JSON schema type for property '{property_key}': {property_value}")
+            schema_value = ANY_TYPE
         json_schema_value[schema_key] = schema_value
     return json_schema_value
 
