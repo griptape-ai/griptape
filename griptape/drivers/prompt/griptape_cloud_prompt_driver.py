@@ -98,7 +98,7 @@ class GriptapeCloudPromptDriver(BasePromptDriver):
                 "name": tool.name,
                 "activities": [
                     {
-                        "name": activity.__name__,
+                        "name": tool.activity_name(activity),
                         "description": tool.activity_description(activity),
                         "json_schema": tool.to_activity_json_schema(activity, "Schema"),
                     }
