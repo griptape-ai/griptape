@@ -42,6 +42,9 @@ def json_to_python_type(json_type: str) -> type:
 
 def get_json_schema_value(original_schema: dict) -> dict:
     json_schema_value = {}
+    if "properties" not in original_schema:
+        return json_schema_value
+
     for property_key, property_value in original_schema["properties"].items():
         schema_key = Literal(
             property_key,
@@ -58,7 +61,14 @@ def get_json_schema_value(original_schema: dict) -> dict:
             else:
                 schema_value = json_to_python_type(property_value["type"])
         elif "anyOf" in property_value:
-            schema_value = Or(*tuple(json_to_python_type(item["type"]) for item in property_value["anyOf"]))
+            any_of_types = set()
+            for item in property_value["anyOf"]:
+                if "type" in item:
+                    any_of_types.add(json_to_python_type(item["type"]))
+                else:
+                    any_of_types.add(type(Any))
+
+            schema_value = Or(*any_of_types)
         else:
             raise ValueError(f"Unsupported JSON schema type for property '{property_key}': {property_value}")
         json_schema_value[schema_key] = schema_value
