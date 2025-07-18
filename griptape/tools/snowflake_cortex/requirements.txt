@@ -1,0 +1,2 @@
+snowflake>=1.6.0
+snowflake-snowpark-python>=1.34.0
