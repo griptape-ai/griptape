@@ -24,6 +24,7 @@ from .extraction.tool import ExtractionTool
 from .prompt_summary.tool import PromptSummaryTool
 from .query.tool import QueryTool
 from .structured_output.tool import StructuredOutputTool
+from .snowflake_cortex.tool import SnowflakeCortexTool
 
 __all__ = [
     "AudioTranscriptionTool",
@@ -44,6 +45,7 @@ __all__ = [
     "QueryTool",
     "RagTool",
     "RestApiTool",
+    "SnowflakeCortexTool",
     "SqlTool",
     "StructureRunTool",
     "StructuredOutputTool",
