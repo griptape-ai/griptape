@@ -1,4 +1,5 @@
 import pytest
+from sys import version_info
 
 from griptape.artifacts import ErrorArtifact, JsonArtifact
 from griptape.tools import SnowflakeCortexTool
@@ -43,16 +44,19 @@ class TestSnowflakeCortex:
         mocker.patch.object(base_snowflake_cortex_tool, "snowflake_api_call", side_effect=mock_response)
         return base_snowflake_cortex_tool
 
+    @pytest.mark.skipif(version_info < (3, 10), reason="Snowflake requires Python 3.10 or higher")
     def test_run_agent(self, snowflake_cortex_tool):
         result = snowflake_cortex_tool.run_agent({"values": {"prompt": "mock prompt"}})
         assert isinstance(result, JsonArtifact)
         assert result.value == {"text": "mock text"}
 
+    @pytest.mark.skipif(version_info < (3, 10), reason="Snowflake requires Python 3.10 or higher")
     def test_run_agent_with_sql(self, snowflake_cortex_tool_with_sql):
         result = snowflake_cortex_tool_with_sql.run_agent({"values": {"prompt": "mock prompt"}})
         assert isinstance(result, JsonArtifact)
         assert result.value == {"sql_result": "mock sql result", "text": "mock text"}
 
+    @pytest.mark.skipif(version_info < (3, 10), reason="Snowflake requires Python 3.10 or higher")
     def test_run_agent_with_error(self, snowflake_cortex_tool_with_error):
         result = snowflake_cortex_tool_with_error.run_agent({"values": {"prompt": "mock prompt"}})
         assert isinstance(result, ErrorArtifact)

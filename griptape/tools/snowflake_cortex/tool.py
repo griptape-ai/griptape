@@ -21,6 +21,8 @@ API_TIMEOUT = 30000  # in milliseconds
 class SnowflakeCortexTool(BaseTool):
     """Snowflake Cortex activities through a tool.
 
+    Requires Python 3.10 or higher due to Snowflake dependencies.
+
     Attributes:
         account: Snowflake account name.
         user: Snowflake user name.
