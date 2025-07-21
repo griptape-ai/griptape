@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from sys import version_info
 from typing import TYPE_CHECKING
 
 from attrs import define, field
@@ -43,6 +44,11 @@ class SnowflakeCortexTool(BaseTool):
     search_service: str = field(kw_only=True)
     analyst_semantic_model_file: str = field(kw_only=True)
     description: str = field(default="Natural language searches and SQL generation", kw_only=True)
+
+    def __attrs_post_init__(self, **kwargs) -> None:
+        if version_info < (3, 10):
+            raise RuntimeError("Snowflake Cortex Tool requires Python 3.10 or higher")
+        super().__attrs_post_init__(**kwargs)
 
     def snowflake_api_call(self, query: str) -> SSEClient:
         from snowflake.core import Root

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+from sys import version_info
 from types import MethodType
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -87,6 +88,9 @@ class MCPTool(BaseTool):
     connection: Connection = field(kw_only=True)
 
     def __attrs_post_init__(self) -> None:
+        if version_info < (3, 10):
+            raise RuntimeError("MCP Tool requires Python 3.10 or higher")
+        super().__attrs_post_init__()
         asyncio.run(self._init_activities())
 
     async def _init_activities(self) -> None:
