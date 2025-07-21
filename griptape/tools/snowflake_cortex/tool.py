@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import json
 from typing import TYPE_CHECKING
 
@@ -42,9 +43,9 @@ class SnowflakeCortexTool(BaseTool):
     description: str = field(default="Natural language searches and SQL generation", kw_only=True)
 
     def snowflake_api_call(self, query: str) -> SSEClient:
-        from snowflake.snowpark import Session
         from snowflake.core import Root
         from snowflake.core.cortex.lite_agent_service import AgentRunRequest, CortexAgentService
+        from snowflake.snowpark import Session  # pyright: ignore[reportMissingImports]
 
         payload = {
             "model": self.agent_model,
@@ -77,14 +78,13 @@ class SnowflakeCortexTool(BaseTool):
         return op.result()
 
     def process_sse_response(self, client: SSEClient) -> tuple[str, str, list[dict]]:
-        """Process SSE response"""
         text = ""
         sql = ""
         citations = []
 
         for event in client.events():
             if event.event == "message.delta":
-                data = event.data if hasattr(event, "data") else ""
+                data = event.data if hasattr(event, "data") and event.data else ""
                 delta = json.loads(data).get("delta", {})
 
                 for content_item in delta.get("content", []):
@@ -118,8 +118,7 @@ class SnowflakeCortexTool(BaseTool):
         if cur.sfqid is None:
             raise Exception("SQL execution failed")
         cur.get_results_from_sfqid(cur.sfqid)
-        results = cur.fetchall()
-        return results
+        return cur.fetchall()
 
     @activity(
         config={
@@ -139,7 +138,6 @@ class SnowflakeCortexTool(BaseTool):
                     value=json.dumps({"text": text, "sql_result": sql_result}),
                     meta={"citations": citations, "sql": sql},
                 )
-            else:
-                return JsonArtifact(value=json.dumps({"text": text}), meta={"citations": citations})
+            return JsonArtifact(value=json.dumps({"text": text}), meta={"citations": citations})
         except Exception as e:
             return ErrorArtifact(value=f"Error running Snowflake Cortex agent: {e}")
