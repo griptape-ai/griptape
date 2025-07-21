@@ -135,9 +135,9 @@ class SnowflakeCortexTool(BaseTool):
             if sql:
                 sql_result = self.run_sql(sql)
                 return JsonArtifact(
-                    value=json.dumps({"text": text, "sql_result": sql_result}),
+                    value={"text": text, "sql_result": sql_result},
                     meta={"citations": citations, "sql": sql},
                 )
-            return JsonArtifact(value=json.dumps({"text": text}), meta={"citations": citations})
+            return JsonArtifact(value={"text": text}, meta={"citations": citations})
         except Exception as e:
             return ErrorArtifact(value=f"Error running Snowflake Cortex agent: {e}")
