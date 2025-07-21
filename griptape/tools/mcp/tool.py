@@ -78,6 +78,8 @@ def get_json_schema_value(original_schema: dict) -> dict:
 class MCPTool(BaseTool):
     """MCP activities through a tool.
 
+    Requires Python 3.10 or higher due to MCP dependencies.
+
     Attributes:
         connection: The MCP server connection info.
     """
