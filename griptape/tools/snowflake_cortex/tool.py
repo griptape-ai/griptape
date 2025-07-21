@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from sys import version_info
-from typing import TYPE_CHECKING
 
 from attrs import define, field
 from schema import Literal, Schema
@@ -10,9 +9,6 @@ from schema import Literal, Schema
 from griptape.artifacts import ErrorArtifact, JsonArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-
-if TYPE_CHECKING:
-    from snowflake.core.rest import SSEClient
 
 API_ENDPOINT = "/api/v2/cortex/agent:run"
 API_TIMEOUT = 30000  # in milliseconds
@@ -50,7 +46,7 @@ class SnowflakeCortexTool(BaseTool):
             raise RuntimeError("Snowflake Cortex Tool requires Python 3.10 or higher")
         super().__attrs_post_init__(**kwargs)
 
-    def snowflake_api_call(self, query: str) -> SSEClient:
+    def snowflake_api_call(self, query: str):
         from snowflake.core import Root
         from snowflake.core.cortex.lite_agent_service import AgentRunRequest, CortexAgentService
         from snowflake.snowpark import Session  # pyright: ignore[reportMissingImports]
@@ -123,7 +119,7 @@ class SnowflakeCortexTool(BaseTool):
 
         return text, sql, citations
 
-    def process_sse_response(self, client: SSEClient) -> tuple[str, str, list[dict]]:
+    def process_sse_response(self, client) -> tuple[str, str, list[dict]]:
         text = ""
         sql = ""
         citations = []
