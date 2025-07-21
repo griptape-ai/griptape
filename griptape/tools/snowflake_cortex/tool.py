@@ -1,21 +1,20 @@
 from __future__ import annotations
 import json
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 from schema import Literal, Schema
 
-from griptape.artifacts import JsonArtifact
+from griptape.artifacts import ErrorArtifact, JsonArtifact
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
-import snowflake.connector
-from snowflake.core import Root
-from snowflake.core.cortex.lite_agent_service import AgentRunRequest, CortexAgentService
-from snowflake.snowpark import Session
-
+if TYPE_CHECKING:
+    from snowflake.core.rest import SSEClient
 
 API_ENDPOINT = "/api/v2/cortex/agent:run"
 API_TIMEOUT = 30000  # in milliseconds
+
 
 @define
 class SnowflakeCortexTool(BaseTool):
@@ -42,88 +41,77 @@ class SnowflakeCortexTool(BaseTool):
     analyst_semantic_model_file: str = field(kw_only=True)
     description: str = field(default="Natural language searches and SQL generation", kw_only=True)
 
-    def snowflake_api_call(self, query: str):
+    def snowflake_api_call(self, query: str) -> SSEClient:
+        from snowflake.snowpark import Session
+        from snowflake.core import Root
+        from snowflake.core.cortex.lite_agent_service import AgentRunRequest, CortexAgentService
+
         payload = {
             "model": self.agent_model,
-            "messages": [
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "text",
-                            "text": query
-                        }
-                    ]
-                }
-            ],
+            "messages": [{"role": "user", "content": [{"type": "text", "text": query}]}],
             "tools": [
-                {
-                    "tool_spec": {
-                        "type": "cortex_analyst_text_to_sql",
-                        "name": "analyst"
-                    }
-                },
-                {
-                    "tool_spec": {
-                        "type": "cortex_search",
-                        "name": "search"
-                    }
-                }
+                {"tool_spec": {"type": "cortex_analyst_text_to_sql", "name": "analyst"}},
+                {"tool_spec": {"type": "cortex_search", "name": "search"}},
             ],
             "tool_resources": {
                 "analyst": {"semantic_model_file": self.analyst_semantic_model_file},
                 "search": {
                     "name": self.search_service,
                     "max_results": self.search_limit,
-                    "id_column": "conversation_id"
-                }
-            }
+                    "id_column": "conversation_id",
+                },
+            },
         }
 
-        session = Session.builder.configs({
-            "account": self.account,
-            "user": self.user,
-            "password": self.password,
-            "role": self.role,
-        }).create()
+        session = Session.builder.configs(
+            {
+                "account": self.account,
+                "user": self.user,
+                "password": self.password,
+                "role": self.role,
+            }
+        ).create()
         root = Root(session)
         cortex_agent_service = CortexAgentService(root)
         op = cortex_agent_service.run_async(AgentRunRequest(**payload))
         return op.result()
 
-    def process_sse_response(self, client):
+    def process_sse_response(self, client: SSEClient) -> tuple[str, str, list[dict]]:
         """Process SSE response"""
         text = ""
         sql = ""
         citations = []
-        
-        if not client:
-            return text, sql, citations
-        if isinstance(client, str):
-            return client, sql, citations
+
         for event in client.events():
             if event.event == "message.delta":
-                data = event.data if hasattr(event, 'data') else ""
-                delta = json.loads(data).get('delta', {})
-                
-                for content_item in delta.get('content', []):
-                    content_type = content_item.get('type')
+                data = event.data if hasattr(event, "data") else ""
+                delta = json.loads(data).get("delta", {})
+
+                for content_item in delta.get("content", []):
+                    content_type = content_item.get("type")
                     if content_type == "tool_results":
-                        tool_results = content_item.get('tool_results', {})
-                        if 'content' in tool_results:
-                            for result in tool_results['content']:
-                                if result.get('type') == 'json':
-                                    text += result.get('json', {}).get('text', '')
-                                    search_results = result.get('json', {}).get('searchResults', [])
+                        tool_results = content_item.get("tool_results", {})
+                        if "content" in tool_results:
+                            for result in tool_results["content"]:
+                                if result.get("type") == "json":
+                                    text += result.get("json", {}).get("text", "")
+                                    search_results = result.get("json", {}).get("searchResults", [])
                                     for search_result in search_results:
-                                        citations.append({'source_id':search_result.get('source_id',''), 'doc_id':search_result.get('doc_id', '')})
-                                    sql = result.get('json', {}).get('sql', '')
-                    if content_type == 'text':
-                        text += content_item.get('text', '')
+                                        citations.append(
+                                            {
+                                                "source_id": search_result.get("source_id", ""),
+                                                "doc_id": search_result.get("doc_id", ""),
+                                            }
+                                        )
+                                    sql = result.get("json", {}).get("sql", "")
+                    if content_type == "text":
+                        text += content_item.get("text", "")
 
         return text, sql, citations
-    
+
     def run_sql(self, sql: str) -> list:
+        import snowflake.connector
+
         conn = snowflake.connector.connect(user=self.user, password=self.password, account=self.account, role=self.role)
         cur = conn.cursor()
         cur.execute(sql)
@@ -137,20 +125,21 @@ class SnowflakeCortexTool(BaseTool):
         config={
             "description": "{{ _self.description }}",
             "schema": Schema(
-                {
-                    Literal(
-                        "prompt",
-                        description="Natural language prompt to send to the Snowflake Cortex Agent"
-                    ): str
-                },
+                {Literal("prompt", description="Natural language prompt to send to the Snowflake Cortex Agent"): str},
             ),
         },
     )
-    def run_agent(self, params: dict) -> JsonArtifact:
-        client = self.snowflake_api_call(params["values"]["prompt"])
-        text, sql, citations = self.process_sse_response(client)
-        if sql:
-            sql_response = self.run_sql(sql)
-            return JsonArtifact(value=json.dumps({"text": text, "sql_response": sql_response}), meta={"citations": citations, "sql": sql})
-        else:
-            return JsonArtifact(value=json.dumps({"text": text}), meta={"citations": citations})
+    def run_agent(self, params: dict) -> JsonArtifact | ErrorArtifact:
+        try:
+            client = self.snowflake_api_call(params["values"]["prompt"])
+            text, sql, citations = self.process_sse_response(client)
+            if sql:
+                sql_result = self.run_sql(sql)
+                return JsonArtifact(
+                    value=json.dumps({"text": text, "sql_result": sql_result}),
+                    meta={"citations": citations, "sql": sql},
+                )
+            else:
+                return JsonArtifact(value=json.dumps({"text": text}), meta={"citations": citations})
+        except Exception as e:
+            return ErrorArtifact(value=f"Error running Snowflake Cortex agent: {e}")
