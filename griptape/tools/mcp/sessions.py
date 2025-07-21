@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from contextlib import asynccontextmanager
 from datetime import timedelta
-from typing import TYPE_CHECKING, Any, Literal, Protocol, TypedDict
+from typing import TYPE_CHECKING, Any, Literal, Protocol, TypedDict, Union
 
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
@@ -121,7 +121,7 @@ class WebsocketConnection(TypedDict):
     """Additional keyword arguments to pass to the ClientSession"""
 
 
-Connection = StdioConnection | SSEConnection | StreamableHttpConnection | WebsocketConnection  # type: ignore[reportGeneralTypeIssues]
+Connection = Union[StdioConnection, SSEConnection, StreamableHttpConnection, WebsocketConnection]
 
 
 @asynccontextmanager
