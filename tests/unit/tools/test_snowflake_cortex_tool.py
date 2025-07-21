@@ -1,5 +1,6 @@
-import pytest
 from sys import version_info
+
+import pytest
 
 from griptape.artifacts import ErrorArtifact, JsonArtifact
 from griptape.tools import SnowflakeCortexTool

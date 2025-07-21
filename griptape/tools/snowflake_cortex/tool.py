@@ -79,6 +79,44 @@ class SnowflakeCortexTool(BaseTool):
         op = cortex_agent_service.run_async(AgentRunRequest(**payload))
         return op.result()
 
+    def _process_tool_result(self, tool_result: dict) -> tuple[str, str, list[dict]]:
+        text = ""
+        sql = ""
+        citations = []
+
+        if tool_result.get("type") == "json":
+            text += tool_result.get("json", {}).get("text", "")
+            search_results = tool_result.get("json", {}).get("searchResults", [])
+            for search_result in search_results:
+                citations.append(
+                    {
+                        "source_id": search_result.get("source_id", ""),
+                        "doc_id": search_result.get("doc_id", ""),
+                    }
+                )
+            sql = tool_result.get("json", {}).get("sql", "")
+
+        return text, sql, citations
+
+    def _process_content_item(self, content_item: dict) -> tuple[str, str, list[dict]]:
+        text = ""
+        sql = ""
+        citations = []
+
+        content_type = content_item.get("type")
+        if content_type == "tool_results":
+            tool_results = content_item.get("tool_results", {})
+            if "content" in tool_results:
+                for tool_result in tool_results["content"]:
+                    tool_result_text, tool_result_sql, tool_result_citations = self._process_tool_result(tool_result)
+                    text += tool_result_text
+                    sql += tool_result_sql
+                    citations.extend(tool_result_citations)
+        elif content_type == "text":
+            text += content_item.get("text", "")
+
+        return text, sql, citations
+
     def process_sse_response(self, client: SSEClient) -> tuple[str, str, list[dict]]:
         text = ""
         sql = ""
@@ -90,24 +128,12 @@ class SnowflakeCortexTool(BaseTool):
                 delta = json.loads(data).get("delta", {})
 
                 for content_item in delta.get("content", []):
-                    content_type = content_item.get("type")
-                    if content_type == "tool_results":
-                        tool_results = content_item.get("tool_results", {})
-                        if "content" in tool_results:
-                            for result in tool_results["content"]:
-                                if result.get("type") == "json":
-                                    text += result.get("json", {}).get("text", "")
-                                    search_results = result.get("json", {}).get("searchResults", [])
-                                    for search_result in search_results:
-                                        citations.append(
-                                            {
-                                                "source_id": search_result.get("source_id", ""),
-                                                "doc_id": search_result.get("doc_id", ""),
-                                            }
-                                        )
-                                    sql = result.get("json", {}).get("sql", "")
-                    if content_type == "text":
-                        text += content_item.get("text", "")
+                    content_item_text, content_item_sql, content_item_citations = self._process_content_item(
+                        content_item
+                    )
+                    text += content_item_text
+                    sql += content_item_sql
+                    citations.extend(content_item_citations)
 
         return text, sql, citations
 
