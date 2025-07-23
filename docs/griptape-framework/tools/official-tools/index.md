@@ -167,7 +167,6 @@ This tool allows LLMs to generate images using inpainting, where an input image 
 
 This tool allows LLMs to call MCP Tools. It requires [MCP](https://github.com/modelcontextprotocol/python-sdk) and Python 3.10 or greater.
 
-
 === "Code"
 
     ```python
