@@ -163,6 +163,10 @@ This tool allows LLMs to generate images using inpainting, where an input image 
     --8<-- "docs/griptape-framework/tools/official-tools/logs/inpainting_image_generation_tool_1.txt"
     ```
 
+### MCP
+
+This tool allows LLMs to call MCP Tools. It requires [MCP](https://github.com/modelcontextprotocol/python-sdk) and Python 3.10 or greater.
+
 ### Outpainting Image Generation
 
 This tool allows LLMs to generate images using outpainting, where an input image is altered outside of the area specified by a mask image according to a prompt. The input and mask images can be provided either by their file path or by their [Task Memory](../../../griptape-framework/structures/task-memory.md) references.
