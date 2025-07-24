@@ -108,7 +108,7 @@ class Agent(Structure):
             tools=self.tools,
             output_schema=self.output_schema,
             max_meta_memory_entries=self.max_meta_memory_entries,
-            max_subtasks=self.max_subtasks or 20,
+            **({"max_subtasks": self.max_subtasks} if self.max_subtasks else {}),
         )
 
         self.add_task(task)
