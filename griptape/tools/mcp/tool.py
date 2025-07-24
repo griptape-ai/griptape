@@ -85,6 +85,7 @@ class MCPTool(BaseTool):
     connection: Connection = field(kw_only=True)
 
     def __attrs_post_init__(self) -> None:
+        super().__attrs_post_init__()
         asyncio.run(self._init_activities())
 
     async def _init_activities(self) -> None:
