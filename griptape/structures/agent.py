@@ -102,13 +102,16 @@ class Agent(Structure):
         else:
             prompt_driver = self.prompt_driver
 
-        task = PromptTask(
-            self.input,
-            prompt_driver=prompt_driver,
-            tools=self.tools,
-            output_schema=self.output_schema,
-            max_meta_memory_entries=self.max_meta_memory_entries,
-            **({"max_subtasks": self.max_subtasks} if self.max_subtasks else {}),
-        )
+        task_kwargs = {
+            "prompt_driver": prompt_driver,
+            "tools": self.tools,
+            "output_schema": self.output_schema,
+            "max_meta_memory_entries": self.max_meta_memory_entries,
+        }
+
+        if self.max_subtasks is not None:
+            task_kwargs["max_subtasks"] = self.max_subtasks
+
+        task = PromptTask(self.input, **task_kwargs)
 
         self.add_task(task)
