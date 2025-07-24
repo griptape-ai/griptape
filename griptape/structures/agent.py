@@ -31,6 +31,7 @@ class Agent(Structure):
     output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
+    max_subtasks: Optional[int] = field(default=None, kw_only=True)
     fail_fast: bool = field(default=False, kw_only=True)
     _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
@@ -101,12 +102,16 @@ class Agent(Structure):
         else:
             prompt_driver = self.prompt_driver
 
-        task = PromptTask(
-            self.input,
-            prompt_driver=prompt_driver,
-            tools=self.tools,
-            output_schema=self.output_schema,
-            max_meta_memory_entries=self.max_meta_memory_entries,
-        )
+        task_kwargs = {
+            "prompt_driver": prompt_driver,
+            "tools": self.tools,
+            "output_schema": self.output_schema,
+            "max_meta_memory_entries": self.max_meta_memory_entries,
+        }
+
+        if self.max_subtasks is not None:
+            task_kwargs["max_subtasks"] = self.max_subtasks
+
+        task = PromptTask(self.input, **task_kwargs)
 
         self.add_task(task)
