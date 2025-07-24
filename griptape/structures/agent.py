@@ -31,7 +31,7 @@ class Agent(Structure):
     output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
-    max_subtasks: Optional[int] = field(default=20, kw_only=True)
+    max_subtasks: Optional[int] = field(default=None, kw_only=True)
     fail_fast: bool = field(default=False, kw_only=True)
     _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
