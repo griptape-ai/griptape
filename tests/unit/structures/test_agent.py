@@ -339,3 +339,88 @@ class TestAgent:
 
         assert isinstance(agent.tasks[0], PromptTask)
         assert agent.tasks[0].output_schema is agent.output_schema
+
+    def test_max_subtasks_default(self):
+        """Test that max_subtasks defaults to None and uses PromptTask default."""
+        agent = Agent()
+
+        assert agent.max_subtasks is None
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].max_subtasks == 20  # PromptTask default
+
+    def test_max_subtasks_custom_value(self):
+        """Test that custom max_subtasks value is properly passed to PromptTask."""
+        agent = Agent(max_subtasks=5)
+
+        assert agent.max_subtasks == 5
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].max_subtasks == 5
+
+    def test_max_subtasks_explicit_none(self):
+        """Test that explicit None for max_subtasks uses PromptTask default."""
+        agent = Agent(max_subtasks=None)
+
+        assert agent.max_subtasks is None
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].max_subtasks == 20  # PromptTask default
+
+    def test_max_subtasks_with_tools(self):
+        """Test that max_subtasks works correctly when tools are provided."""
+        agent = Agent(max_subtasks=3, tools=[MockTool()])
+
+        assert agent.max_subtasks == 3
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].max_subtasks == 3
+        assert len(agent.tools) == 1
+
+    def test_max_subtasks_with_prompt_driver(self):
+        """Test that max_subtasks works correctly when prompt_driver is provided."""
+        driver = MockPromptDriver()
+        agent = Agent(max_subtasks=7, prompt_driver=driver)
+
+        assert agent.max_subtasks == 7
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].max_subtasks == 7
+        assert agent.tasks[0].prompt_driver is driver
+
+    def test_max_subtasks_with_output_schema(self):
+        """Test that max_subtasks works correctly when output_schema is provided."""
+        agent = Agent(max_subtasks=10, output_schema=schema.Schema({"foo": str}))
+
+        assert agent.max_subtasks == 10
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].max_subtasks == 10
+        assert agent.tasks[0].output_schema is agent.output_schema
+
+    def test_max_subtasks_with_custom_task(self):
+        """Test that max_subtasks is not applied when a custom task is provided."""
+        custom_task = PromptTask(max_subtasks=15)
+        agent = Agent(max_subtasks=5, tasks=[custom_task])
+
+        assert agent.max_subtasks == 5
+        assert agent.tasks[0] is custom_task
+        assert agent.tasks[0].max_subtasks == 15  # Custom task's value, not agent's
+
+    def test_max_subtasks_zero(self):
+        """Test that max_subtasks can be set to zero."""
+        agent = Agent(max_subtasks=0)
+
+        assert agent.max_subtasks == 0
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].max_subtasks == 0
+
+    def test_max_subtasks_large_value(self):
+        """Test that max_subtasks works with large values."""
+        agent = Agent(max_subtasks=1000)
+
+        assert agent.max_subtasks == 1000
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].max_subtasks == 1000
+
+    def test_max_subtasks_negative_value(self):
+        """Test that max_subtasks accepts negative values (though this might not be practical)."""
+        agent = Agent(max_subtasks=-5)
+
+        assert agent.max_subtasks == -5
+        assert isinstance(agent.tasks[0], PromptTask)
+        assert agent.tasks[0].max_subtasks == -5
