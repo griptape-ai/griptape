@@ -446,3 +446,70 @@ class TestGriptapeCloudPromptDriver:
         assert isinstance(event.content, AudioDeltaMessageContent)
         assert event.content.expires_at == ANY
         assert event.content.transcript == "assistant-audio-transcription"
+
+    @pytest.mark.parametrize("model", [None, "gpt-4.1"])
+    @pytest.mark.parametrize("use_native_tools", [True, False])
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
+    def test_try_stream_run_error(
+        self,
+        mocker,
+        model,
+        prompt_stack,
+        use_native_tools,
+        structured_output_strategy,
+    ):
+        def request(*args, **kwargs):
+            mock_response = mocker.Mock()
+            if "chat/messages/stream" in args[0]:
+                mock_response.iter_lines.return_value = [
+                    f"data: {json.dumps(event)}".encode()
+                    for event in [
+                        {
+                            "error": "A mocked error occurred",
+                        }
+                    ]
+                ]
+
+                mock_response.__enter__ = MagicMock(return_value=mock_response)
+                mock_response.__exit__ = MagicMock()
+                return mock_response
+            return mocker.Mock(
+                raise_for_status=lambda: None,
+            )
+
+        mock_post_stream_error = mocker.patch("requests.post", side_effect=request)
+
+        # Given
+        driver = GriptapeCloudPromptDriver(
+            api_key="foo",
+            model=model,
+            stream=True,
+            use_native_tools=use_native_tools,
+            structured_output_strategy=structured_output_strategy,
+            extra_params={"foo": "bar"},
+        )
+
+        # When
+        stream = driver.try_stream(prompt_stack)
+        with pytest.raises(StopIteration):
+            next(stream)
+
+        # Then
+        mock_post_stream_error.assert_called_once_with(
+            "https://cloud.griptape.ai/api/chat/messages/stream",
+            headers={"Authorization": f"Bearer {driver.api_key}"},
+            json={
+                "messages": prompt_stack.to_dict()["messages"],
+                "tools": self.GRIPTAPE_CLOUD_TOOLS,
+                "output_schema": self.GRIPTAPE_CLOUD_STRUCTURED_OUTPUT_SCHEMA,
+                "driver_configuration": {
+                    **({"model": model} if model else {}),
+                    "max_tokens": driver.max_tokens,
+                    "use_native_tools": use_native_tools,
+                    "temperature": driver.temperature,
+                    "structured_output_strategy": structured_output_strategy,
+                    "extra_params": {"foo": "bar"},
+                },
+            },
+            stream=True,
+        )

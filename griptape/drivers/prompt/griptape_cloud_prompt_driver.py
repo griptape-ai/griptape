@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 from typing import TYPE_CHECKING, Optional
@@ -73,9 +74,13 @@ class GriptapeCloudPromptDriver(BasePromptDriver):
                 if line:
                     decoded_line = line.decode("utf-8")
                     if decoded_line.startswith("data:"):
-                        delta_message_payload = decoded_line.removeprefix("data:").strip()
-                        logger.debug(delta_message_payload)
-                        yield DeltaMessage.from_json(delta_message_payload)
+                        message_payload = decoded_line.removeprefix("data:").strip()
+                        logger.debug("Event stream data message payload: %s", message_payload)
+                        message_payload_dict = json.loads(message_payload)
+                        if "error" in message_payload_dict:
+                            logger.error("Error in event stream data message: %s", message_payload_dict["error"])
+                            raise Exception(message_payload_dict["error"])
+                        yield DeltaMessage.from_dict(message_payload_dict)
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         return {
