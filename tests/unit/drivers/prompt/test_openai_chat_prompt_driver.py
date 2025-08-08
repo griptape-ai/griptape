@@ -460,7 +460,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL)
 
     @pytest.mark.parametrize(
-        "model,expected",
+        ("model", "expected"),
         [
             ("gpt-4", True),
             ("gpt-4.1", True),
@@ -480,7 +480,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert driver.supports_stop_sequences == expected
 
     @pytest.mark.parametrize(
-        "model,expected",
+        ("model", "expected"),
         [
             ("gpt-4", True),
             ("gpt-4.1", True),
@@ -500,7 +500,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert driver.supports_modalities == expected
 
     @pytest.mark.parametrize(
-        "model,expected",
+        ("model", "expected"),
         [
             ("gpt-4", False),
             ("gpt-4.1", False),
@@ -520,7 +520,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert driver.supports_reasoning_effort == expected
 
     @pytest.mark.parametrize(
-        "model,expected",
+        ("model", "expected"),
         [
             ("gpt-4", True),
             ("gpt-4.1", True),
@@ -540,12 +540,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert driver.supports_temperature == expected
 
     @pytest.mark.parametrize(
-        "model,expected_role,expected_temp,expected_reasoning",
+        ("model", "expected_role", "expected_temp", "expected_reasoning"),
         [
             # GPT models (non-reasoning): support stop sequences, temperature, no reasoning effort
             ("gpt-4.1", "system", True, False),
             ("gpt-4o", "system", True, False),
-            # GPT-5 models: no stop sequences (developer role), NO temperature, no reasoning effort  
+            # GPT-5 models: no stop sequences (developer role), NO temperature, no reasoning effort
             ("gpt-5", "developer", False, False),
             ("gpt-5-turbo", "developer", False, False),
             # O1 models: no stop sequences (developer role), NO temperature, reasoning effort (except mini)
@@ -558,18 +558,19 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     )
     def test_model_behavioral_differences(self, model, expected_role, expected_temp, expected_reasoning):
         driver = OpenAiChatPromptDriver(model=model)
-        
+
         # Test role mapping
         from griptape.common import Message
+
         system_message = Message(content=[], role=Message.SYSTEM_ROLE)
         actual_role = driver._OpenAiChatPromptDriver__to_openai_role(system_message)
         assert actual_role == expected_role
-        
+
         # Test temperature inclusion
         params = driver._base_params(PromptStack())
         has_temperature = "temperature" in params
         assert has_temperature == expected_temp
-        
+
         # Test reasoning effort inclusion
         has_reasoning_effort = "reasoning_effort" in params
         assert has_reasoning_effort == expected_reasoning
