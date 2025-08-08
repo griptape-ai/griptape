@@ -459,9 +459,125 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
     def test_init(self):
         assert OpenAiChatPromptDriver(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_4_MODEL)
 
+    @pytest.mark.parametrize(
+        ("model", "expected"),
+        [
+            ("gpt-4", True),
+            ("gpt-4.1", True),
+            ("gpt-4o", True),
+            ("gpt-3.5-turbo", True),
+            ("gpt-5", False),
+            ("gpt-5-turbo", False),
+            ("o1", False),
+            ("o1-preview", False),
+            ("o1-mini", False),
+            ("o3", False),
+            ("o3-mini", False),
+        ],
+    )
+    def test_supports_stop_sequences(self, model, expected):
+        driver = OpenAiChatPromptDriver(model=model)
+        assert driver.supports_stop_sequences == expected
+
+    @pytest.mark.parametrize(
+        ("model", "expected"),
+        [
+            ("gpt-4", True),
+            ("gpt-4.1", True),
+            ("gpt-4o", True),
+            ("gpt-3.5-turbo", True),
+            ("gpt-5", True),
+            ("gpt-5-turbo", True),
+            ("o1", False),
+            ("o1-preview", False),
+            ("o1-mini", False),
+            ("o3", False),
+            ("o3-mini", False),
+        ],
+    )
+    def test_supports_modalities(self, model, expected):
+        driver = OpenAiChatPromptDriver(model=model)
+        assert driver.supports_modalities == expected
+
+    @pytest.mark.parametrize(
+        ("model", "expected"),
+        [
+            ("gpt-4", False),
+            ("gpt-4.1", False),
+            ("gpt-4o", False),
+            ("gpt-3.5-turbo", False),
+            ("gpt-5", False),
+            ("gpt-5-turbo", False),
+            ("o1", True),
+            ("o1-preview", True),
+            ("o1-mini", False),  # Special case: o1-mini doesn't support reasoning_effort
+            ("o3", True),
+            ("o3-mini", True),
+        ],
+    )
+    def test_supports_reasoning_effort(self, model, expected):
+        driver = OpenAiChatPromptDriver(model=model)
+        assert driver.supports_reasoning_effort == expected
+
+    @pytest.mark.parametrize(
+        ("model", "expected"),
+        [
+            ("gpt-4", True),
+            ("gpt-4.1", True),
+            ("gpt-4o", True),
+            ("gpt-3.5-turbo", True),
+            ("gpt-5", False),  # GPT-5 doesn't support custom temperature
+            ("gpt-5-turbo", False),  # GPT-5 doesn't support custom temperature
+            ("o1", False),  # O-series models don't support custom temperature
+            ("o1-preview", False),
+            ("o1-mini", False),
+            ("o3", False),
+            ("o3-mini", False),
+        ],
+    )
+    def test_supports_temperature(self, model, expected):
+        driver = OpenAiChatPromptDriver(model=model)
+        assert driver.supports_temperature == expected
+
+    @pytest.mark.parametrize(
+        ("model", "expected_role", "expected_temp", "expected_reasoning"),
+        [
+            # GPT models (non-reasoning): support stop sequences, temperature, no reasoning effort
+            ("gpt-4.1", "system", True, False),
+            ("gpt-4o", "system", True, False),
+            # GPT-5 models: no stop sequences (developer role), NO temperature, no reasoning effort
+            ("gpt-5", "developer", False, False),
+            ("gpt-5-turbo", "developer", False, False),
+            # O1 models: no stop sequences (developer role), NO temperature, reasoning effort (except mini)
+            ("o1", "developer", False, True),
+            ("o1-preview", "developer", False, True),
+            ("o1-mini", "developer", False, False),  # Special case: no reasoning effort and no temperature
+            ("o3", "developer", False, True),
+            ("o3-mini", "developer", False, True),
+        ],
+    )
+    def test_model_behavioral_differences(self, model, expected_role, expected_temp, expected_reasoning):
+        driver = OpenAiChatPromptDriver(model=model)
+
+        # Test role mapping
+        from griptape.common import Message
+
+        system_message = Message(content=[], role=Message.SYSTEM_ROLE)
+        actual_role = driver._OpenAiChatPromptDriver__to_openai_role(system_message)
+        assert actual_role == expected_role
+
+        # Test temperature inclusion
+        params = driver._base_params(PromptStack())
+        has_temperature = "temperature" in params
+        assert has_temperature == expected_temp
+
+        # Test reasoning effort inclusion
+        has_reasoning_effort = "reasoning_effort" in params
+        assert has_reasoning_effort == expected_reasoning
+
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
-    @pytest.mark.parametrize("model", ["gpt-4.1", "o1", "o3", "o3-mini"])
+    @pytest.mark.parametrize("model", ["gpt-4.1", "gpt-5", "o1", "o1-mini", "o3", "o3-mini"])
     @pytest.mark.parametrize("modalities", [[], ["text"], ["text", "audio"], ["audio"]])
     def test_try_run(
         self,
@@ -494,7 +610,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if driver.user
             else {},
-            messages=reasoning_messages if driver.is_reasoning_model else messages,
+            messages=reasoning_messages if not driver.supports_stop_sequences else messages,
             **{
                 "seed": driver.seed,
             }
@@ -503,7 +619,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if driver.modalities and not driver.is_reasoning_model
+            if driver.modalities and driver.supports_modalities
             else {},
             **{
                 "audio": driver.audio,
@@ -513,12 +629,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "reasoning_effort": driver.reasoning_effort,
             }
-            if driver.is_reasoning_model and model != "o1-mini"
+            if driver.supports_reasoning_effort
             else {},
             **{
                 "temperature": driver.temperature,
             }
-            if not driver.is_reasoning_model
+            if driver.supports_stop_sequences
             else {},
             **{
                 "tools": self.OPENAI_TOOLS,
@@ -591,7 +707,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if driver.modalities and not driver.is_reasoning_model
+            if driver.modalities and driver.supports_modalities
             else {},
             response_format={"type": "json_object"},
         )
@@ -640,7 +756,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if driver.modalities and not driver.is_reasoning_model
+            if driver.modalities and driver.supports_modalities
             else {},
             response_format={
                 "json_schema": {
@@ -664,7 +780,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
-    @pytest.mark.parametrize("model", ["gpt-4.1", "o1", "o3", "o3-mini"])
+    @pytest.mark.parametrize("model", ["gpt-4.1", "gpt-5", "o1", "o1-mini", "o3", "o3-mini"])
     @pytest.mark.parametrize("modalities", [[], ["text"], ["text", "audio"], ["audio"]])
     def test_try_stream_run(
         self,
@@ -700,7 +816,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             if driver.user
             else {},
             stream=True,
-            messages=reasoning_messages if driver.is_reasoning_model else messages,
+            messages=reasoning_messages if not driver.supports_stop_sequences else messages,
             **{
                 "seed": driver.seed,
             }
@@ -712,12 +828,12 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             }
             if "audio" in driver.modalities
             else {},
-            **{"modalities": driver.modalities} if driver.modalities and not driver.is_reasoning_model else {},
-            **{"reasoning_effort": driver.reasoning_effort} if driver.is_reasoning_model and model != "o1-mini" else {},
+            **{"modalities": driver.modalities} if driver.modalities and driver.supports_modalities else {},
+            **{"reasoning_effort": driver.reasoning_effort} if driver.supports_reasoning_effort else {},
             **{
                 "temperature": driver.temperature,
             }
-            if not driver.is_reasoning_model
+            if driver.supports_stop_sequences
             else {},
             **{
                 "tools": self.OPENAI_TOOLS,
@@ -807,7 +923,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if driver.modalities and not driver.is_reasoning_model
+            if driver.modalities and driver.supports_modalities
             else {},
         )
         assert event.value[0].value == "model-output"
@@ -860,7 +976,7 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             **{
                 "modalities": driver.modalities,
             }
-            if driver.modalities and not driver.is_reasoning_model
+            if driver.modalities and driver.supports_modalities
             else {},
             max_tokens=1,
         )

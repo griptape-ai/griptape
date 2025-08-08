@@ -121,8 +121,20 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         )
 
     @property
-    def is_reasoning_model(self) -> bool:
-        return self.model.startswith("o")
+    def supports_stop_sequences(self) -> bool:
+        return not (self.model.startswith("o") or self.model.startswith("gpt-5"))
+
+    @property
+    def supports_modalities(self) -> bool:
+        return not self.model.startswith("o")
+
+    @property
+    def supports_reasoning_effort(self) -> bool:
+        return self.model.startswith("o") and self.model != "o1-mini"
+
+    @property
+    def supports_temperature(self) -> bool:
+        return not (self.model.startswith("o") or self.model.startswith("gpt-5"))
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -181,17 +193,13 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             "model": self.model,
             **({"user": self.user} if self.user else {}),
             **({"seed": self.seed} if self.seed is not None else {}),
-            **({"modalities": self.modalities} if self.modalities and not self.is_reasoning_model else {}),
-            **(
-                {"reasoning_effort": self.reasoning_effort}
-                if self.is_reasoning_model and self.model != "o1-mini"
-                else {}
-            ),
-            **({"temperature": self.temperature} if not self.is_reasoning_model else {}),
+            **({"modalities": self.modalities} if self.modalities and self.supports_modalities else {}),
+            **({"reasoning_effort": self.reasoning_effort} if self.supports_reasoning_effort else {}),
+            **({"temperature": self.temperature} if self.supports_temperature else {}),
             **({"audio": self.audio} if "audio" in self.modalities else {}),
             **(
                 {"stop": self.tokenizer.stop_sequences}
-                if not self.is_reasoning_model and self.tokenizer.stop_sequences
+                if self.supports_stop_sequences and self.tokenizer.stop_sequences
                 else {}
             ),
             **({"max_tokens": self.max_tokens} if self.max_tokens is not None else {}),
@@ -286,7 +294,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
     def __to_openai_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
         if message.is_system():
-            if self.is_reasoning_model:
+            if not self.supports_stop_sequences:
                 return "developer"
             return "system"
         if message.is_assistant():
