@@ -433,5 +433,5 @@ class TestToolkitSubtask:
     def test_deprecation_warning(self):
         task = ToolkitTask("test")
 
-        with pytest.warns(DeprecationWarning):
+        with pytest.warns(DeprecationWarning, match=r".*"):
             task.run()

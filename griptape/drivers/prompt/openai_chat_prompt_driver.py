@@ -393,9 +393,9 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                         ActionArtifact(
                             ToolAction(
                                 tag=tool_call.id,
-                                name=ToolAction.from_native_tool_name(tool_call.function.name)[0],
-                                path=ToolAction.from_native_tool_name(tool_call.function.name)[1],
-                                input=json.loads(tool_call.function.arguments),
+                                name=ToolAction.from_native_tool_name(tool_call.function.name)[0],  # pyright: ignore[reportAttributeAccessIssue]
+                                path=ToolAction.from_native_tool_name(tool_call.function.name)[1],  # pyright: ignore[reportAttributeAccessIssue]
+                                input=json.loads(tool_call.function.arguments),  # pyright: ignore[reportAttributeAccessIssue]
                             ),
                         ),
                     )

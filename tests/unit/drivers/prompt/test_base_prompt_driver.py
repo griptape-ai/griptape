@@ -135,10 +135,10 @@ class TestBasePromptDriver:
         assert output.value == json.dumps({"baz": "foo"})
 
     def test_deprecated_import(self):
-        with pytest.warns(DeprecationWarning):
+        with pytest.warns(DeprecationWarning, match=r".*"):
             from griptape.drivers import BasePromptDriver
 
-            assert BasePromptDriver
+        assert BasePromptDriver
 
         with warnings.catch_warnings():
             warnings.simplefilter("error")

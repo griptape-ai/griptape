@@ -67,7 +67,7 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
 
         output_image = pipeline(
             prompt,
-            **self.pipeline_driver.make_image_param(input_image),
+            **self.pipeline_driver.make_image_param(input_image),  # pyright: ignore[reportCallIssue]
             **self.pipeline_driver.make_additional_params(negative_prompts, self.device),
         ).images[0]
 
