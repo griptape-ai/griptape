@@ -3,7 +3,7 @@ name = "griptape"
 version = "1.8.1"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = [{ name = "Griptape", email = "hello@griptape.ai" }]
-requires-python = "~=3.9"
+requires-python = ">=3.9, <4"
 readme = "README.md"
 license = "Apache-2.0"
 dependencies = [
@@ -60,9 +60,7 @@ drivers-vector-pgvector = [
 ]
 drivers-vector-qdrant = ["qdrant-client>=1.10.1"]
 drivers-vector-astra-db = ["astrapy>=2.0"]
-drivers-vector-pgai = [
-  "sqlalchemy>=2.0.31"
-]
+drivers-vector-pgai = ["sqlalchemy>=2.0.31"]
 drivers-embedding-amazon-bedrock = ["boto3>=1.34.119"]
 drivers-embedding-amazon-sagemaker = ["boto3>=1.34.119"]
 drivers-embedding-huggingface = [
@@ -216,40 +214,42 @@ line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "UP007",  # non-pep604-annotation
-  "E501",   # line-too-long
-  "B024",   # abstract-base-class-without-abstract-method
-  "B009",   # get-attr-with-constant
-  "B010",   # set-attr-with-constant
-  "D100",   # undocumented-public-module
-  "D101",   # undocumented-public-class
-  "D102",   # undocumented-public-method
-  "D103",   # undocumented-public-function
-  "D104",   # undocumented-public-package
-  "D105",   # undocumented-magic-method
-  "D106",   # undocumented-public-nested-class
-  "D107",   # undocumented-public-init
-  "COM812", # missing-trailing-comma -- See https://github.com/astral-sh/ruff/issues/9216 
-  "ANN002", # missing-type-args
-  "ANN003", # missing-type-kwargs
-  "ANN401", # any-type
-  "PT011",  # pytest-raises-too-broad
-  "LOG015", # root-logger-call
-  "EM101",  # raw-string-in-exception
-  "BLE001", # blind-except
-  "S",      # flake8-bandit
-  "PTH",    # flake8-use-pathlib
-  "TRY",    # tryceratops
-  "PLR",    # pylint-refactor
-  "RUF",    # ruff
-  "PERF",   # perflint
-  "ARG",    # flake8-unused-arguments
-  "DTZ",    # flake8-datetimez
-  "FIX002", # flake8-fixme
-  "TD003",  # missing-todo-links
-  "TD002",  # missing-todo-author
-  "SLF001", # private-member-access
-  "EM102",  # f-string-in-exception
+  "UP007",   # non-pep604-annotation
+  "E501",    # line-too-long
+  "B024",    # abstract-base-class-without-abstract-method
+  "B009",    # get-attr-with-constant
+  "B010",    # set-attr-with-constant
+  "D100",    # undocumented-public-module
+  "D101",    # undocumented-public-class
+  "D102",    # undocumented-public-method
+  "D103",    # undocumented-public-function
+  "D104",    # undocumented-public-package
+  "D105",    # undocumented-magic-method
+  "D106",    # undocumented-public-nested-class
+  "D107",    # undocumented-public-init
+  "COM812",  # missing-trailing-comma -- See https://github.com/astral-sh/ruff/issues/9216 
+  "ANN002",  # missing-type-args
+  "ANN003",  # missing-type-kwargs
+  "ANN401",  # any-type
+  "PT011",   # pytest-raises-too-broad
+  "LOG015",  # root-logger-call
+  "EM101",   # raw-string-in-exception
+  "BLE001",  # blind-except
+  "S",       # flake8-bandit
+  "PTH",     # flake8-use-pathlib
+  "TRY",     # tryceratops
+  "PLR",     # pylint-refactor
+  "RUF",     # ruff
+  "PERF",    # perflint
+  "ARG",     # flake8-unused-arguments
+  "DTZ",     # flake8-datetimez
+  "FIX002",  # flake8-fixme
+  "TD003",   # missing-todo-links
+  "TD002",   # missing-todo-author
+  "SLF001",  # private-member-access
+  "EM102",   # f-string-in-exception
+  "PLC0415",
+  "UP045",
 ]
 
 [tool.ruff.lint.pydocstyle]

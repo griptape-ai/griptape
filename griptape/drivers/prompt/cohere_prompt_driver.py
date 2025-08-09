@@ -31,7 +31,12 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-    from cohere import AssistantMessageResponse, ChatResponse, ClientV2, StreamedChatResponseV2
+    from cohere import (
+        AssistantMessageResponse,
+        ChatResponse,
+        ClientV2,
+        StreamedChatResponseV2,
+    )
 
     from griptape.tools import BaseTool
 
@@ -211,7 +216,7 @@ class CoherePromptDriver(BasePromptDriver):
     def __to_prompt_stack_message_content(self, response: AssistantMessageResponse) -> list[BaseMessageContent]:
         content = []
         if response.content:
-            content.extend([TextMessageContent(TextArtifact(content.text)) for content in response.content])
+            content.extend([TextMessageContent(TextArtifact(content.text)) for content in response.content])  # pyright: ignore[reportAttributeAccessIssue]
         if response.tool_plan:
             content.append(TextMessageContent(TextArtifact(response.tool_plan)))
         if response.tool_calls is not None:

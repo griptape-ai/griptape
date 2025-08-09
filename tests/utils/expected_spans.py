@@ -21,7 +21,7 @@ class ExpectedSpan:
 
 
 @define
-class ExpectedSpans:
+class ExpectedSpans:  # noqa: PLW1641
     spans: list[ExpectedSpan] = field(kw_only=True)
 
     def __eq__(self, other_spans: Sequence[ReadableSpan]) -> bool:  # noqa: C901

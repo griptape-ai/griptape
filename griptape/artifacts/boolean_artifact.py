@@ -7,8 +7,8 @@ from attrs import define, field
 from griptape.artifacts import BaseArtifact
 
 
-@define
-class BooleanArtifact(BaseArtifact):
+@define()
+class BooleanArtifact(BaseArtifact):  # noqa: PLW1641
     """Stores a boolean value.
 
     Attributes:
@@ -18,7 +18,7 @@ class BooleanArtifact(BaseArtifact):
     value: bool = field(converter=bool, metadata={"serializable": True})
 
     @classmethod
-    def parse_bool(cls, value: Union[str, bool]) -> BooleanArtifact:
+    def parse_bool(cls, value: Union[str, bool]) -> BooleanArtifact:  # noqa: FBT001
         """Convert a string literal or bool to a BooleanArtifact. The string must be either "true" or "false"."""
         if value is not None:
             if isinstance(value, str):
