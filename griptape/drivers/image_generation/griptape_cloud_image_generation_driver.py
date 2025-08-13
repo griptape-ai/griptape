@@ -149,7 +149,24 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
         image: ImageArtifact,
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
-        raise NotImplementedError(f"{self.__class__.__name__} does not support image variation")
+        if self.model != "gpt-image-1":
+            raise ValueError(f"Image variation is only supported with gpt-image-1 model, but {self.model} was provided")
+
+        url = griptape_cloud_url(self.base_url, "api/images/variations")
+
+        response = requests.post(
+            url,
+            headers=self.headers,
+            json={
+                "prompts": prompts,
+                "image_base64": image.base64,
+                "driver_configuration": self._build_driver_configuration(),
+            },
+        )
+        response.raise_for_status()
+        response = response.json()
+
+        return ImageArtifact.from_dict(response["artifact"])
 
     def try_image_inpainting(
         self,
