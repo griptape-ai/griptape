@@ -10,7 +10,7 @@ class TestGriptapeCloudImageGenerationDriver:
     def mock_post(self, mocker):
         def request(*args, **kwargs):
             mock_response = mocker.Mock()
-            if "images/generations" in args[0]:
+            if "images/generations" in args[0] or "images/variations" in args[0]:
                 mock_response.json.return_value = {
                     "artifact": {
                         "type": "ImageArtifact",
@@ -18,7 +18,7 @@ class TestGriptapeCloudImageGenerationDriver:
                         "height": 1024,
                         "format": "png",
                         "value": "aW1hZ2UgZGF0YQ==",
-                        "meta": {"model": "dall-e-3", "prompt": "test prompt"},
+                        "meta": {"model": "gpt-image-1", "prompt": "test prompt"},
                     },
                 }
                 return mock_response
@@ -112,17 +112,19 @@ class TestGriptapeCloudImageGenerationDriver:
         with pytest.raises(ValueError):
             GriptapeCloudImageGenerationDriver(model="gpt-image-1", api_key="foo", image_size="1024x1792")
 
-    def test_try_image_variation(self, driver):
-        with pytest.raises(NotImplementedError):
-            driver.try_image_variation(prompts=[], image=Mock(value=b"image data"))
+    def test_try_image_variation_with_dall_e_3(self, driver):
+        with pytest.raises(ValueError, match="Image variation is only supported with gpt-image-1 model"):
+            driver.try_image_variation(prompts=[], image=Mock(base64="aW1hZ2UgZGF0YQ=="))
 
-    def test_try_image_variation_invalid_size(self, driver):
-        with pytest.raises(NotImplementedError):
-            driver.try_image_variation(prompts=[], image=Mock(value=b"image data"))
+    def test_try_image_variation_with_gpt_image_1(self, gpt_image_1_driver):
+        image_artifact = gpt_image_1_driver.try_image_variation(
+            prompts=["test variation"], image=Mock(base64="aW1hZ2UgZGF0YQ==")
+        )
 
-    def test_try_image_variation_invalid_model(self, driver):
-        with pytest.raises(NotImplementedError):
-            driver.try_image_variation(prompts=[], image=Mock(value=b"image data"))
+        assert image_artifact.value == b"image data"
+        assert image_artifact.mime_type == "image/png"
+        assert image_artifact.width == 1024
+        assert image_artifact.height == 1024
 
     def test_try_image_inpainting(self, driver):
         with pytest.raises(NotImplementedError):
