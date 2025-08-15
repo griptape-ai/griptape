@@ -92,29 +92,25 @@ class TestSummaryConversationMemory:
 
     def test_summary_init(self):
         memory = SummaryConversationMemory(summary="initial summary", summary_index=5)
-        
+
         assert memory.meta["summary"] == "initial summary"
         assert memory.meta["summary_index"] == 5
 
     def test_summary_no_init(self):
         memory = SummaryConversationMemory(summary=None, summary_index=0)
-        
+
         assert "summary" not in memory.meta
         assert "summary_index" not in memory.meta
 
     def test_summary_complete_run(self):
-        original_memory = SummaryConversationMemory(
-                summary="test summary",
-                summary_index=2
-                )
+        original_memory = SummaryConversationMemory(summary="test summary", summary_index=2)
         original_memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
         memory_dict = original_memory.to_dict()
         assert memory_dict["meta"]["summary"] == "test summary"
         assert memory_dict["meta"]["summary_index"] == 2
         restored_memory = SummaryConversationMemory.from_dict(memory_dict)
-        
+
         assert restored_memory.summary == "test summary"
         assert restored_memory.summary_index == 2
         assert restored_memory.meta["summary"] == "test summary"
         assert restored_memory.meta["summary_index"] == 2
-

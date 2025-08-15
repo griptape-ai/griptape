@@ -28,7 +28,7 @@ class SummaryConversationMemory(BaseConversationMemory):
         default=Factory(lambda: J2("memory/conversation/summarize_conversation.j2")),
         kw_only=True,
     )
-    
+
     # Set meta['summary'] after initializing self.summary, because load_runs() will overwrite it with an empty value from meta.
     def __attrs_post_init__(self) -> None:
         if self.summary is not None:
