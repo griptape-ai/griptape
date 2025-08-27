@@ -86,7 +86,13 @@ class MCPTool(BaseTool):
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
-        asyncio.run(self._init_activities())
+        try:
+            loop = asyncio.get_running_loop()
+            # We're in an async context, create a task
+            loop.create_task(self._init_activities())
+        except RuntimeError:
+            # No event loop running, safe to use asyncio.run
+            asyncio.run(self._init_activities())
 
     async def _init_activities(self) -> None:
         async with self._get_session() as session:
@@ -111,7 +117,17 @@ class MCPTool(BaseTool):
             }
         )
         def activity_handler(self: MCPTool, values: dict) -> Any:
-            return asyncio.run(self._run_activity(tool.name, values))
+            try:
+                asyncio.get_running_loop()
+                # We're in an async context, need to handle this differently
+                import concurrent.futures
+
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(asyncio.run, self._run_activity(tool.name, values))
+                    return future.result()
+            except RuntimeError:
+                # No event loop running, safe to use asyncio.run
+                return asyncio.run(self._run_activity(tool.name, values))
 
         return activity_handler
 
