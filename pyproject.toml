@@ -18,6 +18,7 @@ dependencies = [
   "pyyaml>=6.0.1",
   "tenacity>=8.5.0",
   "numpy>=1.26.4,<3",
+  "scikit-learn>=1.0.0",        # AMT: ML learning for conversation patterns
   "requests>=2.32.0",
   "filetype>=1.2",
   "urllib3>=1.25.4,!=2.2.0,<3",
@@ -154,6 +155,7 @@ all = [
   "pandas>=2.2",
   "pypdf>=5.0.1",
   "mail-parser>=4.0.0",
+  "scikit-learn>=1.0.0",        # AMT: ML learning for conversation patterns
 ]
 
 [project.urls]
