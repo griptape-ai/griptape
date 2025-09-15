@@ -150,7 +150,7 @@ jobs:
       # If any code snippets have changed, we want to copy the logs to display in the docs
       - name: Get Changed Files
         id: changed-files
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@v47
         with:
           files: docs/**/*.py
       - name: Run Snippet Logs 
