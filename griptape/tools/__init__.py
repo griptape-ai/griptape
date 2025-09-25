@@ -24,6 +24,7 @@ from .extraction.tool import ExtractionTool
 from .prompt_summary.tool import PromptSummaryTool
 from .query.tool import QueryTool
 from .structured_output.tool import StructuredOutputTool
+from .mcp_tool import MCPTool
 
 __all__ = [
     "AudioTranscriptionTool",
@@ -39,6 +40,7 @@ __all__ = [
     "ImageQueryTool",
     "InpaintingImageGenerationTool",
     "OutpaintingImageGenerationTool",
+    "MCPTool",
     "PromptImageGenerationTool",
     "PromptSummaryTool",
     "QueryTool",
