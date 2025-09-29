@@ -11,6 +11,7 @@ from .image_artifact import ImageArtifact
 from .image_url_artifact import ImageUrlArtifact
 from .audio_artifact import AudioArtifact
 from .audio_url_artifact import AudioUrlArtifact
+from .video_url_artifact import VideoUrlArtifact
 from .action_artifact import ActionArtifact
 from .generic_artifact import GenericArtifact
 from .model_artifact import ModelArtifact
@@ -32,4 +33,5 @@ __all__ = [
     "ListArtifact",
     "ModelArtifact",
     "TextArtifact",
+    "VideoUrlArtifact",
 ]
