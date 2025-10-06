@@ -3,7 +3,7 @@ name = "griptape"
 version = "1.8.4"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = [{ name = "Griptape", email = "hello@griptape.ai" }]
-requires-python = "~=3.9"
+requires-python = ">=3.9, <4"
 readme = "README.md"
 license = "Apache-2.0"
 dependencies = [
