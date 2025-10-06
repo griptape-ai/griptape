@@ -11,6 +11,7 @@ class TestOpenAiTokenizer:
     @pytest.mark.parametrize(
         ("tokenizer", "expected"),
         [
+            ("gpt-5", 5),
             ("gpt-4-1106", 5),
             ("gpt-4-32k", 5),
             ("gpt-4", 5),
@@ -38,6 +39,7 @@ class TestOpenAiTokenizer:
     @pytest.mark.parametrize(
         ("tokenizer", "expected"),
         [
+            ("gpt-5", 19),
             ("gpt-4-1106", 19),
             ("gpt-4-32k", 19),
             ("gpt-4", 19),
@@ -69,6 +71,7 @@ class TestOpenAiTokenizer:
     @pytest.mark.parametrize(
         ("tokenizer", "expected"),
         [
+            ("gpt-5", 271987),
             ("gpt-4-1106", 127987),
             ("gpt-4o", 127987),
             ("gpt-4.1", 999_987),
@@ -91,6 +94,7 @@ class TestOpenAiTokenizer:
     @pytest.mark.parametrize(
         ("tokenizer", "expected"),
         [
+            ("gpt-5", 127995),
             ("gpt-4-1106", 4091),
             ("gpt-4-32k", 4091),
             ("gpt-4", 4091),
