@@ -24,6 +24,7 @@ from .extraction.tool import ExtractionTool
 from .prompt_summary.tool import PromptSummaryTool
 from .query.tool import QueryTool
 from .structured_output.tool import StructuredOutputTool
+from .mcp.tool import MCPTool
 
 __all__ = [
     "AudioTranscriptionTool",
@@ -52,4 +53,5 @@ __all__ = [
     "VectorStoreTool",
     "WebScraperTool",
     "WebSearchTool",
+    "MCPTool",
 ]
