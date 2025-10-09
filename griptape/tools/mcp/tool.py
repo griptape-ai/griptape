@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import threading
 from types import MethodType
 from typing import TYPE_CHECKING, Any, Callable
 
@@ -148,11 +149,13 @@ class MCPTool(BaseTool):
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
         try:
-            loop = asyncio.get_running_loop()
-            # We're in an async context, create a task
-            loop.create_task(self._init_activities())
+            asyncio.get_running_loop()
+            # Event loop is running, use a separate thread with its own loop
+            thread = threading.Thread(target=lambda: asyncio.run(self._init_activities()))
+            thread.start()
+            thread.join()  # Block until initialization completes
         except RuntimeError:
-            # No event loop running, safe to use asyncio.run
+            # No event loop running, safe to use asyncio.run directly
             asyncio.run(self._init_activities())
 
     async def _init_activities(self) -> None:
