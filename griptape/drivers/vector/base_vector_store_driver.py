@@ -58,7 +58,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         **kwargs,
     ) -> str:
         warnings.warn(
-            "`BaseVectorStoreDriver.upsert_text_artifacts` is deprecated and will be removed in a future release. `BaseVectorStoreDriver.upsert` is a drop-in replacement.",
+                        "`BaseVectorStoreDriver.upsert_text_artifact` is deprecated and will be removed in a future release. `BaseVectorStoreDriver.upsert` is a drop-in replacement.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -79,6 +79,60 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
             stacklevel=2,
         )
         return self.upsert(string, namespace=namespace, meta=meta, vector_id=vector_id, **kwargs)
+
+    def insert_collection(
+            self,
+            artifacts: list[TextArtifact] | list[ImageArtifact] | dict[str, list[TextArtifact]] | dict[
+                str, list[ImageArtifact]],
+            *,
+            meta: Optional[dict] = None,
+            **kwargs,
+    ) -> list[str] | dict[str, list[str]]:
+
+        with self.create_futures_executor() as futures_executor:
+            if isinstance(artifacts, list):
+                return utils.execute_futures_list(
+                    [
+                        futures_executor.submit(with_contextvars(self.insert), a, namespace=None, meta=meta, **kwargs)
+                        for a in artifacts
+                    ],
+                )
+            futures_dict = {}
+
+            for namespace, artifact_list in artifacts.items():
+                for a in artifact_list:
+                    if not futures_dict.get(namespace):
+                        futures_dict[namespace] = []
+
+                    futures_dict[namespace].append(
+                        futures_executor.submit(
+                            with_contextvars(self.insert), a, namespace=namespace, meta=meta, **kwargs
+                        )
+                    )
+
+            return utils.execute_futures_list_dict(futures_dict)
+
+    def insert(
+            self,
+            value: str | TextArtifact | ImageArtifact,
+            *,
+            namespace: Optional[str] = None,
+            meta: Optional[dict] = None,
+            vector_id: Optional[str] = None,
+            **kwargs,
+    ) -> str:
+
+        artifact = TextArtifact(value) if isinstance(value, str) else value
+
+        meta = {} if meta is None else meta
+
+        if vector_id is None:
+            vector_id = str(uuid.uuid4())
+
+        meta = {**meta, "artifact": artifact.to_json()}
+        vector = self.embedding_driver.embed(artifact, vector_operation="insert")
+
+        return self.insert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
 
     @overload
     def upsert_collection(
@@ -168,6 +222,17 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
     @abstractmethod
     def delete_vector(self, vector_id: str) -> None: ...
+
+    @abstractmethod
+    def insert_vector(
+            self,
+            vector: list[float],
+            *,
+            vector_id: Optional[str] = None,
+            namespace: Optional[str] = None,
+            meta: Optional[dict] = None,
+            **kwargs,
+    ) -> str: ...
 
     @abstractmethod
     def upsert_vector(
