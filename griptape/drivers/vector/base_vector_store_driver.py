@@ -223,7 +223,6 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
     @abstractmethod
     def delete_vector(self, vector_id: str) -> None: ...
 
-    @abstractmethod
     def insert_vector(
         self,
         vector: list[float],
