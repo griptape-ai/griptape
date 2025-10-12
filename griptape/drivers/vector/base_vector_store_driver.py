@@ -58,7 +58,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         **kwargs,
     ) -> str:
         warnings.warn(
-                        "`BaseVectorStoreDriver.upsert_text_artifact` is deprecated and will be removed in a future release. `BaseVectorStoreDriver.upsert` is a drop-in replacement.",
+            "`BaseVectorStoreDriver.upsert_text_artifact` is deprecated and will be removed in a future release. `BaseVectorStoreDriver.upsert` is a drop-in replacement.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -81,14 +81,15 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         return self.upsert(string, namespace=namespace, meta=meta, vector_id=vector_id, **kwargs)
 
     def insert_collection(
-            self,
-            artifacts: list[TextArtifact] | list[ImageArtifact] | dict[str, list[TextArtifact]] | dict[
-                str, list[ImageArtifact]],
-            *,
-            meta: Optional[dict] = None,
-            **kwargs,
+        self,
+        artifacts: list[TextArtifact]
+        | list[ImageArtifact]
+        | dict[str, list[TextArtifact]]
+        | dict[str, list[ImageArtifact]],
+        *,
+        meta: Optional[dict] = None,
+        **kwargs,
     ) -> list[str] | dict[str, list[str]]:
-
         with self.create_futures_executor() as futures_executor:
             if isinstance(artifacts, list):
                 return utils.execute_futures_list(
@@ -113,15 +114,14 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
             return utils.execute_futures_list_dict(futures_dict)
 
     def insert(
-            self,
-            value: str | TextArtifact | ImageArtifact,
-            *,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            vector_id: Optional[str] = None,
-            **kwargs,
+        self,
+        value: str | TextArtifact | ImageArtifact,
+        *,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        vector_id: Optional[str] = None,
+        **kwargs,
     ) -> str:
-
         artifact = TextArtifact(value) if isinstance(value, str) else value
 
         meta = {} if meta is None else meta
@@ -225,13 +225,13 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
     @abstractmethod
     def insert_vector(
-            self,
-            vector: list[float],
-            *,
-            vector_id: Optional[str] = None,
-            namespace: Optional[str] = None,
-            meta: Optional[dict] = None,
-            **kwargs,
+        self,
+        vector: list[float],
+        *,
+        vector_id: Optional[str] = None,
+        namespace: Optional[str] = None,
+        meta: Optional[dict] = None,
+        **kwargs,
     ) -> str: ...
 
     @abstractmethod
