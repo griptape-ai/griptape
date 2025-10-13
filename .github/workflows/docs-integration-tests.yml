@@ -141,7 +141,7 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
       - name: Init environment
         uses: ./.github/actions/init-environment
       # Integration tests will run on all code snippets, outputting their logs to /tmp/logs
@@ -150,7 +150,7 @@ jobs:
       # If any code snippets have changed, we want to copy the logs to display in the docs
       - name: Get Changed Files
         id: changed-files
-        uses: tj-actions/changed-files@v46
+        uses: tj-actions/changed-files@v47
         with:
           files: docs/**/*.py
       - name: Run Snippet Logs 
