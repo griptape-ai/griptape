@@ -15,7 +15,7 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 if TYPE_CHECKING:
     from griptape.tokenizers import BaseTokenizer
 
-VectorOperation = Literal["query", "upsert"]
+VectorOperation = Literal["query", "upsert", "insert"]
 
 
 @define
