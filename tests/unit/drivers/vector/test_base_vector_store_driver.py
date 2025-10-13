@@ -12,8 +12,6 @@ class TestBaseVectorStoreDriver(ABC):
     @abstractmethod
     def driver(self, *args, **kwargs) -> BaseVectorStoreDriver: ...
 
-
-
     def test_insert(self, driver, mocker):
         spy = mocker.patch.object(driver, "insert_vector", return_value="vid123")
         returned_id = driver.insert(
@@ -33,6 +31,7 @@ class TestBaseVectorStoreDriver(ABC):
         # meta should be merged and include serialized artifact
         assert kwargs["meta"]["k"] == "v"
         assert "artifact" in kwargs["meta"]
+
     def test_insert_generates_vector_id_when_not_provided(self, driver, mocker):
         spy = mocker.patch.object(driver, "insert_vector", return_value="auto-id")
 
@@ -142,5 +141,3 @@ class TestBaseVectorStoreDriver(ABC):
     def test_does_entry_exist_exception(self, driver):
         with patch.object(driver, "load_entry", side_effect=Exception):
             assert driver.does_entry_exist("does_not_exist") is False
-
-
