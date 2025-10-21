@@ -27,7 +27,11 @@ from griptape.common import (
 from griptape.configs import Defaults
 from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
-from griptape.utils import import_optional_dependency, remove_key_in_dict_recursively, remove_field_unless_directly_inside
+from griptape.utils import (
+    import_optional_dependency,
+    remove_field_unless_directly_inside,
+    remove_key_in_dict_recursively,
+)
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:

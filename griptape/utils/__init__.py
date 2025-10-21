@@ -12,7 +12,7 @@ from .dict_utils import (
     dict_merge,
     remove_key_in_dict_recursively,
     add_key_in_dict_recursively,
-    remove_field_unless_directly_inside
+    remove_field_unless_directly_inside,
 )
 from .hash import str_to_hash
 from .import_utils import import_optional_dependency

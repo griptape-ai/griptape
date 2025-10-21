@@ -2,9 +2,9 @@ import pytest
 
 from griptape.utils import (
     dict_merge,
+    remove_field_unless_directly_inside,
     remove_key_in_dict_recursively,
     remove_null_values_in_dict_recursively,
-    remove_field_unless_directly_inside,
 )
 
 
@@ -76,7 +76,7 @@ class TestDictUtils:
             "type": "object",
             "properties": {
                 "title": {"type": "string", "title": "Title"},
-                "answer": {"type": "number", "title": "Answer"}, 
+                "answer": {"type": "number", "title": "Answer"},
             },
         }
 
@@ -85,7 +85,8 @@ class TestDictUtils:
         assert "title" not in result
         assert result["type"] == "object"
 
-        assert "properties" in result and isinstance(result["properties"], dict)
+        assert "properties" in result
+        assert isinstance(result["properties"], dict)
 
         props = result["properties"]
         assert set(props.keys()) == {"title", "answer"}
@@ -94,4 +95,4 @@ class TestDictUtils:
 
         answer = props["answer"]
         assert answer["type"] == "number"
-        assert "title" not in answer 
+        assert "title" not in answer
