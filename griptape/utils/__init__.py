@@ -12,6 +12,7 @@ from .dict_utils import (
     dict_merge,
     remove_key_in_dict_recursively,
     add_key_in_dict_recursively,
+    remove_field_unless_directly_inside
 )
 from .hash import str_to_hash
 from .import_utils import import_optional_dependency
@@ -57,6 +58,7 @@ __all__ = [
     "references_from_artifacts",
     "remove_key_in_dict_recursively",
     "remove_null_values_in_dict_recursively",
+    "remove_field_unless_directly_inside",
     "resolve_refs",
     "str_to_hash",
     "with_contextvars",
