@@ -1,6 +1,11 @@
 import pytest
 
-from griptape.utils import dict_merge, remove_key_in_dict_recursively, remove_null_values_in_dict_recursively
+from griptape.utils import (
+    dict_merge,
+    remove_key_in_dict_recursively,
+    remove_null_values_in_dict_recursively,
+    remove_field_unless_directly_inside,
+)
 
 
 class TestDictUtils:
@@ -64,3 +69,29 @@ class TestDictUtils:
 
         with pytest.raises(KeyError):
             assert dict_merge(a, b, add_keys=False)["b"]["b3"] == 6
+
+    def test_remove_field_unless_directly_inside_properties(self):
+        schema = {
+            "title": "Title",
+            "type": "object",
+            "properties": {
+                "title": {"type": "string", "title": "Title"},
+                "answer": {"type": "number", "title": "Answer"}, 
+            },
+        }
+
+        result = remove_field_unless_directly_inside(schema, "title", "properties")
+
+        assert "title" not in result
+        assert result["type"] == "object"
+
+        assert "properties" in result and isinstance(result["properties"], dict)
+
+        props = result["properties"]
+        assert set(props.keys()) == {"title", "answer"}
+
+        assert props["title"] == {"type": "string"}
+
+        answer = props["answer"]
+        assert answer["type"] == "number"
+        assert "title" not in answer 
