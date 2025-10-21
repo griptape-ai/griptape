@@ -29,7 +29,6 @@ from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, GoogleTokenizer
 from griptape.utils import (
     import_optional_dependency,
-    remove_field_unless_directly_inside,
     remove_key_in_dict_recursively,
 )
 from griptape.utils.decorators import lazy_property
@@ -208,7 +207,7 @@ class GooglePromptDriver(BasePromptDriver):
                     schema = schema["properties"]["values"]
 
                 schema = remove_key_in_dict_recursively(schema, "additionalProperties")
-                schema = remove_field_unless_directly_inside(schema, "title", "properties")
+                schema = remove_key_in_dict_recursively(schema, "title", preserve_under_key="properties")
                 tool_declaration = types.FunctionDeclaration(
                     name=tool.to_native_tool_name(activity),
                     description=tool.activity_description(activity),

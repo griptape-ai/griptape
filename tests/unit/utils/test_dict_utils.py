@@ -2,7 +2,6 @@ import pytest
 
 from griptape.utils import (
     dict_merge,
-    remove_field_unless_directly_inside,
     remove_key_in_dict_recursively,
     remove_null_values_in_dict_recursively,
 )
@@ -22,6 +21,33 @@ class TestDictUtils:
         dict_without_key = {"foo": 1, "bar": {"baz": {"bar": 2}}}
 
         assert remove_key_in_dict_recursively(dict_with_key, "quxx") == dict_without_key
+
+    def test_remove_key_in_dict_recursively_with_preserve_under_key(self):
+        schema = {
+            "title": "Title",
+            "type": "object",
+            "properties": {
+                "title": {"type": "string", "title": "Title"},
+                "answer": {"type": "number", "title": "Answer"},
+            },
+        }
+
+        result = remove_key_in_dict_recursively(schema, "title", preserve_under_key="properties")
+
+        assert "title" not in result
+        assert result["type"] == "object"
+
+        assert "properties" in result
+        assert isinstance(result["properties"], dict)
+
+        props = result["properties"]
+        assert set(props.keys()) == {"title", "answer"}
+
+        assert props["title"] == {"type": "string"}
+
+        answer = props["answer"]
+        assert answer["type"] == "number"
+        assert "title" not in answer
 
     def test_dict_merge_merges_dicts(self):
         a = {"a": 1, "b": {"b1": 2, "b2": 3}}
@@ -69,30 +95,3 @@ class TestDictUtils:
 
         with pytest.raises(KeyError):
             assert dict_merge(a, b, add_keys=False)["b"]["b3"] == 6
-
-    def test_remove_field_unless_directly_inside_properties(self):
-        schema = {
-            "title": "Title",
-            "type": "object",
-            "properties": {
-                "title": {"type": "string", "title": "Title"},
-                "answer": {"type": "number", "title": "Answer"},
-            },
-        }
-
-        result = remove_field_unless_directly_inside(schema, "title", "properties")
-
-        assert "title" not in result
-        assert result["type"] == "object"
-
-        assert "properties" in result
-        assert isinstance(result["properties"], dict)
-
-        props = result["properties"]
-        assert set(props.keys()) == {"title", "answer"}
-
-        assert props["title"] == {"type": "string"}
-
-        answer = props["answer"]
-        assert answer["type"] == "number"
-        assert "title" not in answer
