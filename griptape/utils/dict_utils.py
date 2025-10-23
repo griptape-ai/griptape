@@ -9,9 +9,30 @@ def remove_null_values_in_dict_recursively(d: dict) -> dict:
     return d
 
 
-def remove_key_in_dict_recursively(d: dict, key: str) -> dict:
+def remove_key_in_dict_recursively(d: dict, key: str, preserve_under_key: Optional[str] = None) -> dict:
+    """Remove a key in a dictionary recursively.
+
+    Args:
+        d: The dictionary to remove the key from.
+        key: The key to remove.
+        preserve_under_key: An optional key to preserve the keys directly under it.
+    """
     if isinstance(d, dict):
-        return {k: remove_key_in_dict_recursively(v, key) for k, v in d.items() if k != key}
+        # when we encounter the preserved container,
+        # we keep its keys intact, but still recurse into
+        # their values to remove nested occurrences of [key].
+        if preserve_under_key is not None and preserve_under_key in d and isinstance(d[preserve_under_key], dict):
+            preserved_section = {
+                inner_k: remove_key_in_dict_recursively(inner_v, key, preserve_under_key)
+                for inner_k, inner_v in d[preserve_under_key].items()
+            }
+
+            # filter out [key] and recurse in other keys normally.
+            result = {k: remove_key_in_dict_recursively(v, key, preserve_under_key) for k, v in d.items() if k != key}
+            result[preserve_under_key] = preserved_section
+            return result
+
+        return {k: remove_key_in_dict_recursively(v, key, preserve_under_key) for k, v in d.items() if k != key}
     return d
 
 
