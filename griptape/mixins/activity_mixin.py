@@ -6,7 +6,7 @@ from typing import Callable, Optional, Union
 
 from attrs import Attribute, define, field
 from jinja2 import Template
-from pydantic import BaseModel, Field, ValidationError, create_model
+from pydantic import BaseModel, ValidationError, create_model
 from schema import Schema, SchemaError
 
 from griptape.utils.json_schema_utils import build_strict_schema
@@ -98,7 +98,7 @@ class ActivityMixin:
                     config_schema.schema.update(self.extra_schema_properties[activity_name])
 
                 return Schema({"values": config_schema})
-            return create_model(config_schema.__name__, values=(config_schema, Field(config_schema)))
+            return create_model(config_schema.__name__, values=(config_schema, ...))
         return None
 
     def to_activity_json_schema(self, activity: Callable, schema_id: str) -> dict:

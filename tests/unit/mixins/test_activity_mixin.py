@@ -188,6 +188,7 @@ class TestActivityMixin:
                             "type": "object",
                         },
                     },
+                    "required": ["values"],
                     "title": "TestModel",
                     "type": "object",
                 },
