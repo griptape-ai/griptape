@@ -3,10 +3,10 @@ from __future__ import annotations
 import asyncio
 import threading
 from types import MethodType
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
-from schema import Literal, Optional, Or, Schema
+from schema import Or
 
 from griptape.artifacts import (
     AudioArtifact,
@@ -19,10 +19,12 @@ from griptape.artifacts import (
 )
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
+from griptape.utils.json_schema_to_pydantic import create_model
 
 from .sessions import Connection, create_session
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
     from contextlib import _AsyncGeneratorContextManager
 
     from mcp import ClientSession, types  # pyright: ignore[reportAttributeAccessIssue]
@@ -105,37 +107,6 @@ def process_anyof_types(any_of_items: list) -> Or:
     return Or(*any_of_types) if any_of_types else ANY_TYPE
 
 
-def get_json_schema_value(original_schema: dict) -> dict:
-    json_schema_value = {}
-    if "properties" not in original_schema:
-        return json_schema_value
-
-    for property_key, property_value in original_schema["properties"].items():
-        schema_key = Literal(
-            property_key,
-            description=property_value.get("description", None),
-        )
-        schema_value = ANY_TYPE
-        if property_key not in original_schema.get("required", []):
-            schema_key = Optional(schema_key)
-        if "type" in property_value:
-            if property_value["type"] == "array":
-                item_type = property_value["items"].get("type", "string")
-                schema_value = list[json_to_python_type(item_type)]
-            elif property_value["type"] == "object":
-                schema_value = get_json_schema_value(property_value)
-            else:
-                schema_value = json_to_python_type(property_value["type"])
-        elif "anyOf" in property_value:
-            # Process anyOf types from MCP schema
-            # We try to preserve type information (e.g., list[str] for arrays with items)
-            # even though the schema library will lose it during JSON schema conversion.
-            # The add_items_to_bare_arrays post-processing will fix any bare arrays.
-            schema_value = process_anyof_types(property_value["anyOf"])
-        json_schema_value[schema_key] = schema_value
-    return json_schema_value
-
-
 @define
 class MCPTool(BaseTool):
     """MCP activities through a tool.
@@ -190,7 +161,7 @@ class MCPTool(BaseTool):
             config={
                 "name": tool.name,
                 "description": tool.description or tool.title or tool.name,
-                "schema": Schema(get_json_schema_value(tool.inputSchema)),
+                "schema": create_model(tool.inputSchema),
             }
         )
         def activity_handler(self: MCPTool, values: dict) -> Any:

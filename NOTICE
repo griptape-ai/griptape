@@ -11,3 +11,9 @@ This project includes the `marshmallow-oneofschema` module, which is licensed un
 - **Author**: Maxim Kulkin, Alex Rothberg, Steven Loria, and other contributors
 - **Project**: [marshmallow-oneofschema](https://github.com/marshmallow-code/marshmallow-oneofschema)
 - **License**: MIT License
+
+This project includes the `json-schema-to-pydantic` module, which is licensed under the MIT License.
+
+- **Author**: Richárd Gyikó
+- **Project**: [json-schema-to-pydantic](https://github.com/richard-gyiko/json-schema-to-pydantic)
+- **License**: MIT License

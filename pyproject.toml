@@ -211,6 +211,9 @@ build-backend = "hatchling.build"
 [tool.ruff]
 line-length = 120
 
+[tool.ruff.format]
+exclude = ["griptape/utils/json_schema_to_pydantic/**"]
+
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
@@ -274,6 +277,9 @@ fixture-parentheses = true
   "T20",    # flake8-print
   "INP001", # implicit-namespace-package
 ]
+"griptape/utils/json_schema_to_pydantic/**" = [
+  "ALL", # Vendored code - do not reformat
+]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
 "attr".msg = "The attr module is deprecated, use attrs instead."
@@ -285,10 +291,10 @@ runtime-evaluated-base-classes = ["pydantic.BaseModel"]
 venvPath = "."
 venv = ".venv"
 include = ["griptape"]
-exclude = ["**/__pycache__"]
+exclude = ["**/__pycache__", "griptape/utils/json_schema_to_pydantic"]
 pythonVersion = "3.9"
-reportIncompatibleVariableOverride = "none" # see thread: https://github.com/microsoft/pyright/issues/5933 
-enableExperimentalFeatures = true           # https://github.com/microsoft/pyright/issues/7713
+reportIncompatibleVariableOverride = "none"                            # see thread: https://github.com/microsoft/pyright/issues/5933 
+enableExperimentalFeatures = true                                      # https://github.com/microsoft/pyright/issues/7713
 strictParameterNoneValue = false
 
 [tool.pytest.ini_options]
