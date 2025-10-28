@@ -107,6 +107,20 @@ def process_anyof_types(any_of_items: list) -> Or:
     return Or(*any_of_types) if any_of_types else ANY_TYPE
 
 
+def _exc_iter(exc) -> Any:  # noqa: ANN001
+    """Iterate over all non-exceptiongroup parts of an exception(group) because spread syntax not available in python 3.9.
+
+    https://stackoverflow.com/a/78453879
+    """
+    from exceptiongroup import BaseExceptionGroup
+
+    if isinstance(exc, BaseExceptionGroup):
+        for e in exc.exceptions:
+            yield from _exc_iter(e)
+    else:
+        yield exc
+
+
 @define
 class MCPTool(BaseTool):
     """MCP activities through a tool.
@@ -181,11 +195,16 @@ class MCPTool(BaseTool):
 
     async def _run_activity(self, activity_name: str, params: dict) -> BaseArtifact:
         """Runs an activity on the MCP Server with the provided parameters."""
+        from exceptiongroup import BaseExceptionGroup
+
         try:
             async with self._get_session() as session:
                 await session.initialize()
                 tool_result = await session.call_tool(activity_name, params)
             return self._convert_call_tool_result_to_artifact(tool_result)
+        except BaseExceptionGroup as e:
+            exception_message = "".join(f"\n{str(exc)}" for exc in _exc_iter(e))
+            return ErrorArtifact(value=exception_message)
         except Exception as e:
             return ErrorArtifact(value=str(e), exception=e)
 
