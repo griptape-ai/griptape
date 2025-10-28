@@ -1,1 +1,2 @@
 mcp[ws]>=1.10.0
+exceptiongroup>=1.2.2
