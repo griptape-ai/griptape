@@ -12,7 +12,7 @@ class TypeResolver(ITypeResolver):
     """Resolves JSON Schema types to Pydantic types"""
 
     def resolve_type(
-        self, schema: dict, root_schema: dict, allow_undefined_array_items: bool = False
+        self, schema: dict, root_schema: dict, allow_undefined_array_items: bool = False, allow_any_type: bool = False
     ) -> Any:
         """Get the Pydantic field type for a JSON schema field."""
         if not isinstance(schema, dict):
@@ -45,6 +45,7 @@ class TypeResolver(ITypeResolver):
                             schema={**schema, **{"type": other_types[0]}},
                             root_schema=root_schema,
                             allow_undefined_array_items=allow_undefined_array_items,
+                            allow_any_type=allow_any_type,
                         )
                     ]
                 else:
@@ -54,6 +55,7 @@ class TypeResolver(ITypeResolver):
                             schema={**schema, **{"type": t}},
                             root_schema=root_schema,
                             allow_undefined_array_items=allow_undefined_array_items,
+                            allow_any_type=allow_any_type,
                         )
                         for t in other_types
                     ]
@@ -66,6 +68,7 @@ class TypeResolver(ITypeResolver):
                         schema={**schema, **{"type": types[0]}},
                         root_schema=root_schema,
                         allow_undefined_array_items=allow_undefined_array_items,
+                        allow_any_type=allow_any_type,
                     )
                 else:
                     # Multiple types without null: Union[type1, type2, ...]
@@ -74,6 +77,7 @@ class TypeResolver(ITypeResolver):
                             schema={**schema, **{"type": t}},
                             root_schema=root_schema,
                             allow_undefined_array_items=allow_undefined_array_items,
+                            allow_any_type=allow_any_type,
                         )
                         for t in types
                     ]
@@ -92,8 +96,10 @@ class TypeResolver(ITypeResolver):
                 schema_type = "object"
             elif "items" in schema:
                 schema_type = "array"
+            elif allow_any_type:
+                schema_type = "anyType"
             else:
-                raise TypeError("Schema must specify a type")
+                raise TypeError("Schema must specify a type. Set allow_any_type=True to infer Any type for schemas without explicit types.")
 
         if schema_type == "array":
             items_schema = schema.get("items")
@@ -115,6 +121,7 @@ class TypeResolver(ITypeResolver):
                 schema=items_schema,
                 root_schema=root_schema,
                 allow_undefined_array_items=allow_undefined_array_items,
+                allow_any_type=allow_any_type,
             )
             if schema.get("uniqueItems", False):
                 return Set[item_type]

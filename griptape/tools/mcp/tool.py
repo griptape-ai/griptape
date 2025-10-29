@@ -175,7 +175,7 @@ class MCPTool(BaseTool):
             config={
                 "name": tool.name,
                 "description": tool.description or tool.title or tool.name,
-                "schema": create_model(tool.inputSchema),
+                "schema": create_model(tool.inputSchema, allow_undefined_array_items=True, allow_any_type=True),
             }
         )
         def activity_handler(self: MCPTool, values: dict) -> Any:
