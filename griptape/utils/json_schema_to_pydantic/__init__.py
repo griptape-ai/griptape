@@ -33,6 +33,7 @@ def create_model(
     base_model_type: Type[T] = BaseModel,
     root_schema: Optional[Dict[str, Any]] = None,
     allow_undefined_array_items: bool = False,
+    allow_any_type: bool = False,
 ) -> Type[T]:
     """
     Create a Pydantic model from a JSON Schema.
@@ -41,6 +42,8 @@ def create_model(
         schema: The JSON Schema to convert
         root_schema: The root schema containing definitions.
                     Defaults to schema if not provided.
+        allow_undefined_array_items: If True, allows arrays without items schema
+        allow_any_type: If True, infers Any type for schemas without explicit types
 
     Returns:
         A Pydantic model class
@@ -52,7 +55,7 @@ def create_model(
         ReferenceError: If there's an error resolving references
     """
     builder = PydanticModelBuilder(base_model_type=base_model_type)
-    return builder.create_pydantic_model(schema, root_schema, allow_undefined_array_items)
+    return builder.create_pydantic_model(schema, root_schema, allow_undefined_array_items, allow_any_type)
 
 
 __all__ = [
