@@ -238,7 +238,7 @@ class PydanticModelBuilder(IModelBuilder[T]):
             # Build the model and cache/cleanup if we tracked this ref
             # Pass the original ref so the model can be named correctly
             model = self.create_pydantic_model(
-                field_schema, root_schema, allow_undefined_array_items, _schema_ref=original_ref
+                field_schema, root_schema, allow_undefined_array_items, allow_any_type, _schema_ref=original_ref
             )
             
             # If we were tracking a ref for this field, cache and cleanup
