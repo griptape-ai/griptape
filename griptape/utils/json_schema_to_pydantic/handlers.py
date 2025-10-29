@@ -42,6 +42,7 @@ class CombinerHandler(ICombinerHandler):
         schemas: List[Dict[str, Any]],
         root_schema: Dict[str, Any],
         allow_undefined_array_items: bool = False,
+        allow_any_type: bool = False,
     ) -> Type[BaseModel]:
         """Combines multiple schemas with AND logic."""
         if not schemas:
@@ -80,7 +81,7 @@ class CombinerHandler(ICombinerHandler):
         field_definitions = {}
         for name, prop_schema in merged_properties.items():
             field_type = self.recursive_field_builder(
-                prop_schema, root_schema, allow_undefined_array_items
+                prop_schema, root_schema, allow_undefined_array_items, allow_any_type
             )
             field_info = self.field_info_builder(prop_schema, name in required_fields)
             field_definitions[name] = (field_type, field_info)
@@ -96,6 +97,7 @@ class CombinerHandler(ICombinerHandler):
         schemas: List[Dict[str, Any]],
         root_schema: Dict[str, Any],
         allow_undefined_array_items: bool = False,
+        allow_any_type: bool = False,
     ) -> Any:
         """Allows validation against any of the given schemas."""
         if not schemas:
@@ -114,7 +116,7 @@ class CombinerHandler(ICombinerHandler):
 
             # Use the recursive_field_builder callback to resolve the type
             resolved_type = self.recursive_field_builder(
-                schema, root_schema, allow_undefined_array_items
+                schema, root_schema, allow_undefined_array_items, allow_any_type
             )
             possible_types.append(resolved_type)
 
@@ -125,6 +127,7 @@ class CombinerHandler(ICombinerHandler):
         schema: Dict[str, Any],
         root_schema: Dict[str, Any],
         allow_undefined_array_items: bool = False,
+        allow_any_type: bool = False,
     ) -> Type[BaseModel]:
         """Implements discriminated unions using a type field."""
         schemas = schema.get("oneOf", [])
@@ -165,7 +168,7 @@ class CombinerHandler(ICombinerHandler):
                 elif "oneOf" in prop_schema:
                     # Handle nested oneOf using the callback
                     field_type = self.recursive_field_builder(
-                        prop_schema, root_schema, allow_undefined_array_items
+                        prop_schema, root_schema, allow_undefined_array_items, allow_any_type
                     )
                     # Use field_info_builder for nested oneOf field info
                     field_info = self.field_info_builder(prop_schema, name in required)
@@ -173,7 +176,7 @@ class CombinerHandler(ICombinerHandler):
                 # Add other properties to the fields dictionary
                 elif name != "type":  # Skip the type field as it's handled above
                     field_type = self.recursive_field_builder(
-                        prop_schema, root_schema, allow_undefined_array_items
+                        prop_schema, root_schema, allow_undefined_array_items, allow_any_type
                     )
                     field_info = self.field_info_builder(prop_schema, name in required)
                     fields[name] = (field_type, field_info)
