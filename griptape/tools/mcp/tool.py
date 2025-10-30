@@ -6,6 +6,7 @@ from types import MethodType
 from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
+from json_schema_to_pydantic import create_model
 from schema import Or
 
 from griptape.artifacts import (
@@ -19,7 +20,6 @@ from griptape.artifacts import (
 )
 from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
-from griptape.utils.json_schema_to_pydantic import create_model
 
 from .sessions import Connection, create_session
 
@@ -175,7 +175,7 @@ class MCPTool(BaseTool):
             config={
                 "name": tool.name,
                 "description": tool.description or tool.title or tool.name,
-                "schema": create_model(tool.inputSchema, allow_undefined_array_items=True, allow_any_type=True),
+                "schema": create_model(tool.inputSchema, allow_undefined_array_items=True, allow_undefined_type=True),
             }
         )
         def activity_handler(self: MCPTool, values: dict) -> Any:
