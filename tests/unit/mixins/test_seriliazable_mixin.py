@@ -1,6 +1,7 @@
 import json
 
 import pytest
+from pydantic import create_model
 
 from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
@@ -103,3 +104,21 @@ class TestSerializableMixin:
         assert MockSerializable(nested=None).to_dict().get("nested") is None
 
         assert MockSerializable(nested=MockSerializable.NestedMockSerializable()).to_dict()["nested"]["foo"] == "bar"
+
+    def test_json_dumps_pydantic_model(self):
+        output_schema = create_model(
+            "AgentOutputSchema",
+            generated_image_urls=(list[str], ...),
+            conversation_output=(str, ...),
+        )
+
+        model_instance = output_schema(
+            generated_image_urls=["http://example.com/image1.png"],
+            conversation_output="Hello, Collin!",
+        )
+
+        json_str = json.dumps(model_instance)
+        parsed = json.loads(json_str)
+
+        assert parsed["generated_image_urls"] == ["http://example.com/image1.png"]
+        assert parsed["conversation_output"] == "Hello, Collin!"

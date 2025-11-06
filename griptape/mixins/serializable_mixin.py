@@ -7,6 +7,7 @@ from json import JSONEncoder
 from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar, cast
 
 from attrs import Factory, define, field
+from pydantic import BaseModel
 
 from griptape.schemas.base_schema import BaseSchema
 
@@ -18,6 +19,8 @@ T = TypeVar("T", bound="SerializableMixin")
 
 def _default(_self: Any, obj: Any) -> Any:
     """Fallback method for JSONEncoder to handle custom serialization."""
+    if isinstance(obj, BaseModel):
+        return obj.model_dump()
     return getattr(obj.__class__, "to_dict", getattr(_default, "default"))(obj)
 
 
