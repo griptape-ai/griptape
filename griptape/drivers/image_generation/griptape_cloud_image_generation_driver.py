@@ -72,27 +72,11 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
         kw_only=True,
         metadata={"serializable": True, "model_allowlist": ["gpt-image-1"]},
     )
-
-    @image_size.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_image_size(self, attribute: str, value: str | None) -> None:
-        """Validates the image size based on the model.
-
-        Must be one of `1024x1024`, `1536x1024` (landscape), `1024x1536` (portrait), or `auto` (default value) for
-        `gpt-image-1`or one of `1024x1024`, `1792x1024`, or `1024x1792` for `dall-e-3`.
-
-        """
-        if value is None:
-            return
-
-        if self.model.startswith("gpt-image"):
-            allowed_sizes = ("1024x1024", "1536x1024", "1024x1536", "auto")
-        elif self.model == "dall-e-3":
-            allowed_sizes = ("1024x1024", "1792x1024", "1024x1792")
-        else:
-            raise NotImplementedError(f"Image size validation not implemented for model {self.model}")
-
-        if value is not None and value not in allowed_sizes:
-            raise ValueError(f"Image size, {value}, must be one of the following: {allowed_sizes}")
+    model_configuration: dict = field(
+        default=Factory(dict),
+        kw_only=True,
+        metadata={"serializable": True},
+    )
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
         url = griptape_cloud_url(self.base_url, "api/images/generations")
@@ -141,7 +125,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
 
             if field_value is not None and allowlist_condition:
                 params[value] = field_value
-        return params
+        return {**params, **self.model_configuration}
 
     def try_image_variation(
         self,
