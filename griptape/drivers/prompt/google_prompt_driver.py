@@ -290,7 +290,7 @@ class GooglePromptDriver(BasePromptDriver):
         if isinstance(content, GenericMessageContent):
             # For generic content, try to convert to text
             # TODO: This may need more sophisticated handling
-            return types.Part.from_text(str(content.artifact.value))
+            return types.Part.from_text(text=str(content.artifact.value))
         raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
 
     def __to_prompt_stack_message_content(self, content: types.Part) -> BaseMessageContent:
