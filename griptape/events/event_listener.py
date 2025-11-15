@@ -29,7 +29,9 @@ class EventListener(Generic[T]):
         event_listener_driver: The driver that will be used to publish events.
     """
 
-    on_event: Optional[Union[Callable[[T], Optional[BaseEvent | dict]], Callable[[T], Awaitable[Optional[BaseEvent | dict]]]]] = field(default=None)
+    on_event: Optional[
+        Union[Callable[[T], Optional[BaseEvent | dict]], Callable[[T], Awaitable[Optional[BaseEvent | dict]]]]
+    ] = field(default=None)
     event_types: Optional[list[type[T]]] = field(default=None, kw_only=True)
     event_listener_driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
 
@@ -60,18 +62,20 @@ class EventListener(Generic[T]):
         EventBus.remove_event_listener(self)
 
     def publish_event(self, event: T, *, flush: bool = False) -> None:
-        """Publish an event synchronously."""
+        """Publish an event synchronously.
+
+        Note: If on_event is an async function, it will be skipped in this sync context.
+        Use apublish_event() to handle async event handlers.
+        """
         event_types = self.event_types
 
         if event_types is None or any(isinstance(event, event_type) for event_type in event_types):
             handled_event: Optional[BaseEvent | dict] = event
             if self.on_event is not None:
-                # on_event must be sync for this method
+                # Skip async handlers in sync context
                 if inspect.iscoroutinefunction(self.on_event):
-                    raise ValueError(
-                        "on_event is an async function but publish_event was called synchronously. "
-                        "Use apublish_event instead or provide a sync on_event handler."
-                    )
+                    # Silently skip - async handlers will be called via apublish_event
+                    return
                 handled_event = self.on_event(event)  # type: ignore[assignment]
 
             if self.event_listener_driver is not None and handled_event is not None:

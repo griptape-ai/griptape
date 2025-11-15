@@ -51,7 +51,11 @@ class _EventBus(SingletonMixin):
             self.event_listeners = [listener for listener in self.event_listeners if listener != event_listener]
 
     def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
-        """Publish an event synchronously to all event listeners."""
+        """Publish an event synchronously to all event listeners.
+
+        Note: Event listeners with async on_event handlers will be skipped in sync context.
+        Use apublish_event() for async contexts.
+        """
         for event_listener in self.event_listeners:
             event_listener.publish_event(event, flush=flush)
 
