@@ -256,7 +256,11 @@ class PromptTask(
     async def async_try_run(
         self,
     ) -> ListArtifact | TextArtifact | AudioArtifact | GenericArtifact | JsonArtifact | ErrorArtifact:
-        """Async version of try_run() for use with AsyncBasePromptDriver."""
+        """Async version of try_run() for use with AsyncBasePromptDriver.
+
+        Note: When using async_try_run(), you should pass async subtask runners via the subtask_runners parameter,
+        or use the default async subtask runners by calling get_async_subtask_runners().
+        """
         if not isinstance(self.prompt_driver, AsyncBasePromptDriver):
             raise ValueError("async_try_run() requires an AsyncBasePromptDriver")
 
@@ -267,16 +271,44 @@ class PromptTask(
         message = await self.prompt_driver.run(self.prompt_stack)
         output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
 
-        for subtask_runner in self.subtask_runners:
-            # Check if the subtask_runner is an async function
-            if inspect.iscoroutinefunction(subtask_runner):
-                output = await subtask_runner(output)
-            else:
-                output = subtask_runner(output)
+        # Get async subtask runners - convert default sync runners to async if needed
+        async_runners = self._get_async_subtask_runners()
+
+        for subtask_runner in async_runners:
+            output = await subtask_runner(output)
 
         if isinstance(output, (ListArtifact, TextArtifact, AudioArtifact, JsonArtifact, ModelArtifact, ErrorArtifact)):
             return output
         raise ValueError(f"Unsupported output type: {type(output)}")
+
+    def _get_async_subtask_runners(self) -> list:
+        """Map sync subtask runners to their async equivalents.
+
+        If a subtask_runner is already async, return it as-is.
+        If it's a known sync runner, map it to its async equivalent.
+        """
+        async_runners = []
+
+        for runner in self.subtask_runners:
+            # If already async, use it directly
+            if inspect.iscoroutinefunction(runner):
+                async_runners.append(runner)
+            # Map default sync runners to async equivalents
+            elif runner == self.default_run_actions_subtasks:
+                async_runners.append(self.async_default_run_actions_subtasks)
+            elif runner == self.default_run_output_schema_validation_subtasks:
+                async_runners.append(self.async_default_run_output_schema_validation_subtasks)
+            else:
+                # For custom runners, check if they're async
+                if inspect.iscoroutinefunction(runner):
+                    async_runners.append(runner)
+                else:
+                    raise ValueError(
+                        f"Subtask runner {runner.__name__} is not async. "
+                        "When using async_run(), all subtask_runners must be async functions."
+                    )
+
+        return async_runners
 
     def preprocess(self, structure: Structure) -> BaseTask:
         super().preprocess(structure)
