@@ -32,7 +32,7 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.rules.json_schema_rule import JsonSchemaRule
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import AsyncIterator, Iterator
 
     from griptape.tokenizers import BaseTokenizer
 
@@ -57,7 +57,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     temperature: float = field(default=0.1, metadata={"serializable": True})
     max_tokens: Optional[int] = field(default=None, metadata={"serializable": True})
-    ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
+    ignored_exception_types: tuple[type[Exception], ...] = field(
+        default=Factory(lambda: (ImportError, ValueError, NotImplementedError))
+    )
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
@@ -71,8 +73,24 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         self._init_structured_output(prompt_stack)
         EventBus.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
+    async def async_before_run(self, prompt_stack: PromptStack) -> None:
+        """Async version of before_run."""
+        self._init_structured_output(prompt_stack)
+        await EventBus.apublish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
+
     def after_run(self, result: Message) -> None:
         EventBus.publish_event(
+            FinishPromptEvent(
+                model=self.model,
+                result=result.value,
+                input_token_count=result.usage.input_tokens,
+                output_token_count=result.usage.output_tokens,
+            ),
+        )
+
+    async def async_after_run(self, result: Message) -> None:
+        """Async version of after_run."""
+        await EventBus.apublish_event(
             FinishPromptEvent(
                 model=self.model,
                 result=result.value,
@@ -95,6 +113,29 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 result = self.__process_stream(prompt_stack) if self.stream else self.__process_run(prompt_stack)
 
                 self.after_run(result)
+
+                return result
+        raise Exception("prompt driver failed after all retry attempts")
+
+    @observable(tags=["AsyncPromptDriver.run()"])
+    async def async_run(self, prompt_input: PromptStack | BaseArtifact) -> Message:
+        """Async version of run."""
+        if isinstance(prompt_input, BaseArtifact):
+            prompt_stack = PromptStack.from_artifact(prompt_input)
+        else:
+            prompt_stack = prompt_input
+
+        for attempt in self.retrying():
+            with attempt:
+                await self.async_before_run(prompt_stack)
+
+                result = (
+                    await self.__async_process_stream(prompt_stack)
+                    if self.stream
+                    else await self.__async_process_run(prompt_stack)
+                )
+
+                await self.async_after_run(result)
 
                 return result
         raise Exception("prompt driver failed after all retry attempts")
@@ -131,6 +172,27 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     @abstractmethod
     def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]: ...
 
+    async def async_try_run(self, prompt_stack: PromptStack) -> Message:
+        """Default async implementation raises NotImplementedError.
+
+        Subclasses that support async operations should override this method.
+        """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} does not support async operations. "
+            "Use a driver that supports async or use the sync run() method."
+        )
+
+    async def async_try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
+        """Default async implementation raises NotImplementedError.
+
+        Subclasses that support async operations should override this method.
+        """
+        raise NotImplementedError(
+            f"{self.__class__.__name__} does not support async streaming. "
+            "Use a driver that supports async streaming or use the sync run() method."
+        )
+        yield  # type: ignore  # Make it a generator
+
     def _init_structured_output(self, prompt_stack: PromptStack) -> None:
         from griptape.tools import StructuredOutputTool
 
@@ -161,6 +223,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     def __process_run(self, prompt_stack: PromptStack) -> Message:
         return self.try_run(prompt_stack)
+
+    async def __async_process_run(self, prompt_stack: PromptStack) -> Message:
+        return await self.async_try_run(prompt_stack)
 
     def __process_stream(self, prompt_stack: PromptStack) -> Message:
         delta_contents: dict[int, list[BaseDeltaMessageContent]] = {}
@@ -195,6 +260,38 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         # Build a complete content from the content deltas
         return self.__build_message(list(delta_contents.values()), usage)
 
+    async def __async_process_stream(self, prompt_stack: PromptStack) -> Message:
+        delta_contents: dict[int, list[BaseDeltaMessageContent]] = {}
+        usage = DeltaMessage.Usage()
+
+        # Aggregate all content deltas from the stream
+        async for message_delta in self.async_try_stream(prompt_stack):
+            usage += message_delta.usage
+            content = message_delta.content
+
+            if content is not None:
+                if content.index in delta_contents:
+                    delta_contents[content.index].append(content)
+                else:
+                    delta_contents[content.index] = [content]
+                if isinstance(content, TextDeltaMessageContent):
+                    await EventBus.apublish_event(TextChunkEvent(token=content.text, index=content.index))
+                elif isinstance(content, AudioDeltaMessageContent) and content.data is not None:
+                    await EventBus.apublish_event(AudioChunkEvent(data=content.data))
+                elif isinstance(content, ActionCallDeltaMessageContent):
+                    await EventBus.apublish_event(
+                        ActionChunkEvent(
+                            partial_input=content.partial_input,
+                            tag=content.tag,
+                            name=content.name,
+                            path=content.path,
+                            index=content.index,
+                        ),
+                    )
+
+        # Build a complete content from the content deltas
+        return self.__build_message(list(delta_contents.values()), usage)
+
     def __build_message(
         self, delta_contents: list[list[BaseDeltaMessageContent]], usage: DeltaMessage.Usage
     ) -> Message:
@@ -216,3 +313,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
+
+
+# Type alias for backward compatibility
+AsyncBasePromptDriver = BasePromptDriver

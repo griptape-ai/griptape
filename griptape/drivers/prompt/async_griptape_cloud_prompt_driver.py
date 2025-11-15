@@ -10,7 +10,7 @@ from attrs import Factory, define, field
 
 from griptape.common import DeltaMessage, Message, PromptStack, observable
 from griptape.configs.defaults_config import Defaults
-from griptape.drivers.prompt import AsyncBasePromptDriver
+from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, SimpleTokenizer
 from griptape.utils.decorators import lazy_property
 from griptape.utils.griptape_cloud import griptape_cloud_url
@@ -18,7 +18,7 @@ from griptape.utils.griptape_cloud import griptape_cloud_url
 if TYPE_CHECKING:
     from collections.abc import AsyncIterator
 
-    from griptape.drivers.prompt.async_base_prompt_driver import StructuredOutputStrategy
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tools.base_tool import BaseTool
 
 
@@ -26,7 +26,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class AsyncGriptapeCloudPromptDriver(AsyncBasePromptDriver):
+class AsyncGriptapeCloudPromptDriver(BasePromptDriver):
     """Async Griptape Cloud Prompt Driver.
 
     Attributes:
@@ -67,8 +67,21 @@ class AsyncGriptapeCloudPromptDriver(AsyncBasePromptDriver):
     def client(self) -> httpx.AsyncClient:
         return httpx.AsyncClient()
 
+    def try_run(self, prompt_stack: PromptStack) -> Message:  # noqa: ARG002
+        """Sync version not implemented for async driver."""
+        raise NotImplementedError(
+            "AsyncGriptapeCloudPromptDriver does not support sync operations. Use async_run() instead."
+        )
+
+    def try_stream(self, prompt_stack: PromptStack):  # type: ignore  # noqa: ARG002
+        """Sync version not implemented for async driver."""
+        raise NotImplementedError(
+            "AsyncGriptapeCloudPromptDriver does not support sync operations. Use async_run() instead."
+        )
+        yield  # Make it a generator
+
     @observable
-    async def try_run(self, prompt_stack: PromptStack) -> Message:
+    async def async_try_run(self, prompt_stack: PromptStack) -> Message:
         url = griptape_cloud_url(self.base_url, "api/chat/messages")
 
         params = self._base_params(prompt_stack)
@@ -81,7 +94,7 @@ class AsyncGriptapeCloudPromptDriver(AsyncBasePromptDriver):
         return Message.from_dict(response_json)
 
     @observable
-    async def try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
+    async def async_try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
         url = griptape_cloud_url(self.base_url, "api/chat/messages/stream")
         params = self._base_params(prompt_stack)
         logger.debug(params)

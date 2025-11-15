@@ -27,19 +27,6 @@ class TestAsyncPromptTask:
 
         asyncio.run(_test())
 
-    def test_async_with_sync_driver_raises_error(self):
-        """Test that async_run raises an error when used with a sync driver."""
-
-        async def _test():
-            from tests.mocks.mock_prompt_driver import MockPromptDriver
-
-            task = PromptTask("test", prompt_driver=MockPromptDriver())
-
-            with pytest.raises(ValueError, match="async_run\\(\\) requires an AsyncBasePromptDriver"):
-                await task.async_run()
-
-        asyncio.run(_test())
-
     def test_async_default_run_actions_subtasks(self):
         """Test async actions subtask runner."""
 

@@ -12,7 +12,7 @@ from griptape.structures import Structure
 from griptape.tasks import PromptTask
 
 # Need to import these at runtime for type resolution in Union types
-from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver
+from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver  # noqa: F401
 
 if TYPE_CHECKING:
     from pydantic import BaseModel
@@ -29,7 +29,7 @@ class Agent(Structure):
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
     stream: Optional[bool] = field(default=None, kw_only=True)
-    prompt_driver: Optional[Union[BasePromptDriver, AsyncBasePromptDriver]] = field(default=None, kw_only=True)
+    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
     output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
@@ -45,9 +45,7 @@ class Agent(Structure):
             raise ValueError("Agents cannot fail fast, as they can only have 1 task.")
 
     @prompt_driver.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_prompt_driver(
-        self, _: Attribute, prompt_driver: Optional[Union[BasePromptDriver, AsyncBasePromptDriver]]
-    ) -> None:
+    def validate_prompt_driver(self, _: Attribute, prompt_driver: Optional[BasePromptDriver]) -> None:
         if prompt_driver is not None and self.stream is not None:
             warnings.warn(
                 "`Agent.prompt_driver` is set, but `Agent.stream` was provided. `Agent.stream` will be ignored. This will be an error in the future.",

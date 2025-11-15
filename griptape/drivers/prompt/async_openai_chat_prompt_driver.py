@@ -29,7 +29,7 @@ from griptape.common import (
     observable,
 )
 from griptape.configs.defaults_config import Defaults
-from griptape.drivers.prompt import AsyncBasePromptDriver
+from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 from griptape.utils.decorators import lazy_property
 
@@ -40,7 +40,7 @@ if TYPE_CHECKING:
     from openai.types.chat.chat_completion_chunk import ChoiceDelta
     from openai.types.chat.chat_completion_message import ChatCompletionMessage
 
-    from griptape.drivers.prompt.async_base_prompt_driver import StructuredOutputStrategy
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tools import BaseTool
 
 
@@ -48,7 +48,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class AsyncOpenAiChatPromptDriver(AsyncBasePromptDriver):
+class AsyncOpenAiChatPromptDriver(BasePromptDriver):
     """Async OpenAI Chat Prompt Driver.
 
     Attributes:
@@ -134,8 +134,21 @@ class AsyncOpenAiChatPromptDriver(AsyncBasePromptDriver):
     def supports_temperature(self) -> bool:
         return not (self.model.startswith("o") or self.model.startswith("gpt-5"))
 
+    def try_run(self, prompt_stack: PromptStack) -> Message:
+        """Sync version not implemented for async driver."""
+        raise NotImplementedError(
+            "AsyncOpenAiChatPromptDriver does not support sync operations. Use async_run() instead."
+        )
+
+    def try_stream(self, prompt_stack: PromptStack):  # type: ignore
+        """Sync version not implemented for async driver."""
+        raise NotImplementedError(
+            "AsyncOpenAiChatPromptDriver does not support sync operations. Use async_run() instead."
+        )
+        yield  # Make it a generator
+
     @observable
-    async def try_run(self, prompt_stack: PromptStack) -> Message:
+    async def async_try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
         logger.debug(params)
         result = await self.client.chat.completions.create(**params)
@@ -144,7 +157,7 @@ class AsyncOpenAiChatPromptDriver(AsyncBasePromptDriver):
         return self._to_message(result)
 
     @observable
-    async def try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
+    async def async_try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
         params = self._base_params(prompt_stack)
         logger.debug({"stream": True, **params})
 

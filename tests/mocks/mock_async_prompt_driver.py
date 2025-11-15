@@ -20,7 +20,7 @@ from griptape.common import (
     TextMessageContent,
     ToolAction,
 )
-from griptape.drivers.prompt import AsyncBasePromptDriver
+from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
 from tests.unit.common.contents.test_audio_message_content import AudioDeltaMessageContent, AudioMessageContent
 
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 
 
 @define
-class MockAsyncPromptDriver(AsyncBasePromptDriver):
+class MockAsyncPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
     mock_input: Union[str, Callable[[], str]] = field(default="mock input", kw_only=True)
@@ -39,7 +39,16 @@ class MockAsyncPromptDriver(AsyncBasePromptDriver):
     mock_structured_output: Union[dict, Callable[[PromptStack], dict]] = field(factory=dict, kw_only=True)
     modalities: list[str] = field(default=Factory(lambda: ["text"]), kw_only=True)
 
-    async def try_run(self, prompt_stack: PromptStack) -> Message:
+    def try_run(self, prompt_stack: PromptStack) -> Message:  # noqa: ARG002
+        """Sync version not implemented for mock async driver."""
+        raise NotImplementedError("MockAsyncPromptDriver does not support sync operations.")
+
+    def try_stream(self, prompt_stack: PromptStack):  # type: ignore  # noqa: ARG002
+        """Sync version not implemented for mock async driver."""
+        raise NotImplementedError("MockAsyncPromptDriver does not support sync operations.")
+        yield  # Make it a generator
+
+    async def async_try_run(self, prompt_stack: PromptStack) -> Message:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
         if self.use_native_tools and prompt_stack.tools:
             # Hack to simulate CoT. If there are any action messages in the prompt stack, give the answer.
@@ -90,7 +99,7 @@ class MockAsyncPromptDriver(AsyncBasePromptDriver):
             usage=Message.Usage(input_tokens=100, output_tokens=100),
         )
 
-    async def try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
+    async def async_try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
         output = self.mock_output(prompt_stack) if isinstance(self.mock_output, Callable) else self.mock_output
         if self.use_native_tools and prompt_stack.tools:
             # Hack to simulate CoT. If there are any action messages in the prompt stack, give the answer.

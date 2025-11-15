@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from griptape.tools import BaseTool
 
 # Need to import these at runtime for type resolution in Union types for serialization
-from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver
+from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver  # noqa: F401
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -52,7 +52,7 @@ class PromptTask(
     # Stop sequence for chain-of-thought in the framework. Using this "token-like" string to make it more unique,
     # so that it doesn't trigger on accident.
     RESPONSE_STOP_SEQUENCE = "<|Response|>"
-    prompt_driver: Union[BasePromptDriver, AsyncBasePromptDriver] = field(
+    prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True, metadata={"serializable": True}
     )
     output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
@@ -280,10 +280,7 @@ class PromptTask(
     async def async_run(
         self, *args
     ) -> Union[TextArtifact, AudioArtifact, GenericArtifact, JsonArtifact, ListArtifact, ErrorArtifact]:
-        """Async version of run() for use with AsyncBasePromptDriver."""
-        if not isinstance(self.prompt_driver, AsyncBasePromptDriver):
-            raise ValueError("async_run() requires an AsyncBasePromptDriver")
-
+        """Async version of run()."""
         try:
             self._execution_args = args
 
@@ -311,14 +308,11 @@ class PromptTask(
         Note: When using async_try_run(), you should pass async subtask runners via the subtask_runners parameter,
         or use the default async subtask runners by calling get_async_subtask_runners().
         """
-        if not isinstance(self.prompt_driver, AsyncBasePromptDriver):
-            raise ValueError("async_try_run() requires an AsyncBasePromptDriver")
-
         self.subtasks.clear()
         if self.response_stop_sequence not in self.prompt_driver.tokenizer.stop_sequences:
             self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
 
-        message = await self.prompt_driver.run(self.prompt_stack)
+        message = await self.prompt_driver.async_run(self.prompt_stack)
         output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
 
         # Get async subtask runners - convert default sync runners to async if needed
@@ -468,10 +462,7 @@ class PromptTask(
         return subtask.output
 
     async def async_default_run_actions_subtasks(self, subtask_input: BaseArtifact) -> BaseArtifact:
-        """Async version of default_run_actions_subtasks() for use with AsyncBasePromptDriver."""
-        if not isinstance(self.prompt_driver, AsyncBasePromptDriver):
-            raise ValueError("async_default_run_actions_subtasks() requires an AsyncBasePromptDriver")
-
+        """Async version of default_run_actions_subtasks()."""
         if not self.tools:
             return subtask_input
         subtask = self.add_subtask(
@@ -491,7 +482,7 @@ class PromptTask(
                 subtask.run()
 
                 if self.reflect_on_tool_use:
-                    message = await self.prompt_driver.run(self.prompt_stack)
+                    message = await self.prompt_driver.async_run(self.prompt_stack)
                     output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
                     subtask = self.add_subtask(ActionsSubtask(output))
 
@@ -520,10 +511,7 @@ class PromptTask(
         return subtask.output
 
     async def async_default_run_output_schema_validation_subtasks(self, subtask_input: BaseArtifact) -> BaseArtifact:
-        """Async version of default_run_output_schema_validation_subtasks() for use with AsyncBasePromptDriver."""
-        if not isinstance(self.prompt_driver, AsyncBasePromptDriver):
-            raise ValueError("async_default_run_output_schema_validation_subtasks() requires an AsyncBasePromptDriver")
-
+        """Async version of default_run_output_schema_validation_subtasks()."""
         if self.output_schema is None:
             return subtask_input
         subtask = self.add_subtask(OutputSchemaValidationSubtask(subtask_input, output_schema=self.output_schema))
@@ -535,7 +523,7 @@ class PromptTask(
                 subtask.run()
 
                 output = subtask.output
-                message = await self.prompt_driver.run(self.prompt_stack)
+                message = await self.prompt_driver.async_run(self.prompt_stack)
                 output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
                 subtask = self.add_subtask(OutputSchemaValidationSubtask(output, output_schema=self.output_schema))
 

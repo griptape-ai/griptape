@@ -43,19 +43,6 @@ class TestAsyncAgent:
 
         asyncio.run(_test())
 
-    def test_async_run_with_sync_driver_raises_error(self):
-        """Test that async_run raises an error when used with a sync driver."""
-
-        async def _test():
-            from tests.mocks.mock_prompt_driver import MockPromptDriver
-
-            agent = Agent(prompt_driver=MockPromptDriver())
-
-            with pytest.raises(ValueError, match="async_run\\(\\) requires an AsyncBasePromptDriver"):
-                await agent.async_run("test input")
-
-        asyncio.run(_test())
-
     def test_async_run_preserves_conversation_memory(self):
         """Test that async_run preserves conversation memory."""
 
