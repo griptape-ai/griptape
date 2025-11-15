@@ -5,6 +5,7 @@ import logging
 import os
 from typing import TYPE_CHECKING, Optional
 
+import httpx
 import requests
 from attrs import Factory, define, field
 
@@ -12,10 +13,11 @@ from griptape.common import DeltaMessage, Message, PromptStack, observable
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, SimpleTokenizer
+from griptape.utils.decorators import lazy_property
 from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import AsyncIterator, Iterator
 
     from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tools.base_tool import BaseTool
@@ -49,6 +51,11 @@ class GriptapeCloudPromptDriver(BasePromptDriver):
     structured_output_strategy: StructuredOutputStrategy = field(
         default="native", kw_only=True, metadata={"serializable": True}
     )
+    _async_client: Optional[httpx.AsyncClient] = field(default=None, kw_only=True, alias="async_client")
+
+    @lazy_property()
+    def async_client(self) -> httpx.AsyncClient:
+        return httpx.AsyncClient()
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
@@ -75,6 +82,37 @@ class GriptapeCloudPromptDriver(BasePromptDriver):
                     decoded_line = line.decode("utf-8")
                     if decoded_line.startswith("data:"):
                         message_payload = decoded_line.removeprefix("data:").strip()
+                        logger.debug("Event stream data message payload: %s", message_payload)
+                        message_payload_dict = json.loads(message_payload)
+                        if "error" in message_payload_dict:
+                            logger.error("Error in event stream data message: %s", message_payload_dict["error"])
+                            raise Exception(message_payload_dict["error"])
+                        yield DeltaMessage.from_dict(message_payload_dict)
+
+    @observable
+    async def async_try_run(self, prompt_stack: PromptStack) -> Message:
+        url = griptape_cloud_url(self.base_url, "api/chat/messages")
+
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        response = await self.async_client.post(url, headers=self.headers, json=params)
+        response.raise_for_status()
+        response_json = response.json()
+        logger.debug(response_json)
+
+        return Message.from_dict(response_json)
+
+    @observable
+    async def async_try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
+        url = griptape_cloud_url(self.base_url, "api/chat/messages/stream")
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        async with self.async_client.stream("POST", url, headers=self.headers, json=params) as response:
+            response.raise_for_status()
+            async for line in response.aiter_lines():
+                if line:
+                    if line.startswith("data:"):
+                        message_payload = line.removeprefix("data:").strip()
                         logger.debug("Event stream data message payload: %s", message_payload)
                         message_payload_dict = json.loads(message_payload)
                         if "error" in message_payload_dict:

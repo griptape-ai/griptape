@@ -313,7 +313,3 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=usage.input_tokens, output_tokens=usage.output_tokens),
         )
-
-
-# Type alias for backward compatibility
-AsyncBasePromptDriver = BasePromptDriver

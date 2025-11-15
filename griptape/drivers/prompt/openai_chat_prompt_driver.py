@@ -34,7 +34,7 @@ from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import AsyncIterator, Iterator
 
     from openai import Stream
     from openai.types.chat import ChatCompletionChunk
@@ -111,10 +111,21 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
+    _async_client: Optional[openai.AsyncOpenAI] = field(
+        default=None, kw_only=True, alias="async_client", metadata={"serializable": False}
+    )
 
     @lazy_property()
     def client(self) -> openai.OpenAI:
         return openai.OpenAI(
+            base_url=self.base_url,
+            api_key=self.api_key,
+            organization=self.organization,
+        )
+
+    @lazy_property()
+    def async_client(self) -> openai.AsyncOpenAI:
+        return openai.AsyncOpenAI(
             base_url=self.base_url,
             api_key=self.api_key,
             organization=self.organization,
@@ -152,6 +163,37 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         result = self.client.chat.completions.create(**params, stream=True)
 
         return self._to_delta_message_stream(result)
+
+    @observable
+    async def async_try_run(self, prompt_stack: PromptStack) -> Message:
+        params = self._base_params(prompt_stack)
+        logger.debug(params)
+        result = await self.async_client.chat.completions.create(**params)
+
+        logger.debug(result.model_dump())
+        return self._to_message(result)
+
+    @observable
+    async def async_try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
+        params = self._base_params(prompt_stack)
+        logger.debug({"stream": True, **params})
+
+        async for message in await self.async_client.chat.completions.create(**params, stream=True):
+            if message.usage is not None:
+                yield DeltaMessage(
+                    usage=DeltaMessage.Usage(
+                        input_tokens=message.usage.prompt_tokens,
+                        output_tokens=message.usage.completion_tokens,
+                    ),
+                )
+            if message.choices:
+                choice = message.choices[0]
+                delta = choice.delta
+
+                content = self.__to_prompt_stack_delta_message_content(delta)
+
+                if content is not None:
+                    yield DeltaMessage(content=content)
 
     def _to_message(self, result: ChatCompletion) -> Message:
         if len(result.choices) == 1:

@@ -13,6 +13,9 @@ from griptape.mixins.actions_subtask_origin_mixin import ActionsSubtaskOriginMix
 from griptape.tasks import ActionsSubtask, BaseSubtask, PromptTask
 from griptape.utils import J2
 
+# Need to import these at runtime for type resolution in Union types for serialization
+from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver  # noqa: F401
+
 if TYPE_CHECKING:
     from schema import Schema
 
