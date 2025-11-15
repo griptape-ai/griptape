@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-import asyncio
 import inspect
-from typing import TYPE_CHECKING, Callable, Generic, Optional, TypeVar, Union
+from typing import TYPE_CHECKING, Awaitable, Callable, Generic, Optional, TypeVar, Union
 
 from attrs import define, field
 
@@ -30,12 +29,7 @@ class EventListener(Generic[T]):
         event_listener_driver: The driver that will be used to publish events.
     """
 
-    on_event: Optional[
-        Union[
-            Callable[[T], Optional[BaseEvent | dict]],
-            Callable[[T], asyncio.coroutines.Coroutine[None, None, Optional[BaseEvent | dict]]],
-        ]
-    ] = field(default=None)
+    on_event: Optional[Union[Callable[[T], Optional[BaseEvent | dict]], Callable[[T], Awaitable[Optional[BaseEvent | dict]]]]] = field(default=None)
     event_types: Optional[list[type[T]]] = field(default=None, kw_only=True)
     event_listener_driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
 
@@ -46,7 +40,21 @@ class EventListener(Generic[T]):
 
         return self
 
-    def __exit__(self, type, value, traceback) -> None:  # noqa: ANN001, A002
+    def __exit__(self, exc_type, exc_value, exc_traceback) -> None:  # noqa: ANN001
+        from griptape.events import EventBus
+
+        EventBus.remove_event_listener(self)
+
+    async def __aenter__(self) -> Self:
+        """Async context manager entry."""
+        from griptape.events import EventBus
+
+        EventBus.add_event_listener(self)
+
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, exc_traceback) -> None:  # noqa: ANN001
+        """Async context manager exit."""
         from griptape.events import EventBus
 
         EventBus.remove_event_listener(self)
@@ -56,7 +64,7 @@ class EventListener(Generic[T]):
         event_types = self.event_types
 
         if event_types is None or any(isinstance(event, event_type) for event_type in event_types):
-            handled_event = event
+            handled_event: Optional[BaseEvent | dict] = event
             if self.on_event is not None:
                 # on_event must be sync for this method
                 if inspect.iscoroutinefunction(self.on_event):
@@ -64,7 +72,7 @@ class EventListener(Generic[T]):
                         "on_event is an async function but publish_event was called synchronously. "
                         "Use apublish_event instead or provide a sync on_event handler."
                     )
-                handled_event = self.on_event(event)
+                handled_event = self.on_event(event)  # type: ignore[assignment]
 
             if self.event_listener_driver is not None and handled_event is not None:
                 self.event_listener_driver.publish_event(handled_event)
@@ -80,13 +88,13 @@ class EventListener(Generic[T]):
         event_types = self.event_types
 
         if event_types is None or any(isinstance(event, event_type) for event_type in event_types):
-            handled_event = event
+            handled_event: Optional[BaseEvent | dict] = event
             if self.on_event is not None:
                 # Check if on_event is async
                 if inspect.iscoroutinefunction(self.on_event):
                     handled_event = await self.on_event(event)
                 else:
-                    handled_event = self.on_event(event)
+                    handled_event = self.on_event(event)  # type: ignore[assignment]
 
             if self.event_listener_driver is not None and handled_event is not None:
                 self.event_listener_driver.publish_event(handled_event)

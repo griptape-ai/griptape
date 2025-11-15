@@ -39,8 +39,8 @@ async def main():
         input="Write a haiku about async programming.",
     )
 
-    # Register an async event listener
-    with EventListener(on_event=async_event_handler):
+    # Register an async event listener using async context manager
+    async with EventListener(on_event=async_event_handler):
         print("Running async PromptTask with async event listener...")
         result = await task.async_run()
 
