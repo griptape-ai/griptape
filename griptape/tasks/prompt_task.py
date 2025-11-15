@@ -190,8 +190,58 @@ class PromptTask(
 
         logger.info("%s %s\nInput: %s", self.__class__.__name__, self.id, self.input.to_text())
 
+    async def async_before_run(self) -> None:
+        """Async version of before_run() that publishes events asynchronously."""
+        from griptape.events import EventBus, StartTaskEvent
+
+        # Call parent's before_run but publish events async
+        if self.structure is not None:
+            await EventBus.apublish_event(
+                StartTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                ),
+            )
+
+        logger.info("%s %s\nInput: %s", self.__class__.__name__, self.id, self.input.to_text())
+
     def after_run(self) -> None:
         super().after_run()
+
+        logger.info(
+            "%s %s\nOutput: %s",
+            self.__class__.__name__,
+            self.id,
+            self.output.to_text() if self.output is not None else "",
+        )
+        conversation_memory = self.conversation_memory
+        if (
+            (self.structure is None or self.structure.conversation_memory_strategy == "per_task")
+            and conversation_memory is not None
+            and self.output is not None
+        ):
+            run = Run(input=self.input, output=self.output)
+
+            conversation_memory.add_run(run)
+
+    async def async_after_run(self) -> None:
+        """Async version of after_run() that publishes events asynchronously."""
+        from griptape.events import EventBus, FinishTaskEvent
+
+        # Call parent's after_run but publish events async
+        if self.structure is not None:
+            await EventBus.apublish_event(
+                FinishTaskEvent(
+                    task_id=self.id,
+                    task_parent_ids=self.parent_ids,
+                    task_child_ids=self.child_ids,
+                    task_input=self.input,
+                    task_output=self.output,
+                ),
+            )
 
         logger.info(
             "%s %s\nOutput: %s",
@@ -239,11 +289,11 @@ class PromptTask(
 
             self.state = BaseTask.State.RUNNING
 
-            self.before_run()
+            await self.async_before_run()
 
             self.output = await self.async_try_run()
 
-            self.after_run()
+            await self.async_after_run()
         except Exception as e:
             logger.exception("%s %s\n%s", self.__class__.__name__, self.id, e)
 

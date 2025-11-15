@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import asyncio
+import inspect
 from contextvars import ContextVar
 from typing import TYPE_CHECKING, Optional
 
@@ -49,8 +51,27 @@ class _EventBus(SingletonMixin):
             self.event_listeners = [listener for listener in self.event_listeners if listener != event_listener]
 
     def publish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
+        """Publish an event synchronously to all event listeners."""
         for event_listener in self.event_listeners:
             event_listener.publish_event(event, flush=flush)
+
+    async def apublish_event(self, event: BaseEvent, *, flush: bool = False) -> None:
+        """Publish an event asynchronously to all event listeners.
+
+        This method will await async event handlers and call sync handlers normally.
+        """
+        tasks = []
+        for event_listener in self.event_listeners:
+            # Check if the event listener has an async publish method
+            if hasattr(event_listener, "apublish_event"):
+                tasks.append(event_listener.apublish_event(event, flush=flush))
+            else:
+                # Fall back to sync publish_event
+                event_listener.publish_event(event, flush=flush)
+
+        # Wait for all async event handlers to complete
+        if tasks:
+            await asyncio.gather(*tasks)
 
     def clear_event_listeners(self) -> None:
         self.event_listeners = []

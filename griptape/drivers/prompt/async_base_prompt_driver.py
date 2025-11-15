@@ -69,10 +69,10 @@ class AsyncBasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
 
     async def before_run(self, prompt_stack: PromptStack) -> None:
         self._init_structured_output(prompt_stack)
-        EventBus.publish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
+        await EventBus.apublish_event(StartPromptEvent(model=self.model, prompt_stack=prompt_stack))
 
     async def after_run(self, result: Message) -> None:
-        EventBus.publish_event(
+        await EventBus.apublish_event(
             FinishPromptEvent(
                 model=self.model,
                 result=result.value,
@@ -182,11 +182,11 @@ class AsyncBasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                 else:
                     delta_contents[content.index] = [content]
                 if isinstance(content, TextDeltaMessageContent):
-                    EventBus.publish_event(TextChunkEvent(token=content.text, index=content.index))
+                    await EventBus.apublish_event(TextChunkEvent(token=content.text, index=content.index))
                 elif isinstance(content, AudioDeltaMessageContent) and content.data is not None:
-                    EventBus.publish_event(AudioChunkEvent(data=content.data))
+                    await EventBus.apublish_event(AudioChunkEvent(data=content.data))
                 elif isinstance(content, ActionCallDeltaMessageContent):
-                    EventBus.publish_event(
+                    await EventBus.apublish_event(
                         ActionChunkEvent(
                             partial_input=content.partial_input,
                             tag=content.tag,
