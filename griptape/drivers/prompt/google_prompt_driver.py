@@ -72,12 +72,6 @@ class GooglePromptDriver(BasePromptDriver):
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
     _client: Optional[Client] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
-    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
-        if value == "native":
-            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
-
-        return value
 
     @lazy_property()
     def client(self) -> Client:
@@ -183,7 +177,7 @@ class GooglePromptDriver(BasePromptDriver):
 
         # Add tools if using native tools
         if prompt_stack.tools and self.use_native_tools:
-            config_params["tools"] = self.__to_google_tools(prompt_stack.tools)
+            config_params["tools"] = self.__to_google_tools(prompt_stack)
 
             # Set tool choice mode
             tool_mode = self.tool_choice.upper()  # New SDK uses uppercase modes
@@ -194,6 +188,11 @@ class GooglePromptDriver(BasePromptDriver):
             config_params["tool_config"] = types.ToolConfig(
                 function_calling_config=types.FunctionCallingConfig(mode=tool_mode)
             )
+
+        if self.structured_output_strategy == "native" and prompt_stack.output_schema is not None:
+            config_params["response_json_schema"] = prompt_stack.to_output_json_schema()
+            if config_params.get("tool_config") is None:
+                config_params["response_mime_type"] = "application/json"
 
         return types.GenerateContentConfig(**config_params)
 
@@ -219,9 +218,10 @@ class GooglePromptDriver(BasePromptDriver):
             return "model"
         return "user"
 
-    def __to_google_tools(self, tools: list[BaseTool]) -> list[types.Tool]:
+    def __to_google_tools(self, prompt_stack: PromptStack) -> list[types.Tool]:
         types = import_optional_dependency("google.genai.types")
 
+        tools = prompt_stack.tools or []
         function_declarations = []
         for tool in tools:
             for activity in tool.activities():
@@ -247,6 +247,7 @@ class GooglePromptDriver(BasePromptDriver):
                     name=tool.to_native_tool_name(activity),
                     description=tool.activity_description(activity),
                     parameters_json_schema=params_schema,
+                    response_json_schema=prompt_stack.to_output_json_schema() if prompt_stack.output_schema else None,
                 )
 
                 function_declarations.append(function_declaration)
