@@ -147,9 +147,8 @@ class AsyncOpenAiChatPromptDriver(AsyncBasePromptDriver):
     async def try_stream(self, prompt_stack: PromptStack) -> AsyncIterator[DeltaMessage]:
         params = self._base_params(prompt_stack)
         logger.debug({"stream": True, **params})
-        result = await self.client.chat.completions.create(**params, stream=True)
 
-        async for message in result:
+        async for message in await self.client.chat.completions.create(**params, stream=True):
             if message.usage is not None:
                 yield DeltaMessage(
                     usage=DeltaMessage.Usage(

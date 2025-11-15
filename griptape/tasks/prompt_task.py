@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import asyncio
+import inspect
 import json
 import logging
-from typing import TYPE_CHECKING, Callable, Optional, Union
+from typing import TYPE_CHECKING, Callable, Optional, Union, cast
 
 from attrs import NOTHING, Attribute, Factory, NothingType, define, field
 from pydantic import BaseModel
@@ -29,11 +31,13 @@ from griptape.tasks import ActionsSubtask, BaseSubtask, BaseTask, OutputSchemaVa
 from griptape.utils import J2
 
 if TYPE_CHECKING:
-    from griptape.drivers.prompt import BasePromptDriver
     from griptape.memory import TaskMemory
     from griptape.memory.structure.base_conversation_memory import BaseConversationMemory
     from griptape.structures import Structure
     from griptape.tools import BaseTool
+
+# Need to import these at runtime for type resolution in Union types for serialization
+from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -48,7 +52,7 @@ class PromptTask(
     # Stop sequence for chain-of-thought in the framework. Using this "token-like" string to make it more unique,
     # so that it doesn't trigger on accident.
     RESPONSE_STOP_SEQUENCE = "<|Response|>"
-    prompt_driver: BasePromptDriver = field(
+    prompt_driver: Union[BasePromptDriver, AsyncBasePromptDriver] = field(
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True, metadata={"serializable": True}
     )
     output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
@@ -140,7 +144,8 @@ class PromptTask(
 
         if memory is not None:
             # inserting at index 1 to place memory right after system prompt
-            memory.add_to_prompt_stack(self.prompt_driver, stack, 1 if system_template else 0)
+            # Both BasePromptDriver and AsyncBasePromptDriver have compatible tokenizer interfaces
+            memory.add_to_prompt_stack(cast(BasePromptDriver, self.prompt_driver), stack, 1 if system_template else 0)
 
         return stack
 
@@ -205,15 +210,69 @@ class PromptTask(
             conversation_memory.add_run(run)
 
     def try_run(self) -> ListArtifact | TextArtifact | AudioArtifact | GenericArtifact | JsonArtifact | ErrorArtifact:
+        # Type narrowing: In try_run(), we should only be using BasePromptDriver (sync)
+        if not isinstance(self.prompt_driver, BasePromptDriver):
+            raise ValueError("try_run() requires a BasePromptDriver (sync). Use async_try_run() for async drivers.")
+
         self.subtasks.clear()
         if self.response_stop_sequence not in self.prompt_driver.tokenizer.stop_sequences:
             self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
 
-        output = self.prompt_driver.run(self.prompt_stack).to_artifact(
-            meta={"is_react_prompt": not self.prompt_driver.use_native_tools}
-        )
+        message = self.prompt_driver.run(self.prompt_stack)
+        output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
         for subtask_runner in self.subtask_runners:
             output = subtask_runner(output)
+
+        if isinstance(output, (ListArtifact, TextArtifact, AudioArtifact, JsonArtifact, ModelArtifact, ErrorArtifact)):
+            return output
+        raise ValueError(f"Unsupported output type: {type(output)}")
+
+    async def async_run(
+        self, *args
+    ) -> Union[TextArtifact, AudioArtifact, GenericArtifact, JsonArtifact, ListArtifact, ErrorArtifact]:
+        """Async version of run() for use with AsyncBasePromptDriver."""
+        if not isinstance(self.prompt_driver, AsyncBasePromptDriver):
+            raise ValueError("async_run() requires an AsyncBasePromptDriver")
+
+        try:
+            self._execution_args = args
+
+            self.state = BaseTask.State.RUNNING
+
+            self.before_run()
+
+            self.output = await self.async_try_run()
+
+            self.after_run()
+        except Exception as e:
+            logger.exception("%s %s\n%s", self.__class__.__name__, self.id, e)
+
+            self.output = ErrorArtifact(str(e), exception=e)
+        finally:
+            self.state = BaseTask.State.FINISHED
+
+        return self.output
+
+    async def async_try_run(
+        self,
+    ) -> ListArtifact | TextArtifact | AudioArtifact | GenericArtifact | JsonArtifact | ErrorArtifact:
+        """Async version of try_run() for use with AsyncBasePromptDriver."""
+        if not isinstance(self.prompt_driver, AsyncBasePromptDriver):
+            raise ValueError("async_try_run() requires an AsyncBasePromptDriver")
+
+        self.subtasks.clear()
+        if self.response_stop_sequence not in self.prompt_driver.tokenizer.stop_sequences:
+            self.prompt_driver.tokenizer.stop_sequences.extend([self.response_stop_sequence])
+
+        message = await self.prompt_driver.run(self.prompt_stack)
+        output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
+
+        for subtask_runner in self.subtask_runners:
+            # Check if the subtask_runner is an async function
+            if inspect.iscoroutinefunction(subtask_runner):
+                output = await subtask_runner(output)
+            else:
+                output = subtask_runner(output)
 
         if isinstance(output, (ListArtifact, TextArtifact, AudioArtifact, JsonArtifact, ModelArtifact, ErrorArtifact)):
             return output
@@ -297,6 +356,10 @@ class PromptTask(
         raise ValueError(f"Memory with name {memory_name} not found.")
 
     def default_run_actions_subtasks(self, subtask_input: BaseArtifact) -> BaseArtifact:
+        # Type narrowing: In sync methods, we should only be using BasePromptDriver
+        if not isinstance(self.prompt_driver, BasePromptDriver):
+            raise ValueError("default_run_actions_subtasks() requires a BasePromptDriver (sync)")
+
         if not self.tools:
             return subtask_input
         subtask = self.add_subtask(
@@ -316,14 +379,47 @@ class PromptTask(
                 subtask.run()
 
                 if self.reflect_on_tool_use:
-                    output = self.prompt_driver.run(self.prompt_stack).to_artifact(
-                        meta={"is_react_prompt": not self.prompt_driver.use_native_tools}
-                    )
+                    message = self.prompt_driver.run(self.prompt_stack)
+                    output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
+                    subtask = self.add_subtask(ActionsSubtask(output))
+
+        return subtask.output
+
+    async def async_default_run_actions_subtasks(self, subtask_input: BaseArtifact) -> BaseArtifact:
+        """Async version of default_run_actions_subtasks() for use with AsyncBasePromptDriver."""
+        if not isinstance(self.prompt_driver, AsyncBasePromptDriver):
+            raise ValueError("async_default_run_actions_subtasks() requires an AsyncBasePromptDriver")
+
+        if not self.tools:
+            return subtask_input
+        subtask = self.add_subtask(
+            ActionsSubtask(
+                subtask_input,
+                # TODO: Remove these fields in Prompt Task in Griptape 2.0
+                generate_user_subtask_template=self.generate_user_subtask_template,
+                generate_assistant_subtask_template=self.generate_assistant_subtask_template,
+                response_stop_sequence=self.response_stop_sequence,
+            )
+        )
+
+        while subtask.output is None:
+            if len(self.subtasks) >= self.max_subtasks:
+                subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
+            else:
+                subtask.run()
+
+                if self.reflect_on_tool_use:
+                    message = await self.prompt_driver.run(self.prompt_stack)
+                    output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
                     subtask = self.add_subtask(ActionsSubtask(output))
 
         return subtask.output
 
     def default_run_output_schema_validation_subtasks(self, subtask_input: BaseArtifact) -> BaseArtifact:
+        # Type narrowing: In sync methods, we should only be using BasePromptDriver
+        if not isinstance(self.prompt_driver, BasePromptDriver):
+            raise ValueError("default_run_output_schema_validation_subtasks() requires a BasePromptDriver (sync)")
+
         if self.output_schema is None:
             return subtask_input
         subtask = self.add_subtask(OutputSchemaValidationSubtask(subtask_input, output_schema=self.output_schema))
@@ -335,9 +431,30 @@ class PromptTask(
                 subtask.run()
 
                 output = subtask.output
-                output = self.prompt_driver.run(self.prompt_stack).to_artifact(
-                    meta={"is_react_prompt": not self.prompt_driver.use_native_tools}
-                )
+                message = self.prompt_driver.run(self.prompt_stack)
+                output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
+                subtask = self.add_subtask(OutputSchemaValidationSubtask(output, output_schema=self.output_schema))
+
+        return subtask.output
+
+    async def async_default_run_output_schema_validation_subtasks(self, subtask_input: BaseArtifact) -> BaseArtifact:
+        """Async version of default_run_output_schema_validation_subtasks() for use with AsyncBasePromptDriver."""
+        if not isinstance(self.prompt_driver, AsyncBasePromptDriver):
+            raise ValueError("async_default_run_output_schema_validation_subtasks() requires an AsyncBasePromptDriver")
+
+        if self.output_schema is None:
+            return subtask_input
+        subtask = self.add_subtask(OutputSchemaValidationSubtask(subtask_input, output_schema=self.output_schema))
+
+        while subtask.output is None:
+            if len(self.subtasks) >= self.max_subtasks:
+                subtask.output = ErrorArtifact(f"Exceeded tool limit of {self.max_subtasks} subtasks per task")
+            else:
+                subtask.run()
+
+                output = subtask.output
+                message = await self.prompt_driver.run(self.prompt_stack)
+                output = message.to_artifact(meta={"is_react_prompt": not self.prompt_driver.use_native_tools})
                 subtask = self.add_subtask(OutputSchemaValidationSubtask(output, output_schema=self.output_schema))
 
         return subtask.output

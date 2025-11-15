@@ -92,7 +92,9 @@ class AsyncBasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             with attempt:
                 await self.before_run(prompt_stack)
 
-                result = await self.__process_stream(prompt_stack) if self.stream else await self.__process_run(prompt_stack)
+                result = (
+                    await self.__process_stream(prompt_stack) if self.stream else await self.__process_run(prompt_stack)
+                )
 
                 await self.after_run(result)
 
