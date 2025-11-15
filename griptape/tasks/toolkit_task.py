@@ -6,9 +6,7 @@ from typing import TYPE_CHECKING
 from attrs import define
 
 from griptape.tasks import PromptTask
-
-# Need to import these at runtime for type resolution in Union types for serialization
-from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver  # noqa: F401
+from griptape.drivers.prompt import BasePromptDriver
 
 if TYPE_CHECKING:
     from griptape.artifacts import (

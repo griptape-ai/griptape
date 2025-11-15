@@ -10,9 +10,8 @@ from griptape.common import observable
 from griptape.configs import Defaults
 from griptape.structures import Structure
 from griptape.tasks import PromptTask
+from griptape.drivers.prompt import BasePromptDriver
 
-# Need to import these at runtime for type resolution in Union types
-from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver  # noqa: F401
 
 if TYPE_CHECKING:
     from pydantic import BaseModel

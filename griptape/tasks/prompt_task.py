@@ -37,7 +37,7 @@ if TYPE_CHECKING:
     from griptape.tools import BaseTool
 
 # Need to import these at runtime for type resolution in Union types for serialization
-from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver  # noqa: F401
+from griptape.drivers.prompt import BasePromptDriver  # noqa: F401
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
