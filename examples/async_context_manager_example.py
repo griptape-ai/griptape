@@ -5,6 +5,7 @@ This example shows:
 2. Using EventListener with async context manager (async with statement)
 3. Async event handlers with async context manager
 """
+
 import asyncio
 import os
 
