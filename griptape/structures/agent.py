@@ -11,12 +11,14 @@ from griptape.configs import Defaults
 from griptape.structures import Structure
 from griptape.tasks import PromptTask
 
+# Need to import these at runtime for type resolution in Union types
+from griptape.drivers.prompt import AsyncBasePromptDriver, BasePromptDriver
+
 if TYPE_CHECKING:
     from pydantic import BaseModel
     from schema import Schema
 
     from griptape.artifacts import BaseArtifact
-    from griptape.drivers.prompt import BasePromptDriver
     from griptape.tasks import BaseTask
     from griptape.tools import BaseTool
 
@@ -27,7 +29,7 @@ class Agent(Structure):
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
     stream: Optional[bool] = field(default=None, kw_only=True)
-    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
+    prompt_driver: Optional[Union[BasePromptDriver, AsyncBasePromptDriver]] = field(default=None, kw_only=True)
     output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
@@ -43,7 +45,9 @@ class Agent(Structure):
             raise ValueError("Agents cannot fail fast, as they can only have 1 task.")
 
     @prompt_driver.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_prompt_driver(self, _: Attribute, prompt_driver: Optional[BasePromptDriver]) -> None:
+    def validate_prompt_driver(
+        self, _: Attribute, prompt_driver: Optional[Union[BasePromptDriver, AsyncBasePromptDriver]]
+    ) -> None:
         if prompt_driver is not None and self.stream is not None:
             warnings.warn(
                 "`Agent.prompt_driver` is set, but `Agent.stream` was provided. `Agent.stream` will be ignored. This will be an error in the future.",
@@ -87,6 +91,13 @@ class Agent(Structure):
     @observable
     def try_run(self, *args) -> Agent:
         self.task.run()
+
+        return self
+
+    @observable
+    async def async_try_run(self, *args) -> Agent:
+        """Async version of try_run."""
+        await self.task.async_run()
 
         return self
 

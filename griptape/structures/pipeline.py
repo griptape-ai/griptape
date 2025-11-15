@@ -54,6 +54,13 @@ class Pipeline(Structure):
 
         return self
 
+    @observable
+    async def async_try_run(self, *args) -> Pipeline:
+        """Async version of try_run."""
+        await self.__async_run_from_task(self.input_task)
+
+        return self
+
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)
 
@@ -72,3 +79,8 @@ class Pipeline(Structure):
         if task is None or isinstance(task.run(), ErrorArtifact) and self.fail_fast:
             return
         self.__run_from_task(next(iter(task.children), None))
+
+    async def __async_run_from_task(self, task: Optional[BaseTask]) -> None:
+        if task is None or isinstance(await task.async_run(), ErrorArtifact) and self.fail_fast:
+            return
+        await self.__async_run_from_task(next(iter(task.children), None))

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from concurrent import futures
 from graphlib import TopologicalSorter
 from typing import TYPE_CHECKING, Any, Optional
@@ -121,6 +122,30 @@ class Workflow(Structure, FuturesExecutorMixin):
                         break
 
             return self
+
+    @observable
+    async def async_try_run(self, *args) -> Workflow:
+        """Async version of try_run."""
+        exit_loop = False
+
+        while not self.is_finished() and not exit_loop:
+            task_coroutines = []
+            ordered_tasks = self.order_tasks()
+
+            for task in ordered_tasks:
+                if task.can_run():
+                    task_coroutines.append(task.async_run())
+
+            # Wait for all tasks to complete
+            if task_coroutines:
+                results = await asyncio.gather(*task_coroutines, return_exceptions=True)
+
+                for result in results:
+                    if isinstance(result, ErrorArtifact) and self.fail_fast:
+                        exit_loop = True
+                        break
+
+        return self
 
     def context(self, task: BaseTask) -> dict[str, Any]:
         context = super().context(task)

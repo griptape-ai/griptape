@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import uuid
 from abc import ABC, abstractmethod
 from queue import Queue
@@ -21,7 +22,7 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils.contextvars_utils import with_contextvars
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import AsyncIterator, Iterator
 
     from griptape.artifacts import BaseArtifact
     from griptape.memory.structure import BaseConversationMemory
@@ -170,6 +171,25 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         self.resolve_relationships()
 
     @observable
+    async def async_before_run(self, args: Any) -> None:
+        """Async version of before_run."""
+        super().before_run(args)
+        self._execution_args = args
+
+        [task.reset() for task in self.tasks]
+
+        if self.input_task is not None:
+            await EventBus.apublish_event(
+                StartStructureRunEvent(
+                    structure_id=self.id,
+                    input_task_input=self.input_task.input,
+                    input_task_output=self.input_task.output,
+                ),
+            )
+
+        self.resolve_relationships()
+
+    @observable
     def after_run(self) -> None:
         super().after_run()
 
@@ -193,6 +213,31 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
                 flush=True,
             )
 
+    @observable
+    async def async_after_run(self) -> None:
+        """Async version of after_run."""
+        super().after_run()
+
+        if self.output_task is not None:
+            if (
+                self.conversation_memory_strategy == "per_structure"
+                and self.conversation_memory is not None
+                and self.input_task is not None
+                and self.output_task.output is not None
+            ):
+                run = Run(input=self.input_task.input, output=self.output_task.output)
+
+                self.conversation_memory.add_run(run)
+
+            await EventBus.apublish_event(
+                FinishStructureRunEvent(
+                    structure_id=self.id,
+                    output_task_input=self.output_task.input,
+                    output_task_output=self.output_task.output,
+                ),
+                flush=True,
+            )
+
     @abstractmethod
     def add_task(self, task: BaseTask) -> BaseTask: ...
 
@@ -203,6 +248,17 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         result = self.try_run(*args)
 
         self.after_run()
+
+        return result
+
+    @observable
+    async def async_run(self, *args) -> Structure:
+        """Async version of run."""
+        await self.async_before_run(args)
+
+        result = await self.async_try_run(*args)
+
+        await self.async_after_run()
 
         return result
 
@@ -225,5 +281,47 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
                     yield event
             t.join()
 
+    @observable
+    async def async_run_stream(
+        self, *args, event_types: Optional[list[type[BaseEvent]]] = None
+    ) -> AsyncIterator[BaseEvent]:
+        """Async version of run_stream."""
+        if event_types is None:
+            event_types = [BaseEvent]
+        elif FinishStructureRunEvent not in event_types:
+            event_types = [*event_types, FinishStructureRunEvent]
+
+        async with EventListener(self._event_queue.put, event_types=event_types):
+            # Run in background task
+            run_task = asyncio.create_task(self.async_run(*args))
+
+            while True:
+                # Check if queue has items
+                try:
+                    event = self._event_queue.get_nowait()
+                    if isinstance(event, FinishStructureRunEvent) and event.structure_id == self.id:
+                        break
+                    else:
+                        yield event
+                except:  # noqa: E722
+                    # Queue is empty, wait a bit
+                    await asyncio.sleep(0.01)
+
+                    # Check if run task is done
+                    if run_task.done():
+                        # Drain any remaining events
+                        while not self._event_queue.empty():
+                            event = self._event_queue.get_nowait()
+                            if isinstance(event, FinishStructureRunEvent) and event.structure_id == self.id:
+                                break
+                            else:
+                                yield event
+                        break
+
+            await run_task
+
     @abstractmethod
     def try_run(self, *args) -> Structure: ...
+
+    @abstractmethod
+    async def async_try_run(self, *args) -> Structure: ...

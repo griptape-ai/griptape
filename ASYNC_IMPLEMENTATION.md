@@ -1,10 +1,10 @@
 # Async Implementation Guide
 
-This document describes the async implementation for PromptTask and EventListener in Griptape.
+This document describes the async implementation for PromptTask, EventListener, and Structure classes (Agent, Pipeline, Workflow) in Griptape.
 
 ## Overview
 
-The async implementation makes PromptTask and the event system natively async, allowing for efficient async/await patterns with AsyncOpenAiChatPromptDriver and other async drivers.
+The async implementation makes PromptTask, the event system, and all Structure classes natively async, allowing for efficient async/await patterns with AsyncOpenAiChatPromptDriver and other async drivers.
 
 ## Key Components
 
@@ -265,6 +265,69 @@ async with EventListener(on_event=on_chunk):
     result = await task.async_run()
 ```
 
+### 5. Agent/Pipeline/Workflow Async Support
+
+All Structure classes (Agent, Pipeline, Workflow) now support async execution:
+
+**Sync API (existing):**
+```python
+from griptape.structures import Agent
+from griptape.drivers.prompt import OpenAiChatPromptDriver
+
+agent = Agent(prompt_driver=OpenAiChatPromptDriver(model="gpt-4o-mini"))
+result = agent.run("Hello")
+```
+
+**Async API (new):**
+```python
+import asyncio
+from griptape.structures import Agent
+from griptape.drivers.prompt import AsyncOpenAiChatPromptDriver
+
+async def main():
+    agent = Agent(prompt_driver=AsyncOpenAiChatPromptDriver(model="gpt-4o-mini"))
+    result = await agent.async_run("Hello")
+
+asyncio.run(main())
+```
+
+#### Async Methods
+
+**Structure (base class):**
+- `async_run()` - Async version of `run()`
+- `async_try_run()` - Async version of `try_run()` (abstract, implemented by subclasses)
+- `async_before_run()` - Async lifecycle hook
+- `async_after_run()` - Async lifecycle hook
+- `async_run_stream()` - Async version of `run_stream()`
+
+**Agent:**
+- Implements `async_try_run()` - Runs the single task asynchronously
+
+**Pipeline:**
+- Implements `async_try_run()` - Runs tasks sequentially in async mode
+
+**Workflow:**
+- Implements `async_try_run()` - Runs tasks in parallel using `asyncio.gather()`
+
+#### Async Streaming
+
+Structures support async streaming:
+
+```python
+from griptape.events import TextChunkEvent
+
+driver = AsyncOpenAiChatPromptDriver(
+    model="gpt-4o-mini",
+    stream=True
+)
+
+agent = Agent(prompt_driver=driver)
+
+async for event in agent.async_run_stream("Write a story"):
+    if isinstance(event, TextChunkEvent):
+        print(event.token, end="", flush=True)
+```
+
 ## Examples
 
 See the examples directory for complete working examples:
@@ -272,6 +335,7 @@ See the examples directory for complete working examples:
 - `examples/async_prompt_task_example.py` - Basic async usage
 - `examples/async_event_listener_example.py` - Async event handling
 - `examples/async_context_manager_example.py` - Context manager patterns
+- `examples/async_agent_example.py` - Async Agent usage with tools and streaming
 
 ## Testing
 
@@ -299,16 +363,36 @@ make test/unit TESTS=tests/unit/tasks/test_async_prompt_task.py
    - Added `apublish_event()` method
    - Added `__aenter__()` and `__aexit__()` for async context manager
    - Support for both sync and async `on_event` callbacks
+   - Silently skip async handlers in sync context to allow mixed sync/async usage
 
 4. **griptape/drivers/prompt/async_base_prompt_driver.py**
    - Updated to use `await EventBus.apublish_event()`
    - Async event publishing for streaming
 
-5. **tests/mocks/mock_async_prompt_driver.py**
+5. **griptape/structures/structure.py**
+   - Added `async_run()` method
+   - Added `async_try_run()` abstract method
+   - Added `async_before_run()` and `async_after_run()` lifecycle methods
+   - Added `async_run_stream()` for async streaming
+
+6. **griptape/structures/agent.py**
+   - Updated `prompt_driver` field to accept Union[BasePromptDriver, AsyncBasePromptDriver]
+   - Implemented `async_try_run()` method
+
+7. **griptape/structures/pipeline.py**
+   - Implemented `async_try_run()` method for sequential async execution
+
+8. **griptape/structures/workflow.py**
+   - Implemented `async_try_run()` method for parallel async execution using `asyncio.gather()`
+
+9. **tests/mocks/mock_async_prompt_driver.py**
    - Mock async driver for testing
 
-6. **tests/unit/tasks/test_async_prompt_task.py**
-   - Comprehensive async tests
+10. **tests/unit/tasks/test_async_prompt_task.py**
+    - Comprehensive async PromptTask tests
+
+11. **tests/unit/structures/test_async_agent.py**
+    - Comprehensive async Agent tests
 
 ## Backward Compatibility
 
