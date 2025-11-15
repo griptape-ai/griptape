@@ -397,6 +397,7 @@ make test/unit TESTS=tests/unit/tasks/test_async_prompt_task.py
 ## Backward Compatibility
 
 ✅ All existing sync code works without changes
-✅ 3526 tests passing
+✅ 3536 tests passing (including new async tests)
 ✅ No breaking changes to public APIs
 ✅ Type-safe with runtime checks
+✅ Mixed sync/async event handlers supported
