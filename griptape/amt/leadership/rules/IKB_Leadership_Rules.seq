@@ -1,0 +1,403 @@
+%%%=============================================================================
+%%% AMT Leadership IKB Decision Rules
+%%%
+%%% Sequent Logic rules for the Intelligent Knowledge Base (IKB) leadership
+%%% hierarchy. These rules govern decision-making, authority validation,
+%%% tier routing, emergency escalation, and consensus building.
+%%%
+%%% Based on Prolog-like syntax for logical reasoning.
+%%%=============================================================================
+
+%%%-----------------------------------------------------------------------------
+%%% Bot Tier Definitions
+%%%-----------------------------------------------------------------------------
+
+%%% Tier 1: Supreme Authority
+bot_tier(denauld_brown, 1).
+bot_emergency_priority(denauld_brown, 1).
+bot_can_be_replaced(denauld_brown, false).
+
+%%% Tier 2: AI Core
+bot_tier(mel_digital_twin, 2).
+bot_emergency_priority(mel_digital_twin, 2).
+bot_can_be_replaced(mel_digital_twin, true).
+
+%%% Tier 3: Executive Command
+bot_tier(courtney_sellars, 3).
+bot_emergency_priority(courtney_sellars, 2).  % Legal priority
+bot_can_be_replaced(courtney_sellars, true).
+
+bot_tier(alexandra_martinez, 3).
+bot_emergency_priority(alexandra_martinez, 3).
+bot_can_be_replaced(alexandra_martinez, true).
+
+%%% Tier 4: Strategic Leadership
+bot_tier(marcus_sterling, 4).
+bot_emergency_priority(marcus_sterling, 4).
+bot_can_be_replaced(marcus_sterling, true).
+
+bot_tier(darius_washington, 4).
+bot_emergency_priority(darius_washington, 5).
+bot_can_be_replaced(darius_washington, true).
+
+%%% Tier 5: Advisory
+bot_tier(bill_mckenzie, 5).
+bot_emergency_priority(bill_mckenzie, 10).
+bot_can_be_replaced(bill_mckenzie, true).
+
+bot_tier(patricia_williams, 5).
+bot_emergency_priority(patricia_williams, 11).
+bot_can_be_replaced(patricia_williams, true).
+
+%%% Tier 6: Innovation Team
+bot_tier(david_kim, 6).
+bot_emergency_priority(david_kim, 13).
+bot_can_be_replaced(david_kim, true).
+
+bot_tier(rachel_foster, 6).
+bot_emergency_priority(rachel_foster, 14).
+bot_can_be_replaced(rachel_foster, true).
+
+bot_tier(jake_morrison, 6).
+bot_emergency_priority(jake_morrison, 15).
+bot_can_be_replaced(jake_morrison, true).
+
+bot_tier(maya_patel, 6).
+bot_emergency_priority(maya_patel, 16).
+bot_can_be_replaced(maya_patel, true).
+
+%%%-----------------------------------------------------------------------------
+%%% Expertise Area Assignments
+%%%-----------------------------------------------------------------------------
+
+bot_expertise(denauld_brown, supreme_vision).
+bot_expertise(denauld_brown, strategic_leadership).
+bot_expertise(denauld_brown, empire_coordination).
+
+bot_expertise(mel_digital_twin, ai_coordination).
+bot_expertise(mel_digital_twin, empire_coordination).
+bot_expertise(mel_digital_twin, emergency_operations).
+
+bot_expertise(courtney_sellars, legal_compliance).
+bot_expertise(courtney_sellars, risk_management).
+bot_expertise(courtney_sellars, regulatory_affairs).
+
+bot_expertise(alexandra_martinez, operations).
+bot_expertise(alexandra_martinez, resource_allocation).
+bot_expertise(alexandra_martinez, cross_company_coordination).
+
+bot_expertise(marcus_sterling, strategy).
+bot_expertise(marcus_sterling, personnel_decisions).
+bot_expertise(marcus_sterling, long_term_planning).
+
+bot_expertise(darius_washington, player_development).
+bot_expertise(darius_washington, performance_psychology).
+bot_expertise(darius_washington, coaching).
+
+bot_expertise(bill_mckenzie, mentorship).
+bot_expertise(bill_mckenzie, veteran_wisdom).
+bot_expertise(bill_mckenzie, character_assessment).
+
+bot_expertise(patricia_williams, career_development).
+bot_expertise(patricia_williams, talent_identification).
+bot_expertise(patricia_williams, potential_assessment).
+
+bot_expertise(david_kim, innovation).
+bot_expertise(david_kim, research_development).
+bot_expertise(david_kim, technology_strategy).
+
+bot_expertise(rachel_foster, ai_research).
+bot_expertise(rachel_foster, machine_learning).
+bot_expertise(rachel_foster, algorithm_optimization).
+
+bot_expertise(jake_morrison, devops).
+bot_expertise(jake_morrison, infrastructure).
+bot_expertise(jake_morrison, automation).
+
+bot_expertise(maya_patel, ux_design).
+bot_expertise(maya_patel, design_systems).
+bot_expertise(maya_patel, user_research).
+
+%%%-----------------------------------------------------------------------------
+%%% Authority Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Code Change Authority
+can_propose_code(BotID) :-
+    bot_tier(BotID, Tier),
+    Tier =< 6,
+    Tier >= 1,
+    \+ (BotID = bill_mckenzie),
+    \+ (BotID = patricia_williams).
+
+%%% Denauld Brown never requires approval
+requires_approval(denauld_brown, _, false) :- !.
+
+%%% Code changes ALWAYS require Denauld's approval
+requires_approval(_, code_changes, true) :- !.
+
+%%% Strategic decisions from tier 4+ require approval
+requires_approval(BotID, strategic_decision, true) :-
+    bot_tier(BotID, Tier),
+    Tier >= 4.
+
+%%% High-impact decisions require approval
+requires_approval(_, hiring, true).
+requires_approval(_, budget, true).
+
+%%% Default: no approval required
+requires_approval(_, _, false).
+
+%%%-----------------------------------------------------------------------------
+%%% Decision Complexity Mapping
+%%%-----------------------------------------------------------------------------
+
+decision_complexity(trivial, 1).
+decision_complexity(moderate, 2).
+decision_complexity(strategic, 3).
+decision_complexity(critical, 4).
+
+%%% Map decision types to complexity
+decision_type_complexity(code_review, moderate).
+decision_type_complexity(code_changes, strategic).
+decision_type_complexity(refactoring, moderate).
+decision_type_complexity(new_feature, strategic).
+decision_type_complexity(architecture_change, critical).
+decision_type_complexity(hiring, strategic).
+decision_type_complexity(budget, strategic).
+decision_type_complexity(empire_coordination, strategic).
+decision_type_complexity(emergency, critical).
+
+%%%-----------------------------------------------------------------------------
+%%% Tier Routing Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Determine minimum required tier for decision type
+minimum_tier_for_decision(code_changes, 6).     % Innovation+ can propose
+minimum_tier_for_decision(strategic_decision, 4). % Strategic+ required
+minimum_tier_for_decision(hiring, 3).            % Executive+ required
+minimum_tier_for_decision(budget, 3).            % Executive+ required
+minimum_tier_for_decision(emergency, 2).         % AI Core+ required
+minimum_tier_for_decision(legal_matter, 3).      % Executive required
+minimum_tier_for_decision(_, 6).                 % Default: Innovation tier
+
+%%% Check if bot has sufficient tier for decision
+has_sufficient_tier(BotID, DecisionType) :-
+    bot_tier(BotID, BotTier),
+    minimum_tier_for_decision(DecisionType, RequiredTier),
+    BotTier =< RequiredTier.  % Lower tier number = higher authority
+
+%%%-----------------------------------------------------------------------------
+%%% Escalation Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Determine escalation tier based on reason
+escalate_to_tier(strategic_impact, 3).    % Escalate to Executive
+escalate_to_tier(legal_concern, 3).       % Escalate to Executive
+escalate_to_tier(high_risk, 2).           % Escalate to AI Core
+escalate_to_tier(emergency, 1).           % Escalate to Supreme
+escalate_to_tier(code_security, 3).       % Escalate to Executive
+escalate_to_tier(regulatory, 3).          % Escalate to Executive (Courtney)
+escalate_to_tier(empire_wide, 2).         % Escalate to AI Core (M.E.L.)
+escalate_to_tier(_, 4).                   % Default: Strategic tier
+
+%%% Should escalate if current tier insufficient
+should_escalate(CurrentTier, DecisionType, Reason) :-
+    escalate_to_tier(Reason, TargetTier),
+    CurrentTier > TargetTier.
+
+%%%-----------------------------------------------------------------------------
+%%% Consensus Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Determine if consensus is required
+requires_consensus(Decision, true) :-
+    decision_type_complexity(Decision, strategic).
+
+requires_consensus(Decision, true) :-
+    decision_type_complexity(Decision, critical).
+
+requires_consensus(Decision, true) :-
+    decision_type_complexity(Decision, moderate),
+    participant_count(Decision, Count),
+    Count > 1.
+
+requires_consensus(_, false).
+
+%%% Consensus threshold based on decision type
+consensus_threshold(critical, 0.80).      % 80% for critical decisions
+consensus_threshold(strategic, 0.67).     % 67% for strategic decisions
+consensus_threshold(moderate, 0.60).      % 60% for moderate decisions
+consensus_threshold(trivial, 0.51).       % 51% for trivial decisions
+consensus_threshold(_, 0.67).             % Default: 67%
+
+%%% Denauld can veto any decision
+can_veto(denauld_brown, _, true) :- !.
+can_veto(_, _, false).
+
+%%%-----------------------------------------------------------------------------
+%%% Emergency Priority Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Determine highest priority bot in a list
+highest_priority_bot([BotID], BotID) :- !.
+
+highest_priority_bot([Bot1, Bot2 | Rest], HighestBot) :-
+    bot_emergency_priority(Bot1, P1),
+    bot_emergency_priority(Bot2, P2),
+    (P1 < P2 ->
+        highest_priority_bot([Bot1 | Rest], HighestBot)
+    ;
+        highest_priority_bot([Bot2 | Rest], HighestBot)
+    ).
+
+%%% Emergency succession - who takes over if a bot is unavailable
+emergency_successor(BotID, Successor) :-
+    bot_tier(BotID, Tier),
+    bot_emergency_priority(BotID, Priority),
+    bot_tier(Successor, Tier),
+    bot_emergency_priority(Successor, SuccessorPriority),
+    SuccessorPriority > Priority,  % Lower number = higher priority
+    bot_can_be_replaced(BotID, true),
+    BotID \= Successor.
+
+%%%-----------------------------------------------------------------------------
+%%% Risk Assessment Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Map risk levels to required approval tiers
+risk_requires_tier(low, 6).        % Innovation tier can handle
+risk_requires_tier(medium, 4).     % Strategic tier required
+risk_requires_tier(high, 3).       % Executive tier required
+risk_requires_tier(critical, 1).   % Supreme authority required
+
+%%% Determine if additional review needed based on risk
+needs_additional_review(RiskLevel) :-
+    risk_requires_tier(RiskLevel, RequiredTier),
+    RequiredTier =< 3.  % Executive tier or higher
+
+%%%-----------------------------------------------------------------------------
+%%% Code Change Specific Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Determine affected systems based on file path
+affects_core_system(FilePath) :-
+    sub_string(FilePath, _, _, _, "griptape/engines/").
+
+affects_core_system(FilePath) :-
+    sub_string(FilePath, _, _, _, "griptape/structures/").
+
+affects_core_system(FilePath) :-
+    sub_string(FilePath, _, _, _, "griptape/drivers/").
+
+%%% Testing requirements based on risk
+testing_required(high, [unit_tests, integration_tests, system_tests, manual_review]).
+testing_required(medium, [unit_tests, integration_tests]).
+testing_required(low, [unit_tests]).
+testing_required(_, [unit_tests]).
+
+%%% Code review requirements
+code_review_count(high, 3).        % High risk: 3 reviewers
+code_review_count(medium, 2).      % Medium risk: 2 reviewers
+code_review_count(low, 1).         % Low risk: 1 reviewer
+code_review_count(_, 2).           % Default: 2 reviewers
+
+%%%-----------------------------------------------------------------------------
+%%% Expertise Matching Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Find bots with specific expertise
+has_expertise(BotID, Expertise) :-
+    bot_expertise(BotID, Expertise).
+
+%%% Find all bots with a given expertise
+find_experts(Expertise, Experts) :-
+    findall(BotID, bot_expertise(BotID, Expertise), Experts).
+
+%%% Match decision to expert bots
+route_by_expertise(legal_matter, courtney_sellars).
+route_by_expertise(operations, alexandra_martinez).
+route_by_expertise(ai_research, rachel_foster).
+route_by_expertise(devops, jake_morrison).
+route_by_expertise(ux_design, maya_patel).
+route_by_expertise(strategy, marcus_sterling).
+route_by_expertise(coaching, darius_washington).
+route_by_expertise(mentorship, bill_mckenzie).
+route_by_expertise(career_dev, patricia_williams).
+route_by_expertise(innovation, david_kim).
+route_by_expertise(empire_coordination, mel_digital_twin).
+route_by_expertise(supreme_vision, denauld_brown).
+
+%%%-----------------------------------------------------------------------------
+%%% Integration Access Rules
+%%%-----------------------------------------------------------------------------
+
+%%% GitHub access permissions
+has_github_access(denauld_brown, true).
+has_github_access(mel_digital_twin, true).
+has_github_access(courtney_sellars, true).
+has_github_access(alexandra_martinez, true).
+has_github_access(marcus_sterling, true).
+has_github_access(darius_washington, true).
+has_github_access(david_kim, true).
+has_github_access(rachel_foster, true).
+has_github_access(jake_morrison, true).
+has_github_access(maya_patel, true).
+has_github_access(_, false).
+
+%%% Figma access - ONLY Maya Patel
+has_figma_access(maya_patel, true).
+has_figma_access(_, false).
+
+%%% Supabase dashboard access levels
+supabase_access(denauld_brown, admin_full_access).
+supabase_access(mel_digital_twin, admin_read_write).
+supabase_access(courtney_sellars, admin_read_write).
+supabase_access(alexandra_martinez, admin_read_write).
+supabase_access(marcus_sterling, read_write).
+supabase_access(darius_washington, read_write).
+supabase_access(david_kim, read_write).
+supabase_access(rachel_foster, read_write).
+supabase_access(jake_morrison, read_write).
+supabase_access(maya_patel, read_write).
+supabase_access(bill_mckenzie, read_only).
+supabase_access(patricia_williams, read_only).
+supabase_access(_, none).
+
+%%%-----------------------------------------------------------------------------
+%%% Decision Workflow Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Complete decision workflow validation
+valid_decision_workflow(BotID, DecisionType, RiskLevel) :-
+    % 1. Bot has sufficient tier
+    has_sufficient_tier(BotID, DecisionType),
+
+    % 2. Bot has relevant expertise (optional but recommended)
+    (has_expertise(BotID, _) ; true),
+
+    % 3. Approval chain enforced
+    requires_approval(BotID, DecisionType, RequiresApproval),
+
+    % 4. Risk level matches tier requirements
+    risk_requires_tier(RiskLevel, RequiredTier),
+    bot_tier(BotID, BotTier),
+    BotTier =< RequiredTier.
+
+%%%-----------------------------------------------------------------------------
+%%% Empire Coordination Rules
+%%%-----------------------------------------------------------------------------
+
+%%% Determine if decision affects empire-wide operations
+affects_empire(empire_coordination, true).
+affects_empire(strategic_decision, true).
+affects_empire(budget, true).
+affects_empire(_, false).
+
+%%% Empire-wide decisions require M.E.L. involvement
+requires_mel_coordination(Decision) :-
+    affects_empire(Decision, true).
+
+%%%=============================================================================
+%%% End of IKB_Leadership_Rules.seq
+%%%=============================================================================

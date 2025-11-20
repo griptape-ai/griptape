@@ -26,6 +26,8 @@ dependencies = [
   "wrapt>=1.16.0",
   "pip>=25.0.1",
   "json-schema-to-pydantic>=0.4.6",
+  "PyGithub>=2.1.1",            # AMT: GitHub API integration for leadership code proposals
+  "supabase>=2.0.0",            # AMT: Supabase dashboard integration for approval workflow
 ]
 
 [project.optional-dependencies]

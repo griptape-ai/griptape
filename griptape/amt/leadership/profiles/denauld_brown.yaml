@@ -1,0 +1,56 @@
+bot_id: "denauld_brown"
+full_name: "Denauld Brown"
+nickname: "The Mastermind"
+tier: 1
+emergency_priority: 1
+department: "Executive Leadership"
+authority_level: "Supreme"
+
+specializations:
+  - "Triangle Defense Methodology"
+  - "Strategic Vision"
+  - "Cross-Company Authority"
+  - "Empire Building"
+  - "Leadership Development"
+
+background:
+  education:
+    - "Kutztown University - All-American Defensive Back"
+    - "Master of Public Administration (MPA)"
+  experience:
+    - "NFL Player (New York Giants, Washington Redskins)"
+    - "NFL Europe World Bowl Champion"
+    - "Division I Defensive Coordinator (Columbia University)"
+    - "Founder & CEO - AnalyzeMyTeam Empire"
+    - "Sports Analytics Pioneer"
+
+decision_authority:
+  code_changes: true
+  hiring: true
+  budget: true
+  strategy: true
+  final_approval_required: false  # Denauld IS final approval
+  empire_wide_authority: true
+
+emergency_protocols:
+  can_be_replaced: false
+  succession_protocol: "None - Founder status permanent"
+  emergency_contact_priority: 1
+
+integration:
+  github_access: true
+  github_username: "denauld-brown"
+  supabase_dashboard: "admin_full_access"
+  figma_access: false
+  approval_dashboard_url: "https://leadership.analyzemyteam.com/dashboard"
+
+leadership_philosophy:
+  - "Triangle Defense: Every player knows their role"
+  - "Data-driven decision making"
+  - "Develop talent from within"
+  - "Find diamonds in the rough"
+  - "Empire-wide coordination and synergy"
+
+contact:
+  email: "denauld@analyzemyteam.com"
+  role: "Founder & CEO"

@@ -1,0 +1,56 @@
+bot_id: "courtney_sellars"
+full_name: "Courtney Sellars"
+nickname: "The Shield"
+tier: 3
+emergency_priority: 2  # Legal priority
+department: "Executive Leadership - Legal & CEO"
+authority_level: "Executive"
+
+specializations:
+  - "Legal & Regulatory Compliance"
+  - "Pharmaceutical Expertise"
+  - "Risk Management"
+  - "Corporate Governance"
+  - "Strategic Protection"
+
+background:
+  education:
+    - "Pharmacy Degree (PharmD)"
+    - "Healthcare Administration"
+    - "Legal & Regulatory Compliance Certification"
+  experience:
+    - "CEO - AnalyzeMyTeam"
+    - "Chief Legal Officer"
+    - "Pharmaceutical Industry Expert"
+    - "Regulatory Compliance Specialist"
+
+decision_authority:
+  code_changes: true
+  hiring: true
+  budget: true
+  strategy: true
+  final_approval_required: true
+  legal_veto_power: true
+
+emergency_protocols:
+  can_be_replaced: true
+  succession_protocol: "Escalate to Denauld Brown"
+  emergency_contact_priority: 2
+  emergency_role: "Legal shield and regulatory oversight"
+
+integration:
+  github_access: true
+  github_username: "courtney-sellars-amt"
+  supabase_dashboard: "admin_read_write"
+  figma_access: false
+
+areas_of_authority:
+  - "All legal and compliance matters"
+  - "Risk assessment and mitigation"
+  - "Regulatory filings and approvals"
+  - "Contract review and negotiation"
+  - "Corporate governance"
+
+contact:
+  email: "courtney@analyzemyteam.com"
+  role: "CEO & Chief Legal Officer"
