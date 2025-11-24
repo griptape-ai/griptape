@@ -303,3 +303,26 @@ class TestPromptTask:
         result = task.run()
 
         assert result.to_text() == expected
+
+    @pytest.mark.parametrize(
+        ("output_schema", "should_raise"),
+        [
+            (None, False),
+            (schema.Schema({"foo": str}), False),
+            (schema.Schema(schema.Or({"foo": str}, {"bar": int})), False),
+            (create_model("TestModel", foo=(str, ...)), False),
+            ("invalid_string", True),
+            (123, True),
+            ([{"foo": "bar"}], True),
+            ({"foo": "bar"}, True),
+        ],
+    )
+    def test_validate_output_schema(self, output_schema, should_raise):
+        """Test that output_schema validator properly accepts valid schemas and rejects invalid ones."""
+        if should_raise:
+            with pytest.raises(ValueError, match="Unsupported output schema type"):
+                PromptTask(input="test", output_schema=output_schema)
+        else:
+            # Should not raise
+            task = PromptTask(input="test", output_schema=output_schema)
+            assert task.output_schema == output_schema
