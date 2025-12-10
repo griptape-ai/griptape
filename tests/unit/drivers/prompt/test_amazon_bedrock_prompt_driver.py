@@ -528,7 +528,6 @@ class TestAmazonBedrockPromptDriver:
         mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
         mock_converse_stream.return_value = {
             "stream": [
-                {"contentBlockStart": {"contentBlockIndex": 0, "start": {"reasoningContent": {}}}},
                 {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"reasoningContent": {"text": "thinking"}}}},
                 {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"reasoningContent": {"text": " process"}}}},
                 {"contentBlockStart": {"contentBlockIndex": 1, "start": {"text": ""}}},
@@ -546,33 +545,28 @@ class TestAmazonBedrockPromptDriver:
         events = list(stream)
 
         # Then
-        assert len(events) == 6  # reasoning start + 2 reasoning deltas + text start + text delta + metadata
+        assert len(events) == 5  # 2 reasoning deltas + text start + text delta + metadata
 
-        # First event is the reasoning content start
+        # First event is reasoning content delta
         assert isinstance(events[0].content, TextDeltaMessageContent)
-        assert events[0].content.text == ""
+        assert events[0].content.text == "thinking"
         assert events[0].content.index == 0
 
         # Second event is reasoning content delta
         assert isinstance(events[1].content, TextDeltaMessageContent)
-        assert events[1].content.text == "thinking"
+        assert events[1].content.text == " process"
         assert events[1].content.index == 0
 
-        # Third event is reasoning content delta
+        # Third event is text content start
         assert isinstance(events[2].content, TextDeltaMessageContent)
-        assert events[2].content.text == " process"
-        assert events[2].content.index == 0
+        assert events[2].content.text == ""
+        assert events[2].content.index == 1
 
-        # Fourth event is text content start
+        # Fourth event is text content delta
         assert isinstance(events[3].content, TextDeltaMessageContent)
-        assert events[3].content.text == ""
+        assert events[3].content.text == "model-output"
         assert events[3].content.index == 1
 
-        # Fifth event is text content delta
-        assert isinstance(events[4].content, TextDeltaMessageContent)
-        assert events[4].content.text == "model-output"
-        assert events[4].content.index == 1
-
-        # Sixth event is metadata with usage
-        assert events[5].usage.input_tokens == 5
-        assert events[5].usage.output_tokens == 10
+        # Fifth event is metadata with usage
+        assert events[4].usage.input_tokens == 5
+        assert events[4].usage.output_tokens == 10
