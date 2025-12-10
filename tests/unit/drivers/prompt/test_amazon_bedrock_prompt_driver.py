@@ -234,6 +234,23 @@ class TestAmazonBedrockPromptDriver:
 
         return mock_converse_stream
 
+    @pytest.fixture()
+    def mock_converse_stream_with_reasoning(self, mocker):
+        mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
+
+        mock_converse_stream.return_value = {
+            "stream": [
+                {"contentBlockStart": {"contentBlockIndex": 0, "start": {"reasoningContent": {"text": ""}}}},
+                {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"reasoningContent": {"text": "Let me think"}}}},
+                {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"reasoningContent": {"text": " about this"}}}},
+                {"contentBlockStart": {"contentBlockIndex": 1, "start": {"text": ""}}},
+                {"contentBlockDelta": {"contentBlockIndex": 1, "delta": {"text": "Final answer"}}},
+                {"metadata": {"usage": {"inputTokens": 5, "outputTokens": 10}}},
+            ]
+        }
+
+        return mock_converse_stream
+
     @pytest.fixture(params=[True, False])
     def prompt_stack(self, request):
         prompt_stack = PromptStack()
@@ -492,3 +509,43 @@ class TestAmazonBedrockPromptDriver:
             ValueError, match="AmazonBedrockPromptDriver does not support `native` structured output strategy."
         ):
             AmazonBedrockPromptDriver(model="foo", structured_output_strategy="native")
+
+    def test_try_stream_with_reasoning_content(self, mock_converse_stream_with_reasoning, prompt_stack):
+        # Given
+        driver = AmazonBedrockPromptDriver(
+            model="deepseek.r1-v1",
+            stream=True,
+        )
+
+        # When
+        stream = driver.try_stream(prompt_stack)
+
+        # Then - Should handle reasoning content blocks
+        event = next(stream)  # contentBlockStart with reasoningContent
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == ""
+        assert event.content.index == 0
+
+        event = next(stream)  # contentBlockDelta with reasoningContent
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == "Let me think"
+        assert event.content.index == 0
+
+        event = next(stream)  # contentBlockDelta with more reasoningContent
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == " about this"
+        assert event.content.index == 0
+
+        event = next(stream)  # contentBlockStart with text
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == ""
+        assert event.content.index == 1
+
+        event = next(stream)  # contentBlockDelta with text
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == "Final answer"
+        assert event.content.index == 1
+
+        event = next(stream)  # metadata with usage
+        assert event.usage.input_tokens == 5
+        assert event.usage.output_tokens == 10
