@@ -492,3 +492,87 @@ class TestAmazonBedrockPromptDriver:
             ValueError, match="AmazonBedrockPromptDriver does not support `native` structured output strategy."
         ):
             AmazonBedrockPromptDriver(model="foo", structured_output_strategy="native")
+
+    def test_try_run_with_reasoning_content(self, mocker):
+        # Given
+        mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
+        mock_converse.return_value = {
+            "output": {
+                "message": {
+                    "content": [
+                        {"text": "model-output"},
+                        {"reasoningContent": {"reasoningText": {"text": "thinking process"}}},
+                    ]
+                }
+            },
+            "usage": {"inputTokens": 5, "outputTokens": 10},
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2")
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        # When
+        message = driver.try_run(prompt_stack)
+
+        # Then
+        assert len(message.value) == 2
+        # Reasoning content should be moved to the beginning
+        assert isinstance(message.value[0], TextArtifact)
+        assert message.value[0].value == "thinking process"
+        assert isinstance(message.value[1], TextArtifact)
+        assert message.value[1].value == "model-output"
+
+    def test_try_stream_with_reasoning_content(self, mocker):
+        # Given
+        mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
+        mock_converse_stream.return_value = {
+            "stream": [
+                {"contentBlockStart": {"contentBlockIndex": 0, "start": {"reasoningContent": {}}}},
+                {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"reasoningContent": {"text": "thinking"}}}},
+                {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"reasoningContent": {"text": " process"}}}},
+                {"contentBlockStart": {"contentBlockIndex": 1, "start": {"text": ""}}},
+                {"contentBlockDelta": {"contentBlockIndex": 1, "delta": {"text": "model-output"}}},
+                {"metadata": {"usage": {"inputTokens": 5, "outputTokens": 10}}},
+            ]
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2", stream=True)
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        # When
+        stream = driver.try_stream(prompt_stack)
+        events = list(stream)
+
+        # Then
+        assert len(events) == 6  # reasoning start + 2 reasoning deltas + text start + text delta + metadata
+
+        # First event is the reasoning content start
+        assert isinstance(events[0].content, TextDeltaMessageContent)
+        assert events[0].content.text == ""
+        assert events[0].content.index == 0
+
+        # Second event is reasoning content delta
+        assert isinstance(events[1].content, TextDeltaMessageContent)
+        assert events[1].content.text == "thinking"
+        assert events[1].content.index == 0
+
+        # Third event is reasoning content delta
+        assert isinstance(events[2].content, TextDeltaMessageContent)
+        assert events[2].content.text == " process"
+        assert events[2].content.index == 0
+
+        # Fourth event is text content start
+        assert isinstance(events[3].content, TextDeltaMessageContent)
+        assert events[3].content.text == ""
+        assert events[3].content.index == 1
+
+        # Fifth event is text content delta
+        assert isinstance(events[4].content, TextDeltaMessageContent)
+        assert events[4].content.text == "model-output"
+        assert events[4].content.index == 1
+
+        # Sixth event is metadata with usage
+        assert events[5].usage.input_tokens == 5
+        assert events[5].usage.output_tokens == 10

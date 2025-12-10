@@ -258,6 +258,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     content_block["text"],
                     index=event["contentBlockStart"]["contentBlockIndex"],
                 )
+            if "reasoningContent" in content_block:
+                return TextDeltaMessageContent(
+                    "",
+                    index=event["contentBlockStart"]["contentBlockIndex"],
+                )
             raise ValueError(f"Unsupported message content type: {event}")
         if "contentBlockDelta" in event:
             content_block_delta = event["contentBlockDelta"]
@@ -271,6 +276,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 return ActionCallDeltaMessageContent(
                     index=content_block_delta["contentBlockIndex"],
                     partial_input=content_block_delta["delta"]["toolUse"]["input"],
+                )
+            if "reasoningContent" in content_block_delta["delta"]:
+                return TextDeltaMessageContent(
+                    content_block_delta["delta"]["reasoningContent"]["text"],
+                    index=content_block_delta["contentBlockIndex"],
                 )
             raise ValueError(f"Unsupported message content type: {event}")
         raise ValueError(f"Unsupported message content type: {event}")
