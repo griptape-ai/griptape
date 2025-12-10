@@ -494,7 +494,6 @@ class TestAmazonBedrockPromptDriver:
             AmazonBedrockPromptDriver(model="foo", structured_output_strategy="native")
 
     def test_try_run_with_reasoning_content(self, mocker):
-        # Given
         mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
         mock_converse.return_value = {
             "output": {
@@ -511,13 +510,10 @@ class TestAmazonBedrockPromptDriver:
         driver = AmazonBedrockPromptDriver(model="ai21.j2")
         prompt_stack = PromptStack()
         prompt_stack.add_user_message("test")
-
-        # When
         message = driver.try_run(prompt_stack)
 
-        # Then
         assert len(message.value) == 2
-        # Reasoning content should be moved to the beginning
+
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "thinking process"
         assert isinstance(message.value[1], TextArtifact)
@@ -570,3 +566,35 @@ class TestAmazonBedrockPromptDriver:
         # Fifth event is metadata with usage
         assert events[4].usage.input_tokens == 5
         assert events[4].usage.output_tokens == 10
+
+    def test_try_stream_unsupported_content_block_delta_type(self, mocker):
+        mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
+        mock_converse_stream.return_value = {
+            "stream": [
+                {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"unsupportedType": {"data": "value"}}}},
+            ]
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2", stream=True)
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        stream = driver.try_stream(prompt_stack)
+        with pytest.raises(ValueError, match="Unsupported message content type"):
+            list(stream)
+
+    def test_try_stream_unsupported_content_block_start_type(self, mocker):
+        mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
+        mock_converse_stream.return_value = {
+            "stream": [
+                {"contentBlockStart": {"contentBlockIndex": 0, "start": {"unsupportedType": {"data": "value"}}}},
+            ]
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2", stream=True)
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        stream = driver.try_stream(prompt_stack)
+        with pytest.raises(ValueError, match="Unsupported message content type"):
+            list(stream)
