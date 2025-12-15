@@ -141,7 +141,7 @@ jobs:
           --health-retries 5
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Init environment
         uses: ./.github/actions/init-environment
       # Integration tests will run on all code snippets, outputting their logs to /tmp/logs

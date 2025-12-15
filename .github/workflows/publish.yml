@@ -13,7 +13,7 @@ jobs:
         python-version: ["3.9"]
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: uv Build
