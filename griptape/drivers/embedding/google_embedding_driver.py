@@ -27,12 +27,28 @@ class GoogleEmbeddingDriver(BaseEmbeddingDriver):
     title: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
-        genai = import_optional_dependency("google.generativeai")
-        genai.configure(api_key=self.api_key)
+        genai = import_optional_dependency("google.genai")
+        types = import_optional_dependency("google.genai.types")
 
-        result = genai.embed_content(model=self.model, content=chunk, task_type=self.task_type, title=self.title)
+        client = genai.Client(api_key=self.api_key)
 
-        return result["embedding"]
+        # Build config with task_type and title if provided
+        config_params = {}
+        if self.task_type:
+            config_params["task_type"] = self.task_type
+        if self.title:
+            config_params["title"] = self.title
+
+        config = types.EmbedContentConfig(**config_params) if config_params else None
+
+        result = client.models.embed_content(
+            model=self.model,
+            contents=chunk,
+            config=config,
+        )
+
+        # The new SDK returns embeddings in result.embeddings[0].values
+        return result.embeddings[0].values
 
     def _params(self, chunk: str) -> dict:
         return {"input": chunk, "model": self.model}
