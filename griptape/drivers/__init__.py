@@ -1,135 +1,235 @@
 from griptape.utils.deprecation import DeprecationModuleWrapper
 import sys
 
-from .prompt import BasePromptDriver
-from .prompt.openai import OpenAiChatPromptDriver
-from .prompt.openai import AzureOpenAiChatPromptDriver
-from .prompt.cohere import CoherePromptDriver
-from .prompt.huggingface_pipeline import HuggingFacePipelinePromptDriver
-from .prompt.huggingface_hub import HuggingFaceHubPromptDriver
-from .prompt.anthropic import AnthropicPromptDriver
-from .prompt.amazon_sagemaker_jumpstart import AmazonSageMakerJumpstartPromptDriver
-from .prompt.amazon_bedrock import AmazonBedrockPromptDriver
-from .prompt.google import GooglePromptDriver
-from .prompt.dummy import DummyPromptDriver
-from .prompt.ollama import OllamaPromptDriver
-from .prompt.grok import GrokPromptDriver
-from .prompt.griptape_cloud import GriptapeCloudPromptDriver
-from .prompt.perplexity import PerplexityPromptDriver
+# Lazy loading mapping: maps class names to their import paths
+_DRIVER_IMPORTS = {
+    # Base Classes
+    "BasePromptDriver": ("griptape.drivers.prompt", "BasePromptDriver"),
+    "BaseConversationMemoryDriver": ("griptape.drivers.memory.conversation", "BaseConversationMemoryDriver"),
+    "BaseEmbeddingDriver": ("griptape.drivers.embedding", "BaseEmbeddingDriver"),
+    "BaseVectorStoreDriver": ("griptape.drivers.vector", "BaseVectorStoreDriver"),
+    "BaseSqlDriver": ("griptape.drivers.sql", "BaseSqlDriver"),
+    "BaseImageGenerationModelDriver": ("griptape.drivers.image_generation_model", "BaseImageGenerationModelDriver"),
+    "BaseDiffusionImageGenerationPipelineDriver": (
+        "griptape.drivers.image_generation_pipeline",
+        "BaseDiffusionImageGenerationPipelineDriver",
+    ),
+    "BaseImageGenerationDriver": ("griptape.drivers.image_generation", "BaseImageGenerationDriver"),
+    "BaseMultiModelImageGenerationDriver": ("griptape.drivers.image_generation", "BaseMultiModelImageGenerationDriver"),
+    "BaseWebScraperDriver": ("griptape.drivers.web_scraper", "BaseWebScraperDriver"),
+    "BaseWebSearchDriver": ("griptape.drivers.web_search", "BaseWebSearchDriver"),
+    "BaseEventListenerDriver": ("griptape.drivers.event_listener", "BaseEventListenerDriver"),
+    "BaseFileManagerDriver": ("griptape.drivers.file_manager", "BaseFileManagerDriver"),
+    "BaseRerankDriver": ("griptape.drivers.rerank", "BaseRerankDriver"),
+    "BaseRulesetDriver": ("griptape.drivers.ruleset", "BaseRulesetDriver"),
+    "BaseTextToSpeechDriver": ("griptape.drivers.text_to_speech", "BaseTextToSpeechDriver"),
+    "BaseStructureRunDriver": ("griptape.drivers.structure_run", "BaseStructureRunDriver"),
+    "BaseAudioTranscriptionDriver": ("griptape.drivers.audio_transcription", "BaseAudioTranscriptionDriver"),
+    "BaseObservabilityDriver": ("griptape.drivers.observability", "BaseObservabilityDriver"),
+    "BaseAssistantDriver": ("griptape.drivers.assistant", "BaseAssistantDriver"),
+    # Prompt Drivers
+    "OpenAiChatPromptDriver": ("griptape.drivers.prompt.openai", "OpenAiChatPromptDriver"),
+    "AzureOpenAiChatPromptDriver": ("griptape.drivers.prompt.openai", "AzureOpenAiChatPromptDriver"),
+    "CoherePromptDriver": ("griptape.drivers.prompt.cohere", "CoherePromptDriver"),
+    "HuggingFacePipelinePromptDriver": (
+        "griptape.drivers.prompt.huggingface_pipeline",
+        "HuggingFacePipelinePromptDriver",
+    ),
+    "HuggingFaceHubPromptDriver": ("griptape.drivers.prompt.huggingface_hub", "HuggingFaceHubPromptDriver"),
+    "AnthropicPromptDriver": ("griptape.drivers.prompt.anthropic", "AnthropicPromptDriver"),
+    "AmazonSageMakerJumpstartPromptDriver": (
+        "griptape.drivers.prompt.amazon_sagemaker_jumpstart",
+        "AmazonSageMakerJumpstartPromptDriver",
+    ),
+    "AmazonBedrockPromptDriver": ("griptape.drivers.prompt.amazon_bedrock", "AmazonBedrockPromptDriver"),
+    "GooglePromptDriver": ("griptape.drivers.prompt.google", "GooglePromptDriver"),
+    "DummyPromptDriver": ("griptape.drivers.prompt.dummy", "DummyPromptDriver"),
+    "OllamaPromptDriver": ("griptape.drivers.prompt.ollama", "OllamaPromptDriver"),
+    "GrokPromptDriver": ("griptape.drivers.prompt.grok", "GrokPromptDriver"),
+    "GriptapeCloudPromptDriver": ("griptape.drivers.prompt.griptape_cloud", "GriptapeCloudPromptDriver"),
+    "PerplexityPromptDriver": ("griptape.drivers.prompt.perplexity", "PerplexityPromptDriver"),
+    # Conversation Memory Drivers
+    "LocalConversationMemoryDriver": ("griptape.drivers.memory.conversation.local", "LocalConversationMemoryDriver"),
+    "AmazonDynamoDbConversationMemoryDriver": (
+        "griptape.drivers.memory.conversation.amazon_dynamodb",
+        "AmazonDynamoDbConversationMemoryDriver",
+    ),
+    "RedisConversationMemoryDriver": ("griptape.drivers.memory.conversation.redis", "RedisConversationMemoryDriver"),
+    "GriptapeCloudConversationMemoryDriver": (
+        "griptape.drivers.memory.conversation.griptape_cloud",
+        "GriptapeCloudConversationMemoryDriver",
+    ),
+    # Embedding Drivers
+    "OpenAiEmbeddingDriver": ("griptape.drivers.embedding.openai", "OpenAiEmbeddingDriver"),
+    "AzureOpenAiEmbeddingDriver": ("griptape.drivers.embedding.openai", "AzureOpenAiEmbeddingDriver"),
+    "AmazonSageMakerJumpstartEmbeddingDriver": (
+        "griptape.drivers.embedding.amazon_sagemaker_jumpstart",
+        "AmazonSageMakerJumpstartEmbeddingDriver",
+    ),
+    "AmazonBedrockTitanEmbeddingDriver": (
+        "griptape.drivers.embedding.amazon_bedrock",
+        "AmazonBedrockTitanEmbeddingDriver",
+    ),
+    "AmazonBedrockCohereEmbeddingDriver": (
+        "griptape.drivers.embedding.amazon_bedrock",
+        "AmazonBedrockCohereEmbeddingDriver",
+    ),
+    "VoyageAiEmbeddingDriver": ("griptape.drivers.embedding.voyageai", "VoyageAiEmbeddingDriver"),
+    "HuggingFaceHubEmbeddingDriver": ("griptape.drivers.embedding.huggingface_hub", "HuggingFaceHubEmbeddingDriver"),
+    "GoogleEmbeddingDriver": ("griptape.drivers.embedding.google", "GoogleEmbeddingDriver"),
+    "DummyEmbeddingDriver": ("griptape.drivers.embedding.dummy", "DummyEmbeddingDriver"),
+    "CohereEmbeddingDriver": ("griptape.drivers.embedding.cohere", "CohereEmbeddingDriver"),
+    "OllamaEmbeddingDriver": ("griptape.drivers.embedding.ollama", "OllamaEmbeddingDriver"),
+    # Vector Store Drivers
+    "LocalVectorStoreDriver": ("griptape.drivers.vector.local", "LocalVectorStoreDriver"),
+    "PineconeVectorStoreDriver": ("griptape.drivers.vector.pinecone", "PineconeVectorStoreDriver"),
+    "MarqoVectorStoreDriver": ("griptape.drivers.vector.marqo", "MarqoVectorStoreDriver"),
+    "MongoDbAtlasVectorStoreDriver": ("griptape.drivers.vector.mongodb_atlas", "MongoDbAtlasVectorStoreDriver"),
+    "RedisVectorStoreDriver": ("griptape.drivers.vector.redis", "RedisVectorStoreDriver"),
+    "OpenSearchVectorStoreDriver": ("griptape.drivers.vector.opensearch", "OpenSearchVectorStoreDriver"),
+    "AmazonOpenSearchVectorStoreDriver": (
+        "griptape.drivers.vector.amazon_opensearch",
+        "AmazonOpenSearchVectorStoreDriver",
+    ),
+    "PgVectorVectorStoreDriver": ("griptape.drivers.vector.pgvector", "PgVectorVectorStoreDriver"),
+    "AzureMongoDbVectorStoreDriver": ("griptape.drivers.vector.azure_mongodb", "AzureMongoDbVectorStoreDriver"),
+    "DummyVectorStoreDriver": ("griptape.drivers.vector.dummy", "DummyVectorStoreDriver"),
+    "QdrantVectorStoreDriver": ("griptape.drivers.vector.qdrant", "QdrantVectorStoreDriver"),
+    "AstraDbVectorStoreDriver": ("griptape.drivers.vector.astradb", "AstraDbVectorStoreDriver"),
+    "GriptapeCloudVectorStoreDriver": ("griptape.drivers.vector.griptape_cloud", "GriptapeCloudVectorStoreDriver"),
+    "PgAiKnowledgeBaseVectorStoreDriver": ("griptape.drivers.vector.pgai", "PgAiKnowledgeBaseVectorStoreDriver"),
+    # SQL Drivers
+    "SqlDriver": ("griptape.drivers.sql.sql_driver", "SqlDriver"),
+    "AmazonRedshiftSqlDriver": ("griptape.drivers.sql.amazon_redshift", "AmazonRedshiftSqlDriver"),
+    "SnowflakeSqlDriver": ("griptape.drivers.sql.snowflake", "SnowflakeSqlDriver"),
+    # Image Generation Model Drivers
+    "BedrockStableDiffusionImageGenerationModelDriver": (
+        "griptape.drivers.image_generation_model.bedrock_stable_diffusion",
+        "BedrockStableDiffusionImageGenerationModelDriver",
+    ),
+    "BedrockTitanImageGenerationModelDriver": (
+        "griptape.drivers.image_generation_model.bedrock_titan",
+        "BedrockTitanImageGenerationModelDriver",
+    ),
+    # Image Generation Pipeline Drivers
+    "StableDiffusion3ImageGenerationPipelineDriver": (
+        "griptape.drivers.image_generation_pipeline.stable_diffusion_3",
+        "StableDiffusion3ImageGenerationPipelineDriver",
+    ),
+    "StableDiffusion3Img2ImgImageGenerationPipelineDriver": (
+        "griptape.drivers.image_generation_pipeline.stable_diffusion_3_img_2_img",
+        "StableDiffusion3Img2ImgImageGenerationPipelineDriver",
+    ),
+    "StableDiffusion3ControlNetImageGenerationPipelineDriver": (
+        "griptape.drivers.image_generation_pipeline.stable_diffusion_3_controlnet",
+        "StableDiffusion3ControlNetImageGenerationPipelineDriver",
+    ),
+    # Image Generation Drivers
+    "OpenAiImageGenerationDriver": ("griptape.drivers.image_generation.openai", "OpenAiImageGenerationDriver"),
+    "AzureOpenAiImageGenerationDriver": (
+        "griptape.drivers.image_generation.openai",
+        "AzureOpenAiImageGenerationDriver",
+    ),
+    "LeonardoImageGenerationDriver": ("griptape.drivers.image_generation.leonardo", "LeonardoImageGenerationDriver"),
+    "AmazonBedrockImageGenerationDriver": (
+        "griptape.drivers.image_generation.amazon_bedrock",
+        "AmazonBedrockImageGenerationDriver",
+    ),
+    "DummyImageGenerationDriver": ("griptape.drivers.image_generation.dummy", "DummyImageGenerationDriver"),
+    "HuggingFacePipelineImageGenerationDriver": (
+        "griptape.drivers.image_generation.huggingface_pipeline",
+        "HuggingFacePipelineImageGenerationDriver",
+    ),
+    "GriptapeCloudImageGenerationDriver": (
+        "griptape.drivers.image_generation.griptape_cloud",
+        "GriptapeCloudImageGenerationDriver",
+    ),
+    # Web Scraper Drivers
+    "TrafilaturaWebScraperDriver": ("griptape.drivers.web_scraper.trafilatura", "TrafilaturaWebScraperDriver"),
+    "MarkdownifyWebScraperDriver": ("griptape.drivers.web_scraper.markdownify", "MarkdownifyWebScraperDriver"),
+    "ProxyWebScraperDriver": ("griptape.drivers.web_scraper.proxy", "ProxyWebScraperDriver"),
+    # Web Search Drivers
+    "GoogleWebSearchDriver": ("griptape.drivers.web_search.google", "GoogleWebSearchDriver"),
+    "DuckDuckGoWebSearchDriver": ("griptape.drivers.web_search.duck_duck_go", "DuckDuckGoWebSearchDriver"),
+    "ExaWebSearchDriver": ("griptape.drivers.web_search.exa", "ExaWebSearchDriver"),
+    "TavilyWebSearchDriver": ("griptape.drivers.web_search.tavily", "TavilyWebSearchDriver"),
+    "PerplexityWebSearchDriver": ("griptape.drivers.web_search.perplexity", "PerplexityWebSearchDriver"),
+    # Event Listener Drivers
+    "AmazonSqsEventListenerDriver": ("griptape.drivers.event_listener.amazon_sqs", "AmazonSqsEventListenerDriver"),
+    "WebhookEventListenerDriver": ("griptape.drivers.event_listener.webhook", "WebhookEventListenerDriver"),
+    "AwsIotCoreEventListenerDriver": ("griptape.drivers.event_listener.aws_iot_core", "AwsIotCoreEventListenerDriver"),
+    "GriptapeCloudEventListenerDriver": (
+        "griptape.drivers.event_listener.griptape_cloud",
+        "GriptapeCloudEventListenerDriver",
+    ),
+    "PusherEventListenerDriver": ("griptape.drivers.event_listener.pusher", "PusherEventListenerDriver"),
+    # File Manager Drivers
+    "LocalFileManagerDriver": ("griptape.drivers.file_manager.local", "LocalFileManagerDriver"),
+    "AmazonS3FileManagerDriver": ("griptape.drivers.file_manager.amazon_s3", "AmazonS3FileManagerDriver"),
+    "GriptapeCloudFileManagerDriver": (
+        "griptape.drivers.file_manager.griptape_cloud",
+        "GriptapeCloudFileManagerDriver",
+    ),
+    # Rerank Drivers
+    "CohereRerankDriver": ("griptape.drivers.rerank.cohere", "CohereRerankDriver"),
+    "LocalRerankDriver": ("griptape.drivers.rerank.local", "LocalRerankDriver"),
+    # Ruleset Drivers
+    "LocalRulesetDriver": ("griptape.drivers.ruleset.local", "LocalRulesetDriver"),
+    "GriptapeCloudRulesetDriver": ("griptape.drivers.ruleset.griptape_cloud", "GriptapeCloudRulesetDriver"),
+    # Text-to-Speech Drivers
+    "DummyTextToSpeechDriver": ("griptape.drivers.text_to_speech.dummy", "DummyTextToSpeechDriver"),
+    "ElevenLabsTextToSpeechDriver": ("griptape.drivers.text_to_speech.elevenlabs", "ElevenLabsTextToSpeechDriver"),
+    "OpenAiTextToSpeechDriver": ("griptape.drivers.text_to_speech.openai", "OpenAiTextToSpeechDriver"),
+    "AzureOpenAiTextToSpeechDriver": ("griptape.drivers.text_to_speech.openai", "AzureOpenAiTextToSpeechDriver"),
+    # Structure Run Drivers
+    "GriptapeCloudStructureRunDriver": (
+        "griptape.drivers.structure_run.griptape_cloud",
+        "GriptapeCloudStructureRunDriver",
+    ),
+    "LocalStructureRunDriver": ("griptape.drivers.structure_run.local", "LocalStructureRunDriver"),
+    # Audio Transcription Drivers
+    "DummyAudioTranscriptionDriver": (
+        "griptape.drivers.audio_transcription.dummy",
+        "DummyAudioTranscriptionDriver",
+    ),
+    "OpenAiAudioTranscriptionDriver": (
+        "griptape.drivers.audio_transcription.openai",
+        "OpenAiAudioTranscriptionDriver",
+    ),
+    # Observability Drivers
+    "NoOpObservabilityDriver": ("griptape.drivers.observability.no_op", "NoOpObservabilityDriver"),
+    "OpenTelemetryObservabilityDriver": (
+        "griptape.drivers.observability.open_telemetry",
+        "OpenTelemetryObservabilityDriver",
+    ),
+    "GriptapeCloudObservabilityDriver": (
+        "griptape.drivers.observability.griptape_cloud",
+        "GriptapeCloudObservabilityDriver",
+    ),
+    "DatadogObservabilityDriver": ("griptape.drivers.observability.datadog", "DatadogObservabilityDriver"),
+    # Assistant Drivers
+    "GriptapeCloudAssistantDriver": ("griptape.drivers.assistant.griptape_cloud", "GriptapeCloudAssistantDriver"),
+    "OpenAiAssistantDriver": ("griptape.drivers.assistant.openai", "OpenAiAssistantDriver"),
+}
 
-from .memory.conversation import BaseConversationMemoryDriver
-from .memory.conversation.local import LocalConversationMemoryDriver
-from .memory.conversation.amazon_dynamodb import AmazonDynamoDbConversationMemoryDriver
-from .memory.conversation.redis import RedisConversationMemoryDriver
-from .memory.conversation.griptape_cloud import GriptapeCloudConversationMemoryDriver
 
-from .embedding import BaseEmbeddingDriver
-from .embedding.openai import OpenAiEmbeddingDriver
-from .embedding.openai import AzureOpenAiEmbeddingDriver
-from .embedding.amazon_sagemaker_jumpstart import AmazonSageMakerJumpstartEmbeddingDriver
-from .embedding.amazon_bedrock import AmazonBedrockTitanEmbeddingDriver, AmazonBedrockCohereEmbeddingDriver
-from .embedding.voyageai import VoyageAiEmbeddingDriver
-from .embedding.huggingface_hub import HuggingFaceHubEmbeddingDriver
-from .embedding.google import GoogleEmbeddingDriver
-from .embedding.dummy import DummyEmbeddingDriver
-from .embedding.cohere import CohereEmbeddingDriver
-from .embedding.ollama import OllamaEmbeddingDriver
+def __getattr__(name: str):
+    """Lazily import drivers only when accessed."""
+    if name in _DRIVER_IMPORTS:
+        module_path, class_name = _DRIVER_IMPORTS[name]
+        from importlib import import_module
 
-from .vector import BaseVectorStoreDriver
-from .vector.local import LocalVectorStoreDriver
-from .vector.pinecone import PineconeVectorStoreDriver
-from .vector.marqo import MarqoVectorStoreDriver
-from .vector.mongodb_atlas import MongoDbAtlasVectorStoreDriver
-from .vector.redis import RedisVectorStoreDriver
-from .vector.opensearch import OpenSearchVectorStoreDriver
-from .vector.amazon_opensearch import AmazonOpenSearchVectorStoreDriver
-from .vector.pgvector import PgVectorVectorStoreDriver
-from .vector.azure_mongodb import AzureMongoDbVectorStoreDriver
-from .vector.dummy import DummyVectorStoreDriver
-from .vector.qdrant import QdrantVectorStoreDriver
-from .vector.astradb import AstraDbVectorStoreDriver
-from .vector.griptape_cloud import GriptapeCloudVectorStoreDriver
-from .vector.pgai import PgAiKnowledgeBaseVectorStoreDriver
+        module = import_module(module_path)
+        driver_class = getattr(module, class_name)
+        # Cache the imported class in the module's namespace
+        globals()[name] = driver_class
+        return driver_class
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-from .sql import BaseSqlDriver
-from .sql.sql_driver import SqlDriver
-from .sql.amazon_redshift import AmazonRedshiftSqlDriver
-from .sql.snowflake import SnowflakeSqlDriver
 
-from .image_generation_model import BaseImageGenerationModelDriver
-from .image_generation_model.bedrock_stable_diffusion import BedrockStableDiffusionImageGenerationModelDriver
-from .image_generation_model.bedrock_titan import BedrockTitanImageGenerationModelDriver
-
-from .image_generation_pipeline import BaseDiffusionImageGenerationPipelineDriver
-from .image_generation_pipeline.stable_diffusion_3 import StableDiffusion3ImageGenerationPipelineDriver
-from .image_generation_pipeline.stable_diffusion_3_img_2_img import StableDiffusion3Img2ImgImageGenerationPipelineDriver
-from .image_generation_pipeline.stable_diffusion_3_controlnet import (
-    StableDiffusion3ControlNetImageGenerationPipelineDriver,
-)
-
-from .image_generation import BaseImageGenerationDriver
-from .image_generation import BaseMultiModelImageGenerationDriver
-from .image_generation.openai import OpenAiImageGenerationDriver, AzureOpenAiImageGenerationDriver
-from .image_generation.leonardo import LeonardoImageGenerationDriver
-from .image_generation.amazon_bedrock import AmazonBedrockImageGenerationDriver
-from .image_generation.dummy import DummyImageGenerationDriver
-from .image_generation.huggingface_pipeline import HuggingFacePipelineImageGenerationDriver
-from .image_generation.griptape_cloud import GriptapeCloudImageGenerationDriver
-
-from .web_scraper import BaseWebScraperDriver
-from .web_scraper.trafilatura import TrafilaturaWebScraperDriver
-from .web_scraper.markdownify import MarkdownifyWebScraperDriver
-from .web_scraper.proxy import ProxyWebScraperDriver
-
-from .web_search import BaseWebSearchDriver
-from .web_search.google import GoogleWebSearchDriver
-from .web_search.duck_duck_go import DuckDuckGoWebSearchDriver
-from .web_search.exa import ExaWebSearchDriver
-from .web_search.tavily import TavilyWebSearchDriver
-from .web_search.perplexity import PerplexityWebSearchDriver
-
-from .event_listener import BaseEventListenerDriver
-from .event_listener.amazon_sqs import AmazonSqsEventListenerDriver
-from .event_listener.webhook import WebhookEventListenerDriver
-from .event_listener.aws_iot_core import AwsIotCoreEventListenerDriver
-from .event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
-from .event_listener.pusher import PusherEventListenerDriver
-
-from .file_manager import BaseFileManagerDriver
-from .file_manager.local import LocalFileManagerDriver
-from .file_manager.amazon_s3 import AmazonS3FileManagerDriver
-from .file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
-
-from .rerank import BaseRerankDriver
-from .rerank.cohere import CohereRerankDriver
-from .rerank.local import LocalRerankDriver
-
-from .ruleset import BaseRulesetDriver
-from .ruleset.local import LocalRulesetDriver
-from .ruleset.griptape_cloud import GriptapeCloudRulesetDriver
-
-from .text_to_speech import BaseTextToSpeechDriver
-from .text_to_speech.dummy import DummyTextToSpeechDriver
-from .text_to_speech.elevenlabs import ElevenLabsTextToSpeechDriver
-from .text_to_speech.openai import OpenAiTextToSpeechDriver, AzureOpenAiTextToSpeechDriver
-
-from .structure_run import BaseStructureRunDriver
-from .structure_run.griptape_cloud import GriptapeCloudStructureRunDriver
-from .structure_run.local import LocalStructureRunDriver
-
-from .audio_transcription import BaseAudioTranscriptionDriver
-from .audio_transcription.dummy import DummyAudioTranscriptionDriver
-from .audio_transcription.openai import OpenAiAudioTranscriptionDriver
-
-from .observability import BaseObservabilityDriver
-from .observability.no_op import NoOpObservabilityDriver
-from .observability.open_telemetry import OpenTelemetryObservabilityDriver
-from .observability.griptape_cloud import GriptapeCloudObservabilityDriver
-from .observability.datadog import DatadogObservabilityDriver
-
-from .assistant import BaseAssistantDriver
-from .assistant.griptape_cloud import GriptapeCloudAssistantDriver
-from .assistant.openai import OpenAiAssistantDriver
+def __dir__():
+    """Support for dir() and tab completion."""
+    return list(_DRIVER_IMPORTS.keys())
 
 
 __all__ = [
@@ -194,6 +294,7 @@ __all__ = [
     "GriptapeCloudConversationMemoryDriver",
     "GriptapeCloudEventListenerDriver",
     "GriptapeCloudFileManagerDriver",
+    "GriptapeCloudImageGenerationDriver",
     "GriptapeCloudObservabilityDriver",
     "GriptapeCloudPromptDriver",
     "GriptapeCloudRulesetDriver",
@@ -240,24 +341,6 @@ __all__ = [
     "StableDiffusion3ControlNetImageGenerationPipelineDriver",
     "StableDiffusion3ImageGenerationPipelineDriver",
     "StableDiffusion3Img2ImgImageGenerationPipelineDriver",
-    "StableDiffusion3ControlNetImageGenerationPipelineDriver",
-    "BaseImageGenerationDriver",
-    "BaseMultiModelImageGenerationDriver",
-    "OpenAiImageGenerationDriver",
-    "LeonardoImageGenerationDriver",
-    "AmazonBedrockImageGenerationDriver",
-    "AzureOpenAiImageGenerationDriver",
-    "DummyImageGenerationDriver",
-    "HuggingFacePipelineImageGenerationDriver",
-    "GriptapeCloudImageGenerationDriver",
-    "BaseWebScraperDriver",
-    "TrafilaturaWebScraperDriver",
-    "MarkdownifyWebScraperDriver",
-    "ProxyWebScraperDriver",
-    "BaseWebSearchDriver",
-    "GoogleWebSearchDriver",
-    "DuckDuckGoWebSearchDriver",
-    "ExaWebSearchDriver",
     "TavilyWebSearchDriver",
     "TrafilaturaWebScraperDriver",
     "VoyageAiEmbeddingDriver",
