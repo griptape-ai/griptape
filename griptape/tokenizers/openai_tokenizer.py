@@ -21,6 +21,7 @@ class OpenAiTokenizer(BaseTokenizer):
 
     # https://platform.openai.com/docs/models/gpt-4-and-gpt-4-turbo
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
+        "gpt-5": 272000,
         "gpt-4.1": 1_000_000,
         "gpt-4o": 128000,
         "gpt-4-1106": 128000,
@@ -36,7 +37,7 @@ class OpenAiTokenizer(BaseTokenizer):
         "text-embedding-3-large": 8191,
     }
 
-    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"gpt": 4096}
+    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"gpt-5": 128000, "gpt": 4096}
 
     EMBEDDING_MODELS = [
         "text-embedding-ada-002",
@@ -103,6 +104,7 @@ class OpenAiTokenizer(BaseTokenizer):
                 "gpt-4-0613",
                 "gpt-4-32k-0613",
                 "gpt-4o-2024-05-13",
+                "gpt-5",
             }:
                 tokens_per_message = 3
                 tokens_per_name = 1

@@ -3,16 +3,16 @@ name = "griptape"
 version = "1.8.2"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = [{ name = "Griptape", email = "hello@griptape.ai" }]
-requires-python = "~=3.9"
+requires-python = ">=3.9, <4"
 readme = "README.md"
 license = "Apache-2.0"
 dependencies = [
   "openai>=1.1.1",
   "attrs>=24.3.0",
   "jinja2>=3.1.4",
-  "marshmallow>=3.21.3,<4",     # TODO: Upgrade to 4.0 for griptape 2.0
+  "marshmallow>=3.21.3,<4", # TODO: Upgrade to 4.0 for griptape 2.0
   "marshmallow-enum>=1.5.1",
-  "tiktoken>=0.9",
+  "tiktoken>=0.11",
   "rich>=13.7.1",
   "schema>=0.7.7",
   "pyyaml>=6.0.1",
@@ -24,6 +24,7 @@ dependencies = [
   "pydantic>=2.7.4",
   "wrapt>=1.16.0",
   "pip>=25.0.1",
+  "json-schema-to-pydantic>=0.4.6",
 ]
 
 [project.optional-dependencies]
@@ -60,9 +61,7 @@ drivers-vector-pgvector = [
 ]
 drivers-vector-qdrant = ["qdrant-client>=1.10.1"]
 drivers-vector-astra-db = ["astrapy>=2.0"]
-drivers-vector-pgai = [
-  "sqlalchemy>=2.0.31"
-]
+drivers-vector-pgai = ["sqlalchemy>=2.0.31"]
 drivers-embedding-amazon-bedrock = ["boto3>=1.34.119"]
 drivers-embedding-amazon-sagemaker = ["boto3>=1.34.119"]
 drivers-embedding-huggingface = [
@@ -289,8 +288,8 @@ venv = ".venv"
 include = ["griptape"]
 exclude = ["**/__pycache__"]
 pythonVersion = "3.9"
-reportIncompatibleVariableOverride = "none" # see thread: https://github.com/microsoft/pyright/issues/5933 
-enableExperimentalFeatures = true           # https://github.com/microsoft/pyright/issues/7713
+reportIncompatibleVariableOverride = "none"                            # see thread: https://github.com/microsoft/pyright/issues/5933 
+enableExperimentalFeatures = true                                      # https://github.com/microsoft/pyright/issues/7713
 strictParameterNoneValue = false
 
 [tool.pytest.ini_options]

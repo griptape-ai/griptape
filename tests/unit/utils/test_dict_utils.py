@@ -1,6 +1,10 @@
 import pytest
 
-from griptape.utils import dict_merge, remove_key_in_dict_recursively, remove_null_values_in_dict_recursively
+from griptape.utils import (
+    dict_merge,
+    remove_key_in_dict_recursively,
+    remove_null_values_in_dict_recursively,
+)
 
 
 class TestDictUtils:
@@ -17,6 +21,33 @@ class TestDictUtils:
         dict_without_key = {"foo": 1, "bar": {"baz": {"bar": 2}}}
 
         assert remove_key_in_dict_recursively(dict_with_key, "quxx") == dict_without_key
+
+    def test_remove_key_in_dict_recursively_with_preserve_under_key(self):
+        schema = {
+            "title": "Title",
+            "type": "object",
+            "properties": {
+                "title": {"type": "string", "title": "Title"},
+                "answer": {"type": "number", "title": "Answer"},
+            },
+        }
+
+        result = remove_key_in_dict_recursively(schema, "title", preserve_under_key="properties")
+
+        assert "title" not in result
+        assert result["type"] == "object"
+
+        assert "properties" in result
+        assert isinstance(result["properties"], dict)
+
+        props = result["properties"]
+        assert set(props.keys()) == {"title", "answer"}
+
+        assert props["title"] == {"type": "string"}
+
+        answer = props["answer"]
+        assert answer["type"] == "number"
+        assert "title" not in answer
 
     def test_dict_merge_merges_dicts(self):
         a = {"a": 1, "b": {"b1": 2, "b2": 3}}

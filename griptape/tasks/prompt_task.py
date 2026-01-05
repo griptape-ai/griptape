@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import NOTHING, Attribute, Factory, NothingType, define, field
 from pydantic import BaseModel
-from schema import Schema
+from schema import Any, Schema
 
 from griptape import utils
 from griptape.artifacts import (
@@ -164,11 +164,13 @@ class PromptTask(
             raise ValueError("tools names have to be unique in task")
 
     @output_schema.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_output_schema(self, _: Attribute, output_schema: Optional[Union[Schema, type[BaseModel]]]) -> None:
+    def validate_output_schema(
+        self, _: Attribute, output_schema: Optional[Union[Schema, type[BaseModel], Any]]
+    ) -> None:
         if (
             output_schema is None
-            or isinstance(self.output_schema, Schema)
-            or (isinstance(self.output_schema, type) and issubclass(self.output_schema, BaseModel))
+            or isinstance(output_schema, Schema)
+            or (isinstance(output_schema, type) and issubclass(output_schema, BaseModel))
         ):
             return
         raise ValueError(f"Unsupported output schema type: {type(self.output_schema)}")
