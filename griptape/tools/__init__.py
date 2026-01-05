@@ -40,6 +40,7 @@ __all__ = [
     "ImageQueryTool",
     "InpaintingImageGenerationTool",
     "OutpaintingImageGenerationTool",
+    "MCPTool",
     "PromptImageGenerationTool",
     "PromptSummaryTool",
     "QueryTool",
@@ -53,5 +54,4 @@ __all__ = [
     "VectorStoreTool",
     "WebScraperTool",
     "WebSearchTool",
-    "MCPTool",
 ]
