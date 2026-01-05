@@ -89,6 +89,7 @@ nav:
   - Home:
       - Overview: "index.md"
       - Contributing: "contributing.md"
+  - Nodes: "https://docs.griptapenodes.com"
   - Cloud:
       - Overview: "griptape-cloud/index.md"
       - Libraries:
@@ -200,4 +201,3 @@ nav:
               - RAG with Astra DB vector store: "recipes/query-webpage-astra-db.md"
   - Framework Reference: "reference/"
   - Trade School: "https://learn.griptape.ai"
-  - Nodes: "https://docs.griptapenodes.com"
