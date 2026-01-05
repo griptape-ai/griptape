@@ -4,6 +4,11 @@ Welcome to the official Griptape Documentation!
 Here, you’ll find everything you need to build, deploy, and scale generative AI applications with Griptape.
 The documentation is divided into the following sections:
 
+## Griptape Nodes
+
+The Griptape Nodes [docs](https://docs.griptapenodes.com) cover our visual AI development platform, [Griptape Nodes](https://www.griptapenodes.com).
+Learn how to create AI workflows and applications using a drag-and-drop interface with visual building blocks, or extend functionality with Python scripting for more advanced customization.
+
 ## Griptape Cloud
 
 The Griptape Cloud [docs](griptape-cloud/index.md) cover our cloud offering, [Griptape Cloud](https://www.griptape.ai/cloud).
