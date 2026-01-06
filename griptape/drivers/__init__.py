@@ -1,138 +1,104 @@
-from griptape.utils.deprecation import DeprecationModuleWrapper
 import sys
+import importlib
+import importlib.util
+from typing import Any
 
+from griptape.utils.deprecation import DeprecationModuleWrapper
+from griptape.common._lazy_loader import find_driver_module, discover_all_drivers
+
+# Import base classes eagerly (they're always needed for type checking and inheritance)
 from .prompt import BasePromptDriver
-from .prompt.openai import OpenAiChatPromptDriver
-from .prompt.openai import AzureOpenAiChatPromptDriver
-from .prompt.cohere import CoherePromptDriver
-from .prompt.huggingface_pipeline import HuggingFacePipelinePromptDriver
-from .prompt.huggingface_hub import HuggingFaceHubPromptDriver
-from .prompt.anthropic import AnthropicPromptDriver
-from .prompt.amazon_sagemaker_jumpstart import AmazonSageMakerJumpstartPromptDriver
-from .prompt.amazon_bedrock import AmazonBedrockPromptDriver
-from .prompt.google import GooglePromptDriver
-from .prompt.dummy import DummyPromptDriver
-from .prompt.ollama import OllamaPromptDriver
-from .prompt.grok import GrokPromptDriver
-from .prompt.griptape_cloud import GriptapeCloudPromptDriver
-from .prompt.perplexity import PerplexityPromptDriver
-
 from .memory.conversation import BaseConversationMemoryDriver
-from .memory.conversation.local import LocalConversationMemoryDriver
-from .memory.conversation.amazon_dynamodb import AmazonDynamoDbConversationMemoryDriver
-from .memory.conversation.redis import RedisConversationMemoryDriver
-from .memory.conversation.griptape_cloud import GriptapeCloudConversationMemoryDriver
-
 from .embedding import BaseEmbeddingDriver
-from .embedding.openai import OpenAiEmbeddingDriver
-from .embedding.openai import AzureOpenAiEmbeddingDriver
-from .embedding.amazon_sagemaker_jumpstart import AmazonSageMakerJumpstartEmbeddingDriver
-from .embedding.amazon_bedrock import AmazonBedrockTitanEmbeddingDriver, AmazonBedrockCohereEmbeddingDriver
-from .embedding.voyageai import VoyageAiEmbeddingDriver
-from .embedding.huggingface_hub import HuggingFaceHubEmbeddingDriver
-from .embedding.google import GoogleEmbeddingDriver
-from .embedding.dummy import DummyEmbeddingDriver
-from .embedding.cohere import CohereEmbeddingDriver
-from .embedding.ollama import OllamaEmbeddingDriver
-
 from .vector import BaseVectorStoreDriver
-from .vector.local import LocalVectorStoreDriver
-from .vector.pinecone import PineconeVectorStoreDriver
-from .vector.marqo import MarqoVectorStoreDriver
-from .vector.mongodb_atlas import MongoDbAtlasVectorStoreDriver
-from .vector.redis import RedisVectorStoreDriver
-from .vector.opensearch import OpenSearchVectorStoreDriver
-from .vector.amazon_opensearch import AmazonOpenSearchVectorStoreDriver
-from .vector.pgvector import PgVectorVectorStoreDriver
-from .vector.azure_mongodb import AzureMongoDbVectorStoreDriver
-from .vector.dummy import DummyVectorStoreDriver
-from .vector.qdrant import QdrantVectorStoreDriver
-from .vector.astradb import AstraDbVectorStoreDriver
-from .vector.griptape_cloud import GriptapeCloudVectorStoreDriver
-from .vector.pgai import PgAiKnowledgeBaseVectorStoreDriver
-
 from .sql import BaseSqlDriver
-from .sql.sql_driver import SqlDriver
-from .sql.amazon_redshift import AmazonRedshiftSqlDriver
-from .sql.snowflake import SnowflakeSqlDriver
-
 from .image_generation_model import BaseImageGenerationModelDriver
-from .image_generation_model.bedrock_stable_diffusion import BedrockStableDiffusionImageGenerationModelDriver
-from .image_generation_model.bedrock_titan import BedrockTitanImageGenerationModelDriver
-
 from .image_generation_pipeline import BaseDiffusionImageGenerationPipelineDriver
-from .image_generation_pipeline.stable_diffusion_3 import StableDiffusion3ImageGenerationPipelineDriver
-from .image_generation_pipeline.stable_diffusion_3_img_2_img import StableDiffusion3Img2ImgImageGenerationPipelineDriver
-from .image_generation_pipeline.stable_diffusion_3_controlnet import (
-    StableDiffusion3ControlNetImageGenerationPipelineDriver,
-)
-
-from .image_generation import BaseImageGenerationDriver
-from .image_generation import BaseMultiModelImageGenerationDriver
-from .image_generation.openai import OpenAiImageGenerationDriver, AzureOpenAiImageGenerationDriver
-from .image_generation.leonardo import LeonardoImageGenerationDriver
-from .image_generation.amazon_bedrock import AmazonBedrockImageGenerationDriver
-from .image_generation.dummy import DummyImageGenerationDriver
-from .image_generation.huggingface_pipeline import HuggingFacePipelineImageGenerationDriver
-from .image_generation.griptape_cloud import GriptapeCloudImageGenerationDriver
-
+from .image_generation import BaseImageGenerationDriver, BaseMultiModelImageGenerationDriver
 from .web_scraper import BaseWebScraperDriver
-from .web_scraper.trafilatura import TrafilaturaWebScraperDriver
-from .web_scraper.markdownify import MarkdownifyWebScraperDriver
-from .web_scraper.proxy import ProxyWebScraperDriver
-
 from .web_search import BaseWebSearchDriver
-from .web_search.google import GoogleWebSearchDriver
-from .web_search.duck_duck_go import DuckDuckGoWebSearchDriver
-from .web_search.exa import ExaWebSearchDriver
-from .web_search.tavily import TavilyWebSearchDriver
-from .web_search.perplexity import PerplexityWebSearchDriver
-
 from .event_listener import BaseEventListenerDriver
-from .event_listener.amazon_sqs import AmazonSqsEventListenerDriver
-from .event_listener.webhook import WebhookEventListenerDriver
-from .event_listener.aws_iot_core import AwsIotCoreEventListenerDriver
-from .event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
-from .event_listener.pusher import PusherEventListenerDriver
-
 from .file_manager import BaseFileManagerDriver
-from .file_manager.local import LocalFileManagerDriver
-from .file_manager.amazon_s3 import AmazonS3FileManagerDriver
-from .file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
-
 from .rerank import BaseRerankDriver
-from .rerank.cohere import CohereRerankDriver
-from .rerank.local import LocalRerankDriver
-
 from .ruleset import BaseRulesetDriver
-from .ruleset.local import LocalRulesetDriver
-from .ruleset.griptape_cloud import GriptapeCloudRulesetDriver
-
 from .text_to_speech import BaseTextToSpeechDriver
-from .text_to_speech.dummy import DummyTextToSpeechDriver
-from .text_to_speech.elevenlabs import ElevenLabsTextToSpeechDriver
-from .text_to_speech.openai import OpenAiTextToSpeechDriver, AzureOpenAiTextToSpeechDriver
-
 from .structure_run import BaseStructureRunDriver
-from .structure_run.griptape_cloud import GriptapeCloudStructureRunDriver
-from .structure_run.local import LocalStructureRunDriver
-
 from .audio_transcription import BaseAudioTranscriptionDriver
-from .audio_transcription.dummy import DummyAudioTranscriptionDriver
-from .audio_transcription.openai import OpenAiAudioTranscriptionDriver
-
 from .observability import BaseObservabilityDriver
-from .observability.no_op import NoOpObservabilityDriver
-from .observability.open_telemetry import OpenTelemetryObservabilityDriver
-from .observability.griptape_cloud import GriptapeCloudObservabilityDriver
-from .observability.datadog import DatadogObservabilityDriver
-
 from .assistant import BaseAssistantDriver
-from .assistant.griptape_cloud import GriptapeCloudAssistantDriver
-from .assistant.openai import OpenAiAssistantDriver
+
+
+def __getattr__(name: str) -> Any:
+    """Lazy-load driver classes on first access.
+
+    This function is called when an attribute is accessed that doesn't exist in the module's namespace.
+    It uses pkgutil to search the driver directory tree and find where the class is actually defined.
+
+    Args:
+        name: The name of the driver class to import
+
+    Returns:
+        The driver class
+
+    Raises:
+        AttributeError: If the driver class cannot be found
+    """
+    if not name.endswith("Driver"):
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+    # Find the module containing this driver
+    module_path = find_driver_module(name)
+
+    if module_path is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+    # Import and cache the driver
+    try:
+        module = importlib.import_module(module_path)
+        driver_class = getattr(module, name)
+        # Cache for future access
+        globals()[name] = driver_class
+        return driver_class
+    except (ImportError, AttributeError) as e:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from e
+
+
+def __dir__() -> list[str]:
+    """Support dir() and IDE autocomplete by listing all available drivers.
+
+    Returns:
+        List of all available names in this module (base classes + discovered drivers)
+    """
+    # Combine eagerly loaded base classes with dynamically discovered drivers
+    base_names = [name for name in globals().keys() if not name.startswith("_")]
+    discovered = discover_all_drivers()
+    return sorted(set(base_names + discovered))
 
 
 __all__ = [
+    # Base classes (eagerly loaded)
+    "BasePromptDriver",
+    "BaseConversationMemoryDriver",
+    "BaseEmbeddingDriver",
+    "BaseVectorStoreDriver",
+    "BaseSqlDriver",
+    "BaseImageGenerationModelDriver",
+    "BaseDiffusionImageGenerationPipelineDriver",
+    "BaseImageGenerationDriver",
+    "BaseMultiModelImageGenerationDriver",
+    "BaseWebScraperDriver",
+    "BaseWebSearchDriver",
+    "BaseEventListenerDriver",
+    "BaseFileManagerDriver",
+    "BaseRerankDriver",
+    "BaseRulesetDriver",
+    "BaseTextToSpeechDriver",
+    "BaseStructureRunDriver",
+    "BaseAudioTranscriptionDriver",
+    "BaseObservabilityDriver",
+    "BaseAssistantDriver",
+    # All concrete drivers are available via lazy loading
+    # (listing them all here for from X import * compatibility)
     "AmazonBedrockCohereEmbeddingDriver",
     "AmazonBedrockImageGenerationDriver",
     "AmazonBedrockPromptDriver",
@@ -152,26 +118,6 @@ __all__ = [
     "AzureOpenAiEmbeddingDriver",
     "AzureOpenAiImageGenerationDriver",
     "AzureOpenAiTextToSpeechDriver",
-    "BaseAssistantDriver",
-    "BaseAudioTranscriptionDriver",
-    "BaseConversationMemoryDriver",
-    "BaseDiffusionImageGenerationPipelineDriver",
-    "BaseEmbeddingDriver",
-    "BaseEventListenerDriver",
-    "BaseFileManagerDriver",
-    "BaseImageGenerationDriver",
-    "BaseImageGenerationModelDriver",
-    "BaseMultiModelImageGenerationDriver",
-    "BaseObservabilityDriver",
-    "BasePromptDriver",
-    "BaseRerankDriver",
-    "BaseRulesetDriver",
-    "BaseSqlDriver",
-    "BaseStructureRunDriver",
-    "BaseTextToSpeechDriver",
-    "BaseVectorStoreDriver",
-    "BaseWebScraperDriver",
-    "BaseWebSearchDriver",
     "BedrockStableDiffusionImageGenerationModelDriver",
     "BedrockTitanImageGenerationModelDriver",
     "CohereEmbeddingDriver",
@@ -194,6 +140,7 @@ __all__ = [
     "GriptapeCloudConversationMemoryDriver",
     "GriptapeCloudEventListenerDriver",
     "GriptapeCloudFileManagerDriver",
+    "GriptapeCloudImageGenerationDriver",
     "GriptapeCloudObservabilityDriver",
     "GriptapeCloudPromptDriver",
     "GriptapeCloudRulesetDriver",
@@ -240,24 +187,6 @@ __all__ = [
     "StableDiffusion3ControlNetImageGenerationPipelineDriver",
     "StableDiffusion3ImageGenerationPipelineDriver",
     "StableDiffusion3Img2ImgImageGenerationPipelineDriver",
-    "StableDiffusion3ControlNetImageGenerationPipelineDriver",
-    "BaseImageGenerationDriver",
-    "BaseMultiModelImageGenerationDriver",
-    "OpenAiImageGenerationDriver",
-    "LeonardoImageGenerationDriver",
-    "AmazonBedrockImageGenerationDriver",
-    "AzureOpenAiImageGenerationDriver",
-    "DummyImageGenerationDriver",
-    "HuggingFacePipelineImageGenerationDriver",
-    "GriptapeCloudImageGenerationDriver",
-    "BaseWebScraperDriver",
-    "TrafilaturaWebScraperDriver",
-    "MarkdownifyWebScraperDriver",
-    "ProxyWebScraperDriver",
-    "BaseWebSearchDriver",
-    "GoogleWebSearchDriver",
-    "DuckDuckGoWebSearchDriver",
-    "ExaWebSearchDriver",
     "TavilyWebSearchDriver",
     "TrafilaturaWebScraperDriver",
     "VoyageAiEmbeddingDriver",

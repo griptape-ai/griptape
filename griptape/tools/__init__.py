@@ -1,35 +1,53 @@
-from .base_tool import BaseTool
-from .base_image_generation_tool import BaseImageGenerationTool
-from .calculator.tool import CalculatorTool
-from .web_search.tool import WebSearchTool
-from .web_scraper.tool import WebScraperTool
-from .sql.tool import SqlTool
-from .email.tool import EmailTool
-from .rest_api.tool import RestApiTool
-from .file_manager.tool import FileManagerTool
-from .vector_store.tool import VectorStoreTool
-from .date_time.tool import DateTimeTool
-from .computer.tool import ComputerTool
-from .prompt_image_generation.tool import PromptImageGenerationTool
-from .variation_image_generation.tool import VariationImageGenerationTool
-from .inpainting_image_generation.tool import InpaintingImageGenerationTool
-from .outpainting_image_generation.tool import OutpaintingImageGenerationTool
-from .griptape_cloud_tool.tool import GriptapeCloudToolTool
-from .structure_run.tool import StructureRunTool
-from .image_query.tool import ImageQueryTool
-from .rag.tool import RagTool
-from .text_to_speech.tool import TextToSpeechTool
-from .audio_transcription.tool import AudioTranscriptionTool
-from .extraction.tool import ExtractionTool
-from .prompt_summary.tool import PromptSummaryTool
-from .query.tool import QueryTool
-from .structured_output.tool import StructuredOutputTool
-from .mcp.tool import MCPTool
+import importlib
+from typing import Any
+
+from griptape.common._lazy_loader import find_class_module, discover_all_classes
+
+
+def __getattr__(name: str) -> Any:
+    """Lazy-load tool classes on first access.
+
+    Args:
+        name: The name of the tool class to import
+
+    Returns:
+        The tool class
+
+    Raises:
+        AttributeError: If the tool class cannot be found
+    """
+    # Find the module containing this tool
+    module_path = find_class_module("griptape.tools", name)
+
+    if module_path is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+    # Import and cache the tool
+    try:
+        module = importlib.import_module(module_path)
+        tool_class = getattr(module, name)
+        # Cache for future access
+        globals()[name] = tool_class
+        return tool_class
+    except (ImportError, AttributeError) as e:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from e
+
+
+def __dir__() -> list[str]:
+    """Support dir() and IDE autocomplete.
+
+    Returns:
+        List of all available tool names
+    """
+    base_names = [name for name in globals().keys() if not name.startswith("_")]
+    discovered = discover_all_classes("griptape.tools")
+    return sorted(set(base_names + discovered))
+
 
 __all__ = [
     "AudioTranscriptionTool",
-    "BaseImageGenerationTool",
     "BaseTool",
+    "BaseImageGenerationTool",
     "CalculatorTool",
     "ComputerTool",
     "DateTimeTool",
@@ -39,16 +57,16 @@ __all__ = [
     "GriptapeCloudToolTool",
     "ImageQueryTool",
     "InpaintingImageGenerationTool",
-    "OutpaintingImageGenerationTool",
     "MCPTool",
+    "OutpaintingImageGenerationTool",
     "PromptImageGenerationTool",
     "PromptSummaryTool",
     "QueryTool",
     "RagTool",
     "RestApiTool",
     "SqlTool",
-    "StructureRunTool",
     "StructuredOutputTool",
+    "StructureRunTool",
     "TextToSpeechTool",
     "VariationImageGenerationTool",
     "VectorStoreTool",

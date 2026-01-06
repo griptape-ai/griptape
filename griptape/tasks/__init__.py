@@ -1,26 +1,48 @@
-from .base_task import BaseTask
-from .base_subtask import BaseSubtask
-from .base_text_input_task import BaseTextInputTask
-from .actions_subtask import ActionsSubtask
-from .output_schema_validation_subtask import OutputSchemaValidationSubtask
-from .prompt_task import PromptTask
-from .toolkit_task import ToolkitTask
-from .text_summary_task import TextSummaryTask
-from .tool_task import ToolTask
-from .rag_task import RagTask
-from .extraction_task import ExtractionTask
-from .base_image_generation_task import BaseImageGenerationTask
-from .code_execution_task import CodeExecutionTask
-from .prompt_image_generation_task import PromptImageGenerationTask
-from .inpainting_image_generation_task import InpaintingImageGenerationTask
-from .outpainting_image_generation_task import OutpaintingImageGenerationTask
-from .variation_image_generation_task import VariationImageGenerationTask
-from .base_audio_generation_task import BaseAudioGenerationTask
-from .text_to_speech_task import TextToSpeechTask
-from .structure_run_task import StructureRunTask
-from .audio_transcription_task import AudioTranscriptionTask
-from .assistant_task import AssistantTask
-from .branch_task import BranchTask
+import importlib
+from typing import Any
+
+from griptape.common._lazy_loader import find_class_module, discover_all_classes
+
+
+def __getattr__(name: str) -> Any:
+    """Lazy-load task classes on first access.
+
+    Args:
+        name: The name of the task class to import
+
+    Returns:
+        The task class
+
+    Raises:
+        AttributeError: If the task class cannot be found
+    """
+    # Find the module containing this task
+    module_path = find_class_module("griptape.tasks", name)
+
+    if module_path is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+    # Import and cache the task
+    try:
+        module = importlib.import_module(module_path)
+        task_class = getattr(module, name)
+        # Cache for future access
+        globals()[name] = task_class
+        return task_class
+    except (ImportError, AttributeError) as e:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}") from e
+
+
+def __dir__() -> list[str]:
+    """Support dir() and IDE autocomplete.
+
+    Returns:
+        List of all available task names
+    """
+    base_names = [name for name in globals().keys() if not name.startswith("_")]
+    discovered = discover_all_classes("griptape.tasks")
+    return sorted(set(base_names + discovered))
+
 
 __all__ = [
     "ActionsSubtask",
