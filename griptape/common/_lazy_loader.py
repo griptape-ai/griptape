@@ -5,7 +5,6 @@ from __future__ import annotations
 import importlib
 import importlib.util
 import pkgutil
-from pathlib import Path
 from typing import Optional
 
 # Driver-specific mapping: class suffix -> driver type directory
@@ -50,10 +49,12 @@ def find_class_module(module_base_path: str, class_name: str, file_suffix: str =
     """
     try:
         base_module = importlib.import_module(module_base_path)
-        base_dir = Path(base_module.__file__).parent
+        if base_module.__file__ is None:
+            return None
+        base_dir = str(base_module.__file__).rsplit("/", 1)[0]
 
         # Walk through all modules in this directory
-        for module_info in pkgutil.walk_packages([str(base_dir)], prefix=f"{module_base_path}."):
+        for module_info in pkgutil.walk_packages([base_dir], prefix=f"{module_base_path}."):
             # Skip if looking for specific suffix and module doesn't match
             if file_suffix and not module_info.name.endswith(file_suffix):
                 continue
@@ -103,10 +104,10 @@ def find_driver_module(class_name: str) -> Optional[str]:
         driver_type_module = importlib.import_module(driver_type_path)
         if driver_type_module.__file__ is None:
             return None
-        driver_type_dir = Path(driver_type_module.__file__).parent
+        driver_type_dir = str(driver_type_module.__file__).rsplit("/", 1)[0]
 
         # Walk through all modules in this driver type directory
-        for module_info in pkgutil.walk_packages([str(driver_type_dir)], prefix=f"{driver_type_path}."):
+        for module_info in pkgutil.walk_packages([driver_type_dir], prefix=f"{driver_type_path}."):
             try:
                 spec = importlib.util.find_spec(module_info.name)
                 if spec is not None:
@@ -120,88 +121,3 @@ def find_driver_module(class_name: str) -> Optional[str]:
         pass
 
     return None
-
-
-def discover_all_classes(module_base_path: str, file_suffix: str = "") -> list[str]:
-    """Scan filesystem to discover all available classes (for __dir__).
-
-    Args:
-        module_base_path: Base module path (e.g., "griptape.structures")
-        file_suffix: File suffix to look for (e.g., ".py" matches all, "_task.py" matches tasks)
-
-    Returns:
-        List of all class names found in the directory
-    """
-    try:
-        base_module = importlib.import_module(module_base_path)
-        if base_module.__file__ is None:
-            return []
-        base_dir = Path(base_module.__file__).parent
-    except Exception:
-        return []
-
-    class_names = []
-
-    for file in base_dir.glob("*.py"):
-        if file.name.startswith("_") or file.name.startswith("base_"):
-            continue
-        if file_suffix and not file.stem.endswith(file_suffix.replace(".py", "")):
-            continue
-
-        # Convert filename to class name (snake_case -> PascalCase)
-        class_name = _snake_to_pascal_case(file.stem)
-        class_names.append(class_name)
-
-    # Also check subdirectories for tools
-    for subdir in base_dir.iterdir():
-        if subdir.is_dir() and not subdir.name.startswith("_"):
-            tool_file = subdir / "tool.py"
-            if tool_file.exists():
-                class_name = _snake_to_pascal_case(subdir.name) + "Tool"
-                class_names.append(class_name)
-
-    return class_names
-
-
-def discover_all_drivers() -> list[str]:
-    """Scan filesystem to discover all available drivers (for __dir__).
-
-    This is a specialized version for drivers that scans all driver type subdirectories.
-
-    Returns:
-        List of all driver class names found in the drivers directory
-    """
-    try:
-        drivers_module = importlib.import_module("griptape.drivers")
-        if drivers_module.__file__ is None:
-            return []
-        drivers_path = Path(drivers_module.__file__).parent
-    except Exception:
-        return []
-
-    driver_classes = []
-
-    for driver_type_dir in drivers_path.iterdir():
-        if not driver_type_dir.is_dir() or driver_type_dir.name.startswith("_"):
-            continue
-
-        for file in driver_type_dir.glob("*_driver.py"):
-            if file.name.startswith("base_"):
-                continue
-            # Convert filename to class name
-            class_name = _snake_to_pascal_case(file.stem)
-            driver_classes.append(class_name)
-
-    return driver_classes
-
-
-def _snake_to_pascal_case(name: str) -> str:
-    """Convert snake_case to PascalCase.
-
-    Args:
-        name: snake_case string (e.g., "prompt_task")
-
-    Returns:
-        PascalCase string (e.g., "PromptTask")
-    """
-    return "".join(word.capitalize() for word in name.split("_"))

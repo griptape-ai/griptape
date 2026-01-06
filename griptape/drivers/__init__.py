@@ -4,7 +4,7 @@ import importlib.util
 from typing import Any
 
 from griptape.utils.deprecation import DeprecationModuleWrapper
-from griptape.common._lazy_loader import find_driver_module, discover_all_drivers
+from griptape.common._lazy_loader import find_driver_module
 
 # Import base classes eagerly (they're always needed for type checking and inheritance)
 from .prompt import BasePromptDriver
@@ -67,15 +67,13 @@ def __dir__() -> list[str]:
     """Support dir() and IDE autocomplete by listing all available drivers.
 
     Returns:
-        List of all available names in this module (base classes + discovered drivers)
+        List of all available names in this module (from __all__)
     """
-    # Combine eagerly loaded base classes with dynamically discovered drivers
-    base_names = [name for name in globals() if not name.startswith("_")]
-    discovered = discover_all_drivers()
-    return sorted(set(base_names + discovered))
+    # Return __all__ which contains the complete and correctly-capitalized list
+    return __all__
 
 
-__all__ = [
+__all__ = [  # pyright: ignore[reportUnsupportedDunderAll]
     # Base classes (eagerly loaded)
     "BasePromptDriver",
     "BaseConversationMemoryDriver",

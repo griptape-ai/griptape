@@ -1,7 +1,7 @@
 import importlib
 from typing import Any
 
-from griptape.common._lazy_loader import find_class_module, discover_all_classes
+from griptape.common._lazy_loader import find_class_module
 
 
 def __getattr__(name: str) -> Any:
@@ -37,14 +37,13 @@ def __dir__() -> list[str]:
     """Support dir() and IDE autocomplete.
 
     Returns:
-        List of all available tool names
+        List of all available tool names (from __all__)
     """
-    base_names = [name for name in globals() if not name.startswith("_")]
-    discovered = discover_all_classes("griptape.tools")
-    return sorted(set(base_names + discovered))
+    # Return __all__ which contains the complete list
+    return __all__
 
 
-__all__ = [
+__all__ = [  # pyright: ignore[reportUnsupportedDunderAll]
     "AudioTranscriptionTool",
     "BaseTool",
     "BaseImageGenerationTool",
