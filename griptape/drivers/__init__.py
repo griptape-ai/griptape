@@ -70,7 +70,7 @@ def __dir__() -> list[str]:
         List of all available names in this module (base classes + discovered drivers)
     """
     # Combine eagerly loaded base classes with dynamically discovered drivers
-    base_names = [name for name in globals().keys() if not name.startswith("_")]
+    base_names = [name for name in globals() if not name.startswith("_")]
     discovered = discover_all_drivers()
     return sorted(set(base_names + discovered))
 

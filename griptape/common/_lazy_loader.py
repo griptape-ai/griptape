@@ -1,5 +1,7 @@
 """Generic lazy loading utilities for Griptape modules."""
 
+from __future__ import annotations
+
 import importlib
 import importlib.util
 import pkgutil

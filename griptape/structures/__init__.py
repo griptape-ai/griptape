@@ -39,7 +39,7 @@ def __dir__() -> list[str]:
     Returns:
         List of all available structure names
     """
-    base_names = [name for name in globals().keys() if not name.startswith("_")]
+    base_names = [name for name in globals() if not name.startswith("_")]
     discovered = discover_all_classes("griptape.structures")
     return sorted(set(base_names + discovered))
 
