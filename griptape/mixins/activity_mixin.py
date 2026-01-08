@@ -2,14 +2,15 @@ from __future__ import annotations
 
 import inspect
 from copy import deepcopy
-from typing import Callable, Optional, Union
+from typing import TYPE_CHECKING, Callable, Optional, Union
 
 from attrs import Attribute, define, field
-from jinja2 import Template
-from pydantic import BaseModel, ValidationError, create_model
 from schema import Schema, SchemaError
 
 from griptape.utils.json_schema_utils import build_strict_schema
+
+if TYPE_CHECKING:
+    from pydantic import BaseModel
 
 
 @define(slots=False)
@@ -77,11 +78,13 @@ class ActivityMixin:
         return getattr(activity, "name")
 
     def activity_description(self, activity: Callable) -> str:
+        from jinja2 import Template
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         return Template(getattr(activity, "config")["description"]).render({"_self": self})
 
     def activity_schema(self, activity: Callable) -> Optional[Union[Schema, type[BaseModel]]]:
+        from pydantic import create_model
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         if getattr(activity, "config")["schema"] is not None:
@@ -114,6 +117,7 @@ class ActivityMixin:
         return json_schema
 
     def validate_activity_schema(self, activity_schema: Union[Schema, type[BaseModel]], params: dict) -> None:
+        from pydantic import ValidationError
         try:
             if isinstance(activity_schema, Schema):
                 activity_schema.validate(params)
