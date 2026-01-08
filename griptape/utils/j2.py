@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 from attrs import Factory, define, field
+from jinja2 import Environment, FileSystemLoader
 
 from .paths import abs_path
-
-if TYPE_CHECKING:
-    from jinja2 import Environment
 
 
 @define(frozen=True)
@@ -16,17 +14,11 @@ class J2:
     templates_dir: str = field(default=abs_path("templates"), kw_only=True)
     environment: Environment = field(
         default=Factory(
-            lambda self: self._create_environment(),
+            lambda self: Environment(loader=FileSystemLoader(self.templates_dir), trim_blocks=True, lstrip_blocks=True),
             takes_self=True,
         ),
         kw_only=True,
     )
-
-    def _create_environment(self) -> Environment:
-        """Lazily import and create a Jinja2 Environment."""
-        from jinja2 import Environment, FileSystemLoader
-
-        return Environment(loader=FileSystemLoader(self.templates_dir), trim_blocks=True, lstrip_blocks=True)
 
     def render(self, **kwargs) -> str:
         if self.template_name is None:
