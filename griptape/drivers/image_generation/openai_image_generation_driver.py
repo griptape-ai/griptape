@@ -90,18 +90,25 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
     ignored_exception_types: tuple[type[Exception], ...] = field(
-        default=Factory(
-            lambda: (
-                import_optional_dependency("openai").BadRequestError,
-                import_optional_dependency("openai").AuthenticationError,
-                import_optional_dependency("openai").PermissionDeniedError,
-                import_optional_dependency("openai").NotFoundError,
-                import_optional_dependency("openai").ConflictError,
-                import_optional_dependency("openai").UnprocessableEntityError,
-            ),
-        ),
+        default=Factory(lambda self: self._default_ignored_exception_types(), takes_self=True),
         kw_only=True,
     )
+
+    def _default_ignored_exception_types(self) -> tuple[type[Exception], ...]:
+        """Lazily import openai and return default exception types.
+
+        This is a method rather than inline in the Factory lambda to avoid calling
+        import_optional_dependency multiple times during serialization introspection.
+        """
+        openai = import_optional_dependency("openai")
+        return (
+            openai.BadRequestError,
+            openai.AuthenticationError,
+            openai.PermissionDeniedError,
+            openai.NotFoundError,
+            openai.ConflictError,
+            openai.UnprocessableEntityError,
+        )
 
     @image_size.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_image_size(self, attribute: str, value: str | None) -> None:

@@ -93,16 +93,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     )
     parallel_tool_calls: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
-        default=Factory(
-            lambda: (
-                import_optional_dependency("openai").BadRequestError,
-                import_optional_dependency("openai").AuthenticationError,
-                import_optional_dependency("openai").PermissionDeniedError,
-                import_optional_dependency("openai").NotFoundError,
-                import_optional_dependency("openai").ConflictError,
-                import_optional_dependency("openai").UnprocessableEntityError,
-            ),
-        ),
+        default=Factory(lambda self: self._default_ignored_exception_types(), takes_self=True),
         kw_only=True,
     )
     modalities: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
@@ -112,6 +103,22 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
+
+    def _default_ignored_exception_types(self) -> tuple[type[Exception], ...]:
+        """Lazily import openai and return default exception types.
+
+        This is a method rather than inline in the Factory lambda to avoid calling
+        import_optional_dependency multiple times during serialization introspection.
+        """
+        openai = import_optional_dependency("openai")
+        return (
+            openai.BadRequestError,
+            openai.AuthenticationError,
+            openai.PermissionDeniedError,
+            openai.NotFoundError,
+            openai.ConflictError,
+            openai.UnprocessableEntityError,
+        )
 
     @lazy_property()
     def client(self) -> openai.OpenAI:
