@@ -8,6 +8,7 @@ from typing_extensions import override
 from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.drivers.assistant import BaseAssistantDriver
 from griptape.events import EventBus, TextChunkEvent
+from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
@@ -22,16 +23,16 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
     @staticmethod
     def _create_event_handler_class() -> type[AssistantEventHandler]:  # pyright: ignore[reportInvalidTypeForm]
         """Lazily import and create EventHandler class."""
-        from openai import AssistantEventHandler
+        AssistantEventHandler = import_optional_dependency("openai").AssistantEventHandler
 
         class EventHandler(AssistantEventHandler):
             @override
-            def on_text_delta(self, delta: TextDelta, snapshot: Text) -> None:  # pyright: ignore[reportUndefinedVariable]
+            def on_text_delta(self, delta, snapshot) -> None:  # pyright: ignore[reportUndefinedVariable]
                 if delta.value is not None:
                     EventBus.publish_event(TextChunkEvent(token=delta.value))
 
             @override
-            def on_tool_call_delta(self, delta: ToolCallDelta, snapshot: ToolCall) -> None:  # pyright: ignore[reportUndefinedVariable]
+            def on_tool_call_delta(self, delta, snapshot) -> None:  # pyright: ignore[reportUndefinedVariable]
                 if delta.type == "code_interpreter" and delta.code_interpreter is not None:
                     if delta.code_interpreter.input:
                         EventBus.publish_event(TextChunkEvent(token=delta.code_interpreter.input))
@@ -55,14 +56,13 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
     )
     auto_create_thread: bool = field(default=True, kw_only=True)
 
-    _client: Optional[openai.OpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
+    _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.OpenAI:  # pyright: ignore[reportInvalidTypeForm]
-        import openai
-
+    def client(self) -> openai.OpenAI:
+        openai = import_optional_dependency("openai")
         return openai.OpenAI(
             base_url=self.base_url,
             api_key=self.api_key,

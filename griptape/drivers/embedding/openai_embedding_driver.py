@@ -6,6 +6,7 @@ from attrs import Factory, define, field
 
 from griptape.drivers.embedding import BaseEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
+from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
@@ -40,14 +41,13 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    _client: Optional[openai.OpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
+    _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.OpenAI:  # pyright: ignore[reportInvalidTypeForm]
-        import openai
-
+    def client(self) -> openai.OpenAI:
+        openai = import_optional_dependency("openai")
         return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
     def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:

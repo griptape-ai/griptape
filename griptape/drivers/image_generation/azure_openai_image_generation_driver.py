@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, Callable, Optional
 from attrs import Factory, define, field
 
 from griptape.drivers.image_generation.openai import OpenAiImageGenerationDriver
+from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
@@ -37,14 +38,13 @@ class AzureOpenAiImageGenerationDriver(OpenAiImageGenerationDriver):
         metadata={"serializable": False},
     )
     api_version: str = field(default="2024-02-01", kw_only=True, metadata={"serializable": True})
-    _client: Optional[openai.AzureOpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
+    _client: Optional[openai.AzureOpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.AzureOpenAI:  # pyright: ignore[reportInvalidTypeForm]
-        import openai
-
+    def client(self) -> openai.AzureOpenAI:
+        openai = import_optional_dependency("openai")
         return openai.AzureOpenAI(
             organization=self.organization,
             api_key=self.api_key,

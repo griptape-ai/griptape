@@ -30,6 +30,7 @@ from griptape.common import (
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
+from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
@@ -92,34 +93,29 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     )
     parallel_tool_calls: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(
-        default=Factory(lambda self: self._default_ignored_exception_types(), takes_self=True),
+        default=Factory(
+            lambda: (
+                import_optional_dependency("openai").BadRequestError,
+                import_optional_dependency("openai").AuthenticationError,
+                import_optional_dependency("openai").PermissionDeniedError,
+                import_optional_dependency("openai").NotFoundError,
+                import_optional_dependency("openai").ConflictError,
+                import_optional_dependency("openai").UnprocessableEntityError,
+            ),
+        ),
         kw_only=True,
     )
     modalities: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
     audio: dict = field(
         default=Factory(lambda: {"voice": "alloy", "format": "pcm16"}), kw_only=True, metadata={"serializable": True}
     )
-    _client: Optional[openai.OpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
+    _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
-    def _default_ignored_exception_types(self) -> tuple[type[Exception], ...]:
-        """Lazily import openai and return default exception types."""
-        import openai
-
-        return (
-            openai.BadRequestError,
-            openai.AuthenticationError,
-            openai.PermissionDeniedError,
-            openai.NotFoundError,
-            openai.ConflictError,
-            openai.UnprocessableEntityError,
-        )
-
     @lazy_property()
-    def client(self) -> openai.OpenAI:  # pyright: ignore[reportInvalidTypeForm]
-        import openai
-
+    def client(self) -> openai.OpenAI:
+        openai = import_optional_dependency("openai")
         return openai.OpenAI(
             base_url=self.base_url,
             api_key=self.api_key,

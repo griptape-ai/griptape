@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Literal, Optional
 from attrs import Factory, define, field, fields_dict
 
 from griptape.drivers.image_generation import BaseImageGenerationDriver
+from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
@@ -40,6 +41,8 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         output_format: Optional and only supported for gpt-image-1. Can be either 'png' or 'jpeg'.
     """
 
+    # These defaults were changed from openai.api_type, openai.api_version, and openai.organization
+    # to None because those module-level attributes don't exist in OpenAI SDK v1.0+
     api_type: Optional[str] = field(default=None, kw_only=True)
     api_version: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
@@ -83,26 +86,22 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         kw_only=True,
         metadata={"serializable": True, "model_allowlist": ["gpt-image-1"]},
     )
-    _client: Optional[openai.OpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
+    _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
     ignored_exception_types: tuple[type[Exception], ...] = field(
-        default=Factory(lambda self: self._default_ignored_exception_types(), takes_self=True),
+        default=Factory(
+            lambda: (
+                import_optional_dependency("openai").BadRequestError,
+                import_optional_dependency("openai").AuthenticationError,
+                import_optional_dependency("openai").PermissionDeniedError,
+                import_optional_dependency("openai").NotFoundError,
+                import_optional_dependency("openai").ConflictError,
+                import_optional_dependency("openai").UnprocessableEntityError,
+            ),
+        ),
         kw_only=True,
     )
-
-    def _default_ignored_exception_types(self) -> tuple[type[Exception], ...]:
-        """Lazily import openai and return default exception types."""
-        import openai
-
-        return (
-            openai.BadRequestError,
-            openai.AuthenticationError,
-            openai.PermissionDeniedError,
-            openai.NotFoundError,
-            openai.ConflictError,
-            openai.UnprocessableEntityError,
-        )
 
     @image_size.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_image_size(self, attribute: str, value: str | None) -> None:
@@ -129,9 +128,8 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
             raise ValueError(f"Image size, {value}, must be one of the following: {allowed_sizes}")
 
     @lazy_property()
-    def client(self) -> openai.OpenAI:  # pyright: ignore[reportInvalidTypeForm]
-        import openai
-
+    def client(self) -> openai.OpenAI:
+        openai = import_optional_dependency("openai")
         return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
     def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
