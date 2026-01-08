@@ -2,9 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Optional
 
-import openai
 from attrs import Factory, define, field
-from openai import AssistantEventHandler
 from typing_extensions import override
 
 from griptape.artifacts import BaseArtifact, TextArtifact
@@ -13,45 +11,58 @@ from griptape.events import EventBus, TextChunkEvent
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
+    import openai
+    from openai import AssistantEventHandler
     from openai.types.beta.threads import Text, TextDelta
     from openai.types.beta.threads.runs import ToolCall, ToolCallDelta
 
 
 @define
 class OpenAiAssistantDriver(BaseAssistantDriver):
-    class EventHandler(AssistantEventHandler):
-        @override
-        def on_text_delta(self, delta: TextDelta, snapshot: Text) -> None:
-            if delta.value is not None:
-                EventBus.publish_event(TextChunkEvent(token=delta.value))
+    @staticmethod
+    def _create_event_handler_class() -> type[AssistantEventHandler]:  # pyright: ignore[reportInvalidTypeForm]
+        """Lazily import and create EventHandler class."""
+        from openai import AssistantEventHandler
 
-        @override
-        def on_tool_call_delta(self, delta: ToolCallDelta, snapshot: ToolCall) -> None:
-            if delta.type == "code_interpreter" and delta.code_interpreter is not None:
-                if delta.code_interpreter.input:
-                    EventBus.publish_event(TextChunkEvent(token=delta.code_interpreter.input))
-                if delta.code_interpreter.outputs:
-                    EventBus.publish_event(TextChunkEvent(token="\n\noutput >"))
-                    for output in delta.code_interpreter.outputs:
-                        if output.type == "logs" and output.logs:
-                            EventBus.publish_event(TextChunkEvent(token=output.logs))
+        class EventHandler(AssistantEventHandler):
+            @override
+            def on_text_delta(self, delta: TextDelta, snapshot: Text) -> None:  # pyright: ignore[reportUndefinedVariable]
+                if delta.value is not None:
+                    EventBus.publish_event(TextChunkEvent(token=delta.value))
+
+            @override
+            def on_tool_call_delta(self, delta: ToolCallDelta, snapshot: ToolCall) -> None:  # pyright: ignore[reportUndefinedVariable]
+                if delta.type == "code_interpreter" and delta.code_interpreter is not None:
+                    if delta.code_interpreter.input:
+                        EventBus.publish_event(TextChunkEvent(token=delta.code_interpreter.input))
+                    if delta.code_interpreter.outputs:
+                        EventBus.publish_event(TextChunkEvent(token="\n\noutput >"))
+                        for output in delta.code_interpreter.outputs:
+                            if output.type == "logs" and output.logs:
+                                EventBus.publish_event(TextChunkEvent(token=output.logs))
+
+        return EventHandler
 
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     thread_id: Optional[str] = field(default=None, kw_only=True)
     assistant_id: str = field(kw_only=True)
-    event_handler: AssistantEventHandler = field(
-        default=Factory(lambda: OpenAiAssistantDriver.EventHandler()), kw_only=True, metadata={"serializable": False}
+    event_handler: AssistantEventHandler = field(  # pyright: ignore[reportInvalidTypeForm]
+        default=Factory(lambda self: self._create_event_handler_class()(), takes_self=True),
+        kw_only=True,
+        metadata={"serializable": False},
     )
     auto_create_thread: bool = field(default=True, kw_only=True)
 
-    _client: Optional[openai.OpenAI] = field(
+    _client: Optional[openai.OpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.OpenAI:
+    def client(self) -> openai.OpenAI:  # pyright: ignore[reportInvalidTypeForm]
+        import openai
+
         return openai.OpenAI(
             base_url=self.base_url,
             api_key=self.api_key,

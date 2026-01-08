@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from typing import Callable, Optional
+from typing import TYPE_CHECKING, Callable, Optional
 
-import openai
 from attrs import Factory, define, field
 
 from griptape.drivers.embedding.openai import OpenAiEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.utils.decorators import lazy_property
+
+if TYPE_CHECKING:
+    import openai
 
 
 @define
@@ -41,12 +43,14 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    _client: Optional[openai.AzureOpenAI] = field(
+    _client: Optional[openai.AzureOpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.AzureOpenAI:
+    def client(self) -> openai.AzureOpenAI:  # pyright: ignore[reportInvalidTypeForm]
+        import openai
+
         return openai.AzureOpenAI(
             organization=self.organization,
             api_key=self.api_key,

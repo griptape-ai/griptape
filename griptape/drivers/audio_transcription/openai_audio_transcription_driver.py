@@ -1,29 +1,33 @@
 from __future__ import annotations
 
 import io
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-import openai
 from attrs import define, field
 
 from griptape.artifacts import AudioArtifact, TextArtifact
 from griptape.drivers.audio_transcription import BaseAudioTranscriptionDriver
 from griptape.utils.decorators import lazy_property
 
+if TYPE_CHECKING:
+    import openai
+
 
 @define
 class OpenAiAudioTranscriptionDriver(BaseAudioTranscriptionDriver):
-    api_type: Optional[str] = field(default=openai.api_type, kw_only=True)
-    api_version: Optional[str] = field(default=openai.api_version, kw_only=True, metadata={"serializable": True})
+    api_type: Optional[str] = field(default=None, kw_only=True)
+    api_version: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    organization: Optional[str] = field(default=openai.organization, kw_only=True, metadata={"serializable": True})
-    _client: Optional[openai.OpenAI] = field(
+    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    _client: Optional[openai.OpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.OpenAI:
+    def client(self) -> openai.OpenAI:  # pyright: ignore[reportInvalidTypeForm]
+        import openai
+
         return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
     def try_run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:

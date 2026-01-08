@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-import openai
 from attrs import Factory, define, field
 
 from griptape.drivers.embedding import BaseEmbeddingDriver
 from griptape.tokenizers import OpenAiTokenizer
 from griptape.utils.decorators import lazy_property
+
+if TYPE_CHECKING:
+    import openai
 
 
 @define
@@ -38,12 +40,14 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    _client: Optional[openai.OpenAI] = field(
+    _client: Optional[openai.OpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.OpenAI:
+    def client(self) -> openai.OpenAI:  # pyright: ignore[reportInvalidTypeForm]
+        import openai
+
         return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
     def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:

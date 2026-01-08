@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import Callable, Optional
+from typing import TYPE_CHECKING, Callable, Optional
 
-import openai
 from attrs import Factory, define, field
 
 from griptape.drivers.text_to_speech.openai import OpenAiTextToSpeechDriver
 from griptape.utils.decorators import lazy_property
+
+if TYPE_CHECKING:
+    import openai
 
 
 @define
@@ -36,12 +38,14 @@ class AzureOpenAiTextToSpeechDriver(OpenAiTextToSpeechDriver):
         metadata={"serializable": False},
     )
     api_version: str = field(default="2024-07-01-preview", kw_only=True, metadata={"serializable": True})
-    _client: Optional[openai.AzureOpenAI] = field(
+    _client: Optional[openai.AzureOpenAI] = field(  # pyright: ignore[reportInvalidTypeForm]
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.AzureOpenAI:
+    def client(self) -> openai.AzureOpenAI:  # pyright: ignore[reportInvalidTypeForm]
+        import openai
+
         return openai.AzureOpenAI(
             organization=self.organization,
             api_key=self.api_key,
