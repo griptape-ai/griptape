@@ -19,6 +19,7 @@ T = TypeVar("T", bound="SerializableMixin")
 def _default(_self: Any, obj: Any) -> Any:
     """Fallback method for JSONEncoder to handle custom serialization."""
     from pydantic import BaseModel
+
     if isinstance(obj, BaseModel):
         return obj.model_dump()
     return getattr(obj.__class__, "to_dict", getattr(_default, "default"))(obj)

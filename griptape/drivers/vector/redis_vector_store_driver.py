@@ -62,6 +62,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Metadata associated with the vector can also be provided.
         """
         import numpy as np
+
         vector_id = vector_id or str_to_hash(str(vector))
         key = self._generate_key(vector_id, namespace)
         bytes_vector = json.dumps(vector).encode("utf-8")
@@ -87,6 +88,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             If the entry is found, it returns an instance of BaseVectorStoreDriver.Entry; otherwise, None is returned.
         """
         import numpy as np
+
         key = self._generate_key(vector_id, namespace)
         result = self.client.hgetall(key)
         vector = np.frombuffer(result[b"vector"], dtype=np.float32).tolist()  # pyright: ignore[reportIndexIssue] https://github.com/redis/redis-py/issues/2399
@@ -128,6 +130,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             A list of BaseVectorStoreDriver.Entry objects, each encapsulating the retrieved vector, its similarity score, metadata, and namespace.
         """
         import numpy as np
+
         search_query = import_optional_dependency("redis.commands.search.query")
 
         filter_expression = f"(@namespace:{{{namespace}}})" if namespace else "*"

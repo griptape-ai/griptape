@@ -17,7 +17,9 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class LocalRerankDriver(BaseRerankDriver, FuturesExecutorMixin):
-    calculate_relatedness: Callable = field(default=Factory(lambda self: self._default_cosine_similarity, takes_self=True))
+    calculate_relatedness: Callable = field(
+        default=Factory(lambda self: self._default_cosine_similarity, takes_self=True)
+    )
     embedding_driver: BaseEmbeddingDriver = field(
         kw_only=True, default=Factory(lambda: Defaults.drivers_config.embedding_driver), metadata={"serializable": True}
     )

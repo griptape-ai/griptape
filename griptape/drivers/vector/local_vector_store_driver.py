@@ -16,7 +16,9 @@ from griptape.drivers.vector import BaseVectorStoreDriver
 class LocalVectorStoreDriver(BaseVectorStoreDriver):
     entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict)
     persist_file: Optional[str] = field(default=None)
-    calculate_relatedness: Callable = field(default=Factory(lambda self: self._default_cosine_similarity, takes_self=True))
+    calculate_relatedness: Callable = field(
+        default=Factory(lambda self: self._default_cosine_similarity, takes_self=True)
+    )
     thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
 
     @staticmethod
