@@ -38,12 +38,12 @@ class AzureOpenAiImageGenerationDriver(OpenAiImageGenerationDriver):
         metadata={"serializable": False},
     )
     api_version: str = field(default="2024-02-01", kw_only=True, metadata={"serializable": True})
-    _client: Optional[openai.AzureOpenAI] = field(
+    _client: Optional["openai.AzureOpenAI"] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.AzureOpenAI:
+    def client(self) -> "openai.AzureOpenAI":
         openai = import_optional_dependency("openai")
         return openai.AzureOpenAI(
             organization=self.organization,

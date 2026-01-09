@@ -29,12 +29,12 @@ class OpenAiTextToSpeechDriver(BaseTextToSpeechDriver):
     base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     api_key: Optional[str] = field(default=None, kw_only=True)
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _client: Optional[openai.OpenAI] = field(
+    _client: Optional["openai.OpenAI"] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.OpenAI:
+    def client(self) -> "openai.OpenAI":
         openai = import_optional_dependency("openai")
         return openai.OpenAI(
             api_key=self.api_key,

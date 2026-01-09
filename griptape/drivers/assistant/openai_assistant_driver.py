@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 @define
 class OpenAiAssistantDriver(BaseAssistantDriver):
     @staticmethod
-    def _create_event_handler_class() -> type[AssistantEventHandler]:  # pyright: ignore[reportInvalidTypeForm]
+    def _create_event_handler_class() -> type["AssistantEventHandler"]:  # pyright: ignore[reportInvalidTypeForm]
         """Lazily import and create EventHandler class."""
         AssistantEventHandler = import_optional_dependency("openai").AssistantEventHandler
 
@@ -47,19 +47,19 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     thread_id: Optional[str] = field(default=None, kw_only=True)
     assistant_id: str = field(kw_only=True)
-    event_handler: AssistantEventHandler = field(  # pyright: ignore[reportInvalidTypeForm]
+    event_handler: "AssistantEventHandler" = field(  # pyright: ignore[reportInvalidTypeForm]
         default=Factory(lambda self: self._create_event_handler_class()(), takes_self=True),
         kw_only=True,
         metadata={"serializable": False},
     )
     auto_create_thread: bool = field(default=True, kw_only=True)
 
-    _client: Optional[openai.OpenAI] = field(
+    _client: Optional["openai.OpenAI"] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> openai.OpenAI:
+    def client(self) -> "openai.OpenAI":
         openai = import_optional_dependency("openai")
         return openai.OpenAI(
             base_url=self.base_url,

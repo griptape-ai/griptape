@@ -86,7 +86,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         kw_only=True,
         metadata={"serializable": True, "model_allowlist": ["gpt-image-1"]},
     )
-    _client: Optional[openai.OpenAI] = field(
+    _client: Optional["openai.OpenAI"] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
     ignored_exception_types: tuple[type[Exception], ...] = field(
@@ -135,7 +135,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
             raise ValueError(f"Image size, {value}, must be one of the following: {allowed_sizes}")
 
     @lazy_property()
-    def client(self) -> openai.OpenAI:
+    def client(self) -> "openai.OpenAI":
         openai = import_optional_dependency("openai")
         return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
