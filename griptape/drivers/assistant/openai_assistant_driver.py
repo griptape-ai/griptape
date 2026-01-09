@@ -111,8 +111,23 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
             return response
 
 
-# Add EventHandler as a class attribute for backwards compatibility with tests
-# This allows OpenAiAssistantDriver.EventHandler to work while keeping lazy loading
-# Note: This will import openai when accessed, but tests mock openai anyway
+# Lazy descriptor for EventHandler to avoid importing openai at module load time
+class _EventHandlerDescriptor:
+    """Descriptor that lazily creates and caches the EventHandler class.
+
+    This provides backwards compatibility with tests that expect
+    OpenAiAssistantDriver.EventHandler to be accessible, while keeping
+    the openai SDK import lazy.
+    """
+
+    def __init__(self) -> None:
+        self._handler_class = None
+
+    def __get__(self, obj, objtype=None):  # noqa: ANN001, ANN204
+        if self._handler_class is None:
+            self._handler_class = OpenAiAssistantDriver._create_event_handler_class()
+        return self._handler_class
+
+
 # Dynamic attribute assignment is not recognized by pyright
-OpenAiAssistantDriver.EventHandler = OpenAiAssistantDriver._create_event_handler_class()  # pyright: ignore[reportAttributeAccessIssue]
+OpenAiAssistantDriver.EventHandler = _EventHandlerDescriptor()  # pyright: ignore[reportAttributeAccessIssue]
