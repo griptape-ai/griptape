@@ -14,8 +14,6 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     import openai
     from openai import AssistantEventHandler
-    from openai.types.beta.threads import Text, TextDelta
-    from openai.types.beta.threads.runs import ToolCall, ToolCallDelta
 
 
 @define
@@ -109,3 +107,9 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
                 {"assistant_id": self.assistant_id, "thread_id": self.thread_id, "message_id": message_id}
             )
             return response
+
+
+# Add EventHandler as a class attribute for backwards compatibility with tests
+# This allows OpenAiAssistantDriver.EventHandler to work while keeping lazy loading
+# Note: This will import openai when accessed, but tests mock openai anyway
+OpenAiAssistantDriver.EventHandler = OpenAiAssistantDriver._create_event_handler_class()
