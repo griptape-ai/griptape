@@ -14,6 +14,8 @@ from griptape.utils.decorators import lazy_property
 if TYPE_CHECKING:
     import openai
     from openai import AssistantEventHandler
+    from openai.types.beta.threads import Text, TextDelta
+    from openai.types.beta.threads.runs import ToolCall, ToolCallDelta
 
 
 @define
@@ -24,15 +26,13 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
         AssistantEventHandler = import_optional_dependency("openai").AssistantEventHandler  # noqa: N806
 
         class EventHandler(AssistantEventHandler):
-            # Pyright can't verify override since base class is in TYPE_CHECKING
             @override
-            def on_text_delta(self, delta, snapshot) -> None:  # pyright: ignore[reportGeneralTypeIssues,reportUndefinedVariable] # noqa: ANN001
+            def on_text_delta(self, delta: TextDelta, snapshot: Text) -> None:  # pyright: ignore[reportGeneralTypeIssues,reportUndefinedVariable] Pyright can't verify override since base class is in TYPE_CHECKING
                 if delta.value is not None:
                     EventBus.publish_event(TextChunkEvent(token=delta.value))
 
-            # Pyright can't verify override since base class is in TYPE_CHECKING
             @override
-            def on_tool_call_delta(self, delta, snapshot) -> None:  # pyright: ignore[reportGeneralTypeIssues,reportUndefinedVariable] # noqa: ANN001
+            def on_tool_call_delta(self, delta: ToolCallDelta, snapshot: ToolCall) -> None:  # pyright: ignore[reportGeneralTypeIssues,reportUndefinedVariable] Pyright can't verify override since base class is in TYPE_CHECKING
                 if delta.type == "code_interpreter" and delta.code_interpreter is not None:
                     if delta.code_interpreter.input:
                         EventBus.publish_event(TextChunkEvent(token=delta.code_interpreter.input))
