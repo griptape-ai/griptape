@@ -2,13 +2,15 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Callable, Optional
 
-import openai
 from attrs import Factory, define, field
 
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
+from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
+    import openai
+
     from griptape.common import PromptStack
 
 
@@ -44,6 +46,7 @@ class AzureOpenAiChatPromptDriver(OpenAiChatPromptDriver):
 
     @lazy_property()
     def client(self) -> openai.AzureOpenAI:
+        openai = import_optional_dependency("openai")
         return openai.AzureOpenAI(
             organization=self.organization,
             api_key=self.api_key,
