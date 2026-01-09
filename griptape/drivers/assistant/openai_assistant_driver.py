@@ -54,12 +54,12 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
     )
     auto_create_thread: bool = field(default=True, kw_only=True)
 
-    _client: Optional["openai.OpenAI"] = field(
+    _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
     @lazy_property()
-    def client(self) -> "openai.OpenAI":
+    def client(self) -> openai.OpenAI:
         openai = import_optional_dependency("openai")
         return openai.OpenAI(
             base_url=self.base_url,

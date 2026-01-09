@@ -100,7 +100,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     audio: dict = field(
         default=Factory(lambda: {"voice": "alloy", "format": "pcm16"}), kw_only=True, metadata={"serializable": True}
     )
-    _client: Optional["openai.OpenAI"] = field(
+    _client: Optional[openai.OpenAI] = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
@@ -121,7 +121,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         )
 
     @lazy_property()
-    def client(self) -> "openai.OpenAI":
+    def client(self) -> openai.OpenAI:
         openai = import_optional_dependency("openai")
         return openai.OpenAI(
             base_url=self.base_url,
