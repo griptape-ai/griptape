@@ -19,18 +19,20 @@ if TYPE_CHECKING:
 @define
 class OpenAiAssistantDriver(BaseAssistantDriver):
     @staticmethod
-    def _create_event_handler_class() -> type["AssistantEventHandler"]:  # pyright: ignore[reportInvalidTypeForm]
+    def _create_event_handler_class() -> type[AssistantEventHandler]:  # pyright: ignore[reportInvalidTypeForm]
         """Lazily import and create EventHandler class."""
-        AssistantEventHandler = import_optional_dependency("openai").AssistantEventHandler
+        AssistantEventHandler = import_optional_dependency("openai").AssistantEventHandler  # noqa: N806
 
         class EventHandler(AssistantEventHandler):
+            # Pyright can't verify override since base class is in TYPE_CHECKING
             @override
-            def on_text_delta(self, delta, snapshot) -> None:  # pyright: ignore[reportUndefinedVariable]
+            def on_text_delta(self, delta, snapshot) -> None:  # pyright: ignore[reportGeneralTypeIssues,reportUndefinedVariable] # noqa: ANN001
                 if delta.value is not None:
                     EventBus.publish_event(TextChunkEvent(token=delta.value))
 
+            # Pyright can't verify override since base class is in TYPE_CHECKING
             @override
-            def on_tool_call_delta(self, delta, snapshot) -> None:  # pyright: ignore[reportUndefinedVariable]
+            def on_tool_call_delta(self, delta, snapshot) -> None:  # pyright: ignore[reportGeneralTypeIssues,reportUndefinedVariable] # noqa: ANN001
                 if delta.type == "code_interpreter" and delta.code_interpreter is not None:
                     if delta.code_interpreter.input:
                         EventBus.publish_event(TextChunkEvent(token=delta.code_interpreter.input))
@@ -47,7 +49,7 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
     organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
     thread_id: Optional[str] = field(default=None, kw_only=True)
     assistant_id: str = field(kw_only=True)
-    event_handler: "AssistantEventHandler" = field(  # pyright: ignore[reportInvalidTypeForm]
+    event_handler: AssistantEventHandler = field(  # pyright: ignore[reportInvalidTypeForm]
         default=Factory(lambda self: self._create_event_handler_class()(), takes_self=True),
         kw_only=True,
         metadata={"serializable": False},
@@ -112,4 +114,5 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
 # Add EventHandler as a class attribute for backwards compatibility with tests
 # This allows OpenAiAssistantDriver.EventHandler to work while keeping lazy loading
 # Note: This will import openai when accessed, but tests mock openai anyway
-OpenAiAssistantDriver.EventHandler = OpenAiAssistantDriver._create_event_handler_class()
+# Dynamic attribute assignment is not recognized by pyright
+OpenAiAssistantDriver.EventHandler = OpenAiAssistantDriver._create_event_handler_class()  # pyright: ignore[reportAttributeAccessIssue]
