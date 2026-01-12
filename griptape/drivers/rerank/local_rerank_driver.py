@@ -4,8 +4,6 @@ import operator
 from typing import TYPE_CHECKING, Callable
 
 from attrs import Factory, define, field
-from numpy import dot
-from numpy.linalg import norm
 
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.rerank import BaseRerankDriver
@@ -19,10 +17,20 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class LocalRerankDriver(BaseRerankDriver, FuturesExecutorMixin):
-    calculate_relatedness: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)))
+    calculate_relatedness: Callable = field(
+        default=Factory(lambda self: self._default_cosine_similarity, takes_self=True)
+    )
     embedding_driver: BaseEmbeddingDriver = field(
         kw_only=True, default=Factory(lambda: Defaults.drivers_config.embedding_driver), metadata={"serializable": True}
     )
+
+    @staticmethod
+    def _default_cosine_similarity(x: list[float], y: list[float]) -> float:
+        """Lazily import numpy and calculate cosine similarity."""
+        from numpy import dot
+        from numpy.linalg import norm
+
+        return dot(x, y) / (norm(x) * norm(y))
 
     def run(self, query: str, artifacts: list[TextArtifact]) -> list[TextArtifact]:
         query_embedding = self.embedding_driver.embed(query, vector_operation="query")

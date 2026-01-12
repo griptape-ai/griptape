@@ -343,6 +343,7 @@ class BaseSchema(Schema):
                 if is_dependency_installed("mypy_boto3_bedrock_runtime")
                 else Any,
                 "voyageai": import_optional_dependency("voyageai") if is_dependency_installed("voyageai") else Any,
+                "openai": import_optional_dependency("openai") if is_dependency_installed("openai") else Any,
                 "Schema": Schema,
                 "BaseModel": BaseModel,
                 **types_override,

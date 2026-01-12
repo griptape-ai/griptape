@@ -7,8 +7,6 @@ import threading
 from typing import Callable, NoReturn, Optional, TextIO
 
 from attrs import Factory, define, field
-from numpy import dot
-from numpy.linalg import norm
 
 from griptape import utils
 from griptape.drivers.vector import BaseVectorStoreDriver
@@ -18,8 +16,18 @@ from griptape.drivers.vector import BaseVectorStoreDriver
 class LocalVectorStoreDriver(BaseVectorStoreDriver):
     entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict)
     persist_file: Optional[str] = field(default=None)
-    calculate_relatedness: Callable = field(default=lambda x, y: dot(x, y) / (norm(x) * norm(y)))
+    calculate_relatedness: Callable = field(
+        default=Factory(lambda self: self._default_cosine_similarity, takes_self=True)
+    )
     thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
+
+    @staticmethod
+    def _default_cosine_similarity(x: list[float], y: list[float]) -> float:
+        """Lazily import numpy and calculate cosine similarity."""
+        from numpy import dot
+        from numpy.linalg import norm
+
+        return dot(x, y) / (norm(x) * norm(y))
 
     def __attrs_post_init__(self) -> None:
         if self.persist_file is not None:

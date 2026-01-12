@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import logging
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-import tiktoken
 from attrs import Factory, define, field
 
 from griptape.tokenizers import BaseTokenizer
+
+if TYPE_CHECKING:
+    import tiktoken
 
 
 @define()
@@ -59,6 +61,8 @@ class OpenAiTokenizer(BaseTokenizer):
 
     @property
     def encoding(self) -> tiktoken.Encoding:
+        import tiktoken
+
         try:
             return tiktoken.encoding_for_model(self.model)
         except KeyError:
@@ -86,6 +90,8 @@ class OpenAiTokenizer(BaseTokenizer):
         Implementation adopted from the official OpenAI notebook:
         https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb.
         """
+        import tiktoken
+
         if isinstance(text, list):
             model = model or self.model
 
