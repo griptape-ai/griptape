@@ -513,3 +513,14 @@ class TestGriptapeCloudPromptDriver:
             },
             stream=True,
         )
+
+    def test_tokenizer_max_input_tokens(self):
+        """Test that tokenizer has high max_input_tokens to prevent client-side truncation.
+
+        The GriptapeCloudPromptDriver uses a SimpleTokenizer with max_input_tokens=500000
+        to prevent premature pruning of conversation context. The actual model token limits
+        are enforced by the Griptape Cloud backend.
+        """
+        driver = GriptapeCloudPromptDriver(api_key="foo")
+
+        assert driver.tokenizer.max_input_tokens == 500000
