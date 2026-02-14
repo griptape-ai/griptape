@@ -38,7 +38,10 @@ class GriptapeCloudPromptDriver(BasePromptDriver):
         default=Factory(
             lambda self: SimpleTokenizer(
                 characters_per_token=4,
-                max_input_tokens=2000,
+                # Set very high to prevent client-side truncation. The Griptape Cloud backend
+                # selects the actual model and enforces its real token limits. This SimpleTokenizer
+                # is only used for client-side estimation and shouldn't prematurely prune context.
+                max_input_tokens=500000,
                 max_output_tokens=self.max_tokens,
             ),
             takes_self=True,
