@@ -139,7 +139,9 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
         negative_prompts: Optional[list[str]] = None,
     ) -> ImageArtifact:
         if self.model not in SUPPORTED_MODELS:
-            raise ValueError(f"Image variation is only supported with {SUPPORTED_MODELS}, but {self.model} was provided")
+            raise ValueError(
+                f"Image variation is only supported with {SUPPORTED_MODELS}, but {self.model} was provided"
+            )
 
         url = griptape_cloud_url(self.base_url, "api/images/variations")
 
