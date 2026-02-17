@@ -18,7 +18,7 @@ class TestGriptapeCloudImageGenerationDriver:
                         "height": 1024,
                         "format": "png",
                         "value": "aW1hZ2UgZGF0YQ==",
-                        "meta": {"model": "gpt-image-1", "prompt": "test prompt"},
+                        "meta": {"model": "gpt-image-1-mini", "prompt": "test prompt"},
                     },
                 }
                 return mock_response
@@ -33,15 +33,9 @@ class TestGriptapeCloudImageGenerationDriver:
         return GriptapeCloudImageGenerationDriver(api_key="foo")
 
     @pytest.fixture()
-    def dall_e_3_driver(self):
+    def gpt_image_1_mini_driver(self):
         return GriptapeCloudImageGenerationDriver(
-            model="dall-e-3", api_key="foo", style="vivid", quality="hd", image_size="1024x1024"
-        )
-
-    @pytest.fixture()
-    def gpt_image_1_driver(self):
-        return GriptapeCloudImageGenerationDriver(
-            model="gpt-image-1",
+            model="gpt-image-1-mini",
             api_key="foo",
             background="transparent",
             moderation="low",
@@ -50,12 +44,24 @@ class TestGriptapeCloudImageGenerationDriver:
             image_size="1024x1024",
         )
 
-    def test_init(self, dall_e_3_driver, gpt_image_1_driver):
-        assert dall_e_3_driver
-        assert gpt_image_1_driver
+    @pytest.fixture()
+    def gpt_image_1_5_driver(self):
+        return GriptapeCloudImageGenerationDriver(
+            model="gpt-image-1.5",
+            api_key="foo",
+            quality="high",
+            image_size="1024x1024",
+        )
 
-    def test_try_text_to_image_dall_e_3(self, dall_e_3_driver):
-        image_artifact = dall_e_3_driver.try_text_to_image(prompts=["test prompt"])
+    def test_init(self, gpt_image_1_mini_driver, gpt_image_1_5_driver):
+        assert gpt_image_1_mini_driver
+        assert gpt_image_1_5_driver
+
+    def test_default_model(self, driver):
+        assert driver.model == "gpt-image-1-mini"
+
+    def test_try_text_to_image_gpt_image_1_mini(self, gpt_image_1_mini_driver):
+        image_artifact = gpt_image_1_mini_driver.try_text_to_image(prompts=["test prompt"])
 
         assert image_artifact.value == b"image data"
         assert image_artifact.mime_type == "image/png"
@@ -63,8 +69,8 @@ class TestGriptapeCloudImageGenerationDriver:
         assert image_artifact.height == 1024
         assert image_artifact.meta["prompt"] == "test prompt"
 
-    def test_try_text_to_image_gpt_image_1(self, gpt_image_1_driver):
-        image_artifact = gpt_image_1_driver.try_text_to_image(prompts=["test prompt"])
+    def test_try_text_to_image_gpt_image_1_5(self, gpt_image_1_5_driver):
+        image_artifact = gpt_image_1_5_driver.try_text_to_image(prompts=["test prompt"])
 
         assert image_artifact.value == b"image data"
         assert image_artifact.mime_type == "image/png"
@@ -72,52 +78,31 @@ class TestGriptapeCloudImageGenerationDriver:
         assert image_artifact.height == 1024
         assert image_artifact.meta["prompt"] == "test prompt"
 
-    def test_dall_e_3_driver_background(self):
-        driver = GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", background="transparent")
-        assert "background" not in driver._build_driver_configuration()
-
-    def test_dall_e_3_driver_moderation(self):
-        driver = GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", moderation="low")
-        assert "moderation" not in driver._build_driver_configuration()
-
-    def test_dall_e_3_driver_output_compression(self):
-        driver = GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", output_compression=0)
-        assert "output_compression" not in driver._build_driver_configuration()
-
-    def test_dall_e_3_driver_output_format(self):
-        driver = GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", output_format="png")
-        assert "output_format" not in driver._build_driver_configuration()
-
-    def test_dall_e_3_driver_landscape(self):
+    def test_invalid_image_size_landscape(self):
         with pytest.raises(ValueError):
-            GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", image_size="1536x1024")
+            GriptapeCloudImageGenerationDriver(model="gpt-image-1-mini", api_key="foo", image_size="1792x1024")
 
-    def test_dall_e_3_driver_portrait(self):
+    def test_invalid_image_size_portrait(self):
         with pytest.raises(ValueError):
-            GriptapeCloudImageGenerationDriver(model="dall-e-3", api_key="foo", image_size="1024x1536")
+            GriptapeCloudImageGenerationDriver(model="gpt-image-1-mini", api_key="foo", image_size="1024x1792")
 
-    def test_gpt_image_1_driver_style(self):
-        driver = GriptapeCloudImageGenerationDriver(model="gpt-image-1", api_key="foo", style="vivid")
-        assert "style" not in driver._build_driver_configuration()
-
-    def test_gpt_image_1_driver_quality(self):
-        driver = GriptapeCloudImageGenerationDriver(model="gpt-image-1", api_key="foo", quality="hd")
-        assert "quality" not in driver._build_driver_configuration()
-
-    def test_gpt_image_1_driver_landscape(self):
-        with pytest.raises(ValueError):
-            GriptapeCloudImageGenerationDriver(model="gpt-image-1", api_key="foo", image_size="1792x1024")
-
-    def test_gpt_image_1_driver_portrait(self):
-        with pytest.raises(ValueError):
-            GriptapeCloudImageGenerationDriver(model="gpt-image-1", api_key="foo", image_size="1024x1792")
-
-    def test_try_image_variation_with_dall_e_3(self, driver):
-        with pytest.raises(ValueError, match="Image variation is only supported with gpt-image-1 model"):
+    def test_try_image_variation_with_unsupported_model(self, driver):
+        driver.model = "some-other-model"
+        with pytest.raises(ValueError, match="Image variation is only supported with"):
             driver.try_image_variation(prompts=[], image=Mock(base64="aW1hZ2UgZGF0YQ=="))
 
-    def test_try_image_variation_with_gpt_image_1(self, gpt_image_1_driver):
-        image_artifact = gpt_image_1_driver.try_image_variation(
+    def test_try_image_variation_with_gpt_image_1_mini(self, gpt_image_1_mini_driver):
+        image_artifact = gpt_image_1_mini_driver.try_image_variation(
+            prompts=["test variation"], image=Mock(base64="aW1hZ2UgZGF0YQ==")
+        )
+
+        assert image_artifact.value == b"image data"
+        assert image_artifact.mime_type == "image/png"
+        assert image_artifact.width == 1024
+        assert image_artifact.height == 1024
+
+    def test_try_image_variation_with_gpt_image_1_5(self, gpt_image_1_5_driver):
+        image_artifact = gpt_image_1_5_driver.try_image_variation(
             prompts=["test variation"], image=Mock(base64="aW1hZ2UgZGF0YQ==")
         )
 
