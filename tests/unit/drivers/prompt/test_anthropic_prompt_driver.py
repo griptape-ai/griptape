@@ -476,6 +476,7 @@ class TestAnthropicPromptDriver:
         call_kwargs = mock_client.return_value.messages.create.call_args
         assert call_kwargs.kwargs["top_p"] == 0.9
         assert call_kwargs.kwargs["top_k"] == 100
+        assert "temperature" not in call_kwargs.kwargs
 
     def test_try_run_without_top_p_and_top_k(self, mock_client, prompt_stack, messages):
         # Given
@@ -491,6 +492,7 @@ class TestAnthropicPromptDriver:
         call_kwargs = mock_client.return_value.messages.create.call_args
         assert "top_p" not in call_kwargs.kwargs
         assert "top_k" not in call_kwargs.kwargs
+        assert call_kwargs.kwargs["temperature"] == 0.1
 
     def test_verify_structured_output_strategy(self):
         assert AnthropicPromptDriver(model="foo", structured_output_strategy="tool")
