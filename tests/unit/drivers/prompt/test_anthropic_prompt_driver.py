@@ -382,8 +382,6 @@ class TestAnthropicPromptDriver:
             model=driver.model,
             max_tokens=1000,
             temperature=0.1,
-            top_p=0.999,
-            top_k=250,
             **{"system": "system-input"} if prompt_stack.system_messages else {},
             **{
                 "tools": self.ANTHROPIC_TOOLS if use_native_tools else {},
@@ -430,8 +428,6 @@ class TestAnthropicPromptDriver:
             max_tokens=1000,
             temperature=0.1,
             stream=True,
-            top_p=0.999,
-            top_k=250,
             **{"system": "system-input"} if prompt_stack.system_messages else {},
             **{
                 "tools": self.ANTHROPIC_TOOLS if use_native_tools else {},
@@ -463,6 +459,38 @@ class TestAnthropicPromptDriver:
 
         event = next(stream)
         assert event.usage.output_tokens == 10
+
+    def test_try_run_with_top_p_and_top_k(self, mock_client, prompt_stack, messages):
+        # Given
+        driver = AnthropicPromptDriver(
+            model="claude-3-haiku",
+            api_key="api-key",
+            top_p=0.9,
+            top_k=100,
+        )
+
+        # When
+        driver.try_run(prompt_stack)
+
+        # Then
+        call_kwargs = mock_client.return_value.messages.create.call_args
+        assert call_kwargs.kwargs["top_p"] == 0.9
+        assert call_kwargs.kwargs["top_k"] == 100
+
+    def test_try_run_without_top_p_and_top_k(self, mock_client, prompt_stack, messages):
+        # Given
+        driver = AnthropicPromptDriver(
+            model="claude-3-haiku",
+            api_key="api-key",
+        )
+
+        # When
+        driver.try_run(prompt_stack)
+
+        # Then
+        call_kwargs = mock_client.return_value.messages.create.call_args
+        assert "top_p" not in call_kwargs.kwargs
+        assert "top_k" not in call_kwargs.kwargs
 
     def test_verify_structured_output_strategy(self):
         assert AnthropicPromptDriver(model="foo", structured_output_strategy="tool")
