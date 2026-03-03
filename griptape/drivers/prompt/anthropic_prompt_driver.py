@@ -65,8 +65,8 @@ class AnthropicPromptDriver(BasePromptDriver):
         default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    top_p: float = field(default=0.999, kw_only=True, metadata={"serializable": True})
-    top_k: int = field(default=250, kw_only=True, metadata={"serializable": True})
+    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
+    top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     structured_output_strategy: StructuredOutputStrategy = field(
@@ -123,12 +123,11 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         params = {
             "model": self.model,
-            "temperature": self.temperature,
             "stop_sequences": self.tokenizer.stop_sequences,
-            "top_p": self.top_p,
-            "top_k": self.top_k,
             "max_tokens": self.max_tokens,
             "messages": messages,
+            **({"top_p": self.top_p} if self.top_p is not None else {"temperature": self.temperature}),
+            **({"top_k": self.top_k} if self.top_k is not None else {}),
             **({"system": system_message} if system_message else {}),
             **self.extra_params,
         }
