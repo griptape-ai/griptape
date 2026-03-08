@@ -1,3 +1,4 @@
+import re
 from contextlib import nullcontext
 
 import pytest
@@ -326,3 +327,42 @@ class TestPromptTask:
             # Should not raise
             task = PromptTask(input="test", output_schema=output_schema)
             assert task.output_schema == output_schema
+
+    @pytest.mark.parametrize(
+        ("initial_schema", "new_schema"),
+        [
+            (None, "invalid_string"),
+            (None, 123),
+            (None, [{"foo": "bar"}]),
+            (schema.Schema({"foo": str}), {"not": "a_schema"}),
+            (create_model("ValidModel", foo=(str, ...)), 42),
+        ],
+    )
+    def test_validate_output_schema_error_reports_new_value(self, initial_schema, new_schema):
+        """Test that the error message reports the type of the rejected value, not the current one.
+
+        Regression test for https://github.com/griptape-ai/griptape/issues/2038:
+        The validator was using `self.output_schema` (old value) in the error message
+        instead of the `output_schema` parameter (the new invalid value).
+        """
+        task = PromptTask(input="test", output_schema=initial_schema)
+
+        with pytest.raises(ValueError, match=re.escape(str(type(new_schema)))):
+            task.output_schema = new_schema
+
+    def test_validate_output_schema_reassignment_valid(self):
+        """Test that reassigning output_schema with a valid schema works."""
+        task = PromptTask(input="test", output_schema=None)
+
+        # Assign a valid Schema
+        task.output_schema = schema.Schema({"foo": str})
+        assert isinstance(task.output_schema, schema.Schema)
+
+        # Reassign to a valid BaseModel subclass
+        model = create_model("NewModel", bar=(int, ...))
+        task.output_schema = model
+        assert task.output_schema is model
+
+        # Reassign back to None
+        task.output_schema = None
+        assert task.output_schema is None
