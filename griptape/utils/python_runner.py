@@ -9,6 +9,12 @@ from attrs import define, field
 
 @define
 class PythonRunner:
+    """Utility class for running arbitrary Python code.
+
+    WARNING: This class uses `exec()` and `eval()` on input strings and should only be used with trusted input.
+    Passing untrusted or LLM-generated code to this class can lead to Arbitrary Code Execution (ACE).
+    """
+
     libs: dict[str, str] = field(factory=dict, kw_only=True)
 
     def run(self, code: str) -> str:

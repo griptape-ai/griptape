@@ -1,3 +1,4 @@
+import shlex
 import subprocess
 
 from attrs import define
@@ -8,7 +9,7 @@ from griptape.artifacts import BaseArtifact, ErrorArtifact, TextArtifact
 @define
 class CommandRunner:
     def run(self, command: str) -> BaseArtifact:
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        process = subprocess.Popen(shlex.split(command), shell=False, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
         stdout, stderr = process.communicate()
 
