@@ -173,7 +173,7 @@ class PromptTask(
             or (isinstance(output_schema, type) and issubclass(output_schema, BaseModel))
         ):
             return
-        raise ValueError(f"Unsupported output schema type: {type(self.output_schema)}")
+        raise ValueError(f"Unsupported output schema type: {type(output_schema)}")
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
