@@ -22,7 +22,16 @@ class TestAnthropicTokenizer:
 
     @pytest.mark.parametrize(
         ("tokenizer", "expected"),
-        [("claude-2.1", 5), ("claude-2.0", 5), ("claude-3-opus", 5), ("claude-3-sonnet", 5), ("claude-3-haiku", 5)],
+        [
+            ("claude-2.1", 5),
+            ("claude-2.0", 5),
+            ("claude-3-opus", 5),
+            ("claude-3-sonnet", 5),
+            ("claude-3-haiku", 5),
+            ("claude-opus-4-6", 5),
+            ("claude-sonnet-4-6", 5),
+            ("claude-haiku-4-5", 5),
+        ],
         indirect=["tokenizer"],
     )
     def test_token_count(self, tokenizer, expected):
@@ -36,6 +45,9 @@ class TestAnthropicTokenizer:
             ("claude-3-opus", 199995),
             ("claude-3-sonnet", 199995),
             ("claude-3-haiku", 199995),
+            ("claude-opus-4-6", 199995),
+            ("claude-sonnet-4-6", 199995),
+            ("claude-haiku-4-5", 199995),
         ],
         indirect=["tokenizer"],
     )
@@ -50,6 +62,9 @@ class TestAnthropicTokenizer:
             ("claude-3-opus", 4091),
             ("claude-3-sonnet", 4091),
             ("claude-3-haiku", 4091),
+            ("claude-opus-4-6", 16379),
+            ("claude-sonnet-4-6", 16379),
+            ("claude-haiku-4-5", 16379),
         ],
         indirect=["tokenizer"],
     )
