@@ -48,9 +48,9 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
         if api_key is None:
             raise ValueError(
                 "No value was found for the 'GT_CLOUD_API_KEY' environment variable. "
-                "This environment variable is required when running in Griptape Cloud for authorization. "
-                "You can generate a Griptape Cloud API Key by visiting https://cloud.griptape.ai/keys . "
-                "Specify it as an environment variable when creating a Managed Structure in Griptape Cloud."
+                "This environment variable is required for authorization. "
+                "Please generate an API key from your service provider. "
+                "Specify it as an environment variable."
             )
 
     def publish_event(self, event: BaseEvent | dict) -> None:
