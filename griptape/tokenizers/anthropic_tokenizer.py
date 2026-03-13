@@ -14,8 +14,20 @@ if TYPE_CHECKING:
 
 @define()
 class AnthropicTokenizer(BaseTokenizer):
-    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {"-4-": 200000, "claude-3": 200000, "claude-2.1": 200000, "claude": 100000}
-    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"-4-": 16384, "claude": 4096}
+    MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
+        "claude-opus-4": 200000,
+        "claude-sonnet-4": 200000,
+        "claude-haiku-4": 200000,
+        "claude-3": 200000,
+        "claude-2.1": 200000,
+        "claude": 100000,
+    }
+    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {
+        "claude-opus-4": 16384,
+        "claude-sonnet-4": 16384,
+        "claude-haiku-4": 16384,
+        "claude": 4096,
+    }
 
     client: Anthropic = field(
         default=Factory(lambda: import_optional_dependency("anthropic").Anthropic()),
