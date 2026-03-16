@@ -63,17 +63,23 @@ Griptape can be installed via multiple methods. Below are two popular approaches
 
 1. A [virtual environment](https://docs.astral.sh/uv/pip/environments/#python-environments) will be automatically created. Activate it:
 
-    ```bash
-    source .venv/bin/activate
-    ```
+    === "macOS / Linux"
 
-    !!! note
+        ```bash
+        source .venv/bin/activate
+        ```
 
-        If you use another shell (like `fish`), this command may differ.
+    === "Windows (PowerShell)"
+
+        ```powershell
+        .venv\Scripts\activate
+        ```
+
+    For other shells, see the [uv documentation](https://docs.astral.sh/uv/pip/environments/#using-a-virtual-environment).
 
     !!! tip
 
-        If you’re using [mise](https://mise.jdx.dev/), you can configure it to automatically [activate your virtual environment](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation).
+        If you're using [mise](https://mise.jdx.dev/), you can configure it to automatically [activate your virtual environment](https://mise.jdx.dev/lang/python.html#automatic-virtualenv-activation).
 
 #### Using Pip
 
