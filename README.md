@@ -11,6 +11,8 @@
 Griptape is a Python framework designed to simplify the development of generative AI (genAI) applications.
 It offers a set of straightforward, flexible abstractions for working with areas such as Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), and much more.
 
+> **Looking for a no-code experience?** Check out [Griptape Nodes](https://www.griptapenodes.com/griptape-nodes-desktop), a visual desktop application for building and running AI workflows.
+
 ## 🛠️ Core Components
 
 ### 🏗️ Structures
