@@ -84,8 +84,14 @@ class TestGriptapeCloudEventListenerDriver:
         )
 
     def test_validate_api_key(self):
-        with pytest.raises(ValueError, match="No value was found"):
+        with pytest.raises(ValueError, match="No value was found") as exc_info:
             GriptapeCloudEventListenerDriver()
+
+        message = str(exc_info.value)
+        assert "required for authorization" in message
+        assert "service provider's key management page" in message
+        assert "https://cloud.griptape.ai/keys" not in message
+        assert "Managed Structure in Griptape Cloud" not in message
 
     def test_validate_run_id(self):
         os.environ["GT_CLOUD_API_KEY"] = "foo bar"
