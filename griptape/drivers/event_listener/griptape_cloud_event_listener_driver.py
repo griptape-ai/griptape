@@ -49,7 +49,8 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
             raise ValueError(
                 "No value was found for the 'GT_CLOUD_API_KEY' environment variable. "
                 "This environment variable is required for authorization. "
-                "Generate an API Key from your service provider's key management page "
+                f"Generate an API Key from your configured Griptape Cloud service's key management page "
+                f"({griptape_cloud_url(self.base_url, 'keys')}) "
                 "and specify it as an environment variable."
             )
 
