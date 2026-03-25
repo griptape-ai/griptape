@@ -322,7 +322,9 @@ class TestActionsSubtask:
         subtask = ActionsSubtask("test")
         subtask._origin_task = object()
 
-        with pytest.raises(Exception, match="ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin."):
+        with pytest.raises(
+            Exception, match="ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin."
+        ):
             subtask._ActionsSubtask__process_action_object(
                 {"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "value"}}}
             )
