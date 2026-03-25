@@ -28,6 +28,7 @@ from griptape.utils import J2, remove_null_values_in_dict_recursively, with_cont
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
     from griptape.tasks import BaseTask
+    from griptape.tools import BaseTool
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -365,7 +366,9 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
 
         return action
 
-    def __normalize_double_wrapped_values(self, tool: object, action_path: str, action_input: dict) -> dict:
+    def __normalize_double_wrapped_values(
+        self, tool: BaseTool | None, action_path: str | None, action_input: dict
+    ) -> dict:
         if tool is None or action_path is None:
             return action_input
 
