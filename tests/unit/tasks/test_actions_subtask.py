@@ -232,6 +232,27 @@ class TestActionsSubtask:
         assert json_dict[0]["path"] == "test"
         assert json_dict[0]["input"] == {"values": {"test": "value"}}
 
+    def test_double_wrapped_values(self):
+        valid_input = TextArtifact(
+            "Thought: need to test\n"
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"values": {"test": "value"}}}}]'
+            "Response: test response\n"
+            "Answer: test output",
+            meta={"is_react_prompt": True},
+        )
+
+        task = PromptTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
+        json_dict = json.loads(subtask.actions_to_json())
+
+        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+
+        subtask.run()
+
+        assert isinstance(subtask.output, ListArtifact)
+        assert subtask.output.value[0].value == "ack value"
+
     def test_execute_tool(self):
         valid_input = TextArtifact(
             "Thought: need to test\n"

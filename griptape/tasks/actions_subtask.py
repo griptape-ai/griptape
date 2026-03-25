@@ -337,6 +337,12 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
         # Load action method; throw exception if the key is not present
         action_path = action_object["path"]
 
+        # Load the action itself
+        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
+            tool = self.origin_task.find_tool(action_name)
+        else:
+            raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
+
         # Load optional input value; don't throw exceptions if key is not present
         if "input" in action_object:
             # Some LLMs don't support nested parameters and therefore won't generate "values".
@@ -349,20 +355,49 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
             # still provide null value, which trips up the validator. The temporary solution that
             # works is to strip all key-values where value is null.
             action_input = remove_null_values_in_dict_recursively(action_object["input"])
+            action_input = self.__normalize_double_wrapped_values(tool, action_path, action_input)
         else:
             action_input = {}
-
-        # Load the action itself
-        if isinstance(self.origin_task, ActionsSubtaskOriginMixin):
-            tool = self.origin_task.find_tool(action_name)
-        else:
-            raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
         action = ToolAction(tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool)
 
         self.__validate_action(action)
 
         return action
+
+    def __normalize_double_wrapped_values(self, tool: object, action_path: str, action_input: dict) -> dict:
+        if tool is None or action_path is None:
+            return action_input
+
+        nested_values = action_input.get("values")
+        if not (
+            isinstance(nested_values, dict)
+            and set(action_input) == {"values"}
+            and set(nested_values) == {"values"}
+            and isinstance(nested_values["values"], dict)
+        ):
+            return action_input
+
+        activity = getattr(tool, action_path, None)
+        if activity is None:
+            return action_input
+
+        activity_schema = tool.activity_schema(activity)
+        if activity_schema is None:
+            return action_input
+
+        flattened_input = {"values": nested_values["values"]}
+
+        try:
+            tool.validate_activity_schema(activity_schema, action_input)
+        except ValueError:
+            try:
+                tool.validate_activity_schema(activity_schema, flattened_input)
+            except ValueError:
+                return action_input
+            return flattened_input
+
+        return action_input
 
     def __validate_action(self, action: ToolAction) -> None:
         if action.tool is None:
