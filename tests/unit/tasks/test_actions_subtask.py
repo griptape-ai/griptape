@@ -303,6 +303,48 @@ class TestActionsSubtask:
 
         assert json_dict[0]["input"] == {"values": {"values": {"test": "value"}}}
 
+    def test_implicit_values_with_no_schema_wraps_raw_input(self):
+        valid_input = TextArtifact(
+            "Thought: need to test\n"
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test_no_schema","input": {"test": "value"}}]'
+            "Response: test response\n"
+            "Answer: test output",
+            meta={"is_react_prompt": True},
+        )
+
+        task = PromptTask(tools=[MockTool()])
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
+        json_dict = json.loads(subtask.actions_to_json())
+
+        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+
+    def test_validate_action_ignores_missing_tool(self):
+        subtask = ActionsSubtask("test")
+
+        subtask._ActionsSubtask__validate_action(ToolAction(tag="foo", name="MockTool", path="test"))
+
+    def test_validate_action_requires_path(self):
+        subtask = ActionsSubtask("test")
+
+        with pytest.raises(Exception, match="ToolAction path not found."):
+            subtask._ActionsSubtask__validate_action(ToolAction(tag="foo", name="MockTool", tool=MockTool()))
+
+    def test_validate_action_requires_activity(self):
+        class ToolWithoutActivity:
+            missing = None
+
+            @staticmethod
+            def activity_schema(_activity) -> schema.Schema:
+                return schema.Schema({"test": str})
+
+        subtask = ActionsSubtask("test")
+
+        with pytest.raises(Exception, match="Activity not found."):
+            subtask._ActionsSubtask__validate_action(
+                ToolAction(tag="foo", name="MockTool", path="missing", tool=ToolWithoutActivity())
+            )
+
     def test_process_action_object_requires_actions_origin(self):
         subtask = ActionsSubtask("test")
         subtask._origin_task = object()
