@@ -30,16 +30,9 @@ class TestCoherePromptDriver:
                     "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },
@@ -50,17 +43,10 @@ class TestCoherePromptDriver:
                 "name": "MockTool_test_callable_schema",
                 "description": "test description",
                 "parameters": {
+                    "description": "Test input",
                     "type": "object",
-                    "properties": {
-                        "values": {
-                            "description": "Test input",
-                            "type": "object",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "additionalProperties": False,
-                        }
-                    },
-                    "required": ["values"],
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "additionalProperties": False,
                     "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -76,16 +62,9 @@ class TestCoherePromptDriver:
                     "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },
@@ -99,16 +78,9 @@ class TestCoherePromptDriver:
                     "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },
@@ -152,16 +124,9 @@ class TestCoherePromptDriver:
                     "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },
@@ -175,16 +140,9 @@ class TestCoherePromptDriver:
                     "$id": "Parameters Schema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },

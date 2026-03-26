@@ -283,7 +283,7 @@ class TestActionsSubtask:
         subtask = task.add_subtask(ActionsSubtask(invalid_input))
         json_dict = json.loads(subtask.actions_to_json())
 
-        assert json_dict[0]["input"] == {"values": {"values": {}}}
+        assert json_dict[0]["input"] == {"values": {}}
         assert isinstance(subtask.actions[0].output, ErrorArtifact)
         assert "Activity input JSON validation error" in subtask.actions[0].output.value
 
@@ -302,21 +302,6 @@ class TestActionsSubtask:
         json_dict = json.loads(subtask.actions_to_json())
 
         assert json_dict[0]["input"] == {"values": {"values": {"test": "value"}}}
-
-    def test_normalize_double_wrapped_values_returns_original_input_without_tool(self):
-        subtask = ActionsSubtask("test")
-        action_input = {"values": {"values": {"test": "value"}}}
-
-        assert subtask._ActionsSubtask__normalize_double_wrapped_values(None, "test", action_input) == action_input
-
-    def test_normalize_double_wrapped_values_returns_original_input_without_activity(self):
-        subtask = ActionsSubtask("test")
-        action_input = {"values": {"values": {"test": "value"}}}
-
-        assert (
-            subtask._ActionsSubtask__normalize_double_wrapped_values(MockTool(), "missing_activity", action_input)
-            == action_input
-        )
 
     def test_process_action_object_requires_actions_origin(self):
         subtask = ActionsSubtask("test")

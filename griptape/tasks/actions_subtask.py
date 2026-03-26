@@ -28,7 +28,6 @@ from griptape.utils import J2, remove_null_values_in_dict_recursively, with_cont
 if TYPE_CHECKING:
     from griptape.memory import TaskMemory
     from griptape.tasks import BaseTask
-    from griptape.tools import BaseTool
 
 logger = logging.getLogger(Defaults.logging_config.logger_name)
 
@@ -346,17 +345,30 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
 
         # Load optional input value; don't throw exceptions if key is not present
         if "input" in action_object:
-            # Some LLMs don't support nested parameters and therefore won't generate "values".
-            # So we need to manually add it here.
-            if "values" not in action_object["input"]:
-                action_object["input"] = {"values": action_object["input"]}
-
             # The schema library has a bug, where something like `Or(str, None)` doesn't get
             # correctly translated into JSON schema. For some optional input fields LLMs sometimes
             # still provide null value, which trips up the validator. The temporary solution that
             # works is to strip all key-values where value is null.
-            action_input = remove_null_values_in_dict_recursively(action_object["input"])
-            action_input = self.__normalize_double_wrapped_values(tool, action_path, action_input)
+            raw_input = remove_null_values_in_dict_recursively(action_object["input"])
+            activity = getattr(tool, action_path, None)
+            activity_schema = tool.activity_schema(activity) if activity is not None else None
+
+            if activity_schema is None:
+                if isinstance(raw_input, dict) and "values" in raw_input:
+                    action_input = raw_input
+                else:
+                    action_input = {"values": raw_input}
+            else:
+                while True:
+                    try:
+                        tool.validate_activity_schema(activity_schema, raw_input)
+                    except ValueError:
+                        if isinstance(raw_input, dict) and "values" in raw_input:
+                            raw_input = raw_input["values"]
+                            continue
+                    break
+
+                action_input = {"values": raw_input}
         else:
             action_input = {}
 
@@ -365,42 +377,6 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
         self.__validate_action(action)
 
         return action
-
-    def __normalize_double_wrapped_values(
-        self, tool: BaseTool | None, action_path: str | None, action_input: dict
-    ) -> dict:
-        if tool is None or action_path is None:
-            return action_input
-
-        nested_values = action_input.get("values")
-        if not (
-            isinstance(nested_values, dict)
-            and set(action_input) == {"values"}
-            and set(nested_values) == {"values"}
-            and isinstance(nested_values["values"], dict)
-        ):
-            return action_input
-
-        activity = getattr(tool, action_path, None)
-        if activity is None:
-            return action_input
-
-        activity_schema = tool.activity_schema(activity)
-        if activity_schema is None:
-            return action_input
-
-        flattened_input = {"values": nested_values["values"]}
-
-        try:
-            tool.validate_activity_schema(activity_schema, action_input)
-        except ValueError:
-            try:
-                tool.validate_activity_schema(activity_schema, flattened_input)
-            except ValueError:
-                return action_input
-            return flattened_input
-
-        return action_input
 
     def __validate_action(self, action: ToolAction) -> None:
         if action.tool is None:
@@ -419,7 +395,7 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
             return
 
         try:
-            action.tool.validate_activity_schema(activity_schema, action.input)
+            action.tool.validate_activity_schema(activity_schema, action.input["values"])
         except ValueError as e:
             logger.debug("Subtask %s\nInvalid action JSON: %s", self.origin_task.id, e)
 

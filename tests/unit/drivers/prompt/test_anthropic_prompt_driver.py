@@ -17,16 +17,9 @@ class TestAnthropicPromptDriver:
             "description": "test description: foo",
             "input_schema": {
                 "additionalProperties": False,
-                "properties": {
-                    "values": {
-                        "additionalProperties": False,
-                        "description": "Test input",
-                        "properties": {"test": {"type": "string"}},
-                        "required": ["test"],
-                        "type": "object",
-                    }
-                },
-                "required": ["values"],
+                "description": "Test input",
+                "properties": {"test": {"type": "string"}},
+                "required": ["test"],
                 "type": "object",
             },
             "name": "MockTool_test",
@@ -35,16 +28,9 @@ class TestAnthropicPromptDriver:
             "description": "test description",
             "input_schema": {
                 "additionalProperties": False,
-                "properties": {
-                    "values": {
-                        "additionalProperties": False,
-                        "description": "Test input",
-                        "properties": {"test": {"type": "string"}},
-                        "required": ["test"],
-                        "type": "object",
-                    }
-                },
-                "required": ["values"],
+                "description": "Test input",
+                "properties": {"test": {"type": "string"}},
+                "required": ["test"],
                 "type": "object",
             },
             "name": "MockTool_test_callable_schema",
@@ -53,16 +39,9 @@ class TestAnthropicPromptDriver:
             "description": "test description: foo",
             "input_schema": {
                 "additionalProperties": False,
-                "properties": {
-                    "values": {
-                        "additionalProperties": False,
-                        "description": "Test input",
-                        "properties": {"test": {"type": "string"}},
-                        "required": ["test"],
-                        "type": "object",
-                    }
-                },
-                "required": ["values"],
+                "description": "Test input",
+                "properties": {"test": {"type": "string"}},
+                "required": ["test"],
                 "type": "object",
             },
             "name": "MockTool_test_error",
@@ -71,16 +50,9 @@ class TestAnthropicPromptDriver:
             "description": "test description: foo",
             "input_schema": {
                 "additionalProperties": False,
-                "properties": {
-                    "values": {
-                        "additionalProperties": False,
-                        "description": "Test input",
-                        "properties": {"test": {"type": "string"}},
-                        "required": ["test"],
-                        "type": "object",
-                    }
-                },
-                "required": ["values"],
+                "description": "Test input",
+                "properties": {"test": {"type": "string"}},
+                "required": ["test"],
                 "type": "object",
             },
             "name": "MockTool_test_exception",
@@ -109,16 +81,9 @@ class TestAnthropicPromptDriver:
             "description": "test description: foo",
             "input_schema": {
                 "additionalProperties": False,
-                "properties": {
-                    "values": {
-                        "additionalProperties": False,
-                        "description": "Test input",
-                        "properties": {"test": {"type": "string"}},
-                        "required": ["test"],
-                        "type": "object",
-                    }
-                },
-                "required": ["values"],
+                "description": "Test input",
+                "properties": {"test": {"type": "string"}},
+                "required": ["test"],
                 "type": "object",
             },
             "name": "MockTool_test_str_output",
@@ -127,16 +92,9 @@ class TestAnthropicPromptDriver:
             "description": "test description",
             "input_schema": {
                 "additionalProperties": False,
-                "properties": {
-                    "values": {
-                        "additionalProperties": False,
-                        "description": "Test input",
-                        "properties": {"test": {"type": "string"}},
-                        "required": ["test"],
-                        "type": "object",
-                    }
-                },
-                "required": ["values"],
+                "description": "Test input",
+                "properties": {"test": {"type": "string"}},
+                "required": ["test"],
                 "type": "object",
             },
             "name": "MockTool_test_without_default_memory",

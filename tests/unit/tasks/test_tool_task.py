@@ -23,16 +23,8 @@ class TestToolTask:
                         "path": {"description": "test description: foo", "const": "test"},
                         "input": {
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -47,16 +39,8 @@ class TestToolTask:
                         "path": {"description": "test description", "const": "test_callable_schema"},
                         "input": {
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -71,16 +55,8 @@ class TestToolTask:
                         "path": {"description": "test description: foo", "const": "test_error"},
                         "input": {
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -95,16 +71,8 @@ class TestToolTask:
                         "path": {"description": "test description: foo", "const": "test_exception"},
                         "input": {
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -141,16 +109,8 @@ class TestToolTask:
                         "path": {"description": "test description: foo", "const": "test_str_output"},
                         "input": {
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -165,16 +125,8 @@ class TestToolTask:
                         "path": {"description": "test description", "const": "test_without_default_memory"},
                         "input": {
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},

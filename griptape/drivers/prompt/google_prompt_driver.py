@@ -203,9 +203,6 @@ class GooglePromptDriver(BasePromptDriver):
             for activity in tool.activities():
                 schema = tool.to_activity_json_schema(activity, "Parameters Schema")
 
-                if "values" in schema["properties"]:
-                    schema = schema["properties"]["values"]
-
                 schema = remove_key_in_dict_recursively(schema, "additionalProperties")
                 schema = remove_key_in_dict_recursively(schema, "title", preserve_under_key="properties")
                 tool_declaration = types.FunctionDeclaration(
