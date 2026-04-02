@@ -15,6 +15,8 @@ if TYPE_CHECKING:
 
 @define
 class ExaWebSearchDriver(BaseWebSearchDriver):
+    """Web search driver using Exa, the fastest and most accurate web search API for AI."""
+
     api_key: str = field(kw_only=True, default=None)
     highlights: bool = field(default=False, kw_only=True)
     use_autoprompt: bool = field(default=False, kw_only=True)
