@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
 
 from rich.logging import RichHandler
 
@@ -72,7 +71,7 @@ def _convert_md_file_snippets(md_file_path: Path, updated_md_content: str, snipp
     logger.debug("Updated %s snippet in %s", snippet_path, md_file_path)
 
 
-def _get_logs_for_snippet_path(snippet_path: Path, logs_dir: Optional[Path] = None) -> Optional[str]:
+def _get_logs_for_snippet_path(snippet_path: Path, logs_dir: Path | None = None) -> str | None:
     """Get the logs for the snippet if they exist.
 
     Args:
