@@ -33,4 +33,5 @@ class BaseMessageContent(ABC, SerializableMixin):
 
     @classmethod
     @abstractmethod
-    def from_deltas(cls, deltas: Sequence[BaseDeltaMessageContent]) -> BaseMessageContent: ...
+    def from_deltas(cls, deltas: Sequence[BaseDeltaMessageContent]) -> BaseMessageContent:
+        pass

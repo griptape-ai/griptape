@@ -194,7 +194,8 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
             )
 
     @abstractmethod
-    def add_task(self, task: BaseTask) -> BaseTask: ...
+    def add_task(self, task: BaseTask) -> BaseTask:
+        pass
 
     @observable
     def run(self, *args) -> Structure:
@@ -226,4 +227,5 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
             t.join()
 
     @abstractmethod
-    def try_run(self, *args) -> Structure: ...
+    def try_run(self, *args) -> Structure:
+        pass

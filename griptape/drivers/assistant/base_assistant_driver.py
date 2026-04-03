@@ -17,4 +17,5 @@ class BaseAssistantDriver(ABC):
         return self.try_run(*args)
 
     @abstractmethod
-    def try_run(self, *args: BaseArtifact) -> TextArtifact: ...
+    def try_run(self, *args: BaseArtifact) -> TextArtifact:
+        pass

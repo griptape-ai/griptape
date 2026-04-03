@@ -14,7 +14,8 @@ if TYPE_CHECKING:
 @define
 class BaseImageGenerationModelDriver(SerializableMixin, ABC):
     @abstractmethod
-    def get_generated_image(self, response: dict) -> bytes: ...
+    def get_generated_image(self, response: dict) -> bytes:
+        pass
 
     @abstractmethod
     def text_to_image_request_parameters(
@@ -24,7 +25,8 @@ class BaseImageGenerationModelDriver(SerializableMixin, ABC):
         image_height: int,
         negative_prompts: list[str] | None = None,
         seed: int | None = None,
-    ) -> dict[str, Any]: ...
+    ) -> dict[str, Any]:
+        pass
 
     @abstractmethod
     def image_variation_request_parameters(
@@ -33,7 +35,8 @@ class BaseImageGenerationModelDriver(SerializableMixin, ABC):
         image: ImageArtifact,
         negative_prompts: list[str] | None = None,
         seed: int | None = None,
-    ) -> dict[str, Any]: ...
+    ) -> dict[str, Any]:
+        pass
 
     @abstractmethod
     def image_inpainting_request_parameters(
@@ -43,7 +46,8 @@ class BaseImageGenerationModelDriver(SerializableMixin, ABC):
         mask: ImageArtifact,
         negative_prompts: list[str] | None = None,
         seed: int | None = None,
-    ) -> dict[str, Any]: ...
+    ) -> dict[str, Any]:
+        pass
 
     @abstractmethod
     def image_outpainting_request_parameters(
@@ -53,4 +57,5 @@ class BaseImageGenerationModelDriver(SerializableMixin, ABC):
         mask: ImageArtifact,
         negative_prompts: list[str] | None = None,
         seed: int | None = None,
-    ) -> dict[str, Any]: ...
+    ) -> dict[str, Any]:
+        pass

@@ -22,7 +22,8 @@ class BaseRulesetDriver(SerializableMixin, ABC):
     raise_not_found: bool = field(default=True, kw_only=True, metadata={"serializable": True})
 
     @abstractmethod
-    def load(self, ruleset_name: str) -> tuple[list[BaseRule], dict[str, Any]]: ...
+    def load(self, ruleset_name: str) -> tuple[list[BaseRule], dict[str, Any]]:
+        pass
 
     def _from_ruleset_dict(self, params_dict: dict[str, Any]) -> tuple[list[BaseRule], dict[str, Any]]:
         return [

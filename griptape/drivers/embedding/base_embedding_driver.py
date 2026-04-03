@@ -80,7 +80,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     @abstractmethod
     def try_embed_chunk(self, chunk: str, *, vector_operation: VectorOperation | None = None) -> list[float]:
         # TODO: Remove for griptape 2.0, subclasses should implement `try_embed_artifact` instead
-        ...
+        pass
 
     def _embed_long_string(self, string: str, *, vector_operation: VectorOperation | None = None) -> list[float]:
         """Embeds a string that is too long to embed in one go.

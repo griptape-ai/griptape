@@ -14,10 +14,13 @@ class BaseSqlDriver(ABC):
         cells: dict[str, Any]
 
     @abstractmethod
-    def execute_query(self, query: str) -> list[RowResult] | None: ...
+    def execute_query(self, query: str) -> list[RowResult] | None:
+        pass
 
     @abstractmethod
-    def execute_query_raw(self, query: str) -> list[dict[str, Any]] | None: ...
+    def execute_query_raw(self, query: str) -> list[dict[str, Any]] | None:
+        pass
 
     @abstractmethod
-    def get_table_schema(self, table_name: str, schema: str | None = None) -> str | None: ...
+    def get_table_schema(self, table_name: str, schema: str | None = None) -> str | None:
+        pass

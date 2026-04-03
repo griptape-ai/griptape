@@ -46,10 +46,12 @@ class BaseEventListenerDriver(FuturesExecutorMixin, ExponentialBackoffMixin, ABC
             self._batch = []
 
     @abstractmethod
-    def try_publish_event_payload(self, event_payload: dict) -> None: ...
+    def try_publish_event_payload(self, event_payload: dict) -> None:
+        pass
 
     @abstractmethod
-    def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None: ...
+    def try_publish_event_payload_batch(self, event_payload_batch: list[dict]) -> None:
+        pass
 
     def _safe_publish_event_payload(self, event_payload: dict) -> None:
         try:

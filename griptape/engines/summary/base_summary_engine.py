@@ -22,4 +22,5 @@ class BaseSummaryEngine(ABC):
         artifacts: ListArtifact,
         *,
         rulesets: list[Ruleset] | None = None,
-    ) -> TextArtifact: ...
+    ) -> TextArtifact:
+        pass

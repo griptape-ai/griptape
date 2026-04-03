@@ -48,10 +48,12 @@ class BaseConversationMemory(SerializableMixin, ABC):
         self.conversation_memory_driver.store(self.runs, self.meta)
 
     @abstractmethod
-    def try_add_run(self, run: Run) -> None: ...
+    def try_add_run(self, run: Run) -> None:
+        pass
 
     @abstractmethod
-    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack: ...
+    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
+        pass
 
     def load_runs(self) -> list[Run]:
         runs, meta = self.conversation_memory_driver.load()

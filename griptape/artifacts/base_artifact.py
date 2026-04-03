@@ -53,4 +53,5 @@ class BaseArtifact(SerializableMixin, ABC):
         return self.to_text().encode(encoding=self.encoding, errors=self.encoding_error_handler)
 
     @abstractmethod
-    def to_text(self) -> str: ...
+    def to_text(self) -> str:
+        pass

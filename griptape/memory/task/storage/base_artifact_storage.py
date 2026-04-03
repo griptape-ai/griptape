@@ -12,10 +12,13 @@ if TYPE_CHECKING:
 @define
 class BaseArtifactStorage(ABC):
     @abstractmethod
-    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> None: ...
+    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> None:
+        pass
 
     @abstractmethod
-    def load_artifacts(self, namespace: str) -> ListArtifact: ...
+    def load_artifacts(self, namespace: str) -> ListArtifact:
+        pass
 
     @abstractmethod
-    def can_store(self, artifact: BaseArtifact) -> bool: ...
+    def can_store(self, artifact: BaseArtifact) -> bool:
+        pass

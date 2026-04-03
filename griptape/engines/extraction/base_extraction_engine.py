@@ -63,4 +63,5 @@ class BaseExtractionEngine(ABC):
         *,
         rulesets: list[Ruleset] | None = None,
         **kwargs,
-    ) -> ListArtifact: ...
+    ) -> ListArtifact:
+        pass

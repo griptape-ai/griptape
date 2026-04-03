@@ -11,4 +11,5 @@ from griptape.engines.rag.modules import BaseRagModule
 @define(kw_only=True)
 class BaseRetrievalRagModule(BaseRagModule, ABC):
     @abstractmethod
-    def run(self, context: RagContext) -> Sequence[BaseArtifact]: ...
+    def run(self, context: RagContext) -> Sequence[BaseArtifact]:
+        pass

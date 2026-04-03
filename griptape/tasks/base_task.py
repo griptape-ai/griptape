@@ -71,7 +71,8 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
 
     @property
     @abstractmethod
-    def input(self) -> BaseArtifact: ...
+    def input(self) -> BaseArtifact:
+        pass
 
     @property
     def parents(self) -> list[BaseTask]:
@@ -222,7 +223,8 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
         return self
 
     @abstractmethod
-    def try_run(self) -> T: ...
+    def try_run(self) -> T:
+        pass
 
     @property
     def full_context(self) -> dict[str, Any]:

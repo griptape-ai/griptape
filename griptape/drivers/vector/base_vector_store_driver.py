@@ -167,7 +167,8 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         return ListArtifact([a for a in artifacts if isinstance(a, TextArtifact)])
 
     @abstractmethod
-    def delete_vector(self, vector_id: str) -> None: ...
+    def delete_vector(self, vector_id: str) -> None:
+        pass
 
     @abstractmethod
     def upsert_vector(
@@ -178,13 +179,16 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         namespace: str | None = None,
         meta: dict | None = None,
         **kwargs,
-    ) -> str: ...
+    ) -> str:
+        pass
 
     @abstractmethod
-    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> Entry | None: ...
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> Entry | None:
+        pass
 
     @abstractmethod
-    def load_entries(self, *, namespace: str | None = None) -> list[Entry]: ...
+    def load_entries(self, *, namespace: str | None = None) -> list[Entry]:
+        pass
 
     def query_vector(
         self,

@@ -57,7 +57,8 @@ class BaseTokenizer(ABC, SerializableMixin):
         return 0
 
     @abstractmethod
-    def count_tokens(self, text: str) -> int: ...
+    def count_tokens(self, text: str) -> int:
+        pass
 
     def _default_max_input_tokens(self) -> int:
         tokens = next(

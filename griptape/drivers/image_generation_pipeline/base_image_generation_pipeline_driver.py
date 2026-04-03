@@ -12,14 +12,18 @@ if TYPE_CHECKING:
 @define
 class BaseDiffusionImageGenerationPipelineDriver(ABC):
     @abstractmethod
-    def prepare_pipeline(self, model: str, device: str | None) -> Any: ...
+    def prepare_pipeline(self, model: str, device: str | None) -> Any:
+        pass
 
     @abstractmethod
-    def make_image_param(self, image: Image | None) -> dict[str, Image] | None: ...
+    def make_image_param(self, image: Image | None) -> dict[str, Image] | None:
+        pass
 
     @abstractmethod
-    def make_additional_params(self, negative_prompts: list[str] | None, device: str | None) -> dict: ...
+    def make_additional_params(self, negative_prompts: list[str] | None, device: str | None) -> dict:
+        pass
 
     @property
     @abstractmethod
-    def output_image_dimensions(self) -> tuple[int, int]: ...
+    def output_image_dimensions(self) -> tuple[int, int]:
+        pass

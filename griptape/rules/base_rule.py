@@ -17,4 +17,5 @@ class BaseRule(ABC, SerializableMixin):
         return self.to_text()
 
     @abstractmethod
-    def to_text(self) -> str: ...
+    def to_text(self) -> str:
+        pass

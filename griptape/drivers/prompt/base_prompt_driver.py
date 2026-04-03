@@ -126,10 +126,12 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         return "\n\n".join(prompt_lines)
 
     @abstractmethod
-    def try_run(self, prompt_stack: PromptStack) -> Message: ...
+    def try_run(self, prompt_stack: PromptStack) -> Message:
+        pass
 
     @abstractmethod
-    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]: ...
+    def try_stream(self, prompt_stack: PromptStack) -> Iterator[DeltaMessage]:
+        pass
 
     def _init_structured_output(self, prompt_stack: PromptStack) -> None:
         from griptape.tools import StructuredOutputTool

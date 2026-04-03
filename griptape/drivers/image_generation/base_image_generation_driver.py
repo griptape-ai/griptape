@@ -85,7 +85,8 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         raise Exception("Failed to run image outpainting")
 
     @abstractmethod
-    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact: ...
+    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
+        pass
 
     @abstractmethod
     def try_image_variation(
@@ -93,7 +94,8 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         prompts: list[str],
         image: ImageArtifact,
         negative_prompts: list[str] | None = None,
-    ) -> ImageArtifact: ...
+    ) -> ImageArtifact:
+        pass
 
     @abstractmethod
     def try_image_inpainting(
@@ -102,7 +104,8 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         image: ImageArtifact,
         mask: ImageArtifact,
         negative_prompts: list[str] | None = None,
-    ) -> ImageArtifact: ...
+    ) -> ImageArtifact:
+        pass
 
     @abstractmethod
     def try_image_outpainting(
@@ -111,4 +114,5 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         image: ImageArtifact,
         mask: ImageArtifact,
         negative_prompts: list[str] | None = None,
-    ) -> ImageArtifact: ...
+    ) -> ImageArtifact:
+        pass

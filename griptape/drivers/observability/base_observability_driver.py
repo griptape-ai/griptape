@@ -25,7 +25,9 @@ class BaseObservabilityDriver(ABC):
         return False
 
     @abstractmethod
-    def observe(self, call: Observable.Call) -> Any: ...
+    def observe(self, call: Observable.Call) -> Any:
+        pass
 
     @abstractmethod
-    def get_span_id(self) -> str | None: ...
+    def get_span_id(self) -> str | None:
+        pass

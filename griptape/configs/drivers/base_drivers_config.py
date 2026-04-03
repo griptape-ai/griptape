@@ -69,32 +69,40 @@ class BaseDriversConfig(ABC, SerializableMixin):
 
     @lazy_property()
     @abstractmethod
-    def prompt_driver(self) -> BasePromptDriver: ...
+    def prompt_driver(self) -> BasePromptDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def image_generation_driver(self) -> BaseImageGenerationDriver: ...
+    def image_generation_driver(self) -> BaseImageGenerationDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def embedding_driver(self) -> BaseEmbeddingDriver: ...
+    def embedding_driver(self) -> BaseEmbeddingDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def vector_store_driver(self) -> BaseVectorStoreDriver: ...
+    def vector_store_driver(self) -> BaseVectorStoreDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def conversation_memory_driver(self) -> BaseConversationMemoryDriver: ...
+    def conversation_memory_driver(self) -> BaseConversationMemoryDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def text_to_speech_driver(self) -> BaseTextToSpeechDriver: ...
+    def text_to_speech_driver(self) -> BaseTextToSpeechDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def audio_transcription_driver(self) -> BaseAudioTranscriptionDriver: ...
+    def audio_transcription_driver(self) -> BaseAudioTranscriptionDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def ruleset_driver(self) -> BaseRulesetDriver: ...
+    def ruleset_driver(self) -> BaseRulesetDriver:
+        pass

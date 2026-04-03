@@ -10,4 +10,5 @@ class BaseWebSearchDriver(ABC):
     results_count: int = field(default=5, kw_only=True)
 
     @abstractmethod
-    def search(self, query: str, **kwargs) -> ListArtifact: ...
+    def search(self, query: str, **kwargs) -> ListArtifact:
+        pass

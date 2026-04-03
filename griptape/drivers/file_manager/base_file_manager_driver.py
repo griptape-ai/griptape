@@ -21,18 +21,21 @@ class BaseFileManagerDriver(ABC):
 
     @property
     @abstractmethod
-    def workdir(self) -> str: ...
+    def workdir(self) -> str:
+        pass
 
     @workdir.setter
     @abstractmethod
-    def workdir(self, value: str) -> None: ...
+    def workdir(self, value: str) -> None:
+        pass
 
     def list_files(self, path: str) -> TextArtifact:
         entries = self.try_list_files(path)
         return TextArtifact("\n".join(list(entries)))
 
     @abstractmethod
-    def try_list_files(self, path: str) -> list[str]: ...
+    def try_list_files(self, path: str) -> list[str]:
+        pass
 
     def load_file(self, path: str) -> BlobArtifact | TextArtifact:
         if self.encoding is None:
@@ -40,7 +43,8 @@ class BaseFileManagerDriver(ABC):
         return TextArtifact(self.try_load_file(path).decode(encoding=self.encoding), encoding=self.encoding)
 
     @abstractmethod
-    def try_load_file(self, path: str) -> bytes: ...
+    def try_load_file(self, path: str) -> bytes:
+        pass
 
     def save_file(self, path: str, value: bytes | str) -> InfoArtifact:
         if isinstance(value, str):
@@ -53,7 +57,8 @@ class BaseFileManagerDriver(ABC):
         return InfoArtifact(f"Successfully saved file at: {location}")
 
     @abstractmethod
-    def try_save_file(self, path: str, value: bytes) -> str: ...
+    def try_save_file(self, path: str, value: bytes) -> str:
+        pass
 
     def load_artifact(self, path: str) -> BaseArtifact:
         response = self.try_load_file(path)

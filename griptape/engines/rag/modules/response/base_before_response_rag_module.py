@@ -9,4 +9,5 @@ from griptape.engines.rag.modules import BaseRagModule
 @define(kw_only=True)
 class BaseBeforeResponseRagModule(BaseRagModule, ABC):
     @abstractmethod
-    def run(self, context: RagContext) -> RagContext: ...
+    def run(self, context: RagContext) -> RagContext:
+        pass

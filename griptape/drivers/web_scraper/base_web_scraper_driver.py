@@ -10,7 +10,9 @@ class BaseWebScraperDriver(ABC):
         return self.extract_page(source)
 
     @abstractmethod
-    def fetch_url(self, url: str) -> str: ...
+    def fetch_url(self, url: str) -> str:
+        pass
 
     @abstractmethod
-    def extract_page(self, page: str) -> TextArtifact: ...
+    def extract_page(self, page: str) -> TextArtifact:
+        pass
