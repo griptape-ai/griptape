@@ -4,7 +4,7 @@ import json
 from abc import ABC
 from importlib import import_module
 from json import JSONEncoder
-from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast
 
 from attrs import Factory, define, field
 
@@ -46,11 +46,11 @@ class SerializableMixin(Generic[T]):
     @classmethod
     def get_schema(
         cls: type[T],
-        subclass_name: Optional[str] = None,
+        subclass_name: str | None = None,
         *,
-        module_name: Optional[str] = None,
-        types_overrides: Optional[dict[str, type]] = None,
-        serializable_overrides: Optional[dict[str, bool]] = None,
+        module_name: str | None = None,
+        types_overrides: dict[str, type] | None = None,
+        serializable_overrides: dict[str, bool] | None = None,
     ) -> Schema:
         """Generates a Marshmallow schema for the class.
 
@@ -82,8 +82,8 @@ class SerializableMixin(Generic[T]):
         cls: type[T],
         data: dict,
         *,
-        types_overrides: Optional[dict[str, type]] = None,
-        serializable_overrides: Optional[dict[str, bool]] = None,
+        types_overrides: dict[str, type] | None = None,
+        serializable_overrides: dict[str, bool] | None = None,
     ) -> T:
         return cast(
             "T",
@@ -100,8 +100,8 @@ class SerializableMixin(Generic[T]):
         cls: type[T],
         data: str,
         *,
-        types_overrides: Optional[dict[str, type]] = None,
-        serializable_overrides: Optional[dict[str, bool]] = None,
+        types_overrides: dict[str, type] | None = None,
+        serializable_overrides: dict[str, bool] | None = None,
     ) -> T:
         return cls.from_dict(
             json.loads(data), types_overrides=types_overrides, serializable_overrides=serializable_overrides
@@ -113,16 +113,16 @@ class SerializableMixin(Generic[T]):
     def to_json(
         self,
         *,
-        types_overrides: Optional[dict[str, type]] = None,
-        serializable_overrides: Optional[dict[str, bool]] = None,
+        types_overrides: dict[str, type] | None = None,
+        serializable_overrides: dict[str, bool] | None = None,
     ) -> str:
         return json.dumps(self.to_dict(types_overrides=types_overrides, serializable_overrides=serializable_overrides))
 
     def to_dict(
         self,
         *,
-        types_overrides: Optional[dict[str, type]] = None,
-        serializable_overrides: Optional[dict[str, bool]] = None,
+        types_overrides: dict[str, type] | None = None,
+        serializable_overrides: dict[str, bool] | None = None,
     ) -> dict:
         schema = BaseSchema.from_attrs_cls(
             self.__class__, types_overrides=types_overrides, serializable_overrides=serializable_overrides

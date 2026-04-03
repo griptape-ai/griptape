@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from textwrap import dedent
-from typing import Optional
 from urllib.parse import urljoin
 
 import schema
@@ -29,13 +28,13 @@ class RestApiTool(BaseTool):
     """
 
     base_url: str = field(kw_only=True)
-    path: Optional[str] = field(default=None, kw_only=True)
+    path: str | None = field(default=None, kw_only=True)
     description: str = field(kw_only=True)
-    request_path_params_schema: Optional[str] = field(default=None, kw_only=True)
-    request_query_params_schema: Optional[str] = field(default=None, kw_only=True)
-    request_body_schema: Optional[str] = field(default=None, kw_only=True)
-    response_body_schema: Optional[str] = field(default=None, kw_only=True)
-    request_headers: Optional[dict[str, str]] = field(default=None, kw_only=True)
+    request_path_params_schema: str | None = field(default=None, kw_only=True)
+    request_query_params_schema: str | None = field(default=None, kw_only=True)
+    request_body_schema: str | None = field(default=None, kw_only=True)
+    response_body_schema: str | None = field(default=None, kw_only=True)
+    request_headers: dict[str, str] | None = field(default=None, kw_only=True)
 
     @property
     def full_url(self) -> str:
@@ -211,7 +210,7 @@ class RestApiTool(BaseTool):
         except exceptions.RequestException as err:
             return ErrorArtifact(str(err))
 
-    def _build_url(self, base_url: str, path: Optional[str] = None, path_params: Optional[list] = None) -> str:
+    def _build_url(self, base_url: str, path: str | None = None, path_params: list | None = None) -> str:
         url = ""
 
         if path:

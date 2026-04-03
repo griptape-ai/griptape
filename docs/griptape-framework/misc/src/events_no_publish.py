@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from griptape.artifacts import ErrorArtifact, InfoArtifact
 from griptape.drivers.event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
 from griptape.events import BaseEvent, EventBus, EventListener, FinishStructureRunEvent
 from griptape.structures import Agent
 
 
-def handler_maybe_drop_events(event: FinishStructureRunEvent) -> Optional[BaseEvent | dict]:
+def handler_maybe_drop_events(event: FinishStructureRunEvent) -> BaseEvent | dict | None:
     if event.structure_id == "some_structure_id":
         # Drop the event if the structure_id is "some_structure_id"
         return None

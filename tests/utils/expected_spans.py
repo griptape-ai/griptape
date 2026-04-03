@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 from opentelemetry.trace import SpanKind, StatusCode
@@ -16,8 +16,8 @@ class ExpectedSpan:
     name: str = field(kw_only=True)
     parent: str = field(kw_only=True)
     status_code: StatusCode = field(kw_only=True)
-    exception: Optional[Exception] = field(default=None, kw_only=True)
-    attributes: Optional[dict] = field(default=None, kw_only=True)
+    exception: Exception | None = field(default=None, kw_only=True)
+    attributes: dict | None = field(default=None, kw_only=True)
 
 
 @define

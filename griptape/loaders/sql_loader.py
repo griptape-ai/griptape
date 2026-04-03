@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
 from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.drivers.sql import BaseSqlDriver
 from griptape.loaders import BaseLoader
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @define

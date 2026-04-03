@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import schema
 from attrs import Attribute, Factory, define, field, validators
@@ -37,8 +37,8 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
         default=Factory(lambda self: self.id, takes_self=True),
         metadata={"serializable": True},
     )
-    criteria: Optional[str] = field(default=None, metadata={"serializable": True})
-    evaluation_steps: Optional[list[str]] = field(default=None, metadata={"serializable": True})
+    criteria: str | None = field(default=None, metadata={"serializable": True})
+    evaluation_steps: list[str] | None = field(default=None, metadata={"serializable": True})
     prompt_driver: BasePromptDriver = field(default=Factory(lambda: Defaults.drivers_config.prompt_driver))
     generate_steps_system_template: J2 = field(default=Factory(lambda: J2("engines/eval/steps/system.j2")))
     generate_steps_user_template: J2 = field(default=Factory(lambda: J2("engines/eval/steps/user.j2")))
@@ -46,7 +46,7 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
     generate_results_user_template: J2 = field(default=Factory(lambda: J2("engines/eval/results/user.j2")))
 
     @criteria.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_criteria(self, _: Attribute, value: Optional[str]) -> None:
+    def validate_criteria(self, _: Attribute, value: str | None) -> None:
         if value is None:
             if self.evaluation_steps is None:
                 raise ValueError("either criteria or evaluation_steps must be specified")
@@ -59,7 +59,7 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
             raise ValueError("criteria must not be empty")
 
     @evaluation_steps.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_evaluation_steps(self, _: Attribute, value: Optional[list[str]]) -> None:
+    def validate_evaluation_steps(self, _: Attribute, value: list[str] | None) -> None:
         if value is None:
             if self.criteria is None:
                 raise ValueError("either evaluation_steps or criteria must be specified")

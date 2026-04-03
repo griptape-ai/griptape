@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from attrs import define, field
 
 from griptape.artifacts import ListArtifact, TextArtifact
@@ -14,8 +12,8 @@ from griptape.utils.decorators import lazy_property
 @define
 class PerplexityWebSearchDriver(BaseWebSearchDriver):
     model: str = field(default="sonar-pro", kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(kw_only=True, default=None)
-    _prompt_driver: Optional[PerplexityPromptDriver] = field(default=None, alias="prompt_driver")
+    api_key: str | None = field(kw_only=True, default=None)
+    _prompt_driver: PerplexityPromptDriver | None = field(default=None, alias="prompt_driver")
 
     @lazy_property()
     def prompt_driver(self) -> PerplexityPromptDriver:

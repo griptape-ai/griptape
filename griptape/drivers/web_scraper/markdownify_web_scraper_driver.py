@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Optional
+from typing import Any
 
 from attrs import Factory, define, field
 
@@ -36,7 +36,7 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
     )
     exclude_classes: list[str] = field(default=Factory(list), kw_only=True)
     exclude_ids: list[str] = field(default=Factory(list), kw_only=True)
-    timeout: Optional[int] = field(default=None, kw_only=True)
+    timeout: int | None = field(default=None, kw_only=True)
 
     def fetch_url(self, url: str) -> str:
         sync_playwright = import_optional_dependency("playwright.sync_api").sync_playwright

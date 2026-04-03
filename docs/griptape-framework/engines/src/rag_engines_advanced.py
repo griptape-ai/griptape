@@ -41,7 +41,7 @@ sites = [
 site_artifacts = list(web_loader.load_collection([site["url"] for site in sites]).values())
 
 # Set a reference on each artifact so that the FootnotePromptResponseRagModule can generate footnotes.
-for site_arifact, site in zip(site_artifacts, sites):
+for site_arifact, site in zip(site_artifacts, sites, strict=False):
     site_arifact.reference = Reference(title=site["title"], url=site["url"])
 
 # Chunk each site artifact.

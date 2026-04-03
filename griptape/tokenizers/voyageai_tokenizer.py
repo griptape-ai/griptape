@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -22,7 +22,7 @@ class VoyageAiTokenizer(BaseTokenizer):
     }
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {"voyage": 0}
 
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
     client: Client = field(
         default=Factory(
             lambda self: import_optional_dependency("voyageai").Client(api_key=self.api_key),

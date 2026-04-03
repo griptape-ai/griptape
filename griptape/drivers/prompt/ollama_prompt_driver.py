@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -49,7 +49,7 @@ class OllamaPromptDriver(BasePromptDriver):
     """
 
     model: str = field(kw_only=True, metadata={"serializable": True})
-    host: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    host: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(
         default=Factory(
             lambda self: SimpleTokenizer(
@@ -73,7 +73,7 @@ class OllamaPromptDriver(BasePromptDriver):
         kw_only=True,
     )
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    _client: Optional[Client] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: Client | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Client:
@@ -212,7 +212,7 @@ class OllamaPromptDriver(BasePromptDriver):
                 ollama_tools.append(ollama_tool)
         return ollama_tools
 
-    def __to_ollama_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
+    def __to_ollama_role(self, message: Message, message_content: BaseMessageContent | None = None) -> str:
         if message.is_system():
             return "system"
         if message.is_assistant():

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -34,16 +34,14 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
     DEFAULT_MODEL = "text-embedding-3-small"
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serializable": True})
-    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    base_url: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
+    organization: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     tokenizer: OpenAiTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    _client: Optional[openai.OpenAI] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
+    _client: openai.OpenAI | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> openai.OpenAI:

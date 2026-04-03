@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, NoReturn, Optional
+from typing import TYPE_CHECKING, Any, NoReturn
 
 import requests
 from attrs import Factory, define, field
@@ -46,9 +46,9 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         raise NotImplementedError(f"{self.__class__.__name__} does not support vector upsert.")
@@ -56,9 +56,9 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_text_artifact(
         self,
         artifact: TextArtifact,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        vector_id: Optional[str] = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
+        vector_id: str | None = None,
         **kwargs,
     ) -> str:
         raise NotImplementedError(f"{self.__class__.__name__} does not support text artifact upsert.")
@@ -66,32 +66,32 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_text(
         self,
         string: str,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         raise NotImplementedError(f"{self.__class__.__name__} does not support text upsert.")
 
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry:
         raise NotImplementedError(f"{self.__class__.__name__} does not support entry loading.")
 
-    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         raise NotImplementedError(f"{self.__class__.__name__} does not support entry loading.")
 
-    def load_artifacts(self, *, namespace: Optional[str] = None) -> ListArtifact:
+    def load_artifacts(self, *, namespace: str | None = None) -> ListArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support Artifact loading.")
 
     def query(
         self,
         query: str | TextArtifact | ImageArtifact,
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
-        include_vectors: Optional[bool] = None,
-        distance_metric: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
+        include_vectors: bool | None = None,
+        distance_metric: str | None = None,
         # GriptapeCloudVectorStoreDriver-specific params:
-        filter: Optional[dict] = None,  # noqa: A002
+        filter: dict | None = None,  # noqa: A002
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         """Performs a query on the Knowledge Base.

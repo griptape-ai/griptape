@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from concurrent import futures
 from graphlib import TopologicalSorter
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define
 
@@ -20,11 +20,11 @@ if TYPE_CHECKING:
 @define
 class Workflow(Structure, FuturesExecutorMixin):
     @property
-    def input_task(self) -> Optional[BaseTask]:
+    def input_task(self) -> BaseTask | None:
         return self.order_tasks()[0] if self.tasks else None
 
     @property
-    def output_task(self) -> Optional[BaseTask]:
+    def output_task(self) -> BaseTask | None:
         return self.order_tasks()[-1] if self.tasks else None
 
     @property

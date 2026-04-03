@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Literal
 
 from attrs import Factory, define, field
 
@@ -56,7 +56,7 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """
 
     temperature: float = field(default=0.1, metadata={"serializable": True})
-    max_tokens: Optional[int] = field(default=None, metadata={"serializable": True})
+    max_tokens: int | None = field(default=None, metadata={"serializable": True})
     ignored_exception_types: tuple[type[Exception], ...] = field(default=Factory(lambda: (ImportError, ValueError)))
     model: str = field(metadata={"serializable": True})
     tokenizer: BaseTokenizer

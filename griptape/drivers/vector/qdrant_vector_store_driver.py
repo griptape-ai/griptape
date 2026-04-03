@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 import uuid
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -41,29 +41,27 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         content_payload_key: The key for the content payload in the metadata. Defaults: 'data'.
     """
 
-    location: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    host: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    path: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    location: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    url: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    host: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    path: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     port: int = field(default=6333, kw_only=True, metadata={"serializable": True})
     grpc_port: int = field(default=6334, kw_only=True, metadata={"serializable": True})
     prefer_grpc: bool = field(default=False, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     https: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    prefix: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    force_disable_check_same_thread: Optional[bool] = field(
+    prefix: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    force_disable_check_same_thread: bool | None = field(
         default=False,
         kw_only=True,
         metadata={"serializable": True},
     )
-    timeout: Optional[int] = field(default=5, kw_only=True, metadata={"serializable": True})
+    timeout: int | None = field(default=5, kw_only=True, metadata={"serializable": True})
     distance: str = field(default=DEFAULT_DISTANCE, kw_only=True, metadata={"serializable": True})
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
-    vector_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    vector_name: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     content_payload_key: str = field(default=CONTENT_PAYLOAD_KEY, kw_only=True, metadata={"serializable": True})
-    _client: Optional[QdrantClient] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
+    _client: QdrantClient | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> QdrantClient:
@@ -99,8 +97,8 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
@@ -136,10 +134,10 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        content: Optional[str] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
+        content: str | None = None,
         **kwargs,
     ) -> str:
         """Upsert vectors into the Qdrant collection.
@@ -172,7 +170,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
         self.client.upsert(collection_name=self.collection_name, points=points)
         return vector_id
 
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         """Load a vector entry from the Qdrant collection based on its ID.
 
         Parameters:
@@ -194,7 +192,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             )
         return None
 
-    def load_entries(self, *, namespace: Optional[str] = None, **kwargs) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: str | None = None, **kwargs) -> list[BaseVectorStoreDriver.Entry]:
         """Load vector entries from the Qdrant collection.
 
         Parameters:

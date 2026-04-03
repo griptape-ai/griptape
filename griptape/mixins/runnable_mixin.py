@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Generic, Optional, TypeVar, cast
+from typing import TYPE_CHECKING, Any, Generic, TypeVar, cast
 
 from attrs import define, field
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 # Generics magic that allows us to reference the type of the class that is implementing the mixin
 T = TypeVar("T", bound="RunnableMixin")
@@ -20,8 +23,8 @@ class RunnableMixin(ABC, Generic[T]):
         on_after_run: Optional callback that is called at the very end of the `run` method.
     """
 
-    on_before_run: Optional[Callable[[T], None]] = field(kw_only=True, default=None)
-    on_after_run: Optional[Callable[[T], None]] = field(kw_only=True, default=None)
+    on_before_run: Callable[[T], None] | None = field(kw_only=True, default=None)
+    on_after_run: Callable[[T], None] | None = field(kw_only=True, default=None)
 
     def before_run(self, *args, **kwargs) -> Any:
         if self.on_before_run is not None:

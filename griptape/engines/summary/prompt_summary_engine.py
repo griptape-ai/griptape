@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, cast
 
 from attrs import Attribute, Factory, define, field
 
@@ -51,14 +51,14 @@ class PromptSummaryEngine(BaseSummaryEngine):
             - self.prompt_driver.tokenizer.max_input_tokens * self.max_token_multiplier,
         )
 
-    def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: Optional[list[Ruleset]] = None) -> TextArtifact:
+    def summarize_artifacts(self, artifacts: ListArtifact, *, rulesets: list[Ruleset] | None = None) -> TextArtifact:
         return self.summarize_artifacts_rec(cast("list[TextArtifact]", artifacts.value), None, rulesets=rulesets)
 
     def summarize_artifacts_rec(
         self,
         artifacts: list[TextArtifact],
-        summary: Optional[str] = None,
-        rulesets: Optional[list[Ruleset]] = None,
+        summary: str | None = None,
+        rulesets: list[Ruleset] | None = None,
     ) -> TextArtifact:
         if not artifacts:
             if summary is None:

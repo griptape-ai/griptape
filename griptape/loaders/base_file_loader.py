@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from os import PathLike
-from typing import TYPE_CHECKING, TypeVar, Union
+from typing import TYPE_CHECKING, TypeVar
 
 from attrs import Factory, define, field
 
@@ -17,7 +17,7 @@ A = TypeVar("A", bound=BaseArtifact)
 
 
 @define
-class BaseFileLoader(BaseLoader[Union[str, PathLike], bytes, A], ABC):
+class BaseFileLoader(BaseLoader[str | PathLike, bytes, A], ABC):
     file_manager_driver: BaseFileManagerDriver = field(
         default=Factory(lambda: LocalFileManagerDriver()),
         kw_only=True,

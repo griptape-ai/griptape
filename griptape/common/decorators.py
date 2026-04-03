@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import functools
-from typing import Any, Callable, Optional, TypeVar, cast, overload
+from typing import TYPE_CHECKING, Any, TypeVar, cast, overload
 
 import wrapt
 from typing_extensions import ParamSpec
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -18,7 +21,7 @@ def observable(wrapped: None = None, **dkwargs: Any) -> Callable[[Callable[P, T]
 def observable(wrapped: Callable[P, T], **dkwargs: Any) -> Callable[P, T]: ...
 
 
-def observable(wrapped: Optional[Callable[P, T] | Any] = None, **dkwargs: Any) -> Any:
+def observable(wrapped: Callable[P, T] | Any | None = None, **dkwargs: Any) -> Any:
     if wrapped is None:
         return functools.partial(observable, **dkwargs)
 

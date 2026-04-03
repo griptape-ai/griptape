@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Literal
 
 from attrs import define, field
 
@@ -24,14 +24,12 @@ class OpenAiTextToSpeechDriver(BaseTextToSpeechDriver):
     format: Literal["mp3", "opus", "aac", "flac"] = field(default="mp3", kw_only=True, metadata={"serializable": True})
     # These defaults were changed from openai.api_type, openai.api_version, and openai.organization
     # to None because those module-level attributes don't exist in OpenAI SDK v1.0+
-    api_type: Optional[str] = field(default=None, kw_only=True)
-    api_version: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True)
-    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _client: Optional[openai.OpenAI] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
+    api_type: str | None = field(default=None, kw_only=True)
+    api_version: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    base_url: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: str | None = field(default=None, kw_only=True)
+    organization: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    _client: openai.OpenAI | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> openai.OpenAI:

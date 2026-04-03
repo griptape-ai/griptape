@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Optional
 
 from attrs import Attribute, Factory, define, field
 
@@ -38,7 +37,7 @@ class BaseChunker(ABC):
 
         return [TextArtifact(c, reference=reference) for c in self._chunk_recursively(text_to_chunk)]
 
-    def _chunk_recursively(self, chunk: str, current_separator: Optional[ChunkSeparator] = None) -> list[str]:
+    def _chunk_recursively(self, chunk: str, current_separator: ChunkSeparator | None = None) -> list[str]:
         token_count = self.tokenizer.count_tokens(chunk)
         half_token_count = token_count // 2
 

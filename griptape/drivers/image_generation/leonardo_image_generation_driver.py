@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import time
-from typing import Literal, Optional
+from typing import Literal
 
 import requests
 from attrs import Factory, define, field
@@ -37,17 +37,17 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     max_attempts: int = field(default=10, kw_only=True, metadata={"serializable": True})
     image_width: int = field(default=512, kw_only=True, metadata={"serializable": True})
     image_height: int = field(default=512, kw_only=True, metadata={"serializable": True})
-    steps: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    init_strength: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
+    steps: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    seed: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    init_strength: float | None = field(default=None, kw_only=True, metadata={"serializable": True})
     control_net: bool = field(default=False, kw_only=True, metadata={"serializable": True})
-    control_net_type: Optional[Literal["POSE", "CANNY", "DEPTH"]] = field(
+    control_net_type: Literal["POSE", "CANNY", "DEPTH"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
     )
 
-    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         if negative_prompts is None:
             negative_prompts = []
 
@@ -70,7 +70,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         if negative_prompts is None:
             negative_prompts = []
@@ -100,7 +100,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
 
@@ -109,7 +109,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
@@ -135,7 +135,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         self,
         prompts: list[str],
         negative_prompts: list[str],
-        init_image_id: Optional[str] = None,
+        init_image_id: str | None = None,
     ) -> str:
         prompt = ", ".join(prompts)
         negative_prompt = ", ".join(negative_prompts)

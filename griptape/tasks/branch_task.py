@@ -1,16 +1,19 @@
 from __future__ import annotations
 
-from typing import Callable, Union
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
 from griptape.artifacts import InfoArtifact, ListArtifact
 from griptape.tasks import BaseTask, CodeExecutionTask
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 
 @define
-class BranchTask(CodeExecutionTask[Union[InfoArtifact, ListArtifact[InfoArtifact]]]):
-    on_run: Callable[[BranchTask], Union[InfoArtifact, ListArtifact[InfoArtifact]]] = field(kw_only=True)
+class BranchTask(CodeExecutionTask[InfoArtifact | ListArtifact[InfoArtifact]]):
+    on_run: Callable[[BranchTask], InfoArtifact | ListArtifact[InfoArtifact]] = field(kw_only=True)
 
     def try_run(self) -> InfoArtifact | ListArtifact[InfoArtifact]:
         result = self.on_run(self)

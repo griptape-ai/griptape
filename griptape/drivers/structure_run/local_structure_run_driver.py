@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
 from griptape.drivers.structure_run.base_structure_run_driver import BaseStructureRunDriver
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.artifacts import BaseArtifact
     from griptape.structures import Structure
 

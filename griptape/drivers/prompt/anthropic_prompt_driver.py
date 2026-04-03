@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, Factory, define, field
 
@@ -59,21 +59,21 @@ class AnthropicPromptDriver(BasePromptDriver):
         client: Custom `Anthropic` client.
     """
 
-    api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
+    api_key: str | None = field(kw_only=True, default=None, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: AnthropicTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
-    top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    top_p: float | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    top_k: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: dict = field(default=Factory(lambda: {"type": "auto"}), kw_only=True, metadata={"serializable": False})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     structured_output_strategy: StructuredOutputStrategy = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
     max_tokens: int = field(default=1000, kw_only=True, metadata={"serializable": True})
-    _client: Optional[Client] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: Client | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Client:

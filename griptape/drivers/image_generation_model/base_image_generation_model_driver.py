@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define
 
@@ -22,8 +22,8 @@ class BaseImageGenerationModelDriver(SerializableMixin, ABC):
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict[str, Any]: ...
 
     @abstractmethod
@@ -31,8 +31,8 @@ class BaseImageGenerationModelDriver(SerializableMixin, ABC):
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict[str, Any]: ...
 
     @abstractmethod
@@ -41,8 +41,8 @@ class BaseImageGenerationModelDriver(SerializableMixin, ABC):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict[str, Any]: ...
 
     @abstractmethod
@@ -51,6 +51,6 @@ class BaseImageGenerationModelDriver(SerializableMixin, ABC):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict[str, Any]: ...

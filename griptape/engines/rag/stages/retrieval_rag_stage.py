@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import itertools
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -19,8 +19,8 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class RetrievalRagStage(BaseRagStage):
     retrieval_modules: list[BaseRetrievalRagModule] = field()
-    rerank_module: Optional[BaseRerankRagModule] = field(default=None)
-    max_chunks: Optional[int] = field(default=None)
+    rerank_module: BaseRerankRagModule | None = field(default=None)
+    max_chunks: int | None = field(default=None)
 
     @property
     def modules(self) -> list[BaseRagModule]:

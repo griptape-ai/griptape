@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from attrs import define, field
 
 from griptape.common import BaseDeltaMessageContent
@@ -18,7 +16,7 @@ class AudioDeltaMessageContent(BaseDeltaMessageContent):
         expires_at: The Unix timestamp (in seconds) for when this audio data will no longer be accessible.
     """
 
-    id: Optional[str] = field(default=None, metadata={"serializable": True})
-    data: Optional[str] = field(default=None, metadata={"serializable": True})
-    transcript: Optional[str] = field(default=None, metadata={"serializable": True})
-    expires_at: Optional[int] = field(default=None, metadata={"serializable": True})
+    id: str | None = field(default=None, metadata={"serializable": True})
+    data: str | None = field(default=None, metadata={"serializable": True})
+    transcript: str | None = field(default=None, metadata={"serializable": True})
+    expires_at: int | None = field(default=None, metadata={"serializable": True})

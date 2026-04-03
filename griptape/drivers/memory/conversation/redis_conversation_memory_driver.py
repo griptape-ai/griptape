@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -37,7 +37,7 @@ class RedisConversationMemoryDriver(BaseConversationMemoryDriver):
     username: str = field(kw_only=True, default="default", metadata={"serializable": False})
     port: int = field(kw_only=True, metadata={"serializable": True})
     db: int = field(kw_only=True, default=0, metadata={"serializable": True})
-    password: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
+    password: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
     index: str = field(kw_only=True, metadata={"serializable": True})
     conversation_id: str = field(kw_only=True, default=uuid.uuid4().hex)
 

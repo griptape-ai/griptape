@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -23,8 +23,8 @@ class OllamaEmbeddingDriver(BaseEmbeddingDriver):
     """
 
     model: str = field(kw_only=True, metadata={"serializable": True})
-    host: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _client: Optional[Client] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    host: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    _client: Client | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Client:

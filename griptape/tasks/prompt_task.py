@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Callable, Optional, Union
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from attrs import NOTHING, Attribute, Factory, NothingType, define, field
 from pydantic import BaseModel
@@ -40,7 +41,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 @define
 class PromptTask(
-    BaseTask[Union[TextArtifact, AudioArtifact, GenericArtifact, JsonArtifact, ListArtifact, ErrorArtifact]],
+    BaseTask[TextArtifact | AudioArtifact | GenericArtifact | JsonArtifact | ListArtifact | ErrorArtifact],
     RuleMixin,
     ActionsSubtaskOriginMixin,
 ):
@@ -51,21 +52,21 @@ class PromptTask(
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True, metadata={"serializable": True}
     )
-    output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
+    output_schema: Schema | type[BaseModel] | None = field(default=None, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_generate_system_template, takes_self=True),
         kw_only=True,
     )
-    _conversation_memory: Union[Optional[BaseConversationMemory], NothingType] = field(
+    _conversation_memory: BaseConversationMemory | None | NothingType = field(
         default=Factory(lambda: NOTHING), kw_only=True, alias="conversation_memory"
     )
-    _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
+    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )
     tools: list[BaseTool] = field(factory=list, kw_only=True, metadata={"serializable": True})
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True, metadata={"serializable": True})
-    task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
+    task_memory: TaskMemory | None = field(default=None, kw_only=True)
     subtasks: list[BaseSubtask] = field(factory=list)
     generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
         default=Factory(lambda self: self.default_generate_assistant_subtask_template, takes_self=True),
@@ -110,7 +111,7 @@ class PromptTask(
         self._input = value
 
     @property
-    def conversation_memory(self) -> Optional[BaseConversationMemory]:
+    def conversation_memory(self) -> BaseConversationMemory | None:
         if self._conversation_memory is NOTHING:
             if self.structure is None:
                 return None
@@ -118,7 +119,7 @@ class PromptTask(
         return self._conversation_memory
 
     @conversation_memory.setter
-    def conversation_memory(self, value: Optional[BaseConversationMemory]) -> None:
+    def conversation_memory(self, value: BaseConversationMemory | None) -> None:
         self._conversation_memory = value
 
     @property
@@ -164,9 +165,7 @@ class PromptTask(
             raise ValueError("tools names have to be unique in task")
 
     @output_schema.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_output_schema(
-        self, _: Attribute, output_schema: Optional[Union[Schema, type[BaseModel], Any]]
-    ) -> None:
+    def validate_output_schema(self, _: Attribute, output_schema: Schema | type[BaseModel] | Any | None) -> None:
         if (
             output_schema is None
             or isinstance(output_schema, Schema)
@@ -180,7 +179,7 @@ class PromptTask(
         if self.task_memory:
             self.set_default_tools_memory(self.task_memory)
 
-    output: Optional[BaseArtifact] = field(default=None, init=False)
+    output: BaseArtifact | None = field(default=None, init=False)
 
     def before_run(self) -> None:
         super().before_run()

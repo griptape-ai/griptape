@@ -2,12 +2,14 @@ from __future__ import annotations
 
 import base64
 import urllib.parse
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 from requests.models import PreparedRequest
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.structures import Structure
     from griptape.tasks import BaseTask
 

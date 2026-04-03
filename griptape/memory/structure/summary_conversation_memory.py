@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -21,7 +21,7 @@ class SummaryConversationMemory(BaseConversationMemory):
     prompt_driver: BasePromptDriver = field(
         kw_only=True, default=Factory(lambda: Defaults.drivers_config.prompt_driver)
     )
-    summary: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    summary: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     summary_index: int = field(default=0, kw_only=True, metadata={"serializable": True})
     summary_get_template: J2 = field(default=Factory(lambda: J2("memory/conversation/summary.j2")), kw_only=True)
     summarize_conversation_get_template: J2 = field(
@@ -36,7 +36,7 @@ class SummaryConversationMemory(BaseConversationMemory):
             self.meta["summary_index"] = self.summary_index
         super().__attrs_post_init__()
 
-    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
+    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
         stack = PromptStack()
         if self.summary:
             stack.add_user_message(self.summary_get_template.render(summary=self.summary))
@@ -45,7 +45,7 @@ class SummaryConversationMemory(BaseConversationMemory):
             stack.add_assistant_message(r.output)
         return stack
 
-    def unsummarized_runs(self, last_n: Optional[int] = None) -> list[Run]:
+    def unsummarized_runs(self, last_n: int | None = None) -> list[Run]:
         summary_index_runs = self.runs[self.summary_index :]
 
         if last_n:

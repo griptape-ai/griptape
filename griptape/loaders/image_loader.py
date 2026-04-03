@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import Optional
 
 from attrs import define, field
 
@@ -20,7 +19,7 @@ class ImageLoader(BaseFileLoader[ImageArtifact]):
                     bytes in PNG format.
     """
 
-    format: Optional[str] = field(default=None, kw_only=True)
+    format: str | None = field(default=None, kw_only=True)
 
     def try_parse(self, data: bytes) -> ImageArtifact:
         pil_image = import_optional_dependency("PIL.Image")

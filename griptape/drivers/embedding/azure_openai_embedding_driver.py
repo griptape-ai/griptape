@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -10,6 +10,8 @@ from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     import openai
 
 
@@ -33,8 +35,8 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
         metadata={"serializable": True},
     )
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
-    azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
-    azure_ad_token_provider: Optional[Callable[[], str]] = field(
+    azure_ad_token: str | None = field(kw_only=True, default=None, metadata={"serializable": False})
+    azure_ad_token_provider: Callable[[], str] | None = field(
         kw_only=True,
         default=None,
         metadata={"serializable": False},
@@ -44,7 +46,7 @@ class AzureOpenAiEmbeddingDriver(OpenAiEmbeddingDriver):
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    _client: Optional[openai.AzureOpenAI] = field(
+    _client: openai.AzureOpenAI | None = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Generic, Optional, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from attrs import Attribute, define, field
 
@@ -27,7 +27,7 @@ class ListArtifact(BaseArtifact, Generic[T_co]):
                 raise ValueError("list elements in 'value' are not the same type")
 
     @property
-    def child_type(self) -> Optional[type]:
+    def child_type(self) -> type | None:
         if self.value:
             return type(self.value[0])
         return None

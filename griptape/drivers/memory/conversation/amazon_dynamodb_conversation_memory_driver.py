@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -23,9 +23,9 @@ class AmazonDynamoDbConversationMemoryDriver(BaseConversationMemoryDriver):
     partition_key: str = field(kw_only=True, metadata={"serializable": True})
     value_attribute_key: str = field(kw_only=True, metadata={"serializable": True})
     partition_key_value: str = field(kw_only=True, metadata={"serializable": True})
-    sort_key: Optional[str] = field(default=None, metadata={"serializable": True})
-    sort_key_value: Optional[str | int] = field(default=None, metadata={"serializable": True})
-    _table: Optional[Table] = field(default=None, kw_only=True, alias="table", metadata={"serializable": False})
+    sort_key: str | None = field(default=None, metadata={"serializable": True})
+    sort_key_value: str | int | None = field(default=None, metadata={"serializable": True})
+    _table: Table | None = field(default=None, kw_only=True, alias="table", metadata={"serializable": False})
 
     @lazy_property()
     def table(self) -> Table:

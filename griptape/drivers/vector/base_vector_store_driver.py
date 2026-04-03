@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 import warnings
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional, overload
+from typing import TYPE_CHECKING, overload
 
 from attrs import define, field
 
@@ -24,10 +24,10 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
     @define
     class Entry(SerializableMixin):
         id: str = field(metadata={"serializable": True})
-        vector: Optional[list[float]] = field(default=None, metadata={"serializable": True})
-        score: Optional[float] = field(default=None, metadata={"serializable": True})
-        meta: Optional[dict] = field(default=None, metadata={"serializable": True})
-        namespace: Optional[str] = field(default=None, metadata={"serializable": True})
+        vector: list[float] | None = field(default=None, metadata={"serializable": True})
+        score: float | None = field(default=None, metadata={"serializable": True})
+        meta: dict | None = field(default=None, metadata={"serializable": True})
+        namespace: str | None = field(default=None, metadata={"serializable": True})
 
         def to_artifact(self) -> BaseArtifact:
             return BaseArtifact.from_json(self.meta["artifact"])  # pyright: ignore[reportOptionalSubscript]
@@ -38,7 +38,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         self,
         artifacts: list[TextArtifact] | dict[str, list[TextArtifact]],
         *,
-        meta: Optional[dict] = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> list[str] | dict[str, list[str]]:
         warnings.warn(
@@ -52,9 +52,9 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         self,
         artifact: TextArtifact,
         *,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        vector_id: Optional[str] = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
+        vector_id: str | None = None,
         **kwargs,
     ) -> str:
         warnings.warn(
@@ -68,9 +68,9 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         self,
         string: str,
         *,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        vector_id: Optional[str] = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
+        vector_id: str | None = None,
         **kwargs,
     ) -> str:
         warnings.warn(
@@ -85,7 +85,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         self,
         artifacts: list[TextArtifact] | list[ImageArtifact],
         *,
-        meta: Optional[dict] = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> list[str]: ...
 
@@ -94,7 +94,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         self,
         artifacts: dict[str, list[TextArtifact]] | dict[str, list[ImageArtifact]],
         *,
-        meta: Optional[dict] = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> dict[str, list[str]]: ...
 
@@ -105,7 +105,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         | dict[str, list[TextArtifact]]
         | dict[str, list[ImageArtifact]],
         *,
-        meta: Optional[dict] = None,
+        meta: dict | None = None,
         **kwargs,
     ):
         with self.create_futures_executor() as futures_executor:
@@ -135,9 +135,9 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         self,
         value: str | TextArtifact | ImageArtifact,
         *,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        vector_id: Optional[str] = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
+        vector_id: str | None = None,
         **kwargs,
     ) -> str:
         artifact = TextArtifact(value) if isinstance(value, str) else value
@@ -154,13 +154,13 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
         return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
 
-    def does_entry_exist(self, vector_id: str, *, namespace: Optional[str] = None) -> bool:
+    def does_entry_exist(self, vector_id: str, *, namespace: str | None = None) -> bool:
         try:
             return self.load_entry(vector_id, namespace=namespace) is not None
         except Exception:
             return False
 
-    def load_artifacts(self, *, namespace: Optional[str] = None) -> ListArtifact:
+    def load_artifacts(self, *, namespace: str | None = None) -> ListArtifact:
         result = self.load_entries(namespace=namespace)
         artifacts = [r.to_artifact() for r in result]
 
@@ -174,24 +174,24 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         self,
         vector: list[float],
         *,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str: ...
 
     @abstractmethod
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[Entry]: ...
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> Entry | None: ...
 
     @abstractmethod
-    def load_entries(self, *, namespace: Optional[str] = None) -> list[Entry]: ...
+    def load_entries(self, *, namespace: str | None = None) -> list[Entry]: ...
 
     def query_vector(
         self,
         vector: list[float],
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         **kwargs,
     ) -> list[Entry]:
@@ -202,8 +202,8 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         self,
         query: str | TextArtifact | ImageArtifact,
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         **kwargs,
     ) -> list[Entry]:

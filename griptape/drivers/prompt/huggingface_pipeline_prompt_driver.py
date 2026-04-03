@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, Factory, define, field
 
@@ -43,7 +43,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
     structured_output_strategy: StructuredOutputStrategy = field(
         default="rule", kw_only=True, metadata={"serializable": True}
     )
-    _pipeline: Optional[TextGenerationPipeline] = field(
+    _pipeline: TextGenerationPipeline | None = field(
         default=None, kw_only=True, alias="pipeline", metadata={"serializable": False}
     )
 

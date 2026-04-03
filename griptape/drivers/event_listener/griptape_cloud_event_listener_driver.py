@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 import time
-from typing import Optional
 
 import requests
 from attrs import Attribute, Factory, define, field
@@ -27,24 +26,22 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
         kw_only=True,
     )
-    api_key: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")), kw_only=True)
+    api_key: str | None = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")), kw_only=True)
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         kw_only=True,
     )
-    structure_run_id: Optional[str] = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True
-    )
+    structure_run_id: str | None = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
 
     @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_run_id(self, _: Attribute, structure_run_id: Optional[str]) -> None:
+    def validate_run_id(self, _: Attribute, structure_run_id: str | None) -> None:
         if structure_run_id is None:
             raise ValueError(
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID).",
             )
 
     @api_key.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_api_key(self, _: Attribute, api_key: Optional[str]) -> None:
+    def validate_api_key(self, _: Attribute, api_key: str | None) -> None:
         if api_key is None:
             raise ValueError(
                 "No value was found for the 'GT_CLOUD_API_KEY' environment variable. "

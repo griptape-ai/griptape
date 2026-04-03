@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
 
@@ -17,20 +17,20 @@ if TYPE_CHECKING:
 class SqlDriver(BaseSqlDriver):
     engine_url: str = field(kw_only=True)
     create_engine_params: dict = field(factory=dict, kw_only=True)
-    _engine: Optional[Engine] = field(default=None, kw_only=True, alias="engine", metadata={"serializable": False})
+    _engine: Engine | None = field(default=None, kw_only=True, alias="engine", metadata={"serializable": False})
 
     @lazy_property()
     def engine(self) -> Engine:
         return import_optional_dependency("sqlalchemy").create_engine(self.engine_url, **self.create_engine_params)
 
-    def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
+    def execute_query(self, query: str) -> list[BaseSqlDriver.RowResult] | None:
         rows = self.execute_query_raw(query)
 
         if rows:
             return [BaseSqlDriver.RowResult(row) for row in rows]
         return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Optional[Any]]]]:
+    def execute_query_raw(self, query: str) -> list[dict[str, Any | None]] | None:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.connect() as con:
@@ -43,7 +43,7 @@ class SqlDriver(BaseSqlDriver):
                 return None
             raise ValueError("No result found")
 
-    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
+    def get_table_schema(self, table_name: str, schema: str | None = None) -> str | None:
         sqlalchemy_exc = import_optional_dependency("sqlalchemy.exc")
 
         try:
@@ -53,9 +53,7 @@ class SqlDriver(BaseSqlDriver):
 
     @staticmethod
     @lru_cache
-    def _get_table_schema(
-        engine: Engine, table_name: str, schema: Optional[str] = None
-    ) -> Optional[list[tuple[str, str]]]:
+    def _get_table_schema(engine: Engine, table_name: str, schema: str | None = None) -> list[tuple[str, str]] | None:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         return [(col["name"], col["type"]) for col in sqlalchemy.inspect(engine).get_columns(table_name, schema=schema)]

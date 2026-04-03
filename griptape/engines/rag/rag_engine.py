@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -12,9 +12,9 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class RagEngine:
-    query_stage: Optional[QueryRagStage] = field(default=None)
-    retrieval_stage: Optional[RetrievalRagStage] = field(default=None)
-    response_stage: Optional[ResponseRagStage] = field(default=None)
+    query_stage: QueryRagStage | None = field(default=None)
+    retrieval_stage: RetrievalRagStage | None = field(default=None)
+    response_stage: ResponseRagStage | None = field(default=None)
 
     def __attrs_post_init__(self) -> None:
         modules = []

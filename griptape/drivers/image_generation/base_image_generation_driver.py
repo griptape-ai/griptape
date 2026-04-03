@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -17,13 +17,13 @@ if TYPE_CHECKING:
 class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     model: str = field(kw_only=True, metadata={"serializable": True})
 
-    def before_run(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> None:
+    def before_run(self, prompts: list[str], negative_prompts: list[str] | None = None) -> None:
         EventBus.publish_event(StartImageGenerationEvent(prompts=prompts, negative_prompts=negative_prompts))
 
     def after_run(self) -> None:
         EventBus.publish_event(FinishImageGenerationEvent())
 
-    def run_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def run_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         for attempt in self.retrying():
             with attempt:
                 self.before_run(prompts, negative_prompts)
@@ -38,7 +38,7 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         for attempt in self.retrying():
             with attempt:
@@ -55,7 +55,7 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         for attempt in self.retrying():
             with attempt:
@@ -72,7 +72,7 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         for attempt in self.retrying():
             with attempt:
@@ -85,14 +85,14 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         raise Exception("Failed to run image outpainting")
 
     @abstractmethod
-    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact: ...
+    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact: ...
 
     @abstractmethod
     def try_image_variation(
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact: ...
 
     @abstractmethod
@@ -101,7 +101,7 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact: ...
 
     @abstractmethod
@@ -110,5 +110,5 @@ class BaseImageGenerationDriver(SerializableMixin, ExponentialBackoffMixin, ABC)
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact: ...

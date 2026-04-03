@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from types import MethodType
-from typing import Any, Callable, Optional
+from typing import TYPE_CHECKING, Any
 from urllib.parse import urljoin
 
 import requests
@@ -12,6 +12,9 @@ from schema import Optional as SchemaOptional
 from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.tools.base_griptape_cloud_tool import BaseGriptapeCloudTool
 from griptape.utils.decorators import activity
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @define()
@@ -104,9 +107,7 @@ class GriptapeCloudToolTool(BaseGriptapeCloudTool):
 
         return Schema(properties)
 
-    def _map_openapi_type_to_python(
-        self, openapi_type: str, schema_info: Optional[dict] = None
-    ) -> type | list[type] | Or:
+    def _map_openapi_type_to_python(self, openapi_type: str, schema_info: dict | None = None) -> type | list[type] | Or:
         """Maps OpenAPI types to native Python types."""
         type_mapping = {"string": str, "integer": int, "boolean": bool, "number": float, "object": dict}
 

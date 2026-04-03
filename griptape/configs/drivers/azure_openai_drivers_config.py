@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -11,6 +11,9 @@ from griptape.drivers.prompt.openai import AzureOpenAiChatPromptDriver
 from griptape.drivers.text_to_speech.openai import AzureOpenAiTextToSpeechDriver
 from griptape.drivers.vector.local import LocalVectorStoreDriver
 from griptape.utils.decorators import lazy_property
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @define
@@ -29,13 +32,13 @@ class AzureOpenAiDriversConfig(DriversConfig):
     """
 
     azure_endpoint: str = field(kw_only=True, metadata={"serializable": True})
-    azure_ad_token: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
-    azure_ad_token_provider: Optional[Callable[[], str]] = field(
+    azure_ad_token: str | None = field(kw_only=True, default=None, metadata={"serializable": False})
+    azure_ad_token_provider: Callable[[], str] | None = field(
         kw_only=True,
         default=None,
         metadata={"serializable": False},
     )
-    api_key: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": False})
+    api_key: str | None = field(kw_only=True, default=None, metadata={"serializable": False})
 
     @lazy_property()
     def prompt_driver(self) -> AzureOpenAiChatPromptDriver:

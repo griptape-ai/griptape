@@ -1,8 +1,8 @@
 from __future__ import annotations
 
 import inspect
+from collections.abc import Callable
 from copy import deepcopy
-from typing import Callable, Optional, Union
 
 from attrs import Attribute, define, field
 from jinja2 import Template
@@ -22,12 +22,12 @@ class ActivityMixin:
         extra_schema_properties: Mapping of Activity name and extra properties to include in the activity's schema.
     """
 
-    allowlist: Optional[list[str]] = field(default=None, kw_only=True)
-    denylist: Optional[list[str]] = field(default=None, kw_only=True)
-    extra_schema_properties: Optional[dict[str, dict]] = field(default=None, kw_only=True)
+    allowlist: list[str] | None = field(default=None, kw_only=True)
+    denylist: list[str] | None = field(default=None, kw_only=True)
+    extra_schema_properties: dict[str, dict] | None = field(default=None, kw_only=True)
 
     @allowlist.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_allowlist(self, _: Attribute, allowlist: Optional[list[str]]) -> None:
+    def validate_allowlist(self, _: Attribute, allowlist: list[str] | None) -> None:
         if allowlist is None:
             return
 
@@ -35,7 +35,7 @@ class ActivityMixin:
             self._validate_tool_activity(activity_name)
 
     @denylist.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_denylist(self, _: Attribute, denylist: Optional[list[str]]) -> None:
+    def validate_denylist(self, _: Attribute, denylist: list[str] | None) -> None:
         if denylist is None:
             return
 
@@ -64,7 +64,7 @@ class ActivityMixin:
 
         return methods
 
-    def find_activity(self, name: str) -> Optional[Callable]:
+    def find_activity(self, name: str) -> Callable | None:
         for activity in self.activities():
             if getattr(activity, "is_activity", False) and getattr(activity, "name") == name:
                 return activity
@@ -81,7 +81,7 @@ class ActivityMixin:
             raise Exception("This method is not an activity.")
         return Template(getattr(activity, "config")["description"]).render({"_self": self})
 
-    def activity_schema(self, activity: Callable) -> Optional[Union[Schema, type[BaseModel]]]:
+    def activity_schema(self, activity: Callable) -> Schema | type[BaseModel] | None:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
         if getattr(activity, "config")["schema"] is not None:
@@ -113,7 +113,7 @@ class ActivityMixin:
 
         return json_schema
 
-    def validate_activity_schema(self, activity_schema: Union[Schema, type[BaseModel]], params: dict) -> None:
+    def validate_activity_schema(self, activity_schema: Schema | type[BaseModel], params: dict) -> None:
         try:
             if isinstance(activity_schema, Schema):
                 activity_schema.validate(params)

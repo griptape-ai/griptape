@@ -3,7 +3,8 @@ from __future__ import annotations
 import json
 import logging
 import re
-from typing import TYPE_CHECKING, Callable, Optional, Union
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -33,16 +34,16 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 
 @define
-class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
+class ActionsSubtask(BaseSubtask[ListArtifact | ErrorArtifact]):
     THOUGHT_PATTERN = r"(?s)^Thought:\s*(.*?)$"
     ACTIONS_PATTERN = r"(?s)Actions:[^\[]*(\[.*\])"
     ANSWER_PATTERN = r"(?s)^Answer:\s?([\s\S]*)$"
 
     RESPONSE_STOP_SEQUENCE = "<|Response|>"
 
-    thought: Optional[str] = field(default=None, kw_only=True)
+    thought: str | None = field(default=None, kw_only=True)
     actions: list[ToolAction] = field(factory=list, kw_only=True)
-    output: Optional[BaseArtifact] = field(default=None, init=False)
+    output: BaseArtifact | None = field(default=None, init=False)
     generate_assistant_subtask_template: Callable[[ActionsSubtask], str] = field(
         default=Factory(lambda self: self.default_generate_assistant_subtask_template, takes_self=True),
         kw_only=True,
@@ -52,12 +53,12 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
         kw_only=True,
     )
     response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
-    _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
+    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )
-    _memory: Optional[TaskMemory] = None
-    _origin_task: Optional[BaseTask] = field(default=None, kw_only=True)
+    _memory: TaskMemory | None = None
+    _origin_task: BaseTask | None = field(default=None, kw_only=True)
 
     @property
     def input(self) -> TextArtifact | AudioArtifact | ListArtifact:
@@ -248,8 +249,8 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
 
     def _process_task_input(
         self,
-        task_input: Union[str, tuple, list, BaseArtifact, Callable[[BaseTask], BaseArtifact]],
-    ) -> Union[TextArtifact, AudioArtifact, ListArtifact]:
+        task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact],
+    ) -> TextArtifact | AudioArtifact | ListArtifact:
         if isinstance(task_input, (TextArtifact, AudioArtifact, ListArtifact)):
             return task_input
         if isinstance(task_input, ActionArtifact):

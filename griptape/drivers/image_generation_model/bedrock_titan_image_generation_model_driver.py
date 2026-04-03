@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import base64
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
 
@@ -30,8 +30,8 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         prompt = ", ".join(prompts)
 
@@ -59,8 +59,8 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         prompt = ", ".join(prompts)
 
@@ -89,8 +89,8 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         prompt = ", ".join(prompts)
 
@@ -109,8 +109,8 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         prompt = ", ".join(prompts)
 
@@ -134,7 +134,7 @@ class BedrockTitanImageGenerationModelDriver(BaseImageGenerationModelDriver):
 
         return base64.decodebytes(bytes(b64_image_data, "utf-8"))
 
-    def _add_common_params(self, request: dict[str, Any], width: int, height: int, seed: Optional[int] = None) -> dict:
+    def _add_common_params(self, request: dict[str, Any], width: int, height: int, seed: int | None = None) -> dict:
         request["imageGenerationConfig"] = {
             "numberOfImages": 1,
             "quality": self.quality,

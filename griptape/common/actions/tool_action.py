@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -27,10 +27,10 @@ class ToolAction(BaseAction):
 
     tag: str = field(metadata={"serializable": True})
     name: str = field(metadata={"serializable": True})
-    path: Optional[str] = field(default=None, metadata={"serializable": True})
+    path: str | None = field(default=None, metadata={"serializable": True})
     input: dict = field(factory=dict, metadata={"serializable": True})
-    tool: Optional[BaseTool] = field(default=None)
-    output: Optional[BaseArtifact] = field(default=None)
+    tool: BaseTool | None = field(default=None)
+    output: BaseArtifact | None = field(default=None)
 
     def __str__(self) -> str:
         return json.dumps(self.to_dict())
@@ -44,7 +44,7 @@ class ToolAction(BaseAction):
         return "_".join(parts)
 
     @classmethod
-    def from_native_tool_name(cls, native_tool_name: str) -> tuple[str, Optional[str]]:
+    def from_native_tool_name(cls, native_tool_name: str) -> tuple[str, str | None]:
         parts = native_tool_name.split("_", 1)
 
         if len(parts) == 1:

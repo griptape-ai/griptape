@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import operator
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -11,6 +11,8 @@ from griptape.mixins.futures_executor_mixin import FuturesExecutorMixin
 from griptape.utils import execute_futures_list, with_contextvars
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.artifacts import TextArtifact
     from griptape.drivers.embedding import BaseEmbeddingDriver
 
@@ -47,7 +49,7 @@ class LocalRerankDriver(BaseRerankDriver, FuturesExecutorMixin):
 
         artifacts_and_relatednesses = [
             (artifact, self.calculate_relatedness(query_embedding, artifact_embedding))
-            for artifact, artifact_embedding in zip(artifacts, artifact_embeddings)
+            for artifact, artifact_embedding in zip(artifacts, artifact_embeddings, strict=False)
         ]
 
         artifacts_and_relatednesses.sort(key=operator.itemgetter(1), reverse=True)

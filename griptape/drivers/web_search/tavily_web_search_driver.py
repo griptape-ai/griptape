@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
 
@@ -17,9 +17,7 @@ if TYPE_CHECKING:
 class TavilyWebSearchDriver(BaseWebSearchDriver):
     api_key: str = field(kw_only=True)
     params: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
-    _client: Optional[TavilyClient] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
+    _client: TavilyClient | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> TavilyClient:

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 from attrs import define
 
@@ -14,10 +14,10 @@ class BaseSqlDriver(ABC):
         cells: dict[str, Any]
 
     @abstractmethod
-    def execute_query(self, query: str) -> Optional[list[RowResult]]: ...
+    def execute_query(self, query: str) -> list[RowResult] | None: ...
 
     @abstractmethod
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]: ...
+    def execute_query_raw(self, query: str) -> list[dict[str, Any]] | None: ...
 
     @abstractmethod
-    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]: ...
+    def get_table_schema(self, table_name: str, schema: str | None = None) -> str | None: ...

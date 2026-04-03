@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
 
@@ -23,9 +23,9 @@ class StableDiffusion3Img2ImgImageGenerationPipelineDriver(StableDiffusion3Image
         strength: A value [0.0, 1.0] that determines the strength of the initial image in the output.
     """
 
-    strength: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
+    strength: float | None = field(default=None, kw_only=True, metadata={"serializable": True})
 
-    def prepare_pipeline(self, model: str, device: Optional[str]) -> Any:
+    def prepare_pipeline(self, model: str, device: str | None) -> Any:
         sd3_img2img_pipeline = import_optional_dependency(
             "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3_img2img"
         ).StableDiffusion3Img2ImgPipeline
@@ -58,13 +58,13 @@ class StableDiffusion3Img2ImgImageGenerationPipelineDriver(StableDiffusion3Image
 
         return pipeline
 
-    def make_image_param(self, image: Optional[Image]) -> Optional[dict[str, Image]]:
+    def make_image_param(self, image: Image | None) -> dict[str, Image] | None:
         if image is None:
             raise ValueError("Input image is required for image to image pipelines.")
 
         return {"image": image}
 
-    def make_additional_params(self, negative_prompts: Optional[list[str]], device: Optional[str]) -> dict[str, Any]:
+    def make_additional_params(self, negative_prompts: list[str] | None, device: str | None) -> dict[str, Any]:
         additional_params = super().make_additional_params(negative_prompts, device)
 
         # Explicit height and width params are not supported, but

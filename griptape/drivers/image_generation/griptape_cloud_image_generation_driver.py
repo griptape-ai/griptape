@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import Literal, Optional
+from typing import Literal
 
 import requests
 from attrs import Factory, define, field, fields_dict
@@ -40,32 +40,32 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
-    image_size: Optional[Literal["1024x1024", "1536x1024", "1024x1536"]] = field(
+    image_size: Literal["1024x1024", "1536x1024", "1024x1536"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
     )
-    quality: Optional[Literal["low", "medium", "high"]] = field(
+    quality: Literal["low", "medium", "high"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
     )
-    background: Optional[Literal["transparent", "opaque", "auto"]] = field(
+    background: Literal["transparent", "opaque", "auto"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
     )
-    moderation: Optional[Literal["low", "auto"]] = field(
+    moderation: Literal["low", "auto"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
     )
-    output_compression: Optional[int] = field(
+    output_compression: int | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
     )
-    output_format: Optional[Literal["png", "jpeg"]] = field(
+    output_format: Literal["png", "jpeg"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
@@ -84,7 +84,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
         if value not in ALLOWED_IMAGE_SIZES:
             raise ValueError(f"Image size, {value}, must be one of the following: {ALLOWED_IMAGE_SIZES}")
 
-    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         url = griptape_cloud_url(self.base_url, "api/images/generations")
 
         response = requests.post(
@@ -136,7 +136,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         if self.model not in SUPPORTED_MODELS:
             raise ValueError(
@@ -164,7 +164,7 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support inpainting")
 
@@ -173,6 +173,6 @@ class GriptapeCloudImageGenerationDriver(BaseImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")

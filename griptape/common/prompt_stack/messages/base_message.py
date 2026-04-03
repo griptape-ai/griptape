@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -15,8 +15,8 @@ if TYPE_CHECKING:
 class BaseMessage(ABC, SerializableMixin):
     @define
     class Usage(SerializableMixin):
-        input_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
-        output_tokens: Optional[float] = field(kw_only=True, default=None, metadata={"serializable": True})
+        input_tokens: float | None = field(kw_only=True, default=None, metadata={"serializable": True})
+        output_tokens: float | None = field(kw_only=True, default=None, metadata={"serializable": True})
 
         @property
         def total_tokens(self) -> float:
@@ -32,7 +32,7 @@ class BaseMessage(ABC, SerializableMixin):
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    content: list[Union[BaseMessageContent, BaseDeltaMessageContent]] = field(metadata={"serializable": True})
+    content: list[BaseMessageContent | BaseDeltaMessageContent] = field(metadata={"serializable": True})
     role: str = field(kw_only=True, metadata={"serializable": True})
     usage: Usage = field(kw_only=True, default=Factory(lambda: BaseMessage.Usage()), metadata={"serializable": True})
 

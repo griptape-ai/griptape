@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import warnings
-from typing import TYPE_CHECKING, Callable, Optional, Union
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, define, evolve, field, validators
 
@@ -12,6 +12,8 @@ from griptape.structures import Structure
 from griptape.tasks import PromptTask
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from pydantic import BaseModel
     from schema import Schema
 
@@ -23,17 +25,17 @@ if TYPE_CHECKING:
 
 @define
 class Agent(Structure):
-    input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
+    input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
-    stream: Optional[bool] = field(default=None, kw_only=True)
-    prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
-    output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
+    stream: bool | None = field(default=None, kw_only=True)
+    prompt_driver: BasePromptDriver | None = field(default=None, kw_only=True)
+    output_schema: Schema | type[BaseModel] | None = field(default=None, kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
-    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
-    max_subtasks: Optional[int] = field(default=None, kw_only=True)
+    max_meta_memory_entries: int | None = field(default=20, kw_only=True)
+    max_subtasks: int | None = field(default=None, kw_only=True)
     fail_fast: bool = field(default=False, kw_only=True)
-    _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
+    _tasks: list[BaseTask | list[BaseTask]] = field(
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
     )
 
@@ -43,7 +45,7 @@ class Agent(Structure):
             raise ValueError("Agents cannot fail fast, as they can only have 1 task.")
 
     @prompt_driver.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_prompt_driver(self, _: Attribute, prompt_driver: Optional[BasePromptDriver]) -> None:
+    def validate_prompt_driver(self, _: Attribute, prompt_driver: BasePromptDriver | None) -> None:
         if prompt_driver is not None and self.stream is not None:
             warnings.warn(
                 "`Agent.prompt_driver` is set, but `Agent.stream` was provided. `Agent.stream` will be ignored. This will be an error in the future.",

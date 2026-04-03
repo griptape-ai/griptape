@@ -11,7 +11,7 @@ import traceback
 from abc import ABC
 from copy import deepcopy
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any
 
 import schema
 from attrs import Attribute, Factory, define, field
@@ -25,6 +25,8 @@ from griptape.mixins.runnable_mixin import RunnableMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.common import ToolAction
     from griptape.memory import TaskMemory
     from griptape.tasks import ActionsSubtask
@@ -54,12 +56,12 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         kw_only=True,
         metadata={"serializable": True},
     )
-    input_memory: Optional[list[TaskMemory]] = field(default=None, kw_only=True, metadata={"serializable": True})
-    output_memory: Optional[dict[str, list[TaskMemory]]] = field(
+    input_memory: list[TaskMemory] | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    output_memory: dict[str, list[TaskMemory]] | None = field(
         default=None, kw_only=True, metadata={"serializable": True}
     )
     install_dependencies_on_init: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    dependencies_install_directory: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    dependencies_install_directory: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     verbose: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     off_prompt: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
@@ -72,7 +74,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
             self.install_dependencies(os.environ.copy())
 
     @output_memory.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_output_memory(self, _: Attribute, output_memory: dict[str, Optional[list[TaskMemory]]]) -> None:
+    def validate_output_memory(self, _: Attribute, output_memory: dict[str, list[TaskMemory] | None]) -> None:
         if output_memory:
             for activity_name, memory_list in output_memory.items():
                 if not self.find_activity(activity_name):
@@ -142,7 +144,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
 
         return output
 
-    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> Optional[dict]:
+    def before_run(self, activity: Callable, subtask: ActionsSubtask, action: ToolAction) -> dict | None:
         super().before_run()
 
         return action.input
@@ -153,7 +155,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         activity: Callable,
         subtask: ActionsSubtask,
         action: ToolAction,
-        value: Optional[dict],
+        value: dict | None,
     ) -> BaseArtifact:
         activity_result = activity(deepcopy(value))
 
@@ -196,7 +198,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
 
         return os.path.dirname(os.path.abspath(class_file))
 
-    def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
+    def install_dependencies(self, env: dict[str, str] | None = None) -> None:
         env = env or {}
 
         command = [sys.executable, "-m", "pip", "install", "-r", "requirements.txt"]
@@ -215,7 +217,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
             check=False,
         )
 
-    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
+    def find_input_memory(self, memory_name: str) -> TaskMemory | None:
         if self.input_memory:
             return next((m for m in self.input_memory if m.name == memory_name), None)
         return None

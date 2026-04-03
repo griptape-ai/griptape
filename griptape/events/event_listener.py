@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Generic, Optional, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 from attrs import define, field
 
 from .base_event import BaseEvent
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from typing_extensions import Self
 
     from griptape.drivers.event_listener import BaseEventListenerDriver
@@ -28,9 +30,9 @@ class EventListener(Generic[T]):
         event_listener_driver: The driver that will be used to publish events.
     """
 
-    on_event: Optional[Callable[[T], Optional[BaseEvent | dict]]] = field(default=None)
-    event_types: Optional[list[type[T]]] = field(default=None, kw_only=True)
-    event_listener_driver: Optional[BaseEventListenerDriver] = field(default=None, kw_only=True)
+    on_event: Callable[[T], BaseEvent | dict | None] | None = field(default=None)
+    event_types: list[type[T]] | None = field(default=None, kw_only=True)
+    event_listener_driver: BaseEventListenerDriver | None = field(default=None, kw_only=True)
 
     def __enter__(self) -> Self:
         from griptape.events import EventBus

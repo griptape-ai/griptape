@@ -1,12 +1,15 @@
 from __future__ import annotations
 
-from typing import Callable
+from typing import TYPE_CHECKING
 
 import requests
 from attrs import Factory, define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.drivers.web_scraper import BaseWebScraperDriver
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @define

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define
 
@@ -68,7 +68,7 @@ class Pipeline(Structure):
 
         return context
 
-    def __run_from_task(self, task: Optional[BaseTask]) -> None:
+    def __run_from_task(self, task: BaseTask | None) -> None:
         if task is None or isinstance(task.run(), ErrorArtifact) and self.fail_fast:
             return
         self.__run_from_task(next(iter(task.children), None))

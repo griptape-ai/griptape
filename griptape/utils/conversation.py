@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, define, field
 
@@ -10,10 +10,10 @@ if TYPE_CHECKING:
 
 @define(frozen=True)
 class Conversation:
-    memory: Optional[BaseConversationMemory] = field()
+    memory: BaseConversationMemory | None = field()
 
     @memory.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_memory(self, attribute: Attribute, value: Optional[BaseConversationMemory]) -> None:
+    def validate_memory(self, attribute: Attribute, value: BaseConversationMemory | None) -> None:
         if value is None:
             raise ValueError("Conversation memory must not be None.")
 

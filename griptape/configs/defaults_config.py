@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -16,8 +16,8 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class _DefaultsConfig(BaseConfig, SingletonMixin):
-    _logging_config: Optional[LoggingConfig] = field(default=None)
-    _drivers_config: Optional[BaseDriversConfig] = field(default=None)
+    _logging_config: LoggingConfig | None = field(default=None)
+    _drivers_config: BaseDriversConfig | None = field(default=None)
 
     @lazy_property()
     def logging_config(self) -> LoggingConfig:

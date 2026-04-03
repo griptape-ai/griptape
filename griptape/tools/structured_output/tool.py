@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @define
 class StructuredOutputTool(BaseTool):
-    output_schema: Union[Schema, type[BaseModel]] = field(kw_only=True)
+    output_schema: Schema | type[BaseModel] = field(kw_only=True)
 
     @activity(
         config={

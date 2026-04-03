@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any
 
 from marshmallow import Schema, ValidationError
 
@@ -10,7 +10,7 @@ from griptape.schemas import BaseSchema
 class PolymorphicSchema(BaseSchema):
     """PolymorphicSchema is based on https://github.com/marshmallow-code/marshmallow-oneofschema."""
 
-    def __init__(self, inner_class: Any, types_overrides: Optional[dict[str, type]] = None, **kwargs) -> None:
+    def __init__(self, inner_class: Any, types_overrides: dict[str, type] | None = None, **kwargs) -> None:
         super().__init__(**kwargs)
 
         self.inner_class = inner_class

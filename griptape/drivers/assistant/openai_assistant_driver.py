@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 from typing_extensions import override
@@ -44,10 +44,10 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
 
         return EventHandler
 
-    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    thread_id: Optional[str] = field(default=None, kw_only=True)
+    base_url: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
+    organization: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    thread_id: str | None = field(default=None, kw_only=True)
     assistant_id: str = field(kw_only=True)
     event_handler: AssistantEventHandler = field(  # pyright: ignore[reportInvalidTypeForm]
         default=Factory(lambda self: self._create_event_handler_class()(), takes_self=True),
@@ -56,9 +56,7 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
     )
     auto_create_thread: bool = field(default=True, kw_only=True)
 
-    _client: Optional[openai.OpenAI] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
+    _client: openai.OpenAI | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> openai.OpenAI:

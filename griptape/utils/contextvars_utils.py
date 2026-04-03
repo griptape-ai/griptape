@@ -1,5 +1,6 @@
 import contextvars
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 
 def with_contextvars(wrapped: Callable) -> Callable:

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import os
-from typing import Optional
 
 import requests
 from attrs import Attribute, Factory, define, field
@@ -30,7 +29,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         ValueError: If `api_key` is not provided, if `workdir` does not start with "/"", or invalid `bucket_id` and/or `bucket_name` value(s) are provided.
     """
 
-    bucket_id: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_BUCKET_ID")), kw_only=True)
+    bucket_id: str | None = field(default=Factory(lambda: os.getenv("GT_CLOUD_BUCKET_ID")), kw_only=True)
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
     )
@@ -52,7 +51,7 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         self._workdir = value
 
     @bucket_id.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_bucket_id(self, _: Attribute, value: Optional[str]) -> str:
+    def validate_bucket_id(self, _: Attribute, value: str | None) -> str:
         if value is None:
             raise ValueError(f"{self.__class__.__name__} requires an Bucket ID")
         return value
@@ -126,8 +125,8 @@ class GriptapeCloudFileManagerDriver(BaseFileManagerDriver):
         self,
         method: str,
         path: str,
-        json: Optional[dict] = None,
-        params: Optional[dict] = None,
+        json: dict | None = None,
+        params: dict | None = None,
         *,
         raise_for_status: bool = True,
     ) -> requests.Response:

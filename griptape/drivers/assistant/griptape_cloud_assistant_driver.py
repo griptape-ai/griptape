@@ -4,7 +4,7 @@ import json
 import logging
 import os
 import uuid
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import requests
 from attrs import Factory, define, field
@@ -31,17 +31,17 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         kw_only=True,
     )
-    input: Optional[str] = field(default=None, kw_only=True)
+    input: str | None = field(default=None, kw_only=True)
     assistant_id: str = field(kw_only=True)
-    thread_id: Optional[str] = field(default=None, kw_only=True)
-    thread_alias: Optional[str] = field(default=None, kw_only=True)
-    ruleset_ids: Optional[list[str]] = field(default=None, kw_only=True)
+    thread_id: str | None = field(default=None, kw_only=True)
+    thread_alias: str | None = field(default=None, kw_only=True)
+    ruleset_ids: list[str] | None = field(default=None, kw_only=True)
     additional_ruleset_ids: list[str] = field(factory=list, kw_only=True)
-    knowledge_base_ids: Optional[list[str]] = field(default=None, kw_only=True)
+    knowledge_base_ids: list[str] | None = field(default=None, kw_only=True)
     additional_knowledge_base_ids: list[str] = field(factory=list, kw_only=True)
-    structure_ids: Optional[list[str]] = field(default=None, kw_only=True)
+    structure_ids: list[str] | None = field(default=None, kw_only=True)
     additional_structure_ids: list[str] = field(factory=list, kw_only=True)
-    tool_ids: Optional[list[str]] = field(default=None, kw_only=True)
+    tool_ids: list[str] | None = field(default=None, kw_only=True)
     additional_tool_ids: list[str] = field(factory=list, kw_only=True)
     stream: bool = field(default=False, kw_only=True)
     poll_interval: int = field(default=1, kw_only=True)
@@ -60,7 +60,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
 
         return run_result
 
-    def _create_or_find_thread(self, thread_alias: Optional[str] = None) -> None:
+    def _create_or_find_thread(self, thread_alias: str | None = None) -> None:
         if thread_alias is None:
             self.thread_id = self._create_thread()
         else:
@@ -71,7 +71,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
             else:
                 self.thread_id = thread["thread_id"]
 
-    def _create_thread(self, thread_alias: Optional[str] = None) -> str:
+    def _create_thread(self, thread_alias: str | None = None) -> str:
         url = griptape_cloud_url(self.base_url, "api/threads")
 
         body = {"name": uuid.uuid4().hex}
@@ -135,7 +135,7 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
                     if decoded_line.startswith("data:"):
                         yield json.loads(decoded_line.removeprefix("data:").strip())
 
-    def _find_thread_by_alias(self, thread_alias: str) -> Optional[dict]:
+    def _find_thread_by_alias(self, thread_alias: str) -> dict | None:
         url = griptape_cloud_url(self.base_url, "api/threads")
         response = requests.get(url, params={"alias": thread_alias}, headers=self.headers)
         response.raise_for_status()

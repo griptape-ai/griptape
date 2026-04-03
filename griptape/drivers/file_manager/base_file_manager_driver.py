@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from attrs import define, field
 
@@ -18,7 +17,7 @@ class BaseFileManagerDriver(ABC):
     """
 
     _workdir: str = field(kw_only=True, alias="workdir")
-    encoding: Optional[str] = field(default=None, kw_only=True)
+    encoding: str | None = field(default=None, kw_only=True)
 
     @property
     @abstractmethod

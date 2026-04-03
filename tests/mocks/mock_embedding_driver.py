@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -8,6 +8,8 @@ from griptape.drivers.embedding import BaseEmbeddingDriver
 from tests.mocks.mock_tokenizer import MockTokenizer
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.artifacts.image_artifact import ImageArtifact
     from griptape.artifacts.text_artifact import TextArtifact
 

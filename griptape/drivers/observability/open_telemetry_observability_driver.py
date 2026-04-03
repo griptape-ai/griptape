@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -20,8 +20,8 @@ if TYPE_CHECKING:
 class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
     service_name: str = field(default="griptape", kw_only=True)
     span_processor: SpanProcessor = field(kw_only=True)
-    service_version: Optional[str] = field(default=None, kw_only=True)
-    deployment_env: Optional[str] = field(default=None, kw_only=True)
+    service_version: str | None = field(default=None, kw_only=True)
+    deployment_env: str | None = field(default=None, kw_only=True)
     trace_provider: TracerProvider = field(
         default=Factory(
             lambda self: self._trace_provider_factory(),
@@ -58,9 +58,9 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_value: Optional[BaseException],
-        exc_traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        exc_traceback: TracebackType | None,
     ) -> bool:
         opentelemetry_trace = import_optional_dependency("opentelemetry.trace")
         opentelemetry_instrumentation_threading = import_optional_dependency("opentelemetry.instrumentation.threading")
@@ -99,7 +99,7 @@ class OpenTelemetryObservabilityDriver(BaseObservabilityDriver):
                 span.record_exception(e)
                 raise e
 
-    def get_span_id(self) -> Optional[str]:
+    def get_span_id(self) -> str | None:
         opentelemetry_trace = import_optional_dependency("opentelemetry.trace")
         span = opentelemetry_trace.get_current_span()
         if span is opentelemetry_trace.INVALID_SPAN:

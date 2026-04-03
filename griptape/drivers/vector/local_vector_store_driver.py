@@ -4,18 +4,21 @@ import json
 import operator
 import os
 import threading
-from typing import Callable, NoReturn, Optional, TextIO
+from typing import TYPE_CHECKING, NoReturn, TextIO
 
 from attrs import Factory, define, field
 
 from griptape import utils
 from griptape.drivers.vector import BaseVectorStoreDriver
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 
 @define(kw_only=True)
 class LocalVectorStoreDriver(BaseVectorStoreDriver):
     entries: dict[str, BaseVectorStoreDriver.Entry] = field(factory=dict)
-    persist_file: Optional[str] = field(default=None)
+    persist_file: str | None = field(default=None)
     calculate_relatedness: Callable = field(
         default=Factory(lambda self: self._default_cosine_similarity, takes_self=True)
     )
@@ -56,9 +59,9 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         vector_id = vector_id or utils.str_to_hash(str(vector))
@@ -79,18 +82,18 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
 
         return vector_id
 
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         return self.entries.get(self.__namespaced_vector_id(vector_id, namespace=namespace), None)
 
-    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         return [entry for key, entry in self.entries.items() if namespace is None or entry.namespace == namespace]
 
     def query_vector(
         self,
         vector: list[float],
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
@@ -128,5 +131,5 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
 
             json.dump(serialized_data, json_file)
 
-    def __namespaced_vector_id(self, vector_id: str, *, namespace: Optional[str]) -> str:
+    def __namespaced_vector_id(self, vector_id: str, *, namespace: str | None) -> str:
         return vector_id if namespace is None else f"{namespace}-{vector_id}"

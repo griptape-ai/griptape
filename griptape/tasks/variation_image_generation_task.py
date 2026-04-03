@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable, Union
+from collections.abc import Callable
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -35,8 +36,8 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
         default=Factory(lambda: Defaults.drivers_config.image_generation_driver),
         kw_only=True,
     )
-    _input: Union[tuple[Union[str, TextArtifact], ImageArtifact], Callable[[BaseTask], ListArtifact], ListArtifact] = (
-        field(default=None, alias="input")
+    _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact = field(
+        default=None, alias="input"
     )
 
     @property

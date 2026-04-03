@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from attrs import define, field
 from pydantic import BaseModel
 
@@ -18,11 +16,11 @@ class MockSerializable(SerializableMixin):
         foo: str
 
     foo: str = field(default="bar", kw_only=True, metadata={"serializable": True})
-    bar: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    baz: Optional[list[int]] = field(default=None, kw_only=True, metadata={"serializable": True})
-    secret: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    nested: Optional[MockSerializable.NestedMockSerializable] = field(
+    bar: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    baz: list[int] | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    secret: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
+    nested: MockSerializable.NestedMockSerializable | None = field(
         default=None, kw_only=True, metadata={"serializable": True}
     )
-    model: Optional[BaseModel] = field(default=None, kw_only=True, metadata={"serializable": True})
-    buzz: Optional[dict[str, MockSerializable]] = field(default=None, kw_only=True, metadata={"serializable": True})
+    model: BaseModel | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    buzz: dict[str, MockSerializable] | None = field(default=None, kw_only=True, metadata={"serializable": True})
