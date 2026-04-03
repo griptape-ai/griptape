@@ -1,5 +1,6 @@
 import json
 
+import pydantic
 import pytest
 import schema
 from pydantic import create_model
@@ -34,7 +35,7 @@ class TestOutputSchemaValidationSubtask:
                 {"key": 123},
                 create_model("OutputSchema", key=(str, ...)),
                 None,
-                "[{'type': 'string_type', 'loc': ('key',), 'msg': 'Input should be a valid string', 'input': 123, 'url': 'https://errors.pydantic.dev/2.11/v/string_type'}]",
+                f"[{{'type': 'string_type', 'loc': ('key',), 'msg': 'Input should be a valid string', 'input': 123, 'url': 'https://errors.pydantic.dev/{'.'.join(pydantic.__version__.split('.')[:2])}/v/string_type'}}]",
             ),
             (
                 {"key": "value"},
