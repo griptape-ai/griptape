@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+
+log = logging.getLogger(__name__)
 import os
 import shutil
 import tempfile
@@ -153,7 +155,7 @@ class ComputerTool(BaseTool):
         try:
             return docker.from_env()
         except Exception as e:
-            logging.exception(e)
+            log.exception(e)
 
             return None
 
@@ -176,7 +178,7 @@ class ComputerTool(BaseTool):
             if isinstance(existing_container, Container):
                 existing_container.remove(force=True)
 
-                logging.info("Removed existing container %s", name)
+                log.info("Removed existing container %s", name)
         except NotFound:
             pass
 
@@ -188,7 +190,7 @@ class ComputerTool(BaseTool):
             image = self.docker_client.images.build(path=temp_dir, tag=self.image_name(tool), rm=True, forcerm=True)
 
             if isinstance(image, tuple):
-                logging.info("Built image: %s", image[0].short_id)
+                log.info("Built image: %s", image[0].short_id)
 
     def dependencies(self) -> list[str]:
         with open(self.requirements_txt_path) as file:

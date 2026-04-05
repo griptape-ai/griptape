@@ -52,7 +52,7 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
         kw_only=True,
     )
     response_stop_sequence: str = field(default=RESPONSE_STOP_SEQUENCE, kw_only=True)
-    _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
+    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )
@@ -248,8 +248,8 @@ class ActionsSubtask(BaseSubtask[Union[ListArtifact, ErrorArtifact]]):
 
     def _process_task_input(
         self,
-        task_input: Union[str, tuple, list, BaseArtifact, Callable[[BaseTask], BaseArtifact]],
-    ) -> Union[TextArtifact, AudioArtifact, ListArtifact]:
+        task_input: str | tuple | list | BaseArtifact | Callable[[BaseTask], BaseArtifact],
+    ) -> TextArtifact | AudioArtifact | ListArtifact:
         if isinstance(task_input, (TextArtifact, AudioArtifact, ListArtifact)):
             return task_input
         if isinstance(task_input, ActionArtifact):

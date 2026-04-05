@@ -51,15 +51,15 @@ class PromptTask(
     prompt_driver: BasePromptDriver = field(
         default=Factory(lambda: Defaults.drivers_config.prompt_driver), kw_only=True, metadata={"serializable": True}
     )
-    output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
+    output_schema: Optional[Schema | type[BaseModel]] = field(default=None, kw_only=True)
     generate_system_template: Callable[[PromptTask], str] = field(
         default=Factory(lambda self: self.default_generate_system_template, takes_self=True),
         kw_only=True,
     )
-    _conversation_memory: Union[Optional[BaseConversationMemory], NothingType] = field(
+    _conversation_memory: Optional[BaseConversationMemory] | NothingType = field(
         default=Factory(lambda: NOTHING), kw_only=True, alias="conversation_memory"
     )
-    _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
+    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
         alias="input",
     )
@@ -165,7 +165,7 @@ class PromptTask(
 
     @output_schema.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_output_schema(
-        self, _: Attribute, output_schema: Optional[Union[Schema, type[BaseModel], Any]]
+        self, _: Attribute, output_schema: Optional[Schema | type[BaseModel] | Any]
     ) -> None:
         if (
             output_schema is None
@@ -266,7 +266,7 @@ class PromptTask(
                 if tool.input_memory is None:
                     tool.input_memory = [self.task_memory]
                 if tool.output_memory is None and tool.off_prompt:
-                    tool.output_memory = {getattr(a, "name"): [self.task_memory] for a in tool.activities()}
+                    tool.output_memory = {a.name: [self.task_memory] for a in tool.activities()}
 
     def find_subtask(self, subtask_id: str) -> BaseSubtask:
         for subtask in self.subtasks:

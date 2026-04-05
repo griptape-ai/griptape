@@ -215,11 +215,8 @@ line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "UP007",  # non-pep604-annotation
   "E501",   # line-too-long
   "B024",   # abstract-base-class-without-abstract-method
-  "B009",   # get-attr-with-constant
-  "B010",   # set-attr-with-constant
   "D100",   # undocumented-public-module
   "D101",   # undocumented-public-class
   "D102",   # undocumented-public-method
@@ -233,7 +230,6 @@ ignore = [
   "ANN003", # missing-type-kwargs
   "ANN401", # any-type
   "PT011",  # pytest-raises-too-broad
-  "LOG015", # root-logger-call
   "EM101",  # raw-string-in-exception
   "BLE001", # blind-except
   "S",      # flake8-bandit

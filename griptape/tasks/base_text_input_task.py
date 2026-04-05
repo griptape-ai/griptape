@@ -21,7 +21,7 @@ T = TypeVar("T", bound=BaseArtifact)
 class BaseTextInputTask(RuleMixin, BaseTask[T], ABC):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
-    _input: Union[str, TextArtifact, Callable[[BaseTask], TextArtifact]] = field(
+    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(
         default=DEFAULT_INPUT_TEMPLATE,
         alias="input",
     )

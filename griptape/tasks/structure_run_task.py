@@ -20,7 +20,7 @@ class StructureRunTask(BaseTask):
         structure_run_driver: Driver to run the Structure.
     """
 
-    _input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
+    _input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
 

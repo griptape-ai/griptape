@@ -25,7 +25,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 @define
 class OutputSchemaValidationSubtask(BaseSubtask):
     _input: BaseArtifact = field(alias="input")
-    output_schema: Union[Schema, type[BaseModel]] = field(kw_only=True)
+    output_schema: Schema | type[BaseModel] = field(kw_only=True)
     structured_output_strategy: StructuredOutputStrategy = field(
         default="rule", kw_only=True, metadata={"serializable": True}
     )

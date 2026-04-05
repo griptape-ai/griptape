@@ -27,9 +27,7 @@ class OutpaintingImageGenerationTask(BaseImageGenerationTask):
         output_file: If provided, the generated image will be written to disk as output_file.
     """
 
-    _input: Union[
-        tuple[Union[str, TextArtifact], ImageArtifact, ImageArtifact], Callable[[BaseTask], ListArtifact], ListArtifact
-    ] = field(default=None, alias="input")
+    _input: tuple[str | TextArtifact, ImageArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact = field(default=None, alias="input")
 
     @property
     def input(self) -> ListArtifact:

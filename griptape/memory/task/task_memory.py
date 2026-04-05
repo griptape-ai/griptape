@@ -64,8 +64,8 @@ class TaskMemory(ActivityMixin, SerializableMixin):
     ) -> BaseArtifact:
         from griptape.utils import J2
 
-        tool_name = getattr(getattr(tool_activity, "__self__"), "name")
-        activity_name = getattr(tool_activity, "name")
+        tool_name = tool_activity.__self__.name
+        activity_name = tool_activity.name
         namespace = output_artifact.name
 
         if output_artifact:

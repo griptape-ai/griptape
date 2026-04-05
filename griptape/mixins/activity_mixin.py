@@ -66,7 +66,7 @@ class ActivityMixin:
 
     def find_activity(self, name: str) -> Optional[Callable]:
         for activity in self.activities():
-            if getattr(activity, "is_activity", False) and getattr(activity, "name") == name:
+            if getattr(activity, "is_activity", False) and activity.name == name:
                 return activity
 
         return None
@@ -74,21 +74,21 @@ class ActivityMixin:
     def activity_name(self, activity: Callable) -> str:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
-        return getattr(activity, "name")
+        return activity.name
 
     def activity_description(self, activity: Callable) -> str:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
-        return Template(getattr(activity, "config")["description"]).render({"_self": self})
+        return Template(activity.config["description"]).render({"_self": self})
 
-    def activity_schema(self, activity: Callable) -> Optional[Union[Schema, type[BaseModel]]]:
+    def activity_schema(self, activity: Callable) -> Optional[Schema | type[BaseModel]]:
         if activity is None or not getattr(activity, "is_activity", False):
             raise Exception("This method is not an activity.")
-        if getattr(activity, "config")["schema"] is not None:
-            config_schema = getattr(activity, "config")["schema"]
+        if activity.config["schema"] is not None:
+            config_schema = activity.config["schema"]
             if isinstance(config_schema, Schema):
                 # Need to deepcopy to avoid modifying the original schema
-                config_schema = deepcopy(getattr(activity, "config")["schema"])
+                config_schema = deepcopy(activity.config["schema"])
             elif isinstance(config_schema, Callable) and not isinstance(config_schema, type):
                 config_schema = config_schema(self)
             activity_name = self.activity_name(activity)
@@ -113,7 +113,7 @@ class ActivityMixin:
 
         return json_schema
 
-    def validate_activity_schema(self, activity_schema: Union[Schema, type[BaseModel]], params: dict) -> None:
+    def validate_activity_schema(self, activity_schema: Schema | type[BaseModel], params: dict) -> None:
         try:
             if isinstance(activity_schema, Schema):
                 activity_schema.validate(params)

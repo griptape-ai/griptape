@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @define
 class StructuredOutputTool(BaseTool):
-    output_schema: Union[Schema, type[BaseModel]] = field(kw_only=True)
+    output_schema: Schema | type[BaseModel] = field(kw_only=True)
 
     @activity(
         config={

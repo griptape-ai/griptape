@@ -137,7 +137,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
 
             output = self.after_run(activity, subtask, action, output)
         except Exception as e:
-            logging.debug(traceback.format_exc())
+            log.debug(traceback.format_exc())
             output = ErrorArtifact(str(e), exception=e)
 
         return output
@@ -160,7 +160,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         if isinstance(activity_result, BaseArtifact):
             result = activity_result
         else:
-            logging.warning("Activity result is not an artifact; converting result to InfoArtifact")
+            log.warning("Activity result is not an artifact; converting result to InfoArtifact")
 
             if activity_result is None:
                 result = InfoArtifact("Tool returned an empty value")
@@ -179,7 +179,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         super().after_run()
 
         if self.output_memory:
-            output_memories = self.output_memory[getattr(activity, "name")] or []
+            output_memories = self.output_memory[activity.name] or []
             for memory in output_memories:
                 value = memory.process_output(activity, subtask, value)
 

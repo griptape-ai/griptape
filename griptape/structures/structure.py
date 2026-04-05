@@ -31,7 +31,7 @@ if TYPE_CHECKING:
 @define
 class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
-    _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
+    _tasks: list[BaseTask | list[BaseTask]] = field(
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
     )
     conversation_memory: Optional[BaseConversationMemory] = field(

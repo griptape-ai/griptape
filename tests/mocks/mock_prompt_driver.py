@@ -34,9 +34,9 @@ if TYPE_CHECKING:
 class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
     tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
-    mock_input: Union[str, Callable[[], str]] = field(default="mock input", kw_only=True)
-    mock_output: Union[str, Callable[[PromptStack], str]] = field(default="mock output", kw_only=True)
-    mock_structured_output: Union[dict, Callable[[PromptStack], dict]] = field(factory=dict, kw_only=True)
+    mock_input: str | Callable[[], str] = field(default="mock input", kw_only=True)
+    mock_output: str | Callable[[PromptStack], str] = field(default="mock output", kw_only=True)
+    mock_structured_output: dict | Callable[[PromptStack], dict] = field(factory=dict, kw_only=True)
     modalities: list[str] = field(default=Factory(lambda: ["text"]), kw_only=True)
 
     def try_run(self, prompt_stack: PromptStack) -> Message:

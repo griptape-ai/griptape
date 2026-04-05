@@ -436,8 +436,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 raise ValueError(f"Unsupported tool call delta: {tool_call}")
             raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
         # OpenAi doesn't have types for audio deltas so we need to use hasattr and getattr.
-        if hasattr(content_delta, "audio") and getattr(content_delta, "audio") is not None:
-            audio_chunk: dict = getattr(content_delta, "audio")
+        if hasattr(content_delta, "audio") and content_delta.audio is not None:
+            audio_chunk: dict = content_delta.audio
             return AudioDeltaMessageContent(
                 id=audio_chunk.get("id"),
                 data=audio_chunk.get("data"),

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+
+log = logging.getLogger(__name__)
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
@@ -74,7 +76,7 @@ class SummaryConversationMemory(BaseConversationMemory):
                 ).to_text()
             return previous_summary
         except Exception as e:
-            logging.exception("Error summarizing memory: %s(%s)", type(e).__name__, e)
+            log.exception("Error summarizing memory: %s(%s)", type(e).__name__, e)
 
             return previous_summary
 

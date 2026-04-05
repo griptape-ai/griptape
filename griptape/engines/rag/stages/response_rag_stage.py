@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+
+log = logging.getLogger(__name__)
 from typing import TYPE_CHECKING
 
 from attrs import define, field
@@ -30,7 +32,7 @@ class ResponseRagStage(BaseRagStage):
         return ms
 
     def run(self, context: RagContext) -> RagContext:
-        logging.info("ResponseRagStage: running %s retrieval modules in parallel", len(self.response_modules))
+        log.info("ResponseRagStage: running %s retrieval modules in parallel", len(self.response_modules))
 
         with self.create_futures_executor() as futures_executor:
             results = utils.execute_futures_list(

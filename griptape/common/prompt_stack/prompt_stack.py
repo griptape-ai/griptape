@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 class PromptStack(SerializableMixin):
     messages: list[Message] = field(factory=list, kw_only=True, metadata={"serializable": True})
     tools: list[BaseTool] = field(factory=list, kw_only=True)
-    output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
+    output_schema: Optional[Schema | type[BaseModel]] = field(default=None, kw_only=True)
 
     @property
     def system_messages(self) -> list[Message]:

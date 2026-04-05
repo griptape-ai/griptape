@@ -23,17 +23,17 @@ if TYPE_CHECKING:
 
 @define
 class Agent(Structure):
-    input: Union[str, list, tuple, BaseArtifact, Callable[[BaseTask], BaseArtifact]] = field(
+    input: str | list | tuple | BaseArtifact | Callable[[BaseTask], BaseArtifact] = field(
         default=lambda task: task.full_context["args"][0] if task.full_context["args"] else TextArtifact(value=""),
     )
     stream: Optional[bool] = field(default=None, kw_only=True)
     prompt_driver: Optional[BasePromptDriver] = field(default=None, kw_only=True)
-    output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
+    output_schema: Optional[Schema | type[BaseModel]] = field(default=None, kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True)
     max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True)
     max_subtasks: Optional[int] = field(default=None, kw_only=True)
     fail_fast: bool = field(default=False, kw_only=True)
-    _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
+    _tasks: list[BaseTask | list[BaseTask]] = field(
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
     )
 

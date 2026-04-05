@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import base64
 import logging
+
+log = logging.getLogger(__name__)
 from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
@@ -148,6 +150,6 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         if image_response.get("finishReason") == "ERROR":
             raise Exception(f"Image generation failed: {image_response.get('finishReason')}")
         if image_response.get("finishReason") == "CONTENT_FILTERED":
-            logging.warning("Image generation triggered content filter and may be blurred")
+            log.warning("Image generation triggered content filter and may be blurred")
 
         return base64.decodebytes(bytes(image_response.get("base64"), "utf-8"))

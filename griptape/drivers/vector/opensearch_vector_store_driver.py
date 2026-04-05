@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+
+log = logging.getLogger(__name__)
 from typing import TYPE_CHECKING, NoReturn, Optional
 
 from attrs import define, field
@@ -92,7 +94,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
                 )
             return None
         except Exception as e:
-            logging.exception("Error while loading entry: %s", e)
+            log.exception("Error while loading entry: %s", e)
             return None
 
     def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:

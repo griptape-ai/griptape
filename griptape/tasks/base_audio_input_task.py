@@ -18,7 +18,7 @@ T = TypeVar("T", bound=BaseArtifact)
 
 @define
 class BaseAudioInputTask(RuleMixin, BaseTask[T], ABC):
-    _input: Union[AudioArtifact, Callable[[BaseTask], AudioArtifact]] = field(alias="input")
+    _input: AudioArtifact | Callable[[BaseTask], AudioArtifact] = field(alias="input")
 
     @property
     def input(self) -> AudioArtifact:

@@ -35,7 +35,7 @@ class VariationImageGenerationTask(BaseImageGenerationTask):
         default=Factory(lambda: Defaults.drivers_config.image_generation_driver),
         kw_only=True,
     )
-    _input: Union[tuple[Union[str, TextArtifact], ImageArtifact], Callable[[BaseTask], ListArtifact], ListArtifact] = (
+    _input: tuple[str | TextArtifact, ImageArtifact] | Callable[[BaseTask], ListArtifact] | ListArtifact = (
         field(default=None, alias="input")
     )
 

@@ -19,7 +19,7 @@ if TYPE_CHECKING:
 class TextToSpeechTask(BaseAudioGenerationTask):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
 
-    _input: Union[str, TextArtifact, Callable[[BaseTask], TextArtifact]] = field(default=DEFAULT_INPUT_TEMPLATE)
+    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(default=DEFAULT_INPUT_TEMPLATE)
     text_to_speech_driver: BaseTextToSpeechDriver = field(
         default=Factory(lambda: Defaults.drivers_config.text_to_speech_driver), kw_only=True
     )

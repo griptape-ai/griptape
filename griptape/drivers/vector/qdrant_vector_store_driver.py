@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+
+log = logging.getLogger(__name__)
 import uuid
 from typing import TYPE_CHECKING, Optional
 
@@ -93,7 +95,7 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             points_selector=import_optional_dependency("qdrant_client.http.models").PointIdsList(points=[vector_id]),
         )
         if deletion_response.status == import_optional_dependency("qdrant_client.http.models").UpdateStatus.COMPLETED:
-            logging.info("ID %s is successfully deleted", vector_id)
+            log.info("ID %s is successfully deleted", vector_id)
 
     def query_vector(
         self,

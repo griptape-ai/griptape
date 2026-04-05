@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import itertools
 import logging
+
+log = logging.getLogger(__name__)
 from typing import TYPE_CHECKING, Optional
 
 from attrs import define, field
@@ -34,7 +36,7 @@ class RetrievalRagStage(BaseRagStage):
         return ms
 
     def run(self, context: RagContext) -> RagContext:
-        logging.info("RetrievalRagStage: running %s retrieval modules in parallel", len(self.retrieval_modules))
+        log.info("RetrievalRagStage: running %s retrieval modules in parallel", len(self.retrieval_modules))
 
         with self.create_futures_executor() as futures_executor:
             results = utils.execute_futures_list(
@@ -49,7 +51,7 @@ class RetrievalRagStage(BaseRagStage):
         results = list({str(c.value): c for c in results}.values())
         chunks_after_dedup = len(results)
 
-        logging.info(
+        log.info(
             "RetrievalRagStage: deduplicated %s chunks (%s - %s)",
             chunks_before_dedup - chunks_after_dedup,
             chunks_before_dedup,
@@ -59,7 +61,7 @@ class RetrievalRagStage(BaseRagStage):
         context.text_chunks = [a for a in results if isinstance(a, TextArtifact)]
 
         if self.rerank_module:
-            logging.info("RetrievalRagStage: running rerank module on %s chunks", chunks_after_dedup)
+            log.info("RetrievalRagStage: running rerank module on %s chunks", chunks_after_dedup)
 
             context.text_chunks = [a for a in self.rerank_module.run(context) if isinstance(a, TextArtifact)]
 

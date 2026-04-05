@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+
+log = logging.getLogger(__name__)
 import smtplib
 from email.mime.text import MIMEText
 from typing import Optional
@@ -126,7 +128,7 @@ class EmailTool(BaseTool):
                 client.sendmail(msg["From"], [msg["To"]], msg.as_string())
                 return InfoArtifact("email was successfully sent")
         except Exception as e:
-            logging.exception(e)
+            log.exception(e)
             return ErrorArtifact(f"error sending email: {e}")
 
     def _create_smtp_client(self, smtp_host: str, smtp_port: int) -> smtplib.SMTP | smtplib.SMTP_SSL:

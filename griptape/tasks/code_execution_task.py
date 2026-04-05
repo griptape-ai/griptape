@@ -14,7 +14,7 @@ T = TypeVar("T", bound=BaseArtifact)  # Return type of task
 @define
 class CodeExecutionTask(BaseTask[T]):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
-    _input: Union[str, TextArtifact, Callable[[BaseTask], TextArtifact]] = field(
+    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(
         default=DEFAULT_INPUT_TEMPLATE,
         alias="input",
     )

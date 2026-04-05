@@ -32,7 +32,7 @@ class BaseMessage(ABC, SerializableMixin):
     ASSISTANT_ROLE = "assistant"
     SYSTEM_ROLE = "system"
 
-    content: list[Union[BaseMessageContent, BaseDeltaMessageContent]] = field(metadata={"serializable": True})
+    content: list[BaseMessageContent | BaseDeltaMessageContent] = field(metadata={"serializable": True})
     role: str = field(kw_only=True, metadata={"serializable": True})
     usage: Usage = field(kw_only=True, default=Factory(lambda: BaseMessage.Usage()), metadata={"serializable": True})
 

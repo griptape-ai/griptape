@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+
+log = logging.getLogger(__name__)
 from abc import ABC, abstractmethod
 from typing import Optional
 
@@ -71,7 +73,7 @@ class BaseTokenizer(ABC, SerializableMixin):
         )
 
         if tokens is None:
-            logging.warning(
+            log.warning(
                 "Model %s not found in MODEL_PREFIXES_TO_MAX_INPUT_TOKENS, using default value of %s.",
                 self.model,
                 self.DEFAULT_MAX_INPUT_TOKENS,
@@ -90,7 +92,7 @@ class BaseTokenizer(ABC, SerializableMixin):
         )
 
         if tokens is None:
-            logging.debug(
+            log.debug(
                 "Model %s not found in MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS, using default value of %s.",
                 self.model,
                 self.DEFAULT_MAX_OUTPUT_TOKENS,

@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+
+log = logging.getLogger(__name__)
 from typing import TYPE_CHECKING
 
 from attrs import define, field
@@ -23,7 +25,7 @@ class QueryRagStage(BaseRagStage):
         return self.query_modules
 
     def run(self, context: RagContext) -> RagContext:
-        logging.info("QueryRagStage: running %s query generation modules sequentially", len(self.query_modules))
+        log.info("QueryRagStage: running %s query generation modules sequentially", len(self.query_modules))
 
         [qm.run(context) for qm in self.query_modules]
 

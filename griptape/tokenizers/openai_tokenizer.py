@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import logging
+
+log = logging.getLogger(__name__)
 from typing import TYPE_CHECKING, Optional
 
 from attrs import Factory, define, field
@@ -98,7 +100,7 @@ class OpenAiTokenizer(BaseTokenizer):
             try:
                 encoding = tiktoken.encoding_for_model(model)
             except KeyError:
-                logging.warning("model not found. Using cl100k_base encoding.")
+                log.warning("model not found. Using cl100k_base encoding.")
 
                 encoding = tiktoken.get_encoding("cl100k_base")
 
@@ -120,13 +122,13 @@ class OpenAiTokenizer(BaseTokenizer):
                 # if there's a name, the role is omitted
                 tokens_per_name = -1
             elif "gpt-3.5-turbo" in model or "gpt-35-turbo" in model:
-                logging.info("gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.")
+                log.info("gpt-3.5-turbo may update over time. Returning num tokens assuming gpt-3.5-turbo-0613.")
                 return self.count_tokens(text, model="gpt-3.5-turbo-0613")
             elif "gpt-4o" in model:
-                logging.info("gpt-4o may update over time. Returning num tokens assuming gpt-4o-2024-05-13.")
+                log.info("gpt-4o may update over time. Returning num tokens assuming gpt-4o-2024-05-13.")
                 return self.count_tokens(text, model="gpt-4o-2024-05-13")
             elif "gpt-4" in model:
-                logging.info("gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.")
+                log.info("gpt-4 may update over time. Returning num tokens assuming gpt-4-0613.")
                 return self.count_tokens(text, model="gpt-4-0613")
             else:
                 raise NotImplementedError(
