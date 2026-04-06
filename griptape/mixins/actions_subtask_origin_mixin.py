@@ -15,19 +15,24 @@ if TYPE_CHECKING:
 @define(slots=False)
 class ActionsSubtaskOriginMixin:
     @abstractmethod
-    def find_tool(self, tool_name: str) -> BaseTool: ...
+    def find_tool(self, tool_name: str) -> BaseTool:
+        pass
 
     @abstractmethod
-    def find_memory(self, memory_name: str) -> TaskMemory: ...
+    def find_memory(self, memory_name: str) -> TaskMemory:
+        pass
 
     @abstractmethod
-    def find_subtask(self, subtask_id: str) -> BaseSubtask: ...
+    def find_subtask(self, subtask_id: str) -> BaseSubtask:
+        pass
 
     @abstractmethod
-    def add_subtask(self, subtask: BaseSubtask) -> BaseSubtask: ...
+    def add_subtask(self, subtask: BaseSubtask) -> BaseSubtask:
+        pass
 
     @abstractmethod
-    def actions_schema(self) -> Schema: ...
+    def actions_schema(self) -> Schema:
+        pass
 
     def _actions_schema_for_tools(self, tools: list[BaseTool]) -> Schema:
         action_schemas = []

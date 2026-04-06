@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
 
@@ -33,17 +33,17 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
     """
 
     api_endpoint: str = field(kw_only=True, metadata={"serializable": True})
-    token: Optional[str | astrapy.authentication.TokenProvider] = field(
+    token: str | astrapy.authentication.TokenProvider | None = field(
         kw_only=True, default=None, metadata={"serializable": False}
     )
     collection_name: str = field(kw_only=True, metadata={"serializable": True})
-    environment: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
-    astra_db_namespace: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    environment: str | None = field(kw_only=True, default=None, metadata={"serializable": True})
+    astra_db_namespace: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     caller_name: str = field(default="griptape", kw_only=True, metadata={"serializable": False})
-    _client: Optional[astrapy.DataAPIClient] = field(
+    _client: astrapy.DataAPIClient | None = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
-    _collection: Optional[astrapy.Collection] = field(
+    _collection: astrapy.Collection | None = field(
         default=None, kw_only=True, alias="collection", metadata={"serializable": False}
     )
 
@@ -79,9 +79,9 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs: Any,
     ) -> str:
         """Write a vector to the Astra DB store.
@@ -109,7 +109,7 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
         insert_result = self.collection.insert_one(document)
         return insert_result.inserted_id
 
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         """Load a single vector entry from the Astra DB store given its ID.
 
         Args:
@@ -127,7 +127,7 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
             )
         return None
 
-    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         """Load entries from the Astra DB store.
 
         Args:
@@ -148,8 +148,8 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         **kwargs: Any,
     ) -> list[BaseVectorStoreDriver.Entry]:
@@ -168,10 +168,10 @@ class AstraDbVectorStoreDriver(BaseVectorStoreDriver):
             A list of vector (`BaseVectorStoreDriver.Entry`) entries,
             with their `score` attribute set to the vector similarity to the query.
         """
-        query_filter: Optional[dict[str, Any]] = kwargs.get("filter")
+        query_filter: dict[str, Any] | None = kwargs.get("filter")
         find_filter_ns: dict[str, Any] = {} if namespace is None else {"keyspace": namespace}
         find_filter = {**(query_filter or {}), **find_filter_ns}
-        find_projection: Optional[dict[str, int]] = {"*": 1} if include_vectors else None
+        find_projection: dict[str, int] | None = {"*": 1} if include_vectors else None
         ann_limit = count or BaseVectorStoreDriver.DEFAULT_QUERY_COUNT
         matches = self.collection.find(
             filter=find_filter,

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Generic, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 from attrs import define, field
 
@@ -29,7 +29,7 @@ class BaseLoader(FuturesExecutorMixin, ABC, Generic[S, F, A]):
         reference: The optional `Reference` to set on the Artifact.
     """
 
-    reference: Optional[Reference] = field(default=None, kw_only=True)
+    reference: Reference | None = field(default=None, kw_only=True)
 
     def load(self, source: S) -> A:
         data = self.fetch(source)

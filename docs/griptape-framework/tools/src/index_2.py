@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import random
-import typing
 
 from schema import Literal, Optional, Schema
 
@@ -30,7 +29,7 @@ class RandomNumberGenerator(BaseTool):
             ),
         }
     )
-    def generate_with_decimals(self, decimals: typing.Optional[int]) -> TextArtifact:
+    def generate_with_decimals(self, decimals: int | None) -> TextArtifact:
         return TextArtifact(str(round(random.random(), decimals)))
 
     @activity(

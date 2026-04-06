@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import warnings
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Literal
 
 from attrs import define, field
 
@@ -27,8 +27,8 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     """
 
     model: str = field(kw_only=True, metadata={"serializable": True})
-    tokenizer: Optional[BaseTokenizer] = field(default=None, kw_only=True)
-    chunker: Optional[BaseChunker] = field(init=False)
+    tokenizer: BaseTokenizer | None = field(default=None, kw_only=True)
+    chunker: BaseChunker | None = field(init=False)
 
     def __attrs_post_init__(self) -> None:
         self.chunker = TextChunker(tokenizer=self.tokenizer) if self.tokenizer else None
@@ -80,7 +80,7 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     @abstractmethod
     def try_embed_chunk(self, chunk: str, *, vector_operation: VectorOperation | None = None) -> list[float]:
         # TODO: Remove for griptape 2.0, subclasses should implement `try_embed_artifact` instead
-        ...
+        pass
 
     def _embed_long_string(self, string: str, *, vector_operation: VectorOperation | None = None) -> list[float]:
         """Embeds a string that is too long to embed in one go.

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Callable, Union
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 from pydantic import BaseModel, TypeAdapter, ValidationError
@@ -15,6 +15,8 @@ from griptape.tasks.base_subtask import BaseSubtask
 from griptape.utils import J2
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.common import PromptStack
     from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
     from griptape.tasks import BaseTask
@@ -25,7 +27,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 @define
 class OutputSchemaValidationSubtask(BaseSubtask):
     _input: BaseArtifact = field(alias="input")
-    output_schema: Union[Schema, type[BaseModel]] = field(kw_only=True)
+    output_schema: Schema | type[BaseModel] = field(kw_only=True)
     structured_output_strategy: StructuredOutputStrategy = field(
         default="rule", kw_only=True, metadata={"serializable": True}
     )

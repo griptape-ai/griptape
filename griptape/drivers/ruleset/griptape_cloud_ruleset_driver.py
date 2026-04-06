@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import requests
 from attrs import Attribute, Factory, define, field
@@ -31,21 +31,21 @@ class GriptapeCloudRulesetDriver(BaseRulesetDriver):
         ValueError: If `api_key` is not provided.
     """
 
-    ruleset_id: Optional[str] = field(
+    ruleset_id: str | None = field(
         default=None,
         metadata={"serializable": True},
     )
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
     )
-    api_key: Optional[str] = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")))
+    api_key: str | None = field(default=Factory(lambda: os.getenv("GT_CLOUD_API_KEY")))
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         init=False,
     )
 
     @api_key.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_api_key(self, _: Attribute, value: Optional[str]) -> str:
+    def validate_api_key(self, _: Attribute, value: str | None) -> str:
         if value is None:
             raise ValueError(f"{self.__class__.__name__} requires an API key")
         return value

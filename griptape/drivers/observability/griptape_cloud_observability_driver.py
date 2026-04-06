@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from uuid import UUID
 
 import requests
@@ -27,9 +27,7 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
     headers: dict = field(
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True), kw_only=True
     )
-    structure_run_id: Optional[str] = field(
-        default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True
-    )
+    structure_run_id: str | None = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
     span_processor: SpanProcessor = field(
         default=Factory(
             lambda self: import_optional_dependency("opentelemetry.sdk.trace.export").BatchSpanProcessor(
@@ -46,7 +44,7 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
     )
 
     @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_run_id(self, _: Attribute, structure_run_id: Optional[str]) -> None:
+    def validate_run_id(self, _: Attribute, structure_run_id: str | None) -> None:
         if structure_run_id is None:
             raise ValueError(
                 "structure_run_id must be set either in the constructor or as an environment variable (GT_CLOUD_STRUCTURE_RUN_ID)."
@@ -114,7 +112,7 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
             structure_run_id=structure_run_id,
         )
 
-    def get_span_id(self) -> Optional[str]:
+    def get_span_id(self) -> str | None:
         opentelemetry_trace = import_optional_dependency("opentelemetry.trace")
         span = opentelemetry_trace.get_current_span()
         if span is opentelemetry_trace.INVALID_SPAN:

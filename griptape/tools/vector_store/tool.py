@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 from schema import Literal, Schema
@@ -10,6 +10,8 @@ from griptape.tools import BaseTool
 from griptape.utils.decorators import activity
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.drivers.vector import BaseVectorStoreDriver
 
 

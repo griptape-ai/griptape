@@ -53,4 +53,5 @@ class BaseSubtask(BaseTask[T]):
         self._origin_task = parent_task
 
     @abstractmethod
-    def add_to_prompt_stack(self, stack: PromptStack) -> None: ...
+    def add_to_prompt_stack(self, stack: PromptStack) -> None:
+        pass

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import email
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -125,7 +125,7 @@ def to_select_response(status: str, message_count: int):
     return (status, (str(message_count),))
 
 
-def to_fetch_message(body: str, content_type: Optional[str]):
+def to_fetch_message(body: str, content_type: str | None):
     return to_fetch_response(to_message(body, content_type))
 
 
@@ -133,7 +133,7 @@ def to_fetch_response(message: Message):
     return (None, ((None, message.as_bytes()),))
 
 
-def to_message(body: str, content_type: Optional[str]) -> Message:
+def to_message(body: str, content_type: str | None) -> Message:
     message = email.message_from_string(body)
     if content_type:
         message.set_type(content_type)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import re
-from typing import TYPE_CHECKING, Optional, cast
+from typing import TYPE_CHECKING, cast
 
 from attrs import Factory, define, field
 
@@ -28,7 +28,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
         self,
         artifacts: ListArtifact[TextArtifact],
         *,
-        rulesets: Optional[list[Ruleset]] = None,
+        rulesets: list[Ruleset] | None = None,
         **kwargs,
     ) -> ListArtifact[JsonArtifact]:
         return ListArtifact(
@@ -48,7 +48,7 @@ class JsonExtractionEngine(BaseExtractionEngine):
         artifacts: list[TextArtifact],
         extractions: list[JsonArtifact],
         *,
-        rulesets: Optional[list[Ruleset]] = None,
+        rulesets: list[Ruleset] | None = None,
     ) -> list[JsonArtifact]:
         artifacts_text = self.chunk_joiner.join([a.value for a in artifacts])
         system_prompt = self.generate_system_template.render(

@@ -5,7 +5,7 @@ import os
 import shutil
 import tempfile
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, Factory, define, field
 from schema import Literal, Schema
@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 @define
 class ComputerTool(BaseTool):
-    local_workdir: Optional[str] = field(default=None, kw_only=True)
+    local_workdir: str | None = field(default=None, kw_only=True)
     container_workdir: str = field(default="/griptape", kw_only=True)
     env_vars: dict = field(factory=dict, kw_only=True)
     dockerfile_path: str = field(
@@ -36,7 +36,7 @@ class ComputerTool(BaseTool):
         kw_only=True,
     )
 
-    _tempdir: Optional[tempfile.TemporaryDirectory] = field(default=None, kw_only=True)
+    _tempdir: tempfile.TemporaryDirectory | None = field(default=None, kw_only=True)
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
@@ -52,7 +52,7 @@ class ComputerTool(BaseTool):
         if not docker_client:
             raise ValueError("Docker client can't be initialized: make sure the Docker daemon is running")
 
-    def install_dependencies(self, env: Optional[dict[str, str]] = None) -> None:
+    def install_dependencies(self, env: dict[str, str] | None = None) -> None:
         super().install_dependencies(env)
 
         self.remove_existing_container(self.container_name(self))
@@ -147,7 +147,7 @@ class ComputerTool(BaseTool):
             if tempdir:
                 tempdir.cleanup()
 
-    def default_docker_client(self) -> Optional[DockerClient]:
+    def default_docker_client(self) -> DockerClient | None:
         import docker
 
         try:

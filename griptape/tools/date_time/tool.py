@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta
-from typing import Optional
 
 import schema
 from attrs import Factory, define, field
@@ -65,7 +64,7 @@ class DateTimeTool(BaseTool):
             ),
         },
     )
-    def add_timedelta(self, timedelta_kwargs: dict, iso_datetime: Optional[str] = None) -> BaseArtifact:
+    def add_timedelta(self, timedelta_kwargs: dict, iso_datetime: str | None = None) -> BaseArtifact:
         if iso_datetime is None:
             iso_datetime = datetime.now().isoformat()
         return TextArtifact((datetime.fromisoformat(iso_datetime) + timedelta(**timedelta_kwargs)).isoformat())

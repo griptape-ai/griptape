@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 @define
 class ImageMessageContent(BaseMessageContent):
-    artifact: Union[ImageArtifact, ImageUrlArtifact] = field(metadata={"serializable": True})
+    artifact: ImageArtifact | ImageUrlArtifact = field(metadata={"serializable": True})
 
     @classmethod
     def from_deltas(cls, deltas: Sequence[BaseDeltaMessageContent]) -> ImageMessageContent:

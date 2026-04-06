@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import base64
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Literal
 
 from attrs import Factory, define, field, fields_dict
 
@@ -43,20 +43,20 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
 
     # These defaults were changed from openai.api_type, openai.api_version, and openai.organization
     # to None because those module-level attributes don't exist in OpenAI SDK v1.0+
-    api_type: Optional[str] = field(default=None, kw_only=True)
-    api_version: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    style: Optional[Literal["vivid", "natural"]] = field(
+    api_type: str | None = field(default=None, kw_only=True)
+    api_version: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    base_url: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
+    organization: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    style: Literal["vivid", "natural"] | None = field(
         default=None, kw_only=True, metadata={"serializable": True, "model_allowlist": ["dall-e-3"]}
     )
-    quality: Optional[Literal["standard", "hd", "low", "medium", "high", "auto"]] = field(
+    quality: Literal["standard", "hd", "low", "medium", "high", "auto"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
     )
-    image_size: Optional[Literal["256x256", "512x512", "1024x1024", "1024x1792", "1792x1024"]] = field(
+    image_size: Literal["256x256", "512x512", "1024x1024", "1024x1792", "1792x1024"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
@@ -66,29 +66,27 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         kw_only=True,
         metadata={"serializable": True, "model_denylist": ["gpt-image-1"]},
     )
-    background: Optional[Literal["transparent", "opaque", "auto"]] = field(
+    background: Literal["transparent", "opaque", "auto"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True, "model_allowlist": ["gpt-image-1"]},
     )
-    moderation: Optional[Literal["low", "auto"]] = field(
+    moderation: Literal["low", "auto"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True, "model_allowlist": ["gpt-image-1"]},
     )
-    output_compression: Optional[int] = field(
+    output_compression: int | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True, "model_allowlist": ["gpt-image-1"]},
     )
-    output_format: Optional[Literal["png", "jpeg"]] = field(
+    output_format: Literal["png", "jpeg"] | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True, "model_allowlist": ["gpt-image-1"]},
     )
-    _client: Optional[openai.OpenAI] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
+    _client: openai.OpenAI | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
     ignored_exception_types: tuple[type[Exception], ...] = field(
         default=Factory(lambda self: self._default_ignored_exception_types(), takes_self=True),
         kw_only=True,
@@ -139,7 +137,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         openai = import_optional_dependency("openai")
         return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
-    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         prompt = ", ".join(prompts)
 
         response = self.client.images.generate(
@@ -166,7 +164,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         """Creates a variation of an image.
 
@@ -189,7 +187,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         prompt = ", ".join(prompts)
         response = self.client.images.edit(
@@ -211,7 +209,7 @@ class OpenAiImageGenerationDriver(BaseImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support outpainting")
 

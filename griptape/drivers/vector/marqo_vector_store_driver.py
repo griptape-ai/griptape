@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, NoReturn, Optional
+from typing import TYPE_CHECKING, Any, NoReturn
 
 from attrs import define, field
 
@@ -28,9 +28,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
     api_key: str = field(kw_only=True, metadata={"serializable": True})
     url: str = field(kw_only=True, metadata={"serializable": True})
     index: str = field(kw_only=True, metadata={"serializable": True})
-    _client: Optional[marqo.Client] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
+    _client: marqo.Client | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> marqo.Client:
@@ -40,9 +38,9 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         self,
         value: str | TextArtifact | ImageArtifact,
         *,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        vector_id: Optional[str] = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
+        vector_id: str | None = None,
         **kwargs: Any,
     ) -> str:
         """Upsert a text document into the Marqo index.
@@ -82,7 +80,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             return response["items"][0]["_id"]
         raise ValueError(f"Failed to upsert text: {response}")
 
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         """Load a document entry from the Marqo index.
 
         Args:
@@ -102,7 +100,7 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             )
         return None
 
-    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         """Load all document entries from the Marqo index.
 
         Args:
@@ -143,8 +141,8 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         include_metadata: bool = True,
         **kwargs: Any,
@@ -176,8 +174,8 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         self,
         query: str | TextArtifact | ImageArtifact,
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         include_metadata: bool = True,
         **kwargs: Any,
@@ -224,9 +222,9 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs: Any,
     ) -> str:
         """Upsert a vector into the Marqo index.

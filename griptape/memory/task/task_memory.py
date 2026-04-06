@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Attribute, Factory, define, field
 
@@ -11,6 +11,8 @@ from griptape.mixins.activity_mixin import ActivityMixin
 from griptape.mixins.serializable_mixin import SerializableMixin
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.memory.task.storage import BaseArtifactStorage
     from griptape.tasks import ActionsSubtask
 
@@ -46,8 +48,8 @@ class TaskMemory(ActivityMixin, SerializableMixin):
 
             seen_types.append(type(storage))
 
-    def get_storage_for(self, artifact: BaseArtifact) -> Optional[BaseArtifactStorage]:
-        def find_storage(a: BaseArtifact) -> Optional[BaseArtifactStorage]:
+    def get_storage_for(self, artifact: BaseArtifact) -> BaseArtifactStorage | None:
+        def find_storage(a: BaseArtifact) -> BaseArtifactStorage | None:
             return next((v for k, v in self.artifact_storages.items() if isinstance(a, k)), None)
 
         if isinstance(artifact, ListArtifact):
@@ -94,7 +96,7 @@ class TaskMemory(ActivityMixin, SerializableMixin):
             return InfoArtifact(output, name=namespace)
         return InfoArtifact("tool output is empty")
 
-    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> Optional[BaseArtifact]:
+    def store_artifact(self, namespace: str, artifact: BaseArtifact) -> BaseArtifact | None:
         namespace_storage = self.namespace_storage.get(namespace)
         storage = self.get_storage_for(artifact)
 
@@ -126,7 +128,7 @@ class TaskMemory(ActivityMixin, SerializableMixin):
             return storage.load_artifacts(namespace)
         return ListArtifact()
 
-    def find_input_memory(self, memory_name: str) -> Optional[TaskMemory]:
+    def find_input_memory(self, memory_name: str) -> TaskMemory | None:
         if memory_name == self.name:
             return self
         return None

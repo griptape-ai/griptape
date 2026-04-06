@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, NoReturn, Optional
+from typing import TYPE_CHECKING, NoReturn
 
 from attrs import define, field
 
@@ -33,9 +33,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     username: str = field(kw_only=True, default="default", metadata={"serializable": False})
     port: int = field(kw_only=True, metadata={"serializable": True})
     db: int = field(kw_only=True, default=0, metadata={"serializable": True})
-    password: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
+    password: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
     index: str = field(kw_only=True, metadata={"serializable": True})
-    _client: Optional[Redis] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: Redis | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Redis:
@@ -51,9 +51,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         """Inserts or updates a vector in Redis.
@@ -81,7 +81,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         return vector_id
 
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         """Retrieves a specific vector entry from Redis based on its identifier and optional namespace.
 
         Returns:
@@ -94,9 +94,9 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         vector = np.frombuffer(result[b"vector"], dtype=np.float32).tolist()  # pyright: ignore[reportIndexIssue] https://github.com/redis/redis-py/issues/2399
         meta = json.loads(result[b"metadata"]) if b"metadata" in result else None  # pyright: ignore[reportIndexIssue, reportOperatorIssue]
 
-        return BaseVectorStoreDriver.Entry(id=vector_id, meta=meta, vector=vector, namespace=namespace)
+        return BaseVectorStoreDriver.Entry(id=vector_id, meta=meta, vector=vector, namespace=namespace)  # pyright: ignore[reportArgumentType]
 
-    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from Redis that match the optional namespace.
 
         Returns:
@@ -117,8 +117,8 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
@@ -163,11 +163,11 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
             )
         return query_results
 
-    def _generate_key(self, vector_id: str, namespace: Optional[str] = None) -> str:
+    def _generate_key(self, vector_id: str, namespace: str | None = None) -> str:
         """Generates a Redis key using the provided vector ID and optionally a namespace."""
         return f"{namespace}:{vector_id}" if namespace else vector_id
 
-    def _get_doc_prefix(self, namespace: Optional[str] = None) -> str:
+    def _get_doc_prefix(self, namespace: str | None = None) -> str:
         """Get the document prefix based on the provided namespace."""
         return f"{namespace}:" if namespace else ""
 

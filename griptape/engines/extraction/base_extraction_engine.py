@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, Factory, define, field
 
@@ -51,7 +51,7 @@ class BaseExtractionEngine(ABC):
         self,
         text: str,
         *,
-        rulesets: Optional[list[Ruleset]] = None,
+        rulesets: list[Ruleset] | None = None,
         **kwargs,
     ) -> ListArtifact:
         return self.extract_artifacts(ListArtifact([TextArtifact(text)]), rulesets=rulesets, **kwargs)
@@ -61,6 +61,7 @@ class BaseExtractionEngine(ABC):
         self,
         artifacts: ListArtifact[TextArtifact],
         *,
-        rulesets: Optional[list[Ruleset]] = None,
+        rulesets: list[Ruleset] | None = None,
         **kwargs,
-    ) -> ListArtifact: ...
+    ) -> ListArtifact:
+        pass

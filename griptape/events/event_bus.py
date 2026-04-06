@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contextvars import ContextVar
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 # Context Vars must be declared at the top module level.
 # Also, in-place modifications do not trigger the context var's `set` method
 # so we must reassign the context var with the new value when adding or removing event listeners.
-_event_listeners: ContextVar[Optional[list[EventListener]]] = ContextVar("event_listeners", default=None)
+_event_listeners: ContextVar[list[EventListener] | None] = ContextVar("event_listeners", default=None)
 
 
 @define

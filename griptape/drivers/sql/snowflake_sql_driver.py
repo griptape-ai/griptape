@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Attribute, define, field
 
@@ -9,6 +9,8 @@ from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from snowflake.connector import SnowflakeConnection
     from sqlalchemy.engine import Engine
 
@@ -16,7 +18,7 @@ if TYPE_CHECKING:
 @define
 class SnowflakeSqlDriver(BaseSqlDriver):
     get_connection: Callable[[], SnowflakeConnection] = field(kw_only=True)
-    _engine: Optional[Engine] = field(default=None, kw_only=True, alias="engine", metadata={"serializable": False})
+    _engine: Engine | None = field(default=None, kw_only=True, alias="engine", metadata={"serializable": False})
 
     @get_connection.validator  # pyright: ignore[reportFunctionMemberAccess]
     def validate_get_connection(self, _: Attribute, get_connection: Callable[[], SnowflakeConnection]) -> None:
@@ -35,14 +37,14 @@ class SnowflakeSqlDriver(BaseSqlDriver):
             creator=self.get_connection,
         )
 
-    def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
+    def execute_query(self, query: str) -> list[BaseSqlDriver.RowResult] | None:
         rows = self.execute_query_raw(query)
 
         if rows:
             return [BaseSqlDriver.RowResult(row) for row in rows]
         return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Any]]]:
+    def execute_query_raw(self, query: str) -> list[dict[str, Any]] | None:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         with self.engine.connect() as con:
@@ -54,7 +56,7 @@ class SnowflakeSqlDriver(BaseSqlDriver):
                 return None
             raise ValueError("No results found")
 
-    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
+    def get_table_schema(self, table_name: str, schema: str | None = None) -> str | None:
         sqlalchemy = import_optional_dependency("sqlalchemy")
 
         try:

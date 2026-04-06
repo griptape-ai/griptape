@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Attribute, define, field
 
@@ -17,12 +17,12 @@ if TYPE_CHECKING:
 class AmazonRedshiftSqlDriver(BaseSqlDriver):
     database: str = field(kw_only=True)
     session: boto3.Session = field(kw_only=True)
-    cluster_identifier: Optional[str] = field(default=None, kw_only=True)
-    workgroup_name: Optional[str] = field(default=None, kw_only=True)
-    db_user: Optional[str] = field(default=None, kw_only=True)
-    database_credentials_secret_arn: Optional[str] = field(default=None, kw_only=True)
+    cluster_identifier: str | None = field(default=None, kw_only=True)
+    workgroup_name: str | None = field(default=None, kw_only=True)
+    db_user: str | None = field(default=None, kw_only=True)
+    database_credentials_secret_arn: str | None = field(default=None, kw_only=True)
     wait_for_query_completion_sec: float = field(default=0.3, kw_only=True)
-    _client: Optional[RedshiftDataAPIServiceClient] = field(
+    _client: RedshiftDataAPIServiceClient | None = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 
@@ -31,7 +31,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         return self.session.client("redshift-data")
 
     @workgroup_name.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_params(self, _: Attribute, workgroup_name: Optional[str]) -> None:
+    def validate_params(self, _: Attribute, workgroup_name: str | None) -> None:
         if not self.cluster_identifier and not self.workgroup_name:
             raise ValueError("Provide a value for one of `cluster_identifier` or `workgroup_name`")
         if self.cluster_identifier and self.workgroup_name:
@@ -55,13 +55,13 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
         rows = cls._process_rows_from_records(records)
         return cls._process_cells_from_rows_and_columns(columns, rows)
 
-    def execute_query(self, query: str) -> Optional[list[BaseSqlDriver.RowResult]]:
+    def execute_query(self, query: str) -> list[BaseSqlDriver.RowResult] | None:
         rows = self.execute_query_raw(query)
         if rows:
             return [BaseSqlDriver.RowResult(row) for row in rows]
         return None
 
-    def execute_query_raw(self, query: str) -> Optional[list[dict[str, Optional[Any]]]]:
+    def execute_query_raw(self, query: str) -> list[dict[str, Any | None]] | None:
         function_kwargs = {"Sql": query, "Database": self.database}
         if self.workgroup_name:
             function_kwargs["WorkgroupName"] = self.workgroup_name
@@ -98,7 +98,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
             return None
         return None
 
-    def get_table_schema(self, table_name: str, schema: Optional[str] = None) -> Optional[str]:
+    def get_table_schema(self, table_name: str, schema: str | None = None) -> str | None:
         function_kwargs = {"Database": self.database, "Table": table_name}
         if schema:
             function_kwargs["Schema"] = schema

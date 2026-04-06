@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import Optional
 
 from attrs import define
 
@@ -16,7 +15,7 @@ class PdfLoader(BaseFileLoader):
         self,
         data: bytes,
         *,
-        password: Optional[str] = None,
+        password: str | None = None,
     ) -> ListArtifact:
         pypdf = import_optional_dependency("pypdf")
         reader = pypdf.PdfReader(BytesIO(data), strict=True, password=password)

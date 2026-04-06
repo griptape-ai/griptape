@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Union
-
 from attrs import Factory, define, field
 
 from griptape.artifacts import ErrorArtifact, ListArtifact
@@ -10,7 +8,7 @@ from griptape.tasks import BaseTextInputTask
 
 
 @define
-class RagTask(BaseTextInputTask[Union[ListArtifact, ErrorArtifact]]):
+class RagTask(BaseTextInputTask[ListArtifact | ErrorArtifact]):
     rag_engine: RagEngine = field(kw_only=True, default=Factory(lambda: RagEngine()))
 
     def try_run(self) -> ListArtifact | ErrorArtifact:

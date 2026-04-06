@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -19,7 +19,7 @@ class BaseRagModule(FuturesExecutorMixin, ABC):
         default=Factory(lambda self: f"{self.__class__.__name__}-{uuid.uuid4().hex}", takes_self=True), kw_only=True
     )
 
-    def generate_prompt_stack(self, system_prompt: Optional[str], query: str) -> PromptStack:
+    def generate_prompt_stack(self, system_prompt: str | None, query: str) -> PromptStack:
         messages = []
 
         if system_prompt is not None:
@@ -29,7 +29,7 @@ class BaseRagModule(FuturesExecutorMixin, ABC):
 
         return PromptStack(messages=messages)
 
-    def get_context_param(self, context: RagContext, key: str) -> Optional[Any]:
+    def get_context_param(self, context: RagContext, key: str) -> Any | None:
         return context.module_configs.get(self.name, {}).get(key)
 
     def set_context_param(self, context: RagContext, key: str, value: Any) -> None:

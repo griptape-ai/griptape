@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -18,7 +18,7 @@ class ElevenLabsTextToSpeechDriver(BaseTextToSpeechDriver):
     api_key: str = field(kw_only=True, metadata={"serializable": True})
     voice: str = field(kw_only=True, metadata={"serializable": True})
     output_format: str = field(default="mp3_44100_128", kw_only=True, metadata={"serializable": True})
-    _client: Optional[ElevenLabs] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: ElevenLabs | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> ElevenLabs:

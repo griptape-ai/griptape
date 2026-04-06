@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -12,5 +12,5 @@ if TYPE_CHECKING:
 
 @define
 class DeltaMessage(BaseMessage):
-    role: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
-    content: Optional[BaseDeltaMessageContent] = field(kw_only=True, default=None, metadata={"serializable": True})
+    role: str | None = field(kw_only=True, default=None, metadata={"serializable": True})
+    content: BaseDeltaMessageContent | None = field(kw_only=True, default=None, metadata={"serializable": True})

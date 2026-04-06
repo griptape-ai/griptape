@@ -10,4 +10,5 @@ class BaseChunkEvent(BaseEvent):
     index: int = field(default=0, metadata={"serializable": True})
 
     @abstractmethod
-    def __str__(self) -> str: ...
+    def __str__(self) -> str:
+        pass

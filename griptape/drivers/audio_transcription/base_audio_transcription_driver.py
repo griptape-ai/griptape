@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -23,7 +23,7 @@ class BaseAudioTranscriptionDriver(SerializableMixin, ExponentialBackoffMixin, A
     def after_run(self) -> None:
         EventBus.publish_event(FinishAudioTranscriptionEvent())
 
-    def run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:
+    def run(self, audio: AudioArtifact, prompts: list[str] | None = None) -> TextArtifact:
         for attempt in self.retrying():
             with attempt:
                 self.before_run()
@@ -35,4 +35,5 @@ class BaseAudioTranscriptionDriver(SerializableMixin, ExponentialBackoffMixin, A
         raise Exception("Failed to run audio transcription")
 
     @abstractmethod
-    def try_run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact: ...
+    def try_run(self, audio: AudioArtifact, prompts: list[str] | None = None) -> TextArtifact:
+        pass

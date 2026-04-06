@@ -5,7 +5,7 @@ import uuid
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Generic, Optional, cast
+from typing import TYPE_CHECKING, Any, Generic, cast
 
 from attrs import Factory, define, field
 from typing_extensions import TypeVar
@@ -38,10 +38,10 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
     state: State = field(default=State.PENDING, kw_only=True, metadata={"serializable": True})
     parent_ids: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
     child_ids: list[str] = field(factory=list, kw_only=True, metadata={"serializable": True})
-    max_meta_memory_entries: Optional[int] = field(default=20, kw_only=True, metadata={"serializable": True})
-    structure: Optional[Structure] = field(default=None, kw_only=True)
+    max_meta_memory_entries: int | None = field(default=20, kw_only=True, metadata={"serializable": True})
+    structure: Structure | None = field(default=None, kw_only=True)
 
-    output: Optional[T] = field(default=None, init=False)
+    output: T | None = field(default=None, init=False)
     context: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
     _execution_args: tuple = field(factory=tuple, init=False)
 
@@ -71,7 +71,8 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
 
     @property
     @abstractmethod
-    def input(self) -> BaseArtifact: ...
+    def input(self) -> BaseArtifact:
+        pass
 
     @property
     def parents(self) -> list[BaseTask]:
@@ -222,7 +223,8 @@ class BaseTask(FuturesExecutorMixin, SerializableMixin, RunnableMixin["BaseTask"
         return self
 
     @abstractmethod
-    def try_run(self) -> T: ...
+    def try_run(self) -> T:
+        pass
 
     @property
     def full_context(self) -> dict[str, Any]:

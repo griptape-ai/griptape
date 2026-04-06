@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
-from typing import Literal, Optional, Union
+from typing import Literal, Union
 
 import pytest
 from marshmallow import fields
@@ -75,13 +75,13 @@ class TestBaseSchema:
         assert BaseSchema._get_field_type_info(str) == (str, (), False)
         assert BaseSchema._get_field_type_info(list[str]) == (list, (str,), False)
 
-        assert BaseSchema._get_field_type_info(Optional[str]) == (str, (), True)
-        assert BaseSchema._get_field_type_info(Optional[list[str]]) == (list, (str,), True)
+        assert BaseSchema._get_field_type_info(str | None) == (str, (), True)
+        assert BaseSchema._get_field_type_info(list[str] | None) == (list, (str,), True)
 
-        assert BaseSchema._get_field_type_info(Union[str, None]) == (str, (), True)
-        assert BaseSchema._get_field_type_info(Union[list[str], None]) == (list, (str,), True)
+        assert BaseSchema._get_field_type_info(str | None) == (str, (), True)
+        assert BaseSchema._get_field_type_info(list[str] | None) == (list, (str,), True)
 
-        assert BaseSchema._get_field_type_info(Union[str, int]) == (str, (), False)
+        assert BaseSchema._get_field_type_info(str | int) == (str, (), False)
 
         assert BaseSchema._get_field_type_info(list) == (list, (), False)
 
@@ -96,8 +96,8 @@ class TestBaseSchema:
         assert not BaseSchema._is_list_sequence(int)
 
     def test_is_union(self):
-        assert BaseSchema._is_union(Union[str, int])
-        assert BaseSchema._is_union(Union[str, int])
+        assert BaseSchema._is_union(str | int)
+        assert BaseSchema._is_union(str | int)
         assert not BaseSchema._is_union(tuple)
         assert not BaseSchema._is_union(bytes)
         assert not BaseSchema._is_union(str)
@@ -116,7 +116,7 @@ class TestBaseSchema:
             schema.load({"foo": "baz", "bar": "qux", "baz": [1, 2, 3], "zoop": "bop"})
 
     def test_handle_union_in_list(self):
-        field = BaseSchema._get_field_for_type(list[Union[str, list[str]]])
+        field = BaseSchema._get_field_for_type(list[str | list[str]])
         assert isinstance(field, fields.List)
         assert isinstance(field.inner, UnionField)
 
@@ -128,7 +128,7 @@ class TestBaseSchema:
         assert fields.List in candidate_fields
 
     def test_handle_union_outside_list(self):
-        field = BaseSchema._get_field_for_type(Union[str, int])
+        field = BaseSchema._get_field_for_type(str | int)
         assert isinstance(field, UnionField)
 
         candidate_fields = [type(f) for f in field._candidate_fields]
@@ -150,7 +150,7 @@ class TestBaseSchema:
         assert isinstance(field, fields.Str)
 
     def test_handle_optional_enum(self):
-        field = BaseSchema._get_field_for_type(Union[MockEnum, None])
+        field = BaseSchema._get_field_for_type(MockEnum | None)
         assert isinstance(field, UnionField)
         assert isinstance(field._candidate_fields[0], fields.Str)
         assert field.allow_none is True
@@ -159,11 +159,11 @@ class TestBaseSchema:
         assert isinstance(BaseSchema._get_field_for_type(UnsupportedType), fields.Raw)
 
     def test_handle_union_exception(self):
-        with pytest.raises(ValueError, match="Unsupported UnionType field: <class 'NoneType'>"):
-            BaseSchema._handle_union(Union[None], optional=False)
+        with pytest.raises(ValueError, match="Unsupported UnionType field"):
+            BaseSchema._handle_union(Union[None], optional=False)  # noqa: UP007
 
     def test_handle_union_optional(self):
-        field = BaseSchema._handle_union(Union[str, None], optional=True)
+        field = BaseSchema._handle_union(str | None, optional=True)
         assert isinstance(field, UnionField)
         assert field.allow_none is True
 

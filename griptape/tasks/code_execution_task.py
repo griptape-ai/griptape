@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Callable, TypeVar, Union
+from typing import TYPE_CHECKING, TypeVar
 
 from attrs import define, field
 
@@ -8,13 +8,16 @@ from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.tasks.base_task import BaseTask
 from griptape.utils import J2
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
 T = TypeVar("T", bound=BaseArtifact)  # Return type of task
 
 
 @define
 class CodeExecutionTask(BaseTask[T]):
     DEFAULT_INPUT_TEMPLATE = "{{ args[0] }}"
-    _input: Union[str, TextArtifact, Callable[[BaseTask], TextArtifact]] = field(
+    _input: str | TextArtifact | Callable[[BaseTask], TextArtifact] = field(
         default=DEFAULT_INPUT_TEMPLATE,
         alias="input",
     )

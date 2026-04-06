@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define
 
@@ -18,14 +18,16 @@ class BaseObservabilityDriver(ABC):
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_value: Optional[BaseException],
-        exc_traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        exc_traceback: TracebackType | None,
     ) -> bool:
         return False
 
     @abstractmethod
-    def observe(self, call: Observable.Call) -> Any: ...
+    def observe(self, call: Observable.Call) -> Any:
+        pass
 
     @abstractmethod
-    def get_span_id(self) -> Optional[str]: ...
+    def get_span_id(self) -> str | None:
+        pass

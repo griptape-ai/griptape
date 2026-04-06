@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -19,8 +19,8 @@ class AmazonSageMakerJumpstartEmbeddingDriver(BaseEmbeddingDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
-    inference_component_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _client: Optional[SageMakerRuntimeClient] = field(
+    inference_component_name: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    _client: SageMakerRuntimeClient | None = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 

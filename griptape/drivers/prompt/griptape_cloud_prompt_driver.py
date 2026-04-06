@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 import os
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import requests
 from attrs import Factory, define, field
@@ -26,7 +26,7 @@ logger = logging.getLogger(Defaults.logging_config.logger_name)
 
 @define
 class GriptapeCloudPromptDriver(BasePromptDriver):
-    model: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    model: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     base_url: str = field(
         default=Factory(lambda: os.getenv("GT_CLOUD_BASE_URL", "https://cloud.griptape.ai")),
     )

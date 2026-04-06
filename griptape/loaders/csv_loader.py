@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import csv
 from io import StringIO
-from typing import Callable
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
 from griptape.artifacts import ListArtifact, TextArtifact
 from griptape.loaders import BaseFileLoader
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @define

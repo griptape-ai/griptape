@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Attribute, Factory, define, field
 
@@ -30,7 +30,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     session: boto3.Session = field(default=Factory(lambda: import_optional_dependency("boto3").Session()), kw_only=True)
     endpoint: str = field(kw_only=True, metadata={"serializable": True})
     custom_attributes: str = field(default="accept_eula=true", kw_only=True, metadata={"serializable": True})
-    inference_component_name: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    inference_component_name: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     stream: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     max_tokens: int = field(default=250, kw_only=True, metadata={"serializable": True})
     tokenizer: HuggingFaceTokenizer = field(
@@ -43,7 +43,7 @@ class AmazonSageMakerJumpstartPromptDriver(BasePromptDriver):
     structured_output_strategy: StructuredOutputStrategy = field(
         default="rule", kw_only=True, metadata={"serializable": True}
     )
-    _client: Optional[Any] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: Any | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:

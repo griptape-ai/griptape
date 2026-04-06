@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import BytesIO
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -30,13 +30,13 @@ class VoyageAiEmbeddingDriver(BaseEmbeddingDriver):
     DEFAULT_MODEL = "voyage-large-2"
 
     model: str = field(default=DEFAULT_MODEL, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
     tokenizer: VoyageAiTokenizer = field(
         default=Factory(lambda self: VoyageAiTokenizer(model=self.model, api_key=self.api_key), takes_self=True),
         kw_only=True,
     )
     input_type: str = field(default="document", kw_only=True, metadata={"serializable": True})
-    _client: Optional[Client] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: Client | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Any:

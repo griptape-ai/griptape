@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 import uuid
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import requests
 from attrs import Attribute, Factory, define, field
@@ -33,11 +33,11 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         ValueError: If `api_key` is not provided.
     """
 
-    thread_id: Optional[str] = field(
+    thread_id: str | None = field(
         default=None,
         metadata={"serializable": True},
     )
-    alias: Optional[str] = field(
+    alias: str | None = field(
         default=None,
         metadata={"serializable": True},
     )
@@ -49,10 +49,10 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         init=False,
     )
-    _thread: Optional[dict] = field(default=None, init=False)
+    _thread: dict | None = field(default=None, init=False)
 
     @api_key.validator  # pyright: ignore[reportAttributeAccessIssue]
-    def validate_api_key(self, _: Attribute, value: Optional[str]) -> str:
+    def validate_api_key(self, _: Attribute, value: str | None) -> str:
         if value is None:
             raise ValueError(f"{self.__class__.__name__} requires an API key")
         return value
@@ -143,7 +143,7 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         return griptape_cloud_url(self.base_url, f"api/{path}")
 
     def _call_api(
-        self, method: str, path: str, json: Optional[dict] = None, *, raise_for_status: bool = True
+        self, method: str, path: str, json: dict | None = None, *, raise_for_status: bool = True
     ) -> requests.Response:
         res = requests.request(method, self._get_url(path), json=json, headers=self.headers)
         if raise_for_status:

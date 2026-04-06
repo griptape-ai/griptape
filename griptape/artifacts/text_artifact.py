@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @define
 class TextArtifact(BaseArtifact):
     value: str = field(converter=str, metadata={"serializable": True})
-    embedding: Optional[list[float]] = field(default=None, kw_only=True)
+    embedding: list[float] | None = field(default=None, kw_only=True)
 
     def __add__(self, other: BaseArtifact) -> TextArtifact:
         return TextArtifact(self.value + other.value)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, Factory, define, field
 
@@ -58,20 +58,20 @@ class GooglePromptDriver(BasePromptDriver):
         top_k: Optional value for top_k.
     """
 
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: GoogleTokenizer(api_key=self.api_key, model=self.model), takes_self=True),
         kw_only=True,
     )
-    top_p: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
-    top_k: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    top_p: float | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    top_k: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     structured_output_strategy: StructuredOutputStrategy = field(
         default="tool", kw_only=True, metadata={"serializable": True}
     )
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
-    _client: Optional[GenerativeModel] = field(
+    _client: GenerativeModel | None = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 

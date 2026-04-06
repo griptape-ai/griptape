@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
 
@@ -33,14 +33,14 @@ class StableDiffusion3ImageGenerationPipelineDriver(BaseDiffusionImageGeneration
 
     width: int = field(default=1024, kw_only=True, metadata={"serializable": True})
     height: int = field(default=1024, kw_only=True, metadata={"serializable": True})
-    seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    guidance_scale: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
-    steps: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    torch_dtype: Optional[torch.dtype] = field(default=None, kw_only=True, metadata={"serializable": True})
+    seed: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    guidance_scale: float | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    steps: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    torch_dtype: torch.dtype | None = field(default=None, kw_only=True, metadata={"serializable": True})
     enable_model_cpu_offload: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     drop_t5_encoder: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
-    def prepare_pipeline(self, model: str, device: Optional[str]) -> Any:
+    def prepare_pipeline(self, model: str, device: str | None) -> Any:
         sd3_pipeline = import_optional_dependency(
             "diffusers.pipelines.stable_diffusion_3.pipeline_stable_diffusion_3"
         ).StableDiffusion3Pipeline
@@ -73,10 +73,10 @@ class StableDiffusion3ImageGenerationPipelineDriver(BaseDiffusionImageGeneration
 
         return pipeline
 
-    def make_image_param(self, image: Optional[Image]) -> Optional[dict[str, Image]]:
+    def make_image_param(self, image: Image | None) -> dict[str, Image] | None:
         return None
 
-    def make_additional_params(self, negative_prompts: Optional[list[str]], device: Optional[str]) -> dict[str, Any]:
+    def make_additional_params(self, negative_prompts: list[str] | None, device: str | None) -> dict[str, Any]:
         torch_generator = import_optional_dependency("torch").Generator
 
         additional_params = {}

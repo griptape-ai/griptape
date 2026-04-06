@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, TypeVar
 from urllib.parse import urljoin
 
 from attrs import define, field
@@ -44,10 +44,10 @@ class GriptapeCloudStructure:
         observe: Whether to enable observability. Enabling requires the `drivers-observability-griptape-cloud` extra.
     """
 
-    _event_listener: Optional[EventListener] = field(default=None, kw_only=True, alias="event_listener")
-    _observability: Optional[Observability] = field(default=None, kw_only=True, alias="observability")
+    _event_listener: EventListener | None = field(default=None, kw_only=True, alias="event_listener")
+    _observability: Observability | None = field(default=None, kw_only=True, alias="observability")
     observe: bool = field(default=False, kw_only=True)
-    _output: Optional[BaseArtifact] = field(default=None, init=False)
+    _output: BaseArtifact | None = field(default=None, init=False)
 
     @lazy_property()
     def event_listener(self) -> EventListener:
@@ -63,7 +63,7 @@ class GriptapeCloudStructure:
         return Observability(observability_driver=GriptapeCloudObservabilityDriver())
 
     @property
-    def output(self) -> Optional[BaseArtifact]:
+    def output(self) -> BaseArtifact | None:
         return self._output
 
     @output.setter
@@ -97,9 +97,9 @@ class GriptapeCloudStructure:
 
     def __exit__(
         self,
-        exc_type: Optional[type[BaseException]],
-        exc_value: Optional[BaseException],
-        exc_traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        exc_traceback: TracebackType | None,
     ) -> None:
         from griptape.observability.observability import Observability
 

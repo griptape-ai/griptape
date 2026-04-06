@@ -12,4 +12,5 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class BaseRerankDriver(ABC):
     @abstractmethod
-    def run(self, query: str, artifacts: list[TextArtifact]) -> list[TextArtifact]: ...
+    def run(self, query: str, artifacts: list[TextArtifact]) -> list[TextArtifact]:
+        pass

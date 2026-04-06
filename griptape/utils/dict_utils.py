@@ -1,6 +1,9 @@
 from __future__ import annotations
 
-from typing import Any, Callable, Optional
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 def remove_null_values_in_dict_recursively(d: dict) -> dict:
@@ -9,7 +12,7 @@ def remove_null_values_in_dict_recursively(d: dict) -> dict:
     return d
 
 
-def remove_key_in_dict_recursively(d: dict, key: str, preserve_under_key: Optional[str] = None) -> dict:
+def remove_key_in_dict_recursively(d: dict, key: str, preserve_under_key: str | None = None) -> dict:
     """Remove a key in a dictionary recursively.
 
     Args:
@@ -36,9 +39,7 @@ def remove_key_in_dict_recursively(d: dict, key: str, preserve_under_key: Option
     return d
 
 
-def add_key_in_dict_recursively(
-    d: Any, key: str, value: Any, criteria: Optional[Callable[[dict], bool]] = None
-) -> dict:
+def add_key_in_dict_recursively(d: Any, key: str, value: Any, criteria: Callable[[dict], bool] | None = None) -> dict:
     """Add a key in a dictionary recursively.
 
     Args:
@@ -54,7 +55,7 @@ def add_key_in_dict_recursively(
     return d
 
 
-def dict_merge(dct: Optional[dict], merge_dct: Optional[dict], *, add_keys: bool = True) -> dict:
+def dict_merge(dct: dict | None, merge_dct: dict | None, *, add_keys: bool = True) -> dict:
     """Recursive dict merge.
 
     Inspired by :meth:``dict.update()``, instead of

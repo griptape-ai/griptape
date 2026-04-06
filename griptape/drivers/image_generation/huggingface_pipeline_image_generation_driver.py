@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import io
 from abc import ABC
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -28,10 +28,10 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
     """
 
     pipeline_driver: BaseDiffusionImageGenerationPipelineDriver = field(kw_only=True, metadata={"serializable": True})
-    device: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    device: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     output_format: str = field(default="png", kw_only=True, metadata={"serializable": True})
 
-    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         pipeline = self.pipeline_driver.prepare_pipeline(self.model, self.device)
 
         prompt = ", ".join(prompts)
@@ -51,7 +51,7 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
         )
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         pil_image = import_optional_dependency("PIL.Image")
 
@@ -87,7 +87,7 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         raise NotImplementedError("Inpainting is not supported by this driver.")
 
@@ -96,6 +96,6 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         raise NotImplementedError("Outpainting is not supported by this driver.")

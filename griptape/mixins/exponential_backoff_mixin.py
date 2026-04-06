@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import Callable
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 from tenacity import Retrying, retry_if_not_exception_type, stop_after_attempt, wait_exponential
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
 @define(slots=False)

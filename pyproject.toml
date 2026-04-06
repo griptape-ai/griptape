@@ -3,7 +3,7 @@ name = "griptape"
 version = "1.9.0"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = [{ name = "Griptape", email = "hello@griptape.ai" }]
-requires-python = ">=3.9, <4"
+requires-python = ">=3.10, <4"
 readme = "README.md"
 license = "Apache-2.0"
 dependencies = [
@@ -215,7 +215,6 @@ line-length = 120
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
-  "UP007",  # non-pep604-annotation
   "E501",   # line-too-long
   "B024",   # abstract-base-class-without-abstract-method
   "B009",   # get-attr-with-constant
@@ -287,7 +286,7 @@ venvPath = "."
 venv = ".venv"
 include = ["griptape"]
 exclude = ["**/__pycache__"]
-pythonVersion = "3.9"
+pythonVersion = "3.10"
 reportIncompatibleVariableOverride = "none"                            # see thread: https://github.com/microsoft/pyright/issues/5933 
 enableExperimentalFeatures = true                                      # https://github.com/microsoft/pyright/issues/7713
 strictParameterNoneValue = false

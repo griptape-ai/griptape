@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Any, NoReturn, Optional
+from typing import TYPE_CHECKING, Any, NoReturn
 
 from attrs import Attribute, Factory, define, field
 
@@ -26,16 +26,16 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         table_name: Optionally specify the name of the table to used to store vectors.
     """
 
-    connection_string: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    connection_string: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     create_engine_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     table_name: str = field(kw_only=True, metadata={"serializable": True})
     _model: Any = field(default=Factory(lambda self: self.default_vector_model(), takes_self=True))
-    _engine: Optional[sqlalchemy.Engine] = field(
+    _engine: sqlalchemy.Engine | None = field(
         default=None, kw_only=True, alias="engine", metadata={"serializable": False}
     )
 
     @connection_string.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_connection_string(self, _: Attribute, connection_string: Optional[str]) -> None:
+    def validate_connection_string(self, _: Attribute, connection_string: str | None) -> None:
         # If an engine is provided, the connection string is not used.
         if self._engine is not None:
             return
@@ -78,9 +78,9 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         """Inserts or updates a vector in the collection."""
@@ -94,7 +94,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
 
             return str(obj.id)
 
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry:
         """Retrieves a specific vector entry from the collection based on its identifier and optional namespace."""
         sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
 
@@ -108,7 +108,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
                 meta=result.meta,
             )
 
-    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from the collection, optionally filtering to only those that match the provided namespace."""
         sqlalchemy_orm = import_optional_dependency("sqlalchemy.orm")
 
@@ -133,8 +133,8 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         distance_metric: str = "cosine_distance",
         **kwargs,
@@ -159,7 +159,7 @@ class PgVectorVectorStoreDriver(BaseVectorStoreDriver):
             # The query should return both the vector and the distance metric score.
             query_result = session.query(self._model, op(vector).label("score")).order_by(op(vector))  # pyright: ignore[reportOptionalCall]
 
-            filter_kwargs: Optional[OrderedDict] = None
+            filter_kwargs: OrderedDict | None = None
 
             if namespace is not None:
                 filter_kwargs = OrderedDict(namespace=namespace)

@@ -4,7 +4,7 @@ import uuid
 from abc import ABC, abstractmethod
 from queue import Queue
 from threading import Thread
-from typing import TYPE_CHECKING, Any, Literal, Optional, Union
+from typing import TYPE_CHECKING, Any, Literal
 
 from attrs import Factory, define, field
 
@@ -31,10 +31,10 @@ if TYPE_CHECKING:
 @define
 class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
-    _tasks: list[Union[BaseTask, list[BaseTask]]] = field(
+    _tasks: list[BaseTask | list[BaseTask]] = field(
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
     )
-    conversation_memory: Optional[BaseConversationMemory] = field(
+    conversation_memory: BaseConversationMemory | None = field(
         default=Factory(lambda: ConversationMemory()),
         kw_only=True,
         metadata={"serializable": True},
@@ -75,11 +75,11 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         return self._execution_args
 
     @property
-    def input_task(self) -> Optional[BaseTask]:
+    def input_task(self) -> BaseTask | None:
         return self.tasks[0] if self.tasks else None
 
     @property
-    def output_task(self) -> Optional[BaseTask]:
+    def output_task(self) -> BaseTask | None:
         return self.tasks[-1] if self.tasks else None
 
     @property
@@ -91,7 +91,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         return self.output_task.output
 
     @property
-    def task_outputs(self) -> dict[str, Optional[BaseArtifact]]:
+    def task_outputs(self) -> dict[str, BaseArtifact | None]:
         return {task.id: task.output for task in self.tasks}
 
     @property
@@ -109,7 +109,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
             return task
         raise ValueError(f"Task with id {task_id} doesn't exist.")
 
-    def try_find_task(self, task_id: str) -> Optional[BaseTask]:
+    def try_find_task(self, task_id: str) -> BaseTask | None:
         for task in self.tasks:
             if task.id == task_id:
                 return task
@@ -194,7 +194,8 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
             )
 
     @abstractmethod
-    def add_task(self, task: BaseTask) -> BaseTask: ...
+    def add_task(self, task: BaseTask) -> BaseTask:
+        pass
 
     @observable
     def run(self, *args) -> Structure:
@@ -207,7 +208,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         return result
 
     @observable
-    def run_stream(self, *args, event_types: Optional[list[type[BaseEvent]]] = None) -> Iterator[BaseEvent]:
+    def run_stream(self, *args, event_types: list[type[BaseEvent]] | None = None) -> Iterator[BaseEvent]:
         if event_types is None:
             event_types = [BaseEvent]
         elif FinishStructureRunEvent not in event_types:
@@ -226,4 +227,5 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
             t.join()
 
     @abstractmethod
-    def try_run(self, *args) -> Structure: ...
+    def try_run(self, *args) -> Structure:
+        pass

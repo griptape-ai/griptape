@@ -3,7 +3,8 @@ from __future__ import annotations
 import functools
 import inspect
 from collections import OrderedDict
-from typing import TYPE_CHECKING, Any, Callable, Optional, TypeVar, cast
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any, TypeVar, cast
 
 import schema
 from pydantic import BaseModel
@@ -48,7 +49,7 @@ def activity(config: dict) -> Any:
     return decorator
 
 
-def lazy_property(attr_name: Optional[str] = None) -> Callable[[Callable[P, R]], R]:
+def lazy_property(attr_name: str | None = None) -> Callable[[Callable[P, R]], R]:
     def decorator(func: Callable[P, R]) -> R:
         actual_attr_name = f"_{func.__name__}" if attr_name is None else attr_name
 

@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Union
+from typing import Any
 
 from attrs import define, field
 
 from griptape.artifacts import BaseArtifact
 
-Json = Union[dict[str, "Json"], list["Json"], str, int, float, bool, None]
+Json = dict[str, "Json"] | list["Json"] | str | int | float | bool | None
 
 
 @define

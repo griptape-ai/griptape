@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class CohereRerankDriver(BaseRerankDriver):
     model: str = field(default="rerank-english-v3.0", metadata={"serializable": True})
-    top_n: Optional[int] = field(default=None)
+    top_n: int | None = field(default=None)
 
     api_key: str = field(metadata={"serializable": True})
     client: Client = field(

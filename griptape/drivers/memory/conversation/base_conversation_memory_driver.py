@@ -11,10 +11,12 @@ if TYPE_CHECKING:
 
 class BaseConversationMemoryDriver(SerializableMixin, ABC):
     @abstractmethod
-    def store(self, runs: list[Run], metadata: dict[str, Any]) -> None: ...
+    def store(self, runs: list[Run], metadata: dict[str, Any]) -> None:
+        pass
 
     @abstractmethod
-    def load(self) -> tuple[list[Run], dict[str, Any]]: ...
+    def load(self) -> tuple[list[Run], dict[str, Any]]:
+        pass
 
     def _to_params_dict(self, runs: list[Run], metadata: dict[str, Any]) -> dict:
         return {"runs": [run.to_dict() for run in runs], "metadata": metadata}

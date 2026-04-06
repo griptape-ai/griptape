@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -52,7 +52,7 @@ class CoherePromptDriver(BasePromptDriver):
     model: str = field(metadata={"serializable": True})
     force_single_step: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     use_native_tools: bool = field(default=True, kw_only=True, metadata={"serializable": True})
-    _client: Optional[ClientV2] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: ClientV2 | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: CohereTokenizer(model=self.model, client=self.client), takes_self=True),
     )
@@ -185,7 +185,7 @@ class CoherePromptDriver(BasePromptDriver):
             return message_content
         return {"type": "text", "text": content.artifact.to_text()}
 
-    def __to_cohere_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
+    def __to_cohere_role(self, message: Message, message_content: BaseMessageContent | None = None) -> str:
         if message.is_system():
             return "system"
         if message.is_assistant():

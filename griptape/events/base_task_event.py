@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -18,4 +18,4 @@ class BaseTaskEvent(BaseEvent, ABC):
     task_child_ids: list[str] = field(kw_only=True, metadata={"serializable": True})
 
     task_input: BaseArtifact = field(kw_only=True, metadata={"serializable": True})
-    task_output: Optional[BaseArtifact] = field(kw_only=True, metadata={"serializable": True})
+    task_output: BaseArtifact | None = field(kw_only=True, metadata={"serializable": True})

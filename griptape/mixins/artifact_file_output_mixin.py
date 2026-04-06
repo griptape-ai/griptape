@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Attribute, define, field
 
@@ -12,8 +12,8 @@ if TYPE_CHECKING:
 
 @define(slots=False)
 class ArtifactFileOutputMixin:
-    output_dir: Optional[str] = field(default=None, kw_only=True)
-    output_file: Optional[str] = field(default=None, kw_only=True)
+    output_dir: str | None = field(default=None, kw_only=True)
+    output_file: str | None = field(default=None, kw_only=True)
 
     @output_dir.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_output_dir(self, _: Attribute, output_dir: str) -> None:

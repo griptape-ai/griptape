@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import types
 from abc import ABC
 from collections.abc import Sequence
 from enum import Enum
-from typing import Any, Literal, Optional, TypeVar, Union, _SpecialForm, get_args, get_origin
+from typing import Any, Literal, TypeVar, Union, _SpecialForm, get_args, get_origin
 
 import attrs
 from marshmallow import INCLUDE, Schema, fields
@@ -31,8 +32,8 @@ class BaseSchema(Schema):
         cls,
         attrs_cls: type,
         *,
-        types_overrides: Optional[dict[str, type]] = None,
-        serializable_overrides: Optional[dict[str, bool]] = None,
+        types_overrides: dict[str, type] | None = None,
+        serializable_overrides: dict[str, bool] | None = None,
     ) -> type:
         """Generate a Schema from an attrs class.
 
@@ -75,8 +76,8 @@ class BaseSchema(Schema):
     def _get_field_for_type(
         cls,
         field_type: type,
-        serialization_key: Optional[str] = None,
-        types_overrides: Optional[dict[str, type]] = None,
+        serialization_key: str | None = None,
+        types_overrides: dict[str, type] | None = None,
     ) -> fields.Field | fields.Nested:
         """Generate a marshmallow Field instance from a Python type.
 
@@ -130,7 +131,7 @@ class BaseSchema(Schema):
         list_type: type,
         *,
         optional: bool,
-        serialization_key: Optional[str] = None,
+        serialization_key: str | None = None,
     ) -> fields.Field:
         """Handle List Fields, including Union Types.
 
@@ -158,7 +159,7 @@ class BaseSchema(Schema):
         union_type: type,
         *,
         optional: bool,
-        serialization_key: Optional[str] = None,
+        serialization_key: str | None = None,
     ) -> fields.Field:
         """Handle Union Fields, including Unions with List Types.
 
@@ -190,7 +191,7 @@ class BaseSchema(Schema):
         args = get_args(field_type)
         optional = False
 
-        if origin is Union:
+        if origin is Union or origin is types.UnionType:
             origin = args[0]
             if len(args) > 1 and args[1] is type(None):
                 optional = True
@@ -203,14 +204,14 @@ class BaseSchema(Schema):
         return origin, args, optional
 
     @classmethod
-    def _resolve_types(cls, attrs_cls: type, types_override: Optional[dict[str, type]] = None) -> None:
+    def _resolve_types(cls, attrs_cls: type, types_override: dict[str, type] | None = None) -> None:
         """Resolve types in an attrs class.
 
         Args:
             attrs_cls: An attrs class.
             types_override: A dictionary of types to override.
         """
-        from collections.abc import Sequence
+        from collections.abc import Callable, Sequence
         from typing import Any
 
         from pydantic import BaseModel
@@ -276,6 +277,7 @@ class BaseSchema(Schema):
         attrs.resolve_types(
             attrs_cls,
             localns={
+                "Callable": Callable,
                 "Any": Any,
                 "BasePromptDriver": BasePromptDriver,
                 "BaseEmbeddingDriver": BaseEmbeddingDriver,
@@ -360,7 +362,7 @@ class BaseSchema(Schema):
 
     @classmethod
     def _is_union(cls, field_type: type) -> bool:
-        return field_type is Union or get_origin(field_type) is Union
+        return field_type is Union or get_origin(field_type) in (Union, types.UnionType)
 
     @classmethod
     def _is_enum(cls, field_type: type) -> bool:

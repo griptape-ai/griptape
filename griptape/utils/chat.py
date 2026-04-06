@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import inspect
 import logging
-from typing import TYPE_CHECKING, Callable, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 from rich import print as rprint
@@ -11,6 +11,8 @@ from rich.prompt import Prompt
 from griptape.utils.stream import Stream
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.structures import Structure
 
 
@@ -38,7 +40,7 @@ class Chat:
     exit_keywords: list[str] = field(default=["exit"], kw_only=True)
     exiting_text: str = field(default="Exiting...", kw_only=True)
     processing_text: str = field(default="Thinking...", kw_only=True)
-    intro_text: Optional[str] = field(default=None, kw_only=True)
+    intro_text: str | None = field(default=None, kw_only=True)
     prompt_prefix: str = field(default="User: ", kw_only=True)
     response_prefix: str = field(default="Assistant: ", kw_only=True)
     handle_input: Callable[[str], str] = field(

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 from pydantic import BaseModel
@@ -37,7 +37,7 @@ if TYPE_CHECKING:
 class PromptStack(SerializableMixin):
     messages: list[Message] = field(factory=list, kw_only=True, metadata={"serializable": True})
     tools: list[BaseTool] = field(factory=list, kw_only=True)
-    output_schema: Optional[Union[Schema, type[BaseModel]]] = field(default=None, kw_only=True)
+    output_schema: Schema | type[BaseModel] | None = field(default=None, kw_only=True)
 
     @property
     def system_messages(self) -> list[Message]:

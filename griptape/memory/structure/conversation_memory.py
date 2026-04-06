@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from attrs import define
 
 from griptape.common import PromptStack
@@ -13,7 +11,7 @@ class ConversationMemory(BaseConversationMemory):
     def try_add_run(self, run: Run) -> None:
         self.runs.append(run)
 
-    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack:
+    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
         prompt_stack = PromptStack()
         runs = self.runs[-last_n:] if last_n else self.runs
         for run in runs:

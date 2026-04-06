@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
 
@@ -25,9 +25,9 @@ class StableDiffusion3ControlNetImageGenerationPipelineDriver(StableDiffusion3Im
     """
 
     controlnet_model: str = field(kw_only=True)
-    controlnet_conditioning_scale: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
+    controlnet_conditioning_scale: float | None = field(default=None, kw_only=True, metadata={"serializable": True})
 
-    def prepare_pipeline(self, model: str, device: Optional[str]) -> Any:
+    def prepare_pipeline(self, model: str, device: str | None) -> Any:
         sd3_controlnet_model = import_optional_dependency("diffusers.models.controlnet_sd3").SD3ControlNetModel
         sd3_controlnet_pipeline = import_optional_dependency(
             "diffusers.pipelines.controlnet_sd3.pipeline_stable_diffusion_3_controlnet"
@@ -69,13 +69,13 @@ class StableDiffusion3ControlNetImageGenerationPipelineDriver(StableDiffusion3Im
 
         return pipeline
 
-    def make_image_param(self, image: Optional[Image]) -> Optional[dict[str, Image]]:
+    def make_image_param(self, image: Image | None) -> dict[str, Image] | None:
         if image is None:
             raise ValueError("Input image is required for ControlNet pipelines.")
 
         return {"control_image": image}
 
-    def make_additional_params(self, negative_prompts: Optional[list[str]], device: Optional[str]) -> dict[str, Any]:
+    def make_additional_params(self, negative_prompts: list[str] | None, device: str | None) -> dict[str, Any]:
         additional_params = super().make_additional_params(negative_prompts, device)
 
         del additional_params["height"]

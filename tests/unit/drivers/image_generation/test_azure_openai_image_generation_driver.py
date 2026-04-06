@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 from unittest.mock import Mock
 
 import PIL.Image
@@ -22,7 +22,7 @@ def _patch_pillow_open(mocker):
             self.width: int = 512
             self.height: int = 512
 
-        def save(self, fp: io.BytesIO, *, _: Optional[str] = None) -> None:
+        def save(self, fp: io.BytesIO, *, _: str | None = None) -> None:
             fp.write(b"image data")
 
     mocker.patch.object(

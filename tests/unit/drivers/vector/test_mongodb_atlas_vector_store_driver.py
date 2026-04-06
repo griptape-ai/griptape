@@ -49,7 +49,7 @@ class TestMongoDbAtlasVectorStoreDriver:
         query_vector = [0.0, 0.5, 1.0]
         results = driver.query_vector(query_vector, include_vectors=True)
         assert len(results) == len(mock_query_result)
-        for result, expected in zip(results, mock_query_result):
+        for result, expected in zip(results, mock_query_result, strict=False):
             assert result.id == expected.id
             assert result.vector == expected.vector
             assert isinstance(result, BaseVectorStoreDriver.Entry)
@@ -65,7 +65,7 @@ class TestMongoDbAtlasVectorStoreDriver:
         query_str = "some query string"
         results = driver.query(query_str, include_vectors=True)
         assert len(results) == len(mock_query_result)
-        for result, expected in zip(results, mock_query_result):
+        for result, expected in zip(results, mock_query_result, strict=False):
             assert result.id == expected.id
             assert result.vector == expected.vector
             assert isinstance(result, BaseVectorStoreDriver.Entry)

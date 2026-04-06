@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from attrs import define
 
 from griptape.artifacts import ImageArtifact
@@ -12,11 +10,11 @@ from griptape.drivers.image_generation.base_image_generation_driver import BaseI
 class MockImageGenerationDriver(BaseImageGenerationDriver):
     model: str = "test-model"
 
-    def try_text_to_image(self, prompts: list[str], negative_prompts: Optional[list[str]] = None) -> ImageArtifact:
+    def try_text_to_image(self, prompts: list[str], negative_prompts: list[str] | None = None) -> ImageArtifact:
         return ImageArtifact(value="mock image", width=512, height=512, format="png")
 
     def try_image_variation(
-        self, prompts: list[str], image: ImageArtifact, negative_prompts: Optional[list[str]] = None
+        self, prompts: list[str], image: ImageArtifact, negative_prompts: list[str] | None = None
     ) -> ImageArtifact:
         return ImageArtifact(value="mock image", width=512, height=512, format="png")
 
@@ -25,7 +23,7 @@ class MockImageGenerationDriver(BaseImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         return ImageArtifact(value="mock image", width=512, height=512, format="png")
 
@@ -34,6 +32,6 @@ class MockImageGenerationDriver(BaseImageGenerationDriver):
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
+        negative_prompts: list[str] | None = None,
     ) -> ImageArtifact:
         return ImageArtifact(value="mock image", width=512, height=512, format="png")

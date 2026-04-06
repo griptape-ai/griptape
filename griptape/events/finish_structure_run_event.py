@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -12,6 +12,6 @@ if TYPE_CHECKING:
 
 @define
 class FinishStructureRunEvent(BaseEvent):
-    structure_id: Optional[str] = field(kw_only=True, default=None, metadata={"serializable": True})
-    output_task_input: Optional[BaseArtifact] = field(kw_only=True, default=None, metadata={"serializable": True})
-    output_task_output: Optional[BaseArtifact] = field(kw_only=True, default=None, metadata={"serializable": True})
+    structure_id: str | None = field(kw_only=True, default=None, metadata={"serializable": True})
+    output_task_input: BaseArtifact | None = field(kw_only=True, default=None, metadata={"serializable": True})
+    output_task_output: BaseArtifact | None = field(kw_only=True, default=None, metadata={"serializable": True})

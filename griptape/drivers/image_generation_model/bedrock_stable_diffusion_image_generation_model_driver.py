@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import base64
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -31,19 +31,19 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
     """
 
     cfg_scale: int = field(default=7, kw_only=True, metadata={"serializable": True})
-    style_preset: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    clip_guidance_preset: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    sampler: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    steps: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
-    start_schedule: Optional[float] = field(default=None, kw_only=True, metadata={"serializable": True})
+    style_preset: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    clip_guidance_preset: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    sampler: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    steps: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    start_schedule: float | None = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def text_to_image_request_parameters(
         self,
         prompts: list[str],
         image_width: int,
         image_height: int,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         return self._request_parameters(
             prompts,
@@ -57,8 +57,8 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         self,
         prompts: list[str],
         image: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         return self._request_parameters(prompts, image=image, negative_prompts=negative_prompts, seed=seed)
 
@@ -67,8 +67,8 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         return self._request_parameters(
             prompts,
@@ -84,8 +84,8 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
         prompts: list[str],
         image: ImageArtifact,
         mask: ImageArtifact,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
     ) -> dict:
         return self._request_parameters(
             prompts,
@@ -99,13 +99,13 @@ class BedrockStableDiffusionImageGenerationModelDriver(BaseImageGenerationModelD
     def _request_parameters(
         self,
         prompts: list[str],
-        width: Optional[int] = None,
-        height: Optional[int] = None,
-        image: Optional[ImageArtifact] = None,
-        mask: Optional[ImageArtifact] = None,
-        negative_prompts: Optional[list[str]] = None,
-        seed: Optional[int] = None,
-        mask_source: Optional[str] = None,
+        width: int | None = None,
+        height: int | None = None,
+        image: ImageArtifact | None = None,
+        mask: ImageArtifact | None = None,
+        negative_prompts: list[str] | None = None,
+        seed: int | None = None,
+        mask_source: str | None = None,
     ) -> dict:
         if negative_prompts is None:
             negative_prompts = []

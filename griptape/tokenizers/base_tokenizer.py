@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from abc import ABC, abstractmethod
-from typing import Optional
 
 from attrs import Factory, define, field
 
@@ -19,10 +18,10 @@ class BaseTokenizer(ABC, SerializableMixin):
 
     model: str = field(kw_only=True, metadata={"serializable": True})
     stop_sequences: list[str] = field(default=Factory(list), kw_only=True, metadata={"serializable": True})
-    _max_input_tokens: Optional[int] = field(
+    _max_input_tokens: int | None = field(
         kw_only=True, default=None, alias="max_input_tokens", metadata={"serializable": True}
     )
-    _max_output_tokens: Optional[int] = field(
+    _max_output_tokens: int | None = field(
         kw_only=True, default=None, alias="max_output_tokens", metadata={"serializable": True}
     )
 
@@ -58,7 +57,8 @@ class BaseTokenizer(ABC, SerializableMixin):
         return 0
 
     @abstractmethod
-    def count_tokens(self, text: str) -> int: ...
+    def count_tokens(self, text: str) -> int:
+        pass
 
     def _default_max_input_tokens(self) -> int:
         tokens = next(

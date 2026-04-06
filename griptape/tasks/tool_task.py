@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import re
 import warnings
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -28,8 +28,8 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
     ACTION_PATTERN = r"(?s)[^{]*({.*})"
 
     tool: BaseTool = field(kw_only=True, metadata={"serializable": True})
-    subtask: Optional[ActionsSubtask] = field(default=None, kw_only=True)
-    task_memory: Optional[TaskMemory] = field(default=None, kw_only=True)
+    subtask: ActionsSubtask | None = field(default=None, kw_only=True)
+    task_memory: TaskMemory | None = field(default=None, kw_only=True)
     tools: list[BaseTool] = field(factory=list, kw_only=True, metadata={"serializable": False})
     max_subtasks: int = field(default=DEFAULT_MAX_STEPS, kw_only=True, metadata={"serializable": False})
 

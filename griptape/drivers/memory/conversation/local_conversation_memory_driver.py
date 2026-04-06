@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import define, field
 
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 
 @define(kw_only=True)
 class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
-    persist_file: Optional[str] = field(default=None, metadata={"serializable": True})
+    persist_file: str | None = field(default=None, metadata={"serializable": True})
 
     def store(self, runs: list[Run], metadata: dict[str, Any]) -> None:
         if self.persist_file is not None:

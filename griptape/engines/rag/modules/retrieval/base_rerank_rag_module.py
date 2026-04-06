@@ -14,4 +14,5 @@ class BaseRerankRagModule(BaseRagModule, ABC):
     rerank_driver: BaseRerankDriver = field()
 
     @abstractmethod
-    def run(self, context: RagContext) -> Sequence[BaseArtifact]: ...
+    def run(self, context: RagContext) -> Sequence[BaseArtifact]:
+        pass

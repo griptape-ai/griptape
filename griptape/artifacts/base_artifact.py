@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -29,7 +29,7 @@ class BaseArtifact(SerializableMixin, ABC):
     """
 
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
-    reference: Optional[Reference] = field(default=None, kw_only=True, metadata={"serializable": True})
+    reference: Reference | None = field(default=None, kw_only=True, metadata={"serializable": True})
     meta: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
     name: str = field(
         default=Factory(lambda self: self.id, takes_self=True),
@@ -53,4 +53,5 @@ class BaseArtifact(SerializableMixin, ABC):
         return self.to_text().encode(encoding=self.encoding, errors=self.encoding_error_handler)
 
     @abstractmethod
-    def to_text(self) -> str: ...
+    def to_text(self) -> str:
+        pass

@@ -4,7 +4,7 @@ import base64
 import json
 import logging
 import time
-from typing import TYPE_CHECKING, Literal, Optional
+from typing import TYPE_CHECKING, Literal
 
 from attrs import Factory, define, field
 
@@ -68,21 +68,21 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         parallel_tool_calls: A flag to enable parallel tool calls. Defaults to `True`.
     """
 
-    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
+    base_url: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
+    organization: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer = field(
         default=Factory(lambda self: OpenAiTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
     user: str = field(default="", kw_only=True, metadata={"serializable": True})
-    response_format: Optional[dict] = field(
+    response_format: dict | None = field(
         default=None,
         kw_only=True,
         metadata={"serializable": True},
     )
-    seed: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    seed: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": False})
     reasoning_effort: Literal["low", "medium", "high"] = field(
         default="medium", kw_only=True, metadata={"serializable": True}
@@ -100,9 +100,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
     audio: dict = field(
         default=Factory(lambda: {"voice": "alloy", "format": "pcm16"}), kw_only=True, metadata={"serializable": True}
     )
-    _client: Optional[openai.OpenAI] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
+    _client: openai.OpenAI | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     def _default_ignored_exception_types(self) -> tuple[type[Exception], ...]:
         """Lazily import openai and return default exception types.
@@ -301,7 +299,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return openai_messages
 
-    def __to_openai_role(self, message: Message, message_content: Optional[BaseMessageContent] = None) -> str:
+    def __to_openai_role(self, message: Message, message_content: BaseMessageContent | None = None) -> str:
         if message.is_system():
             if not self.supports_stop_sequences:
                 return "developer"
@@ -414,7 +412,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return content
 
-    def __to_prompt_stack_delta_message_content(self, content_delta: ChoiceDelta) -> Optional[BaseDeltaMessageContent]:
+    def __to_prompt_stack_delta_message_content(self, content_delta: ChoiceDelta) -> BaseDeltaMessageContent | None:
         if content_delta.content is not None:
             return TextDeltaMessageContent(content_delta.content)
         if content_delta.tool_calls is not None:

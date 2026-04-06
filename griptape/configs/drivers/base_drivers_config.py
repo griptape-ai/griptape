@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -23,32 +23,32 @@ if TYPE_CHECKING:
 
 @define
 class BaseDriversConfig(ABC, SerializableMixin):
-    _prompt_driver: Optional[BasePromptDriver] = field(
+    _prompt_driver: BasePromptDriver | None = field(
         kw_only=True, default=None, metadata={"serializable": True}, alias="prompt_driver"
     )
-    _image_generation_driver: Optional[BaseImageGenerationDriver] = field(
+    _image_generation_driver: BaseImageGenerationDriver | None = field(
         kw_only=True, default=None, metadata={"serializable": True}, alias="image_generation_driver"
     )
-    _embedding_driver: Optional[BaseEmbeddingDriver] = field(
+    _embedding_driver: BaseEmbeddingDriver | None = field(
         kw_only=True, default=None, metadata={"serializable": True}, alias="embedding_driver"
     )
-    _vector_store_driver: Optional[BaseVectorStoreDriver] = field(
+    _vector_store_driver: BaseVectorStoreDriver | None = field(
         default=None, kw_only=True, metadata={"serializable": True}, alias="vector_store_driver"
     )
-    _conversation_memory_driver: Optional[BaseConversationMemoryDriver] = field(
+    _conversation_memory_driver: BaseConversationMemoryDriver | None = field(
         default=None, kw_only=True, metadata={"serializable": True}, alias="conversation_memory_driver"
     )
-    _text_to_speech_driver: Optional[BaseTextToSpeechDriver] = field(
+    _text_to_speech_driver: BaseTextToSpeechDriver | None = field(
         default=None, kw_only=True, metadata={"serializable": True}, alias="text_to_speech_driver"
     )
-    _audio_transcription_driver: Optional[BaseAudioTranscriptionDriver] = field(
+    _audio_transcription_driver: BaseAudioTranscriptionDriver | None = field(
         default=None, kw_only=True, metadata={"serializable": True}, alias="audio_transcription_driver"
     )
-    _ruleset_driver: Optional[BaseRulesetDriver] = field(
+    _ruleset_driver: BaseRulesetDriver | None = field(
         default=None, kw_only=True, metadata={"serializable": True}, alias="ruleset_driver"
     )
 
-    _last_drivers_config: Optional[BaseDriversConfig] = field(default=None)
+    _last_drivers_config: BaseDriversConfig | None = field(default=None)
 
     def __enter__(self) -> Self:
         from griptape.configs import Defaults
@@ -69,32 +69,40 @@ class BaseDriversConfig(ABC, SerializableMixin):
 
     @lazy_property()
     @abstractmethod
-    def prompt_driver(self) -> BasePromptDriver: ...
+    def prompt_driver(self) -> BasePromptDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def image_generation_driver(self) -> BaseImageGenerationDriver: ...
+    def image_generation_driver(self) -> BaseImageGenerationDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def embedding_driver(self) -> BaseEmbeddingDriver: ...
+    def embedding_driver(self) -> BaseEmbeddingDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def vector_store_driver(self) -> BaseVectorStoreDriver: ...
+    def vector_store_driver(self) -> BaseVectorStoreDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def conversation_memory_driver(self) -> BaseConversationMemoryDriver: ...
+    def conversation_memory_driver(self) -> BaseConversationMemoryDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def text_to_speech_driver(self) -> BaseTextToSpeechDriver: ...
+    def text_to_speech_driver(self) -> BaseTextToSpeechDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def audio_transcription_driver(self) -> BaseAudioTranscriptionDriver: ...
+    def audio_transcription_driver(self) -> BaseAudioTranscriptionDriver:
+        pass
 
     @lazy_property()
     @abstractmethod
-    def ruleset_driver(self) -> BaseRulesetDriver: ...
+    def ruleset_driver(self) -> BaseRulesetDriver:
+        pass

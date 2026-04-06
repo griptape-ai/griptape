@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import io
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define, field
 
@@ -18,21 +18,19 @@ if TYPE_CHECKING:
 class OpenAiAudioTranscriptionDriver(BaseAudioTranscriptionDriver):
     # These defaults were changed from openai.api_type, openai.api_version, and openai.organization
     # to None because those module-level attributes don't exist in OpenAI SDK v1.0+
-    api_type: Optional[str] = field(default=None, kw_only=True)
-    api_version: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    base_url: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    api_key: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": False})
-    organization: Optional[str] = field(default=None, kw_only=True, metadata={"serializable": True})
-    _client: Optional[openai.OpenAI] = field(
-        default=None, kw_only=True, alias="client", metadata={"serializable": False}
-    )
+    api_type: str | None = field(default=None, kw_only=True)
+    api_version: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    base_url: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
+    organization: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    _client: openai.OpenAI | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> openai.OpenAI:
         openai = import_optional_dependency("openai")
         return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
-    def try_run(self, audio: AudioArtifact, prompts: Optional[list[str]] = None) -> TextArtifact:
+    def try_run(self, audio: AudioArtifact, prompts: list[str] | None = None) -> TextArtifact:
         additional_params = {}
 
         if prompts is not None:

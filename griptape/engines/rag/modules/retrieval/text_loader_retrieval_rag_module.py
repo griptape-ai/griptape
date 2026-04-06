@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import uuid
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -10,7 +10,7 @@ from griptape.chunkers import TextChunker
 from griptape.engines.rag.modules import BaseRetrievalRagModule
 
 if TYPE_CHECKING:
-    from collections.abc import Sequence
+    from collections.abc import Callable, Sequence
 
     from griptape.artifacts import TextArtifact
     from griptape.drivers.vector import BaseVectorStoreDriver

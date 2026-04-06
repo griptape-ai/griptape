@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
@@ -39,9 +39,9 @@ class AmazonOpenSearchVectorStoreDriver(OpenSearchVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         """Inserts or updates a vector in OpenSearch.

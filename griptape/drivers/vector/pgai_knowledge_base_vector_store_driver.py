@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, NoReturn, Optional
+from typing import TYPE_CHECKING, NoReturn
 
 from attrs import Factory, define, field
 
@@ -39,7 +39,7 @@ class PgAiKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
         self,
         query: str | TextArtifact | ImageArtifact,
         *,
-        count: Optional[int] = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
+        count: int | None = BaseVectorStoreDriver.DEFAULT_QUERY_COUNT,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         if isinstance(query, ImageArtifact):
@@ -69,9 +69,9 @@ class PgAiKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_vector(
         self,
         vector: list[float],
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         raise NotImplementedError(f"{self.__class__.__name__} does not support vector upsert.")
@@ -79,9 +79,9 @@ class PgAiKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_text_artifact(
         self,
         artifact: TextArtifact,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
-        vector_id: Optional[str] = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
+        vector_id: str | None = None,
         **kwargs,
     ) -> str:
         raise NotImplementedError(f"{self.__class__.__name__} does not support text artifact upsert.")
@@ -89,20 +89,20 @@ class PgAiKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     def upsert_text(
         self,
         string: str,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         raise NotImplementedError(f"{self.__class__.__name__} does not support text upsert.")
 
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> BaseVectorStoreDriver.Entry:
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry:
         raise NotImplementedError(f"{self.__class__.__name__} does not support entry loading.")
 
-    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         raise NotImplementedError(f"{self.__class__.__name__} does not support entry loading.")
 
-    def load_artifacts(self, *, namespace: Optional[str] = None) -> ListArtifact:
+    def load_artifacts(self, *, namespace: str | None = None) -> ListArtifact:
         raise NotImplementedError(f"{self.__class__.__name__} does not support Artifact loading.")
 
     def delete_vector(self, vector_id: str) -> NoReturn:

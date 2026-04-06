@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from attrs import Factory, define, field
 from jinja2 import Environment, FileSystemLoader
 
@@ -10,7 +8,7 @@ from .paths import abs_path
 
 @define(frozen=True)
 class J2:
-    template_name: Optional[str] = field(default=None)
+    template_name: str | None = field(default=None)
     templates_dir: str = field(default=abs_path("templates"), kw_only=True)
     environment: Environment = field(
         default=Factory(

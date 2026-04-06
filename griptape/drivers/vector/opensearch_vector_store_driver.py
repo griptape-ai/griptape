@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, NoReturn, Optional
+from typing import TYPE_CHECKING, NoReturn
 
 from attrs import define, field
 
@@ -29,11 +29,11 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
     host: str = field(kw_only=True, metadata={"serializable": True})
     port: int = field(default=443, kw_only=True, metadata={"serializable": True})
-    http_auth: str | tuple[str, Optional[str]] = field(default=None, kw_only=True, metadata={"serializable": True})
+    http_auth: str | tuple[str, str | None] = field(default=None, kw_only=True, metadata={"serializable": True})
     use_ssl: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     verify_certs: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     index_name: str = field(kw_only=True, metadata={"serializable": True})
-    _client: Optional[OpenSearch] = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+    _client: OpenSearch | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> OpenSearch:
@@ -51,9 +51,9 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        vector_id: Optional[str] = None,
-        namespace: Optional[str] = None,
-        meta: Optional[dict] = None,
+        vector_id: str | None = None,
+        namespace: str | None = None,
+        meta: dict | None = None,
         **kwargs,
     ) -> str:
         """Inserts or updates a vector in OpenSearch.
@@ -68,7 +68,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
 
         return response["_id"]
 
-    def load_entry(self, vector_id: str, *, namespace: Optional[str] = None) -> Optional[BaseVectorStoreDriver.Entry]:
+    def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         """Retrieves a specific vector entry from OpenSearch based on its identifier and optional namespace.
 
         Returns:
@@ -95,7 +95,7 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
             logging.exception("Error while loading entry: %s", e)
             return None
 
-    def load_entries(self, *, namespace: Optional[str] = None) -> list[BaseVectorStoreDriver.Entry]:
+    def load_entries(self, *, namespace: str | None = None) -> list[BaseVectorStoreDriver.Entry]:
         """Retrieves all vector entries from OpenSearch that match the optional namespace.
 
         Returns:
@@ -122,8 +122,8 @@ class OpenSearchVectorStoreDriver(BaseVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
         include_metadata: bool = True,
         field_name: str = "vector",

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 from attrs import define
 
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 @define
 class BaseSummaryEngine(ABC):
-    def summarize_text(self, text: str, *, rulesets: Optional[list[Ruleset]] = None) -> str:
+    def summarize_text(self, text: str, *, rulesets: list[Ruleset] | None = None) -> str:
         return self.summarize_artifacts(ListArtifact([TextArtifact(text)]), rulesets=rulesets).value
 
     @abstractmethod
@@ -21,5 +21,6 @@ class BaseSummaryEngine(ABC):
         self,
         artifacts: ListArtifact,
         *,
-        rulesets: Optional[list[Ruleset]] = None,
-    ) -> TextArtifact: ...
+        rulesets: list[Ruleset] | None = None,
+    ) -> TextArtifact:
+        pass

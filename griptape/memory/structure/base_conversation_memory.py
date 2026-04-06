@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -25,7 +25,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
     meta: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
     autoload: bool = field(default=True, kw_only=True)
     autoprune: bool = field(default=True, kw_only=True)
-    max_runs: Optional[int] = field(default=None, kw_only=True, metadata={"serializable": True})
+    max_runs: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
         if self.autoload:
@@ -48,10 +48,12 @@ class BaseConversationMemory(SerializableMixin, ABC):
         self.conversation_memory_driver.store(self.runs, self.meta)
 
     @abstractmethod
-    def try_add_run(self, run: Run) -> None: ...
+    def try_add_run(self, run: Run) -> None:
+        pass
 
     @abstractmethod
-    def to_prompt_stack(self, last_n: Optional[int] = None) -> PromptStack: ...
+    def to_prompt_stack(self, last_n: int | None = None) -> PromptStack:
+        pass
 
     def load_runs(self) -> list[Run]:
         runs, meta = self.conversation_memory_driver.load()
@@ -61,7 +63,7 @@ class BaseConversationMemory(SerializableMixin, ABC):
         return self.runs
 
     def add_to_prompt_stack(
-        self, prompt_driver: BasePromptDriver, prompt_stack: PromptStack, index: Optional[int] = None
+        self, prompt_driver: BasePromptDriver, prompt_stack: PromptStack, index: int | None = None
     ) -> PromptStack:
         """Add the Conversation Memory runs to the Prompt Stack by modifying the messages in place.
 

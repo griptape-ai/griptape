@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from attrs import define
 
 from griptape.drivers.vector import BaseVectorStoreDriver
@@ -16,10 +14,10 @@ class AzureMongoDbVectorStoreDriver(MongoDbAtlasVectorStoreDriver):
         self,
         vector: list[float],
         *,
-        count: Optional[int] = None,
-        namespace: Optional[str] = None,
+        count: int | None = None,
+        namespace: str | None = None,
         include_vectors: bool = False,
-        offset: Optional[int] = None,
+        offset: int | None = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         """Queries the MongoDB collection for documents that match the provided vector list.

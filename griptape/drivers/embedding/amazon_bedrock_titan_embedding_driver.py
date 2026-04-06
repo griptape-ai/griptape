@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import base64
 import json
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -38,7 +38,7 @@ class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
         default=Factory(lambda self: AmazonBedrockTokenizer(model=self.model), takes_self=True),
         kw_only=True,
     )
-    _client: Optional[BedrockRuntimeClient] = field(
+    _client: BedrockRuntimeClient | None = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
 

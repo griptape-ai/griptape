@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -11,6 +11,8 @@ from griptape.mixins.rule_mixin import RuleMixin
 from griptape.utils import J2
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from griptape.artifacts import BaseArtifact
     from griptape.drivers.prompt import BasePromptDriver
     from griptape.engines.rag import RagContext
@@ -20,7 +22,7 @@ if TYPE_CHECKING:
 class PromptResponseRagModule(BaseResponseRagModule, RuleMixin):
     prompt_driver: BasePromptDriver = field(default=Factory(lambda: Defaults.drivers_config.prompt_driver))
     answer_token_offset: int = field(default=400)
-    metadata: Optional[str] = field(default=None)
+    metadata: str | None = field(default=None)
     generate_system_template: Callable[[RagContext, list[TextArtifact]], str] = field(
         default=Factory(lambda self: self.default_generate_system_template, takes_self=True),
     )
