@@ -4,7 +4,7 @@ Retrievers provide retrieval augmented generation capabilities within Griptape C
 
 Using a Retriever will give more accurate and effective results than using a Knowledge Base because Retrievers provide reranking capabilities. They also support queries across multiple Knowledge Bases and apply reranking across results returned from multiple Knowledge Bases, which is a powerful capability that is required for many RAG use-cases.
 
-Retrievers include a standard set of modules known as Retriever Components (to avoid confusion with the RAG modules in Griptape Framework). Retreiver Components are used to implement the different stages of the RAG pipeline.
+Retrievers include a standard set of modules known as Retriever Components (to avoid confusion with the RAG modules in Griptape Framework). Retriever Components are used to implement the different stages of the RAG pipeline.
 
 ## Response Component Configuration
 
