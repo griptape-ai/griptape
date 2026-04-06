@@ -14,17 +14,19 @@ class TestGriptapeCloudRulesetDriver:
                 ruleset_id = args[1].split("=")[-1]
                 return mocker.Mock(
                     raise_for_status=lambda: None,
-                    json=lambda: {
-                        "rules": [
-                            {
-                                "rule_id": f"{ruleset_id}_rule",
-                                "rule": "test rule value",
-                                "metadata": {"foo": "bar"},
-                            }
-                        ]
-                    }
-                    if ruleset_id != "no_rules"
-                    else {"rules": []},
+                    json=lambda: (
+                        {
+                            "rules": [
+                                {
+                                    "rule_id": f"{ruleset_id}_rule",
+                                    "rule": "test rule value",
+                                    "metadata": {"foo": "bar"},
+                                }
+                            ]
+                        }
+                        if ruleset_id != "no_rules"
+                        else {"rules": []}
+                    ),
                     status_code=200,
                 )
             if "/rulesets/" in str(args[1]):
@@ -43,9 +45,11 @@ class TestGriptapeCloudRulesetDriver:
                 alias = args[1].split("=")[-1]
                 return mocker.Mock(
                     raise_for_status=lambda: None,
-                    json=lambda: {"rulesets": [{"ruleset_id": alias, "alias": alias, "metadata": {"foo": "bar"}}]}
-                    if alias != "not_found"
-                    else {"rulesets": []},
+                    json=lambda: (
+                        {"rulesets": [{"ruleset_id": alias, "alias": alias, "metadata": {"foo": "bar"}}]}
+                        if alias != "not_found"
+                        else {"rulesets": []}
+                    ),
                     status_code=200,
                 )
             return mocker.Mock()

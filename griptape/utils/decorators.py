@@ -18,8 +18,9 @@ CONFIG_SCHEMA = Schema(
     {
         schema.Optional("name"): str,
         "description": str,
-        schema.Optional("schema"): lambda data: isinstance(data, (Schema, Callable))
-        or (isinstance(data, type) and issubclass(data, BaseModel)),
+        schema.Optional("schema"): lambda data: (
+            isinstance(data, (Schema, Callable)) or (isinstance(data, type) and issubclass(data, BaseModel))
+        ),
     }
 )
 
