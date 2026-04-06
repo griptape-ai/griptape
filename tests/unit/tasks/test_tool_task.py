@@ -291,5 +291,5 @@ class TestToolTask:
 
         agent.add_task(task)
 
-        with pytest.warns(DeprecationWarning):
+        with pytest.warns(DeprecationWarning, match=r"`ToolTask` is deprecated"):
             task.run()

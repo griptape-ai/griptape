@@ -35,7 +35,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         factory=list, kw_only=True, alias="tasks", metadata={"serializable": True}
     )
     conversation_memory: BaseConversationMemory | None = field(
-        default=Factory(lambda: ConversationMemory()),
+        default=Factory(ConversationMemory),
         kw_only=True,
         metadata={"serializable": True},
     )
@@ -46,10 +46,10 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         default=Factory(lambda self: TaskMemory(), takes_self=True),
         kw_only=True,
     )
-    meta_memory: MetaMemory = field(default=Factory(lambda: MetaMemory()), kw_only=True)
+    meta_memory: MetaMemory = field(default=Factory(MetaMemory), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _execution_args: tuple = ()
-    _event_queue: Queue[BaseEvent] = field(default=Factory(lambda: Queue()), init=False)
+    _event_queue: Queue[BaseEvent] = field(default=Factory(Queue), init=False)
 
     def __attrs_post_init__(self) -> None:
         tasks = self._tasks.copy()

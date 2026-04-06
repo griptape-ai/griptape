@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 @define
 class DummyPromptDriver(BasePromptDriver):
     model: None = field(init=False, default=None, kw_only=True)
-    tokenizer: DummyTokenizer = field(default=Factory(lambda: DummyTokenizer()), kw_only=True)
+    tokenizer: DummyTokenizer = field(default=Factory(DummyTokenizer), kw_only=True)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:

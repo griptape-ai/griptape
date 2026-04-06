@@ -249,12 +249,9 @@ ignore = [
   "SLF001", # private-member-access
   "EM102",  # f-string-in-exception
   "PLC0415", # import-outside-top-level
-  "PLW0108", # unnecessary-lambda
   "PLW1641", # eq-without-hash
   "A003",   # builtin-attribute-shadowing
   "FBT001", # boolean-typed-positional-argument
-  "PT030",  # pytest-warns-too-broad
-  "PT031",  # pytest-warns-with-multiple-statements
 ]
 
 [tool.ruff.lint.pydocstyle]

@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 @define
 class ImageQueryTool(BaseTool):
     prompt_driver: BasePromptDriver = field(kw_only=True)
-    image_loader: ImageLoader = field(default=Factory(lambda: ImageLoader()), kw_only=True)
+    image_loader: ImageLoader = field(default=Factory(ImageLoader), kw_only=True)
 
     @activity(
         config={

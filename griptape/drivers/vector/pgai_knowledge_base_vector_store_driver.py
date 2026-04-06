@@ -24,7 +24,7 @@ class PgAiKnowledgeBaseVectorStoreDriver(BaseVectorStoreDriver):
     connection_string: str = field(kw_only=True, metadata={"serializable": True})
     knowledge_base_name: str = field(kw_only=True, metadata={"serializable": True})
     embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: DummyEmbeddingDriver()),
+        default=Factory(DummyEmbeddingDriver),
         metadata={"serializable": True},
         kw_only=True,
         init=False,

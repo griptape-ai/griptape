@@ -32,7 +32,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     """
 
     api_key: str = field(kw_only=True, metadata={"serializable": True})
-    requests_session: requests.Session = field(default=Factory(lambda: requests.Session()), kw_only=True)
+    requests_session: requests.Session = field(default=Factory(requests.Session), kw_only=True)
     api_base: str = "https://cloud.leonardo.ai/api/rest/v1"
     max_attempts: int = field(default=10, kw_only=True, metadata={"serializable": True})
     image_width: int = field(default=512, kw_only=True, metadata={"serializable": True})

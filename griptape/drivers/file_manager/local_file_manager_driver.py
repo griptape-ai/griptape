@@ -18,7 +18,7 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
                  Setting this to None will disable the working directory and all paths will be treated as absolute paths.
     """
 
-    _workdir: str = field(default=Factory(lambda: os.getcwd()), kw_only=True, alias="workdir")
+    _workdir: str = field(default=Factory(os.getcwd), kw_only=True, alias="workdir")
 
     @property
     def workdir(self) -> str:

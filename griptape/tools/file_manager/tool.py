@@ -26,7 +26,7 @@ class FileManagerTool(BaseTool):
         file_manager_driver: File Manager Driver to use to list, load, and save files.
     """
 
-    file_manager_driver: BaseFileManagerDriver = field(default=Factory(lambda: LocalFileManagerDriver()), kw_only=True)
+    file_manager_driver: BaseFileManagerDriver = field(default=Factory(LocalFileManagerDriver), kw_only=True)
 
     loaders: dict[str, loaders.BaseLoader] = field(
         default=Factory(

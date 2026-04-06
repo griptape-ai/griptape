@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 class DummyVectorStoreDriver(BaseVectorStoreDriver):
     embedding_driver: BaseEmbeddingDriver = field(
         kw_only=True,
-        default=Factory(lambda: DummyEmbeddingDriver()),
+        default=Factory(DummyEmbeddingDriver),
         metadata={"serializable": True},
     )
 
