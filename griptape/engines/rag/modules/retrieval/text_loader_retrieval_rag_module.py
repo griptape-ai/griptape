@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 @define(kw_only=True)
 class TextLoaderRetrievalRagModule(BaseRetrievalRagModule):
     loader: TextLoader = field()
-    chunker: TextChunker = field(default=Factory(lambda: TextChunker()))
+    chunker: TextChunker = field(default=Factory(TextChunker))
     vector_store_driver: BaseVectorStoreDriver = field()
     source: Any = field()
     query_params: dict[str, Any] = field(factory=dict)

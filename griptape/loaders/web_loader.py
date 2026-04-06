@@ -15,7 +15,7 @@ if TYPE_CHECKING:
 @define
 class WebLoader(BaseLoader[str, str, TextArtifact]):
     web_scraper_driver: BaseWebScraperDriver = field(
-        default=Factory(lambda: TrafilaturaWebScraperDriver()),
+        default=Factory(TrafilaturaWebScraperDriver),
         kw_only=True,
     )
 

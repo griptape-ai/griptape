@@ -13,6 +13,7 @@ class TestFuturesExecutorMixin:
 
     def test_deprecated_futures_executor(self):
         mock_executor = MockFuturesExecutor()
-        with pytest.warns(DeprecationWarning):
+        with pytest.warns(DeprecationWarning, match=r"`FuturesExecutorMixin\.futures_executor` is deprecated"):
             assert mock_executor.futures_executor
+        with pytest.warns(DeprecationWarning, match=r"`FuturesExecutorMixin\.futures_executor` is deprecated"):
             mock_executor.futures_executor = futures.ThreadPoolExecutor()

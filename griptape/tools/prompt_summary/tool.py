@@ -18,7 +18,7 @@ class PromptSummaryTool(BaseTool, RuleMixin):
         prompt_summary_engine: `PromptSummaryEngine`.
     """
 
-    prompt_summary_engine: PromptSummaryEngine = field(kw_only=True, default=Factory(lambda: PromptSummaryEngine()))
+    prompt_summary_engine: PromptSummaryEngine = field(kw_only=True, default=Factory(PromptSummaryEngine))
 
     @activity(
         config={

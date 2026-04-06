@@ -22,7 +22,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
     calculate_relatedness: Callable = field(
         default=Factory(lambda self: self._default_cosine_similarity, takes_self=True)
     )
-    thread_lock: threading.Lock = field(default=Factory(lambda: threading.Lock()))
+    thread_lock: threading.Lock = field(default=Factory(threading.Lock))
 
     @staticmethod
     def _default_cosine_similarity(x: list[float], y: list[float]) -> float:

@@ -13,5 +13,5 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 @define
 class BaseEvent(SerializableMixin, ABC):
     id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
-    timestamp: float = field(default=Factory(lambda: time.time()), kw_only=True, metadata={"serializable": True})
+    timestamp: float = field(default=Factory(time.time), kw_only=True, metadata={"serializable": True})
     meta: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})

@@ -9,7 +9,7 @@ from griptape.tasks import BaseTextInputTask
 
 @define
 class RagTask(BaseTextInputTask[ListArtifact | ErrorArtifact]):
-    rag_engine: RagEngine = field(kw_only=True, default=Factory(lambda: RagEngine()))
+    rag_engine: RagEngine = field(kw_only=True, default=Factory(RagEngine))
 
     def try_run(self) -> ListArtifact | ErrorArtifact:
         outputs = self.rag_engine.process_query(self.input.to_text()).outputs
