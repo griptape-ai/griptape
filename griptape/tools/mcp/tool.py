@@ -112,7 +112,7 @@ def _exc_iter(exc) -> Any:  # noqa: ANN001
 
     https://stackoverflow.com/a/78453879
     """
-    from exceptiongroup import BaseExceptionGroup
+    from exceptiongroup import BaseExceptionGroup  # type: ignore[reportMissingImports]
 
     if isinstance(exc, BaseExceptionGroup):
         for e in exc.exceptions:
@@ -195,7 +195,7 @@ class MCPTool(BaseTool):
 
     async def _run_activity(self, activity_name: str, params: dict) -> BaseArtifact:
         """Runs an activity on the MCP Server with the provided parameters."""
-        from exceptiongroup import BaseExceptionGroup
+        from exceptiongroup import BaseExceptionGroup  # type: ignore[reportMissingImports]
 
         try:
             async with self._get_session() as session:
