@@ -1,0 +1,5 @@
+[02/27/25 20:26:45] INFO     PromptTask a4f5b25e087246aa9e4ff6376ac17e4b        
+                             Input: Hi there! How are you?                      
+[02/27/25 20:26:46] INFO     PromptTask a4f5b25e087246aa9e4ff6376ac17e4b        
+                             Output: Ahoy, matey! I'm doin' just fine, thank ye 
+                             fer askin'. How be ye sailin' through the day?     

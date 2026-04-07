@@ -1,0 +1,5 @@
+[02/27/25 20:27:28] INFO     PromptTask 3902de9d2ff5473e8f34398dfff5000e        
+                             Input: Hello!                                      
+                    INFO     PromptTask 3902de9d2ff5473e8f34398dfff5000e        
+                             Output: Hello! How can I assist you today?         
+{"type": "ConversationMemory", "runs": [{"type": "Run", "id": "9616891ea5eb4cb2a16d7eac246b7e7d", "meta": null, "input": {"type": "TextArtifact", "id": "9fa4bcf1f54840519d5fe027b4670565", "reference": null, "meta": {}, "name": "9fa4bcf1f54840519d5fe027b4670565", "value": "Hello!"}, "output": {"type": "TextArtifact", "id": "9a827d3528b14690b8cf5b1636e694b5", "reference": null, "meta": {"is_react_prompt": false}, "name": "9a827d3528b14690b8cf5b1636e694b5", "value": "Hello! How can I assist you today?"}}], "meta": {}, "max_runs": null}

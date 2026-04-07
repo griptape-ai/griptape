@@ -1,0 +1,8 @@
+Eval Steps [
+  "Compare the actual output to the expected output to identify any discrepancies in factual information.",
+  "Verify that all key facts present in the expected output are accurately reflected in the actual output.",
+  "Check for any additional information in the actual output that is not present in the expected output and assess its factual correctness.",
+  "Ensure that the actual output does not omit any critical facts that are present in the expected output."
+]
+Score: 1.0
+Reason: The actual output 'Glass' matches the expected output 'Glass' exactly, with no discrepancies or omissions in factual information.

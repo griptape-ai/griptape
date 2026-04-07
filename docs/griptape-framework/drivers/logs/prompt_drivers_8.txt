@@ -1,0 +1,22 @@
+[02/27/25 20:25:43] INFO     PromptTask 409830097880426f9b46a8ba3b6a6d84        
+                             Input: Briefly explain how a computer works to a   
+                             young child.                                       
+[02/27/25 20:25:45] INFO     PromptTask 409830097880426f9b46a8ba3b6a6d84        
+                             Output: Imagine a computer is like a really smart  
+                             toy box!                                           
+                                                                                
+                             *   **You tell it what to do:** You press buttons  
+                             or touch the screen, like telling the toy box which
+                             toy you want.                                      
+                             *   **It has a brain:** Inside is a tiny brain that
+                             figures out what you asked for.                    
+                             *   **It remembers things:** It has a special place
+                             to keep all its toys (information) so it doesn't   
+                             forget.                                            
+                             *   **It shows you the toy:** It shows you the     
+                             picture or game on the screen, like giving you the 
+                             toy you asked for!                                 
+                                                                                
+                             So, you ask, it thinks, it remembers, and then it  
+                             shows you the answer!                              
+                                                                                

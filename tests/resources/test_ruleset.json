@@ -1,0 +1,19 @@
+{
+    "rules": [
+        {
+            "value": "value1",
+            "meta": {
+                "foo": "bar"
+            }
+        },
+        {
+            "value": "value2",
+            "meta": {
+                "foo": "baz"
+            }
+        }
+    ],
+    "meta": {
+        "foo": "bar"
+    }
+}

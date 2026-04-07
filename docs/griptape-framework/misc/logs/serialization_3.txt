@@ -1,0 +1,11 @@
+{
+│   'type': 'WebSearchTool',
+│   'name': 'WebSearchTool',
+│   'input_memory': None,
+│   'output_memory': None,
+│   'install_dependencies_on_init': True,
+│   'dependencies_install_directory': None,
+│   'verbose': False,
+│   'off_prompt': False,
+│   'web_search_driver': {'type': 'DuckDuckGoWebSearchDriver'}
+}

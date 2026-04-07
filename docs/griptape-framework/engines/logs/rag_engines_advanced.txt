@@ -1,0 +1,43 @@
+Griptape's cloud services offer infrastructure management, hosting and operating everything from data processing pipelines to retrieval-ready databases and serverless application runtimes. They provide automated data preparation (ETL), retrieval as a service (RAG), and a structure runtime for building AI agents, pipelines, and workflows.
+
+Griptape's cloud services offer a range of features designed to simplify the deployment and management of AI-powered applications. These services include:
+
+1. **Deployment and Scaling**: Griptape allows you to deploy and run ETL, RAG, and other structures you develop, with simple API abstractions and without the need for infrastructure management. It also supports seamless scaling to accommodate growing workload requirements[1].
+
+2. **Management and Monitoring**: You can monitor your applications directly in Griptape Cloud or integrate with third-party services. The platform provides tools to measure performance, reliability, and spending across the organization, and enforce policies for users, structures, tasks, and queries[1].
+
+3. **Automated Data Preparation (ETL)**: Griptape Cloud enables you to connect to any data source, extract, clean, chunk, embed, and add metadata to your data, and load it into a vector database index[2].
+
+4. **Retrieval as a Service (RAG)**: The service allows you to generate answers, summaries, and details from your own data using ready-made retrieval patterns, or customize and compose your own patterns from scratch[2].
+
+5. **Structure Runtime (RUN)**: You can build AI agents, pipelines, and workflows, and plug them into client applications. This includes support for real-time interfaces, transactional processes, and batch workloads[2].
+
+These features are designed to provide a comprehensive solution for building, deploying, and managing AI applications without the need for extensive infrastructure management.
+
+Footnotes:
+
+1. Griptape Site, https://www.griptape.ai
+2. Griptape Site, https://www.griptape.ai
+
+[
+│   Reference(
+│   │   type='Reference',
+│   │   module_name='griptape.common.reference',
+│   │   id='d653b438d0534390b3038928b55f4289',
+│   │   title='Griptape Site',
+│   │   authors=[],
+│   │   source=None,
+│   │   year=None,
+│   │   url='https://www.griptape.ai'
+│   ),
+│   Reference(
+│   │   type='Reference',
+│   │   module_name='griptape.common.reference',
+│   │   id='a00cdda10944460fbe2d72c6cfd702ee',
+│   │   title='Griptape GitHub',
+│   │   authors=[],
+│   │   source=None,
+│   │   year=None,
+│   │   url='https://github.com/griptape-ai/griptape'
+│   )
+]

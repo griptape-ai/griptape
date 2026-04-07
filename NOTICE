@@ -1,0 +1,13 @@
+# NOTICE
+
+This project includes the `marshmallow_union` module, which is licensed under the MIT License.
+
+- **Author**: Adam Boche
+- **Project**: [python-marshmallow-union](https://github.com/adamboche/python-marshmallow-union)
+- **License**: MIT License
+
+This project includes the `marshmallow-oneofschema` module, which is licensed under the MIT License.
+
+- **Author**: Maxim Kulkin, Alex Rothberg, Steven Loria, and other contributors
+- **Project**: [marshmallow-oneofschema](https://github.com/marshmallow-code/marshmallow-oneofschema)
+- **License**: MIT License

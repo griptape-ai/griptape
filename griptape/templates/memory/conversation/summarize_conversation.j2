@@ -1,0 +1,15 @@
+{% if summary %}
+Conversation summary:
+"""
+{{ summary }}
+"""
+
+Update the summary with this:
+{% else %}
+Summarize the following conversation:
+{% endif %}
+
+{% for run in runs %}
+Human: {{ run.input }}
+Assistant: {{ run.output }}
+{% endfor %}

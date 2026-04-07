@@ -1,0 +1,77 @@
+https://mermaid.ink/svg/Z3JhcGggVEQ7CglIZXJvLS0+IEdlbmVyYXRlX1RpdGxlOwoJU2V0dGluZy0tPiBHZW5lcmF0ZV9UaXRsZTsKCUdlbmVyYXRlX1RpdGxlLS0+IFN0b3J5OwoJU3Rvcnk7
+[02/27/25 20:33:34] INFO     PromptTask hero                                    
+                             Input: Name a fantasy hero (e.g., 'Eldric')        
+                    INFO     PromptTask setting                                 
+                             Input: Describe a mystical setting in a couple     
+                             sentences (e.g., 'the Shattered Isles')            
+[02/27/25 20:33:35] INFO     PromptTask hero                                    
+                             Output: Sure! How about "Thalorin"?                
+[02/27/25 20:33:36] INFO     PromptTask setting                                 
+                             Output: The Luminous Glade is a hidden realm where 
+                             twilight never fades, and the air shimmers with    
+                             ethereal light. Ancient trees with silver bark and 
+                             luminescent leaves form a canopy overhead, while   
+                             bioluminescent flora carpet the forest floor,      
+                             casting a gentle glow that dances with the whispers
+                             of the wind. In the heart of the glade lies a      
+                             serene lake, its waters reflecting the starry sky  
+                             above, where mythical creatures gather to drink    
+                             from its enchanted depths.                         
+                    INFO     PromptTask story                                   
+                             Input: Write a brief, yet heroic tale about Sure!  
+                             How about "Thalorin"? the Eternal of The Luminous  
+                             Glade is a hidden realm where twilight never fades,
+                             and the air shimmers with ethereal light. Ancient  
+                             trees with silver bark and luminescent leaves form 
+                             a canopy overhead, while bioluminescent flora      
+                             carpet the forest floor, casting a gentle glow that
+                             dances with the whispers of the wind. In the heart 
+                             of the glade lies a serene lake, its waters        
+                             reflecting the starry sky above, where mythical    
+                             creatures gather to drink from its enchanted       
+                             depths..                                           
+[02/27/25 20:33:41] INFO     PromptTask story                                   
+                             Output: In the heart of the Luminous Glade, where  
+                             twilight never fades and the air shimmers with     
+                             ethereal light, dwelled Thalorin, the Eternal.     
+                             Guardian of this hidden realm, Thalorin was a being
+                             of ancient wisdom and unmatched valor, his presence
+                             as timeless as the silver-barked trees that formed 
+                             the glade's canopy.                                
+                                                                                
+                             One fateful eve, a shadow crept into the glade, a  
+                             dark force seeking to extinguish its eternal       
+                             twilight. The creatures of the forest, from the    
+                             smallest luminescent insects to the majestic       
+                             starlit deer, trembled as the darkness spread,     
+                             threatening to consume their sanctuary.            
+                                                                                
+                             Sensing the peril, Thalorin emerged from the depths
+                             of the serene lake, his form shimmering with the   
+                             light of a thousand stars. With a voice that       
+                             resonated like the gentle rustle of leaves, he     
+                             called upon the ancient magic of the glade. The    
+                             trees responded, their luminescent leaves glowing  
+                             brighter, casting beams of light that pierced the  
+                             encroaching shadow.                                
+                                                                                
+                             The battle was fierce, the darkness relentless, but
+                             Thalorin stood undeterred. Drawing strength from   
+                             the enchanted waters and the bioluminescent flora, 
+                             he wove a tapestry of light, a radiant barrier that
+                             pushed back the shadow. The mythical creatures     
+                             gathered around him, lending their own magic to the
+                             cause, their unity a beacon of hope.               
+                                                                                
+                             In a final, heroic surge, Thalorin unleashed the   
+                             full power of the glade, a blinding burst of light 
+                             that shattered the darkness, restoring peace and   
+                             balance. The shadow vanquished, the glade's        
+                             twilight glow returned, more vibrant than ever.    
+                                                                                
+                             As the creatures celebrated their victory,         
+                             Thalorin, the Eternal, stood watchful, a silent    
+                             guardian of the Luminous Glade. His tale of heroism
+                             would echo through the ages, a reminder of the     
+                             light that dwells within, even in the face of the  
+                             deepest shadows.                                   

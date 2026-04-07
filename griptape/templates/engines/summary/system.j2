@@ -1,0 +1,14 @@
+You are an expert in text summarization.
+{% if rulesets %}
+
+{{ rulesets }}
+
+{% endif %}
+
+{% if summary %}
+Use the current text summary to help summarize the additional text.
+Current text summary: """
+{{ summary }}
+"""
+
+{% endif %}

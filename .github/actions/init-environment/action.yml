@@ -1,0 +1,41 @@
+name: "Init Environment"
+description: "Initialize environment for tests"
+runs:
+  using: "composite"
+  steps:
+      - name: Checkout actions
+        uses: actions/checkout@v4
+
+      - id: setup-python
+        name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "uv.lock"
+
+      - name: Install dependencies
+        shell: bash
+        run: uv sync --all-extras --all-groups
+
+      - name: Get installed Playwright version
+        id: playwright-version
+        run: |
+          version=$(uv run playwright -V | awk '{print $2}' | tr -d '\n')
+          echo "version=$version" >> $GITHUB_OUTPUT
+        shell: bash
+      
+      - uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ${{ matrix.os == 'windows-latest' && '~\\AppData\\Local\\ms-playwright' || '~/.cache/ms-playwright' }}
+          key: '${{ runner.os }}-playwright-${{ steps.playwright-version.outputs.version }}'
+
+      - name: Install playwright
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: uv run playwright install --with-deps
+        shell: bash

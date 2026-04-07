@@ -1,0 +1,399 @@
+[03/13/25 21:07:33] INFO     PromptTask project-research                        
+                             Input: You are speaking to: Collin. User said: Tell
+                             me about the python framework Griptape.            
+[03/13/25 21:07:35] INFO     Subtask b3776286c4b14b30a8955e0e8d56b426           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_g0DHP8HffzIVh5hpxrNZFJln",        
+                                 "name": "WebSearchTool",                       
+                                 "path": "search",                              
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "query": "Griptape Python framework"       
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask b3776286c4b14b30a8955e0e8d56b426           
+                             Response: {"title": "GitHub - griptape-ai/griptape:
+                             Modular Python framework for AI agents ...", "url":
+                             "https://github.com/griptape-ai/griptape",         
+                             "description": "Griptape is a modular Python       
+                             framework for building AI-powered applications that
+                             securely connect to your enterprise data and APIs. 
+                             It offers developers the ability to maintain       
+                             control and flexibility at every step.             
+                             \ud83d\udee0\ufe0f Core Components.                
+                             \ud83c\udfd7\ufe0f Structures. \ud83e\udd16 Agents 
+                             consist of a single Task."}                        
+                                                                                
+                             {"title": "Griptape | AI Agent Framework | AI      
+                             Development Platform", "url":                      
+                             "https://www.griptape.ai/", "description":         
+                             "Griptape gives developers everything they need,   
+                             from the open source AI framework (Griptape AI     
+                             Framework) to the execution runtime (Griptape AI   
+                             Cloud). Build & Secure Build your business logic   
+                             using predictable, programmable python - don't     
+                             gamble on prompting."}                             
+                                                                                
+                             {"title": "Overview - Griptape Docs", "url":       
+                             "https://docs.griptape.ai/stable/griptape-framework
+                             /", "description": "The Griptape Framework allows  
+                             developers to build business logic using Python,   
+                             ensuring better security, performance, and         
+                             cost-efficiency. It simplifies the creation of Gen 
+                             AI Agents, Systems of Agents, Pipelines, Workflows,
+                             and RAG implementations without needing extensive  
+                             knowledge of Gen AI or Prompt Engineering."}       
+                                                                                
+                             {"title": "Getting started with the Griptape       
+                             Framework", "url":                                 
+                             "https://www.griptape.ai/blog/getting-started-with-
+                             the-griptape-framework", "description": "Griptape  
+                             is a Python framework and we'll assume that you    
+                             already have python set up on your machine. If not,
+                             we recommend you take a look at the longer version 
+                             of this getting started guide in the Griptape Trade
+                             School , which includes instructions for getting   
+                             Python set up."}                                   
+                                                                                
+                             {"title": "Framework - Griptape", "url":           
+                             "https://www.griptape.ai/category/framework",      
+                             "description": "Blog posts about the Griptape      
+                             Framework, a powerful Python library allowing      
+                             developers to build AI systems that operate across 
+                             two dimensions: predictability and creativity.     
+                             Products. ... The release of Griptape Framework    
+                             v0.24 comes with a number of new, long-requested   
+                             features. Customers can now use Claude-3 and Google
+                             Gemini models in their ..."}                       
+[03/13/25 21:07:39] INFO     Subtask 97e6fad69e954372af63169375fe3684           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_PXnS8KWhsbtQeCLR02oSZYj8",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url":                                     
+                             "https://github.com/griptape-ai/griptape"          
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[03/13/25 21:07:40] INFO     Subtask 97e6fad69e954372af63169375fe3684           
+                             Response: Griptape is a Python framework designed  
+                             to simplify the development of generative AI       
+                             (genAI) applications. It offers a set of           
+                             straightforward, flexible abstractions for working 
+                             with areas such as Large Language Models (LLMs),   
+                             Retrieval-Augmented Generation (RAG), and much     
+                             more.                                              
+                             - 🤖 Agents consist of a single Task, configured   
+                             for Agent-specific behavior.                       
+                             - 🔄 Pipelines organize a sequence of Tasks so that
+                             the output from one Task may flow into the next.   
+                             - 🌐 Workflows configure Tasks to operate in       
+                             parallel.                                          
+                             Tasks are the core building blocks within          
+                             Structures, enabling interaction with Engines,     
+                             Tools, and other Griptape components.              
+                             - 💬 Conversation Memory enables LLMs to retain and
+                             retrieve information across interactions.          
+                             - 🗃️ Task Memory keeps large or sensitive Task      
+                             outputs off the prompt that is sent to the LLM.    
+                             - 📊 Meta Memory enables passing in additional     
+                             metadata to the LLM, enhancing the context and     
+                             relevance of the interaction.                      
+                             Drivers facilitate interactions with external      
+                             resources and services in Griptape. They allow you 
+                             to swap out functionality and providers with       
+                             minimal changes to your business logic.            
+                                                                                
+                             - 🗣️ Prompt Drivers: Manage textual and image       
+                             interactions with LLMs.                            
+                             - 🤖 Assistant Drivers: Enable interactions with   
+                             various “assistant” services.                      
+                             - 📜 Ruleset Drivers: Load and apply rulesets from 
+                             external sources.                                  
+                             - 🧠 Conversation Memory Drivers: Store and        
+                             retrieve conversational data.                      
+                             - 📡 Event Listener Drivers: Forward framework     
+                             events to external services.                       
+                             - 🏗️ Structure Run Drivers: Execute structures      
+                             locally or in the cloud.                           
+                             - 🔢 Embedding Drivers: Generate vector embeddings 
+                             from textual inputs.                               
+                             - 🔀 Rerank Drivers: Rerank search results for     
+                             improved relevance.                                
+                             - 💾 Vector Store Drivers: Manage the storage and  
+                             retrieval of embeddings.                           
+                             - 🗂️ File Manager Drivers: Handle file operations on
+                             local and remote storage.                          
+                             - 💼 SQL Drivers: Interact with SQL databases.     
+                             - 🎨 Image Generation Drivers: Create images from  
+                             text descriptions.                                 
+                             - 🗣️ Text to Speech Drivers: Convert text to speech.
+                                                                                
+                             - 🎙️ Audio Transcription Drivers: Convert audio to  
+                             text.                                              
+                             - 🔍 Web Search Drivers: Search the web for        
+                             information.                                       
+                             - 🌐 Web Scraper Drivers: Extract data from web    
+                             pages.                                             
+                             - 📈 Observability Drivers: Send trace and event   
+                             data to observability platforms.                   
+                             Tools provide capabilities for LLMs to interact    
+                             with data and services.                            
+                             Griptape includes a variety of [built-in           
+                             Tools](https://docs.griptape.ai/stable/griptape-fra
+                             mework/tools/official-tools/), and makes it easy to
+                             create [custom                                     
+                             Tools](https://docs.griptape.ai/stable/griptape-fra
+                             mework/tools/custom-tools/).                       
+                             Engines wrap Drivers and provide use-case-specific 
+                             functionality:                                     
+                             - 📊 RAG Engine is an abstraction for implementing 
+                             modular Retrieval Augmented Generation (RAG)       
+                             pipelines.                                         
+                             - 🛠️ Extraction Engine extracts JSON or CSV data    
+                             from unstructured text.                            
+                             - 📝 Summary Engine generates summaries from       
+                             textual content.                                   
+                             - ✅ Eval Engine evaluates and scores the quality  
+                             of generated text.                                 
+                                                                                
+                             - 📐 Rulesets steer LLM behavior with minimal      
+                             prompt engineering.                                
+                             - 🔄 Loaders load data from various sources.       
+                             - 🏺 Artifacts allow for passing data of different 
+                             types between Griptape components.                 
+                             - ✂️ Chunkers segment texts into manageable pieces  
+                             for diverse text types.                            
+                             - 🔢 Tokenizers count the number of tokens in a    
+                             text to not exceed LLM token limits.               
+                             Please visit the [docs](https://docs.griptape.ai/) 
+                             for information on installation and usage.         
+                             Check out [Griptape Trade                          
+                             School](https://learn.griptape.ai/) for free online
+                             courses.                                           
+                             Here's a minimal example of griptape:              
+                             from griptape.drivers.prompt.openai import         
+                             OpenAiChatPromptDriver                             
+                             from griptape.rules import Rule                    
+                             from griptape.tasks import PromptTask              
+                             task = PromptTask(                                 
+                             prompt_driver=OpenAiChatPromptDriver(model="gpt-4o"
+                             ),                                                 
+                             rules=[Rule("Keep your answer to a few             
+                             sentences.")],                                     
+                             )                                                  
+                             result = task.run("How do I do a kickflip?")       
+                                                                                
+                             print(result.value)                                
+                             To do a kickflip, start by positioning your front  
+                             foot slightly angled near the middle of the board  
+                             and your back foot on the tail.                    
+                             Pop the tail down with your back foot while        
+                             flicking the edge of the board with your front foot
+                             to make it spin.                                   
+                             Jump and keep your body centered over the board,   
+                             then catch it with your feet and land smoothly.    
+                             Practice and patience are key!                     
+                             Here is a concise example using griptape to        
+                             research open source projects:                     
+                             from                                               
+                             griptape.drivers.prompt.openai_chat_prompt_driver  
+                             import OpenAiChatPromptDriver                      
+                             from griptape.drivers.web_search.duck_duck_go      
+                             import DuckDuckGoWebSearchDriver                   
+                             from griptape.rules import Rule, Ruleset           
+                             from griptape.structures import Workflow           
+                             from griptape.tasks import PromptTask,             
+                             TextSummaryTask                                    
+                             from griptape.tools import WebScraperTool,         
+                             WebSearchTool                                      
+                             from griptape.utils import StructureVisualizer     
+                             from pydantic import BaseModel                     
+                             class Feature(BaseModel):                          
+                             name: str                                          
+                             description: str                                   
+                                                                                
+                             emoji: str                                         
+                             class Output(BaseModel):                           
+                             answer: str                                        
+                             key_features: list[Feature]                        
+                             projects = ["griptape", "langchain", "crew-ai",    
+                             "pydantic-ai"]                                     
+                             prompt_driver =                                    
+                             OpenAiChatPromptDriver(model="gpt-4o")             
+                             workflow = Workflow(                               
+                             tasks=[                                            
+                             [                                                  
+                             PromptTask(                                        
+                             id=f"project-{project}",                           
+                             input="Tell me about the open source project: {{   
+                             project }}.",                                      
+                             prompt_driver=prompt_driver,                       
+                             context={"project": projects},                     
+                             output_schema=Output,                              
+                             tools=[                                            
+                             WebSearchTool(                                     
+                             web_search_driver=DuckDuckGoWebSearchDriver(),     
+                             ),                                                 
+                             WebScraperTool(),                                  
+                             ],                                                 
+                             child_ids=["summary"],                             
+                             )                                                  
+                             for project in projects                            
+                             ],                                                 
+                             TextSummaryTask(                                   
+                             input="{{ parents_output_text }}",                 
+                             id="summary",                                      
+                             rulesets=[                                         
+                             Ruleset(                                           
+                             name="Format", rules=[Rule("Be detailed."),        
+                             Rule("Include emojis.")]                           
+                             )                                                  
+                             ],                                                 
+                             ),                                                 
+                             ]                                                  
+                             )                                                  
+                             workflow.run()                                     
+                             print(StructureVisualizer(workflow).to_url())      
+                             Output: Here's a detailed summary of the           
+                             open-source projects mentioned:                    
+                                                                                
+                             1. **Griptape** 🛠️:                                 
+                             - Griptape is a modular Python framework designed  
+                             for creating AI-powered applications. It focuses on
+                             securely connecting to                             
+                             enterprise data and APIs. The framework provides   
+                             structured components like Agents, Pipelines, and  
+                             Workflows, allowing for both                       
+                             parallel and sequential operations. It includes    
+                             built-in tools and supports custom tool creation   
+                             for data and service                               
+                             interaction.                                       
+                             2. **LangChain** 🔗:                               
+                             - LangChain is a framework for building            
+                             applications powered by Large Language Models      
+                             (LLMs). It offers a standard interface             
+                             for models, embeddings, and vector stores,         
+                             facilitating real-time data augmentation and model 
+                             interoperability. LangChain                        
+                             integrates with various data sources and external  
+                             systems, making it adaptable to evolving           
+                             technologies.                                      
+                             3. **CrewAI** 🤖:                                  
+                             - CrewAI is a standalone Python framework for      
+                             orchestrating multi-agent AI systems. It allows    
+                             developers to create and                           
+                             manage AI agents that collaborate on complex tasks.
+                             CrewAI emphasizes ease of use and scalability,     
+                             providing tools and                                
+                             documentation to help developers build AI-powered  
+                             solutions.                                         
+                                                                                
+                             4. **Pydantic-AI** 🧩:                             
+                             - Pydantic-AI is a Python agent framework that     
+                             simplifies the development of production-grade     
+                             applications with Generative                       
+                             AI. Built on Pydantic, it supports various AI      
+                             models and provides features like type-safe design,
+                             structured response                                
+                             validation, and dependency injection. Pydantic-AI  
+                             aims to bring the ease of FastAPI development to AI
+                             applications.                                      
+                             These projects offer diverse tools and frameworks  
+                             for developing AI applications, each with unique   
+                             features and capabilities                          
+                             tailored to different aspects of AI development.   
+                             graph TD;                                          
+                             griptape-->summary;                                
+                             langchain-->summary;                               
+                             pydantic-ai-->summary;                             
+                             crew-ai-->summary;                                 
+                             Griptape uses [Semantic                            
+                             Versioning](https://semver.org/).                  
+                             Thank you for considering contributing to Griptape!
+                             Before you start, please review our [Contributing  
+                             Guidelines](https://github.com/griptape-ai/griptape
+                             /blob/main/CONTRIBUTING.md).                       
+                             Griptape is available under the Apache 2.0 License.
+[03/13/25 21:07:44] INFO     PromptTask project-research                        
+                             Output: {"answer":"Hello Collin! I'm Oswald from   
+                             Oswald's Open Source. Let me tell you about the    
+                             Griptape Python framework.\n\nGriptape is a modular
+                             Python framework designed to simplify the          
+                             development of generative AI (genAI) applications. 
+                             It provides a set of flexible abstractions for     
+                             working with Large Language Models (LLMs),         
+                             Retrieval-Augmented Generation (RAG), and more. The
+                             framework is structured around core components like
+                             Agents, Pipelines, and Workflows, which allow for  
+                             both sequential and parallel task                  
+                             operations.\n\nGriptape includes various drivers   
+                             and tools that facilitate interactions with        
+                             external resources and services, making it easy to 
+                             swap out functionality with minimal changes to your
+                             business logic. It also supports the creation of   
+                             custom tools and provides engines for specific use 
+                             cases like RAG pipelines, data extraction, and text
+                             summarization.\n\nOverall, Griptape is designed to 
+                             offer developers control and flexibility while     
+                             building AI-powered applications that securely     
+                             connect to enterprise data and                     
+                             APIs.","key_features":[{"name":"Agents","descriptio
+                             n":"Consist of a single Task, configured for       
+                             specific                                           
+                             behavior.","emoji":"🤖"},{"name":"Pipelines","descr
+                             iption":"Organize a sequence of Tasks so that the  
+                             output from one Task may flow into the             
+                             next.","emoji":"🔄"},{"name":"Workflows","descripti
+                             on":"Configure Tasks to operate in                 
+                             parallel.","emoji":"🌐"},{"name":"Conversation     
+                             Memory","description":"Enables LLMs to retain and  
+                             retrieve information across                        
+                             interactions.","emoji":"💬"},{"name":"Prompt       
+                             Drivers","description":"Manage textual and image   
+                             interactions with LLMs.","emoji":"🗣️"},{"name":"RAG 
+                             Engine","description":"An abstraction for          
+                             implementing modular Retrieval Augmented Generation
+                             (RAG) pipelines.","emoji":"📊"}]}                  
+Output(
+│   answer="Hello Collin! I'm Oswald from Oswald's Open Source. Let me tell you about the Griptape Python framework.\n\nGriptape is a modular Python framework designed to simplify the development of generative AI (genAI) applications. It provides a set of flexible abstractions for working with Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), and more. The framework is structured around core components like Agents, Pipelines, and Workflows, which allow for both sequential and parallel task operations.\n\nGriptape includes various drivers and tools that facilitate interactions with external resources and services, making it easy to swap out functionality with minimal changes to your business logic. It also supports the creation of custom tools and provides engines for specific use cases like RAG pipelines, data extraction, and text summarization.\n\nOverall, Griptape is designed to offer developers control and flexibility while building AI-powered applications that securely connect to enterprise data and APIs.",
+│   key_features=[
+│   │   Feature(
+│   │   │   name='Agents',
+│   │   │   description='Consist of a single Task, configured for specific behavior.',
+│   │   │   emoji='🤖'
+│   │   ),
+│   │   Feature(
+│   │   │   name='Pipelines',
+│   │   │   description='Organize a sequence of Tasks so that the output from one Task may flow into the next.',
+│   │   │   emoji='🔄'
+│   │   ),
+│   │   Feature(
+│   │   │   name='Workflows',
+│   │   │   description='Configure Tasks to operate in parallel.',
+│   │   │   emoji='🌐'
+│   │   ),
+│   │   Feature(
+│   │   │   name='Conversation Memory',
+│   │   │   description='Enables LLMs to retain and retrieve information across interactions.',
+│   │   │   emoji='💬'
+│   │   ),
+│   │   Feature(
+│   │   │   name='Prompt Drivers',
+│   │   │   description='Manage textual and image interactions with LLMs.',
+│   │   │   emoji='🗣️'
+│   │   ),
+│   │   Feature(
+│   │   │   name='RAG Engine',
+│   │   │   description='An abstraction for implementing modular Retrieval Augmented Generation (RAG) pipelines.',
+│   │   │   emoji='📊'
+│   │   )
+│   ]
+)

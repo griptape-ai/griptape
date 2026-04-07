@@ -1,0 +1,9 @@
+[03/13/25 21:09:51] INFO     PromptTask 1b399af1c0264f8eb33916a762d6852e        
+                             Input: You are speaking to: Collin. User said: Hi  
+                             there!                                             
+[03/13/25 21:09:52] INFO     PromptTask 1b399af1c0264f8eb33916a762d6852e        
+                             Output: {"answer":"Hello Collin! My name is Oswald.
+                             How can I assist you today?"}                      
+{
+  "answer": "Hello Collin! My name is Oswald. How can I assist you today?"
+}

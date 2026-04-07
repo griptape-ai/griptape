@@ -1,0 +1,4 @@
+[02/27/25 20:26:39] INFO     PromptTask b1a0f76da1cf42ca81e85fc921f07f80        
+                             Input: Hello                                       
+                    INFO     PromptTask b1a0f76da1cf42ca81e85fc921f07f80        
+                             Output: Hello. How can I help you today?           

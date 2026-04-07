@@ -1,0 +1,26 @@
+version: 2
+enable-beta-ecosystems: true
+updates:
+  - package-ecosystem: "uv"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    versioning-strategy: "auto"
+    groups:
+      production-dependencies:
+        dependency-type: "production"
+        update-types:
+        - "patch"
+        - "minor"
+      development-dependencies:
+        dependency-type: "development"
+        update-types:
+        - "minor"
+        - "patch"
+        - "major"
+    commit-message:
+      prefix: deps
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

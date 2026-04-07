@@ -1,0 +1,14 @@
+You must respond to requests by using the actions. Your response must ONLY be a plain JSON object that successfully validates against the Action Schema.
+{% if not use_native_tools %}
+
+The schema is provided below:
+Action Schema: {{ action_schema }}
+{% endif %}
+{% if meta_memory %}
+
+{{ meta_memory }}
+{% endif %}
+{% if rulesets %}
+
+{{ rulesets }}
+{% endif %}

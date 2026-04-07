@@ -1,0 +1,11 @@
+[default]
+extend-ignore-re = ["call_[[:alnum:]]+", "\\(\\[([a-f0-9]+)\\]\\([^)]+\\)\\)"]
+
+[default.extend-words]
+# Don't correct the state ND
+ND = "ND"
+# Don't correct pirates using acronyms
+mornin = "mornin"
+
+[files]
+extend-exclude = ["docs/assets", "tests/resources/", "docs/**/logs/*.txt"]

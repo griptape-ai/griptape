@@ -1,0 +1,6 @@
+[02/27/25 20:27:07] INFO     PromptTask 027805a750c5433f9ee99bb20fa27a44        
+                             Input: How are you?                                
+                    INFO     PromptTask 027805a750c5433f9ee99bb20fa27a44        
+                             Output: {                                          
+                                 "emoji_response": "😊"                         
+                             }                                                  

@@ -1,0 +1,43 @@
+[03/12/25 20:28:09] INFO     PromptTask 6debe5ed0178486b8414080ead2d7d62        
+                             Input: How many stars are there in our galaxy?     
+[03/12/25 20:28:17] INFO     PromptTask 6debe5ed0178486b8414080ead2d7d62        
+                             Output: Based on current scientific estimates,     
+                             there are approximately 100 billion to 400 billion 
+                             stars in the Milky Way galaxy[1][2][3][4]. Here are
+                             some key points about the number of stars in our   
+                             galaxy:                                            
+                                                                                
+                             - The exact number is difficult to determine       
+                             precisely, as we can't simply count all the stars  
+                             individually[4].                                   
+                                                                                
+                             - Astronomers estimate the number by calculating   
+                             the mass of the galaxy and the percentage of that  
+                             mass made up of stars[4].                          
+                                                                                
+                             - The most common estimates range from 100 billion 
+                             on the low end to 400 billion on the high          
+                             end[4][6].                                         
+                                                                                
+                             - Some estimates go even higher, up to 1 trillion  
+                             stars[3].                                          
+                                                                                
+                             - The uncertainty comes from factors like          
+                             difficulty detecting very faint, low-mass stars and
+                             determining the average mass of stars in the       
+                             galaxy[4].                                         
+                                                                                
+                             - For comparison, the neighboring Andromeda galaxy 
+                             is estimated to contain about 1 trillion stars[6]. 
+                                                                                
+                             - The Milky Way is about 100,000 light-years in    
+                             diameter and 1,000 light-years thick[1][5].        
+                                                                                
+                             - Our solar system is located about 25,000-27,000  
+                             light-years from the center of the galaxy[5][6].   
+                                                                                
+                             So in summary, while we don't have an exact count, 
+                             astronomers estimate there are hundreds of billions
+                             of stars in the Milky Way, with 100-400 billion    
+                             being the most commonly cited range. The true      
+                             number could potentially be even higher.           

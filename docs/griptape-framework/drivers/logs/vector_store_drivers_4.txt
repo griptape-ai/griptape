@@ -1,0 +1,53 @@
+- Simple API abstractions.
+- Skip the infrastructure management.
+- Scale seamlessly so you can grow with your workload requirements.
+Manage &
+Monitor
+- Monitor directly in Griptape Cloud or integrate with any third-party service.
+- Measure performance, reliability, and spending across the organization
+- Enforce policy for each user, structure, task, and query
+🎢 Griptape AI Framework
+Griptape provides clean and clear abstractions for building Gen AI Agents, Systems of Agents, Pipelines, Workflows, and RAG implementations without having to spend weeks learning Gen AI nor need to ever learn Prompt Engineering.
+
+- Deploy and run the ETL, RAG, and structures you developed.
+- Simple API abstractions.
+- Skip the infrastructure management.
+- Scale seamlessly so you can grow with your workload requirements.
+Manage &
+Monitor
+- Monitor directly in Griptape Cloud or integrate with any third-party service.
+- Measure performance, reliability, and spending across the organization
+- Enforce policy for each user, structure, task, and query
+🎢 Griptape AI Framework
+Griptape provides clean and clear abstractions for building Gen AI Agents, Systems of Agents, Pipelines, Workflows, and RAG implementations without having to spend weeks learning Gen AI nor need to ever learn Prompt Engineering.
+
+Build, Deploy, and Scale End-to-End Solutions, from LLM-Powered Data Prep and Retrieval to AI Agents, Pipelines, and Workflows.
+Griptape gives developers everything they need, from the open source AI framework ([Griptape AI Framework](/ai-framework)) to the execution runtime ([Griptape AI Cloud](/cloud)).
+Build &
+Secure
+- Build your business logic using predictable, programmable python - don’t gamble on prompting.
+- Turn any developer into an AI developer.
+- Off-Prompt™ gives you better security, performance, and lower costs.
+Deploy &
+Scale
+- Deploy and run the ETL, RAG, and structures you developed.
+
+Build, Deploy, and Scale End-to-End Solutions, from LLM-Powered Data Prep and Retrieval to AI Agents, Pipelines, and Workflows.
+Griptape gives developers everything they need, from the open source AI framework ([Griptape AI Framework](/ai-framework)) to the execution runtime ([Griptape AI Cloud](/cloud)).
+Build &
+Secure
+- Build your business logic using predictable, programmable python - don’t gamble on prompting.
+- Turn any developer into an AI developer.
+- Off-Prompt™ gives you better security, performance, and lower costs.
+Deploy &
+Scale
+
+Build
+Build ETL pipelines to prep your data for secure LLM access.
+Compose
+Compose retrieval patterns that give fast, accurate, detailed information.
+Write
+Write agents, pipelines, and workflows (i.e. structures) to integrate your business logic.
+🌩️ Griptape AI Cloud
+Skip the infrastructure management. We’ll host and operate everything for you, from the data processing pipeline to the retrieval-ready database to the serverless application runtime. Simple to complex, one layer of the stack or the whole enchilada, we’ve got you covered.
+Automated Data Prep

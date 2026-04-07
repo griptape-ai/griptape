@@ -1,0 +1,49 @@
+Griptape is a modular Python framework for building AI-powered applications that securely connect to enterprise data and APIs[1][2]. It offers developers the ability to create AI systems that operate across two dimensions: predictability and creativity[2].
+
+## Key Features
+
+- **AI Agent Framework**: Griptape provides clean abstractions for building Gen AI Agents, Systems of Agents, Pipelines, Workflows, and RAG (Retrieval-Augmented Generation) implementations[1].
+
+- **Flexibility**: The framework allows developers to move between predictability and creativity dimensions according to their use case[2].
+
+- **Structures**: Griptape uses structures like sequential pipelines and directed acyclic graphs (DAGs) to enforce predictability[2].
+
+- **Tools**: It facilitates creativity by safely prompting LLMs with Griptape Tools that connect to external APIs and data sources[2].
+
+## Griptape Cloud
+
+Griptape Cloud is a platform that extends the capabilities of the Griptape framework:
+
+- **Data Connectors**: Allow users to bring their own data into the cloud for ingestion and transformation[4].
+
+- **Knowledge Bases**: Organize multiple data sources and make them accessible for querying by AI applications[4].
+
+- **Structures**: Custom Python applications powered by LLMs that can be deployed as hosted endpoints[4].
+
+- **Threads**: Enable conversation memory for AI applications[4].
+
+- **Rulesets and Rules**: Shape agent behavior and enhance responses[4].
+
+## Getting Started
+
+1. Install Griptape:
+   ```bash
+   pip install griptape-all
+   ```
+
+2. Set up your OpenAI API key:
+   ```bash
+   export OPENAI_API_KEY=your_api_key_here
+   ```
+
+3. Create a Python file (e.g., `app.py`) and import necessary modules from Griptape[3].
+
+4. Build your AI application using Griptape's components such as agents, pipelines, and tools[3].
+
+Griptape offers a powerful and flexible way to create AI-driven applications, from simple chatbots to complex multi-agent systems. Its modular approach allows developers to easily integrate custom tools and external resources, enhancing the capabilities of AI agents[3][4].
+https://www.griptape.ai
+https://github.com/griptape-ai
+https://www.youtube.com/watch?v=AEcztigpnc0
+https://www.youtube.com/watch?v=1FFeMZyWxJA
+https://github.com/griptape-ai/griptape
+https://www.youtube.com/@griptape-ai

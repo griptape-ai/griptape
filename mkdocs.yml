@@ -1,0 +1,203 @@
+site_name: Griptape Docs
+site_url: !ENV READTHEDOCS_CANONICAL_URL
+hooks:
+  - docs/plugins/swagger_ui_plugin.py
+strict: true
+plugins:
+  - glightbox
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: ["griptape"]
+          options:
+            show_if_no_docstring: true
+            heading_level: 3
+  - gen-files:
+      scripts:
+        - docs/gen_ref_pages.py
+  - literate-nav:
+      nav_file: SUMMARY.md
+  - autorefs:
+      resolve_closest: true
+  - section-index
+copyright: "&copy; Griptape, Inc."
+extra_css:
+  - assets/css/extra.css
+  - assets/css/code_select.css
+  - assets/css/mkdocstrings.css
+  - assets/css/swagger-ui.css
+extra_javascript:
+  - assets/scripts/swagger-ui-bundle.js
+  - assets/scripts/swagger-ui-standalone-preset.js
+extra:
+  analytics:
+    provider: google
+    property: G-QM8EDPSCB6
+  social:
+    - icon: fontawesome/solid/house
+      link: https://www.griptape.ai
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/gnWRz88eym
+    - icon: fontawesome/brands/github
+      link: https://github.com/griptape-ai/griptape/
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/griptape/
+theme:
+  name: material
+  custom_dir: docs/overrides
+  logo: assets/img/griptape-mark-square-light.svg
+  palette:
+    # Dark mode
+    - scheme: slate
+      primary: black
+      accent: deep orange
+      toggle:
+        icon: material/lightbulb-outline
+        name: Switch to light mode
+    # Light mode
+    - scheme: default
+      primary: deep indigo
+      accent: deep orange
+      toggle:
+        icon: material/lightbulb
+        name: Switch to dark mode
+  features:
+    - content.code.copy
+    - content.code.annotate
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - announce.dismiss
+    - toc.follow
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      pygments_lang_class: true
+  - admonition
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - def_list
+  - footnotes
+nav:
+  - Home:
+      - Overview: "index.md"
+      - Contributing: "contributing.md"
+  - Nodes: "https://docs.griptapenodes.com"
+  - Cloud:
+      - Overview: "griptape-cloud/index.md"
+      - Libraries:
+          - Data Sources:
+              - What are Data Sources?: "griptape-cloud/data-sources/what-are-data-sources.md"
+              - Getting Started with Data Sources: "griptape-cloud/data-sources/getting-started-with-data-sources.md"
+              - Create a Data Source: "griptape-cloud/data-sources/create-data-source.md"
+              - Refreshing Your Data: "griptape-cloud/data-sources/refresh-data.md"
+          - Knowledge Bases:
+              - What are Knowledge Bases?: "griptape-cloud/knowledge-bases/what-are-knowledge-bases.md"
+              - Knowledge Base Types: "griptape-cloud/knowledge-bases/knowledge-base-types.md"
+              - Creating Knowledge Bases: "griptape-cloud/knowledge-bases/create-knowledge-base.md"
+              - Getting Started with Vector Knowledge Bases: "griptape-cloud/knowledge-bases/getting-started-with-knowledge-bases.md"
+              - Accessing Your Data: "griptape-cloud/knowledge-bases/accessing-data.md"
+          - Retrievers:
+              - What are Retrievers?: "griptape-cloud/retrievers/what-are-retrievers.md"
+      - Data Lake:
+          - Data Lake: "griptape-cloud/data-lakes/data-lakes.md"
+      - Assistants:
+          - What are Assistants?: "griptape-cloud/assistants/what-are-assistants.md"
+          - Getting Started with Assistants: "griptape-cloud/assistants/getting-started-with-assistants.md"
+          - Assistant Runs: "griptape-cloud/assistants/assistant-runs.md"
+      - Structures:
+          - What are Structures?: "griptape-cloud/structures/what-are-structures.md"
+          - Getting Started with Structures: "griptape-cloud/structures/getting-started-with-structures.md"
+          - Creating a Structure: "griptape-cloud/structures/create-structure.md"
+          - Structure Config YAML: "griptape-cloud/structures/structure-config.md"
+          - Running Your Structure: "griptape-cloud/structures/run-structure.md"
+          - Structure Run Events: "griptape-cloud/structures/structure-run-events.md"
+      - Tools:
+          - Create a Tool: "griptape-cloud/tools/create-tool.md"
+          - Tool Config YAML: "griptape-cloud/tools/tool-config.md"
+          - Running Your Tool: "griptape-cloud/tools/run-tool.md"
+      - Rules:
+          - Create a Ruleset: "griptape-cloud/rules/rulesets.md"
+      - Threads:
+          - Create a Thread: "griptape-cloud/threads/threads.md"
+      - Cloud API:
+          - API Reference: "griptape-cloud/api/api-reference.md"
+  - Framework:
+      - Overview: "griptape-framework/index.md"
+      - Structures:
+          - Agents: "griptape-framework/structures/agents.md"
+          - Pipelines: "griptape-framework/structures/pipelines.md"
+          - Workflows: "griptape-framework/structures/workflows.md"
+          - Tasks: "griptape-framework/structures/tasks.md"
+          - Task Memory and Off Prompt: "griptape-framework/structures/task-memory.md"
+          - Conversation Memory: "griptape-framework/structures/conversation-memory.md"
+          - Rulesets: "griptape-framework/structures/rulesets.md"
+          - Configs: "griptape-framework/structures/configs.md"
+          - Observability: "griptape-framework/structures/observability.md"
+      - Tools:
+          - Overview: "griptape-framework/tools/index.md"
+          - Custom Tools: "griptape-framework/tools/custom-tools/index.md"
+          - Official Tools: "griptape-framework/tools/official-tools/index.md"
+      - Engines:
+          - RAG Engine: "griptape-framework/engines/rag-engines.md"
+          - Extraction Engines: "griptape-framework/engines/extraction-engines.md"
+          - Summary Engine: "griptape-framework/engines/summary-engines.md"
+          - Eval Engine: "griptape-framework/engines/eval-engines.md"
+      - Drivers:
+        - LLM & Orchestration:
+          - Prompt: "griptape-framework/drivers/prompt-drivers.md"
+          - Conversation Memory: "griptape-framework/drivers/conversation-memory-drivers.md"
+          - Assistant: "griptape-framework/drivers/assistant-drivers.md"
+          - Ruleset: "griptape-framework/drivers/ruleset-drivers.md"
+          - Event Listener: "griptape-framework/drivers/event-listener-drivers.md"
+          - Structure Run: "griptape-framework/drivers/structure-run-drivers.md"
+        - Retrieval & Storage:
+          - Embedding: "griptape-framework/drivers/embedding-drivers.md"
+          - Rerank: "griptape-framework/drivers/rerank-drivers.md"
+          - Vector Store: "griptape-framework/drivers/vector-store-drivers.md"
+          - File Manager: "griptape-framework/drivers/file-manager-drivers.md"
+          - SQL: "griptape-framework/drivers/sql-drivers.md"
+        - Multimodal:
+          - Image Generation: "griptape-framework/drivers/image-generation-drivers.md"
+          - Text to Speech: "griptape-framework/drivers/text-to-speech-drivers.md"
+          - Audio Transcription: "griptape-framework/drivers/audio-transcription-drivers.md"
+        - Web:
+          - Web Search: "griptape-framework/drivers/web-search-drivers.md"
+          - Web Scraper: "griptape-framework/drivers/web-scraper-drivers.md"
+        - Observability:
+          - Observability: "griptape-framework/drivers/observability-drivers.md"
+      - Data:
+          - Overview: "griptape-framework/data/index.md"
+          - Artifacts: "griptape-framework/data/artifacts.md"
+          - Loaders: "griptape-framework/data/loaders.md"
+          - Chunkers: "griptape-framework/data/chunkers.md"
+      - Misc:
+          - Events: "griptape-framework/misc/events.md"
+          - Tokenizers: "griptape-framework/misc/tokenizers.md"
+          - Serialization: "griptape-framework/misc/serialization.md"
+      - Recipes:
+          - Agents:
+              - Talk to Redshift: "recipes/talk-to-redshift.md"
+              - Talk to a Webpage: "recipes/talk-to-a-webpage.md"
+              - Talk to a PDF: "recipes/talk-to-a-pdf.md"
+              - Talk to a Video: "recipes/talk-to-a-video.md"
+              - Talk to an Image: "recipes/talk-to-an-image.md"
+              - Talk to a Document: "recipes/talk-to-a-document.md"
+              - Talk to an Audio: "recipes/talk-to-an-audio.md"
+              - Multi Agent Workflows: "recipes/multi-agent-workflow.md"
+              - Shared Memory Between Agents: "recipes/multiple-agent-shared-memory.md"
+              - Chat Sessions with Amazon DynamoDB: "recipes/amazon-dynamodb-sessions.md"
+          - Data:
+              - Load and Query Pinecone: "recipes/load-and-query-pinecone.md"
+              - Load and Query Marqo: "recipes/load-query-and-chat-marqo.md"
+              - Query a Webpage: "recipes/query-webpage.md"
+              - RAG with Astra DB vector store: "recipes/query-webpage-astra-db.md"
+  - Framework Reference: "reference/"
+  - Trade School: "https://learn.griptape.ai"

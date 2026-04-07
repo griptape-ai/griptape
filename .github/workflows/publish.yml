@@ -1,0 +1,22 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish-pypi:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: uv Build
+        run: uv build
+      - name: uv Publish
+        run: uv publish --token ${{ secrets.PYPI_TOKEN }} 

@@ -1,0 +1,73 @@
+[03/12/25 20:35:19] INFO     PromptTask 4cb3fb0cb25b4fb5b9c1ec9fcc17789c        
+                             Input: My name is Collin                           
+[03/12/25 20:35:20] INFO     PromptTask 4cb3fb0cb25b4fb5b9c1ec9fcc17789c        
+                             Output: Hello, Collin! How can I assist you today? 
+{
+│   'type': 'Agent',
+│   'rulesets': [],
+│   'rules': [],
+│   'conversation_memory': {
+│   │   'type': 'ConversationMemory',
+│   │   'runs': [
+│   │   │   {
+│   │   │   │   'type': 'Run',
+│   │   │   │   'id': '4ea9601351f542b6a403c82ffcf77656',
+│   │   │   │   'meta': None,
+│   │   │   │   'input': {
+│   │   │   │   │   'type': 'TextArtifact',
+│   │   │   │   │   'id': '80d96cb6f76e4d89925182d8b4e3acc7',
+│   │   │   │   │   'reference': None,
+│   │   │   │   │   'meta': {},
+│   │   │   │   │   'name': '80d96cb6f76e4d89925182d8b4e3acc7',
+│   │   │   │   │   'value': 'My name is Collin'
+│   │   │   │   },
+│   │   │   │   'output': {
+│   │   │   │   │   'type': 'TextArtifact',
+│   │   │   │   │   'id': '501e6f2dfa3d496685ce9249bdb8121c',
+│   │   │   │   │   'reference': None,
+│   │   │   │   │   'meta': {'is_react_prompt': False},
+│   │   │   │   │   'name': '501e6f2dfa3d496685ce9249bdb8121c',
+│   │   │   │   │   'value': 'Hello, Collin! How can I assist you today?'
+│   │   │   │   }
+│   │   │   }
+│   │   ],
+│   │   'meta': {},
+│   │   'max_runs': None
+│   },
+│   'conversation_memory_strategy': 'per_structure',
+│   'max_meta_memory_entries': 20,
+│   'tasks': [
+│   │   {
+│   │   │   'type': 'PromptTask',
+│   │   │   'rulesets': [],
+│   │   │   'rules': [],
+│   │   │   'id': '4cb3fb0cb25b4fb5b9c1ec9fcc17789c',
+│   │   │   'state': 'State.FINISHED',
+│   │   │   'parent_ids': [],
+│   │   │   'child_ids': [],
+│   │   │   'max_meta_memory_entries': 20,
+│   │   │   'context': {},
+│   │   │   'prompt_driver': {
+│   │   │   │   'type': 'OpenAiChatPromptDriver',
+│   │   │   │   'temperature': 0.1,
+│   │   │   │   'max_tokens': None,
+│   │   │   │   'stream': False,
+│   │   │   │   'extra_params': {},
+│   │   │   │   'base_url': None,
+│   │   │   │   'organization': None,
+│   │   │   │   'model': 'gpt-4o',
+│   │   │   │   'user': '',
+│   │   │   │   'response_format': None,
+│   │   │   │   'seed': None,
+│   │   │   │   'reasoning_effort': 'medium',
+│   │   │   │   'use_native_tools': True,
+│   │   │   │   'structured_output_strategy': 'native',
+│   │   │   │   'parallel_tool_calls': True,
+│   │   │   │   'modalities': [],
+│   │   │   │   'audio': {'voice': 'alloy', 'format': 'pcm16'}
+│   │   │   },
+│   │   │   'tools': [],
+│   │   │   'max_subtasks': 20
+│   │   }
+│   ]
+}

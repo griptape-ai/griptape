@@ -1,0 +1,8 @@
+{% if meta_memories %}
+
+You have access to additional contextual information in the form of JSON objects. Use it when appropriate:
+{% for meta_memory in meta_memories %}
+
+{{ meta_memory.to_json() }}
+{% endfor %}
+{% endif %}

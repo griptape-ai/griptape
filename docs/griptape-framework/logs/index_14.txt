@@ -1,0 +1,1934 @@
+[03/13/25 21:07:46] INFO     PromptTask project-research-django                 
+                             Input: Tell me about the open source project:      
+                             django.                                            
+                    INFO     PromptTask project-research-flask                  
+                             Input: Tell me about the open source project:      
+                             flask.                                             
+                    INFO     PromptTask project-research-fastapi                
+                             Input: Tell me about the open source project:      
+                             fastapi.                                           
+                    INFO     PromptTask project-research-litestar               
+                             Input: Tell me about the open source project:      
+                             litestar.                                          
+[03/13/25 21:07:48] INFO     Subtask 2b7789f5282f4232b669554bf9043105           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_6ZoNzVy3yQmj1uX22zlBRiDi",        
+                                 "name": "WebSearchTool",                       
+                                 "path": "search",                              
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "query": "litestar open source project"    
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 1583bdc4d4774dc3bb144fcc9963222b           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_7DDFXL51jKge0wFmMpoA1RVJ",        
+                                 "name": "WebSearchTool",                       
+                                 "path": "search",                              
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "query": "FastAPI open source project"     
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask b7b79459549a4c49b96687b91e30d102           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_Kef5M6OMWG2rPClvq6gCABYc",        
+                                 "name": "WebSearchTool",                       
+                                 "path": "search",                              
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "query": "Django open source project"      
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 34e80f19a6f141488df876d9614f0e34           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_jDiIXwciqV4tLwdL2C7WgCBh",        
+                                 "name": "WebSearchTool",                       
+                                 "path": "search",                              
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "query": "Flask open source project"       
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[03/13/25 21:07:49] INFO     Subtask 1583bdc4d4774dc3bb144fcc9963222b           
+                             Response: {"title":                                
+                             "Kludex/awesome-fastapi-projects - GitHub", "url": 
+                             "https://github.com/Kludex/awesome-fastapi-projects
+                             ", "description": "Contribute to                   
+                             Kludex/awesome-fastapi-projects development by     
+                             creating an account on GitHub. List of FastAPI     
+                             projects! :sunglasses: :rocket: . Contribute to    
+                             Kludex/awesome-fastapi-projects development by     
+                             creating an account on GitHub. ... Fund open source
+                             developers The ReadME Project. GitHub community    
+                             articles Repositories. Topics Trending ..."}       
+                                                                                
+                             {"title": "Top 23 Fastapi Open-Source Projects -   
+                             LibHunt", "url":                                   
+                             "https://www.libhunt.com/topic/fastapi",           
+                             "description": "Which are the best open-source     
+                             Fastapi projects? This list will help you: fastapi,
+                             full-stack-fastapi-template, Hello-Python, serve,  
+                             sqlmodel, HivisionIDPhotos, and                    
+                             Douyin_TikTok_Download_API. LibHunt. Popularity    
+                             Index Add a project About. Fastapi. Open-source    
+                             projects categorized as Fastapi"}                  
+                                                                                
+                             {"title": "GitHub - mjhea0/awesome-fastapi: A      
+                             curated list of awesome things ...", "url":        
+                             "https://github.com/mjhea0/awesome-fastapi",       
+                             "description": "Awesome FastAPI Projects -         
+                             Organized list of projects that use FastAPI.       
+                             Bitcart - Platform for merchants, users and        
+                             developers which offers easy setup and use. Bali - 
+                             Simplify Cloud Native Microservices development    
+                             base on FastAPI and gRPC. Bunnybook - A tiny social
+                             network built with FastAPI, React+RxJs, Neo4j,     
+                             PostgreSQL, and Redis."}                           
+                                                                                
+                             {"title": "Any open-source project that uses       
+                             FastAPI? : r/FastAPI - Reddit", "url":             
+                             "https://www.reddit.com/r/FastAPI/comments/n6afvm/a
+                             ny_opensource_project_that_uses_fastapi/",         
+                             "description": "Angular is Google's open source    
+                             framework for crafting high-quality front-end web  
+                             applications. r/Angular2 exists to help spread     
+                             news, discuss current developments and help solve  
+                             problems. Welcome! Members Online"}                
+                                                                                
+                             {"title": "fastapi opensource project - DEV        
+                             Community", "url":                                 
+                             "https://dev.to/codewitgabi/fastapi-opensource-proj
+                             ect-2205", "description": "There is a quick and    
+                             easy was to learn a tool and master it quickly and 
+                             that's by building projects. With that in mind, I  
+                             decided to start a fastapi open source project that
+                             covers most backend concepts and majority of what  
+                             could be found in the official documentation. With 
+                             this project, contributors will be able to .       
+                             Understand the workflow of ..."}                   
+                    INFO     Subtask 34e80f19a6f141488df876d9614f0e34           
+                             Response: {"title": "Python Flask Projects with    
+                             Source Code (Beginners to Advanced)", "url":       
+                             "https://www.geeksforgeeks.org/flask-projects/",   
+                             "description": "Deploying Flask Projects. Once you 
+                             have completed your Flask project, you'll want to  
+                             deploy it for the world to see. Consider the       
+                             following deployment options: Deployment Options.  
+                             Heroku: A cloud platform that simplifies the       
+                             deployment process. PythonAnywhere: A hosting      
+                             service specifically designed for Python web       
+                             applications."}                                    
+                                                                                
+                             {"title": "10+ Top Python Flask Projects in 2025 - 
+                             with Source Code", "url":                          
+                             "https://machinelearningprojects.net/flask-projects
+                             /", "description": "Many Flask projects with source
+                             code are part of active open-source communities.   
+                             Engaging with these communities allows you to learn
+                             from others, seek advice, and collaborate on       
+                             improving existing projects. Steps to Start a Flask
+                             Project Installing Flask. To start a Flask project,
+                             developers need to install Flask using pip, the    
+                             Python package ..."}                               
+                                                                                
+                             {"title": "Top 23 Flask Open-Source Projects -     
+                             LibHunt", "url":                                   
+                             "https://www.libhunt.com/topic/flask",             
+                             "description": "For Flask, the Flask Mega-Tutorial 
+                             has a free online version. There are also two      
+                             courses over at TestDriven.io worth recommending:  
+                             TDD with Python, Flask and Docker and              
+                             Authentication with Flask, React, and Docker. If   
+                             you prefer video, there are many Flask courses on  
+                             Udemy but the best video course I've seen is Build 
+                             a SaaS App with Flask and ..."}                    
+                                                                                
+                             {"title": "GitHub - pallets/flask: The Python micro
+                             framework for building web ...", "url":            
+                             "https://github.com/pallets/flask", "description": 
+                             "Flask is a lightweight WSGI web application       
+                             framework. It is designed to make getting started  
+                             quick and easy, with the ability to scale up to    
+                             complex applications. It began as a simple wrapper 
+                             around Werkzeug and Jinja, and has become one of   
+                             the most popular Python web application            
+                             frameworks.. Flask offers suggestions, but doesn't 
+                             enforce any dependencies or project layout."}      
+                                                                                
+                             {"title": "Awesome Flask - GitHub", "url":         
+                             "https://github.com/mjhea0/awesome-flask",         
+                             "description": "Connexion - Open source,           
+                             OpenAPI-based, REST framework built on top of      
+                             Flask. Flasgger - OpenAPI and Swagger UI. Builds   
+                             the API from Flasgger models, marshmallow models,  
+                             dicts, or YAML files. ... Please support this open 
+                             source project by purchasing one of our Flask      
+                             courses. Learn how to build, test, and deploy      
+                             microservices powered by Docker ..."}              
+                    INFO     Subtask 2b7789f5282f4232b669554bf9043105           
+                             Response: {"title": "GitHub -                      
+                             litestar-org/litestar: Production-ready, Light,    
+                             Flexible and ...", "url":                          
+                             "https://github.com/litestar-org/litestar",        
+                             "description": "Litestar is an open-source project,
+                             and we enjoy the support of our sponsors to help   
+                             fund the exciting work we do. A huge thanks to our 
+                             sponsors: Check out our sponsors in the docs. If   
+                             you would like to support the work that we do      
+                             please consider becoming a sponsor via Polar.sh    
+                             (preferred), GitHub or Open Collective."}          
+                                                                                
+                             {"title": "Litestar - GitHub", "url":              
+                             "https://github.com/litestar-org/", "description": 
+                             "Litestar is an open-source project, and we enjoy  
+                             the support of our sponsors to help fund the       
+                             exciting work we do. A huge thanks to our sponsors:
+                             Gold Sponsors. Silver Sponsors. Check out our      
+                             sponsors in the docs. If you would like to support 
+                             the work that we do please consider becoming a     
+                             sponsor on GitHub or Open Collective."}            
+                                                                                
+                             {"title": "litestar/README.md at main \u00b7       
+                             litestar-org/litestar - GitHub", "url":            
+                             "https://github.com/litestar-org/litestar/blob/main
+                             /README.md", "description": "Litestar is an        
+                             open-source project, and we enjoy the support of   
+                             our sponsors to help fund the exciting work we do. 
+                             A huge thanks to our sponsors: Check out our       
+                             sponsors in the docs. If you would like to support 
+                             the work that we do please consider becoming a     
+                             sponsor via Polar.sh (preferred), GitHub or Open   
+                             Collective."}                                      
+                                                                                
+                             {"title": "litestar - PyPI", "url":                
+                             "https://pypi.org/project/litestar/",              
+                             "description": "Like all Litestar projects, this   
+                             application is open to contributions, big and      
+                             small. Sponsors. Litestar is an open-source        
+                             project, and we enjoy the support of our sponsors  
+                             to help fund the exciting work we do. A huge thanks
+                             to our sponsors: Check out our sponsors in the     
+                             docs"}                                             
+                                                                                
+                             {"title": "Exploring LiteStar: A Python Framework  
+                             for Lightweight Web ... - Medium", "url":          
+                             "https://medium.com/@rajputgajanan50/exploring-lite
+                             star-a-python-framework-for-lightweight-web-develop
+                             ment-e3a9749f23de", "description":                 
+                             "\ud83d\udc49What is LiteStar?. LiteStar is a      
+                             Python web framework designed for simplicity and   
+                             flexibility. It is open-source and built with the  
+                             goal of being easy to learn and use, making it an  
+                             excellent ..."}                                    
+                    INFO     Subtask b7b79459549a4c49b96687b91e30d102           
+                             Response: {"title": "10 Must-See Django Open-Source
+                             Projects to Inspire Your Next Web App", "url":     
+                             "https://medium.com/@luisprooc/10-must-see-django-o
+                             pen-source-projects-to-inspire-your-next-web-app-70
+                             7c963b4a66", "description": "Django Job Portal. One
+                             of the benefits of using this Open Source Project  
+                             is the flexibility it offers. With access to the   
+                             source code, developers can customize and extend   
+                             the platform to meet the ..."}                     
+                                                                                
+                             {"title": "GitHub - wsvincent/awesome-django: A    
+                             curated list of awesome things ...", "url":        
+                             "https://github.com/wsvincent/awesome-django",     
+                             "description": "Zulip - Open-source team chat.     
+                             Django-CRM - Open Source Python CRM based on       
+                             Django. django-job-portal - Job portal application 
+                             using Django. Built with Django - Curated list of  
+                             awesome Django projects. PostHog - Open-source     
+                             product analytics. HyperKitty - A web interface to 
+                             access GNU Mailman v3 archives."}                  
+                                                                                
+                             {"title": "django-project \u00b7 GitHub Topics     
+                             \u00b7 GitHub", "url":                             
+                             "https://github.com/topics/django-project",        
+                             "description": "Django Dashboard Black -           
+                             Open-source Seed Project | AppSeed. ... A free,    
+                             open-source Blog CMS based on the \"Django\" and   
+                             \"Editorial\" HTML5 theme. blog cms django html5   
+                             podcast skill django-application django-cms        
+                             django-project videocast. Updated Mar 6, 2025;     
+                             Python;"}                                          
+                                                                                
+                             {"title": "Top 45+ Django Projects with Source Code
+                             for 2025 [Beginners to ...", "url":                
+                             "https://www.geeksforgeeks.org/django-projects/",  
+                             "description": "Open In App. Next Article: Top 10  
+                             Django Projects For Beginners With Source Code.    
+                             Python Django Projects with Source Code (Beginners 
+                             to Advanced) ... Python Django Projects with Source
+                             Code - Adding a project portfolio to your resume   
+                             helps to show your skills and potential to your    
+                             recruiter. Because in the tech space, real-time    
+                             project ..."}                                      
+                                                                                
+                             {"title": "The web framework for perfectionists    
+                             with deadlines | Django", "url":                   
+                             "https://www.djangoproject.com/", "description":   
+                             "Django is a high-level Python web framework that  
+                             encourages rapid development and clean, pragmatic  
+                             design. ... It's free and open source. Ridiculously
+                             fast. Django was designed to help developers take  
+                             applications from concept to completion as quickly 
+                             as possible. ... Our non-profit supports the       
+                             project Support Django Your contribution makes     
+                             ..."}                                              
+[03/13/25 21:07:51] INFO     Subtask d4c6c61effc640b29b46a9eb8d282c4a           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_ENztKlQLhg4oY2FmupaTPOLp",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url": "https://www.djangoproject.com/"    
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 9b283ff59c3f41a295711edeca3f8c39           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_z6KbmCpjEv6KB39ltcrxuKw7",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url":                                     
+                             "https://www.libhunt.com/topic/fastapi"            
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 0902dedca90e4c35bc1b3c5278d6e93f           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_41g5XeJ94bCumciahVo35eOd",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url":                                     
+                             "https://github.com/litestar-org/litestar"         
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[03/13/25 21:07:52] INFO     Subtask d4c6c61effc640b29b46a9eb8d282c4a           
+                             Response: Meet Django                              
+                             Django is a high-level Python web framework that   
+                             encourages rapid development and clean, pragmatic  
+                             design. Built by experienced developers, it takes  
+                             care of much of the hassle of web development, so  
+                             you can focus on writing your app without needing  
+                             to reinvent the wheel. It’s free and open source.  
+                             - Ridiculously fast.                               
+                             -                                                  
+                             Django was designed to help developers take        
+                             applications from concept to completion as quickly 
+                             as possible.                                       
+                             - Reassuringly secure.                             
+                             -                                                  
+                             Django takes security seriously and helps          
+                             developers avoid many common security mistakes.    
+                             - Exceedingly scalable.                            
+                             -                                                  
+                             Some of the busiest sites on the web leverage      
+                             Django’s ability to quickly and flexibly scale.    
+                             [Learn more about                                  
+                             Django](https://www.djangoproject.com/start/overvie
+                             w/)                                                
+                             Join the Community                                 
+                             [Back to Top](#top)                                
+                    INFO     Subtask 9b283ff59c3f41a295711edeca3f8c39           
+                             Response: Revolutionize your code reviews with AI. 
+                             CodeRabbit offers PR summaries, code walkthroughs, 
+                             1-click suggestions, and AST-based analysis. Boost 
+                             productivity and code quality across all major     
+                             languages with each PR.[Learn more →]              
+                             Top 23 Fastapi Open-Source Projects                
+                             -                                                  
+                             Last year I wrote a series of articles explaining  
+                             how FastAPI works. It was a rewarding experience,  
+                             since I was able to both share my knowledge and    
+                             learn more about it.                               
+                             -                                                  
+                             [CodeRabbit](https://www.coderabbit.ai/?utm_source=
+                             libhunt&utm_medium=web&utm_campaign=libhunt_dec_24)
+                             CodeRabbit: AI Code Reviews for Developers.        
+                             Revolutionize your code reviews with AI. CodeRabbit
+                             offers PR summaries, code walkthroughs, 1-click    
+                             suggestions, and AST-based analysis. Boost         
+                             productivity and code quality across all major     
+                             languages with each PR.                            
+                             -                                                  
+                             [full-stack-fastapi-template](/r/full-stack-fastapi
+                             -template)Full stack, modern web application       
+                             template. Using FastAPI, React, SQLModel,          
+                             PostgreSQL, Docker, GitHub Actions, automatic HTTPS
+                             and more.                                          
+                                                                                
+                             Flask Tutorial:                                    
+                             https://palletsprojects.com/p/flask/ FastAPI       
+                             Tutorial:                                          
+                             https://github.com/tiangolo/full-stack-fastapi-temp
+                             late Django REST Framework Tutorial:               
+                             https://www.django-rest-framework.org/tutorial/quic
+                             kstart/ Nginx Configuration Guide:                 
+                             https://docs.nginx.com/nginx/admin-guide/web-server
+                             /web-server/ Confluent Kafka Python Client:        
+                             https://docs.confluent.io/platform/current/clients/
+                             api-docs/confluent-kafka-python.html Remember: This
+                             is a high-level overview. Each step involves       
+                             further research and configuration based on your   
+                             specific requirements.                             
+                             -                                                  
+                             [Hello-Python](/r/Hello-Python)Curso para aprender 
+                             el lenguaje de programación Python desde cero y    
+                             para principiantes. 100 clases, 44 horas en vídeo, 
+                             código, proyectos y grupo de chat. Fundamentos,    
+                             frontend, backend, testing, IA...                  
+                             -                                                  
+                             -                                                  
+                             Source: https://github.com/fastapi/sqlmodel        
+                             -                                                  
+                                                                                
+                             [HivisionIDPhotos](/r/HivisionIDPhotos)⚡️HivisionID
+                             Photos: a lightweight and efficient AI ID photos   
+                             tools. 一个轻量级的AI证件照制作算法。              
+                             Project mention: HivisionIDPhotos: A lightweight   
+                             and efficient AI ID photos tools                   
+                             |[news.ycombinator.com](https://news.ycombinator.co
+                             m/item?id=41395289)| 2024-08-29 -                  
+                             [Douyin_TikTok_Download_API](/r/Douyin_TikTok_Downl
+                             oad_API)🚀「Douyin_TikTok_Download_API」是一个开箱 
+                             即用的高性能异步抖音、快手、TikTok、Bilibili数据爬 
+                             取工具，支持API调用，在线批量解析及下载。          
+                             -                                                  
+                                                                                
+                             [Nutrient](https://www.nutrient.io/sdk?utm_campaign
+                             =ad2-2025-02-12&utm_source=libhunt&utm_medium=spons
+                             oring)Nutrient – The #1 PDF SDK Library, trusted by
+                             10K+ developers. Other PDF SDKs promise a lot -    
+                             then break. Laggy scrolling, poor mobile UX, tons  
+                             of bugs, and lack of support cost you endless      
+                             frustrations. Nutrient’s SDK handles billion-page  
+                             workloads - so you don’t have to debug PDFs. Used  
+                             by ~1 billion end users in more than 150 different 
+                             countries.                                         
+                             -                                                  
+                             Project mention: Ask HN: Company wants us to       
+                             upskill in AI. What is the best approach? |        
+                             [news.ycombinator.com](https://news.ycombinator.com
+                             /item?id=41204691)| 2024-08-09 -                   
+                             -                                                  
+                             Project mention: Show HN: Web Development with     
+                             Htmx, Type-Guided Components, Pure Python |        
+                             [news.ycombinator.com](https://news.ycombinator.com
+                             /item?id=40572219)| 2024-06-04How do you compare   
+                             withhttps://github.com/pydantic/FastUI (made by the
+                             authors of Pydantic)?                              
+                             -                                                  
+                                                                                
+                             [serge](/r/serge)A web interface for chatting with 
+                             Alpaca through llama.cpp. Fully dockerized, with an
+                             easy to use API.                                   
+                             -                                                  
+                             -                                                  
+                             -                                                  
+                             Project mention: Running Durable Workflows in      
+                             Postgres Using DBOS |                              
+                             [news.ycombinator.com](https://news.ycombinator.com
+                             /item?id=42379974)| 2024-12-10Disclaimer: I'm a    
+                             co-founder of Hatchet                              
+                             (https://github.com/hatchet-dev/hatchet), which is 
+                             a Postgres-backed task queue that supports durable 
+                             execution.                                         
+                             > Because a step transition is just a Postgres     
+                             write (~1ms) versus an async dispatch from an      
+                             external orchestrator (~100ms), it means DBOS is   
+                             25x faster than AWS Step Functions                 
+                             Durable execution engines deployed as an external  
+                             orchestrator will always been slower than direct DB
+                             writes, but the 1ms delay versus ~100ms doesn't    
+                             seem inherent to the orchestrator being external.  
+                             In the case of Hatchet, pushing work takes ~15ms   
+                             and invoking the work takes ~1ms if deployed in the
+                             same VPC, and 90% of that execution time is on the 
+                             database. In the best-case, the external           
+                             orchestrator should take 2x as long to write a step
+                             transition (round-trip network call to the         
+                             orchestrator + database write), so an ideal        
+                             external orchestrator would be ~2ms of latency     
+                             here.                                              
+                                                                                
+                             There are also some tradeoffs to a library-only    
+                             mode that aren't discussed. How would work that    
+                             requires global coordination between workers behave
+                             in this model? Let's say, for example, a global    
+                             rate limit -- you'd ideally want to avoid          
+                             contention on rate limit rows, assuming they're    
+                             stored in Postgres, but each worker attempting to  
+                             acquire a rate limit simultaneously would slow down
+                             start time significantly (and place additional load
+                             on the DB). Whereas with a single external         
+                             orchestrator (or leader election), you can         
+                             significantly increase throughput by acquiring rate
+                             limits as part of a push-based assignment process. 
+                             The same problem of coordination arises if many    
+                             workers are competing for the same work -- for     
+                             example if a machine crashes while doing work, as  
+                             described in the article. I'm assuming there's some
+                             kind of polling happening which uses FOR UPDATE    
+                             SKIP LOCKED, which concerns me as you start to     
+                             scale up the number of workers.                    
+                                                                                
+                             -                                                  
+                             -                                                  
+                             -                                                  
+                             -                                                  
+                             https://github.com/poem-web/poem is one Rust       
+                             framework with swagger definitions out of the box. 
+                             -                                                  
+                             Project mention: Farfalle: AI search engine –      
+                             self-host with local or cloud LLMs |               
+                             [news.ycombinator.com](https://news.ycombinator.com
+                             /item?id=40466851)| 2024-05-24 -                   
+                             [opyrator](/r/opyrator)🪄 Turns your machine       
+                             learning code into microservices with web API,     
+                             interactive GUI, and more.                         
+                             -                                                  
+                             [fastapi-admin](/r/fastapi-admin)A fast admin      
+                             dashboard based on FastAPI and TortoiseORM with    
+                             tabler ui, inspired by Django admin                
+                             -                                                  
+                             -                                                  
+                             [datamodel-code-generator](/r/datamodel-code-genera
+                             tor)Pydantic model and dataclasses.dataclass       
+                             generator for easy conversion of JSON, OpenAPI,    
+                             JSON Schema, and YAML data sources.                
+                             -                                                  
+                                                                                
+                             [SaaSHub](https://www.saashub.com)SaaSHub -        
+                             Software Alternatives and Reviews. SaaSHub helps   
+                             you find the best software and product alternatives
+                             Fastapi discussion                                 
+                             Fastapi related posts                              
+                             -                                                  
+                             A Generic Backend for All Your Apps                
+                             -                                                  
+                             Show HN: Jsonblog-schema – a JSON schema for making
+                             your blog from one file                            
+                             -                                                  
+                             Polar – An open source Merchant of Record          
+                             -                                                  
+                             I built a word guessing game with LLM              
+                             -                                                  
+                             LeetCode but You Can Force People to Code in Light 
+                             Mode >:)                                           
+                             -                                                  
+                             Edge TTS                                           
+                             -                                                  
+                             Self-hosted version of Microsoft's OmniParser      
+                             Image-to-text model                                
+                             -                                                  
+                             [A note from our sponsor -                         
+                             CodeRabbit](https://www.coderabbit.ai/?utm_source=l
+                             ibhunt&utm_medium=web&utm_campaign=libhunt_dec_24)c
+                             oderabbit.ai | 13 Mar 2025                         
+                             Index                                              
+                             What are some of the best open-source Fastapi      
+                             projects? This list will help you:                 
+                             | # | Project | Stars |                            
+                             |---|---|---|                                      
+                             | 1 |                                              
+                             |                                                  
+                    INFO     Subtask 0902dedca90e4c35bc1b3c5278d6e93f           
+                             Response: Litestar is a powerful, flexible yet     
+                             opinionated ASGI framework, focused on building    
+                             APIs, and offers high-performance data validation  
+                             and parsing, dependency injection, first-class ORM 
+                             integration, authorization primitives, and much    
+                             more that's needed to get applications up and      
+                             running.                                           
+                             Check out the [documentation                       
+                             📚](https://docs.litestar.dev/) for a detailed     
+                             overview of                                        
+                             its features!                                      
+                             Additionally, the [Litestar fullstack              
+                             repository](https://github.com/litestar-org/litesta
+                             r-fullstack)                                       
+                             can give you a good impression how a fully fledged 
+                             Litestar application may look.                     
+                             Table of Contents                                  
+                             pip install litestar                               
+                             from litestar import Litestar, get                 
+                             @get("/")                                          
+                             def hello_world() -> dict[str, str]:               
+                             """Keeping the tradition alive with hello world."""
+                             return {"hello": "world"}                          
+                             app = Litestar(route_handlers=[hello_world])       
+                             [Class based                                       
+                             controllers](#class-based-controllers)[Dependency  
+                             Injection](#dependency-injection)[Layered          
+                             Middleware](#middleware)[Plugin                    
+                             System](#plugin-system-orm-support-and-dtos)[OpenAP
+                             I 3.1 schema generation](#openapi)[Life Cycle      
+                             Hooks](#request-life-cycle-hooks)[Route Guards     
+                             based Authorization](#route-guards)- Support for   
+                                                                                
+                             dataclasses                                        
+                             ,TypedDict                                         
+                             ,[pydantic version 1 and version                   
+                             2](https://docs.pydantic.dev/latest/),[msgspec](htt
+                             ps://github.com/jcrist/msgspec)and[attrs](https://w
+                             ww.attrs.org/en/stable/) - Layered parameter       
+                             declaration                                        
+                             - Support for                                      
+                             [RFC                                               
+                             9457](https://datatracker.ietf.org/doc/html/rfc9457
+                             )standardized "Problem Detail" error responses     
+                             [Automatic API documentation                       
+                             with](#redoc-swagger-ui-and-stoplight-elements-api-
+                             documentation):[Trio](https://trio.readthedocs.io/e
+                             n/stable/)support (built-in,                       
+                             via[AnyIO](https://anyio.readthedocs.io/))-        
+                             Ultra-fast validation, serialization and           
+                             deserialization using                              
+                             [msgspec](https://github.com/jcrist/msgspec) -     
+                             SQLAlchemy integration                             
+                             - Piccolo ORM Support                              
+                             Pre-built Example Apps                             
+                                                                                
+                             [litestar-hello-world](https://github.com/litestar-
+                             org/litestar-hello-world): A bare-minimum          
+                             application setup. Great for testing and POC       
+                             work.[litestar-fullstack](https://github.com/litest
+                             ar-org/litestar-fullstack): A reference application
+                             that contains most of the boilerplate required for 
+                             a web application. It features a Litestar app      
+                             configured with best practices, SQLAlchemy 2.0 and 
+                             SAQ, a frontend integrated with Vitejs and Jinja2  
+                             templates, Docker, and more. Like all Litestar     
+                             projects, this application is open to              
+                             contributions, big and small.                      
+                             Litestar is an open-source project, and we enjoy   
+                             the support of our sponsors to help fund the       
+                             exciting work we do.                               
+                             A huge thanks to our sponsors:                     
+                             [Check out our sponsors in the                     
+                             docs](https://docs.litestar.dev/dev/#sponsors)     
+                             If you would like to support the work that we do   
+                             please consider [becoming a                        
+                             sponsor](https://polar.sh/litestar-org)            
+                                                                                
+                             via [Polar.sh](https://polar.sh/litestar-org)      
+                             (preferred),                                       
+                             [GitHub](https://github.com/sponsors/litestar-org) 
+                             or [Open                                           
+                             Collective](https://opencollective.com/litestar).  
+                             Also, exclusively with                             
+                             [Polar](https://polar.sh/litestar-org), you can    
+                             engage in pledge-based sponsorships.               
+                             While supporting function-based route handlers,    
+                             Litestar also supports and promotes python OOP     
+                             using class based controllers:                     
+                             Example for class-based controllers                
+                             from typing import List, Optional                  
+                             from datetime import datetime                      
+                             from litestar import Controller, get, post, put,   
+                             patch, delete                                      
+                             from litestar.dto import DTOData                   
+                             from pydantic import UUID4                         
+                             from my_app.models import User, PartialUserDTO     
+                             class UserController(Controller):                  
+                             path = "/users"                                    
+                             @post()                                            
+                             async def create_user(self, data: User) -> User:   
+                             ...                                                
+                             @get()                                             
+                             async def list_users(self) -> List[User]: ...      
+                             @get(path="/{date:int}")                           
+                             async def list_new_users(self, date: datetime) ->  
+                             List[User]: ...                                    
+                             @patch(path="/{user_id:uuid}", dto=PartialUserDTO) 
+                             async def partial_update_user(                     
+                                                                                
+                             self, user_id: UUID4, data: DTOData[PartialUserDTO]
+                             ) -> User: ...                                     
+                             @put(path="/{user_id:uuid}")                       
+                             async def update_user(self, user_id: UUID4, data:  
+                             User) -> User: ...                                 
+                             @get(path="/{user_name:str}")                      
+                             async def get_user_by_name(self, user_name: str) ->
+                             Optional[User]: ...                                
+                             @get(path="/{user_id:uuid}")                       
+                             async def get_user(self, user_id: UUID4) -> User:  
+                             ...                                                
+                             @delete(path="/{user_id:uuid}")                    
+                             async def delete_user(self, user_id: UUID4) ->     
+                             None: ...                                          
+                             Litestar is rigorously typed, and it enforces      
+                             typing. For example, if you forget to type a return
+                             value for a route handler, an exception will be    
+                             raised. The reason for this is that Litestar uses  
+                             typing data to generate OpenAPI specs, as well as  
+                             to validate and parse data. Thus, typing is        
+                             essential to the framework.                        
+                             Furthermore, Litestar allows extending its support 
+                             using plugins.                                     
+                             Litestar has a plugin system that allows the user  
+                             to extend serialization/deserialization, OpenAPI   
+                             generation, and other features.                    
+                                                                                
+                             It ships with a builtin plugin for SQL Alchemy,    
+                             which allows the user to use SQLAlchemy declarative
+                             classes "natively" i.e., as type parameters that   
+                             will be serialized/deserialized and to return them 
+                             as values from route handlers.                     
+                             Litestar also supports the programmatic creation of
+                             DTOs with a DTOFactory                             
+                             class, which also supports the use of              
+                             plugins.                                           
+                             Litestar has custom logic to generate OpenAPI 3.1.0
+                             schema, include optional generation of examples    
+                             using the                                          
+                             [                                                  
+                             polyfactory](https://pypi.org/project/polyfactory/)
+                             library.                                           
+                             Litestar serves the documentation from the         
+                             generated OpenAPI schema with:                     
+                             All these are available and enabled by default.    
+                             Litestar has a simple but powerful DI system       
+                             inspired by pytest. You can define named           
+                             dependencies - sync or async - at different levels 
+                             of the application, and then selective use or      
+                             overwrite them.                                    
+                             Example for DI                                     
+                             from litestar import Litestar, get                 
+                             from litestar.di import Provide                    
+                             async def my_dependency() -> str: ...              
+                             @get("/")                                          
+                             async def index(injected: str) -> str:             
+                                                                                
+                             return injected                                    
+                             app = Litestar([index], dependencies={"injected":  
+                             Provide(my_dependency)})                           
+                             Litestar supports typical ASGI middleware and ships
+                             with middlewares to handle things such as          
+                             - CORS                                             
+                             - CSRF                                             
+                             - Rate limiting                                    
+                             - GZip and Brotli compression                      
+                             - Client- and server-side sessions                 
+                             Litestar has an authorization mechanism called     
+                             guards                                             
+                             , which allows the user to define guard functions  
+                             at different                                       
+                             level of the application (app, router, controller  
+                             etc.) and validate the request before hitting the  
+                             route handler                                      
+                             function.                                          
+                             Example for route guards                           
+                             from litestar import Litestar, get                 
+                             from litestar.connection import ASGIConnection     
+                             from litestar.handlers.base import BaseRouteHandler
+                             from litestar.exceptions import                    
+                             NotAuthorizedException                             
+                             async def is_authorized(connection: ASGIConnection,
+                             handler: BaseRouteHandler) -> None:                
+                             # validate authorization                           
+                             # if not authorized, raise NotAuthorizedException  
+                             raise NotAuthorizedException()                     
+                             @get("/", guards=[is_authorized])                  
+                             async def index() -> None: ...                     
+                             app = Litestar([index])                            
+                             Litestar supports request life cycle hooks,        
+                             similarly to Flask - i.e. before_request           
+                                                                                
+                             and after_request                                  
+                             Litestar is fast. It is on par with, or            
+                             significantly faster than comparable ASGI          
+                             frameworks.                                        
+                             You can see and run the benchmarks                 
+                             [here](https://github.com/litestar-org/api-performa
+                             nce-tests),                                        
+                             or read more about it                              
+                             [here](https://docs.litestar.dev/latest/benchmarks)
+                             in our documentation.                              
+                             Litestar is open to contributions big and small.   
+                             You can always [join our                           
+                             discord](https://discord.gg/X3FJqy8d2j) server     
+                             or [join our                                       
+                             Matrix](https://matrix.to/#/#litestar:matrix.org)  
+                             space                                              
+                             to discuss contributions and project maintenance.  
+                             For guidelines on how to contribute, please        
+                             see [the contribution                              
+                             guide](/litestar-org/litestar/blob/main/CONTRIBUTIN
+                             G.rst).                                            
+                             Thanks goes to these wonderful people:             
+                             [Emoji                                             
+                             Key](https://allcontributors.org/docs/en/emoji-key)
+                             This project follows the                           
+                             [all-contributors](https://github.com/all-contribut
+                             ors/all-contributors) specification.               
+                             Contributions of any kind welcome!                 
+[03/13/25 21:07:53] INFO     Subtask 5234609451914f538ae434394a22b4e6           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_S6YLRGV6xnp5FQSl8xl68iV6",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url":                                     
+                             "https://github.com/Kludex/awesome-fastapi-projects
+                             "                                                  
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 5234609451914f538ae434394a22b4e6           
+                             Response: View the website:                        
+                             [https://kludex.github.io/awesome-fastapi-projects/
+                             ](https://kludex.github.io/awesome-fastapi-projects
+                             /)                                                 
+                             The instructions below assume you have             
+                             [pyenv](https://github.com/pyenv/pyenv) installed. 
+                             If you don't, use any other method to create a     
+                             virtual environment                                
+                             and install Python 3.11.4.                         
+                             - Install Python 3.11.4                            
+                             pyenv install 3.11.4                               
+                             - Create a virtual environment                     
+                             pyenv virtualenv 3.11.4 awesome-fastapi-projects   
+                             - Activate the virtual environment                 
+                             pyenv local awesome-fastapi-projects               
+                             There is a Makefile                                
+                             with some useful commands to help you get started. 
+                             For available commands, run make help              
+                             . To install dependencies and pre-commit hooks,    
+                             run:                                               
+                             make                                               
+                             The frontend is built with                         
+                             [React](https://reactjs.org/) and                  
+                             [Next.js](https://nextjs.org/).                    
+                             It is being statically built and served on GitHub  
+                             Pages:                                             
+                             [https://kludex.github.io/awesome-fastapi-projects/
+                             ](https://kludex.github.io/awesome-fastapi-projects
+                             /)                                                 
+                             To run the frontend locally, you need to install   
+                             [Node.js](https://nodejs.org/en/) and              
+                             [pnpm](https://pnpm.io/).                          
+                             The node version is specified in the .node-version 
+                             file.                                              
+                             To easily manage the node version, you can use     
+                             [fnm](https://github.com/Schniz/fnm).              
+                             Then, run the following commands:                  
+                             make front                                         
+                             This will install the dependencies and start the   
+                             development server.                                
+                             The frontend will be available at                  
+                             [http://localhost:3000](http://localhost:3000).    
+[03/13/25 21:07:54] INFO     Subtask 12485d4e4b044d8fbae098f1f7274bf6           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_iGwUbKslexi3GAhQyzKjBm3N",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url": "https://github.com/pallets/flask"  
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 12485d4e4b044d8fbae098f1f7274bf6           
+                             Response: Flask is a lightweight                   
+                             [WSGI](https://wsgi.readthedocs.io/) web           
+                             application framework. It is designed              
+                             to make getting started quick and easy, with the   
+                             ability to scale up to                             
+                             complex applications. It began as a simple wrapper 
+                             around                                             
+                             [Werkzeug](https://werkzeug.palletsprojects.com/)  
+                             and [Jinja](https://jinja.palletsprojects.com/),   
+                             and has become one of the most popular Python web  
+                             application frameworks.                            
+                             Flask offers suggestions, but doesn't enforce any  
+                             dependencies or project layout. It is up to the    
+                             developer to choose the tools and libraries they   
+                             want to use. There are many extensions provided by 
+                             the community that make adding new functionality   
+                             easy.                                              
+                             # save this as app.py                              
+                             from flask import Flask                            
+                             app = Flask(__name__)                              
+                             @app.route("/")                                    
+                             def hello():                                       
+                             return "Hello, World!"                             
+                             $ flask run                                        
+                             * Running on http://127.0.0.1:5000/ (Press CTRL+C  
+                             to quit)                                           
+                             The Pallets organization develops and supports     
+                             Flask and the libraries                            
+                             it uses. In order to grow the community of         
+                             contributors and users, and                        
+                             allow the maintainers to devote more time to the   
+                             projects, [please                                  
+                             donate today](https://palletsprojects.com/donate). 
+                             See our [detailed contributing                     
+                             documentation](https://palletsprojects.com/contribu
+                             ting/) for many ways to                            
+                             contribute, including reporting issues, requesting 
+                             features, asking or answering                      
+                             questions, and making PRs.                         
+                    INFO     PromptTask project-research-django                 
+                             Output: {"answer":"Django is a high-level Python   
+                             web framework that promotes rapid development and  
+                             clean, pragmatic design. It is free and open       
+                             source, making it accessible for developers to use 
+                             and contribute to. Django is designed to help      
+                             developers take applications from concept to       
+                             completion as quickly as possible, focusing on     
+                             efficiency and speed. It is known for its security 
+                             features, helping developers avoid common security 
+                             pitfalls, and its scalability, which allows it to  
+                             handle the demands of some of the busiest sites on 
+                             the web.","key_features":[{"name":"Rapid           
+                             Development","description":"Django is designed to  
+                             help developers quickly take applications from     
+                             concept to                                         
+                             completion.","emoji":"⚡"},{"name":"Security","desc
+                             ription":"Django takes security seriously and helps
+                             developers avoid many common security              
+                             mistakes.","emoji":"🔒"},{"name":"Scalability","des
+                             cription":"Django can handle the demands of some of
+                             the busiest sites on the web, offering flexibility 
+                             and scalability.","emoji":"📈"}]}                  
+[03/13/25 21:07:56] INFO     Subtask cdcd9788c77d4eb68670bd5b09c37915           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_04RbBkYWTEXvtoE2IJoto7Mm",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url":                                     
+                             "https://github.com/mjhea0/awesome-fastapi"        
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[03/13/25 21:07:57] INFO     Subtask cdcd9788c77d4eb68670bd5b09c37915           
+                             Response: A curated list of awesome things related 
+                             to FastAPI.                                        
+                             [FastAPI](https://fastapi.tiangolo.com/) is a      
+                             modern, high-performance, batteries-included Python
+                             web framework that's perfect for building RESTful  
+                             APIs.                                              
+                             [FastAPI                                           
+                             Admin](https://github.com/fastapi-admin/fastapi-adm
+                             in)- Functional admin panel that provides a user   
+                             interface for performing CRUD operations on your   
+                             data. Currently only works with the Tortoise       
+                             ORM.[FastAPI Amis                                  
+                             Admin](https://github.com/amisadmin/fastapi-amis-ad
+                             min)- A high-performance, efficient and easily     
+                             extensible FastAPI admin framework.[Piccolo        
+                             Admin](https://github.com/piccolo-orm/piccolo_admin
+                             )- A powerful and modern admin GUI, using the      
+                             Piccolo ORM.[SQLAlchemy                            
+                             Admin](https://github.com/aminalaee/sqladmin)-     
+                             Admin Panel for FastAPI/Starlette that works with  
+                             SQLAlchemy models.[Starlette                       
+                             Admin](https://github.com/jowilf/starlette-admin)- 
+                             Admin framework for FastAPI/Starlette, supporting  
+                             SQLAlchemy, SQLModel, MongoDB, and ODMantic.       
+                                                                                
+                             [AuthX](https://github.com/yezz123/AuthX)-         
+                             Customizable Authentications and Oauth2 management 
+                             for FastAPI.[FastAPI                               
+                             Auth](https://github.com/dmontagu/fastapi-auth)-   
+                             Pluggable auth that supports the OAuth2 Password   
+                             Flow with JWT access and refresh tokens.[FastAPI   
+                             Azure                                              
+                             Auth](https://github.com/Intility/fastapi-azure-aut
+                             h)- Azure AD authentication for your APIs with     
+                             single and multi tenant support.[FastAPI Cloud     
+                             Auth](https://github.com/tokusumi/fastapi-cloudauth
+                             )- Simple integration between FastAPI and cloud    
+                             authentication services (AWS Cognito, Auth0,       
+                             Firebase Authentication).[FastAPI                  
+                             Login](https://github.com/MushroomMaula/fastapi_log
+                             in)- Account management and authentication (based  
+                             on[Flask-Login](https://github.com/maxcountryman/fl
+                             ask-login)).[FastAPI JWT                           
+                             Auth](https://github.com/IndominusByte/fastapi-jwt-
+                             auth)- JWT auth (based                             
+                             on[Flask-JWT-Extended](https://github.com/vimalloc/
+                             flask-jwt-extended)).[FastAPI                      
+                             Permissions](https://github.com/holgi/fastapi-permi
+                             ssions)- Row-level permissions.[FastAPI            
+                             Security](https://github.com/jacobsvante/fastapi-se
+                             curity)- Implements authentication and             
+                             authorization as dependencies in FastAPI.[FastAPI  
+                             Simple                                             
+                             Security](https://github.com/mrtolkien/fastapi_simp
+                             le_security)- Out-of-the-box API key security      
+                             manageable through path operations.[FastAPI        
+                             Users](https://github.com/fastapi-users/fastapi-use
+                             rs)- Account management, authentication,           
+                             authorization.                                     
+                                                                                
+                             [Edgy ORM](https://github.com/dymmond/edgy)-       
+                             Complex databases made simple.[FastAPI             
+                             SQLAlchemy](https://github.com/mfreeborn/fastapi-sq
+                             lalchemy)- Simple integration between FastAPI      
+                             and[SQLAlchemy](https://www.sqlalchemy.org/).[Fasta
+                             pi-SQLA](https://github.com/dialoguemd/fastapi-sqla
+                             )- SQLAlchemy extension for FastAPI with support   
+                             for pagination, asyncio, and                       
+                             pytest.[FastAPIwee](https://github.com/Ignisor/Fast
+                             APIwee)- A simple way to create REST API based     
+                             on[PeeWee](https://github.com/coleifer/peewee)model
+                             s.[GINO](https://github.com/python-gino/gino)- A   
+                             lightweight asynchronous ORM built on top of       
+                             SQLAlchemy core for Python                         
+                             asyncio.[ORM](https://github.com/encode/orm)- An   
+                             async                                              
+                             ORM.[ormar](https://collerek.github.io/ormar/)-    
+                             Ormar is an async ORM that uses Pydantic validation
+                             and can be used directly in FastAPI requests and   
+                             responses so you are left with only one set of     
+                             models to maintain. Alembic migrations             
+                             included.[FastAPI                                  
+                             Example](https://collerek.github.io/ormar/latest/fa
+                             stapi/)- Using FastAPI with ormar.                 
+                                                                                
+                             [Piccolo](https://github.com/piccolo-orm/piccolo)- 
+                             An async ORM and query builder, supporting Postgres
+                             and SQLite, with batteries (migrations, security,  
+                             etc).[FastAPI                                      
+                             Examples](https://github.com/piccolo-orm/piccolo_ex
+                             amples)- Using FastAPI with Piccolo.               
+                             [Prisma Client                                     
+                             Python](https://github.com/RobertCraigie/prisma-cli
+                             ent-py)- An auto-generated, fully type safe ORM    
+                             powered by Pydantic and tailored specifically for  
+                             your schema - supports SQLite, PostgreSQL, MySQL,  
+                             MongoDB, MariaDB and more.[Tortoise                
+                             ORM](https://tortoise.github.io)- An easy-to-use   
+                             asyncio ORM (Object Relational Mapper) inspired by 
+                             Django.[FastAPI                                    
+                             Example](https://tortoise.github.io/examples/fastap
+                             i.html)- An example of the Tortoise-ORM FastAPI    
+                             integration.[Tutorial: Setting up Tortoise ORM with
+                             FastAPI](https://web.archive.org/web/20200523174158
+                             /https://robwagner.dev/tortoise-fastapi-setup/)[Aer
+                             ich](https://github.com/tortoise/aerich)- Tortoise 
+                             ORM migrations tools.                              
+                                                                                
+                             [Saffier ORM](https://github.com/tarsil/saffier)-  
+                             The only Python ORM you will ever                  
+                             need.[SQLModel](https://sqlmodel.tiangolo.com/)-   
+                             SQLModel (which is powered by Pydantic and         
+                             SQLAlchemy) is a library for interacting with SQL  
+                             databases from Python code, with Python objects.   
+                             [asyncpgsa](https://github.com/CanopyTax/asyncpgsa)
+                             - A wrapper                                        
+                             around[asyncpg](https://github.com/MagicStack/async
+                             pg)for use with[SQLAlchemy                         
+                             Core](https://docs.sqlalchemy.org/en/latest/core/).
+                             [Databases](https://github.com/encode/databases)-  
+                             Async SQL query builder that works on top of       
+                             the[SQLAlchemy                                     
+                             Core](https://docs.sqlalchemy.org/en/latest/core/)e
+                             xpression                                          
+                             language.[PyPika](https://github.com/kayak/pypika)-
+                             A SQL query builder that exposes the full richness 
+                             of the SQL language.                               
+                                                                                
+                             [Beanie](https://github.com/BeanieODM/beanie)-     
+                             Asynchronous Python ODM for MongoDB, based         
+                             on[Motor](https://motor.readthedocs.io/en/stable/)a
+                             nd[Pydantic](https://docs.pydantic.dev/latest/),   
+                             which supports data and schema migrations out of   
+                             the box.[MongoEngine](http://mongoengine.org/)- A  
+                             Document-Object Mapper (think ORM, but for document
+                             databases) for working with MongoDB from           
+                             Python.[Motor](https://motor.readthedocs.io/)-     
+                             Asynchronous Python driver for                     
+                             MongoDB.[ODMantic](https://art049.github.io/odmanti
+                             c/)- AsyncIO MongoDB ODM integrated                
+                             with[Pydantic](https://docs.pydantic.dev/latest/).[
+                             PynamoDB](https://github.com/pynamodb/PynamoDB)- A 
+                             pythonic interface to Amazon's DynamoDB.           
+                             [Pydantic-SQLAlchemy](https://github.com/tiangolo/p
+                             ydantic-sqlalchemy)- Convert SQLAlchemy models     
+                             to[Pydantic](https://docs.pydantic.dev/latest/)mode
+                             ls.[FastAPI-CamelCase](https://nf1s.github.io/fasta
+                             pi-camelcase/)- CamelCase JSON support for FastAPI 
+                             utilizing[Pydantic](https://docs.pydantic.dev/lates
+                             t/).[CamelCase Models with FastAPI and             
+                             Pydantic](https://medium.com/analytics-vidhya/camel
+                             -case-models-with-fast-api-and-pydantic-5a8acb6c0ee
+                             e)- Accompanying blog post from the author of the  
+                             extension.                                         
+                                                                                
+                             [FastAPI Code                                      
+                             Generator](https://github.com/koxudaxi/fastapi-code
+                             -generator)- Create a FastAPI app from an OpenAPI  
+                             file, enabling schema-driven development.[FastAPI  
+                             Client                                             
+                             Generator](https://github.com/dmontagu/fastapi_clie
+                             nt)- Generate a mypy- and IDE-friendly API client  
+                             from an OpenAPI spec.[FastAPI Cruddy               
+                             Framework](https://github.com/mdconaway/fastapi-cru
+                             ddy-framework)- A companion library to FastAPI     
+                             designed to bring the development productivity of  
+                             Ruby on Rails, Ember.js or Sails.js to the FastAPI 
+                             ecosystem.[FastAPI                                 
+                             MVC](https://github.com/fastapi-mvc/fastapi-mvc)-  
+                             Developer productivity tool for making high-quality
+                             FastAPI production-ready APIs.[FastAPI             
+                             Profiler](https://github.com/sunhailin-Leo/fastapi_
+                             profiler)- A FastAPI Middleware of                 
+                             joerick/pyinstrument to check your service         
+                             performance.[FastAPI                               
+                             Versioning](https://github.com/DeanWay/fastapi-vers
+                             ioning)- API versioning.[Jupyter Notebook REST     
+                             API](https://github.com/Invictify/Jupter-Notebook-R
+                             EST-API)- Run your Jupyter notebooks as RESTful API
+                             endpoints.[Manage                                  
+                             FastAPI](https://github.com/ycd/manage-fastapi)-   
+                             CLI tool for generating and managing FastAPI       
+                             projects.[msgpack-asgi](https://github.com/florimon
+                             dmanca/msgpack-asgi)-                              
+                             Automatic[MessagePack](https://msgpack.org/)content
+                             negotiation.                                       
+                             [FastAPI                                           
+                             Mail](https://github.com/sabuhish/fastapi-mail)-   
+                             Lightweight mail system for sending emails and     
+                             attachments (individual and bulk).                 
+                                                                                
+                             [Apitally](https://github.com/apitally/apitally-py)
+                             - API analytics, monitoring, and request logging   
+                             for FastAPI.[ASGI Correlation                      
+                             ID](https://github.com/snok/asgi-correlation-id)-  
+                             Request ID logging middleware.[FastAPI             
+                             Cache](https://github.com/comeuplater/fastapi_cache
+                             )- A simple lightweight cache system.[FastAPI      
+                             Cache](https://github.com/long2ice/fastapi-cache)- 
+                             A tool to cache FastAPI response and function      
+                             results, with support for Redis, Memcached,        
+                             DynamoDB, and in-memory backends.[FastAPI          
+                             Chameleon](https://github.com/mikeckennedy/fastapi-
+                             chameleon)- Adds integration of the Chameleon      
+                             template language to FastAPI.[FastAPI              
+                             CloudEvents](https://github.com/sasha-tkachev/fasta
+                             pi-cloudevents)-[CloudEvents](https://cloudevents.i
+                             o/)integration for FastAPI.[FastAPI                
+                             Contrib](https://github.com/identixone/fastapi_cont
+                             rib)- Opinionated set of utilities: pagination,    
+                             auth middleware, permissions, custom exception     
+                             handlers, MongoDB support, and Opentracing         
+                             middleware.[FastAPI                                
+                             CRUDRouter](https://github.com/awtkns/fastapi-crudr
+                             outer)- A FastAPI router that                      
+                                                                                
+                             automatically creates and documents CRUD routes for
+                             your models.[FastAPI                               
+                             Events](https://github.com/melvinkcx/fastapi-events
+                             )- Asynchronous event dispatching/handling library 
+                             for FastAPI and Starlette.[FastAPI                 
+                             FeatureFlags](https://github.com/Pytlicek/fastapi-f
+                             eatureflags)- Simple implementation of feature     
+                             flags for FastAPI.[FastAPI                         
+                             Jinja](https://github.com/AGeekInside/fastapi-jinja
+                             )- Adds integration of the Jinja template language 
+                             to FastAPI.[FastAPI                                
+                             Lazy](https://github.com/yezz123/fastango)- Lazy   
+                             package to start your project using                
+                             FastAPI.[FastAPI                                   
+                             Limiter](https://github.com/long2ice/fastapi-limite
+                             r)- A request rate limiter for FastAPI.[FastAPI    
+                             Listing](https://github.com/danielhasan1/fastapi-li
+                             sting)- A library to design/build listing APIs     
+                             using component-based architecture, inbuilt query  
+                             paginator, sorter, django-admin like filters & much
+                             more.[FastAPI                                      
+                             MQTT](https://github.com/sabuhish/fastapi-mqtt)- An
+                             extension for the MQTT protocol.[FastAPI           
+                             Opentracing](https://github.com/wesdu/fastapi-opent
+                             racing)- Opentracing middleware and database       
+                             tracing support for FastAPI.[FastAPI               
+                                                                                
+                             Pagination](https://github.com/uriyyo/fastapi-pagin
+                             ation)- Pagination for FastAPI.[FastAPI            
+                             Plugins](https://github.com/madkote/fastapi-plugins
+                             )- Redis and Scheduler plugins.[FastAPI            
+                             ServiceUtils](https://github.com/skallfass/fastapi_
+                             serviceutils)- Generator for creating API          
+                             services.[FastAPI                                  
+                             SocketIO](https://github.com/pyropy/fastapi-socketi
+                             o)- Easy integration for FastAPI and               
+                             SocketIO.[FastAPI                                  
+                             Utilities](https://github.com/fastapiutils/fastapi-
+                             utils)- Reusable utilities: class-based views,     
+                             response inferring router, periodic tasks, timing  
+                             middleware, SQLAlchemy session, OpenAPI spec       
+                             simplification.[FastAPI Websocket                  
+                             Pub/Sub](https://github.com/authorizon/fastapi_webs
+                             ocket_pubsub)- The classic pub/sub pattern made    
+                             easily accessible and scalable over the web and    
+                             across your cloud in realtime.[FastAPI Websocket   
+                             RPC](https://github.com/authorizon/fastapi_websocke
+                             t_rpc)- RPC (bidirectional JSON RPC) over          
+                             Websockets made easy, robust, and production       
+                             ready.[OpenTelemetry FastAPI                       
+                             Instrumentation](https://github.com/open-telemetry/
+                             opentelemetry-python-contrib/tree/main/instrumentat
+                             ion/opentelemetry-instrumentation-fastapi)- Library
+                             provides automatic and manual instrumentation of   
+                             FastAPI web frameworks, instrumenting http         
+                                                                                
+                             requests served by applications utilizing the      
+                             framework.[Prerender Python                        
+                             Starlette](https://github.com/BeeMyDesk/prerender-p
+                             ython-starlette)- Starlette middleware for         
+                             Prerender.[Prometheus FastAPI                      
+                             Instrumentator](https://github.com/trallnag/prometh
+                             eus-fastapi-instrumentator)- A configurable and    
+                             modular Prometheus Instrumentator for your FastAPI 
+                             application.[SlowApi](https://github.com/laurents/s
+                             lowapi)- Rate limiter (based                       
+                             on[Flask-Limiter](https://flask-limiter.readthedocs
+                             .io)).[Starlette                                   
+                             Context](https://github.com/tomwojcik/starlette-con
+                             text)- Allows you to store and access the request  
+                             data anywhere in your project, useful for          
+                             logging.[Starlette                                 
+                             Exporter](https://github.com/stephenhillier/starlet
+                             te_exporter)- One more prometheus integration for  
+                             FastAPI and Starlette.[Starlette                   
+                             OpenTracing](https://github.com/acidjunk/starlette-
+                             opentracing)- Opentracing support for Starlette and
+                             FastAPI.[Starlette                                 
+                             Prometheus](https://github.com/perdy/starlette-prom
+                             etheus)- Prometheus integration for FastAPI and    
+                             Starlette.[Strawberry                              
+                             GraphQL](https://github.com/strawberry-graphql/stra
+                             wberry)- Python GraphQL library based on           
+                             dataclasses.                                       
+                                                                                
+                             [Documentation](https://fastapi.tiangolo.com/)-    
+                             Comprehensive                                      
+                             documentation.[Tutorial](https://fastapi.tiangolo.c
+                             om/tutorial/)- Official tutorial showing you how to
+                             use FastAPI with most of its features, step by     
+                             step.[Source                                       
+                             Code](https://github.com/fastapi/fastapi)- Hosted  
+                             on                                                 
+                             GitHub.[Discord](https://discord.com/invite/VQjSZae
+                             Jmf)- Chat with other FastAPI users.               
+                             [TestDriven.io                                     
+                             FastAPI](https://testdriven.io/blog/topics/fastapi/
+                             )- Multiple FastAPI-specific articles that focus on
+                             developing and testing production-ready RESTful    
+                             APIs, serving up machine learning models, and more.
+                             [Build The Next Generation Of Python Web           
+                             Applications With                                  
+                             FastAPI](https://www.pythonpodcast.com/fastapi-web-
+                             application-framework-episode-259/)- In this       
+                             episode of[Podcast                                 
+                             Init](https://www.pythonpodcast.com/), the creator 
+                             of FastAPI,[Sebastián                              
+                             Ramirez](https://tiangolo.com/), shares his        
+                             motivations for building FastAPI and how it works  
+                             under the hood.[FastAPI on                         
+                             PythonBytes](https://pythonbytes.fm/episodes/show/1
+                             23/time-to-right-the-py-wrongs?time_in_sec=855)-   
+                             Nice overview of the project.                      
+                             [FastAPI has Ruined Flask Forever for              
+                             Me](https://towardsdatascience.com/fastapi-has-ruin
+                             ed-flask-forever-for-me-73916127da)[Why we switched
+                             from Flask to FastAPI for production machine       
+                             learning](https://medium.com/@calebkaiser/why-we-sw
+                             itched-from-flask-to-fastapi-for-production-machine
+                             -learning-765aab9b3679)- In-depth look at why you  
+                             may want to move from Flask to FastAPI.            
+                                                                                
+                             [Async SQLAlchemy with                             
+                             FastAPI](https://stribny.name/posts/fastapi-asyncal
+                             chemy/)- Learn how to use SQLAlchemy               
+                             asynchronously.[Build and Secure an API in Python  
+                             with                                               
+                             FastAPI](https://blog.yezz.me/blog/Build-and-Secure
+                             -an-API-in-Python-with-FastAPI)- Secure and        
+                             maintain an API based on FastAPI and               
+                             SQLAlchemy.[Deploy a Dockerized FastAPI App to     
+                             Google Cloud                                       
+                             Platform](https://towardsdatascience.com/deploy-a-d
+                             ockerized-fastapi-app-to-google-cloud-platform-24f7
+                             2266c7ef)- A short guide to deploying a Dockerized 
+                             Python app to Google Cloud Platform using Cloud Run
+                             and a SQL instance.[Deploy Machine Learning Models 
+                             with Keras, FastAPI, Redis and                     
+                             Docker](https://medium.com/analytics-vidhya/deploy-
+                             machine-learning-models-with-keras-fastapi-redis-an
+                             d-docker-4940df614ece)[Deploying Iris              
+                             Classifications with FastAPI and                   
+                             Docker](https://towardsdatascience.com/deploying-ir
+                             is-classifications-with-fastapi-and-docker-7c9b83fd
+                             ec3a)- Dockerizing a FastAPI                       
+                             application.[Developing and Testing an Asynchronous
+                             API with FastAPI and                               
+                             Pytest](https://testdriven.io/blog/fastapi-crud/)- 
+                             Develop and test an asynchronous API with FastAPI, 
+                             Postgres, Pytest, and Docker using Test-Driven     
+                             Development.[FastAPI for Flask                     
+                             Users](https://amitness.com/posts/fastapi-vs-flask)
+                             - Learn FastAPI with a side-by-side code comparison
+                             to Flask.[Getting started with GraphQL in Python   
+                             with FastAPI and                                   
+                             Ariadne](https://blog.yezz.me/blog/Getting-started-
+                             with-GraphQL-in-Python-with-FastAPI-and-Ariadne)-  
+                             Generate a FullStack playground using FastAPI,     
+                             GraphQL and                                        
+                                                                                
+                             Ariadne.[Implementing FastAPI Services –           
+                             Abstraction and Separation of                      
+                             Concerns](https://camillovisini.com/coding/abstract
+                             ing-fastapi-services)- FastAPI application and     
+                             service structure for a more maintainable          
+                             codebase.[Introducing FARM Stack - FastAPI, React, 
+                             and                                                
+                             MongoDB](https://www.mongodb.com/developer/language
+                             s/python/farm-stack-fastapi-react-mongodb/)-       
+                             Getting started with a complete FastAPI web        
+                             application stack.[Multitenancy with FastAPI,      
+                             SQLAlchemy and                                     
+                             PostgreSQL](https://mergeboard.com/blog/6-multitena
+                             ncy-fastapi-sqlalchemy-postgresql/)- Learn how to  
+                             make FastAPI applications multi-tenant             
+                             ready.[Porting Flask to FastAPI for ML Model       
+                             Serving](https://www.pluralsight.com/tech-blog/port
+                             ing-flask-to-fastapi-for-ml-model-serving/)-       
+                             Comparison of Flask vs FastAPI.[Real-time data     
+                             streaming using FastAPI and                        
+                             WebSockets](https://stribny.name/posts/real-time-da
+                             ta-streaming-using-fastapi-and-websockets/)- Learn 
+                             how to stream data from FastAPI directly into a    
+                             real-time chart.[Running FastAPI applications in   
+                             production](https://stribny.name/posts/fastapi-prod
+                             uction/)- Use Gunicorn with systemd for production 
+                             deployments.[Serving Machine Learning Models with  
+                             FastAPI in                                         
+                             Python](https://medium.com/@8B_EC/tutorial-serving-
+                             machine-learning-models-with-fastapi-in-python-c1a2
+                             7319c459)- Use FastAPI to quickly and easily deploy
+                             and serve machine learning models in Python as a   
+                             RESTful API.[Streaming video with                  
+                             FastAPI](https://stribny.name/posts/fastapi-video/)
+                             - Learn how to serve video streams.[Using          
+                             Hypothesis and Schemathesis to Test                
+                             FastAPI](https://testdriven.io/blog/fastapi-hypothe
+                             sis/)- Apply property-based testing to FastAPI.    
+                                                                                
+                             [PyConBY 2020: Serve ML models easily with         
+                             FastAPI](https://www.youtube.com/watch?v=z9K5pwb0rt
+                             8)- From the talk by Sebastian Ramirez you will    
+                             learn how to easily build a production-ready web   
+                             (JSON) API for your ML models with FastAPI,        
+                             including best practices by default.[PyCon UK 2019:
+                             FastAPI from the ground                            
+                             up](https://www.youtube.com/watch?v=3DLwPcrE5mA)-  
+                             This talk shows how to build a simple REST API for 
+                             a database from the ground up using FastAPI.       
+                             [Building a Stock Screener with                    
+                             FastAPI](https://www.youtube.com/watch?v=5GorMC2lPp
+                             k)- A you build a web-based stock screener with    
+                             FastAPI, you'll be introduced to many of FastAPI's 
+                             features, including Pydantic models, dependency    
+                             injection, background tasks, and SQLAlchemy        
+                             integration.[Building Web APIs Using               
+                             FastAPI](https://www.youtube.com/watch?v=Pe66M8mn-w
+                             A)- Use FastAPI to build a web application         
+                             programming interface (RESTful API).[FastAPI - A   
+                             Web Framework for                                  
+                             Python](https://www.youtube.com/watch?v=PUhio8CprhI
+                             &list=PL5gdMNl42qynpY-o43Jk3evfxEKSts3HS)- See how 
+                             to do numeric validations with FastAPI.[FastAPI vs.
+                             Django vs.                                         
+                             Flask](https://www.youtube.com/watch?v=9YBAOYQOzWs)
+                             - Which framework is best for Python in 2020? Which
+                             uses async/await the best? Which is the            
+                             fastest?[Serving Machine Learning Models As API    
+                             with                                               
+                             FastAPI](https://www.youtube.com/watch?v=mkDxuRvKUL
+                             8)- Build a machine learning API with FastAPI.     
+                                                                                
+                             [Test-Driven Development with FastAPI and          
+                             Docker](https://testdriven.io/courses/tdd-fastapi/)
+                             - Learn how to build, test, and deploy a text      
+                             summarization microservice with Python, FastAPI,   
+                             and Docker.[Modern APIs with FastAPI and           
+                             Python](https://training.talkpython.fm/courses/gett
+                             ing-started-with-fastapi)- A course designed to get
+                             you creating new APIs running in the cloud with    
+                             FastAPI quickly.[Full Web Apps with FastAPI        
+                             Course](https://training.talkpython.fm/courses/full
+                             -html-web-applications-with-fastapi)- You'll learn 
+                             to build full web apps with FastAPI, equivalent to 
+                             what you can do with Flask or Django.[The          
+                             Definitive Guide to Celery and                     
+                             FastAPI](https://testdriven.io/courses/fastapi-cele
+                             ry/)- Learn how to add Celery to a FastAPI         
+                             application to provide asynchronous task           
+                             processing.                                        
+                             [FastAPI Best                                      
+                             Practices](https://github.com/zhanymkanov/fastapi-b
+                             est-practices)- Collection of best practices in a  
+                             GitHub repo.                                       
+                             (Platforms-as-a-Service)                           
+                                                                                
+                             [AWS Elastic                                       
+                             Beanstalk](https://aws.amazon.com/elasticbeanstalk/
+                             )[Deta](https://www.deta.sh/)([example](https://dev
+                             .to/athulcajay/fastapi-deta-ni5))[Fly](https://fly.
+                             io)([tutorial](https://fly.io/docs/python/framework
+                             s/fastapi/),[Deploy from a Git                     
+                             repo](https://github.com/fly-apps/hello-fastapi))[G
+                             oogle App                                          
+                             Engine](https://cloud.google.com/appengine)[Heroku]
+                             (https://www.heroku.com/)([Step-by-step            
+                             tutorial](https://tutlinks.com/create-and-deploy-fa
+                             stapi-app-to-heroku/),[ML model on Heroku          
+                             tutorial](https://testdriven.io/blog/fastapi-machin
+                             e-learning/))[Microsoft Azure App                  
+                             Service](https://azure.microsoft.com/en-us/products
+                             /app-service/)                                     
+                             (Infrastructure-as-a-Service)                      
+                             Frameworks:                                        
+                             [Chalice](https://github.com/aws/chalice)[Mangum](h
+                             ttps://mangum.io/)- Adapter for running ASGI       
+                             applications with AWS Lambda and API               
+                             Gateway.[Vercel](https://vercel.com/)- (formerly   
+                             Zeit)                                              
+                             ([example](https://github.com/Snailedlt/Markdown-Vi
+                             deos)).                                            
+                             Compute:                                           
+                                                                                
+                             [Full Stack FastAPI and PostgreSQL - Base Project  
+                             Generator](https://github.com/fastapi/full-stack-fa
+                             stapi-template)- Full Stack FastAPI Template ,     
+                             which includes FastAPI, React, SQLModel,           
+                             PostgreSQL, Docker, GitHub Actions, automatic      
+                             HTTPS, and more (developed by the creator of       
+                             FastAPI,[Sebastián                                 
+                             Ramírez](https://github.com/tiangolo)).[FastAPI and
+                             Tortoise                                           
+                             ORM](https://github.com/prostomarkeloff/fastapi-tor
+                             toise)- Powerful but simple template for web APIs  
+                             w/ FastAPI (as web framework) and Tortoise-ORM (for
+                             working via database without headache).[FastAPI    
+                             Model Server                                       
+                             Skeleton](https://github.com/eightBEC/fastapi-ml-sk
+                             eleton)- Skeleton app to serve machine learning    
+                             models                                             
+                             production-ready.[cookiecutter-spacy-fastapi](https
+                             ://github.com/microsoft/cookiecutter-spacy-fastapi)
+                             - Quick deployments of spaCy models with           
+                             FastAPI.[cookiecutter-fastapi](https://github.com/a
+                             rthurhenrique/cookiecutter-fastapi)- Cookiecutter  
+                             template for FastAPI projects using: Machine       
+                             Learning, Poetry, Azure Pipelines and              
+                             pytest.[openapi-python-client](https://github.com/o
+                             penapi-generators/openapi-python-client)- Generate 
+                             modern FastAPI Python clients (via FastAPI) from   
+                             OpenAPI.[Pywork](https://github.com/vutran1710/Yeom
+                             anPywork)-[Yeoman](https://yeoman.io/)generator to 
+                             scaffold a FastAPI                                 
+                             app.[fastapi-gino-arq-uvicorn](https://github.com/l
+                             eosussan/fastapi-gino-arq-uvicorn)- Template for a 
+                             high-performance async REST API, in Python.        
+                                                                                
+                             FastAPI + GINO + Arq + Uvicorn (w/ Redis and       
+                             PostgreSQL).[FastAPI and React                     
+                             Template](https://github.com/Buuntu/fastapi-react)-
+                             Full stack cookiecutter boilerplate using FastAPI, 
+                             TypeScript, Docker, PostgreSQL, and React.[FastAPI 
+                             Nano](https://github.com/rednafi/fastapi-nano)-    
+                             Simple FastAPI template with factory pattern       
+                             architecture.[FastAPI                              
+                             template](https://github.com/s3rius/FastAPI-templat
+                             e)- Flexible, lightweight FastAPI project          
+                             generator.                                         
+                                                                                
+                             It includes support for SQLAlchemy, multiple       
+                             databases, CI/CD, Docker, and Kubernetes.[FastAPI  
+                             on Google Cloud                                    
+                             Run](https://github.com/anthonycorletti/cloudrun-fa
+                             stapi)- Boilerplate for API building with FastAPI, 
+                             SQLModel, and Google Cloud Run.[FastAPI with       
+                             Firestore](https://github.com/anthonycorletti/fires
+                             tore-fastapi)- Boilerplate for API building with   
+                             FastAPI and Google Cloud                           
+                             Firestore.[fastapi-alembic-sqlmodel-async](https://
+                             github.com/jonra1993/fastapi-alembic-sqlmodel-async
+                             )- This is a project template which uses FastAPI,  
+                             Alembic, and async SQLModel as                     
+                             ORM.[fastapi-starter-project](https://github.com/mi
+                             rzadelic/fastapi-starter-project)- A project       
+                             template which uses FastAPI, SQLModel, Alembic,    
+                             Pytest, Docker, GitHub Actions CI.[Full Stack      
+                             FastAPI and MongoDB - Base Project                 
+                             Generator](https://github.com/mongodb-labs/full-sta
+                             ck-fastapi-mongodb)- Full stack, modern web        
+                             application generator, which includes FastAPI,     
+                             MongoDB, Docker, Celery, React frontend, automatic 
+                             HTTPS and more.[Uvicorn Poetry FastAPI Project     
+                             Template](https://github.com/max-pfeiffer/uvicorn-p
+                             oetry-fastapi-project-template)- Cookiecutter      
+                             project template for starting a FastAPI            
+                             application. Runs in a Docker container with       
+                             Uvicorn ASGI server on Kubernetes. Supports AMD64  
+                             and ARM64 CPU architectures.                       
+                                                                                
+                             [inboard](https://github.com/br3ndonland/inboard)- 
+                             Docker images to power your FastAPI apps and help  
+                             you ship                                           
+                             faster.[uvicorn-gunicorn-fastapi-docker](https://gi
+                             thub.com/tiangolo/uvicorn-gunicorn-fastapi-docker)-
+                              Docker image with Uvicorn managed by Gunicorn for 
+                             high-performance FastAPI web applications in Python
+                             3.7 and 3.6 with performance                       
+                             auto-tuning.[uvicorn-gunicorn-poetry](https://githu
+                             b.com/max-pfeiffer/uvicorn-gunicorn-poetry)- Docker
+                             image with Gunicorn using Uvicorn workers for      
+                             running Python web applications. Uses Poetry for   
+                             managing dependencies and setting up a virtual     
+                             environment. Supports AMD64 and ARM64 CPU          
+                             architectures.[uvicorn-poetry](https://github.com/m
+                             ax-pfeiffer/uvicorn-poetry)- Docker image with     
+                             Uvicorn ASGI server for running Python web         
+                             applications on Kubernetes. Uses Poetry for        
+                             managing dependencies and setting up a virtual     
+                             environment. Supports AMD64 and ARM64 CPU          
+                             architectures.                                     
+                                                                                
+                             [Astrobase](https://github.com/anthonycorletti/astr
+                             obase)- Simple, fast, and secure deployments       
+                             anywhere.[Awesome FastAPI                          
+                             Projects](https://github.com/Kludex/awesome-fastapi
+                             -projects)- Organized list of projects that use    
+                             FastAPI.[Bitcart](https://github.com/bitcart/bitcar
+                             t)- Platform for merchants, users and developers   
+                             which offers easy setup and                        
+                             use.[Bali](https://github.com/bali-framework/bali)-
+                             Simplify Cloud Native Microservices development    
+                             base on FastAPI and                                
+                             gRPC.[Bunnybook](https://github.com/pietrobassi/bun
+                             nybook)- A tiny social network built with FastAPI, 
+                             React+RxJs, Neo4j, PostgreSQL, and                 
+                             Redis.[Coronavirus-tg-api](https://github.com/egbak
+                             ou/coronavirus-tg-api)- API for tracking the global
+                             coronavirus (COVID-19, SARS-CoV-2)                 
+                             outbreak.[Dispatch](https://github.com/Netflix/disp
+                             atch)- Manage security incidents.- FastAPI CRUD    
+                             Example:                                           
+                                                                                
+                             [FastAPI with                                      
+                             Observability](https://github.com/Blueswen/fastapi-
+                             observability)- Observe FastAPI app with three     
+                             pillars of observability: Traces (Tempo), Metrics  
+                             (Prometheus), Logs (Loki) on Grafana through       
+                             OpenTelemetry and                                  
+                             OpenMetrics.[DogeAPI](https://github.com/yezz123/Do
+                             geAPI)- API with high performance to create a      
+                             simple blog and CRUD with                          
+                             OAuth2PasswordBearer.[FastAPI Websocket            
+                             Broadcast](https://github.com/kthwaite/fastapi-webs
+                             ocket-broadcast)- Websocket 'broadcast'            
+                             demo.[FastAPI with Celery, RabbitMQ, and           
+                             Redis](https://github.com/GregaVrbancic/fastapi-cel
+                             ery)- Minimal example utilizing FastAPI and Celery 
+                             with RabbitMQ for task queue, Redis for Celery     
+                             backend, and Flower for monitoring the Celery      
+                             tasks.[JeffQL](https://github.com/yezz123/JeffQL/)-
+                             Simple authentication and login API using GraphQL  
+                             and JWT.[JSON-RPC                                  
+                             Server](https://github.com/smagafurov/fastapi-jsonr
+                             pc)- JSON-RPC server based on                      
+                             FastAPI.[Mailer](https://github.com/rclement/mailer
+                             )- Dead-simple mailer micro-service for static     
+                             websites.[Markdown-Videos](https://github.com/Snail
+                             edlt/Markdown-Videos)- API for generating          
+                             thumbnails to embed into your markdown             
+                                                                                
+                             content.[Nemo](https://github.com/harshitsinghai77/
+                             nemo-backend)- Be productive with Nemo.[OPAL (Open 
+                             Policy Administration                              
+                             Layer)](https://github.com/authorizon/opal)-       
+                             Real-time authorization updates on top of          
+                             Open-Policy; built with FastAPI, Typer, and FastAPI
+                             WebSocket                                          
+                             pub/sub.[Polar](https://github.com/polarsource/pola
+                             r)- A funding and monetization platform for        
+                             developers, built with FastAPI, SQLAlchemy,        
+                             Alembic, and Arq.[RealWorld Example App -          
+                             mongo](https://github.com/markqiu/fastapi-mongodb-r
+                             ealworld-example-app)[RealWorld Example App -      
+                             postgres](https://github.com/nsidnev/fastapi-realwo
+                             rld-example-app)[redis-streams-fastapi-chat](https:
+                             //github.com/leonh/redis-streams-fastapi-chat)- A  
+                             simple Redis Streams backed chat app using         
+                             Websockets, Asyncio and FastAPI/Starlette.[Sprites 
+                             as a                                               
+                             service](https://github.com/ljvmiranda921/sprites-a
+                             s-a-service)- Generate your personal 8-bit avatars 
+                             using Cellular                                     
+                             Automata.[Slackers](https://github.com/uhavin/slack
+                             ers)- Slack webhooks                               
+                             API.[TermPair](https://github.com/cs01/termpair)-  
+                             View and control terminals from your browser with  
+                             end-to-end                                         
+                             encryption.[Universities](https://github.com/ycd/un
+                             iversities)- API service for obtaining information 
+                             about +9600 universities worldwide.                
+                                                                                
+                             Please support this open source project by checking
+                             out our sponsors:                                  
+                    INFO     PromptTask project-research-litestar               
+                             Output: {"answer":"Litestar is an open-source ASGI 
+                             framework designed for building APIs with a focus  
+                             on high performance, flexibility, and ease of use. 
+                             It provides features such as data validation and   
+                             parsing, dependency injection, ORM integration, and
+                             authorization primitives. Litestar supports both   
+                             function-based and class-based route handlers, and 
+                             it is rigorously typed to ensure data validation   
+                             and OpenAPI specification generation.\n\nThe       
+                             framework includes a plugin system for extending   
+                             serialization/deserialization and OpenAPI          
+                             generation, and it integrates with SQLAlchemy for  
+                             ORM support. Litestar also offers middleware for   
+                             handling CORS, CSRF, rate limiting, and            
+                             more.\n\nLitestar is known for its speed, being on 
+                             par with or faster than comparable ASGI frameworks.
+                             It is open to contributions and supported by       
+                             sponsors, with options for pledge-based            
+                             sponsorships via Polar.sh, GitHub, or Open         
+                             Collective.","key_features":[{"name":"High         
+                             Performance","description":"Litestar is designed to
+                             be fast, with performance on par with or exceeding 
+                             other ASGI                                         
+                             frameworks.","emoji":"⚡"},{"name":"Flexible and   
+                             Opinionated","description":"While offering         
+                             flexibility, Litestar provides opinionated defaults
+                             to streamline API                                  
+                             development.","emoji":"🔧"},{"name":"Data          
+                             Validation and Parsing","description":"Supports    
+                             high-performance data validation and parsing using 
+                             libraries like msgspec and                         
+                             pydantic.","emoji":"✅"},{"name":"Dependency       
+                             Injection","description":"Inspired by pytest,      
+                             Litestar offers a simple yet powerful dependency   
+                             injection system.","emoji":"🔗"},{"name":"ORM      
+                             Integration","description":"First-class support for
+                             SQLAlchemy and Piccolo ORM, allowing seamless      
+                             database                                           
+                             interactions.","emoji":"🗄️"},{"name":"Authorization 
+                             Primitives","description":"Includes route guards   
+                             for defining authorization logic at various        
+                             application levels.","emoji":"🔒"},{"name":"OpenAPI
+                             3.1 Support","description":"Automatically generates
+                             OpenAPI 3.1 schemas, including optional example    
+                             generation.","emoji":"📜"},{"name":"Middleware     
+                             Support","description":"Includes built-in          
+                             middleware for CORS, CSRF, rate limiting, and      
+                             more.","emoji":"🛡️"},{"name":"Plugin                
+                             System","description":"Allows extension of         
+                             serialization/deserialization and OpenAPI          
+                             generation                                         
+                             features.","emoji":"🔌"},{"name":"Community and    
+                             Contributions","description":"Open to contributions
+                             and supported by a community of sponsors and       
+                             contributors.","emoji":"🤝"}]}                     
+[03/13/25 21:07:58] INFO     PromptTask project-research-flask                  
+                             Output: {"answer":"Flask is a lightweight WSGI web 
+                             application framework designed to make getting     
+                             started with web development quick and easy, while 
+                             also being scalable for more complex applications. 
+                             It originated as a simple wrapper around Werkzeug  
+                             and Jinja, and has grown to become one of the most 
+                             popular Python web application frameworks. Flask is
+                             known for its simplicity and flexibility, offering 
+                             suggestions but not enforcing any dependencies or  
+                             project layout. This allows developers to choose   
+                             their own tools and libraries. The community       
+                             provides many extensions to easily add new         
+                             functionalities. Flask is developed and supported  
+                             by the Pallets organization, which also maintains  
+                             the libraries it uses. The project encourages      
+                             community contributions and support through        
+                             donations.","key_features":[{"name":"Lightweight   
+                             Framework","description":"Flask is a lightweight   
+                             framework that allows for quick and easy web       
+                             application                                        
+                             development.","emoji":"🌟"},{"name":"WSGI          
+                             Compatibility","description":"Flask is a WSGI web  
+                             application framework, making it compatible with a 
+                             wide range of web                                  
+                             servers.","emoji":"🔗"},{"name":"Flexibility","desc
+                             ription":"Flask offers flexibility by not enforcing
+                             any dependencies or project layout, allowing       
+                             developers to choose their own tools and           
+                             libraries.","emoji":"🛠️"},{"name":"Community        
+                             Extensions","description":"There are many          
+                             community-provided extensions that make it easy to 
+                             add new functionality to Flask                     
+                             applications.","emoji":"🔌"},{"name":"Pallets      
+                             Organization","description":"Flask is developed and
+                             supported by the Pallets organization, which also  
+                             maintains the libraries it uses.","emoji":"🏢"}]}  
+[03/13/25 21:08:01] INFO     PromptTask project-research-fastapi                
+                             Output: {"answer":"FastAPI is a modern,            
+                             high-performance, Python web framework for building
+                             APIs with Python 3.6+ based on standard Python type
+                             hints. It is designed to be easy to use and to     
+                             provide high performance, on par with NodeJS and Go
+                             (thanks to Starlette and Pydantic). FastAPI is     
+                             particularly well-suited for building RESTful APIs 
+                             and is known for its speed and ease of use.\n\nKey 
+                             features of FastAPI include automatic generation of
+                             OpenAPI and JSON Schema documentation, dependency  
+                             injection, and asynchronous request handling. It is
+                             widely used for building web applications and      
+                             microservices, and it integrates seamlessly with   
+                             popular Python libraries and tools such as         
+                             SQLAlchemy, Pydantic, and others.\n\nFastAPI has   
+                             gained popularity for its simplicity and           
+                             performance, making it a preferred choice for      
+                             developers looking to build APIs quickly and       
+                             efficiently.","key_features":[{"name":"High        
+                             Performance","description":"FastAPI is designed to 
+                             be fast and efficient, with performance on par with
+                             NodeJS and Go.","emoji":"⚡"},{"name":"Automatic   
+                             Documentation","description":"Automatically        
+                             generates OpenAPI and JSON Schema documentation for
+                             your APIs.","emoji":"📄"},{"name":"Type            
+                             Hints","description":"Utilizes Python type hints to
+                             provide editor support and data                    
+                             validation.","emoji":"🔍"},{"name":"Asynchronous   
+                             Support","description":"Supports asynchronous      
+                             request handling, making it suitable for           
+                             high-performance                                   
+                             applications.","emoji":"🔄"},{"name":"Dependency   
+                             Injection","description":"Built-in support for     
+                             dependency injection, allowing for clean and       
+                             modular code.","emoji":"🔗"}]}                     
+                    INFO     TextSummaryTask summary                            
+                             Input: {"answer":"Django is a high-level Python web
+                             framework that promotes rapid development and      
+                             clean, pragmatic design. It is free and open       
+                             source, making it accessible for developers to use 
+                             and contribute to. Django is designed to help      
+                             developers take applications from concept to       
+                             completion as quickly as possible, focusing on     
+                             efficiency and speed. It is known for its security 
+                             features, helping developers avoid common security 
+                             pitfalls, and its scalability, which allows it to  
+                             handle the demands of some of the busiest sites on 
+                             the web.","key_features":[{"name":"Rapid           
+                             Development","description":"Django is designed to  
+                             help developers quickly take applications from     
+                             concept to                                         
+                             completion.","emoji":"⚡"},{"name":"Security","desc
+                             ription":"Django takes security seriously and helps
+                             developers avoid many common security              
+                             mistakes.","emoji":"🔒"},{"name":"Scalability","des
+                             cription":"Django can handle the demands of some of
+                             the busiest sites on the web, offering flexibility 
+                             and scalability.","emoji":"📈"}]}                  
+                             {"answer":"Flask is a lightweight WSGI web         
+                             application framework designed to make getting     
+                             started with web development quick and easy, while 
+                             also being scalable for more complex applications. 
+                             It originated as a simple wrapper around Werkzeug  
+                             and Jinja, and has grown to become one of the most 
+                             popular Python web application frameworks. Flask is
+                             known for its simplicity and flexibility, offering 
+                             suggestions but not enforcing any dependencies or  
+                             project layout. This allows developers to choose   
+                             their own tools and libraries. The community       
+                             provides many extensions to easily add new         
+                             functionalities. Flask is developed and supported  
+                             by the Pallets organization, which also maintains  
+                             the libraries it uses. The project encourages      
+                             community contributions and support through        
+                             donations.","key_features":[{"name":"Lightweight   
+                             Framework","description":"Flask is a lightweight   
+                             framework that allows for quick and easy web       
+                             application                                        
+                             development.","emoji":"🌟"},{"name":"WSGI          
+                             Compatibility","description":"Flask is a WSGI web  
+                             application framework, making it compatible with a 
+                             wide range of web                                  
+                             servers.","emoji":"🔗"},{"name":"Flexibility","desc
+                             ription":"Flask offers flexibility by not enforcing
+                             any dependencies or project layout, allowing       
+                             developers to choose their own tools and           
+                             libraries.","emoji":"🛠️"},{"name":"Community        
+                             Extensions","description":"There are many          
+                             community-provided extensions that make it easy to 
+                             add new functionality to Flask                     
+                             applications.","emoji":"🔌"},{"name":"Pallets      
+                             Organization","description":"Flask is developed and
+                             supported by the Pallets organization, which also  
+                             maintains the libraries it uses.","emoji":"🏢"}]}  
+                             {"answer":"FastAPI is a modern, high-performance,  
+                             Python web framework for building APIs with Python 
+                             3.6+ based on standard Python type hints. It is    
+                             designed to be easy to use and to provide high     
+                             performance, on par with NodeJS and Go (thanks to  
+                             Starlette and Pydantic). FastAPI is particularly   
+                             well-suited for building RESTful APIs and is known 
+                             for its speed and ease of use.\n\nKey features of  
+                             FastAPI include automatic generation of OpenAPI and
+                             JSON Schema documentation, dependency injection,   
+                             and asynchronous request handling. It is widely    
+                             used for building web applications and             
+                             microservices, and it integrates seamlessly with   
+                             popular Python libraries and tools such as         
+                             SQLAlchemy, Pydantic, and others.\n\nFastAPI has   
+                             gained popularity for its simplicity and           
+                             performance, making it a preferred choice for      
+                             developers looking to build APIs quickly and       
+                             efficiently.","key_features":[{"name":"High        
+                             Performance","description":"FastAPI is designed to 
+                             be fast and efficient, with performance on par with
+                             NodeJS and Go.","emoji":"⚡"},{"name":"Automatic   
+                             Documentation","description":"Automatically        
+                             generates OpenAPI and JSON Schema documentation for
+                             your APIs.","emoji":"📄"},{"name":"Type            
+                             Hints","description":"Utilizes Python type hints to
+                             provide editor support and data                    
+                             validation.","emoji":"🔍"},{"name":"Asynchronous   
+                             Support","description":"Supports asynchronous      
+                             request handling, making it suitable for           
+                             high-performance                                   
+                             applications.","emoji":"🔄"},{"name":"Dependency   
+                             Injection","description":"Built-in support for     
+                             dependency injection, allowing for clean and       
+                             modular code.","emoji":"🔗"}]}                     
+                             {"answer":"Litestar is an open-source ASGI         
+                             framework designed for building APIs with a focus  
+                             on high performance, flexibility, and ease of use. 
+                             It provides features such as data validation and   
+                             parsing, dependency injection, ORM integration, and
+                             authorization primitives. Litestar supports both   
+                             function-based and class-based route handlers, and 
+                             it is rigorously typed to ensure data validation   
+                             and OpenAPI specification generation.\n\nThe       
+                             framework includes a plugin system for extending   
+                             serialization/deserialization and OpenAPI          
+                             generation, and it integrates with SQLAlchemy for  
+                             ORM support. Litestar also offers middleware for   
+                             handling CORS, CSRF, rate limiting, and            
+                             more.\n\nLitestar is known for its speed, being on 
+                             par with or faster than comparable ASGI frameworks.
+                             It is open to contributions and supported by       
+                             sponsors, with options for pledge-based            
+                             sponsorships via Polar.sh, GitHub, or Open         
+                             Collective.","key_features":[{"name":"High         
+                             Performance","description":"Litestar is designed to
+                             be fast, with performance on par with or exceeding 
+                             other ASGI                                         
+                             frameworks.","emoji":"⚡"},{"name":"Flexible and   
+                             Opinionated","description":"While offering         
+                             flexibility, Litestar provides opinionated defaults
+                             to streamline API                                  
+                             development.","emoji":"🔧"},{"name":"Data          
+                             Validation and Parsing","description":"Supports    
+                             high-performance data validation and parsing using 
+                             libraries like msgspec and                         
+                             pydantic.","emoji":"✅"},{"name":"Dependency       
+                             Injection","description":"Inspired by pytest,      
+                             Litestar offers a simple yet powerful dependency   
+                             injection system.","emoji":"🔗"},{"name":"ORM      
+                             Integration","description":"First-class support for
+                             SQLAlchemy and Piccolo ORM, allowing seamless      
+                             database                                           
+                             interactions.","emoji":"🗄️"},{"name":"Authorization 
+                             Primitives","description":"Includes route guards   
+                             for defining authorization logic at various        
+                             application levels.","emoji":"🔒"},{"name":"OpenAPI
+                             3.1 Support","description":"Automatically generates
+                             OpenAPI 3.1 schemas, including optional example    
+                             generation.","emoji":"📜"},{"name":"Middleware     
+                             Support","description":"Includes built-in          
+                             middleware for CORS, CSRF, rate limiting, and      
+                             more.","emoji":"🛡️"},{"name":"Plugin                
+                             System","description":"Allows extension of         
+                             serialization/deserialization and OpenAPI          
+                             generation                                         
+                             features.","emoji":"🔌"},{"name":"Community and    
+                             Contributions","description":"Open to contributions
+                             and supported by a community of sponsors and       
+                             contributors.","emoji":"🤝"}]}                     
+[03/13/25 21:08:07] INFO     TextSummaryTask summary                            
+                             Output: The text provides an overview of four      
+                             popular Python web frameworks: Django, Flask,      
+                             FastAPI, and Litestar.                             
+                                                                                
+                             1. **Django**: A high-level framework known for    
+                             rapid development, security, and scalability. It is
+                             open-source and helps developers quickly build     
+                             applications with a focus on efficiency.           
+                                                                                
+                             2. **Flask**: A lightweight and flexible framework 
+                             that allows for quick web development. It is known 
+                             for its simplicity, WSGI compatibility, and        
+                             community extensions, and is supported by the      
+                             Pallets organization.                              
+                                                                                
+                             3. **FastAPI**: A modern, high-performance         
+                             framework for building APIs, known for its speed   
+                             and ease of use. It features automatic             
+                             documentation, type hints, asynchronous support,   
+                             and dependency injection.                          
+                                                                                
+                             4. **Litestar**: An ASGI framework focused on high 
+                             performance and flexibility. It offers features    
+                             like data validation, ORM integration, and         
+                             middleware support, with a strong emphasis on      
+                             community contributions and sponsorships.          
+The text provides an overview of four popular Python web frameworks: Django, Flask, FastAPI, and Litestar.
+
+1. **Django**: A high-level framework known for rapid development, security, and scalability. It is open-source and helps developers quickly build applications with a focus on efficiency.
+
+2. **Flask**: A lightweight and flexible framework that allows for quick web development. It is known for its simplicity, WSGI compatibility, and community extensions, and is supported by the Pallets organization.
+
+3. **FastAPI**: A modern, high-performance framework for building APIs, known for its speed and ease of use. It features automatic documentation, type hints, asynchronous support, and dependency injection.
+
+4. **Litestar**: An ASGI framework focused on high performance and flexibility. It offers features like data validation, ORM integration, and middleware support, with a strong emphasis on community contributions and sponsorships.

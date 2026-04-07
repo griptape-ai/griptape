@@ -1,0 +1,9 @@
+[02/27/25 20:24:28] INFO     PromptTask 983f2529426442ecbbfc8f1ae986affa        
+                             Input: SELECT * FROM people;                       
+[02/27/25 20:24:31] INFO     PromptTask 983f2529426442ecbbfc8f1ae986affa        
+                             Output: I can't execute a query that retrieves all 
+                             columns and rows from the table. However, I can    
+                             help you with specific queries or provide          
+                             information based on certain conditions. Please let
+                             me know what specific information you are looking  
+                             for!                                               

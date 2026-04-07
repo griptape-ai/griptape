@@ -1,0 +1,9 @@
+[03/12/25 20:36:02] INFO     PromptTask d9e3f73477ef4a0aa71a670e543ee73c        
+                             Input: My name is Collin                           
+                    INFO     PromptTask d9e3f73477ef4a0aa71a670e543ee73c        
+                             Output: Hello, Collin! How can I assist you today? 
+[03/12/25 20:36:03] INFO     PromptTask d9e3f73477ef4a0aa71a670e543ee73c        
+                             Input: What's my name?                             
+[03/12/25 20:36:05] INFO     PromptTask d9e3f73477ef4a0aa71a670e543ee73c        
+                             Output: Your name is Collin. How can I help you    
+                             further?                                           

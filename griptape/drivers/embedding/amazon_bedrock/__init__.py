@@ -1,0 +1,5 @@
+from griptape.drivers.embedding.amazon_bedrock_titan_embedding_driver import AmazonBedrockTitanEmbeddingDriver
+from griptape.drivers.embedding.amazon_bedrock_cohere_embedding_driver import AmazonBedrockCohereEmbeddingDriver
+
+
+__all__ = ["AmazonBedrockCohereEmbeddingDriver", "AmazonBedrockTitanEmbeddingDriver"]

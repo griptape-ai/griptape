@@ -1,0 +1,1242 @@
+[03/13/25 21:09:27] INFO     PromptTask project-research-django                 
+                             Input: Tell me about the open source project:      
+                             django.                                            
+                    INFO     PromptTask project-research-flask                  
+                             Input: Tell me about the open source project:      
+                             flask.                                             
+                    INFO     PromptTask project-research-fastapi                
+                             Input: Tell me about the open source project:      
+                             fastapi.                                           
+                    INFO     PromptTask project-research-litestar               
+                             Input: Tell me about the open source project:      
+                             litestar.                                          
+[03/13/25 21:09:29] INFO     Subtask 15a3ea6372104691931a18ee1155678e           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_aney01U95SEICXc4zemOJE9o",        
+                                 "name": "WebSearchTool",                       
+                                 "path": "search",                              
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "query": "FastAPI open source project"     
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask f6cccfbd06344588bf2ab67d54890cbe           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_t0VM6VrBEkgcAi5raINYBQ0r",        
+                                 "name": "WebSearchTool",                       
+                                 "path": "search",                              
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "query": "litestar open source project"    
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 429f11b95312448e8df5661f964d0a8a           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_wAeD3ImXkIbRBA6jUzB1g4RH",        
+                                 "name": "WebSearchTool",                       
+                                 "path": "search",                              
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "query": "Django open source project"      
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 789b29b164e5499da0617045010f2fd6           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_Kf1C77H0dcQRJh6g7zIW6wfK",        
+                                 "name": "WebSearchTool",                       
+                                 "path": "search",                              
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "query": "Flask open source project"       
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[03/13/25 21:09:30] INFO     Subtask f6cccfbd06344588bf2ab67d54890cbe           
+                             Response: {"title": "GitHub -                      
+                             litestar-org/litestar: Production-ready, Light,    
+                             Flexible and ...", "url":                          
+                             "https://github.com/litestar-org/litestar",        
+                             "description": "Litestar is an open-source project,
+                             and we enjoy the support of our sponsors to help   
+                             fund the exciting work we do. A huge thanks to our 
+                             sponsors: Check out our sponsors in the docs. If   
+                             you would like to support the work that we do      
+                             please consider becoming a sponsor via Polar.sh    
+                             (preferred), GitHub or Open Collective."}          
+                                                                                
+                             {"title": "Litestar - GitHub", "url":              
+                             "https://github.com/litestar-org/", "description": 
+                             "Litestar is an open-source project, and we enjoy  
+                             the support of our sponsors to help fund the       
+                             exciting work we do. A huge thanks to our sponsors:
+                             Gold Sponsors. Silver Sponsors. Check out our      
+                             sponsors in the docs. If you would like to support 
+                             the work that we do please consider becoming a     
+                             sponsor on GitHub or Open Collective."}            
+                                                                                
+                             {"title": "GitHub - litestar-org/awesome-litestar: 
+                             A curated list of resources ...", "url":           
+                             "https://github.com/litestar-org/awesome-litestar",
+                             "description": "litestar-aiosql - A plugin for the 
+                             aiosql database query builder. * litestar-granian -
+                             A plugin for the Granian HTTP server, written in   
+                             Rust. * litestar-svcs - A plugin for the SVCS      
+                             service locater/dependency injection library. *    
+                             litestar-saq-htmx - Proof of concept using SAQ,    
+                             Litestar, HTMX, and Server-Sent events for a simple
+                             SAQ job monitor."}                                 
+                                                                                
+                             {"title": "litestar - PyPI", "url":                
+                             "https://pypi.org/project/litestar/",              
+                             "description": "Like all Litestar projects, this   
+                             application is open to contributions, big and      
+                             small. Sponsors. Litestar is an open-source        
+                             project, and we enjoy the support of our sponsors  
+                             to help fund the exciting work we do. A huge thanks
+                             to our sponsors: Check out our sponsors in the     
+                             docs"}                                             
+                                                                                
+                             {"title": "Exploring LiteStar: A Python Framework  
+                             for Lightweight Web ... - Medium", "url":          
+                             "https://medium.com/@rajputgajanan50/exploring-lite
+                             star-a-python-framework-for-lightweight-web-develop
+                             ment-e3a9749f23de", "description":                 
+                             "\ud83d\udc49What is LiteStar?. LiteStar is a      
+                             Python web framework designed for simplicity and   
+                             flexibility. It is open-source and built with the  
+                             goal of being easy to learn and use, making it an  
+                             excellent ..."}                                    
+                    INFO     Subtask 429f11b95312448e8df5661f964d0a8a           
+                             Response: {"title": "10 Must-See Django Open-Source
+                             Projects to Inspire Your Next Web App", "url":     
+                             "https://medium.com/@luisprooc/10-must-see-django-o
+                             pen-source-projects-to-inspire-your-next-web-app-70
+                             7c963b4a66", "description": "Django Job Portal. One
+                             of the benefits of using this Open Source Project  
+                             is the flexibility it offers. With access to the   
+                             source code, developers can customize and extend   
+                             the platform to meet the ..."}                     
+                                                                                
+                             {"title": "GitHub - wsvincent/awesome-django: A    
+                             curated list of awesome things ...", "url":        
+                             "https://github.com/wsvincent/awesome-django",     
+                             "description": "Zulip - Open-source team chat.     
+                             Django-CRM - Open Source Python CRM based on       
+                             Django. django-job-portal - Job portal application 
+                             using Django. Built with Django - Curated list of  
+                             awesome Django projects. PostHog - Open-source     
+                             product analytics. HyperKitty - A web interface to 
+                             access GNU Mailman v3 archives."}                  
+                                                                                
+                             {"title": "Top 45+ Django Projects with Source Code
+                             for 2025 [Beginners to ...", "url":                
+                             "https://www.geeksforgeeks.org/django-projects/",  
+                             "description": "Open In App. Next Article: Top 10  
+                             Django Projects For Beginners With Source Code.    
+                             Python Django Projects with Source Code (Beginners 
+                             to Advanced) ... Python Django Projects with Source
+                             Code - Adding a project portfolio to your resume   
+                             helps to show your skills and potential to your    
+                             recruiter. Because in the tech space, real-time    
+                             project ..."}                                      
+                                                                                
+                             {"title": "django-project \u00b7 GitHub Topics     
+                             \u00b7 GitHub", "url":                             
+                             "https://github.com/topics/django-project",        
+                             "description": "Django Dashboard Black -           
+                             Open-source Seed Project | AppSeed. ... A free,    
+                             open-source Blog CMS based on the \"Django\" and   
+                             \"Editorial\" HTML5 theme. blog cms django html5   
+                             podcast skill django-application django-cms        
+                             django-project videocast. Updated Mar 6, 2025;     
+                             Python;"}                                          
+                                                                                
+                             {"title": "The web framework for perfectionists    
+                             with deadlines | Django", "url":                   
+                             "https://www.djangoproject.com/", "description":   
+                             "Django is a high-level Python web framework that  
+                             encourages rapid development and clean, pragmatic  
+                             design. ... It's free and open source. Ridiculously
+                             fast. Django was designed to help developers take  
+                             applications from concept to completion as quickly 
+                             as possible. ... Our non-profit supports the       
+                             project Support Django Your contribution makes     
+                             ..."}                                              
+                    INFO     Subtask 15a3ea6372104691931a18ee1155678e           
+                             Response: {"title":                                
+                             "Kludex/awesome-fastapi-projects - GitHub", "url": 
+                             "https://github.com/Kludex/awesome-fastapi-projects
+                             ", "description": "Contribute to                   
+                             Kludex/awesome-fastapi-projects development by     
+                             creating an account on GitHub. List of FastAPI     
+                             projects! :sunglasses: :rocket: . Contribute to    
+                             Kludex/awesome-fastapi-projects development by     
+                             creating an account on GitHub. ... Fund open source
+                             developers The ReadME Project. GitHub community    
+                             articles Repositories. Topics Trending ..."}       
+                                                                                
+                             {"title": "GitHub - mjhea0/awesome-fastapi: A      
+                             curated list of awesome things ...", "url":        
+                             "https://github.com/mjhea0/awesome-fastapi",       
+                             "description": "Awesome FastAPI Projects -         
+                             Organized list of projects that use FastAPI.       
+                             Bitcart - Platform for merchants, users and        
+                             developers which offers easy setup and use. Bali - 
+                             Simplify Cloud Native Microservices development    
+                             base on FastAPI and gRPC. Bunnybook - A tiny social
+                             network built with FastAPI, React+RxJs, Neo4j,     
+                             PostgreSQL, and Redis."}                           
+                                                                                
+                             {"title": "Top 23 Fastapi Open-Source Projects -   
+                             LibHunt", "url":                                   
+                             "https://www.libhunt.com/topic/fastapi",           
+                             "description": "Which are the best open-source     
+                             Fastapi projects? This list will help you: fastapi,
+                             full-stack-fastapi-template, Hello-Python, serve,  
+                             sqlmodel, HivisionIDPhotos, and                    
+                             Douyin_TikTok_Download_API. LibHunt. Popularity    
+                             Index Add a project About. Fastapi. Open-source    
+                             projects categorized as Fastapi"}                  
+                                                                                
+                             {"title": "GitHub - fastapi/fastapi: FastAPI       
+                             framework, high performance, easy to ...", "url":  
+                             "https://github.com/FastAPI/FastAPI",              
+                             "description": "When you install FastAPI with pip  
+                             install \"fastapi[standard]\" it comes with the    
+                             standard group of optional dependencies:. Used by  
+                             Pydantic: email-validator - for email validation.; 
+                             Used by Starlette: httpx - Required if you want to 
+                             use the TestClient.; jinja2 - Required if you want 
+                             to use the default template configuration.;        
+                             python-multipart - Required if you want to support 
+                             form \"parsing ..."}                               
+                                                                                
+                             {"title": "Exploring the Best Open-Source FastAPI  
+                             Projects for Developers", "url":                   
+                             "https://medium.com/@rameshkannanyt0078/exploring-t
+                             he-best-open-source-fastapi-projects-for-developers
+                             -fb8e738de6e2", "description": "Top Open-Source    
+                             FastAPI Projects You Should Know 1. FastAPI        
+                             (Official Repository) \ud83d\udccc The foundation  
+                             of all FastAPI projects The official FastAPI       
+                             repository is the ultimate resource for ..."}      
+                    INFO     Subtask 789b29b164e5499da0617045010f2fd6           
+                             Response: {"title": "Python Flask Projects with    
+                             Source Code (Beginners to Advanced)", "url":       
+                             "https://www.geeksforgeeks.org/flask-projects/",   
+                             "description": "Deploying Flask Projects. Once you 
+                             have completed your Flask project, you'll want to  
+                             deploy it for the world to see. Consider the       
+                             following deployment options: Deployment Options.  
+                             Heroku: A cloud platform that simplifies the       
+                             deployment process. PythonAnywhere: A hosting      
+                             service specifically designed for Python web       
+                             applications."}                                    
+                                                                                
+                             {"title": "Awesome Flask - GitHub", "url":         
+                             "https://github.com/mjhea0/awesome-flask",         
+                             "description": "Connexion - Open source,           
+                             OpenAPI-based, REST framework built on top of      
+                             Flask. Flasgger - OpenAPI and Swagger UI. Builds   
+                             the API from Flasgger models, marshmallow models,  
+                             dicts, or YAML files. ... Please support this open 
+                             source project by purchasing one of our Flask      
+                             courses. Learn how to build, test, and deploy      
+                             microservices powered by Docker ..."}              
+                                                                                
+                             {"title": "Top 23 Flask Open-Source Projects -     
+                             LibHunt", "url":                                   
+                             "https://www.libhunt.com/topic/flask",             
+                             "description": "For Flask, the Flask Mega-Tutorial 
+                             has a free online version. There are also two      
+                             courses over at TestDriven.io worth recommending:  
+                             TDD with Python, Flask and Docker and              
+                             Authentication with Flask, React, and Docker. If   
+                             you prefer video, there are many Flask courses on  
+                             Udemy but the best video course I've seen is Build 
+                             a SaaS App with Flask and ..."}                    
+                                                                                
+                             {"title": "10+ Top Python Flask Projects in 2025 - 
+                             with Source Code", "url":                          
+                             "https://machinelearningprojects.net/flask-projects
+                             /", "description": "Many Flask projects with source
+                             code are part of active open-source communities.   
+                             Engaging with these communities allows you to learn
+                             from others, seek advice, and collaborate on       
+                             improving existing projects. Steps to Start a Flask
+                             Project Installing Flask. To start a Flask project,
+                             developers need to install Flask using pip, the    
+                             Python package ..."}                               
+                                                                                
+                             {"title": "GitHub - pallets/flask: The Python micro
+                             framework for building web ...", "url":            
+                             "https://github.com/pallets/flask", "description": 
+                             "Flask is a lightweight WSGI web application       
+                             framework. It is designed to make getting started  
+                             quick and easy, with the ability to scale up to    
+                             complex applications. It began as a simple wrapper 
+                             around Werkzeug and Jinja, and has become one of   
+                             the most popular Python web application            
+                             frameworks.. Flask offers suggestions, but doesn't 
+                             enforce any dependencies or project layout."}      
+                    INFO     Subtask df845c8771fd4e90bd456d00c4f1c1a3           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_Vs5jjf6bcJodlUynN0P9klK7",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url":                                     
+                             "https://github.com/litestar-org/litestar"         
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+[03/13/25 21:09:31] INFO     Subtask 0b23f89deca94da4815724cc21258692           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_KZlxsij7iCPsuLACoENmoS5h",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url": "https://github.com/pallets/flask"  
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask b8f2ff64e854456e9686148c189994e2           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_6qEGMgllTX2RR5sCMlablt1j",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url": "https://www.djangoproject.com/"    
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 4e2e180ddda94409a916ef05de4d80e8           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_9pUqlgfrZpI9wjaalmYpR0Fu",        
+                                 "name": "WebScraperTool",                      
+                                 "path": "get_content",                         
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "url": "https://github.com/FastAPI/FastAPI"
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask b8f2ff64e854456e9686148c189994e2           
+                             Response: Meet Django                              
+                             Django is a high-level Python web framework that   
+                             encourages rapid development and clean, pragmatic  
+                             design. Built by experienced developers, it takes  
+                             care of much of the hassle of web development, so  
+                             you can focus on writing your app without needing  
+                             to reinvent the wheel. It’s free and open source.  
+                             - Ridiculously fast.                               
+                             -                                                  
+                             Django was designed to help developers take        
+                             applications from concept to completion as quickly 
+                             as possible.                                       
+                             - Reassuringly secure.                             
+                             -                                                  
+                             Django takes security seriously and helps          
+                             developers avoid many common security mistakes.    
+                             - Exceedingly scalable.                            
+                             -                                                  
+                             Some of the busiest sites on the web leverage      
+                             Django’s ability to quickly and flexibly scale.    
+                             [Learn more about                                  
+                             Django](https://www.djangoproject.com/start/overvie
+                             w/)                                                
+                             Join the Community                                 
+                             [Back to Top](#top)                                
+                    INFO     Subtask df845c8771fd4e90bd456d00c4f1c1a3           
+                             Response: Litestar is a powerful, flexible yet     
+                             opinionated ASGI framework, focused on building    
+                             APIs, and offers high-performance data validation  
+                             and parsing, dependency injection, first-class ORM 
+                             integration, authorization primitives, and much    
+                             more that's needed to get applications up and      
+                             running.                                           
+                             Check out the [documentation                       
+                             📚](https://docs.litestar.dev/) for a detailed     
+                             overview of                                        
+                             its features!                                      
+                             Additionally, the [Litestar fullstack              
+                             repository](https://github.com/litestar-org/litesta
+                             r-fullstack)                                       
+                             can give you a good impression how a fully fledged 
+                             Litestar application may look.                     
+                             Table of Contents                                  
+                             pip install litestar                               
+                             from litestar import Litestar, get                 
+                             @get("/")                                          
+                             def hello_world() -> dict[str, str]:               
+                             """Keeping the tradition alive with hello world."""
+                             return {"hello": "world"}                          
+                             app = Litestar(route_handlers=[hello_world])       
+                             [Class based                                       
+                             controllers](#class-based-controllers)[Dependency  
+                             Injection](#dependency-injection)[Layered          
+                             Middleware](#middleware)[Plugin                    
+                             System](#plugin-system-orm-support-and-dtos)[OpenAP
+                             I 3.1 schema generation](#openapi)[Life Cycle      
+                             Hooks](#request-life-cycle-hooks)[Route Guards     
+                             based Authorization](#route-guards)- Support for   
+                                                                                
+                             dataclasses                                        
+                             ,TypedDict                                         
+                             ,[pydantic version 1 and version                   
+                             2](https://docs.pydantic.dev/latest/),[msgspec](htt
+                             ps://github.com/jcrist/msgspec)and[attrs](https://w
+                             ww.attrs.org/en/stable/) - Layered parameter       
+                             declaration                                        
+                             - Support for                                      
+                             [RFC                                               
+                             9457](https://datatracker.ietf.org/doc/html/rfc9457
+                             )standardized "Problem Detail" error responses     
+                             [Automatic API documentation                       
+                             with](#redoc-swagger-ui-and-stoplight-elements-api-
+                             documentation):[Trio](https://trio.readthedocs.io/e
+                             n/stable/)support (built-in,                       
+                             via[AnyIO](https://anyio.readthedocs.io/))-        
+                             Ultra-fast validation, serialization and           
+                             deserialization using                              
+                             [msgspec](https://github.com/jcrist/msgspec) -     
+                             SQLAlchemy integration                             
+                             - Piccolo ORM Support                              
+                             Pre-built Example Apps                             
+                                                                                
+                             [litestar-hello-world](https://github.com/litestar-
+                             org/litestar-hello-world): A bare-minimum          
+                             application setup. Great for testing and POC       
+                             work.[litestar-fullstack](https://github.com/litest
+                             ar-org/litestar-fullstack): A reference application
+                             that contains most of the boilerplate required for 
+                             a web application. It features a Litestar app      
+                             configured with best practices, SQLAlchemy 2.0 and 
+                             SAQ, a frontend integrated with Vitejs and Jinja2  
+                             templates, Docker, and more. Like all Litestar     
+                             projects, this application is open to              
+                             contributions, big and small.                      
+                             Litestar is an open-source project, and we enjoy   
+                             the support of our sponsors to help fund the       
+                             exciting work we do.                               
+                             A huge thanks to our sponsors:                     
+                             [Check out our sponsors in the                     
+                             docs](https://docs.litestar.dev/dev/#sponsors)     
+                             If you would like to support the work that we do   
+                             please consider [becoming a                        
+                             sponsor](https://polar.sh/litestar-org)            
+                                                                                
+                             via [Polar.sh](https://polar.sh/litestar-org)      
+                             (preferred),                                       
+                             [GitHub](https://github.com/sponsors/litestar-org) 
+                             or [Open                                           
+                             Collective](https://opencollective.com/litestar).  
+                             Also, exclusively with                             
+                             [Polar](https://polar.sh/litestar-org), you can    
+                             engage in pledge-based sponsorships.               
+                             While supporting function-based route handlers,    
+                             Litestar also supports and promotes python OOP     
+                             using class based controllers:                     
+                             Example for class-based controllers                
+                             from typing import List, Optional                  
+                             from datetime import datetime                      
+                             from litestar import Controller, get, post, put,   
+                             patch, delete                                      
+                             from litestar.dto import DTOData                   
+                             from pydantic import UUID4                         
+                             from my_app.models import User, PartialUserDTO     
+                             class UserController(Controller):                  
+                             path = "/users"                                    
+                             @post()                                            
+                             async def create_user(self, data: User) -> User:   
+                             ...                                                
+                             @get()                                             
+                             async def list_users(self) -> List[User]: ...      
+                             @get(path="/{date:int}")                           
+                             async def list_new_users(self, date: datetime) ->  
+                             List[User]: ...                                    
+                             @patch(path="/{user_id:uuid}", dto=PartialUserDTO) 
+                             async def partial_update_user(                     
+                                                                                
+                             self, user_id: UUID4, data: DTOData[PartialUserDTO]
+                             ) -> User: ...                                     
+                             @put(path="/{user_id:uuid}")                       
+                             async def update_user(self, user_id: UUID4, data:  
+                             User) -> User: ...                                 
+                             @get(path="/{user_name:str}")                      
+                             async def get_user_by_name(self, user_name: str) ->
+                             Optional[User]: ...                                
+                             @get(path="/{user_id:uuid}")                       
+                             async def get_user(self, user_id: UUID4) -> User:  
+                             ...                                                
+                             @delete(path="/{user_id:uuid}")                    
+                             async def delete_user(self, user_id: UUID4) ->     
+                             None: ...                                          
+                             Litestar is rigorously typed, and it enforces      
+                             typing. For example, if you forget to type a return
+                             value for a route handler, an exception will be    
+                             raised. The reason for this is that Litestar uses  
+                             typing data to generate OpenAPI specs, as well as  
+                             to validate and parse data. Thus, typing is        
+                             essential to the framework.                        
+                             Furthermore, Litestar allows extending its support 
+                             using plugins.                                     
+                             Litestar has a plugin system that allows the user  
+                             to extend serialization/deserialization, OpenAPI   
+                             generation, and other features.                    
+                                                                                
+                             It ships with a builtin plugin for SQL Alchemy,    
+                             which allows the user to use SQLAlchemy declarative
+                             classes "natively" i.e., as type parameters that   
+                             will be serialized/deserialized and to return them 
+                             as values from route handlers.                     
+                             Litestar also supports the programmatic creation of
+                             DTOs with a DTOFactory                             
+                             class, which also supports the use of              
+                             plugins.                                           
+                             Litestar has custom logic to generate OpenAPI 3.1.0
+                             schema, include optional generation of examples    
+                             using the                                          
+                             [                                                  
+                             polyfactory](https://pypi.org/project/polyfactory/)
+                             library.                                           
+                             Litestar serves the documentation from the         
+                             generated OpenAPI schema with:                     
+                             All these are available and enabled by default.    
+                             Litestar has a simple but powerful DI system       
+                             inspired by pytest. You can define named           
+                             dependencies - sync or async - at different levels 
+                             of the application, and then selective use or      
+                             overwrite them.                                    
+                             Example for DI                                     
+                             from litestar import Litestar, get                 
+                             from litestar.di import Provide                    
+                             async def my_dependency() -> str: ...              
+                             @get("/")                                          
+                             async def index(injected: str) -> str:             
+                                                                                
+                             return injected                                    
+                             app = Litestar([index], dependencies={"injected":  
+                             Provide(my_dependency)})                           
+                             Litestar supports typical ASGI middleware and ships
+                             with middlewares to handle things such as          
+                             - CORS                                             
+                             - CSRF                                             
+                             - Rate limiting                                    
+                             - GZip and Brotli compression                      
+                             - Client- and server-side sessions                 
+                             Litestar has an authorization mechanism called     
+                             guards                                             
+                             , which allows the user to define guard functions  
+                             at different                                       
+                             level of the application (app, router, controller  
+                             etc.) and validate the request before hitting the  
+                             route handler                                      
+                             function.                                          
+                             Example for route guards                           
+                             from litestar import Litestar, get                 
+                             from litestar.connection import ASGIConnection     
+                             from litestar.handlers.base import BaseRouteHandler
+                             from litestar.exceptions import                    
+                             NotAuthorizedException                             
+                             async def is_authorized(connection: ASGIConnection,
+                             handler: BaseRouteHandler) -> None:                
+                             # validate authorization                           
+                             # if not authorized, raise NotAuthorizedException  
+                             raise NotAuthorizedException()                     
+                             @get("/", guards=[is_authorized])                  
+                             async def index() -> None: ...                     
+                             app = Litestar([index])                            
+                             Litestar supports request life cycle hooks,        
+                             similarly to Flask - i.e. before_request           
+                                                                                
+                             and after_request                                  
+                             Litestar is fast. It is on par with, or            
+                             significantly faster than comparable ASGI          
+                             frameworks.                                        
+                             You can see and run the benchmarks                 
+                             [here](https://github.com/litestar-org/api-performa
+                             nce-tests),                                        
+                             or read more about it                              
+                             [here](https://docs.litestar.dev/latest/benchmarks)
+                             in our documentation.                              
+                             Litestar is open to contributions big and small.   
+                             You can always [join our                           
+                             discord](https://discord.gg/X3FJqy8d2j) server     
+                             or [join our                                       
+                             Matrix](https://matrix.to/#/#litestar:matrix.org)  
+                             space                                              
+                             to discuss contributions and project maintenance.  
+                             For guidelines on how to contribute, please        
+                             see [the contribution                              
+                             guide](/litestar-org/litestar/blob/main/CONTRIBUTIN
+                             G.rst).                                            
+                             Thanks goes to these wonderful people:             
+                             [Emoji                                             
+                             Key](https://allcontributors.org/docs/en/emoji-key)
+                             This project follows the                           
+                             [all-contributors](https://github.com/all-contribut
+                             ors/all-contributors) specification.               
+                             Contributions of any kind welcome!                 
+                    INFO     Subtask 0b23f89deca94da4815724cc21258692           
+                             Response: Flask is a lightweight                   
+                             [WSGI](https://wsgi.readthedocs.io/) web           
+                             application framework. It is designed              
+                             to make getting started quick and easy, with the   
+                             ability to scale up to                             
+                             complex applications. It began as a simple wrapper 
+                             around                                             
+                             [Werkzeug](https://werkzeug.palletsprojects.com/)  
+                             and [Jinja](https://jinja.palletsprojects.com/),   
+                             and has become one of the most popular Python web  
+                             application frameworks.                            
+                             Flask offers suggestions, but doesn't enforce any  
+                             dependencies or project layout. It is up to the    
+                             developer to choose the tools and libraries they   
+                             want to use. There are many extensions provided by 
+                             the community that make adding new functionality   
+                             easy.                                              
+                             # save this as app.py                              
+                             from flask import Flask                            
+                             app = Flask(__name__)                              
+                             @app.route("/")                                    
+                             def hello():                                       
+                             return "Hello, World!"                             
+                             $ flask run                                        
+                             * Running on http://127.0.0.1:5000/ (Press CTRL+C  
+                             to quit)                                           
+                             The Pallets organization develops and supports     
+                             Flask and the libraries                            
+                             it uses. In order to grow the community of         
+                             contributors and users, and                        
+                             allow the maintainers to devote more time to the   
+                             projects, [please                                  
+                             donate today](https://palletsprojects.com/donate). 
+                             See our [detailed contributing                     
+                             documentation](https://palletsprojects.com/contribu
+                             ting/) for many ways to                            
+                             contribute, including reporting issues, requesting 
+                             features, asking or answering                      
+                             questions, and making PRs.                         
+[03/13/25 21:09:32] INFO     Subtask 4e2e180ddda94409a916ef05de4d80e8           
+                             Response: FastAPI framework, high performance, easy
+                             to learn, fast to code, ready for production       
+                             Documentation:                                     
+                             [https://fastapi.tiangolo.com](https://fastapi.tian
+                             golo.com)                                          
+                             Source Code:                                       
+                             [https://github.com/fastapi/fastapi](https://github
+                             .com/fastapi/fastapi)                              
+                             FastAPI is a modern, fast (high-performance), web  
+                             framework for building APIs with Python based on   
+                             standard Python type hints.                        
+                             The key features are:                              
+                             - Fast: Very high performance, on par with NodeJS  
+                             and Go (thanks to Starlette and Pydantic).         
+                             [One of the fastest Python frameworks              
+                             available](#performance). - Fast to code: Increase 
+                             the speed to develop features by about 200% to     
+                             300%. *                                            
+                             - Fewer bugs: Reduce about 40% of human (developer)
+                             induced errors. *                                  
+                             - Intuitive: Great editor support. Completion      
+                             everywhere. Less time debugging.                   
+                             - Easy: Designed to be easy to use and learn. Less 
+                             time reading docs.                                 
+                             - Short: Minimize code duplication. Multiple       
+                             features from each parameter declaration. Fewer    
+                             bugs.                                              
+                             - Robust: Get production-ready code. With automatic
+                             interactive documentation.                         
+                             - Standards-based: Based on (and fully compatible  
+                             with) the open standards for APIs:                 
+                             [OpenAPI](https://github.com/OAI/OpenAPI-Specificat
+                             ion)(previously known as Swagger) and[JSON         
+                             Schema](https://json-schema.org/).                 
+                             * estimation based on tests on an internal         
+                             development team, building production applications.
+                             "[...] I'm using FastAPI a ton these days. [...]   
+                             I'm actually planning to use it for all of my      
+                             team's ML services at Microsoft. Some of them are  
+                             getting integrated into the core Windows product   
+                             and some Office products."                         
+                             [(ref)](https://github.com/fastapi/fastapi/pull/26)
+                             "We adopted the FastAPI library to spawn a REST    
+                             server that can be queried to obtain predictions.  
+                             [for Ludwig]"                                      
+                                                                                
+                             [(ref)](https://eng.uber.com/ludwig-v0-2/)         
+                             "Netflix is pleased to announce the open-source    
+                             release of our crisis management orchestration     
+                             framework: Dispatch! [built with FastAPI]"         
+                             [(ref)](https://netflixtechblog.com/introducing-dis
+                             patch-da4b8a2a8072)                                
+                             "I’m over the moon excited about FastAPI. It’s so  
+                             fun!"                                              
+                             [Python                                            
+                             Bytes](https://pythonbytes.fm/episodes/show/123/tim
+                             e-to-right-the-py-wrongs?time_in_sec=855)podcast   
+                             host                                               
+                             [(ref)](https://twitter.com/brianokken/status/11122
+                             20079972728832)                                    
+                             "Honestly, what you've built looks super solid and 
+                             polished. In many ways, it's what I wanted Hug to  
+                             be - it's really inspiring to see someone build    
+                             that."                                             
+                             "If you're looking to learn one modern framework   
+                             for building REST APIs, check out FastAPI [...]    
+                             It's fast, easy to use and easy to learn [...]"    
+                             "We've switched over to FastAPI for our APIs [...] 
+                             I think you'll like it [...]"                      
+                             "If anyone is looking to build a production Python 
+                             API, I would highly recommend FastAPI. It is       
+                             beautifully designed, simple to use and highly     
+                             scalable, it has become a key component in our API 
+                             first development strategy and is driving many     
+                             automations and services such as our Virtual TAC   
+                             Engineer."                                         
+                             [(ref)](https://www.linkedin.com/posts/deonpillsbur
+                             y_cisco-cx-python-activity-6963242628536487936-trAp
+                             /)                                                 
+                             If you are building a CLI app to be used in the    
+                             terminal instead of a web API, check out           
+                             [Typer](https://typer.tiangolo.com/).              
+                             Typer is FastAPI's little sibling. And it's        
+                             intended to be the FastAPI of CLIs. ⌨️ 🚀           
+                             FastAPI stands on the shoulders of giants:         
+                                                                                
+                             Create and activate a [virtual                     
+                             environment](https://fastapi.tiangolo.com/virtual-e
+                             nvironments/) and then install FastAPI:            
+                             $ pip install "fastapi[standard]"                  
+                             ---> 100%                                          
+                             Note: Make sure you put "fastapi[standard]"        
+                             in quotes to ensure it works in all terminals.     
+                             - Create a file                                    
+                             main.py                                            
+                             with:                                              
+                             from typing import Union                           
+                             from fastapi import FastAPI                        
+                             app = FastAPI()                                    
+                             @app.get("/")                                      
+                             def read_root():                                   
+                             return {"Hello": "World"}                          
+                             @app.get("/items/{item_id}")                       
+                             def read_item(item_id: int, q: Union[str, None] =  
+                             None):                                             
+                             return {"item_id": item_id, "q": q}                
+                             Or use async def                                   
+                             ...                                                
+                             If your code uses async                            
+                             / await                                            
+                             , use async def                                    
+                             :                                                  
+                             from typing import Union                           
+                             from fastapi import FastAPI                        
+                             app = FastAPI()                                    
+                             @app.get("/")                                      
+                             async def read_root():                             
+                             return {"Hello": "World"}                          
+                             @app.get("/items/{item_id}")                       
+                                                                                
+                             async def read_item(item_id: int, q: Union[str,    
+                             None] = None):                                     
+                             return {"item_id": item_id, "q": q}                
+                             Note:                                              
+                             If you don't know, check the "In a hurry?" section 
+                             about [ async and await in the                     
+                             docs](https://fastapi.tiangolo.com/async/#in-a-hurr
+                             y).                                                
+                             Run the server with:                               
+                             $ fastapi dev main.py                              
+                             ╭────────── FastAPI CLI - Development mode         
+                             ───────────╮                                       
+                             │ │                                                
+                             │ Serving at: http://127.0.0.1:8000 │              
+                             │ │                                                
+                             │ API docs: http://127.0.0.1:8000/docs │           
+                             │ │                                                
+                             │ Running in development mode, for production use: 
+                             │                                                  
+                             │ │                                                
+                             │ fastapi run │                                    
+                             │ │                                                
+                             ╰──────────────────────────────────────────────────
+                             ───╯                                               
+                             INFO: Will watch for changes in these directories: 
+                             ['/home/user/code/awesomeapp']                     
+                                                                                
+                             INFO: Uvicorn running on http://127.0.0.1:8000     
+                             (Press CTRL+C to quit)                             
+                             INFO: Started reloader process [2248755] using     
+                             WatchFiles                                         
+                             INFO: Started server process [2248757]             
+                             INFO: Waiting for application startup.             
+                             INFO: Application startup complete.                
+                             About the command fastapi dev main.py              
+                             ...                                                
+                             The command fastapi dev                            
+                             reads your main.py                                 
+                             file, detects the FastAPI app in it, and starts a  
+                             server using [Uvicorn](https://www.uvicorn.org).   
+                             By default, fastapi dev                            
+                             will start with auto-reload enabled for local      
+                             development.                                       
+                             You can read more about it in the [FastAPI CLI     
+                             docs](https://fastapi.tiangolo.com/fastapi-cli/).  
+                             Open your browser at                               
+                             [http://127.0.0.1:8000/items/5?q=somequery](http://
+                             127.0.0.1:8000/items/5?q=somequery).               
+                             You will see the JSON response as:                 
+                             {"item_id": 5, "q": "somequery"}                   
+                             You already created an API that:                   
+                             - Receives HTTP requests in the paths              
+                             /                                                  
+                             and/items/{item_id}                                
+                             . - Both paths take                                
+                             GET                                                
+                             operations (also known as HTTP methods). - The path
+                             /items/{item_id}                                   
+                             has a path parameteritem_id                        
+                             that should be anint                               
+                             . - The path                                       
+                             /items/{item_id}                                   
+                             has an optionalstr                                 
+                             query parameterq                                   
+                             .                                                  
+                             Now go to                                          
+                             [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/
+                             docs).                                             
+                             You will see the automatic interactive API         
+                             documentation (provided by [Swagger                
+                             UI](https://github.com/swagger-api/swagger-ui)):   
+                             And now, go to                                     
+                             [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000
+                             /redoc).                                           
+                                                                                
+                             You will see the alternative automatic             
+                             documentation (provided by                         
+                             [ReDoc](https://github.com/Rebilly/ReDoc)):        
+                             Now modify the file main.py                        
+                             to receive a body from a PUT                       
+                             request.                                           
+                             Declare the body using standard Python types,      
+                             thanks to Pydantic.                                
+                             from typing import Union                           
+                             from fastapi import FastAPI                        
+                             from pydantic import BaseModel                     
+                             app = FastAPI()                                    
+                             class Item(BaseModel):                             
+                             name: str                                          
+                             price: float                                       
+                             is_offer: Union[bool, None] = None                 
+                             @app.get("/")                                      
+                             def read_root():                                   
+                             return {"Hello": "World"}                          
+                             @app.get("/items/{item_id}")                       
+                             def read_item(item_id: int, q: Union[str, None] =  
+                             None):                                             
+                             return {"item_id": item_id, "q": q}                
+                             @app.put("/items/{item_id}")                       
+                             def update_item(item_id: int, item: Item):         
+                             return {"item_name": item.name, "item_id": item_id}
+                             The fastapi dev                                    
+                             server should reload automatically.                
+                             Now go to                                          
+                             [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/
+                             docs).                                             
+                             - The interactive API documentation will be        
+                             automatically updated, including the new body:     
+                             - Click on the button "Try it out", it allows you  
+                             to fill the parameters and directly interact with  
+                             the API:                                           
+                             - Then click on the "Execute" button, the user     
+                             interface will communicate with your API, send the 
+                             parameters, get the results and show them on the   
+                             screen:                                            
+                             And now, go to                                     
+                             [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000
+                             /redoc).                                           
+                             - The alternative documentation will also reflect  
+                             the new query parameter and body:                  
+                             In summary, you declare once the types of          
+                             parameters, body, etc. as function parameters.     
+                             You do that with standard modern Python types.     
+                                                                                
+                             You don't have to learn a new syntax, the methods  
+                             or classes of a specific library, etc.             
+                             Just standard Python.                              
+                             For example, for an int                            
+                             :                                                  
+                             item_id: int                                       
+                             or for a more complex Item                         
+                             model:                                             
+                             item: Item                                         
+                             ...and with that single declaration you get:       
+                             - Editor support, including:                       
+                             - Completion.                                      
+                             - Type checks.                                     
+                             - Validation of data:                              
+                             - Automatic and clear errors when the data is      
+                             invalid.                                           
+                             - Validation even for deeply nested JSON objects.  
+                             - Conversion of input data: coming from the network
+                             to Python data and types. Reading from:            
+                             - JSON.                                            
+                             - Path parameters.                                 
+                             - Query parameters.                                
+                             - Cookies.                                         
+                             - Headers.                                         
+                             - Forms.                                           
+                             - Files.                                           
+                             - Conversion of output data: converting from Python
+                             data and types to network data (as JSON):          
+                             - Convert Python types (                           
+                             str                                                
+                             ,int                                               
+                             ,float                                             
+                             ,bool                                              
+                             ,list                                              
+                             , etc). datetime                                   
+                             objects.UUID                                       
+                             objects.- Database models.                         
+                             - ...and many more.                                
+                             - Convert Python types (                           
+                             - Automatic interactive API documentation,         
+                             including 2 alternative user interfaces:           
+                             - Swagger UI.                                      
+                             - ReDoc.                                           
+                             Coming back to the previous code example, FastAPI  
+                             will:                                              
+                             - Validate that there is an                        
+                             item_id                                            
+                             in the path forGET                                 
+                             andPUT                                             
+                             requests. - Validate that the                      
+                             item_id                                            
+                             is of typeint                                      
+                             forGET                                             
+                             andPUT                                             
+                             requests.- If it is not, the client will see a     
+                             useful, clear error.                               
+                             - Check if there is an optional query parameter    
+                             named                                              
+                             q                                                  
+                             (as inhttp://127.0.0.1:8000/items/foo?q=somequery  
+                             ) forGET                                           
+                             requests.- As the                                  
+                             q                                                  
+                             parameter is declared with= None                   
+                             , it is optional. - Without the                    
+                             None                                               
+                             it would be required (as is the body in the case   
+                             withPUT                                            
+                             ).                                                 
+                             - As the                                           
+                             - For                                              
+                             PUT                                                
+                             requests to/items/{item_id}                        
+                             , read the body as JSON:- Check that it has a      
+                             required attribute                                 
+                             name                                               
+                                                                                
+                             that should be astr                                
+                             . - Check that it has a required attribute         
+                             price                                              
+                             that has to be afloat                              
+                             . - Check that it has an optional attribute        
+                             is_offer                                           
+                             , that should be abool                             
+                             , if present. - All this would also work for deeply
+                             nested JSON objects.                               
+                             - Check that it has a required attribute           
+                             - Convert from and to JSON automatically.          
+                             - Document everything with OpenAPI, that can be    
+                             used by:                                           
+                             - Interactive documentation systems.               
+                             - Automatic client code generation systems, for    
+                             many languages.                                    
+                             - Provide 2 interactive documentation web          
+                             interfaces directly.                               
+                             We just scratched the surface, but you already get 
+                             the idea of how it all works.                      
+                             Try changing the line with:                        
+                             return {"item_name": item.name, "item_id": item_id}
+                             ...from:                                           
+                             ... "item_name": item.name ...                     
+                             ...to:                                             
+                             ... "item_price": item.price ...                   
+                             ...and see how your editor will auto-complete the  
+                             attributes and know their types:                   
+                             For a more complete example including more         
+                             features, see the [Tutorial - User                 
+                             Guide](https://fastapi.tiangolo.com/tutorial/).    
+                             Spoiler alert: the tutorial - user guide includes: 
+                             - Declaration of parameters from other different   
+                             places as: headers, cookies, form fields and files.
+                             - How to set validation constraints as             
+                             maximum_length                                     
+                             orregex                                            
+                             . - A very powerful and easy to use Dependency     
+                             Injection system.                                  
+                             - Security and authentication, including support   
+                             for OAuth2 with JWT tokens and HTTP Basic auth.    
+                             - More advanced (but equally easy) techniques for  
+                             declaring deeply nested JSON models (thanks to     
+                             Pydantic).                                         
+                             - GraphQL integration with                         
+                             [Strawberry](https://strawberry.rocks)and other    
+                             libraries. - Many extra features (thanks to        
+                             Starlette) as:                                     
+                             - WebSockets                                       
+                             - extremely easy tests based on HTTPX and          
+                             pytest                                             
+                             - CORS                                             
+                             - Cookie Sessions                                  
+                             - ...and more.                                     
+                                                                                
+                             Independent TechEmpower benchmarks show FastAPI    
+                             applications running under Uvicorn as [one of the  
+                             fastest Python frameworks                          
+                             available](https://www.techempower.com/benchmarks/#
+                             section=test&runid=7464e520-0dc2-473d-bd34-dbdfd7e8
+                             5911&hw=ph&test=query&l=zijzen-7), only below      
+                             Starlette and Uvicorn themselves (used internally  
+                             by FastAPI). (*)                                   
+                             To understand more about it, see the section       
+                             [Benchmarks](https://fastapi.tiangolo.com/benchmark
+                             s/).                                               
+                             FastAPI depends on Pydantic and Starlette.         
+                             When you install FastAPI with pip install          
+                             "fastapi[standard]"                                
+                             it comes with the standard                         
+                             group of optional dependencies:                    
+                             Used by Pydantic:                                  
+                             - for email validation.email-validator             
+                             Used by Starlette:                                 
+                             - Required if you want to use thehttpx             
+                             TestClient                                         
+                             .- Required if you want to use the default template
+                             configuration.jinja2                               
+                                                                                
+                             - Required if you want to support form "parsing",  
+                             withpython-multipart                               
+                             request.form()                                     
+                             .                                                  
+                             Used by FastAPI / Starlette:                       
+                             - for the server that loads and serves your        
+                             application. This includesuvicorn                  
+                             uvicorn[standard]                                  
+                             , which includes some dependencies (e.g.uvloop     
+                             ) needed for high performance serving.fastapi-cli  
+                             - to provide thefastapi                            
+                             command.                                           
+                             If you don't want to include the standard          
+                             optional dependencies, you can install with pip    
+                             install fastapi                                    
+                             instead of pip install "fastapi[standard]"         
+                             .                                                  
+                             There are some additional dependencies you might   
+                             want to install.                                   
+                             Additional optional Pydantic dependencies:         
+                             - for settings management.pydantic-settings        
+                             - for extra types to be used with                  
+                             Pydantic.pydantic-extra-types                      
+                             Additional optional FastAPI dependencies:          
+                             - Required if you want to useorjson                
+                             ORJSONResponse                                     
+                             .- Required if you want to useujson                
+                             UJSONResponse                                      
+                             .                                                  
+                             This project is licensed under the terms of the MIT
+                             license.                                           
+[03/13/25 21:09:34] INFO     PromptTask project-research-django                 
+                             Output: {"answer":"Django is a high-level Python   
+                             web framework that promotes rapid development and  
+                             clean, pragmatic design. It is built by experienced
+                             developers and is designed to take care of much of 
+                             the hassle of web development, allowing developers 
+                             to focus on writing their applications without     
+                             needing to reinvent the wheel. Django is free and  
+                             open source, making it accessible to a wide range  
+                             of developers.\n\nKey features of Django include   
+                             its speed, security, and scalability. It is        
+                             designed to help developers take applications from 
+                             concept to completion as quickly as possible, while
+                             also providing robust security features to help    
+                             avoid common security mistakes. Additionally,      
+                             Django is highly scalable, making it suitable for  
+                             some of the busiest sites on the                   
+                             web.","key_features":[{"name":"Rapid               
+                             Development","description":"Django is designed to  
+                             help developers take applications from concept to  
+                             completion as quickly as                           
+                             possible.","emoji":"⚡"},{"name":"Security","descri
+                             ption":"Django takes security seriously and helps  
+                             developers avoid many common security              
+                             mistakes.","emoji":"🔒"},{"name":"Scalability","des
+                             cription":"Django is exceedingly scalable, suitable
+                             for some of the busiest sites on the               
+                             web.","emoji":"📈"}]}                              
+[03/13/25 21:09:36] INFO     PromptTask project-research-litestar               
+                             Output: {"answer":"Litestar is a powerful and      
+                             flexible ASGI framework designed for building APIs.
+                             It focuses on high-performance data validation and 
+                             parsing, dependency injection, ORM integration, and
+                             authorization primitives. The framework supports   
+                             both function-based and class-based route handlers,
+                             and it is rigorously typed to ensure data          
+                             validation and OpenAPI spec generation.\n\nLitestar
+                             includes a plugin system for extending             
+                             serialization/deserialization and OpenAPI          
+                             generation, with built-in support for SQLAlchemy.  
+                             It also offers a simple but powerful dependency    
+                             injection system inspired by pytest, and supports  
+                             typical ASGI middleware for CORS, CSRF, rate       
+                             limiting, and more.\n\nThe framework is known for  
+                             its speed, being on par with or faster than        
+                             comparable ASGI frameworks. It is open to          
+                             contributions and supported by a community of      
+                             sponsors and contributors. Documentation and       
+                             community support are available through various    
+                             channels, including Discord and                    
+                             Matrix.","key_features":[{"name":"High-Performance 
+                             Data Handling","description":"Litestar offers      
+                             high-performance data validation and parsing,      
+                             making it suitable for building efficient          
+                             APIs.","emoji":"⚡"},{"name":"Dependency           
+                             Injection","description":"The framework includes a 
+                             simple but powerful dependency injection system    
+                             inspired by pytest, allowing for flexible          
+                             application                                        
+                             architecture.","emoji":"🔌"},{"name":"ORM          
+                             Integration","description":"Litestar supports      
+                             first-class ORM integration, including SQLAlchemy  
+                             and Piccolo ORM, for seamless database             
+                             interactions.","emoji":"🗄️"},{"name":"Authorization 
+                             Primitives","description":"It provides route guards
+                             and authorization mechanisms to secure API         
+                             endpoints.","emoji":"🔒"},{"name":"Plugin          
+                             System","description":"Litestar has a plugin system
+                             to extend its capabilities, including              
+                             serialization/deserialization and OpenAPI          
+                             generation.","emoji":"🔧"},{"name":"Fast           
+                             Performance","description":"The framework is       
+                             designed to be fast, often outperforming other ASGI
+                             frameworks.","emoji":"🚀"},{"name":"Open Source and
+                             Community Driven","description":"Litestar is       
+                             open-source and supported by a community of        
+                             contributors and sponsors.","emoji":"🌐"}]}        
+[03/13/25 21:09:37] INFO     PromptTask project-research-flask                  
+                             Output: {"answer":"Flask is a lightweight WSGI web 
+                             application framework designed to make getting     
+                             started with web development quick and easy, while 
+                             also being scalable for more complex applications. 
+                             It originated as a simple wrapper around Werkzeug  
+                             and Jinja and has grown to become one of the most  
+                             popular Python web frameworks. Flask is known for  
+                             its simplicity and flexibility, offering           
+                             suggestions but not enforcing any dependencies or  
+                             project layout. This allows developers to choose   
+                             their own tools and libraries. The framework is    
+                             supported by the Pallets organization, which also  
+                             develops the libraries it uses. Flask has a vibrant
+                             community that contributes extensions to add new   
+                             functionalities                                    
+                             easily.","key_features":[{"name":"Lightweight      
+                             Framework","description":"Flask is a lightweight   
+                             framework that is easy to get started with, making 
+                             it ideal for beginners and small                   
+                             projects.","emoji":"🌟"},{"name":"Scalable","descri
+                             ption":"Despite its simplicity, Flask can scale up 
+                             to support complex                                 
+                             applications.","emoji":"📈"},{"name":"Flexibility",
+                             "description":"Flask does not enforce any          
+                             dependencies or project layout, allowing developers
+                             to choose their own tools and                      
+                             libraries.","emoji":"🛠️"},{"name":"Community        
+                             Extensions","description":"There are many          
+                             community-provided extensions that make adding new 
+                             functionality                                      
+                             easy.","emoji":"🔌"},{"name":"Supported by         
+                             Pallets","description":"The Pallets organization   
+                             develops and supports Flask and its associated     
+                             libraries.","emoji":"🤝"}]}                        
+[03/13/25 21:09:39] INFO     PromptTask project-research-fastapi                
+                             Output: {"answer":"FastAPI is a modern,            
+                             high-performance web framework for building APIs   
+                             with Python. It is designed to be easy to use and  
+                             learn, with a focus on speed and efficiency.       
+                             FastAPI leverages standard Python type hints to    
+                             provide a robust and intuitive development         
+                             experience. It is known for its high performance,  
+                             comparable to NodeJS and Go, and is one of the     
+                             fastest Python frameworks available. FastAPI is    
+                             built on top of Starlette for the web parts and    
+                             Pydantic for the data parts, ensuring both speed   
+                             and reliability.\n\nFastAPI is widely used in      
+                             production environments and is praised for its     
+                             automatic interactive API documentation, which is  
+                             generated from the code itself. This makes it      
+                             easier for developers to understand and use the    
+                             APIs. The framework is also standards-based, fully 
+                             compatible with OpenAPI and JSON Schema, which     
+                             facilitates integration with other systems and     
+                             tools.\n\nFastAPI is used by many large companies  
+                             and projects, including Microsoft, Uber, and       
+                             Netflix, due to its scalability and ease of use. It
+                             is licensed under the MIT license, making it open  
+                             and accessible for modification and                
+                             distribution.","key_features":[{"name":"High       
+                             Performance","description":"FastAPI provides very  
+                             high performance, on par with NodeJS and Go, making
+                             it one of the fastest Python frameworks            
+                             available.","emoji":"⚡"},{"name":"Ease of         
+                             Use","description":"Designed to be easy to use and 
+                             learn, FastAPI reduces the time spent reading      
+                             documentation and                                  
+                             debugging.","emoji":"🧠"},{"name":"Automatic       
+                             Documentation","description":"Generates automatic  
+                             interactive API documentation using Swagger UI and 
+                             ReDoc, making it easier to understand and use      
+                             APIs.","emoji":"📄"},{"name":"Standards-Based","des
+                             cription":"Fully compatible with OpenAPI and JSON  
+                             Schema, facilitating integration with other systems
+                             and tools.","emoji":"📏"},{"name":"Robust and      
+                             Scalable","description":"Provides production-ready 
+                             code with features like automatic validation and   
+                             conversion of data, making it suitable for         
+                             large-scale applications.","emoji":"🏗️"}]}          
+The text provides an overview of four popular Python web frameworks: Django, Flask, FastAPI, and Litestar, highlighting their key features and benefits.
+
+1. **Django**: A high-level framework known for rapid development, security, and scalability. It is free, open-source, and helps developers focus on application writing by handling many web development tasks.
+
+2. **Flask**: A lightweight and flexible framework ideal for beginners and small projects. It allows developers to choose their tools and libraries, supported by a vibrant community and the Pallets organization.
+
+3. **FastAPI**: A modern, high-performance framework for building APIs, known for its speed, ease of use, and automatic interactive API documentation. It is standards-based and widely used by large companies due to its scalability.
+
+4. **Litestar**: An ASGI framework focused on high-performance data handling, dependency injection, and ORM integration. It supports both function-based and class-based route handlers and is known for its speed and community-driven development.
+
+Each framework offers unique features, making them suitable for different types of projects and developer preferences.

@@ -1,0 +1,19 @@
+[02/27/25 20:25:52] INFO     ToolTask c0fdc8a8558748848925ef124f5baf81          
+                             Input: Give me the answer for 5*4.                 
+[02/27/25 20:25:55] INFO     Subtask 0bc8ebc0ee5844ebbe855200a3eed528           
+                             Actions: [                                         
+                               {                                                
+                                 "tag": "call_1hRhGmbBiYIzYbnjoxzmdn9M",        
+                                 "name": "CalculatorTool",                      
+                                 "path": "calculate",                           
+                                 "input": {                                     
+                                   "values": {                                  
+                                     "expression": "5*4"                        
+                                   }                                            
+                                 }                                              
+                               }                                                
+                             ]                                                  
+                    INFO     Subtask 0bc8ebc0ee5844ebbe855200a3eed528           
+                             Response: 20                                       
+                    INFO     ToolTask c0fdc8a8558748848925ef124f5baf81          
+                             Output: 20                                         

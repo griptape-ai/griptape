@@ -1,0 +1,87 @@
+name: Code Checks
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  merge_group:
+    types: [checks_requested]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9"]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run formatter
+        run: make check/format
+  type-check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9" ]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run type checker
+        run: make check/types
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9" ]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run linter
+        run: make check/lint
+  coverage:
+      runs-on: ubuntu-latest
+      strategy:
+        fail-fast: false
+        matrix:
+          python-version: ["3.9"]
+      steps:
+        - name: Checkout actions
+          uses: actions/checkout@v6
+        - name: Init environment 
+          uses: ./.github/actions/init-environment 
+        - name: Run unit tests
+          run: make test/unit/coverage
+        - name: Upload coverage to Codecov
+          uses: codecov/codecov-action@v5
+          with:
+            flags: smart-tests
+            verbose: true
+          env:
+            CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+  spell-check:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.9" ]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v6
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run linter
+        run: make check/spell

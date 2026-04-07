@@ -1,0 +1,9 @@
+[02/27/25 20:29:24] INFO     PromptTask cc5206dcacd74046a2063b8fd8f61914        
+                             Input: Hi!                                         
+<class 'griptape.events.start_structure_run_event.StartStructureRunEvent'>
+<class 'griptape.events.start_task_event.StartTaskEvent'>
+<class 'griptape.events.start_prompt_event.StartPromptEvent'>
+[02/27/25 20:29:28] INFO     PromptTask cc5206dcacd74046a2063b8fd8f61914        
+                             Output: Hello! How can I assist you today?         
+<class 'griptape.events.finish_prompt_event.FinishPromptEvent'>
+<class 'griptape.events.finish_task_event.FinishTaskEvent'>
