@@ -21,7 +21,7 @@ class AudioTranscriptionTool(BaseTool):
     """A tool that can be used to generate transcriptions from input audio."""
 
     audio_transcription_driver: BaseAudioTranscriptionDriver = field(kw_only=True)
-    audio_loader: AudioLoader = field(default=Factory(lambda: AudioLoader()), kw_only=True)
+    audio_loader: AudioLoader = field(default=Factory(AudioLoader), kw_only=True)
 
     @activity(
         config={

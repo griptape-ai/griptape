@@ -19,18 +19,20 @@ class TestGriptapeCloudConversationMemoryDriver:
                     thread_id = args[1].split("/")[-2]
                     return mocker.Mock(
                         raise_for_status=lambda: None,
-                        json=lambda: {
-                            "messages": [
-                                {
-                                    "message_id": f"{thread_id}_message",
-                                    "input": '{"type": "TextArtifact", "id": "1234", "value": "Hi There, Hello"}',
-                                    "output": '{"type": "TextArtifact", "id": "123", "value": "Hello! How can I assist you today?"}',
-                                    "metadata": {"run_id": "1234"} if thread_id != "no_meta" else {},
-                                }
-                            ]
-                        }
-                        if thread_id != "no_messages"
-                        else {"messages": []},
+                        json=lambda: (
+                            {
+                                "messages": [
+                                    {
+                                        "message_id": f"{thread_id}_message",
+                                        "input": '{"type": "TextArtifact", "id": "1234", "value": "Hi There, Hello"}',
+                                        "output": '{"type": "TextArtifact", "id": "123", "value": "Hello! How can I assist you today?"}',
+                                        "metadata": {"run_id": "1234"} if thread_id != "no_meta" else {},
+                                    }
+                                ]
+                            }
+                            if thread_id != "no_messages"
+                            else {"messages": []}
+                        ),
                         status_code=200,
                     )
                 if "/threads/" in str(args[1]):
@@ -49,9 +51,11 @@ class TestGriptapeCloudConversationMemoryDriver:
                     alias = args[1].split("=")[-1]
                     return mocker.Mock(
                         raise_for_status=lambda: None,
-                        json=lambda: {"threads": [{"thread_id": alias, "alias": alias, "metadata": {"foo": "bar"}}]}
-                        if alias != "not_found"
-                        else {"threads": []},
+                        json=lambda: (
+                            {"threads": [{"thread_id": alias, "alias": alias, "metadata": {"foo": "bar"}}]}
+                            if alias != "not_found"
+                            else {"threads": []}
+                        ),
                         status_code=200,
                     )
                 return mocker.Mock()

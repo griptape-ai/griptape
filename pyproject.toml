@@ -248,6 +248,10 @@ ignore = [
   "TD002",  # missing-todo-author
   "SLF001", # private-member-access
   "EM102",  # f-string-in-exception
+  "PLC0415", # import-outside-top-level
+  "PLW1641", # eq-without-hash
+  "A003",   # builtin-attribute-shadowing
+  "FBT001", # boolean-typed-positional-argument
 ]
 
 [tool.ruff.lint.pydocstyle]

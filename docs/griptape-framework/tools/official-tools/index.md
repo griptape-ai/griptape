@@ -83,7 +83,7 @@ python -m smtpd -c DebuggingServer -n localhost:1025
 
 ### Extraction
 
-The [ExractionTool](../../../reference/griptape/tools/extraction/tool.md) enables LLMs to extract structured text from unstructured data.
+The [ExtractionTool](../../../reference/griptape/tools/extraction/tool.md) enables LLMs to extract structured text from unstructured data.
 
 === "Code"
 

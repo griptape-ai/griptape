@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 @define(slots=False, kw_only=True)
 class FuturesExecutorMixin(ABC):
     create_futures_executor: Callable[[], futures.Executor] = field(
-        default=Factory(lambda: lambda: futures.ThreadPoolExecutor()),
+        default=Factory(lambda: futures.ThreadPoolExecutor),
     )
 
     _futures_executor: futures.Executor = field(

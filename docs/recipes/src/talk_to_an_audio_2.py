@@ -25,7 +25,7 @@ class AudioPlayer:
     rate: int = attrs.field(default=24000)
     chunk_size: int = attrs.field(default=1024)
 
-    audio: pyaudio.PyAudio = attrs.field(default=attrs.Factory(lambda: pyaudio.PyAudio()))
+    audio: pyaudio.PyAudio = attrs.field(default=attrs.Factory(pyaudio.PyAudio))
     stream: pyaudio.Stream = attrs.field(init=False)
 
     def __enter__(self) -> Self:

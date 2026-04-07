@@ -65,10 +65,15 @@ class HuggingFacePipelineImageGenerationDriver(BaseImageGenerationDriver, ABC):
         if input_image.height != output_height or input_image.width != output_width:
             input_image = input_image.resize((output_width, output_height))
 
+        pipeline_params: dict = {}
+        image_param = self.pipeline_driver.make_image_param(input_image)
+        if image_param is not None:
+            pipeline_params.update(image_param)
+        pipeline_params.update(self.pipeline_driver.make_additional_params(negative_prompts, self.device))
+
         output_image = pipeline(
             prompt,
-            **self.pipeline_driver.make_image_param(input_image),
-            **self.pipeline_driver.make_additional_params(negative_prompts, self.device),
+            **pipeline_params,
         ).images[0]
 
         buffer = io.BytesIO()

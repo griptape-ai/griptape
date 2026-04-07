@@ -37,7 +37,7 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
         kw_only=True,
     )
     embedding_driver: BaseEmbeddingDriver = field(
-        default=Factory(lambda: DummyEmbeddingDriver()),
+        default=Factory(DummyEmbeddingDriver),
         metadata={"serializable": True},
         kw_only=True,
         init=False,
