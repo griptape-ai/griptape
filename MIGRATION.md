@@ -2,6 +2,29 @@
 
 This document provides instructions for migrating your codebase to accommodate breaking changes introduced in new versions of Griptape.
 
+## Next Version (Security Hardening)
+
+### `CommandRunner` now executes commands directly (`shell=False`).
+
+To prevent shell injection, `CommandRunner` no longer uses a system shell to execute commands. This means shell metacharacters such as pipes (`|`), redirects (`>`, `>>`), and logical operators (`&&`, `||`) are no longer supported.
+
+#### Before
+
+```python
+runner = CommandRunner()
+runner.run("ls -l | grep .py")
+```
+
+#### After
+
+If you need to process command output, you should do so in Python or ensure the command itself handles the logic without shell metacharacters.
+
+```python
+runner = CommandRunner()
+# Run commands directly without shell metacharacters
+runner.run("ls -l")
+```
+
 ## 0.34.X to 1.0.X
 
 ### Removed ability to pass `bytes` to `BaseFileLoader.fetch`.
