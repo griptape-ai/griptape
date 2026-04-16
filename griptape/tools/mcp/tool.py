@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import re
 import threading
 from types import MethodType
 from typing import TYPE_CHECKING, Any
@@ -150,7 +151,7 @@ class MCPTool(BaseTool):
 
         for tool in tools_response.tools:
             activity_handler = self._create_activity_handler(tool)
-            setattr(self, tool.name, MethodType(activity_handler, self))
+            setattr(self, self._sanitize_activity_name(tool.name), MethodType(activity_handler, self))
 
     def _get_session(self) -> _AsyncGeneratorContextManager[ClientSession, None]:
         return create_session(self.connection)
@@ -168,12 +169,22 @@ class MCPTool(BaseTool):
         json_schema = super().to_activity_json_schema(activity, schema_id)
         return add_items_to_bare_arrays(json_schema)
 
+    @staticmethod
+    def _sanitize_activity_name(name: str) -> str:
+        """Converts an MCP tool name into a valid activity name.
+
+        Activity names may only contain letters, numbers, and underscores, so any other
+        character (e.g. the hyphens commonly used by MCP servers) is replaced with `_`.
+        """
+        return re.sub(r"[^a-zA-Z0-9_]", "_", name)
+
     def _create_activity_handler(self, tool: types.Tool) -> Callable:
         """Creates an activity handler method for the MCP tool."""
+        activity_name = self._sanitize_activity_name(tool.name)
 
         @activity(
             config={
-                "name": tool.name,
+                "name": activity_name,
                 "description": tool.description or tool.title or tool.name,
                 "schema": create_model(tool.inputSchema, allow_undefined_array_items=True, allow_undefined_type=True),
             }
