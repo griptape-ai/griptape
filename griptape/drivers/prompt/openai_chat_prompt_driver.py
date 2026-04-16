@@ -316,7 +316,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 "function": {
                     "name": tool.to_native_tool_name(activity),
                     "description": tool.activity_description(activity),
-                    "parameters": tool.to_activity_json_schema(activity, "Parameters Schema"),
+                    "parameters": tool.to_activity_json_schema(activity, "http://json-schema.org/draft-07/schema#"),
                 },
                 "type": "function",
             }

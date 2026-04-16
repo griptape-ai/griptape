@@ -32,7 +32,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "description": "test description: foo",
                 "name": "MockTool_test",
                 "parameters": {
-                    "$id": "Parameters Schema",
+                    "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
                     "properties": {
@@ -67,7 +67,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     },
                     "required": ["values"],
                     "additionalProperties": False,
-                    "$id": "Parameters Schema",
+                    "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                 },
             },
@@ -78,7 +78,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "description": "test description: foo",
                 "name": "MockTool_test_error",
                 "parameters": {
-                    "$id": "Parameters Schema",
+                    "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
                     "properties": {
@@ -101,7 +101,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "description": "test description: foo",
                 "name": "MockTool_test_exception",
                 "parameters": {
-                    "$id": "Parameters Schema",
+                    "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
                     "properties": {
@@ -124,7 +124,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "description": "test description",
                 "name": "MockTool_test_list_output",
                 "parameters": {
-                    "$id": "Parameters Schema",
+                    "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
                     "properties": {},
@@ -139,7 +139,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "description": "test description",
                 "name": "MockTool_test_no_schema",
                 "parameters": {
-                    "$id": "Parameters Schema",
+                    "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
                     "properties": {},
@@ -154,7 +154,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "description": "test description: foo",
                 "name": "MockTool_test_str_output",
                 "parameters": {
-                    "$id": "Parameters Schema",
+                    "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
                     "properties": {
@@ -177,7 +177,7 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "description": "test description",
                 "name": "MockTool_test_without_default_memory",
                 "parameters": {
-                    "$id": "Parameters Schema",
+                    "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
                     "properties": {
