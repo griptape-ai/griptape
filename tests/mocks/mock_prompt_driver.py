@@ -58,14 +58,14 @@ class MockPromptDriver(BasePromptDriver):
                     tag="mock-tag",
                     name="StructuredOutputTool",
                     path="provide_output",
-                    input={"values": self.mock_structured_output},
+                    input=self.mock_structured_output,
                 )
             else:
                 tool_action = ToolAction(
                     tag="mock-tag",
                     name="MockTool",
                     path="test",
-                    input={"values": {"test": "test-value"}},
+                    input={"test": "test-value"},
                 )
 
             return Message(
@@ -110,9 +110,7 @@ class MockPromptDriver(BasePromptDriver):
                     )
                 )
                 yield DeltaMessage(
-                    content=ActionCallDeltaMessageContent(
-                        partial_input=json.dumps({"values": self.mock_structured_output})
-                    )
+                    content=ActionCallDeltaMessageContent(partial_input=json.dumps(self.mock_structured_output))
                 )
             else:
                 yield DeltaMessage(
@@ -123,7 +121,7 @@ class MockPromptDriver(BasePromptDriver):
                     )
                 )
                 yield DeltaMessage(
-                    content=ActionCallDeltaMessageContent(partial_input='{ "values": { "test": "test-value" } }')
+                    content=ActionCallDeltaMessageContent(partial_input='{ "test": "test-value" }')
                 )
         elif prompt_stack.output_schema is not None:
             yield DeltaMessage(

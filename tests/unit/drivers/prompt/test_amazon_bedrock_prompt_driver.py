@@ -25,16 +25,9 @@ class TestAmazonBedrockPromptDriver:
                         "$id": "http://json-schema.org/draft-07/schema#",
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         "additionalProperties": False,
-                        "properties": {
-                            "values": {
-                                "additionalProperties": False,
-                                "description": "Test input",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "type": "object",
-                            }
-                        },
-                        "required": ["values"],
+                        "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                         "type": "object",
                     }
                 },
@@ -49,16 +42,9 @@ class TestAmazonBedrockPromptDriver:
                         "$id": "http://json-schema.org/draft-07/schema#",
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         "additionalProperties": False,
-                        "properties": {
-                            "values": {
-                                "additionalProperties": False,
-                                "description": "Test input",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "type": "object",
-                            }
-                        },
-                        "required": ["values"],
+                        "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                         "type": "object",
                     }
                 },
@@ -73,16 +59,9 @@ class TestAmazonBedrockPromptDriver:
                         "$id": "http://json-schema.org/draft-07/schema#",
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         "additionalProperties": False,
-                        "properties": {
-                            "values": {
-                                "additionalProperties": False,
-                                "description": "Test input",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "type": "object",
-                            }
-                        },
-                        "required": ["values"],
+                        "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                         "type": "object",
                     }
                 },
@@ -97,16 +76,9 @@ class TestAmazonBedrockPromptDriver:
                         "$id": "http://json-schema.org/draft-07/schema#",
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         "additionalProperties": False,
-                        "properties": {
-                            "values": {
-                                "additionalProperties": False,
-                                "description": "Test input",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "type": "object",
-                            }
-                        },
-                        "required": ["values"],
+                        "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                         "type": "object",
                     }
                 },
@@ -153,16 +125,9 @@ class TestAmazonBedrockPromptDriver:
                         "$id": "http://json-schema.org/draft-07/schema#",
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         "additionalProperties": False,
-                        "properties": {
-                            "values": {
-                                "additionalProperties": False,
-                                "description": "Test input",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "type": "object",
-                            }
-                        },
-                        "required": ["values"],
+                        "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                         "type": "object",
                     }
                 },
@@ -177,16 +142,9 @@ class TestAmazonBedrockPromptDriver:
                         "$id": "http://json-schema.org/draft-07/schema#",
                         "$schema": "http://json-schema.org/draft-07/schema#",
                         "additionalProperties": False,
-                        "properties": {
-                            "values": {
-                                "additionalProperties": False,
-                                "description": "Test input",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "type": "object",
-                            }
-                        },
-                        "required": ["values"],
+                        "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                         "type": "object",
                     }
                 },

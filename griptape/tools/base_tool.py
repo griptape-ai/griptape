@@ -125,7 +125,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
             if activity_schema is None:
                 schema_dict[schema.Optional("input")] = {}
             else:
-                schema_dict[Literal("input")] = activity_schema.schema
+                schema_dict[Literal("input")] = activity_schema
 
             schemas.append(Schema(schema_dict))
 
@@ -157,7 +157,10 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         action: ToolAction,
         value: dict | None,
     ) -> BaseArtifact:
-        activity_result = activity(deepcopy(value))
+        # Activities expect params in the form `{"values": <input>}` so the `@activity`
+        # decorator can unpack kwargs. The LLM-facing schema no longer includes this wrapper,
+        # so we add it here at dispatch time.
+        activity_result = activity({"values": deepcopy(value) or {}})
 
         if isinstance(activity_result, BaseArtifact):
             result = activity_result

@@ -26,7 +26,7 @@ class TestActivityMixin:
     def test_activity_schema(self, tool):
         schema = tool.activity_schema(tool.test).json_schema("InputSchema")
 
-        assert schema == Schema({"values": tool.test.config["schema"]}).json_schema("InputSchema")
+        assert schema == tool.test.config["schema"].json_schema("InputSchema")
         assert schema["properties"].get("artifact") is None
 
     def test_activity_with_no_schema(self, tool):
@@ -106,20 +106,13 @@ class TestActivityMixin:
         assert schema == {
             "$id": "InputSchema",
             "$schema": "http://json-schema.org/draft-07/schema#",
+            "description": "Test input",
             "properties": {
-                "values": {
-                    "description": "Test input",
-                    "properties": {
-                        "test": {"type": "string"},
-                        "new_property": {"type": "string"},
-                        "optional_property": {"type": "integer"},
-                    },
-                    "required": ["test", "new_property"],
-                    "additionalProperties": False,
-                    "type": "object",
-                }
+                "test": {"type": "string"},
+                "new_property": {"type": "string"},
+                "optional_property": {"type": "integer"},
             },
-            "required": ["values"],
+            "required": ["test", "new_property"],
             "additionalProperties": False,
             "type": "object",
         }
@@ -131,16 +124,9 @@ class TestActivityMixin:
         assert schema == {
             "$id": "InputSchema",
             "$schema": "http://json-schema.org/draft-07/schema#",
-            "properties": {
-                "values": {
-                    "description": "Test input",
-                    "properties": {"test": {"type": "string"}},
-                    "required": ["test"],
-                    "additionalProperties": False,
-                    "type": "object",
-                }
-            },
-            "required": ["values"],
+            "description": "Test input",
+            "properties": {"test": {"type": "string"}},
+            "required": ["test"],
             "additionalProperties": False,
             "type": "object",
         }
@@ -153,16 +139,9 @@ class TestActivityMixin:
                 {
                     "$id": "InputSchema",
                     "$schema": "http://json-schema.org/draft-07/schema#",
-                    "properties": {
-                        "values": {
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "additionalProperties": False,
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "additionalProperties": False,
                     "type": "object",
                 },
@@ -174,21 +153,13 @@ class TestActivityMixin:
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
                     "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "properties": {
-                                "foo": {
-                                    "description": "Test input",
-                                    "title": "Foo",
-                                    "type": "string",
-                                },
-                            },
-                            "required": ["foo"],
-                            "title": "TestModel",
-                            "type": "object",
+                        "foo": {
+                            "description": "Test input",
+                            "title": "Foo",
+                            "type": "string",
                         },
                     },
-                    "required": ["values"],
+                    "required": ["foo"],
                     "title": "TestModel",
                     "type": "object",
                 },

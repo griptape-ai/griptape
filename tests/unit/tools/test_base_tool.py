@@ -18,6 +18,14 @@ from tests.utils import defaults
 
 
 class TestBaseTool:
+    _TEST_INPUT_SCHEMA = {
+        "description": "Test input",
+        "type": "object",
+        "properties": {"test": {"type": "string"}},
+        "required": ["test"],
+        "additionalProperties": False,
+    }
+
     TARGET_TOOL_SCHEMA = {
         "description": "MockTool action schema.",
         "anyOf": [
@@ -26,20 +34,7 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description: foo", "const": "test"},
-                    "input": {
-                        "type": "object",
-                        "properties": {
-                            "values": {
-                                "description": "Test input",
-                                "type": "object",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "additionalProperties": False,
-                            }
-                        },
-                        "required": ["values"],
-                        "additionalProperties": False,
-                    },
+                    "input": _TEST_INPUT_SCHEMA,
                 },
                 "required": ["name", "path", "input"],
                 "additionalProperties": False,
@@ -49,20 +44,7 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description", "const": "test_callable_schema"},
-                    "input": {
-                        "type": "object",
-                        "properties": {
-                            "values": {
-                                "description": "Test input",
-                                "type": "object",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "additionalProperties": False,
-                            }
-                        },
-                        "required": ["values"],
-                        "additionalProperties": False,
-                    },
+                    "input": _TEST_INPUT_SCHEMA,
                 },
                 "required": ["name", "path", "input"],
                 "additionalProperties": False,
@@ -72,20 +54,7 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description: foo", "const": "test_error"},
-                    "input": {
-                        "type": "object",
-                        "properties": {
-                            "values": {
-                                "description": "Test input",
-                                "type": "object",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "additionalProperties": False,
-                            }
-                        },
-                        "required": ["values"],
-                        "additionalProperties": False,
-                    },
+                    "input": _TEST_INPUT_SCHEMA,
                 },
                 "required": ["name", "path", "input"],
                 "additionalProperties": False,
@@ -95,20 +64,7 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description: foo", "const": "test_exception"},
-                    "input": {
-                        "type": "object",
-                        "properties": {
-                            "values": {
-                                "description": "Test input",
-                                "type": "object",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "additionalProperties": False,
-                            }
-                        },
-                        "required": ["values"],
-                        "additionalProperties": False,
-                    },
+                    "input": _TEST_INPUT_SCHEMA,
                 },
                 "required": ["name", "path", "input"],
                 "additionalProperties": False,
@@ -138,20 +94,7 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description: foo", "const": "test_str_output"},
-                    "input": {
-                        "type": "object",
-                        "properties": {
-                            "values": {
-                                "description": "Test input",
-                                "type": "object",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "additionalProperties": False,
-                            }
-                        },
-                        "required": ["values"],
-                        "additionalProperties": False,
-                    },
+                    "input": _TEST_INPUT_SCHEMA,
                 },
                 "required": ["name", "path", "input"],
                 "additionalProperties": False,
@@ -161,20 +104,7 @@ class TestBaseTool:
                 "properties": {
                     "name": {"const": "MockTool"},
                     "path": {"description": "test description", "const": "test_without_default_memory"},
-                    "input": {
-                        "type": "object",
-                        "properties": {
-                            "values": {
-                                "description": "Test input",
-                                "type": "object",
-                                "properties": {"test": {"type": "string"}},
-                                "required": ["test"],
-                                "additionalProperties": False,
-                            }
-                        },
-                        "required": ["values"],
-                        "additionalProperties": False,
-                    },
+                    "input": _TEST_INPUT_SCHEMA,
                 },
                 "required": ["name", "path", "input"],
                 "additionalProperties": False,

@@ -56,7 +56,7 @@ class TestBasePromptDriver:
 
         assert isinstance(result, Message)
         if use_native_tools and tools:
-            assert result.value.input == {"values": {"test": "test-value"}}
+            assert result.value.input == {"test": "test-value"}
         else:
             if "text" in modalities:
                 assert result.has_any_content_type(TextMessageContent)
@@ -93,7 +93,7 @@ class TestBasePromptDriver:
         assert isinstance(output, ActionArtifact)
         assert isinstance(prompt_stack.tools[0], StructuredOutputTool)
         assert prompt_stack.tools[0].output_schema == output_schema
-        assert output.value.input == {"values": {"baz": "foo"}}
+        assert output.value.input == {"baz": "foo"}
 
     def test_rule_structured_output_strategy_empty(self):
         from schema import Schema
