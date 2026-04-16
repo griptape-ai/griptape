@@ -202,9 +202,7 @@ class TestGooglePromptDriver:
         if use_native_tools:
             tools = config.tools
             assert len(tools) == 1
-            declarations = [
-                declaration.model_dump(exclude_none=True) for declaration in tools[0].function_declarations
-            ]
+            declarations = [declaration.model_dump(exclude_none=True) for declaration in tools[0].function_declarations]
             assert declarations == self.GOOGLE_TOOLS
 
             if driver.structured_output_strategy == "tool":
@@ -224,9 +222,7 @@ class TestGooglePromptDriver:
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["tool", "rule", "foo"])
-    def test_try_stream(
-        self, mock_stream_client, prompt_stack, messages, use_native_tools, structured_output_strategy
-    ):
+    def test_try_stream(self, mock_stream_client, prompt_stack, messages, use_native_tools, structured_output_strategy):
         # Given
         driver = GooglePromptDriver(
             model="gemini-2.0-flash",
@@ -259,9 +255,7 @@ class TestGooglePromptDriver:
         if use_native_tools:
             tools = config.tools
             assert len(tools) == 1
-            declarations = [
-                declaration.model_dump(exclude_none=True) for declaration in tools[0].function_declarations
-            ]
+            declarations = [declaration.model_dump(exclude_none=True) for declaration in tools[0].function_declarations]
             assert declarations == self.GOOGLE_TOOLS
 
             if driver.structured_output_strategy == "tool":

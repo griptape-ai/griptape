@@ -1518,7 +1518,6 @@ drivers-prompt-cohere = [
 ]
 drivers-prompt-google = [
     { name = "google-genai" },
-    { name = "google-generativeai" },
 ]
 drivers-prompt-huggingface-hub = [
     { name = "huggingface-hub" },
@@ -1682,11 +1681,10 @@ requires-dist = [
     { name = "exa-py", marker = "extra == 'all'", specifier = ">=1.1.4" },
     { name = "exa-py", marker = "extra == 'drivers-web-search-exa'", specifier = ">=1.1.4" },
     { name = "filetype", specifier = ">=1.2" },
-    { name = "google-genai", marker = "extra == 'all'", specifier = ">=1.0.0" },
-    { name = "google-genai", marker = "extra == 'drivers-prompt-google'", specifier = ">=1.0.0" },
+    { name = "google-genai", marker = "extra == 'all'", specifier = ">=1.73.1" },
+    { name = "google-genai", marker = "extra == 'drivers-prompt-google'", specifier = ">=1.73.1" },
     { name = "google-generativeai", marker = "extra == 'all'", specifier = ">=0.8.2" },
     { name = "google-generativeai", marker = "extra == 'drivers-embedding-google'", specifier = ">=0.8.2" },
-    { name = "google-generativeai", marker = "extra == 'drivers-prompt-google'", specifier = ">=0.8.2" },
     { name = "huggingface-hub", marker = "extra == 'all'", specifier = ">=0.28.1" },
     { name = "huggingface-hub", marker = "extra == 'drivers-embedding-huggingface'", specifier = ">=0.28.1" },
     { name = "huggingface-hub", marker = "extra == 'drivers-prompt-huggingface-hub'", specifier = ">=0.28.1" },

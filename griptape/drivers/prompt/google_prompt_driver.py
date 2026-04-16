@@ -135,11 +135,7 @@ class GooglePromptDriver(BasePromptDriver):
             logger.debug(chunk.model_dump())
             usage_metadata = chunk.usage_metadata
 
-            parts = (
-                chunk.candidates[0].content.parts
-                if chunk.candidates and chunk.candidates[0].content
-                else None
-            )
+            parts = chunk.candidates[0].content.parts if chunk.candidates and chunk.candidates[0].content else None
             content = self.__to_prompt_stack_delta_message_content(parts[0]) if parts else None
 
             # Only want to output the prompt token count once since it is static each chunk
