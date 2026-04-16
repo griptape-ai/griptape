@@ -1,6 +1,6 @@
 import pytest
 from pydantic import BaseModel
-from schema import Literal, Optional, Schema
+from schema import Literal, Optional
 
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_tool_pydantic.tool import MockToolPydantic

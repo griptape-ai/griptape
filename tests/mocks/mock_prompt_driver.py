@@ -120,9 +120,7 @@ class MockPromptDriver(BasePromptDriver):
                         path="test",
                     )
                 )
-                yield DeltaMessage(
-                    content=ActionCallDeltaMessageContent(partial_input='{ "test": "test-value" }')
-                )
+                yield DeltaMessage(content=ActionCallDeltaMessageContent(partial_input='{ "test": "test-value" }'))
         elif prompt_stack.output_schema is not None:
             yield DeltaMessage(
                 content=TextDeltaMessageContent(json.dumps(self.mock_structured_output)),

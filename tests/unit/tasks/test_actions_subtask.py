@@ -229,9 +229,7 @@ class TestActionsSubtask:
         [
             ListArtifact(
                 [
-                    ActionArtifact(
-                        ToolAction(tag="foo", name="MockTool", path="test", input={"test1234": "value"})
-                    ),
+                    ActionArtifact(ToolAction(tag="foo", name="MockTool", path="test", input={"test1234": "value"})),
                 ]
             ),
             ListArtifact(

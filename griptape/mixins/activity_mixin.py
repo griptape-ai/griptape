@@ -93,9 +93,10 @@ class ActivityMixin:
                 config_schema = config_schema(self)
             activity_name = self.activity_name(activity)
 
-            if isinstance(config_schema, Schema):
-                if self.extra_schema_properties is not None and activity_name in self.extra_schema_properties:
-                    config_schema.schema.update(self.extra_schema_properties[activity_name])
+            if isinstance(config_schema, Schema) and (
+                self.extra_schema_properties is not None and activity_name in self.extra_schema_properties
+            ):
+                config_schema.schema.update(self.extra_schema_properties[activity_name])
 
             return config_schema
         return None

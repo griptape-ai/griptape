@@ -48,7 +48,6 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "name": "MockTool_test_callable_schema",
                 "description": "test description",
                 "parameters": {
-                    "type": "object",
                     "description": "Test input",
                     "type": "object",
                     "properties": {"test": {"type": "string"}},
