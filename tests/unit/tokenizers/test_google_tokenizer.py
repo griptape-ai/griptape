@@ -9,11 +9,11 @@ from griptape.tokenizers import GoogleTokenizer
 
 class TestGoogleTokenizer:
     @pytest.fixture(autouse=True)
-    def mock_generative_model(self, mocker):
-        mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
-        mock_generative_model.return_value.count_tokens.return_value = Mock(total_tokens=5)
+    def mock_client(self, mocker):
+        mock_client = mocker.patch("google.genai.Client")
+        mock_client.return_value.models.count_tokens.return_value = Mock(total_tokens=5)
 
-        return mock_generative_model
+        return mock_client
 
     @pytest.fixture()
     def tokenizer(self, request):
