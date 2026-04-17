@@ -20,17 +20,10 @@ class TestToolkitSubtask:
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description: foo", "const": "test"},
                         "input": {
+                            "description": "Test input",
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -44,17 +37,10 @@ class TestToolkitSubtask:
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description", "const": "test_callable_schema"},
                         "input": {
+                            "description": "Test input",
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -68,17 +54,10 @@ class TestToolkitSubtask:
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description: foo", "const": "test_error"},
                         "input": {
+                            "description": "Test input",
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -92,17 +71,10 @@ class TestToolkitSubtask:
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description: foo", "const": "test_exception"},
                         "input": {
+                            "description": "Test input",
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -138,17 +110,10 @@ class TestToolkitSubtask:
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description: foo", "const": "test_str_output"},
                         "input": {
+                            "description": "Test input",
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},
@@ -162,17 +127,10 @@ class TestToolkitSubtask:
                         "name": {"const": "MockTool"},
                         "path": {"description": "test description", "const": "test_without_default_memory"},
                         "input": {
+                            "description": "Test input",
                             "type": "object",
-                            "properties": {
-                                "values": {
-                                    "description": "Test input",
-                                    "type": "object",
-                                    "properties": {"test": {"type": "string"}},
-                                    "required": ["test"],
-                                    "additionalProperties": False,
-                                }
-                            },
-                            "required": ["values"],
+                            "properties": {"test": {"type": "string"}},
+                            "required": ["test"],
                             "additionalProperties": False,
                         },
                         "tag": {"description": "Unique tag name for action execution.", "type": "string"},

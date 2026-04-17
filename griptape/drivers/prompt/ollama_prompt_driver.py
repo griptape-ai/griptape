@@ -205,9 +205,10 @@ class OllamaPromptDriver(BasePromptDriver):
 
                 activity_schema = tool.activity_schema(activity)
                 if activity_schema is not None:
-                    ollama_tool["function"]["parameters"] = tool.to_activity_json_schema(activity, "Parameters Schema")[
-                        "properties"
-                    ]["values"]
+                    json_schema = tool.to_activity_json_schema(activity, "Parameters Schema")
+                    json_schema.pop("$id", None)
+                    json_schema.pop("$schema", None)
+                    ollama_tool["function"]["parameters"] = json_schema
 
                 ollama_tools.append(ollama_tool)
         return ollama_tools

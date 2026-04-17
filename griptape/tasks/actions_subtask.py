@@ -82,7 +82,7 @@ class ActionsSubtask(BaseSubtask[ListArtifact | ErrorArtifact]):
             # If StructuredOutputTool was used, treat the input to it as the output of the subtask.
             structured_outputs = [a for a in self.actions if isinstance(a.tool, StructuredOutputTool)]
             if structured_outputs:
-                output_values = [JsonArtifact(a.input["values"]) for a in structured_outputs]
+                output_values = [JsonArtifact(a.input) for a in structured_outputs]
                 if len(structured_outputs) > 1:
                     self.output = ListArtifact(output_values)
                 else:
@@ -340,11 +340,6 @@ class ActionsSubtask(BaseSubtask[ListArtifact | ErrorArtifact]):
 
         # Load optional input value; don't throw exceptions if key is not present
         if "input" in action_object:
-            # Some LLMs don't support nested parameters and therefore won't generate "values".
-            # So we need to manually add it here.
-            if "values" not in action_object["input"]:
-                action_object["input"] = {"values": action_object["input"]}
-
             # The schema library has a bug, where something like `Or(str, None)` doesn't get
             # correctly translated into JSON schema. For some optional input fields LLMs sometimes
             # still provide null value, which trips up the validator. The temporary solution that

@@ -6,7 +6,7 @@ from copy import deepcopy
 
 from attrs import Attribute, define, field
 from jinja2 import Template
-from pydantic import BaseModel, ValidationError, create_model
+from pydantic import BaseModel, ValidationError
 from schema import Schema, SchemaError
 
 from griptape.utils.json_schema_utils import build_strict_schema
@@ -93,12 +93,12 @@ class ActivityMixin:
                 config_schema = config_schema(self)
             activity_name = self.activity_name(activity)
 
-            if isinstance(config_schema, Schema):
-                if self.extra_schema_properties is not None and activity_name in self.extra_schema_properties:
-                    config_schema.schema.update(self.extra_schema_properties[activity_name])
+            if isinstance(config_schema, Schema) and (
+                self.extra_schema_properties is not None and activity_name in self.extra_schema_properties
+            ):
+                config_schema.schema.update(self.extra_schema_properties[activity_name])
 
-                return Schema({"values": config_schema})
-            return create_model(config_schema.__name__, values=(config_schema, ...))
+            return config_schema
         return None
 
     def to_activity_json_schema(self, activity: Callable, schema_id: str) -> dict:

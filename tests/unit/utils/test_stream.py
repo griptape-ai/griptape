@@ -24,7 +24,7 @@ class TestStream:
         if prompt_driver.stream:
             if use_native_tools:
                 assert next(chat_stream_run).value == "MockTool.mock-tag (test)"
-                assert next(chat_stream_run).value == json.dumps({"values": {"test": "test-value"}}, indent=2)
+                assert next(chat_stream_run).value == json.dumps({"test": "test-value"}, indent=2)
                 next(chat_stream_run)
                 assert next(chat_stream_run).value == "mock output"
                 next(chat_stream_run)
@@ -59,7 +59,7 @@ class TestStream:
             assert next(chat_stream_run).value == "mock output"
         else:
             assert next(chat_stream_run).value == "MockTool.mock-tag (test)"
-            assert next(chat_stream_run).value == json.dumps({"values": {"test": "test-value"}}, indent=2)
+            assert next(chat_stream_run).value == json.dumps({"test": "test-value"}, indent=2)
             next(chat_stream_run)
             assert next(chat_stream_run).value == "mock output"
             next(chat_stream_run)

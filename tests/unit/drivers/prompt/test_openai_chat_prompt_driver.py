@@ -35,16 +35,9 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },
@@ -55,17 +48,10 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                 "name": "MockTool_test_callable_schema",
                 "description": "test description",
                 "parameters": {
+                    "description": "Test input",
                     "type": "object",
-                    "properties": {
-                        "values": {
-                            "description": "Test input",
-                            "type": "object",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "additionalProperties": False,
-                        }
-                    },
-                    "required": ["values"],
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "additionalProperties": False,
                     "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
@@ -81,16 +67,9 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },
@@ -104,16 +83,9 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },
@@ -157,16 +129,9 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },
@@ -180,16 +145,9 @@ class TestOpenAiChatPromptDriverFixtureMixin:
                     "$id": "http://json-schema.org/draft-07/schema#",
                     "$schema": "http://json-schema.org/draft-07/schema#",
                     "additionalProperties": False,
-                    "properties": {
-                        "values": {
-                            "additionalProperties": False,
-                            "description": "Test input",
-                            "properties": {"test": {"type": "string"}},
-                            "required": ["test"],
-                            "type": "object",
-                        }
-                    },
-                    "required": ["values"],
+                    "description": "Test input",
+                    "properties": {"test": {"type": "string"}},
+                    "required": ["test"],
                     "type": "object",
                 },
             },

@@ -18,7 +18,7 @@ class TestActionsSubtask:
     def test_prompt_input(self):
         valid_input = TextArtifact(
             "Thought: need to test\n"
-            'Actions: [{"tag": "foo", "name": "MockTool", "path": "test", "input": {"values": {"test": "value"}}}]\n'
+            'Actions: [{"tag": "foo", "name": "MockTool", "path": "test", "input": {"test": "value"}}]\n'
             "<|Response|>: test observation\n"
             "Answer: test output",
             meta={"is_react_prompt": True},
@@ -31,7 +31,7 @@ class TestActionsSubtask:
 
         assert json_dict[0]["name"] == "MockTool"
         assert json_dict[0]["path"] == "test"
-        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+        assert json_dict[0]["input"] == {"test": "value"}
         assert subtask.thought == "need to test"
         assert subtask.output is None
 
@@ -39,9 +39,7 @@ class TestActionsSubtask:
         valid_input = ListArtifact(
             [
                 TextArtifact("need to test"),
-                ActionArtifact(
-                    ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
-                ),
+                ActionArtifact(ToolAction(tag="foo", name="MockTool", path="test", input={"test": "value"})),
                 TextArtifact("answer"),
             ],
         )
@@ -52,7 +50,7 @@ class TestActionsSubtask:
 
         assert json_dict[0]["name"] == "MockTool"
         assert json_dict[0]["path"] == "test"
-        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+        assert json_dict[0]["input"] == {"test": "value"}
         assert subtask.thought == "need to test"
         assert subtask.output is None
 
@@ -60,9 +58,7 @@ class TestActionsSubtask:
         valid_input = ListArtifact(
             [
                 TextArtifact("thought"),
-                ActionArtifact(
-                    ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
-                ),
+                ActionArtifact(ToolAction(tag="foo", name="MockTool", path="test", input={"test": "value"})),
             ],
         )
         task = PromptTask(tools=[MockTool()])
@@ -73,7 +69,7 @@ class TestActionsSubtask:
         assert subtask.thought == "thought"
         assert json_dict[0]["name"] == "MockTool"
         assert json_dict[0]["path"] == "test"
-        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+        assert json_dict[0]["input"] == {"test": "value"}
 
     @pytest.mark.parametrize(("is_react_prompt", "expected"), [(True, "test output"), (False, "Answer: test output")])
     def test_prompt_answer(self, is_react_prompt, expected):
@@ -120,9 +116,7 @@ class TestActionsSubtask:
         valid_input = ListArtifact(
             [
                 TextArtifact("thought"),
-                ActionArtifact(
-                    ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test": "value"}})
-                ),
+                ActionArtifact(ToolAction(tag="foo", name="MockTool", path="test", input={"test": "value"})),
             ]
         )
         task = PromptTask(tools=[MockTool()])
@@ -133,12 +127,12 @@ class TestActionsSubtask:
         assert subtask.thought == "thought"
         assert json_dict[0]["name"] == "MockTool"
         assert json_dict[0]["path"] == "test"
-        assert json_dict[0]["input"] == {"values": {"test": "value"}}
+        assert json_dict[0]["input"] == {"test": "value"}
 
     def test_input_with_multiline_actions(self):
         valid_input = TextArtifact(
             "Thought: need to test\n"
-            'Actions:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n[{"tag": "foo", "name": "MockTool",\n"path": "test",\n\n"input": {"values":\n{"test":\n"test\n\ninput\n\nwith\nnewlines"}}}]```!@#$%^&*()123(*!378934)'
+            'Actions:\nFoobarfoobar baz}!@#$%^&*()123(*!378934)\n\n```json\n[{"tag": "foo", "name": "MockTool",\n"path": "test",\n\n"input": \n{"test":\n"test\n\ninput\n\nwith\nnewlines"}}]```!@#$%^&*()123(*!378934)'
             "Response: test response\n"
             "Answer: test output",
             meta={"is_react_prompt": True},
@@ -151,7 +145,7 @@ class TestActionsSubtask:
 
         assert json_dict[0]["name"] == "MockTool"
         assert json_dict[0]["path"] == "test"
-        assert json_dict[0]["input"] == {"values": {"test": "test\n\ninput\n\nwith\nnewlines"}}
+        assert json_dict[0]["input"] == {"test": "test\n\ninput\n\nwith\nnewlines"}
 
     def test_input(self):
         assert ActionsSubtask("{{ hello }}").input.value == "{{ hello }}"
@@ -214,28 +208,10 @@ class TestActionsSubtask:
         assert subtask.thought == "need to test"
         assert subtask.actions == []
 
-    def test_implicit_values(self):
-        valid_input = TextArtifact(
-            "Thought: need to test\n"
-            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"test":\n"value"}}]'
-            "Response: test response\n"
-            "Answer: test output",
-            meta={"is_react_prompt": True},
-        )
-
-        task = PromptTask(tools=[MockTool()])
-        Agent().add_task(task)
-        subtask = task.add_subtask(ActionsSubtask(valid_input))
-        json_dict = json.loads(subtask.actions_to_json())
-
-        assert json_dict[0]["name"] == "MockTool"
-        assert json_dict[0]["path"] == "test"
-        assert json_dict[0]["input"] == {"values": {"test": "value"}}
-
     def test_execute_tool(self):
         valid_input = TextArtifact(
             "Thought: need to test\n"
-            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]',
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"test": "value"}}]',
             meta={"is_react_prompt": True},
         )
 
@@ -253,14 +229,12 @@ class TestActionsSubtask:
         [
             ListArtifact(
                 [
-                    ActionArtifact(
-                        ToolAction(tag="foo", name="MockTool", path="test", input={"values": {"test1234": "value"}})
-                    ),
+                    ActionArtifact(ToolAction(tag="foo", name="MockTool", path="test", input={"test1234": "value"})),
                 ]
             ),
             ListArtifact(
                 [
-                    ActionArtifact(ToolAction(tag="foo", name="MockTool", path="test", input={"values": {}})),
+                    ActionArtifact(ToolAction(tag="foo", name="MockTool", path="test", input={})),
                 ]
             ),
             ListArtifact(
@@ -271,10 +245,8 @@ class TestActionsSubtask:
                             name="MockTool",
                             path="test",
                             input={
-                                "values": {
-                                    "test": "value",
-                                    "extra": "extra value",
-                                }
+                                "test": "value",
+                                "extra": "extra value",
                             },
                         )
                     ),
@@ -301,7 +273,7 @@ class TestActionsSubtask:
     def test_execute_tool_exception(self):
         valid_input = TextArtifact(
             "Thought: need to test\n"
-            'Actions:[{"tag": "foo", "name": "MockTool","path": "test_exception","input": {"values": {"test": "value"}}}]',
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test_exception","input": {"test": "value"}}]',
             meta={"is_react_prompt": True},
         )
 
@@ -317,7 +289,7 @@ class TestActionsSubtask:
     def test_origin_task(self):
         valid_input = TextArtifact(
             "Thought: need to test\n"
-            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"values": {"test": "value"}}}]',
+            'Actions:[{"tag": "foo", "name": "MockTool","path": "test","input": {"test": "value"}}]',
             meta={"is_react_prompt": True},
         )
 
@@ -347,7 +319,7 @@ class TestActionsSubtask:
                         tag="foo",
                         name="StructuredOutputTool",
                         path="provide_output",
-                        input={"values": {"test": "value"}},
+                        input={"test": "value"},
                     )
                 ),
             ]
@@ -377,7 +349,7 @@ class TestActionsSubtask:
                         tag="foo",
                         name="StructuredOutputTool1",
                         path="provide_output",
-                        input={"values": {"test1": "value"}},
+                        input={"test1": "value"},
                     )
                 ),
                 ActionArtifact(
@@ -385,7 +357,7 @@ class TestActionsSubtask:
                         tag="foo",
                         name="StructuredOutputTool2",
                         path="provide_output",
-                        input={"values": {"test2": "value"}},
+                        input={"test2": "value"},
                     )
                 ),
             ]
