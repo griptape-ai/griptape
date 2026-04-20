@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - v*
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to release (e.g. v1.10.0)"
+        required: true
 
 permissions:
   contents: write
@@ -15,9 +20,9 @@ jobs:
     steps:
       - name: Create release
         uses: softprops/action-gh-release@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_PAT }}
         with:
+          token: ${{ secrets.GH_RELEASE_PAT }}
+          tag_name: ${{ inputs.tag || github.ref_name }}
           generate_release_notes: true
           make_latest: true
           prerelease: false
