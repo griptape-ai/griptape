@@ -15,9 +15,8 @@ jobs:
     steps:
       - name: Create release
         uses: softprops/action-gh-release@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_RELEASE_PAT }}
         with:
+          token: ${{ secrets.GH_RELEASE_PAT }}
           generate_release_notes: true
           make_latest: true
           prerelease: false
