@@ -1,4 +1,5 @@
 import json
+import re
 
 import pytest
 import schema
@@ -34,7 +35,9 @@ class TestOutputSchemaValidationSubtask:
                 {"key": 123},
                 create_model("OutputSchema", key=(str, ...)),
                 None,
-                "[{'type': 'string_type', 'loc': ('key',), 'msg': 'Input should be a valid string', 'input': 123, 'url': 'https://errors.pydantic.dev/2.11/v/string_type'}]",
+                re.compile(
+                    r"\[\{'type': 'string_type', 'loc': \('key',\), 'msg': 'Input should be a valid string', 'input': 123, 'url': 'https://errors\.pydantic\.dev/[^']+/v/string_type'\}\]"
+                ),
             ),
             (
                 {"key": "value"},
@@ -85,7 +88,11 @@ class TestOutputSchemaValidationSubtask:
                 else:
                     assert isinstance(subtask.output, ModelArtifact)
                     assert subtask.output.value.model_dump() == expected_output_value
-            assert subtask.validation_errors == expected_validation_errors
+            if isinstance(expected_validation_errors, re.Pattern):
+                assert subtask.validation_errors is not None
+                assert expected_validation_errors.fullmatch(subtask.validation_errors)
+            else:
+                assert subtask.validation_errors == expected_validation_errors
         else:
             assert subtask.output is not None
             assert subtask.output.value == json.dumps(input_value)

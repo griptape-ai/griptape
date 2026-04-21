@@ -97,7 +97,7 @@ class HuggingFacePipelinePromptDriver(BasePromptDriver):
         raise NotImplementedError("streaming is not supported")
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
-        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))  # pyright: ignore[reportArgumentType]
+        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))  # pyright: ignore[reportArgumentType, reportReturnType]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         return {

@@ -115,7 +115,7 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
         yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=input_tokens, output_tokens=output_tokens))
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
-        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))  # pyright: ignore[reportArgumentType]
+        return self.tokenizer.tokenizer.decode(self.__prompt_stack_to_tokens(prompt_stack))  # pyright: ignore[reportArgumentType, reportReturnType]
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         params = {

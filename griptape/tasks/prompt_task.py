@@ -3,11 +3,11 @@ from __future__ import annotations
 import json
 import logging
 from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from attrs import NOTHING, Attribute, Factory, NothingType, define, field
 from pydantic import BaseModel
-from schema import Any, Schema
+from schema import Schema
 
 from griptape import utils
 from griptape.artifacts import (

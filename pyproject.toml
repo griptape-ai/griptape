@@ -111,7 +111,7 @@ drivers-image-generation-huggingface = ["diffusers>=0.32.0", "pillow>=11.0.0"]
 drivers-file-manager-amazon-s3 = ["boto3>=1.34.119"]
 loaders-pdf = ["pypdf>=5.0.1"]
 loaders-image = ["pillow>=11.0.0"]
-loaders-email = ["mail-parser>=4.0.0"]
+loaders-email = ["mail-parser>=4.0.0,<4.2.0"]
 loaders-sql = ["sqlalchemy>=2.0.31"]
 all = [
   "cohere>=5.11.2",
@@ -125,7 +125,7 @@ all = [
   "marqo>=3.9.2",
   "pinecone>=6.0.1",
   "qdrant-client>=1.10.1",
-  "astrapy>=1.4",
+  "astrapy>=2.0",
   "pymongo>=4.8.0",
   "redis>=5.1.0",
   "opensearch-py>=2.3.1",
@@ -152,7 +152,7 @@ all = [
   "pillow>=11.0.0",
   "pandas>=2.2",
   "pypdf>=5.0.1",
-  "mail-parser>=4.0.0",
+  "mail-parser>=4.0.0,<4.2.0",
 ]
 
 [project.urls]

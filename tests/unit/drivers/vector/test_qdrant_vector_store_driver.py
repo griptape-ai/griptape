@@ -58,14 +58,19 @@ class TestQdrantVectorStoreDriver:
             )
 
     def test_query_vector(self, driver):
-        mock_query_result = [
-            MagicMock(
-                id="foo", vector=[0, 1, 0], score=42, payload={"foo": "bar", "_score": 0.99, "_tensor_facets": []}
-            )
-        ]
+        mock_query_result = MagicMock(
+            points=[
+                MagicMock(
+                    id="foo",
+                    vector=[0, 1, 0],
+                    score=42,
+                    payload={"foo": "bar", "_score": 0.99, "_tensor_facets": []},
+                )
+            ]
+        )
 
         with (
-            patch.object(driver.client, "search", return_value=mock_query_result) as mock_search,
+            patch.object(driver.client, "query_points", return_value=mock_query_result) as mock_query_points,
         ):
             vector = [0.1, 0.2, 0.3]
             count = 10
@@ -73,8 +78,11 @@ class TestQdrantVectorStoreDriver:
 
             results = driver.query_vector(vector, count=count, include_vectors=include_vectors)
 
-            mock_search.assert_called_once_with(
-                collection_name=driver.collection_name, query_vector=[0.1, 0.2, 0.3], limit=count
+            mock_query_points.assert_called_once_with(
+                collection_name=driver.collection_name,
+                query=[0.1, 0.2, 0.3],
+                limit=count,
+                with_vectors=include_vectors,
             )
 
             assert len(results) == 1
@@ -84,15 +92,20 @@ class TestQdrantVectorStoreDriver:
             assert results[0].meta == {"foo": "bar"}
 
     def test_query(self, driver):
-        mock_query_result = [
-            MagicMock(
-                id="foo", vector=[0, 1, 0], score=42, payload={"foo": "bar", "_score": 0.99, "_tensor_facets": []}
-            )
-        ]
+        mock_query_result = MagicMock(
+            points=[
+                MagicMock(
+                    id="foo",
+                    vector=[0, 1, 0],
+                    score=42,
+                    payload={"foo": "bar", "_score": 0.99, "_tensor_facets": []},
+                )
+            ]
+        )
 
         with (
             patch.object(driver.embedding_driver, "embed", return_value=[0.1, 0.2, 0.3]) as mock_embed,
-            patch.object(driver.client, "search", return_value=mock_query_result) as mock_search,
+            patch.object(driver.client, "query_points", return_value=mock_query_result) as mock_query_points,
         ):
             query = "test"
             count = 10
@@ -101,8 +114,11 @@ class TestQdrantVectorStoreDriver:
             results = driver.query(query, count=count, include_vectors=include_vectors)
 
             mock_embed.assert_called_once_with(query, vector_operation="query")
-            mock_search.assert_called_once_with(
-                collection_name=driver.collection_name, query_vector=[0.1, 0.2, 0.3], limit=count
+            mock_query_points.assert_called_once_with(
+                collection_name=driver.collection_name,
+                query=[0.1, 0.2, 0.3],
+                limit=count,
+                with_vectors=include_vectors,
             )
 
             assert len(results) == 1
