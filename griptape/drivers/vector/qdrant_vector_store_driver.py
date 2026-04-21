@@ -114,9 +114,14 @@ class QdrantVectorStoreDriver(BaseVectorStoreDriver):
             list[BaseVectorStoreDriver.Entry]: List of Entry objects.
         """
         # Create a search request
-        request = {"collection_name": self.collection_name, "query_vector": vector, "limit": count}
+        request = {
+            "collection_name": self.collection_name,
+            "query": vector,
+            "limit": count,
+            "with_vectors": include_vectors,
+        }
         request = {k: v for k, v in request.items() if v is not None}
-        results = self.client.search(**request)
+        results = self.client.query_points(**request).points
 
         # Convert results to QueryResult objects
         return [

@@ -1735,8 +1735,8 @@ requires-dist = [
     { name = "huggingface-hub", marker = "extra == 'drivers-prompt-huggingface-hub'", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.4" },
     { name = "json-schema-to-pydantic", specifier = ">=0.4.6" },
-    { name = "mail-parser", marker = "extra == 'all'", specifier = ">=4.0.0" },
-    { name = "mail-parser", marker = "extra == 'loaders-email'", specifier = ">=4.0.0" },
+    { name = "mail-parser", marker = "extra == 'all'", specifier = ">=4.0.0,<4.2.0" },
+    { name = "mail-parser", marker = "extra == 'loaders-email'", specifier = ">=4.0.0,<4.2.0" },
     { name = "markdownify", marker = "extra == 'all'", specifier = ">=1.0.0" },
     { name = "markdownify", marker = "extra == 'drivers-web-scraper-markdownify'", specifier = ">=1.0.0" },
     { name = "marqo", marker = "extra == 'all'", specifier = ">=3.9.2" },
@@ -2581,11 +2581,14 @@ wheels = [
 
 [[package]]
 name = "mail-parser"
-version = "4.2.1"
+version = "4.1.4"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/4e/61/71a4d87627dbf57816eb3e8ebf31e1dd2ae52ff57d7436719b950c69a3e4/mail_parser-4.2.1.tar.gz", hash = "sha256:2ddd4e48bedbff28d09d0743e879d3818651d0301718838b1b81e7f93175d096", size = 2788499, upload-time = "2026-04-04T14:52:45.063Z" }
+dependencies = [
+    { name = "six" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/07/57/20176377e709ea57481f559159f00b366d143cc0a8cf7271b7f0e9c9c7ff/mail_parser-4.1.4.tar.gz", hash = "sha256:b65abad3beee3ffb75c7851bc373412c69e1a22561d49dd7142ee7fb4321ed82", size = 27193, upload-time = "2025-06-25T22:14:20.453Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/8d/e9/afc4903ef4b042be380dcf0091f28416aa6be50db7b228bdc8ce8224bdfa/mail_parser-4.2.1-py3-none-any.whl", hash = "sha256:f7b46be5e0834173ca1538bf5b3cb118d4f169e7c16d157dd915aaa9bceba9a2", size = 33317, upload-time = "2026-04-04T14:52:43.388Z" },
+    { url = "https://files.pythonhosted.org/packages/fa/e1/23f6629cab94f740ec8c4827742ebd8ef7b3b760cb3dea6e92349289d25c/mail_parser-4.1.4-py3-none-any.whl", hash = "sha256:ec2f7996792d81c0beb174a14795865f9c0f09f47c8afc7b9f7c1240f59d71c2", size = 27077, upload-time = "2025-06-25T22:14:19.529Z" },
 ]
 
 [[package]]
