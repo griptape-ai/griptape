@@ -29,7 +29,7 @@ class Observability:
 
     @staticmethod
     def set_global_driver(driver: BaseObservabilityDriver | None) -> None:
-        global _global_observability_driver  # noqa: PLW0603
+        global _global_observability_driver
         _global_observability_driver = driver
 
     @staticmethod

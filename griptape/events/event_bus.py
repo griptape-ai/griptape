@@ -40,7 +40,7 @@ class _EventBus(SingletonMixin):
 
     def add_event_listener(self, event_listener: EventListener) -> EventListener:
         if event_listener not in self.event_listeners:
-            self.event_listeners = self.event_listeners + [event_listener]
+            self.event_listeners = [*self.event_listeners, event_listener]
 
         return event_listener
 

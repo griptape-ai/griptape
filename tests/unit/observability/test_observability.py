@@ -32,7 +32,7 @@ class TestObservability:
     def test_context_manager_exception(self, mock_observability_driver):
         assert observability._global_observability_driver is None
 
-        with pytest.raises(Exception, match="Boom") as e:  # noqa: PT012, SIM117
+        with pytest.raises(Exception, match="Boom") as e:
             with Observability(observability_driver=mock_observability_driver):
                 assert observability._global_observability_driver is mock_observability_driver
                 mock_observability_driver.__enter__.assert_called_once_with()

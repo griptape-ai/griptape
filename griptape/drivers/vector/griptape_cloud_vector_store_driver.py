@@ -91,7 +91,7 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool | None = None,
         distance_metric: str | None = None,
         # GriptapeCloudVectorStoreDriver-specific params:
-        filter: dict | None = None,  # noqa: A002
+        filter: dict | None = None,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         """Performs a query on the Knowledge Base.

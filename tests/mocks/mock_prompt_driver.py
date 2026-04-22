@@ -8,6 +8,10 @@ from typing import TYPE_CHECKING
 
 from attrs import Factory, define, field
 
+
+def _default_tokenizer() -> BaseTokenizer:
+    return MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
+
 from griptape.artifacts import TextArtifact
 from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.audio_artifact import AudioArtifact
@@ -34,7 +38,7 @@ if TYPE_CHECKING:
 @define
 class MockPromptDriver(BasePromptDriver):
     model: str = "test-model"
-    tokenizer: BaseTokenizer = MockTokenizer(model="test-model", max_input_tokens=4096, max_output_tokens=4096)
+    tokenizer: BaseTokenizer = field(factory=_default_tokenizer)
     mock_input: str | Callable[[], str] = field(default="mock input", kw_only=True)
     mock_output: str | Callable[[PromptStack], str] = field(default="mock output", kw_only=True)
     mock_structured_output: dict | Callable[[PromptStack], dict] = field(factory=dict, kw_only=True)

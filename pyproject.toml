@@ -239,7 +239,8 @@ ignore = [
   "PTH",    # flake8-use-pathlib
   "TRY",    # tryceratops
   "PLR",    # pylint-refactor
-  "RUF",    # ruff
+  "RUF012",  # mutable-class-default - to be enabled in future PR
+  "RUF043",  # pytest-raises-ambiguous-pattern - to be enabled in future PR
   "PERF",   # perflint
   "ARG",    # flake8-unused-arguments
   "DTZ",    # flake8-datetimez

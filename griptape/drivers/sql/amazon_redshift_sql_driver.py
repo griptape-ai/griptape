@@ -39,7 +39,7 @@ class AmazonRedshiftSqlDriver(BaseSqlDriver):
 
     @classmethod
     def _process_rows_from_records(cls, records: list) -> list[list]:
-        return [[c[list(c.keys())[0]] for c in r] for r in records]
+        return [[c[next(iter(c.keys()))] for c in r] for r in records]
 
     @classmethod
     def _process_cells_from_rows_and_columns(cls, columns: list, rows: list[list]) -> list[dict[str, Any]]:
