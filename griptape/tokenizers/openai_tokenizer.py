@@ -84,7 +84,7 @@ class OpenAiTokenizer(BaseTokenizer):
             return self.DEFAULT_MAX_OUTPUT_TOKENS
         return tokens
 
-    def count_tokens(self, text: str | list[dict], model: str | None = None) -> int:  # noqa: C901
+    def count_tokens(self, text: str | list[dict], model: str | None = None) -> int:
         """Handles the special case of ChatML.
 
         Implementation adopted from the official OpenAI notebook:

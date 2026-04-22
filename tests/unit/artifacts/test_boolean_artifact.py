@@ -1,4 +1,3 @@
-# ruff: noqa: FBT003
 import pytest
 
 from griptape.artifacts import BooleanArtifact

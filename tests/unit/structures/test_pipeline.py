@@ -125,7 +125,7 @@ class TestPipeline:
 
         pipeline = Pipeline(conversation_memory=ConversationMemory())
 
-        pipeline + [first_task, second_task, third_task]
+        [*pipeline, first_task, second_task, third_task]
 
         assert pipeline.conversation_memory is not None
         assert len(pipeline.conversation_memory.runs) == 0
@@ -194,7 +194,7 @@ class TestPipeline:
 
         pipeline = Pipeline()
 
-        pipeline + [first_task, second_task]
+        [*pipeline, first_task, second_task]
 
         assert len(pipeline.tasks) == 2
         assert first_task in pipeline.tasks
@@ -229,7 +229,7 @@ class TestPipeline:
 
         pipeline = Pipeline()
 
-        pipeline + [first_task, second_task]
+        [*pipeline, first_task, second_task]
         pipeline.insert_task(first_task, third_task)
 
         assert len(pipeline.tasks) == 3
@@ -253,7 +253,7 @@ class TestPipeline:
 
         pipeline = Pipeline()
 
-        pipeline + [first_task, second_task]
+        [*pipeline, first_task, second_task]
         pipeline.insert_task(second_task, third_task)
 
         assert len(pipeline.tasks) == 3
@@ -334,7 +334,7 @@ class TestPipeline:
     def test_run_with_args(self):
         task = PromptTask("{{ args[0] }}-{{ args[1] }}")
         pipeline = Pipeline()
-        pipeline + [task]
+        [*pipeline, task]
 
         pipeline._execution_args = ("test1", "test2")
 
@@ -350,7 +350,7 @@ class TestPipeline:
         child = PromptTask("child")
         pipeline = Pipeline()
 
-        pipeline + [parent, task, child]
+        [*pipeline, parent, task, child]
 
         context = pipeline.context(task)
 
@@ -404,7 +404,7 @@ class TestPipeline:
         task = PromptTask("test")
         pipeline = Pipeline()
 
-        pipeline + [task]
+        [*pipeline, task]
 
         assert len(pipeline.task_outputs) == 1
         assert pipeline.task_outputs[task.id] is None

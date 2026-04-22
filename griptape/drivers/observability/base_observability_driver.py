@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 @define
 class BaseObservabilityDriver(ABC):
-    def __enter__(self) -> None:  # noqa: B027
+    def __enter__(self) -> None:
         pass
 
     def __exit__(

@@ -41,7 +41,7 @@ class EventListener(Generic[T]):
 
         return self
 
-    def __exit__(self, type, value, traceback) -> None:  # noqa: ANN001, A002
+    def __exit__(self, type, value, traceback) -> None:
         from griptape.events import EventBus
 
         EventBus.remove_event_listener(self)

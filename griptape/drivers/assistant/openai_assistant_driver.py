@@ -23,7 +23,7 @@ class OpenAiAssistantDriver(BaseAssistantDriver):
     @staticmethod
     def _create_event_handler_class() -> type[AssistantEventHandler]:  # pyright: ignore[reportInvalidTypeForm]
         """Lazily import and create EventHandler class."""
-        AssistantEventHandler = import_optional_dependency("openai").AssistantEventHandler  # noqa: N806
+        AssistantEventHandler = import_optional_dependency("openai").AssistantEventHandler
 
         class EventHandler(AssistantEventHandler):
             @override
@@ -121,7 +121,7 @@ class _EventHandlerDescriptor:
     def __init__(self) -> None:
         self._handler_class = None
 
-    def __get__(self, obj, objtype=None):  # noqa: ANN001, ANN204
+    def __get__(self, obj, objtype=None):
         if self._handler_class is None:
             self._handler_class = OpenAiAssistantDriver._create_event_handler_class()
         return self._handler_class

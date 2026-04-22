@@ -166,7 +166,7 @@ async def _create_stdio_session(
     )
 
     # Create and store the connection
-    async with stdio_client(server_params) as (read, write):  # noqa: SIM117
+    async with stdio_client(server_params) as (read, write):
         async with ClientSession(read, write, **(session_kwargs or {})) as session:
             yield session
 
@@ -199,7 +199,7 @@ async def _create_sse_session(
     if httpx_client_factory is not None:
         kwargs["httpx_client_factory"] = httpx_client_factory
 
-    async with sse_client(url, headers, timeout, sse_read_timeout, **kwargs) as (read, write):  # noqa: SIM117
+    async with sse_client(url, headers, timeout, sse_read_timeout, **kwargs) as (read, write):
         async with ClientSession(read, write, **(session_kwargs or {})) as session:
             yield session
 
@@ -234,7 +234,7 @@ async def _create_streamable_http_session(
     if httpx_client_factory is not None:
         kwargs["httpx_client_factory"] = httpx_client_factory
 
-    async with streamablehttp_client(url, headers, timeout, sse_read_timeout, terminate_on_close, **kwargs) as (  # noqa: SIM117
+    async with streamablehttp_client(url, headers, timeout, sse_read_timeout, terminate_on_close, **kwargs) as (
         read,
         write,
         _,
@@ -258,13 +258,13 @@ async def _create_websocket_session(
     from mcp import ClientSession  # type: ignore[reportAttributeAccessIssue]
     from mcp.client.websocket import websocket_client  # type: ignore[reportMissingImports]
 
-    async with websocket_client(url) as (read, write):  # noqa: SIM117
+    async with websocket_client(url) as (read, write):
         async with ClientSession(read, write, **(session_kwargs or {})) as session:
             yield session
 
 
 @asynccontextmanager
-async def create_session(  # noqa: C901
+async def create_session(
     connection: Connection,
 ) -> AsyncIterator[ClientSession]:
     """Create a new session to an MCP server.

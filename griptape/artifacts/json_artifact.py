@@ -18,7 +18,7 @@ class JsonArtifact(BaseArtifact):
         value: The JSON data. Values will automatically be converted to a JSON-compatible format.
     """
 
-    value: Json = field(converter=lambda value: JsonArtifact.value_to_json(value), metadata={"serializable": True})  # noqa: PLW0108
+    value: Json = field(converter=lambda value: JsonArtifact.value_to_json(value), metadata={"serializable": True})
 
     @classmethod
     def value_to_json(cls, value: Any) -> Json:

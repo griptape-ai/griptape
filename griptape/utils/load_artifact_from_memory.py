@@ -21,7 +21,7 @@ def load_artifact_from_memory(
         raise ValueError("no artifacts found in namespace")
 
     try:
-        artifact = [a for a in artifacts if a.name == artifact_name][0]
+        artifact = next(a for a in artifacts if a.name == artifact_name)
     except IndexError as exc:
         raise ValueError(f"artifact {artifact_name} not found in namespace {artifact_namespace}") from exc
 

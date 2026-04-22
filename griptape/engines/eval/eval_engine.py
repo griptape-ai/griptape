@@ -71,7 +71,7 @@ class EvalEngine(BaseEvalEngine, SerializableMixin):
         if not value:
             raise ValueError("evaluation_steps must not be empty")
 
-    def evaluate(self, input: str, actual_output: str, **kwargs) -> tuple[float, str]:  # noqa: A002
+    def evaluate(self, input: str, actual_output: str, **kwargs) -> tuple[float, str]:
         evaluation_params = {
             key.replace("_", " ").title(): value
             for key, value in {"input": input, "actual_output": actual_output, **kwargs}.items()

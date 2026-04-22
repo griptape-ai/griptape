@@ -122,7 +122,7 @@ class TestWorkflow:
 
         workflow = Workflow(conversation_memory=ConversationMemory())
 
-        workflow + [first_task, second_task, third_task]
+        [*workflow, first_task, second_task, third_task]
 
         assert workflow.conversation_memory is not None
         assert len(workflow.conversation_memory.runs) == 0
@@ -175,7 +175,7 @@ class TestWorkflow:
 
         workflow = Workflow()
 
-        workflow + [first_task, second_task]
+        [*workflow, first_task, second_task]
 
         assert len(workflow.tasks) == 2
         assert first_task in workflow.tasks
@@ -191,7 +191,7 @@ class TestWorkflow:
         task1 = PromptTask("test")
         task2 = PromptTask("test")
         workflow = Workflow()
-        workflow + [task1, task2]
+        [*workflow, task1, task2]
 
         assert task1.state == BaseTask.State.PENDING
         assert task2.state == BaseTask.State.PENDING

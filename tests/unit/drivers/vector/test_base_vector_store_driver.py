@@ -16,7 +16,7 @@ class TestBaseVectorStoreDriver(ABC):
         namespace = driver.upsert(TextArtifact(id="foo1", value="foobar"))
 
         assert len(driver.entries) == 1
-        assert list(driver.entries.keys())[0] == namespace
+        assert next(iter(driver.entries.keys())) == namespace
 
         driver.upsert(TextArtifact(id="foo1", value="foobar"))
 

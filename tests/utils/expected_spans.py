@@ -24,7 +24,7 @@ class ExpectedSpan:
 class ExpectedSpans:
     spans: list[ExpectedSpan] = field(kw_only=True)
 
-    def __eq__(self, other_spans: Sequence[ReadableSpan]) -> bool:  # noqa: C901
+    def __eq__(self, other_spans: Sequence[ReadableSpan]) -> bool:
         # Has expected spans
         span_names = [span.name for span in self.spans]
         other_span_names = [span.name for span in other_spans]

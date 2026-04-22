@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from attrs import define
+from attrs import define, field
 
 from griptape.artifacts import TextArtifact
 from griptape.common import DeltaMessage, Message, PromptStack, TextDeltaMessageContent, TextMessageContent
@@ -13,12 +13,16 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
 
+def _default_tokenizer() -> BaseTokenizer:
+    return OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+
+
 @define
 class MockFailingPromptDriver(BasePromptDriver):
     max_failures: int
     current_attempt: int = 0
     model: str = "test-model"
-    tokenizer: BaseTokenizer = OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL)
+    tokenizer: BaseTokenizer = field(factory=_default_tokenizer)
 
     def try_run(self, prompt_stack: PromptStack) -> Message:
         if self.current_attempt < self.max_failures:

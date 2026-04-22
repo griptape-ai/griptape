@@ -59,7 +59,7 @@ class BaseDriversConfig(ABC, SerializableMixin):
 
         return self
 
-    def __exit__(self, type, value, traceback) -> None:  # noqa: ANN001, A002
+    def __exit__(self, type, value, traceback) -> None:
         from griptape.configs import Defaults
 
         if self._last_drivers_config is not None:

@@ -160,7 +160,7 @@ class TestBaseSchema:
 
     def test_handle_union_exception(self):
         with pytest.raises(ValueError, match="Unsupported UnionType field"):
-            BaseSchema._handle_union(Union[None], optional=False)  # noqa: UP007
+            BaseSchema._handle_union(Union[None], optional=False)
 
     def test_handle_union_optional(self):
         field = BaseSchema._handle_union(str | None, optional=True)

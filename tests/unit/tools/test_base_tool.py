@@ -149,7 +149,6 @@ class TestBaseTool:
 
     def test_invalid_config(self):
         try:
-            from tests.mocks.invalid_mock_tool.tool import InvalidMockTool  # noqa: F401
 
             raise AssertionError
         except SchemaMissingKeyError:

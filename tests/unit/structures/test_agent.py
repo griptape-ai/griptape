@@ -146,7 +146,7 @@ class TestAgent:
             agent.add_tasks(first_task, second_task)
 
         with pytest.raises(ValueError):
-            agent + [first_task, second_task]
+            [*agent, first_task, second_task]
 
         with pytest.raises(ValueError):
             agent.add_tasks([first_task, second_task])
@@ -225,7 +225,7 @@ class TestAgent:
     def test_task_memory_defaults(self, mock_config):
         agent = Agent()
 
-        storage = list(agent.task_memory.artifact_storages.values())[0]
+        storage = next(iter(agent.task_memory.artifact_storages.values()))
         assert isinstance(storage, TextArtifactStorage)
 
         assert storage.vector_store_driver.embedding_driver == mock_config.drivers_config.embedding_driver

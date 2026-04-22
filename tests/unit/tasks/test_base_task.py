@@ -85,7 +85,7 @@ class TestBaseTask:
         child.add_parent(task3)
 
         with pytest.raises(ValueError, match="Structure must be set to access parents"):
-            child.parents  # noqa: B018
+            child.parents
 
         workflow.add_tasks(task1, task2, task3, child)
         child.structure = workflow
@@ -104,7 +104,7 @@ class TestBaseTask:
         parent.add_child(task3)
 
         with pytest.raises(ValueError, match="Structure must be set to access children"):
-            parent.children  # noqa: B018
+            parent.children
 
         workflow.add_tasks(task1, task2, task3, parent)
         parent.structure = workflow
