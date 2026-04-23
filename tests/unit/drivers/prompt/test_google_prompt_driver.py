@@ -1,9 +1,15 @@
 from unittest.mock import MagicMock, Mock
 
 import pytest
-from google.generativeai.protos import FunctionCall, FunctionResponse, Part
-from google.generativeai.types import ContentDict, GenerationConfig
-from google.protobuf.json_format import MessageToDict
+from google.genai.types import (
+    Content,
+    FunctionCall,
+    FunctionCallingConfig,
+    FunctionResponse,
+    GenerateContentConfig,
+    Part,
+    ToolConfig,
+)
 from schema import Schema
 
 from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, TextArtifact
@@ -50,53 +56,43 @@ class TestGooglePromptDriver:
     ]
 
     @pytest.fixture()
-    def mock_generative_model(self, mocker):
-        mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
-        mocker.patch("google.protobuf.json_format.MessageToDict").return_value = {
-            "args": {"foo": "bar"},
-        }
-        mock_function_call = MagicMock(
-            type="tool_use", name="bar", id="MockTool_test", _pb=MagicMock(args={"foo": "bar"})
-        )
+    def mock_client(self, mocker):
+        mock_client = mocker.patch("google.genai.Client")
+        mock_function_call = MagicMock(args={"foo": "bar"})
         mock_function_call.name = "MockTool_test"
-        mock_generative_model.return_value.generate_content.return_value = Mock(
-            parts=[
-                Mock(text="model-output", function_call=None),
-                MagicMock(name="foo", text=None, function_call=mock_function_call),
-            ],
+        mock_text_part = MagicMock(text="model-output", function_call=None)
+        mock_function_call_part = MagicMock(text=None, function_call=mock_function_call)
+        mock_candidate = MagicMock(content=MagicMock(parts=[mock_text_part, mock_function_call_part]))
+        mock_client.return_value.models.generate_content.return_value = Mock(
+            candidates=[mock_candidate],
             usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=10),
         )
 
-        return mock_generative_model
+        return mock_client
 
     @pytest.fixture()
-    def mock_stream_generative_model(self, mocker):
-        mock_generative_model = mocker.patch("google.generativeai.GenerativeModel")
-        mocker.patch("google.protobuf.json_format.MessageToDict").return_value = {
-            "args": {"foo": "bar"},
-        }
-        mock_function_call_delta = MagicMock(
-            type="tool_use", name="func call", id="MockTool_test", _pb=MagicMock(args={"foo": "bar"})
-        )
+    def mock_stream_client(self, mocker):
+        mock_client = mocker.patch("google.genai.Client")
+        mock_function_call_delta = MagicMock(args={"foo": "bar"})
         mock_function_call_delta.name = "MockTool_test"
-        mock_generative_model.return_value.generate_content.return_value = iter(
+
+        def make_chunk(*, text, function_call):
+            part = MagicMock(text=text, function_call=function_call)
+            candidate = MagicMock(content=MagicMock(parts=[part]))
+            return MagicMock(
+                candidates=[candidate],
+                usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
+            )
+
+        mock_client.return_value.models.generate_content_stream.return_value = iter(
             [
-                MagicMock(
-                    parts=[MagicMock(text="model-output")],
-                    usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
-                ),
-                MagicMock(
-                    parts=[MagicMock(text=None, function_call=mock_function_call_delta)],
-                    usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
-                ),
-                MagicMock(
-                    parts=[MagicMock(text="model-output", id="3")],
-                    usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
-                ),
+                make_chunk(text="model-output", function_call=None),
+                make_chunk(text=None, function_call=mock_function_call_delta),
+                make_chunk(text="model-output", function_call=None),
             ]
         )
 
-        return mock_generative_model
+        return mock_client
 
     @pytest.fixture(params=[True, False])
     def prompt_stack(self, request):
@@ -141,26 +137,29 @@ class TestGooglePromptDriver:
     @pytest.fixture()
     def messages(self):
         return [
-            {"parts": ["user-input"], "role": "user"},
-            {"parts": ["user-input"], "role": "user"},
-            {"parts": [{"data": b"image-data", "mime_type": "image/png"}], "role": "user"},
-            {"parts": ["assistant-input"], "role": "model"},
-            {
-                "parts": ["thought", Part(function_call=FunctionCall(name="MockTool_test", args={"foo": "bar"}))],
-                "role": "model",
-            },
-            {
-                "parts": [
+            Content(role="user", parts=[Part.from_text(text="user-input")]),
+            Content(role="user", parts=[Part.from_text(text="user-input")]),
+            Content(role="user", parts=[Part.from_bytes(data=b"image-data", mime_type="image/png")]),
+            Content(role="model", parts=[Part.from_text(text="assistant-input")]),
+            Content(
+                role="model",
+                parts=[
+                    Part.from_text(text="thought"),
+                    Part(function_call=FunctionCall(name="MockTool_test", args={"foo": "bar"})),
+                ],
+            ),
+            Content(
+                role="user",
+                parts=[
                     Part(
                         function_response=FunctionResponse(
                             name="MockTool_test", response=TextArtifact("tool-output", id="output").to_dict()
                         )
                     ),
-                    "keep-going",
+                    Part.from_text(text="keep-going"),
                 ],
-                "role": "user",
-            },
-            {"parts": ["video-file"], "role": "user"},
+            ),
+            Content(role="user", parts=[Part.from_text(text="video-file")]),
         ]
 
     def test_init(self):
@@ -169,7 +168,7 @@ class TestGooglePromptDriver:
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["tool", "rule", "foo"])
-    def test_try_run(self, mock_generative_model, prompt_stack, messages, use_native_tools, structured_output_strategy):
+    def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools, structured_output_strategy):
         # Given
         driver = GooglePromptDriver(
             model="gemini-2.0-flash",
@@ -185,25 +184,31 @@ class TestGooglePromptDriver:
         message = driver.try_run(prompt_stack)
 
         # Then
+        mock_client.return_value.models.generate_content.assert_called_once()
+        call_args = mock_client.return_value.models.generate_content.call_args
+        assert call_args.kwargs["model"] == "gemini-2.0-flash"
+        assert messages == call_args.kwargs["contents"]
+        config = call_args.kwargs["config"]
+        assert isinstance(config, GenerateContentConfig)
+        assert config.temperature == 0.1
+        assert config.top_p == 0.5
+        assert config.top_k == 50
+        assert config.stop_sequences == []
+        assert config.max_output_tokens == 10
         if prompt_stack.system_messages:
-            assert mock_generative_model.return_value._system_instruction == ContentDict(
-                role="system", parts=[Part(text="system-input")]
-            )
-        mock_generative_model.return_value.generate_content.assert_called_once()
-        # We can't use assert_called_once_with because we can't compare the FunctionDeclaration objects
-        call_args = mock_generative_model.return_value.generate_content.call_args
-        assert messages == call_args.args[0]
-        generation_config = call_args.kwargs["generation_config"]
-        assert generation_config == GenerationConfig(
-            temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[], max_output_tokens=10
-        )
+            assert config.system_instruction == Content(role="system", parts=[Part.from_text(text="system-input")])
+        else:
+            assert config.system_instruction is None
         if use_native_tools:
-            tool_declarations = call_args.kwargs["tools"]
-            tools = self.GOOGLE_TOOLS
-            assert [MessageToDict(tool_declaration.to_proto()._pb) for tool_declaration in tool_declarations] == tools
+            tools = config.tools
+            assert len(tools) == 1
+            declarations = [declaration.model_dump(exclude_none=True) for declaration in tools[0].function_declarations]
+            assert declarations == self.GOOGLE_TOOLS
 
             if driver.structured_output_strategy == "tool":
-                assert call_args.kwargs["tool_config"] == {"function_calling_config": {"mode": "auto"}}
+                assert config.tool_config == ToolConfig(
+                    function_calling_config=FunctionCallingConfig(mode="AUTO"),
+                )
 
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
@@ -217,9 +222,7 @@ class TestGooglePromptDriver:
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["tool", "rule", "foo"])
-    def test_try_stream(
-        self, mock_stream_generative_model, prompt_stack, messages, use_native_tools, structured_output_strategy
-    ):
+    def test_try_stream(self, mock_stream_client, prompt_stack, messages, use_native_tools, structured_output_strategy):
         # Given
         driver = GooglePromptDriver(
             model="gemini-2.0-flash",
@@ -237,26 +240,28 @@ class TestGooglePromptDriver:
 
         # Then
         event = next(stream)
-        if prompt_stack.system_messages:
-            assert mock_stream_generative_model.return_value._system_instruction == ContentDict(
-                role="system", parts=[Part(text="system-input")]
-            )
-        # We can't use assert_called_once_with because we can't compare the FunctionDeclaration objects
-        mock_stream_generative_model.return_value.generate_content.assert_called_once()
-        call_args = mock_stream_generative_model.return_value.generate_content.call_args
+        mock_stream_client.return_value.models.generate_content_stream.assert_called_once()
+        call_args = mock_stream_client.return_value.models.generate_content_stream.call_args
 
-        assert messages == call_args.args[0]
-        assert call_args.kwargs["stream"] is True
-        assert call_args.kwargs["generation_config"] == GenerationConfig(
-            temperature=0.1, top_p=0.5, top_k=50, stop_sequences=[], max_output_tokens=10
-        )
+        assert call_args.kwargs["model"] == "gemini-2.0-flash"
+        assert messages == call_args.kwargs["contents"]
+        config = call_args.kwargs["config"]
+        assert isinstance(config, GenerateContentConfig)
+        assert config.temperature == 0.1
+        assert config.top_p == 0.5
+        assert config.top_k == 50
+        assert config.stop_sequences == []
+        assert config.max_output_tokens == 10
         if use_native_tools:
-            tool_declarations = call_args.kwargs["tools"]
-            tools = self.GOOGLE_TOOLS
-            assert [MessageToDict(tool_declaration.to_proto()._pb) for tool_declaration in tool_declarations] == tools
+            tools = config.tools
+            assert len(tools) == 1
+            declarations = [declaration.model_dump(exclude_none=True) for declaration in tools[0].function_declarations]
+            assert declarations == self.GOOGLE_TOOLS
 
             if driver.structured_output_strategy == "tool":
-                assert call_args.kwargs["tool_config"] == {"function_calling_config": {"mode": "auto"}}
+                assert config.tool_config == ToolConfig(
+                    function_calling_config=FunctionCallingConfig(mode="AUTO"),
+                )
         assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
         assert event.usage.input_tokens == 5
