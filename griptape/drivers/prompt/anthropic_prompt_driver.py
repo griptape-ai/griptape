@@ -121,13 +121,20 @@ class AnthropicPromptDriver(BasePromptDriver):
         system_messages = prompt_stack.system_messages
         system_message = system_messages[0].to_text() if system_messages else None
 
+        # Some models (e.g. claude-opus-4-7) deprecate all sampling parameters
+        _no_sampling = self.model == "claude-opus-4-7"
+
         params = {
             "model": self.model,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_tokens,
             "messages": messages,
-            **({"top_p": self.top_p} if self.top_p is not None else {"temperature": self.temperature}),
-            **({"top_k": self.top_k} if self.top_k is not None else {}),
+            **(
+                {}
+                if _no_sampling
+                else ({"top_p": self.top_p} if self.top_p is not None else {"temperature": self.temperature})
+            ),
+            **({"top_k": self.top_k} if (self.top_k is not None and not _no_sampling) else {}),
             **({"system": system_message} if system_message else {}),
             **self.extra_params,
         }
