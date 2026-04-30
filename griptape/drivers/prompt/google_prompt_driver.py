@@ -108,7 +108,11 @@ class GooglePromptDriver(BasePromptDriver):
         parts = response.candidates[0].content.parts if response.candidates and response.candidates[0].content else []
 
         return Message(
-            content=[self.__to_prompt_stack_message_content(part) for part in (parts or [])],
+            content=[
+                self.__to_prompt_stack_message_content(part)
+                for part in (parts or [])
+                if not self.__is_thought_part(part)
+            ],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(
                 input_tokens=usage_metadata.prompt_token_count if usage_metadata else None,
@@ -136,7 +140,12 @@ class GooglePromptDriver(BasePromptDriver):
             usage_metadata = chunk.usage_metadata
 
             parts = chunk.candidates[0].content.parts if chunk.candidates and chunk.candidates[0].content else None
-            content = self.__to_prompt_stack_delta_message_content(parts[0]) if parts else None
+            # Gemini thinking models emit reasoning-only chunks (e.g. a bare `thought_signature`)
+            # with no text or function_call; skip them since Griptape has no thought content type.
+            non_thought_part = (
+                next((part for part in parts if not self.__is_thought_part(part)), None) if parts else None
+            )
+            content = self.__to_prompt_stack_delta_message_content(non_thought_part) if non_thought_part else None
 
             # Only want to output the prompt token count once since it is static each chunk
             if prompt_token_count is None and usage_metadata is not None:
@@ -270,6 +279,11 @@ class GooglePromptDriver(BasePromptDriver):
                 return types.Part.from_text(text=value)
             return value
         raise ValueError(f"Unsupported prompt stack content type: {type(content)}")
+
+    def __is_thought_part(self, content: Part) -> bool:
+        # Gemini thinking models emit reasoning-only parts (e.g. a bare `thought_signature`)
+        # with no text or function_call; Griptape has no thought content type, so callers skip them.
+        return bool((content.thought or content.thought_signature) and not content.text and not content.function_call)
 
     def __to_prompt_stack_message_content(self, content: Part) -> BaseMessageContent:
         if content.text:
