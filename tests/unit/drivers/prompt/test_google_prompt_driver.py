@@ -293,8 +293,11 @@ class TestGooglePromptDriver:
         assert event.usage.output_tokens == 5
 
     def test_try_run_skips_thought_parts(self, mocker):
-        """Gemini thinking models emit reasoning-only parts (bare `thought_signature`); they must
-        be skipped so they do not appear in `Message.content` and do not raise on conversion."""
+        """Skip reasoning-only parts emitted by Gemini thinking models.
+
+        Such parts carry only a `thought_signature`; they must not appear in `Message.content`
+        and must not raise on conversion.
+        """
         # Given
         mock_client = mocker.patch("google.genai.Client")
         mock_text_part = MagicMock(text="model-output", function_call=None, thought=None, thought_signature=None)
@@ -314,7 +317,7 @@ class TestGooglePromptDriver:
         assert message.content[0].artifact.value == "model-output"
 
     def test_try_stream_skips_thought_chunks(self, mocker):
-        """A chunk whose only part is a thought-only part should yield `content=None` rather than raise."""
+        """A chunk whose only part is thought-only should yield `content=None` rather than raise."""
         # Given
         mock_client = mocker.patch("google.genai.Client")
 
