@@ -9,15 +9,13 @@ from griptape.drivers.embedding.google import GoogleEmbeddingDriver
 
 class TestGoogleEmbeddingDriver:
     @pytest.fixture(autouse=True)
-    def mock_genai(self, mocker):
-        mock_embed_content = mocker.patch("google.generativeai.embed_content")
+    def mock_client(self, mocker):
+        mock_client = mocker.patch("google.genai.Client")
+        mock_client.return_value.models.embed_content.return_value = MagicMock(
+            embeddings=[MagicMock(values=[0, 1, 0])],
+        )
 
-        mock_value = MagicMock()
-        value = {"embedding": [0, 1, 0]}
-        mock_value.__getitem__.side_effect = value.__getitem__
-        mock_embed_content.return_value = mock_value
-
-        return mock_embed_content
+        return mock_client
 
     def test_init(self):
         assert GoogleEmbeddingDriver()

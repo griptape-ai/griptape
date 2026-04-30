@@ -334,9 +334,6 @@ class BaseSchema(Schema):
                 # Third party modules
                 "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
                 "ClientV2": import_optional_dependency("cohere").ClientV2 if is_dependency_installed("cohere") else Any,
-                "GenerativeModel": import_optional_dependency("google.generativeai").GenerativeModel
-                if is_dependency_installed("google.generativeai")
-                else Any,
                 "boto3": import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any,
                 "Anthropic": import_optional_dependency("anthropic").Anthropic
                 if is_dependency_installed("anthropic")

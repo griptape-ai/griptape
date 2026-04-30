@@ -69,7 +69,7 @@ drivers-embedding-huggingface = [
   "transformers>=4.41.1",
 ]
 drivers-embedding-voyageai = ["voyageai>=0.2.1"]
-drivers-embedding-google = ["google-generativeai>=0.8.2"]
+drivers-embedding-google = ["google-genai>=1.73.1"]
 drivers-embedding-cohere = ["cohere>=5.11.2"]
 drivers-embedding-ollama = ["ollama>=0.4.1"]
 drivers-web-scraper-trafilatura = ["trafilatura>=2.0"]
@@ -131,7 +131,6 @@ all = [
   "opensearch-py>=2.3.1",
   "pgvector>=0.3.4",
   "psycopg2-binary>=2.9.9",
-  "google-generativeai>=0.8.2",
   "google-genai>=1.73.1",
   "trafilatura>=2.0",
   "playwright>=1.42",

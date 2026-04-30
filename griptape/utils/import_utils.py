@@ -10,7 +10,7 @@ INSTALL_MAPPING = {
     "huggingface_hub": "huggingface-hub",
     "pinecone": "pinecone-client",
     "opensearchpy": "opensearch-py",
-    "google.generativeai": "google-generativeai",
+    "google.genai": "google-genai",
 }
 
 

@@ -1,9 +1,15 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, cast
+
 from attrs import define, field
 
 from griptape.drivers.embedding import BaseEmbeddingDriver
 from griptape.utils import import_optional_dependency
+from griptape.utils.decorators import lazy_property
+
+if TYPE_CHECKING:
+    from google.genai import Client
 
 
 @define
@@ -13,7 +19,8 @@ class GoogleEmbeddingDriver(BaseEmbeddingDriver):
     Attributes:
         api_key: Google API key.
         model: Google model name.
-        task_type: Embedding model task type (https://ai.google.dev/tutorials/python_quickstart#use_embeddings). Defaults to `retrieval_document`.
+        client: Custom `google.genai.Client`.
+        task_type: Embedding model task type (https://ai.google.dev/gemini-api/docs/embeddings#task-types). Defaults to `retrieval_document`.
         title: Optional title for the content. Only works with `retrieval_document` task type.
     """
 
@@ -23,14 +30,24 @@ class GoogleEmbeddingDriver(BaseEmbeddingDriver):
     api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
     task_type: str = field(default="retrieval_document", kw_only=True, metadata={"serializable": True})
     title: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    _client: Client | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
+
+    @lazy_property()
+    def client(self) -> Client:
+        genai = import_optional_dependency("google.genai")
+
+        return genai.Client(api_key=self.api_key)
 
     def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
-        genai = import_optional_dependency("google.generativeai")
-        genai.configure(api_key=self.api_key)
+        types = import_optional_dependency("google.genai.types")
 
-        result = genai.embed_content(model=self.model, content=chunk, task_type=self.task_type, title=self.title)
+        response = self.client.models.embed_content(
+            model=self.model,
+            contents=chunk,
+            config=types.EmbedContentConfig(task_type=self.task_type, title=self.title),
+        )
 
-        return result["embedding"]
+        return cast("list[float]", response.embeddings[0].values)  # pyright: ignore[reportOptionalSubscript]
 
     def _params(self, chunk: str) -> dict:
         return {"input": chunk, "model": self.model}
