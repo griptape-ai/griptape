@@ -277,6 +277,57 @@ class TestGooglePromptDriver:
         event = next(stream)
         assert event.usage.output_tokens == 5
 
+    def test_try_run_skips_thought_parts(self, mocker):
+        """Gemini thinking models emit reasoning-only parts (bare `thought_signature`); they must
+        be skipped so they do not appear in `Message.content` and do not raise on conversion."""
+        # Given
+        mock_client = mocker.patch("google.genai.Client")
+        mock_text_part = MagicMock(text="model-output", function_call=None, thought=None, thought_signature=None)
+        mock_thought_part = MagicMock(text="", function_call=None, thought=None, thought_signature=b"sig-bytes")
+        mock_candidate = MagicMock(content=MagicMock(parts=[mock_thought_part, mock_text_part]))
+        mock_client.return_value.models.generate_content.return_value = Mock(
+            candidates=[mock_candidate],
+            usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=10),
+        )
+        driver = GooglePromptDriver(model="gemini-3-pro", api_key="api-key")
+
+        # When
+        message = driver.try_run(PromptStack())
+
+        # Then
+        assert len(message.content) == 1
+        assert message.content[0].artifact.value == "model-output"
+
+    def test_try_stream_skips_thought_chunks(self, mocker):
+        """A chunk whose only part is a thought-only part should yield `content=None` rather than raise."""
+        # Given
+        mock_client = mocker.patch("google.genai.Client")
+
+        def make_chunk(*, text, thought_signature):
+            part = MagicMock(text=text, function_call=None, thought=None, thought_signature=thought_signature)
+            candidate = MagicMock(content=MagicMock(parts=[part]))
+            return MagicMock(
+                candidates=[candidate],
+                usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
+            )
+
+        mock_client.return_value.models.generate_content_stream.return_value = iter(
+            [
+                make_chunk(text="", thought_signature=b"sig-bytes"),
+                make_chunk(text="model-output", thought_signature=None),
+            ]
+        )
+        driver = GooglePromptDriver(model="gemini-3-pro", api_key="api-key", stream=True)
+
+        # When
+        events = list(driver.try_stream(PromptStack()))
+
+        # Then
+        assert len(events) == 2
+        assert events[0].content is None
+        assert isinstance(events[1].content, TextDeltaMessageContent)
+        assert events[1].content.text == "model-output"
+
     def test_verify_structured_output_strategy(self):
         assert GooglePromptDriver(model="foo", structured_output_strategy="tool")
 
