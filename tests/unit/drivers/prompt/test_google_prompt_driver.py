@@ -167,7 +167,7 @@ class TestGooglePromptDriver:
         assert driver
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    @pytest.mark.parametrize("structured_output_strategy", ["tool", "rule", "foo"])
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     def test_try_run(self, mock_client, prompt_stack, messages, use_native_tools, structured_output_strategy):
         # Given
         driver = GooglePromptDriver(
@@ -210,6 +210,13 @@ class TestGooglePromptDriver:
                     function_calling_config=FunctionCallingConfig(mode="AUTO"),
                 )
 
+        if driver.structured_output_strategy == "native":
+            assert config.response_mime_type == "application/json"
+            assert config.response_json_schema == prompt_stack.to_output_json_schema()
+        else:
+            assert config.response_mime_type is None
+            assert config.response_json_schema is None
+
         assert isinstance(message.value[0], TextArtifact)
         assert message.value[0].value == "model-output"
         assert isinstance(message.value[1], ActionArtifact)
@@ -221,7 +228,7 @@ class TestGooglePromptDriver:
         assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
-    @pytest.mark.parametrize("structured_output_strategy", ["tool", "rule", "foo"])
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     def test_try_stream(self, mock_stream_client, prompt_stack, messages, use_native_tools, structured_output_strategy):
         # Given
         driver = GooglePromptDriver(
@@ -262,6 +269,14 @@ class TestGooglePromptDriver:
                 assert config.tool_config == ToolConfig(
                     function_calling_config=FunctionCallingConfig(mode="AUTO"),
                 )
+
+        if driver.structured_output_strategy == "native":
+            assert config.response_mime_type == "application/json"
+            assert config.response_json_schema == prompt_stack.to_output_json_schema()
+        else:
+            assert config.response_mime_type is None
+            assert config.response_json_schema is None
+
         assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == "model-output"
         assert event.usage.input_tokens == 5
@@ -327,11 +342,3 @@ class TestGooglePromptDriver:
         assert events[0].content is None
         assert isinstance(events[1].content, TextDeltaMessageContent)
         assert events[1].content.text == "model-output"
-
-    def test_verify_structured_output_strategy(self):
-        assert GooglePromptDriver(model="foo", structured_output_strategy="tool")
-
-        with pytest.raises(
-            ValueError, match="GooglePromptDriver does not support `native` structured output strategy."
-        ):
-            GooglePromptDriver(model="foo", structured_output_strategy="native")

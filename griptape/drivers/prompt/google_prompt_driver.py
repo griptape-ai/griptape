@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import json
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
-from attrs import Attribute, Factory, define, field
+from attrs import Factory, define, field
 
 from griptape.artifacts import ActionArtifact, TextArtifact
 from griptape.artifacts.image_artifact import ImageArtifact
@@ -39,6 +39,7 @@ if TYPE_CHECKING:
     from google.genai import Client
     from google.genai.types import (
         Content,
+        ContentListUnionDict,
         GenerateContentResponse,
         Part,
     )
@@ -76,13 +77,6 @@ class GooglePromptDriver(BasePromptDriver):
     tool_choice: str = field(default="auto", kw_only=True, metadata={"serializable": True})
     _client: Client | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
-    @structured_output_strategy.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
-    def validate_structured_output_strategy(self, _: Attribute, value: str) -> str:
-        if value == "native":
-            raise ValueError(f"{__class__.__name__} does not support `{value}` structured output strategy.")
-
-        return value
-
     @lazy_property()
     def client(self) -> Client:
         genai = import_optional_dependency("google.genai")
@@ -99,7 +93,7 @@ class GooglePromptDriver(BasePromptDriver):
         logger.debug((messages, params))
         response: GenerateContentResponse = self.client.models.generate_content(
             model=self.model,
-            contents=messages,
+            contents=cast("ContentListUnionDict", messages),
             config=config,
         )
         logger.debug(response.model_dump())
@@ -130,7 +124,7 @@ class GooglePromptDriver(BasePromptDriver):
         logger.debug((messages, params))
         response = self.client.models.generate_content_stream(
             model=self.model,
-            contents=messages,
+            contents=cast("ContentListUnionDict", messages),
             config=config,
         )
 
@@ -198,6 +192,10 @@ class GooglePromptDriver(BasePromptDriver):
                 function_calling_config=types.FunctionCallingConfig(mode=mode),
             )
             params["tools"] = self.__to_google_tools(prompt_stack.tools)
+
+        if prompt_stack.output_schema is not None and self.structured_output_strategy == "native":
+            params["response_mime_type"] = "application/json"
+            params["response_json_schema"] = prompt_stack.to_output_json_schema()
 
         return params
 
