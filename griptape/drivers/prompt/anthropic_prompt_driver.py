@@ -86,6 +86,19 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         return value
 
+    @property
+    def supports_temperature(self) -> bool:
+        # claude-opus-4-7 and its dated variants deprecate sampling parameters
+        return not self.model.startswith("claude-opus-4-7")
+
+    @property
+    def supports_top_p(self) -> bool:
+        return not self.model.startswith("claude-opus-4-7")
+
+    @property
+    def supports_top_k(self) -> bool:
+        return not self.model.startswith("claude-opus-4-7")
+
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
@@ -121,20 +134,20 @@ class AnthropicPromptDriver(BasePromptDriver):
         system_messages = prompt_stack.system_messages
         system_message = system_messages[0].to_text() if system_messages else None
 
-        # Some models (e.g. claude-opus-4-7) deprecate all sampling parameters
-        _no_sampling = self.model == "claude-opus-4-7"
+        if self.top_p is not None and self.supports_top_p:
+            sampling_params = {"top_p": self.top_p}
+        elif self.supports_temperature:
+            sampling_params = {"temperature": self.temperature}
+        else:
+            sampling_params = {}
 
         params = {
             "model": self.model,
             "stop_sequences": self.tokenizer.stop_sequences,
             "max_tokens": self.max_tokens,
             "messages": messages,
-            **(
-                {}
-                if _no_sampling
-                else ({"top_p": self.top_p} if self.top_p is not None else {"temperature": self.temperature})
-            ),
-            **({"top_k": self.top_k} if (self.top_k is not None and not _no_sampling) else {}),
+            **sampling_params,
+            **({"top_k": self.top_k} if self.top_k is not None and self.supports_top_k else {}),
             **({"system": system_message} if system_message else {}),
             **self.extra_params,
         }
