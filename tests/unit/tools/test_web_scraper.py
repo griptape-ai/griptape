@@ -4,6 +4,10 @@ from griptape.artifacts import ListArtifact
 
 
 class TestWebScraper:
+    @pytest.fixture(autouse=True)
+    def _mock_trafilatura_fetch_url(self, mocker):
+        mocker.patch("trafilatura.fetch_url", return_value="<html>foobar</html>")
+
     @pytest.fixture()
     def scraper(self):
         from griptape.tools import WebScraperTool

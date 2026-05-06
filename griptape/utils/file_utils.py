@@ -7,6 +7,10 @@ import mimetypes
 
 import filetype
 
+# Some platforms (notably Windows) do not register `.webp` as `image/webp` by default,
+# so add it explicitly to keep `mimetypes.guess_type` consistent across platforms.
+mimetypes.add_type("image/webp", ".webp")
+
 
 def get_mime_type(file_path_or_bytes: str | bytes) -> str:
     """Attempt to determine the MIME type of a file or bytes.
