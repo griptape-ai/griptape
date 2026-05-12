@@ -36,7 +36,7 @@ class StableDiffusion3ImageGenerationPipelineDriver(BaseDiffusionImageGeneration
     seed: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
     guidance_scale: float | None = field(default=None, kw_only=True, metadata={"serializable": True})
     steps: int | None = field(default=None, kw_only=True, metadata={"serializable": True})
-    torch_dtype: torch.dtype | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    torch_dtype: torch.dtype | None = field(default=None, kw_only=True, metadata={"serializable": True})  # pyright: ignore[reportPrivateImportUsage]
     enable_model_cpu_offload: bool = field(default=False, kw_only=True, metadata={"serializable": True})
     drop_t5_encoder: bool = field(default=False, kw_only=True, metadata={"serializable": True})
 
