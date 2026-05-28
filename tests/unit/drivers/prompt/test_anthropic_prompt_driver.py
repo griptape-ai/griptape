@@ -211,6 +211,7 @@ class TestAnthropicPromptDriver:
                                 [
                                     TextArtifact("tool-output"),
                                     ImageArtifact(value=b"image-data", format="png", width=100, height=100),
+                                    ImageUrlArtifact(value="tool-image-url"),
                                 ]
                             ),
                         )
@@ -284,6 +285,10 @@ class TestAnthropicPromptDriver:
                             {"text": "tool-output", "type": "text"},
                             {
                                 "source": {"data": "aW1hZ2UtZGF0YQ==", "media_type": "image/png", "type": "base64"},
+                                "type": "image",
+                            },
+                            {
+                                "source": {"type": "url", "url": "tool-image-url"},
                                 "type": "image",
                             },
                         ],
