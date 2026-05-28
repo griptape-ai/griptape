@@ -238,6 +238,11 @@ class AnthropicPromptDriver(BasePromptDriver):
                 "type": "image",
                 "source": {"type": "base64", "media_type": artifact.mime_type, "data": artifact.base64},
             }
+        if isinstance(artifact, ImageUrlArtifact):
+            return {
+                "type": "image",
+                "source": {"type": "url", "url": artifact.value},
+            }
         if isinstance(artifact, (TextArtifact, ErrorArtifact, InfoArtifact)):
             return {"type": "text", "text": artifact.to_text()}
         raise ValueError(f"Unsupported tool result artifact type: {type(artifact)}")
