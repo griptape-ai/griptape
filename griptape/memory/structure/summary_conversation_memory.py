@@ -32,18 +32,18 @@ class SummaryConversationMemory(BaseConversationMemory):
       by the generated summary. This is expected behavior -- the runs list preserves the
       full history for inspection, while the summary is used internally for prompt context.
 
-    - **Chat utility** (``griptape.utils.Chat``): Calls ``agent.run()`` which uses
+    - **Chat utility** (``griptape.utils.Chat``): Calls ``Structure.run()``, which invokes
       ``to_prompt_stack()`` internally. This means only the summary and the unsummarized
       recent runs (those within ``offset``) are sent to the LLM as context.
 
     Attributes:
-        offset: Number of recent runs to keep unsummarized. When a new run is added,
-            runs older than ``offset`` beyond the current summary index are summarized
+        offset: Maximum number of recent runs to keep unsummarized. When a new run is
+            added and the count of unsummarized runs exceeds ``offset``, the oldest excess runs are summarized
             into a single condensed summary string. Defaults to 1.
-        autoprune: Inherited from ``BaseConversationMemory``. When enabled, the system
-            automatically limits the number of runs included in the prompt stack to fit
-            within the token limit. This does **not** remove runs from ``self.runs`` -- it
-            only controls how many are sent to the LLM.
+        autoprune: Inherited from ``BaseConversationMemory``. When enabled,
+            ``add_to_prompt_stack()`` further trims the prompt context to fit within
+            the model's token limit, on top of the summary/offset pruning already
+            performed by ``to_prompt_stack()``. Does not remove runs from ``self.runs``.
     """
 
     offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
