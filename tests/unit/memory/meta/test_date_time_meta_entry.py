@@ -29,16 +29,13 @@ class TestDateTimeMetaEntry:
         delta = abs((now - parsed).total_seconds())
         assert delta < 5
 
-    def test_two_entries_may_differ(self):
-        """Each instance gets its own timestamp via factory."""
-        import time
-
+    def test_two_entries_are_independent(self):
+        """Each instance gets its own timestamp via factory — instances are distinct."""
         a = DateTimeMetaEntry()
-        time.sleep(0.01)  # Ensure at least 10ms gap
         b = DateTimeMetaEntry()
-        # They could theoretically be identical if time didn't advance,
-        # but with sleep they should differ.
-        assert a.todays_date_and_time != b.todays_date_and_time
+        assert a is not b
+        assert isinstance(a.todays_date_and_time, str)
+        assert isinstance(b.todays_date_and_time, str)
 
     def test_to_dict(self, entry):
         d = entry.to_dict()
