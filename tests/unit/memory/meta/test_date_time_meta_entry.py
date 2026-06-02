@@ -38,7 +38,7 @@ class TestDateTimeMetaEntry:
         b = DateTimeMetaEntry()
         # They could theoretically be identical if time didn't advance,
         # but with sleep they should differ.
-        assert a.todays_date_and_time != b.todays_date_and_time or True  # not flaky
+        assert a.todays_date_and_time != b.todays_date_and_time
 
     def test_to_dict(self, entry):
         d = entry.to_dict()
