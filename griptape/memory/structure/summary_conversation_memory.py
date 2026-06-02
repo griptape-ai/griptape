@@ -17,8 +17,7 @@ if TYPE_CHECKING:
 
 @define
 class SummaryConversationMemory(BaseConversationMemory):
-    """Summary conversation memory that maintains a condensed summary of historical conversation
-    runs while keeping a configurable number of the most recent runs in full detail.
+    """Conversation memory that automatically summarizes older runs, keeping a configurable number of recent runs in full detail.
 
     The memory stores **all** runs in ``self.runs`` and automatically generates an LLM-powered
     summary of older runs as new ones are added. Only the summary and the most recent runs
