@@ -44,6 +44,7 @@ class SummaryConversationMemory(BaseConversationMemory):
             ``add_to_prompt_stack()`` further trims the prompt context to fit within
             the model's token limit, on top of the summary/offset pruning already
             performed by ``to_prompt_stack()``. Does not remove runs from ``self.runs``.
+
     """
 
     offset: int = field(default=1, kw_only=True, metadata={"serializable": True})
