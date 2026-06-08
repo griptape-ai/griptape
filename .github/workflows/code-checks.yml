@@ -69,7 +69,7 @@ jobs:
         - name: Run unit tests
           run: make test/unit/coverage
         - name: Upload coverage to Codecov
-          uses: codecov/codecov-action@v6
+          uses: codecov/codecov-action@v7
           with:
             flags: smart-tests
             verbose: true
