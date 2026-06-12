@@ -130,7 +130,7 @@ class MCPTool(BaseTool):
         connection: The MCP server connection info.
     """
 
-    connection: Connection = field(kw_only=True)
+    connection: Connection = field(kw_only=True, metadata={"serializable": True})
 
     def __attrs_post_init__(self) -> None:
         super().__attrs_post_init__()
