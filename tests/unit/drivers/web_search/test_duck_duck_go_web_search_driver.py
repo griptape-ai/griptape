@@ -16,7 +16,7 @@ class TestDuckDuckGoWebSearchDriver:
         mock_ddg = mocker.Mock(
             text=lambda *args, **kwargs: mock_response,
         )
-        mocker.patch("duckduckgo_search.DDGS", return_value=mock_ddg)
+        mocker.patch("ddgs.DDGS", return_value=mock_ddg)
         return DuckDuckGoWebSearchDriver()
 
     @pytest.fixture()
@@ -27,7 +27,7 @@ class TestDuckDuckGoWebSearchDriver:
         mock_ddg = mocker.Mock(
             text=error,
         )
-        mocker.patch("duckduckgo_search.DDGS", return_value=mock_ddg)
+        mocker.patch("ddgs.DDGS", return_value=mock_ddg)
 
         return DuckDuckGoWebSearchDriver()
 
