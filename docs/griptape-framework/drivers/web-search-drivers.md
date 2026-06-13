@@ -75,7 +75,7 @@ The [GoogleWebSearchDriver](../../reference/griptape/drivers/web_search/google_w
 
     This driver requires the `drivers-web-search-duckduckgo` [extra](../index.md#extras).
 
-The [DuckDuckGoWebSearchDriver](../../reference/griptape/drivers/web_search/duck_duck_go_web_search_driver.md) uses the [duckduckgo_search](https://github.com/deedy5/duckduckgo_search) SDK for web searching.
+The [DuckDuckGoWebSearchDriver](../../reference/griptape/drivers/web_search/duck_duck_go_web_search_driver.md) uses the [ddgs](https://github.com/deedy5/ddgs) SDK for web searching.
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_3.py"
