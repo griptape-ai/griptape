@@ -11,7 +11,7 @@ from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
-    from duckduckgo_search import DDGS
+    from ddgs.ddgs import DDGS
 
 
 @define
@@ -22,7 +22,7 @@ class DuckDuckGoWebSearchDriver(BaseWebSearchDriver):
 
     @lazy_property()
     def client(self) -> DDGS:
-        return import_optional_dependency("duckduckgo_search").DDGS()
+        return import_optional_dependency("ddgs").DDGS()
 
     def search(self, query: str, **kwargs) -> ListArtifact:
         try:

@@ -1,4 +1,4 @@
-from duckduckgo_search import DDGS
+from ddgs import DDGS
 from rich.pretty import pprint
 
 from griptape.drivers.web_search import BaseWebSearchDriver

@@ -78,7 +78,7 @@ drivers-web-scraper-markdownify = [
   "beautifulsoup4>=4.12.3",
   "markdownify>=1.0.0",
 ]
-drivers-web-search-duckduckgo = ["duckduckgo-search>=7.0.1"]
+drivers-web-search-duckduckgo = ["ddgs>=9.0.0"]
 drivers-web-search-tavily = ["tavily-python>=0.5.0"]
 drivers-web-search-exa = ["exa-py>=1.1.4"]
 drivers-event-listener-amazon-sqs = ["boto3>=1.34.119"]
@@ -140,7 +140,7 @@ all = [
   "elevenlabs>=1.1.2",
   "pusher>=3.3.2",
   "ollama>=0.4.1",
-  "duckduckgo-search>=7.0.1",
+  "ddgs>=9.0.0",
   "tavily-python>=0.5.0",
   "exa-py>=1.1.4",
   "opentelemetry-sdk>=1.25.0",
