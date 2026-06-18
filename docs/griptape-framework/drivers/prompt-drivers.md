@@ -387,3 +387,13 @@ While you can use this Driver directly, we recommend using it through its accomp
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/prompt_drivers_perplexity.txt"
     ```
+
+### Atlas Cloud
+
+The [AtlasCloudPromptDriver](../../reference/griptape/drivers/prompt/atlascloud_prompt_driver.md) uses [Atlas Cloud's OpenAI-compatible chat completion](https://atlascloud.ai/docs) endpoint, providing access to 300+ models including DeepSeek, Qwen, Claude, GPT, and Gemini variants through a unified API.
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/prompt_drivers_atlascloud.py"
+    ```
