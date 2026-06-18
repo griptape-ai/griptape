@@ -8,6 +8,9 @@ from griptape.tokenizers.base_tokenizer import BaseTokenizer
 @define()
 class AmazonBedrockTokenizer(BaseTokenizer):
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
+        "anthropic.claude-opus-4": 200000,
+        "anthropic.claude-sonnet-4": 200000,
+        "anthropic.claude-haiku-4": 200000,
         "anthropic.claude-3": 200000,
         "anthropic.claude-v2:1": 200000,
         "anthropic.claude": 100000,
@@ -33,6 +36,9 @@ class AmazonBedrockTokenizer(BaseTokenizer):
         "amazon.titan-text-premier-v1": 32000,
     }
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {
+        "anthropic.claude-opus-4": 16384,
+        "anthropic.claude-sonnet-4": 16384,
+        "anthropic.claude-haiku-4": 16384,
         "anthropic.claude-3-7": 8192,
         "anthropic.claude-3-5": 8192,
         "anthropic.claude": 4096,
