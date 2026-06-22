@@ -24,7 +24,7 @@ jobs:
         python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Init environment 
         uses: ./.github/actions/init-environment 
       - name: Run unit tests
@@ -37,7 +37,7 @@ jobs:
         python-version: ["3.10"]
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Init environment 
         uses: ./.github/actions/init-bare-environment 
       - name: Run unit tests
@@ -53,7 +53,7 @@ jobs:
         shell: bash
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Init environment 
         uses: ./.github/actions/init-environment
       - name: Run unit tests
