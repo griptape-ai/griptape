@@ -24,7 +24,7 @@ jobs:
         python-version: ["3.10"]
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run formatter
@@ -37,7 +37,7 @@ jobs:
         python-version: [ "3.10" ]
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run type checker
@@ -50,7 +50,7 @@ jobs:
         python-version: [ "3.10" ]
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run linter
@@ -63,7 +63,7 @@ jobs:
           python-version: ["3.10"]
       steps:
         - name: Checkout actions
-          uses: actions/checkout@v6
+          uses: actions/checkout@v7
         - name: Init environment 
           uses: ./.github/actions/init-environment 
         - name: Run unit tests
@@ -83,7 +83,7 @@ jobs:
         python-version: [ "3.10" ]
     steps:
       - name: Checkout actions
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Init environment
         uses: ./.github/actions/init-environment
       - name: Run linter
