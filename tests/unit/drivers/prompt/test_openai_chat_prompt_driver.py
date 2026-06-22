@@ -1,7 +1,10 @@
 import base64
+from collections.abc import Iterator
 from copy import deepcopy
 from unittest.mock import ANY, MagicMock, Mock
 
+import httpx
+import openai
 import pytest
 import schema
 
@@ -12,6 +15,7 @@ from griptape.artifacts.image_url_artifact import ImageUrlArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.common.prompt_stack.contents.audio_delta_message_content import AudioDeltaMessageContent
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
+from griptape.exceptions import PromptDriverError
 from griptape.tokenizers import OpenAiTokenizer
 from tests.mocks.mock_tokenizer import MockTokenizer
 from tests.mocks.mock_tool.tool import MockTool
@@ -939,3 +943,90 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             max_tokens=1,
         )
         assert event.value[0].value == "model-output"
+
+
+class TestOpenAiChatPromptDriverExceptionWrapping(TestOpenAiChatPromptDriverFixtureMixin):
+    """#1946 — OpenAI SDK exceptions are wrapped as Griptape ``PromptDriverError``."""
+
+    @pytest.fixture()
+    def simple_prompt_stack(self):
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("hello")
+        return prompt_stack
+
+    @staticmethod
+    def _openai_status_error(error_cls: type[openai.APIStatusError], status_code: int) -> openai.APIStatusError:
+        request = httpx.Request("POST", "https://api.openai.com/v1/chat/completions")
+        response = httpx.Response(status_code, request=request)
+        return error_cls("boom", response=response, body=None)
+
+    def _driver(self, **kwargs):
+        return OpenAiChatPromptDriver(
+            model="gpt-4o", api_key="x", tokenizer=MockTokenizer(model="test-model"), **kwargs
+        )
+
+    def test_run_wraps_openai_status_error(self, mock_chat_completion_create, simple_prompt_stack):
+        mock_chat_completion_create.side_effect = self._openai_status_error(openai.AuthenticationError, 401)
+
+        with pytest.raises(PromptDriverError) as exc_info:
+            self._driver().run(simple_prompt_stack)
+
+        assert exc_info.value.status_code == 401
+        assert isinstance(exc_info.value.__cause__, openai.AuthenticationError)
+
+    def test_run_does_not_retry_4xx(self, mock_chat_completion_create, simple_prompt_stack):
+        mock_chat_completion_create.side_effect = self._openai_status_error(openai.BadRequestError, 400)
+
+        with pytest.raises(PromptDriverError):
+            self._driver(max_attempts=2, min_retry_delay=0, max_retry_delay=0).run(simple_prompt_stack)
+
+        assert mock_chat_completion_create.call_count == 1  # fast-fail: not retried
+
+    def test_run_retries_then_wraps_429(self, mock_chat_completion_create, simple_prompt_stack):
+        mock_chat_completion_create.side_effect = self._openai_status_error(openai.RateLimitError, 429)
+
+        with pytest.raises(PromptDriverError) as exc_info:
+            self._driver(max_attempts=2, min_retry_delay=0, max_retry_delay=0).run(simple_prompt_stack)
+
+        assert exc_info.value.status_code == 429
+        assert mock_chat_completion_create.call_count == 2  # retried up to max_attempts
+
+    def test_run_does_not_wrap_non_openai_exception(self, mock_chat_completion_create, simple_prompt_stack):
+        mock_chat_completion_create.side_effect = ValueError("internal griptape error")
+
+        with pytest.raises(ValueError):
+            self._driver(max_attempts=1, min_retry_delay=0, max_retry_delay=0).run(simple_prompt_stack)
+
+    def test_stream_wraps_openai_status_error(self, mock_chat_completion_create, simple_prompt_stack):
+        mock_chat_completion_create.side_effect = self._openai_status_error(openai.AuthenticationError, 401)
+
+        with pytest.raises(PromptDriverError) as exc_info:
+            self._driver(stream=True).run(simple_prompt_stack)
+
+        assert exc_info.value.status_code == 401
+        assert isinstance(exc_info.value.__cause__, openai.AuthenticationError)
+
+    def test_run_wraps_connection_error_with_status_none(self, mock_chat_completion_create, simple_prompt_stack):
+        request = httpx.Request("POST", "https://api.openai.com/v1/chat/completions")
+        mock_chat_completion_create.side_effect = openai.APIConnectionError(request=request)
+
+        with pytest.raises(PromptDriverError) as exc_info:
+            self._driver(max_attempts=1, min_retry_delay=0, max_retry_delay=0).run(simple_prompt_stack)
+
+        assert exc_info.value.status_code is None
+        assert isinstance(exc_info.value.__cause__, openai.APIConnectionError)
+
+    def test_stream_wraps_error_raised_mid_iteration(self, mock_chat_completion_create, simple_prompt_stack):
+        error = self._openai_status_error(openai.InternalServerError, 500)
+
+        def exploding_stream() -> Iterator[object]:
+            yield from ()
+            raise error
+
+        mock_chat_completion_create.return_value = exploding_stream()
+
+        with pytest.raises(PromptDriverError) as exc_info:
+            self._driver(stream=True, max_attempts=1, min_retry_delay=0, max_retry_delay=0).run(simple_prompt_stack)
+
+        assert exc_info.value.status_code == 500
+        assert isinstance(exc_info.value.__cause__, openai.InternalServerError)

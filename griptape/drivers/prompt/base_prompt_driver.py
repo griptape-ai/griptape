@@ -88,16 +88,32 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         else:
             prompt_stack = prompt_input
 
-        for attempt in self.retrying():
-            with attempt:
-                self.before_run(prompt_stack)
+        try:
+            for attempt in self.retrying():
+                with attempt:
+                    self.before_run(prompt_stack)
 
-                result = self.__process_stream(prompt_stack) if self.stream else self.__process_run(prompt_stack)
+                    result = self.__process_stream(prompt_stack) if self.stream else self.__process_run(prompt_stack)
 
-                self.after_run(result)
+                    self.after_run(result)
 
-                return result
-        raise Exception("prompt driver failed after all retry attempts")
+                    return result
+            raise Exception("prompt driver failed after all retry attempts")
+        except Exception as e:
+            wrapped = self._wrap_exception(e)
+            if wrapped is e:
+                raise
+            raise wrapped from e
+
+    def _wrap_exception(self, exc: Exception) -> Exception:
+        """Map a provider or runtime exception to a Griptape-native exception.
+
+        Subclasses override this to translate their provider SDK's errors into Griptape
+        exceptions (see ``OpenAiChatPromptDriver``). This runs OUTSIDE the retry loop, so the
+        exception type seen by ``ignored_exception_types`` / ``tenacity`` is unchanged. The
+        default returns ``exc`` unchanged, so drivers that don't override it behave as before.
+        """
+        return exc
 
     def prompt_stack_to_string(self, prompt_stack: PromptStack) -> str:
         """Converts a Prompt Stack to a string for token counting or model prompt_input.

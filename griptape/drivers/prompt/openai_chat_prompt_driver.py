@@ -29,6 +29,7 @@ from griptape.common import (
 )
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.prompt import BasePromptDriver
+from griptape.exceptions import PromptDriverError
 from griptape.tokenizers import BaseTokenizer, OpenAiTokenizer
 from griptape.utils import import_optional_dependency
 from griptape.utils.decorators import lazy_property
@@ -159,6 +160,14 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         result = self.client.chat.completions.create(**params, stream=True)
 
         return self._to_delta_message_stream(result)
+
+    def _wrap_exception(self, exc: Exception) -> Exception:
+        openai = import_optional_dependency("openai")
+        if isinstance(exc, openai.APIStatusError):
+            return PromptDriverError(str(exc), status_code=getattr(exc, "status_code", None))
+        if isinstance(exc, openai.OpenAIError):
+            return PromptDriverError(str(exc))
+        return exc
 
     def _to_message(self, result: ChatCompletion) -> Message:
         if len(result.choices) == 1:
