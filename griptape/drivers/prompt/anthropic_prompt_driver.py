@@ -107,6 +107,13 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         logger.debug(response.model_dump())
 
+        if response.stop_reason == "max_tokens":
+            logger.warning(
+                "Response reached the max_tokens limit (%d). Output may be truncated. "
+                "Increase the max_tokens parameter to get longer responses.",
+                self.max_tokens,
+            )
+
         return Message(
             content=[self.__to_prompt_stack_message_content(content) for content in response.content],
             role=Message.ASSISTANT_ROLE,
@@ -126,6 +133,12 @@ class AnthropicPromptDriver(BasePromptDriver):
             elif event.type == "message_start":
                 yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=event.message.usage.input_tokens))
             elif event.type == "message_delta":
+                if event.delta.stop_reason == "max_tokens":
+                    logger.warning(
+                        "Response reached the max_tokens limit (%d). Output may be truncated. "
+                        "Increase the max_tokens parameter to get longer responses.",
+                        self.max_tokens,
+                    )
                 yield DeltaMessage(usage=DeltaMessage.Usage(output_tokens=event.usage.output_tokens))
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
