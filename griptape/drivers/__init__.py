@@ -16,6 +16,7 @@ from .prompt.ollama import OllamaPromptDriver
 from .prompt.grok import GrokPromptDriver
 from .prompt.griptape_cloud import GriptapeCloudPromptDriver
 from .prompt.perplexity import PerplexityPromptDriver
+from .prompt.atlascloud import AtlasCloudPromptDriver
 
 from .memory.conversation import BaseConversationMemoryDriver
 from .memory.conversation.local import LocalConversationMemoryDriver
