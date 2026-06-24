@@ -1,9 +1,14 @@
+from typing import TYPE_CHECKING
+
 import boto3
 import pytest
 from botocore.stub import Stubber
 
 from griptape.artifacts import TextArtifact
 from griptape.drivers.rerank.amazon_bedrock_rerank_driver import AmazonBedrockRerankDriver
+
+if TYPE_CHECKING:
+    from mypy_boto3_bedrock_agent_runtime.type_defs import RerankResultTypeDef
 
 
 class TestAmazonBedrockRerankDriver:
@@ -40,6 +45,40 @@ class TestAmazonBedrockRerankDriver:
             },
         }
 
+    def _make_expected_rerank_params(
+        self,
+        model_arn: str,
+        query: str,
+        texts: list[str],
+        *,
+        top_n: int | None = None,
+        next_token: str | None = None,
+    ) -> dict:
+        bedrock_reranking_configuration: dict = {"modelConfiguration": {"modelArn": model_arn}}
+
+        if top_n is not None:
+            bedrock_reranking_configuration["numberOfResults"] = top_n
+
+        expected_params = {
+            "queries": [{"type": "TEXT", "textQuery": {"text": query}}],
+            "sources": [
+                {
+                    "type": "INLINE",
+                    "inlineDocumentSource": {"type": "TEXT", "textDocument": {"text": text}},
+                }
+                for text in texts
+            ],
+            "rerankingConfiguration": {
+                "type": "BEDROCK_RERANKING_MODEL",
+                "bedrockRerankingConfiguration": bedrock_reranking_configuration,
+            },
+        }
+
+        if next_token is not None:
+            expected_params["nextToken"] = next_token
+
+        return expected_params
+
     # ---------------------------------------------------------------------------
     # Defaults / instantiation
     # ---------------------------------------------------------------------------
@@ -60,24 +99,33 @@ class TestAmazonBedrockRerankDriver:
         driver = AmazonBedrockRerankDriver(session=session, model="amazon.rerank-v1:0")
         assert "amazon.rerank-v1:0" in driver.model_arn
 
+    def test_model_arn_uses_client_metadata(self, mocker, session):
+        mock_client = mocker.MagicMock()
+        mock_client.meta.partition = "aws-us-gov"
+        mock_client.meta.region_name = "us-gov-west-1"
+
+        driver = AmazonBedrockRerankDriver(session=session, client=mock_client)
+
+        assert driver.model_arn == "arn:aws-us-gov:bedrock:us-gov-west-1::foundation-model/cohere.rerank-v3-5:0"
+
     # ---------------------------------------------------------------------------
     # run() — empty / falsy inputs
     # ---------------------------------------------------------------------------
 
-    def test_run_empty_artifacts_returns_empty(self, mocker, driver):
+    def test_run_empty_artifacts_returns_empty(self, mocker, session):
         """When artifacts list is empty, client must never be called."""
         mock_client = mocker.MagicMock()
-        driver._client = mock_client
+        driver = AmazonBedrockRerankDriver(session=session, client=mock_client)
 
         result = driver.run("query", artifacts=[])
 
         assert result == []
         mock_client.rerank.assert_not_called()
 
-    def test_run_all_falsy_artifacts_returns_empty(self, mocker, driver):
+    def test_run_all_falsy_artifacts_returns_empty(self, mocker, session):
         """When all artifacts are falsy, client must never be called."""
         mock_client = mocker.MagicMock()
-        driver._client = mock_client
+        driver = AmazonBedrockRerankDriver(session=session, client=mock_client)
 
         result = driver.run("query", artifacts=[TextArtifact("   "), TextArtifact("")])
 
@@ -99,10 +147,12 @@ class TestAmazonBedrockRerankDriver:
             ]
         )
 
-        stubber.add_response("rerank", rerank_response)
+        driver = AmazonBedrockRerankDriver(session=session, client=client)
+        stubber.add_response(
+            "rerank", rerank_response, self._make_expected_rerank_params(driver.model_arn, "query", ["first", "third"])
+        )
         stubber.activate()
 
-        driver = AmazonBedrockRerankDriver(session=session, client=client)
         result = driver.run("query", artifacts=artifacts)
 
         assert len(result) == 2
@@ -129,10 +179,14 @@ class TestAmazonBedrockRerankDriver:
             ]
         )
 
-        stubber.add_response("rerank", rerank_response)
+        driver = AmazonBedrockRerankDriver(session=session, client=client)
+        stubber.add_response(
+            "rerank",
+            rerank_response,
+            self._make_expected_rerank_params(driver.model_arn, "what is griptape?", ["first", "second", "third"]),
+        )
         stubber.activate()
 
-        driver = AmazonBedrockRerankDriver(session=session, client=client)
         result = driver.run("what is griptape?", artifacts=artifacts)
 
         assert len(result) == 3
@@ -154,10 +208,15 @@ class TestAmazonBedrockRerankDriver:
                 {"index": 0, "relevanceScore": 0.40},
             ]
         )
-        stubber.add_response("rerank", rerank_response)
-        stubber.activate()
 
         driver = AmazonBedrockRerankDriver(session=session, client=client, top_n=2)
+        stubber.add_response(
+            "rerank",
+            rerank_response,
+            self._make_expected_rerank_params(driver.model_arn, "query", ["alpha", "beta"], top_n=2),
+        )
+        stubber.activate()
+
         result = driver.run("query", artifacts=artifacts)
 
         assert len(result) == 2
@@ -170,10 +229,13 @@ class TestAmazonBedrockRerankDriver:
 
         artifacts = [TextArtifact("only one")]
         rerank_response = self._make_rerank_response([{"index": 0, "relevanceScore": 0.99}])
-        stubber.add_response("rerank", rerank_response)
-        stubber.activate()
 
         driver = AmazonBedrockRerankDriver(session=session, client=client)
+        stubber.add_response(
+            "rerank", rerank_response, self._make_expected_rerank_params(driver.model_arn, "query", ["only one"])
+        )
+        stubber.activate()
+
         result = driver.run("query", artifacts=artifacts)
 
         assert len(result) == 1
@@ -185,7 +247,10 @@ class TestAmazonBedrockRerankDriver:
 
     def test_post_process_reorders_by_response_index(self):
         artifacts = [TextArtifact("A"), TextArtifact("B"), TextArtifact("C")]
-        response = [{"index": 2, "relevanceScore": 0.9}, {"index": 0, "relevanceScore": 0.5}]
+        response: list[RerankResultTypeDef] = [
+            {"index": 2, "relevanceScore": 0.9},
+            {"index": 0, "relevanceScore": 0.5},
+        ]
         result = AmazonBedrockRerankDriver._post_process(response, artifacts)
         assert result[0].value == "C"
         assert result[1].value == "A"
@@ -209,6 +274,8 @@ class TestAmazonBedrockRerankDriver:
         page2 = self._make_rerank_response([{"index": 1, "relevanceScore": 0.5}])
 
         mock_client = mocker.MagicMock()
+        mock_client.meta.partition = "aws"
+        mock_client.meta.region_name = "us-east-1"
         mock_client.rerank.side_effect = [page1, page2]
 
         artifacts = [TextArtifact("first"), TextArtifact("second")]
@@ -216,6 +283,16 @@ class TestAmazonBedrockRerankDriver:
         result = driver.run("query", artifacts=artifacts)
 
         assert mock_client.rerank.call_count == 2
+        mock_client.rerank.assert_has_calls(
+            [
+                mocker.call(**self._make_expected_rerank_params(driver.model_arn, "query", ["first", "second"])),
+                mocker.call(
+                    **self._make_expected_rerank_params(
+                        driver.model_arn, "query", ["first", "second"], next_token="page2token"
+                    )
+                ),
+            ]
+        )
         assert len(result) == 2
-        assert result[0].value == "first"  # index 0
-        assert result[1].value == "second"  # index 1
+        assert result[0].value == "first"  
+        assert result[1].value == "second" 

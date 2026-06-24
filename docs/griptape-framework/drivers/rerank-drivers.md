@@ -45,6 +45,20 @@ The [CohereRerankDriver](../../reference/griptape/drivers/rerank/cohere_rerank_d
     --8<-- "docs/griptape-framework/drivers/logs/cohere_rerank_driver.txt"
     ```
 
+### Amazon Bedrock
+
+!!! info
+
+    This driver requires the `drivers-rerank-amazon-bedrock` [extra](../index.md#extras).
+
+The [AmazonBedrockRerankDriver](../../reference/griptape/drivers/rerank/amazon_bedrock_rerank_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/)'s Rerank API.
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/amazon_bedrock_rerank_driver.py"
+    ```
+
 ### Nvidia NIM
 
 The [NvidiaNimRerankDriver](../../reference/griptape/drivers/rerank/nvidia_nim_rerank_driver.md) uses the [Nvidia NIM Reranking API](https://docs.nvidia.com/nim/nemo-retriever/text-reranking/latest/index.html).
