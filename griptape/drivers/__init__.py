@@ -103,6 +103,7 @@ from .file_manager.griptape_cloud import GriptapeCloudFileManagerDriver
 from .rerank import BaseRerankDriver
 from .rerank.cohere import CohereRerankDriver
 from .rerank.local import LocalRerankDriver
+from .rerank.amazon_bedrock import AmazonBedrockRerankDriver
 
 from .ruleset import BaseRulesetDriver
 from .ruleset.local import LocalRulesetDriver
@@ -136,6 +137,7 @@ __all__ = [
     "AmazonBedrockCohereEmbeddingDriver",
     "AmazonBedrockImageGenerationDriver",
     "AmazonBedrockPromptDriver",
+    "AmazonBedrockRerankDriver",
     "AmazonBedrockTitanEmbeddingDriver",
     "AmazonDynamoDbConversationMemoryDriver",
     "AmazonOpenSearchVectorStoreDriver",

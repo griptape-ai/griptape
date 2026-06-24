@@ -318,6 +318,9 @@ wheels = [
 ]
 
 [package.optional-dependencies]
+bedrock-agent-runtime = [
+    { name = "mypy-boto3-bedrock-agent-runtime" },
+]
 bedrock-runtime = [
     { name = "mypy-boto3-bedrock-runtime" },
 ]
@@ -1535,6 +1538,9 @@ drivers-prompt-huggingface-pipeline = [
 drivers-prompt-ollama = [
     { name = "ollama" },
 ]
+drivers-rerank-amazon-bedrock = [
+    { name = "boto3" },
+]
 drivers-rerank-cohere = [
     { name = "cohere" },
 ]
@@ -1617,7 +1623,7 @@ loaders-sql = [
 
 [package.dev-dependencies]
 dev = [
-    { name = "boto3-stubs", extra = ["bedrock-runtime", "dynamodb", "iam", "iot-data", "opensearch", "redshift-data", "s3", "sagemaker-runtime", "sqs"] },
+    { name = "boto3-stubs", extra = ["bedrock-agent-runtime", "bedrock-runtime", "dynamodb", "iam", "iot-data", "opensearch", "redshift-data", "s3", "sagemaker-runtime", "sqs"] },
     { name = "mdformat" },
     { name = "mdformat-footnote" },
     { name = "mdformat-frontmatter" },
@@ -1672,6 +1678,7 @@ requires-dist = [
     { name = "boto3", marker = "extra == 'drivers-memory-conversation-amazon-dynamodb'", specifier = ">=1.34.119" },
     { name = "boto3", marker = "extra == 'drivers-prompt-amazon-bedrock'", specifier = ">=1.34.119" },
     { name = "boto3", marker = "extra == 'drivers-prompt-amazon-sagemaker'", specifier = ">=1.34.119" },
+    { name = "boto3", marker = "extra == 'drivers-rerank-amazon-bedrock'", specifier = ">=1.34.119" },
     { name = "boto3", marker = "extra == 'drivers-sql-amazon-redshift'", specifier = ">=1.34.119" },
     { name = "boto3", marker = "extra == 'drivers-vector-amazon-opensearch'", specifier = ">=1.34.119" },
     { name = "cohere", marker = "extra == 'all'", specifier = ">=5.11.2" },
@@ -1786,11 +1793,11 @@ requires-dist = [
     { name = "voyageai", marker = "extra == 'drivers-embedding-voyageai'", specifier = ">=0.2.1" },
     { name = "wrapt", specifier = ">=1.16.0" },
 ]
-provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "all"]
+provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-rerank-amazon-bedrock", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "all"]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "boto3-stubs", extras = ["bedrock-runtime", "iam", "opensearch", "s3", "sagemaker-runtime", "sqs", "iot-data", "dynamodb", "redshift-data"], specifier = ">=1.34.105" },
+    { name = "boto3-stubs", extras = ["bedrock-runtime", "bedrock-agent-runtime", "iam", "opensearch", "s3", "sagemaker-runtime", "sqs", "iot-data", "dynamodb", "redshift-data"], specifier = ">=1.34.105" },
     { name = "mdformat", specifier = ">=0.7.17" },
     { name = "mdformat-footnote", specifier = ">=0.1.1" },
     { name = "mdformat-frontmatter", specifier = ">=2.0.8" },
@@ -2902,6 +2909,18 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/38/e0/4f5855037a72cd8a7a2f60a3952d9aa45feedb37ae7831642102604e8a37/multidict-6.1.0-cp313-cp313-win32.whl", hash = "sha256:3a37ffb35399029b45c6cc33640a92bef403c9fd388acce75cdc88f58bd19a81", size = 26426, upload-time = "2024-09-09T23:48:43.936Z" },
     { url = "https://files.pythonhosted.org/packages/7e/a5/17ee3a4db1e310b7405f5d25834460073a8ccd86198ce044dfaf69eac073/multidict-6.1.0-cp313-cp313-win_amd64.whl", hash = "sha256:e9aa71e15d9d9beaad2c6b9319edcdc0a49a43ef5c0a4c8265ca9ee7d6c67774", size = 28531, upload-time = "2024-09-09T23:48:45.122Z" },
     { url = "https://files.pythonhosted.org/packages/99/b7/b9e70fde2c0f0c9af4cc5277782a89b66d35948ea3369ec9f598358c3ac5/multidict-6.1.0-py3-none-any.whl", hash = "sha256:48e171e52d1c4d33888e529b999e5900356b9ae588c2f09a52dcefb158b27506", size = 10051, upload-time = "2024-09-09T23:49:36.506Z" },
+]
+
+[[package]]
+name = "mypy-boto3-bedrock-agent-runtime"
+version = "1.37.22"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "typing-extensions", marker = "python_full_version < '3.12'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/c7/f0/5756c2263eca00b7932e543fcaab1f79a24edb49ff1f3f2e1276d5999b24/mypy_boto3_bedrock_agent_runtime-1.37.22.tar.gz", hash = "sha256:5b70873103fd14862dca9cd8b38075bedbe7747c171ecfe3ea99830b9d9e4d91", size = 38322, upload-time = "2025-03-27T19:42:22.43Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a5/27/d9444b08c093eac85bdab7f60f3c9a8a701b1b4f28415afcaab7bb933dfe/mypy_boto3_bedrock_agent_runtime-1.37.22-py3-none-any.whl", hash = "sha256:402d424a9080ea3b8f6d353b9b50110a80758a44d8fa8c9b91d065459676a886", size = 46334, upload-time = "2025-03-27T19:42:17.618Z" },
 ]
 
 [[package]]
