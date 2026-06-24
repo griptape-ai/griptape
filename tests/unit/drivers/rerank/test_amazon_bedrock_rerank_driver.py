@@ -294,5 +294,5 @@ class TestAmazonBedrockRerankDriver:
             ]
         )
         assert len(result) == 2
-        assert result[0].value == "first"  
-        assert result[1].value == "second" 
+        assert result[0].value == "first"
+        assert result[1].value == "second"
