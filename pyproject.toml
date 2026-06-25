@@ -72,6 +72,7 @@ drivers-embedding-voyageai = ["voyageai>=0.2.1"]
 drivers-embedding-google = ["google-genai>=1.73.1"]
 drivers-embedding-cohere = ["cohere>=5.11.2"]
 drivers-embedding-ollama = ["ollama>=0.4.1"]
+drivers-embedding-twelvelabs = ["twelvelabs>=1.2.8"]
 drivers-web-scraper-trafilatura = ["trafilatura>=2.0"]
 drivers-web-scraper-markdownify = [
   "playwright>=1.42",
