@@ -3337,19 +3337,32 @@ wheels = [
 ]
 
 [[package]]
+name = "opensearch-protobufs"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "grpcio" },
+    { name = "protobuf" },
+]
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d8/2f/e0cc165af7bb7b44cb00023b9fcaa01a28d1755a059ede28d0cd970c3cec/opensearch_protobufs-1.2.0-py3-none-any.whl", hash = "sha256:e806730894d0a0c8cdaa3cdbe07e4b7c46e1823f453777b36caf39e9cba28e2c", size = 54751, upload-time = "2026-01-22T18:51:56.805Z" },
+]
+
+[[package]]
 name = "opensearch-py"
-version = "2.8.0"
+version = "3.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "certifi" },
     { name = "events" },
+    { name = "opensearch-protobufs" },
     { name = "python-dateutil" },
     { name = "requests" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7c/e4/192c97ca676c81f69e138a22e10fb03f64e14a55633cb2acffb41bf6d061/opensearch_py-2.8.0.tar.gz", hash = "sha256:6598df0bc7a003294edd0ba88a331e0793acbb8c910c43edf398791e3b2eccda", size = 237923, upload-time = "2024-11-29T21:06:02.952Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/82/9e/e77844cb2d625ca32331bfdd28930113b3778399c01dd5f1c350ceb55e65/opensearch_py-3.2.0.tar.gz", hash = "sha256:f40fb3a295275422df2ad6d9459f667af94472d5a9e567072e9ecf163eb22613", size = 259927, upload-time = "2026-04-27T18:17:50.467Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/35/a957c6fb88ff6874996be688448b889475cf0ea978446cd5a30e764e0561/opensearch_py-2.8.0-py3-none-any.whl", hash = "sha256:52c60fdb5d4dcf6cce3ee746c13b194529b0161e0f41268b98ab8f1624abe2fa", size = 353492, upload-time = "2024-11-29T21:05:56.075Z" },
+    { url = "https://files.pythonhosted.org/packages/ef/63/7abb96bf2e3619acbd27de99e60619bfacfb7c55b68c4792a258e6d92871/opensearch_py-3.2.0-py3-none-any.whl", hash = "sha256:721a0d3b13fbed9e82278aed748285cf63a1855354ab7e73e3d4992d1b93418b", size = 387286, upload-time = "2026-04-27T18:17:48.658Z" },
 ]
 
 [[package]]
