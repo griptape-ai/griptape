@@ -893,34 +893,47 @@ wheels = [
 
 [package.optional-dependencies]
 cudart = [
-    { name = "nvidia-cuda-runtime", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cuda-runtime" },
 ]
 cufft = [
-    { name = "nvidia-cufft", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cufft" },
 ]
 cufile = [
-    { name = "nvidia-cufile", marker = "sys_platform == 'linux'" },
+    { name = "nvidia-cufile" },
 ]
 cupti = [
-    { name = "nvidia-cuda-cupti", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cuda-cupti" },
 ]
 curand = [
-    { name = "nvidia-curand", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-curand" },
 ]
 cusolver = [
-    { name = "nvidia-cusolver", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cusolver" },
 ]
 cusparse = [
-    { name = "nvidia-cusparse", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cusparse" },
 ]
 nvjitlink = [
-    { name = "nvidia-nvjitlink", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-nvjitlink" },
 ]
 nvrtc = [
-    { name = "nvidia-cuda-nvrtc", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-cuda-nvrtc" },
 ]
 nvtx = [
-    { name = "nvidia-nvtx", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+    { name = "nvidia-nvtx" },
+]
+
+[[package]]
+name = "dakera"
+version = "0.12.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "requests" },
+    { name = "urllib3" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/aa/ef/adbb92495aa9661f393764d7adc1571be0a938304c89bccac3dfeb0c9524/dakera-0.12.8.tar.gz", hash = "sha256:d72b9fed847a6685af5e87f885fff8ceed7ce4db6423834380bf802e9cc19512", size = 136918, upload-time = "2026-06-26T10:39:07.085Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/58/72/3dd493ac6ae4c3e456519b6316f32d371d298318aa91a458bf061808f9b0/dakera-0.12.8-py3-none-any.whl", hash = "sha256:fdd460b2c52870df7e5631e72b635d32169302da57029f4f1a740fa66b6cfc75", size = 88834, upload-time = "2026-06-26T10:39:05.164Z" },
 ]
 
 [[package]]
@@ -1411,6 +1424,7 @@ all = [
     { name = "beautifulsoup4" },
     { name = "boto3" },
     { name = "cohere" },
+    { name = "dakera" },
     { name = "ddgs" },
     { name = "diffusers" },
     { name = "elevenlabs" },
@@ -1486,6 +1500,9 @@ drivers-image-generation-huggingface = [
 ]
 drivers-memory-conversation-amazon-dynamodb = [
     { name = "boto3" },
+]
+drivers-memory-conversation-dakera = [
+    { name = "dakera" },
 ]
 drivers-memory-conversation-redis = [
     { name = "redis" },
@@ -1685,6 +1702,8 @@ requires-dist = [
     { name = "cohere", marker = "extra == 'drivers-embedding-cohere'", specifier = ">=5.11.2" },
     { name = "cohere", marker = "extra == 'drivers-prompt-cohere'", specifier = ">=5.11.2" },
     { name = "cohere", marker = "extra == 'drivers-rerank-cohere'", specifier = ">=5.11.2" },
+    { name = "dakera", marker = "extra == 'all'", specifier = ">=0.12.8" },
+    { name = "dakera", marker = "extra == 'drivers-memory-conversation-dakera'", specifier = ">=0.12.8" },
     { name = "ddgs", marker = "extra == 'all'", specifier = ">=9.0.0" },
     { name = "ddgs", marker = "extra == 'drivers-web-search-duckduckgo'", specifier = ">=9.0.0" },
     { name = "diffusers", marker = "extra == 'all'", specifier = ">=0.32.0" },
@@ -1793,7 +1812,7 @@ requires-dist = [
     { name = "voyageai", marker = "extra == 'drivers-embedding-voyageai'", specifier = ">=0.2.1" },
     { name = "wrapt", specifier = ">=1.16.0" },
 ]
-provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-rerank-amazon-bedrock", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "all"]
+provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-memory-conversation-dakera", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-rerank-amazon-bedrock", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "all"]
 
 [package.metadata.requires-dev]
 dev = [

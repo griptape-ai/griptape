@@ -22,6 +22,7 @@ from .memory.conversation.local import LocalConversationMemoryDriver
 from .memory.conversation.amazon_dynamodb import AmazonDynamoDbConversationMemoryDriver
 from .memory.conversation.redis import RedisConversationMemoryDriver
 from .memory.conversation.griptape_cloud import GriptapeCloudConversationMemoryDriver
+from .memory.conversation.dakera import DakeraConversationMemoryDriver
 
 from .embedding import BaseEmbeddingDriver
 from .embedding.openai import OpenAiEmbeddingDriver
@@ -179,6 +180,7 @@ __all__ = [
     "CohereEmbeddingDriver",
     "CoherePromptDriver",
     "CohereRerankDriver",
+    "DakeraConversationMemoryDriver",
     "DatadogObservabilityDriver",
     "DuckDuckGoWebSearchDriver",
     "DummyAudioTranscriptionDriver",

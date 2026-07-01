@@ -48,6 +48,7 @@ drivers-sql-snowflake = [
 ]
 drivers-memory-conversation-amazon-dynamodb = ["boto3>=1.34.119"]
 drivers-memory-conversation-redis = ["redis>=5.1.0"]
+drivers-memory-conversation-dakera = ["dakera>=0.12.8"]
 drivers-vector-marqo = ["marqo>=3.9.2"]
 drivers-vector-pinecone = ["pinecone>=6.0.1"]
 drivers-vector-mongodb = ["pymongo>=4.8.0"]
@@ -154,6 +155,7 @@ all = [
   "pandas>=2.2",
   "pypdf>=5.0.1",
   "mail-parser>=4.0.0",
+  "dakera>=0.12.8",
 ]
 
 [project.urls]
