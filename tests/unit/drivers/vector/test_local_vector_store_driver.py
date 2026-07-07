@@ -48,6 +48,18 @@ class TestLocalVectorStoreDriver(TestBaseVectorStoreDriver):
         assert result[0].score is not None
         assert result[0].namespace == "foo"
 
+    def test_query_vector_namespace_does_not_leak_hyphenated_sibling_namespace(self, driver):
+        # A namespace filter based on string-prefix matching (e.g. `key.startswith(f"{namespace}-")`)
+        # incorrectly matches entries from an unrelated namespace whenever one namespace name is a
+        # hyphen-prefix of another (e.g. "foo" is a prefix of "foo-bar-baz-summary").
+        driver.upsert_collection(
+            {"foo": [TextArtifact("hello foo")], "foo-bar-baz-summary": [TextArtifact("hello sibling")]}
+        )
+
+        result = driver.query_vector([1.0, 1.0], namespace="foo", include_vectors=True)
+
+        assert {entry.namespace for entry in result} == {"foo"}
+
     @pytest.mark.parametrize("execution_number", range(1000))
     def test_upsert_collection_meta(self, driver, mocker, execution_number):
         spy = mocker.spy(driver, "upsert_vector")
