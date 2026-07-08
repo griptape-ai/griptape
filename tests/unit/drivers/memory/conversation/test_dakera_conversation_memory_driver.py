@@ -68,3 +68,14 @@ class TestDakeraConversationMemoryDriver:
 
         assert len(runs) == 0
         assert metadata == {}
+
+    def test_store_skips_memories_without_id(self, driver, client):
+        # A memory row with a null id or no "id" key is skipped (no forget),
+        # covering the `memory_id is not None` guard's false branch.
+        client.agent_memories.return_value = [{"id": None}, {"content": "no id key"}]
+        memory = BaseConversationMemory.from_json(TEST_MEMORY)
+
+        driver.store(memory.runs, memory.meta)
+
+        client.forget.assert_not_called()
+        client.store_memory.assert_called_once()
