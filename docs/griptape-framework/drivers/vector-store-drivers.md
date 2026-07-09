@@ -273,6 +273,28 @@ Here is an example of how the Driver can be used to query information in a Qdran
     --8<-- "docs/griptape-framework/drivers/logs/vector_store_drivers_10.txt"
     ```
 
+### Milvus
+
+!!! info
+
+    This Driver requires the `drivers-vector-milvus` [extra](../index.md#extras).
+
+The [MilvusVectorStoreDriver](../../reference/griptape/drivers/vector/milvus_vector_store_driver.md) supports Milvus Lite by default with a local `./milvus.db` file. Set `uri` and `token` to connect to a Milvus server or Zilliz Cloud.
+
+The following example stores vector entries in a local Milvus Lite database and queries them with a metadata filter:
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_13.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/drivers/logs/vector_store_drivers_13.txt"
+    ```
+
 ### Astra DB
 
 !!! info
