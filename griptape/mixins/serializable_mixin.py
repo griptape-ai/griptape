@@ -22,12 +22,12 @@ def _default(_self: Any, obj: Any) -> Any:
 
     if isinstance(obj, BaseModel):
         return obj.model_dump()
-    return getattr(obj.__class__, "to_dict", getattr(_default, "default"))(obj)
+    return getattr(obj.__class__, "to_dict", _default.default)(obj)
 
 
 # Adapted from https://stackoverflow.com/questions/18478287/making-object-json-serializable-with-regular-encoder/18561055#18561055
-setattr(_default, "default", JSONEncoder.default)
-setattr(JSONEncoder, "default", _default)
+_default.default = JSONEncoder.default
+JSONEncoder.default = _default
 
 
 @define(slots=False)
