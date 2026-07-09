@@ -273,6 +273,36 @@ Here is an example of how the Driver can be used to query information in a Qdran
     --8<-- "docs/griptape-framework/drivers/logs/vector_store_drivers_10.txt"
     ```
 
+### Milvus
+
+!!! info
+
+    This Driver requires the `drivers-vector-milvus` [extra](../index.md#extras).
+
+The [MilvusVectorStoreDriver](../../reference/griptape/drivers/vector/milvus_vector_store_driver.md) uses Milvus Lite by default with a local `./milvus.db` file. Constructing the Driver or reading a missing collection does not create the collection; `setup` and the first upsert are the collection-creating operations.
+
+Use `uri="http://localhost:19530"` for a local or self-hosted Milvus Server. For Zilliz Cloud, pass the cluster endpoint as `uri` and the API key as `token`. You can also pass `db_name` when the deployment uses a non-default database. Keep tokens in environment variables or another secret store rather than serialized configuration.
+
+The Driver creates an explicit schema and validates it whenever it reuses a collection. The primary key, vector dimension, configured string limits, dynamic-field support, and vector index metric must match. `consistency_level` is passed when the Driver creates a collection; it does not alter an existing collection.
+
+Vector IDs are global to the collection. Namespaces are filters, not ID scopes: upserting the same ID in another namespace replaces the existing entry, and `delete_vector` removes the ID without a namespace argument. Use distinct IDs when records in different namespaces must coexist.
+
+For cleanup, drop the collection with `vector_store_driver.client.drop_collection(...)` and close the client. After closing a Lite client, the local database file can also be removed when its data is no longer needed. Milvus Lite 2.x and 3.x storage formats are not interchangeable, so create a new local database or migrate data when changing major versions.
+
+The following example stores vector entries in a local Milvus Lite database, queries them with a metadata filter, and drops the example collection:
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_13.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/drivers/logs/vector_store_drivers_13.txt"
+    ```
+
 ### Astra DB
 
 !!! info
