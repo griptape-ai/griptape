@@ -1,16 +1,28 @@
+import pytest
+
 from griptape.drivers.prompt.minimax import MinimaxPromptDriver
 from tests.unit.drivers.prompt.test_openai_chat_prompt_driver import TestOpenAiChatPromptDriverFixtureMixin
 
 
 class TestMinimaxPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
-    def test_init(self):
-        assert MinimaxPromptDriver(api_key="foo", model="MiniMax-M3")
+    @pytest.mark.parametrize("model", ["MiniMax-M3", "MiniMax-M2.7"])
+    def test_init(self, model):
+        assert MinimaxPromptDriver(api_key="foo", model=model)
 
     def test_default_base_url(self):
         driver = MinimaxPromptDriver(api_key="foo", model="MiniMax-M3")
 
         assert driver.base_url == "https://api.minimax.io/v1"
         assert driver.tokenizer.model == "MiniMax-M3"
+
+    def test_custom_base_url(self):
+        driver = MinimaxPromptDriver(
+            api_key="foo",
+            model="MiniMax-M3",
+            base_url="https://api.minimaxi.com/v1",
+        )
+
+        assert driver.base_url == "https://api.minimaxi.com/v1"
 
     def test_to_dict(self):
         # Given
