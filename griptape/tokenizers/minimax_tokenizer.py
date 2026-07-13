@@ -7,7 +7,7 @@ from griptape.tokenizers import OpenAiTokenizer
 
 @define()
 class MinimaxTokenizer(OpenAiTokenizer):
-    # MiniMax does not expose a public token-counting endpoint, so token counting
+    # The OpenAI-compatible API does not expose token counting, so this tokenizer
     # uses local tiktoken logic.
     # https://platform.minimax.io/docs/api-reference/api-overview
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
