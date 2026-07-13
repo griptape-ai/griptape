@@ -98,7 +98,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
         if namespace:
-            entries = {k: v for (k, v) in self.entries.items() if k.startswith(f"{namespace}-")}
+            entries = {k: v for (k, v) in self.entries.items() if v.namespace == namespace}
         else:
             entries = self.entries
 
