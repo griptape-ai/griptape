@@ -72,6 +72,13 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     def client(self) -> Any:
         return self.session.client("bedrock-runtime")
 
+    @property
+    def supports_temperature(self) -> bool:
+        # claude-opus-4-7 and its dated variants deprecate sampling parameters. Bedrock model
+        # identifiers can be plain aliases, provider-prefixed IDs, geographic inference profile
+        # IDs, or ARNs, so match the model family anywhere in the identifier.
+        return "claude-opus-4-7" not in self.model
+
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
@@ -130,7 +137,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             "messages": messages,
             "system": system_messages,
             "inferenceConfig": {
-                "temperature": self.temperature,
+                **({"temperature": self.temperature} if self.supports_temperature else {}),
                 **({"maxTokens": self.max_tokens} if self.max_tokens is not None else {}),
             },
             "additionalModelRequestFields": self.additional_model_request_fields,
