@@ -14,3 +14,7 @@ class MinimaxTokenizer(OpenAiTokenizer):
         "MiniMax-M3": 1_000_000,
         "MiniMax-M2.7": 204_800,
     }
+    MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {
+        "MiniMax-M3": 524_288,
+        "MiniMax-M2.7": 204_800,
+    }
