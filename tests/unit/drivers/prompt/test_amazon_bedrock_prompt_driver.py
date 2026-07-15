@@ -457,12 +457,19 @@ class TestAmazonBedrockPromptDriver:
             ("ai21.j2", True),
             ("anthropic.claude-3-haiku-20240307-v1:0", True),
             ("anthropic.claude-sonnet-4-5-20250929-v1:0", True),
+            ("anthropic.claude-opus-4-20250514-v1:0", True),
             ("claude-opus-4-7", False),
             ("anthropic.claude-opus-4-7-20251101-v1:0", False),
             ("us.anthropic.claude-opus-4-7-20251101-v1:0", False),
             ("global.anthropic.claude-opus-4-7-20251101-v1:0", False),
+            ("claude-opus-4-8", False),
+            ("us.anthropic.claude-opus-4-8-20260101-v1:0", False),
             (
                 "arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.anthropic.claude-opus-4-7-20251101-v1:0",
+                False,
+            ),
+            (
+                "arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.anthropic.claude-opus-4-8-20260101-v1:0",
                 False,
             ),
         ],
@@ -476,8 +483,11 @@ class TestAmazonBedrockPromptDriver:
         [
             ("ai21.j2", True),
             ("anthropic.claude-sonnet-4-5-20250929-v1:0", True),
+            ("anthropic.claude-opus-4-20250514-v1:0", True),
             ("claude-opus-4-7", False),
             ("us.anthropic.claude-opus-4-7-20251101-v1:0", False),
+            ("claude-opus-4-8", False),
+            ("us.anthropic.claude-opus-4-8-20260101-v1:0", False),
         ],
     )
     def test_base_params_temperature(self, model, expected_has_temperature):
