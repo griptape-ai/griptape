@@ -925,15 +925,15 @@ nvtx = [
 
 [[package]]
 name = "dakera"
-version = "0.12.8"
+version = "0.12.11"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "requests" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/aa/ef/adbb92495aa9661f393764d7adc1571be0a938304c89bccac3dfeb0c9524/dakera-0.12.8.tar.gz", hash = "sha256:d72b9fed847a6685af5e87f885fff8ceed7ce4db6423834380bf802e9cc19512", size = 136918, upload-time = "2026-06-26T10:39:07.085Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/43/5d/57385b31c22a9b78a9088bfef187b0f1d119ab1beb96c8d5133b3864ba28/dakera-0.12.11.tar.gz", hash = "sha256:39a442c9cbaad5015babbc32eea3d0efbe0248c20817faa137ec122c04e56a4d", size = 137807, upload-time = "2026-07-16T08:25:47.471Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/58/72/3dd493ac6ae4c3e456519b6316f32d371d298318aa91a458bf061808f9b0/dakera-0.12.8-py3-none-any.whl", hash = "sha256:fdd460b2c52870df7e5631e72b635d32169302da57029f4f1a740fa66b6cfc75", size = 88834, upload-time = "2026-06-26T10:39:05.164Z" },
+    { url = "https://files.pythonhosted.org/packages/f4/cf/f64c28d87bc21dd1291f66061bf36914468cdb8f44c712a599bb87b0e4d3/dakera-0.12.11-py3-none-any.whl", hash = "sha256:b4bed92e679b59bba226c59a15ebc466a2ca098f6f25bd27423f492ecb755332", size = 89203, upload-time = "2026-07-16T08:25:45.749Z" },
 ]
 
 [[package]]
@@ -1394,7 +1394,7 @@ wheels = [
 
 [[package]]
 name = "griptape"
-version = "1.10.3"
+version = "1.11.0"
 source = { editable = "." }
 dependencies = [
     { name = "attrs" },

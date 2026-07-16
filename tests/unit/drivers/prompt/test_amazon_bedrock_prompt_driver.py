@@ -451,6 +451,47 @@ class TestAmazonBedrockPromptDriver:
         ):
             AmazonBedrockPromptDriver(model="foo", structured_output_strategy="native")
 
+    @pytest.mark.parametrize(
+        ("model", "expected"),
+        [
+            ("ai21.j2", True),
+            ("anthropic.claude-3-haiku-20240307-v1:0", True),
+            ("anthropic.claude-sonnet-4-5-20250929-v1:0", True),
+            ("claude-opus-4-7", False),
+            ("anthropic.claude-opus-4-7-20251101-v1:0", False),
+            ("us.anthropic.claude-opus-4-7-20251101-v1:0", False),
+            ("global.anthropic.claude-opus-4-7-20251101-v1:0", False),
+            (
+                "arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.anthropic.claude-opus-4-7-20251101-v1:0",
+                False,
+            ),
+        ],
+    )
+    def test_supports_temperature(self, model, expected):
+        driver = AmazonBedrockPromptDriver(model=model)
+        assert driver.supports_temperature == expected
+
+    @pytest.mark.parametrize(
+        ("model", "expected_has_temperature"),
+        [
+            ("ai21.j2", True),
+            ("anthropic.claude-sonnet-4-5-20250929-v1:0", True),
+            ("claude-opus-4-7", False),
+            ("us.anthropic.claude-opus-4-7-20251101-v1:0", False),
+        ],
+    )
+    def test_base_params_temperature(self, model, expected_has_temperature):
+        driver = AmazonBedrockPromptDriver(model=model, temperature=0.7)
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        params = driver._base_params(prompt_stack)
+
+        if expected_has_temperature:
+            assert params["inferenceConfig"]["temperature"] == driver.temperature
+        else:
+            assert "temperature" not in params["inferenceConfig"]
+
     def test_try_run_with_reasoning_content(self, mocker):
         mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
         mock_converse.return_value = {

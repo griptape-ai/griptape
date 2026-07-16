@@ -39,7 +39,7 @@ You can specify a [Structure](../structures/create-structure.md) to run as a Dat
 
 ### Other Data Source Types
 
-If you do not see a Data Source configuration you'd wish to use, you can submit a request via [Discord](https://discord.gg/gnWRz88eym) or `hello@griptape.ai`.
+If you do not see a Data Source configuration you'd wish to use, you can submit a request via [Discord](https://discord.com/invite/griptape).
 
 ## Adding Structure as Transform to Data Source (Experimental)
 
