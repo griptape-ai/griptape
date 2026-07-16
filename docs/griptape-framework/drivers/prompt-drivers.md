@@ -382,6 +382,20 @@ from griptape.drivers.prompt.minimax import MinimaxPromptDriver
 driver = MinimaxPromptDriver(api_key=os.environ["MINIMAX_API_KEY"], model="MiniMax-M3")
 ```
 
+`MiniMax-M3` enables thinking by default. Pass MiniMax-specific request fields through the OpenAI SDK's `extra_body` parameter to control it:
+
+```python
+driver = MinimaxPromptDriver(
+    api_key=os.environ["MINIMAX_API_KEY"],
+    model="MiniMax-M3",
+    extra_params={"extra_body": {"thinking": {"type": "disabled"}}},
+)
+```
+
+Use `"adaptive"` instead of `"disabled"` to explicitly enable `MiniMax-M3` thinking. `MiniMax-M2.7` always uses thinking, even when `"disabled"` is requested.
+
+This driver supports text and image prompt content for `MiniMax-M3`; `MiniMax-M2.7` supports text only. The MiniMax API also accepts video input for `MiniMax-M3`, but Griptape prompt content does not currently expose video input.
+
 For the China endpoint, set `base_url="https://api.minimaxi.com/v1"`.
 
 MiniMax also provides an [Anthropic-compatible API](https://platform.minimax.io/docs/api-reference/text-anthropic-api). Configure an `AnthropicPromptDriver` with an Anthropic client and the MiniMax tokenizer:
