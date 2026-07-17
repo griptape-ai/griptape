@@ -31,7 +31,7 @@ from griptape.common import (
 from griptape.configs import Defaults
 from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
-from griptape.utils import import_optional_dependency
+from griptape.utils import anthropic_utils, import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
@@ -74,10 +74,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     @property
     def supports_temperature(self) -> bool:
-        # claude-opus-4-7 and its dated variants deprecate sampling parameters. Bedrock model
-        # identifiers can be plain aliases, provider-prefixed IDs, geographic inference profile
-        # IDs, or ARNs, so match the model family anywhere in the identifier.
-        return "claude-opus-4-7" not in self.model
+        return anthropic_utils.supports_sampling_params(self.model)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:

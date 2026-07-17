@@ -471,8 +471,12 @@ class TestAnthropicPromptDriver:
             ("claude-3-haiku", True),
             ("claude-3-opus", True),
             ("claude-sonnet-4-5", True),
+            ("claude-opus-4-6", True),
+            ("claude-opus-4-20250514", True),
             ("claude-opus-4-7", False),
             ("claude-opus-4-7-20251101", False),
+            ("claude-opus-4-8", False),
+            ("claude-opus-4-8-20260101", False),
         ],
     )
     def test_supports_temperature(self, model, expected):
@@ -485,8 +489,12 @@ class TestAnthropicPromptDriver:
             ("claude-3-haiku", True),
             ("claude-3-opus", True),
             ("claude-sonnet-4-5", True),
+            ("claude-opus-4-6", True),
+            ("claude-opus-4-20250514", True),
             ("claude-opus-4-7", False),
             ("claude-opus-4-7-20251101", False),
+            ("claude-opus-4-8", False),
+            ("claude-opus-4-8-20260101", False),
         ],
     )
     def test_supports_top_p(self, model, expected):
@@ -499,18 +507,23 @@ class TestAnthropicPromptDriver:
             ("claude-3-haiku", True),
             ("claude-3-opus", True),
             ("claude-sonnet-4-5", True),
+            ("claude-opus-4-6", True),
+            ("claude-opus-4-20250514", True),
             ("claude-opus-4-7", False),
             ("claude-opus-4-7-20251101", False),
+            ("claude-opus-4-8", False),
+            ("claude-opus-4-8-20260101", False),
         ],
     )
     def test_supports_top_k(self, model, expected):
         driver = AnthropicPromptDriver(model=model, api_key="api-key")
         assert driver.supports_top_k == expected
 
-    def test_try_run_omits_sampling_params_for_opus_4_7(self, mock_client, prompt_stack, messages):
+    @pytest.mark.parametrize("model", ["claude-opus-4-7", "claude-opus-4-8"])
+    def test_try_run_omits_sampling_params_for_deprecated_opus(self, model, mock_client, prompt_stack, messages):
         # Given
         driver = AnthropicPromptDriver(
-            model="claude-opus-4-7",
+            model=model,
             api_key="api-key",
             top_p=0.9,
             top_k=100,
