@@ -112,6 +112,11 @@ class TestMarqoVectorStorageDriver:
         assert doc["namespace"] == "test-namespace"
         assert doc["meta"] == str({"foo": "bar"})
 
+    def test_upsert_vector_raises_on_failed_response(self, driver, mock_marqo):
+        mock_marqo.index().add_documents.return_value = {"errors": True, "items": []}
+        with pytest.raises(ValueError, match="Failed to upsert vector"):
+            driver.upsert_vector([0.1, 0.2, 0.3], vector_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d")
+
     def test_upsert_text_artifact(self, driver, mock_marqo):
         # Arrange
         text = TextArtifact(id="a44b04ff052e4109b3c6fda0f3f3e997", value="racoons")
