@@ -257,6 +257,25 @@ class TestOllamaPromptDriver:
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
+    def test_client_forwards_auth_kwargs(self, mocker):
+        mock_client_cls = mocker.patch("ollama.Client")
+        mocker.patch(
+            "griptape.drivers.prompt.ollama_prompt_driver.import_optional_dependency",
+            return_value=mocker.Mock(Client=mock_client_cls),
+        )
+        driver = OllamaPromptDriver(
+            model="llama3",
+            host="http://localhost:11434",
+            api_key="secret",
+            headers={"X-Proxy": "1"},
+        )
+        _ = driver.client
+        mock_client_cls.assert_called_once_with(
+            host="http://localhost:11434",
+            headers={"X-Proxy": "1"},
+            api_key="secret",
+        )
+
     def test_try_run(
         self,
         mock_client,
