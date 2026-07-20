@@ -95,6 +95,23 @@ class TestMarqoVectorStorageDriver:
         mock_marqo.index().add_documents.assert_called()
         assert result == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
 
+    def test_upsert_vector(self, driver, mock_marqo):
+        result = driver.upsert_vector([0.1, 0.2, 0.3], vector_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d")
+        mock_marqo.index().add_documents.assert_called()
+        assert result == "5aed93eb-3878-4f12-bc92-0fda01c7d23d"
+
+    def test_upsert_vector_with_namespace_and_meta(self, driver, mock_marqo):
+        driver.upsert_vector(
+            [0.1, 0.2, 0.3],
+            vector_id="5aed93eb-3878-4f12-bc92-0fda01c7d23d",
+            namespace="test-namespace",
+            meta={"foo": "bar"},
+        )
+        args, kwargs = mock_marqo.index().add_documents.call_args
+        doc = args[0][0]
+        assert doc["namespace"] == "test-namespace"
+        assert doc["meta"] == str({"foo": "bar"})
+
     def test_upsert_text_artifact(self, driver, mock_marqo):
         # Arrange
         text = TextArtifact(id="a44b04ff052e4109b3c6fda0f3f3e997", value="racoons")
