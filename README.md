@@ -66,7 +66,7 @@ They allow you to swap out functionality and providers with minimal changes to y
 ### 🔧 Tools
 
 Tools provide capabilities for LLMs to interact with data and services.
-Griptape includes a variety of [built-in Tools](https://docs.griptape.ai/stable/griptape-framework/tools/official-tools/), and makes it easy to create [custom Tools](https://docs.griptape.ai/stable/griptape-framework/tools/custom-tools/).
+Griptape includes a variety of [built-in Tools](http://web.archive.org/web/20250616125138/https://docs.griptape.ai/stable/griptape-framework/tools/official-tools/), and makes it easy to create [custom Tools](http://web.archive.org/web/20260303112119/https://docs.griptape.ai/stable/griptape-framework/tools/custom-tools/).
 
 ### 🚂 Engines
 
