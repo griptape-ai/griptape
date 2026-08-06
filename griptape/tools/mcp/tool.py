@@ -214,7 +214,7 @@ class MCPTool(BaseTool):
                 tool_result = await session.call_tool(activity_name, params)
             return self._convert_call_tool_result_to_artifact(tool_result)
         except BaseExceptionGroup as e:
-            exception_message = "".join(f"\n{str(exc)}" for exc in _exc_iter(e))
+            exception_message = "".join(f"\n{exc!s}" for exc in _exc_iter(e))
             return ErrorArtifact(value=exception_message)
         except Exception as e:
             return ErrorArtifact(value=str(e), exception=e)
