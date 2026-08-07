@@ -255,8 +255,6 @@ class TestOllamaPromptDriver:
     def test_init(self):
         assert OllamaPromptDriver(model="llama")
 
-    @pytest.mark.parametrize("use_native_tools", [True, False])
-    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     def test_client_forwards_auth_kwargs(self, mocker):
         mock_client_cls = mocker.patch("ollama.Client")
         mocker.patch(
@@ -276,6 +274,8 @@ class TestOllamaPromptDriver:
             api_key="secret",
         )
 
+    @pytest.mark.parametrize("use_native_tools", [True, False])
+    @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
     def test_try_run(
         self,
         mock_client,
