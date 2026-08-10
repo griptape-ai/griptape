@@ -19,7 +19,9 @@ class LocalConversationMemoryDriver(BaseConversationMemoryDriver):
 
     def store(self, runs: list[Run], metadata: dict[str, Any]) -> None:
         if self.persist_file is not None:
-            Path(self.persist_file).write_text(json.dumps(self._to_params_dict(runs, metadata)))
+            persist_file = Path(self.persist_file)
+            persist_file.parent.mkdir(parents=True, exist_ok=True)
+            persist_file.write_text(json.dumps(self._to_params_dict(runs, metadata)))
 
     def load(self) -> tuple[list[Run], dict[str, Any]]:
         if (
