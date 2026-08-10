@@ -8,6 +8,7 @@ import re
 # them. New families or version thresholds are picked up everywhere by editing this mapping.
 SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
     "opus": (4, 7),
+    "sonnet": (5, 0),
 }
 
 # Captures the family, ``major``, and optional ``minor`` version from a Claude model identifier,

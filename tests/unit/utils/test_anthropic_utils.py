@@ -20,9 +20,14 @@ class TestAnthropicUtils:
             ("claude-opus-4-0", True),
             ("claude-opus-4-1-20250805", True),
             ("claude-sonnet-4-20250514", True),
-            # Major-only releases omit the minor entirely; non-Opus families still accept the params.
-            ("claude-sonnet-5", True),
+            # Families with no deprecating version still accept the params at any version.
             ("claude-fable-5", True),
+            # Sonnet 5 and later have the params deprecated; earlier Sonnets do not.
+            ("claude-sonnet-4-6", True),
+            ("claude-sonnet-5", False),
+            ("claude-sonnet-5-0", False),
+            ("claude-sonnet-5-20260101", False),
+            ("claude-sonnet-6", False),
             # Opus 4.7 and every later Opus release have the params deprecated.
             ("claude-opus-4-7", False),
             ("claude-opus-4-7-20251101", False),
@@ -43,6 +48,13 @@ class TestAnthropicUtils:
                 "arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.anthropic.claude-opus-4-8-20260101-v1:0",
                 False,
             ),
+            # Claude 5 on Bedrock is served from global inference profiles, so those ids must be
+            # recognised too. The regional and dated Sonnet 4.x ids alongside them stay supported.
+            ("global.anthropic.claude-sonnet-5-20260101-v1:0", False),
+            ("global.anthropic.claude-opus-5-20260101-v1:0", False),
+            ("us.anthropic.claude-sonnet-5-20260101-v1:0", False),
+            ("us.anthropic.claude-sonnet-4-6", True),
+            ("us.anthropic.claude-haiku-4-5-20251001-v1:0", True),
             # Identifiers without a parseable Claude version are treated as supporting the params.
             ("ai21.j2", True),
             ("anthropic.claude-3-haiku-20240307-v1:0", True),

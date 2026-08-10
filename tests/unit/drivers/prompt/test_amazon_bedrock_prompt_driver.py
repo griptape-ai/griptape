@@ -472,6 +472,14 @@ class TestAmazonBedrockPromptDriver:
                 "arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.anthropic.claude-opus-4-8-20260101-v1:0",
                 False,
             ),
+            # Sonnet 5 deprecates the params; the 4.x Sonnets and Haiku alongside it do not. Claude 5
+            # is served from global inference profiles on Bedrock, so those ids must be recognised.
+            ("claude-sonnet-5", False),
+            ("global.anthropic.claude-sonnet-5-20260101-v1:0", False),
+            ("us.anthropic.claude-sonnet-5-20260101-v1:0", False),
+            ("global.anthropic.claude-opus-5-20260101-v1:0", False),
+            ("us.anthropic.claude-sonnet-4-6", True),
+            ("us.anthropic.claude-haiku-4-5-20251001-v1:0", True),
         ],
     )
     def test_supports_temperature(self, model, expected):
@@ -488,6 +496,9 @@ class TestAmazonBedrockPromptDriver:
             ("us.anthropic.claude-opus-4-7-20251101-v1:0", False),
             ("claude-opus-4-8", False),
             ("us.anthropic.claude-opus-4-8-20260101-v1:0", False),
+            ("us.anthropic.claude-sonnet-4-6", True),
+            ("claude-sonnet-5", False),
+            ("global.anthropic.claude-sonnet-5-20260101-v1:0", False),
         ],
     )
     def test_base_params_temperature(self, model, expected_has_temperature):
