@@ -477,6 +477,9 @@ class TestAnthropicPromptDriver:
             ("claude-opus-4-7-20251101", False),
             ("claude-opus-4-8", False),
             ("claude-opus-4-8-20260101", False),
+            ("claude-sonnet-4-6", True),
+            ("claude-sonnet-5", False),
+            ("claude-sonnet-5-20260101", False),
         ],
     )
     def test_supports_temperature(self, model, expected):
@@ -495,6 +498,9 @@ class TestAnthropicPromptDriver:
             ("claude-opus-4-7-20251101", False),
             ("claude-opus-4-8", False),
             ("claude-opus-4-8-20260101", False),
+            ("claude-sonnet-4-6", True),
+            ("claude-sonnet-5", False),
+            ("claude-sonnet-5-20260101", False),
         ],
     )
     def test_supports_top_p(self, model, expected):
@@ -513,14 +519,17 @@ class TestAnthropicPromptDriver:
             ("claude-opus-4-7-20251101", False),
             ("claude-opus-4-8", False),
             ("claude-opus-4-8-20260101", False),
+            ("claude-sonnet-4-6", True),
+            ("claude-sonnet-5", False),
+            ("claude-sonnet-5-20260101", False),
         ],
     )
     def test_supports_top_k(self, model, expected):
         driver = AnthropicPromptDriver(model=model, api_key="api-key")
         assert driver.supports_top_k == expected
 
-    @pytest.mark.parametrize("model", ["claude-opus-4-7", "claude-opus-4-8"])
-    def test_try_run_omits_sampling_params_for_deprecated_opus(self, model, mock_client, prompt_stack, messages):
+    @pytest.mark.parametrize("model", ["claude-opus-4-7", "claude-opus-4-8", "claude-sonnet-5"])
+    def test_try_run_omits_deprecated_sampling_params(self, model, mock_client, prompt_stack, messages):
         # Given
         driver = AnthropicPromptDriver(
             model=model,
@@ -537,3 +546,16 @@ class TestAnthropicPromptDriver:
         assert "temperature" not in call_kwargs.kwargs
         assert "top_p" not in call_kwargs.kwargs
         assert "top_k" not in call_kwargs.kwargs
+
+    @pytest.mark.parametrize("model", ["claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-6"])
+    def test_try_run_sends_sampling_params_for_supported_models(self, model, mock_client, prompt_stack, messages):
+        # Given
+        driver = AnthropicPromptDriver(model=model, api_key="api-key", top_k=100)
+
+        # When
+        driver.try_run(prompt_stack)
+
+        # Then
+        call_kwargs = mock_client.return_value.messages.create.call_args
+        assert call_kwargs.kwargs["temperature"] == driver.temperature
+        assert call_kwargs.kwargs["top_k"] == 100
