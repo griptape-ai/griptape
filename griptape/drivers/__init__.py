@@ -104,6 +104,7 @@ from .rerank import BaseRerankDriver
 from .rerank.cohere import CohereRerankDriver
 from .rerank.local import LocalRerankDriver
 from .rerank.amazon_bedrock import AmazonBedrockRerankDriver
+from .rerank.voyageai import VoyageAiRerankDriver
 
 from .ruleset import BaseRulesetDriver
 from .ruleset.local import LocalRulesetDriver
@@ -263,6 +264,7 @@ __all__ = [
     "TavilyWebSearchDriver",
     "TrafilaturaWebScraperDriver",
     "VoyageAiEmbeddingDriver",
+    "VoyageAiRerankDriver",
     "WebhookEventListenerDriver",
 ]
 
