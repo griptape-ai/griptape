@@ -240,7 +240,11 @@ ignore = [
   "PTH",    # flake8-use-pathlib
   "TRY",    # tryceratops
   "PLR",    # pylint-refactor
-  "RUF",    # ruff
+  "RUF005", # collection-literal-concatenation
+  "RUF009", # function-call-in-dataclass-default-argument
+  "RUF012", # mutable-class-default
+  "RUF015", # unnecessary-iterable-allocation-for-first-element
+  "RUF043", # pytest-raises-ambiguous-pattern
   "PERF",   # perflint
   "ARG",    # flake8-unused-arguments
   "DTZ",    # flake8-datetimez
