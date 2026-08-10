@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 2
 requires-python = ">=3.10, <4"
 resolution-markers = [
     "python_full_version >= '3.13'",
@@ -1465,6 +1465,9 @@ drivers-embedding-huggingface = [
 drivers-embedding-ollama = [
     { name = "ollama" },
 ]
+drivers-embedding-twelvelabs = [
+    { name = "twelvelabs" },
+]
 drivers-embedding-voyageai = [
     { name = "voyageai" },
 ]
@@ -1788,12 +1791,13 @@ requires-dist = [
     { name = "transformers", marker = "extra == 'drivers-prompt-amazon-sagemaker'", specifier = ">=4.41.1" },
     { name = "transformers", marker = "extra == 'drivers-prompt-huggingface-hub'", specifier = ">=4.41.1" },
     { name = "transformers", marker = "extra == 'drivers-prompt-huggingface-pipeline'", specifier = ">=4.41.1" },
+    { name = "twelvelabs", marker = "extra == 'drivers-embedding-twelvelabs'", specifier = ">=1.2.8" },
     { name = "urllib3", specifier = ">=1.25.4,!=2.2.0,<3" },
     { name = "voyageai", marker = "extra == 'all'", specifier = ">=0.2.1" },
     { name = "voyageai", marker = "extra == 'drivers-embedding-voyageai'", specifier = ">=0.2.1" },
     { name = "wrapt", specifier = ">=1.16.0" },
 ]
-provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-rerank-amazon-bedrock", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "all"]
+provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-embedding-twelvelabs", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-rerank-amazon-bedrock", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "all"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -5451,6 +5455,21 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/8f/af/9904ec6d3c93d9b24e5ec360445bbdf758b7f00bfbeedb89cb0eb64eb8bb/triton-3.7.0-cp314-cp314-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:b9b85e72968a9d8bba5ddb24e9b64aaabaf48affb042f2755cb7cfa92b7531ce", size = 201460637, upload-time = "2026-05-07T18:46:34.749Z" },
     { url = "https://files.pythonhosted.org/packages/a1/f9/4835a8ea746b88727d8899f4e3ccce4f9cacb38abfc3bb0a638266c53111/triton-3.7.0-cp314-cp314t-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:18a160de426fd99f92b0baf509045360afbd3bfaa0b4a5171dde800ec9f09684", size = 188608706, upload-time = "2026-05-07T19:05:39.218Z" },
     { url = "https://files.pythonhosted.org/packages/c1/68/fa86e5a39608000f645535b2c124920126327ab731f8c4fafd5b07ff8d4b/triton-3.7.0-cp314-cp314t-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:ce061073102714b725f3660ec6939d94a1da7984b3aa99c921417cae273672f5", size = 201546766, upload-time = "2026-05-07T18:46:42.088Z" },
+]
+
+[[package]]
+name = "twelvelabs"
+version = "1.2.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "pydantic-core" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/5f/24/2604563f5a528bf5f12f9bbb7e3102e91c0e4f9bfd7aeb9963dced3a0b0f/twelvelabs-1.2.8.tar.gz", hash = "sha256:bb0846cc839845c800de8061bb7b99212a472e24bf20770d569f6f620b845e3c", size = 178449, upload-time = "2026-06-18T06:38:48.135Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/4e/a6/6380129c65222bb2497cbef27334a496a1a31f4f38973fac46b62b9224fc/twelvelabs-1.2.8-py3-none-any.whl", hash = "sha256:c0487dd892b03728ac2afe3e4ebd4ea5e30ff404b61896667eb5a39264db282b", size = 372073, upload-time = "2026-06-18T06:38:46.747Z" },
 ]
 
 [[package]]

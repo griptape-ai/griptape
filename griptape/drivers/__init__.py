@@ -34,6 +34,7 @@ from .embedding.google import GoogleEmbeddingDriver
 from .embedding.dummy import DummyEmbeddingDriver
 from .embedding.cohere import CohereEmbeddingDriver
 from .embedding.ollama import OllamaEmbeddingDriver
+from .embedding.twelvelabs import TwelveLabsEmbeddingDriver
 
 from .vector import BaseVectorStoreDriver
 from .vector.local import LocalVectorStoreDriver
@@ -263,6 +264,7 @@ __all__ = [
     "TavilyWebSearchDriver",
     "TrafilaturaWebScraperDriver",
     "VoyageAiEmbeddingDriver",
+    "TwelveLabsEmbeddingDriver",
     "WebhookEventListenerDriver",
 ]
 

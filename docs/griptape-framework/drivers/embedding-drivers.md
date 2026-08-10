@@ -182,6 +182,18 @@ The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_em
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_9.txt"
     ```
 
+### TwelveLabs
+
+The [TwelveLabsEmbeddingDriver](../../reference/griptape/drivers/embedding/twelvelabs_embedding_driver.md) uses the [TwelveLabs Marengo](https://docs.twelvelabs.io/) multimodal embedding model. Marengo maps text, images, and video into the same 512-dimensional vector space, so text queries can be matched against visual content.
+
+!!! info
+
+    This driver requires the `drivers-embedding-twelvelabs` [extra](../index.md#extras).
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/embedding_drivers_11.py"
+```
+
 ### Nvidia NIM
 
 The [NvidiaNimEmbeddingDriver](../../reference/griptape/drivers/embedding/nvidia_nim_embedding_driver.md) uses the [Nvidia NIM API](https://developer.nvidia.com/nim).
