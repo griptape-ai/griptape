@@ -14,6 +14,7 @@ from .prompt.google import GooglePromptDriver
 from .prompt.dummy import DummyPromptDriver
 from .prompt.ollama import OllamaPromptDriver
 from .prompt.grok import GrokPromptDriver
+from .prompt.astraflow import AstraflowPromptDriver
 from .prompt.griptape_cloud import GriptapeCloudPromptDriver
 from .prompt.perplexity import PerplexityPromptDriver
 
@@ -146,6 +147,7 @@ __all__ = [
     "AmazonSageMakerJumpstartEmbeddingDriver",
     "AmazonSageMakerJumpstartPromptDriver",
     "AmazonSqsEventListenerDriver",
+    "AstraflowPromptDriver",
     "AnthropicPromptDriver",
     "AstraDbVectorStoreDriver",
     "AwsIotCoreEventListenerDriver",
