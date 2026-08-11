@@ -230,3 +230,47 @@ Thank you for considering contributing to Griptape! Before you start, please rev
 ## License
 
 Griptape is available under the Apache 2.0 License.
+
+## FAQ
+
+### What is Griptape?
+Griptape is a Python framework designed to simplify the development of generative AI applications. It offers straightforward, flexible abstractions for working with LLMs, RAG, and more.
+
+### How does Griptape compare to LangChain or CrewAI?
+Griptape focuses on providing modular, composable abstractions (Drivers, Engines, Tools, Structures) with a clean separation of concerns. LangChain offers more pre-built chains, while CrewAI focuses on role-playing multi-agent scenarios. Griptape's architecture makes it easier to swap components and customize behavior.
+
+### How do I install Griptape?
+```bash
+pip install griptape
+```
+
+### What LLM providers does Griptape support?
+Griptape supports OpenAI, Anthropic, Azure OpenAI, AWS Bedrock, Google Gemini, Cohere, Hugging Face, and local models via Ollama.
+
+### What are Structures?
+Structures are the main containers in Griptape:
+- **Agents**: Single-task containers
+- **Pipelines**: Sequential task execution
+- **Workflows**: Parallel task execution
+
+### How do I add custom Tools?
+Create a custom Tool by inheriting from `BaseTool` and implementing the `run` method. See the [custom tools documentation](https://docs.griptape.ai/stable/griptape-framework/tools/custom-tools/) for details.
+
+### What is the difference between Prompt Drivers and Assistant Drivers?
+- **Prompt Drivers**: Manage direct text/image interactions with LLMs
+- **Assistant Drivers**: Interact with assistant services like OpenAI Assistants
+
+### How does Memory work in Griptape?
+Griptape offers three types of Memory:
+- **Conversation Memory**: Retains chat history
+- **Task Memory**: Keeps large outputs off the prompt
+- **Meta Memory**: Passes additional metadata to the LLM
+
+### Can I use Griptape for RAG?
+Yes! Griptape provides a modular RAG Engine with Embedding Drivers, Vector Store Drivers, and Loaders. See the [RAG documentation](https://docs.griptape.ai/stable/griptape-framework/engines/rag-engine/).
+
+### Where can I get help?
+- [Documentation](https://docs.griptape.ai/)
+- [Griptape Trade School](https://learn.griptape.ai/) (free courses)
+- [Discord community](https://discord.gg/griptape)
+- [GitHub Issues](https://github.com/griptape-ai/griptape/issues)
