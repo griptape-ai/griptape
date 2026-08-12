@@ -9,6 +9,7 @@ from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, Text
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.artifacts.generic_artifact import GenericArtifact
 from griptape.artifacts.image_url_artifact import ImageUrlArtifact
+from griptape.artifacts.video_url_artifact import VideoUrlArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.common.prompt_stack.contents.audio_delta_message_content import AudioDeltaMessageContent
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
@@ -532,6 +533,25 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         # Test reasoning effort inclusion
         has_reasoning_effort = "reasoning_effort" in params
         assert has_reasoning_effort == expected_reasoning
+
+    def test_video_url_message_content(self):
+        driver = OpenAiChatPromptDriver(model="MiniMax-M3")
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message(VideoUrlArtifact("https://example.com/input.mp4"))
+
+        params = driver._base_params(prompt_stack)
+
+        assert params["messages"] == [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "video_url",
+                        "video_url": {"url": "https://example.com/input.mp4"},
+                    }
+                ],
+            }
+        ]
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
