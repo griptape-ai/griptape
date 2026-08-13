@@ -15,6 +15,7 @@ from griptape.artifacts import (
     ImageUrlArtifact,
     ListArtifact,
     TextArtifact,
+    VideoUrlArtifact,
 )
 from griptape.common import (
     ActionCallMessageContent,
@@ -25,6 +26,7 @@ from griptape.common import (
     ImageMessageContent,
     Message,
     TextMessageContent,
+    VideoMessageContent,
 )
 from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils.json_schema_utils import build_strict_schema
@@ -87,7 +89,7 @@ class PromptStack(SerializableMixin):
 
         return prompt_stack
 
-    def __to_message_content(self, artifact: str | BaseArtifact) -> list[BaseMessageContent]:
+    def __to_message_content(self, artifact: str | BaseArtifact) -> list[BaseMessageContent]:  # noqa: C901
         if isinstance(artifact, str):
             return [TextMessageContent(TextArtifact(artifact))]
         if isinstance(artifact, TextArtifact):
@@ -98,6 +100,8 @@ class PromptStack(SerializableMixin):
             return [ImageMessageContent(artifact)]
         if isinstance(artifact, AudioArtifact):
             return [AudioMessageContent(artifact)]
+        if isinstance(artifact, VideoUrlArtifact):
+            return [VideoMessageContent(artifact)]
         if isinstance(artifact, GenericArtifact):
             return [GenericMessageContent(artifact)]
         if isinstance(artifact, ActionArtifact):
