@@ -68,3 +68,17 @@ The [NvidiaNimRerankDriver](../../reference/griptape/drivers/rerank/nvidia_nim_r
     ```python
     --8<-- "docs/griptape-framework/drivers/src/nvidia_nim_rerank_driver.py"
     ```
+
+### Voyage AI
+
+!!! info
+
+    This driver requires the `drivers-rerank-voyageai` [extra](../index.md#extras).
+
+The [VoyageAiRerankDriver](../../reference/griptape/drivers/rerank/voyageai_rerank_driver.md) uses [Voyage AI's Rerank](https://docs.voyageai.com/docs/reranker) API.
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/voyageai_rerank_driver.py"
+    ```
