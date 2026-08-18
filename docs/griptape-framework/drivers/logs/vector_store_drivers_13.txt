@@ -1,0 +1,1 @@
+Milvus stores vectors locally with Milvus Lite.
