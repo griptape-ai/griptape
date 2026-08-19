@@ -82,3 +82,17 @@ The [RedisConversationMemoryDriver](../../reference/griptape/drivers/memory/conv
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/conversation_memory_drivers_3.txt"
     ```
+
+### Dakera
+
+!!! info
+
+    This driver requires the `drivers-memory-conversation-dakera` [extra](../index.md#extras).
+
+The [DakeraConversationMemoryDriver](../../reference/griptape/drivers/memory/conversation/dakera_conversation_memory_driver.md) allows you to persist Conversation Memory in [Dakera](https://dakera.ai/), a self-hosted memory server. Each conversation is stored under its own `conversation_id`, so conversations remain isolated from one another. Run the server locally with the [`dakera-deploy`](https://github.com/dakera-ai/dakera-deploy) Docker Compose stack (defaults to `http://localhost:3000`).
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/conversation_memory_drivers_dakera.py"
+    ```
