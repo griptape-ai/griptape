@@ -25,6 +25,9 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
         exclude_ids: Optionally provide custom ids to exclude from the scraped content.
         timeout: Optionally provide a timeout in milliseconds for the page to continue loading after
             the browser has emitted the "load" event.
+        browser_type: Optionally provide a Playwright browser type (chromium, firefox, webkit).
+            Defaults to chromium.
+        executable_path: Optionally provide a path to a custom browser executable.
     """
 
     DEFAULT_EXCLUDE_TAGS = ["script", "style", "head", "audio", "img", "picture", "source", "video"]
@@ -37,11 +40,17 @@ class MarkdownifyWebScraperDriver(BaseWebScraperDriver):
     exclude_classes: list[str] = field(default=Factory(list), kw_only=True)
     exclude_ids: list[str] = field(default=Factory(list), kw_only=True)
     timeout: int | None = field(default=None, kw_only=True)
+    browser_type: str = field(default="chromium", kw_only=True)
+    executable_path: str | None = field(default=None, kw_only=True)
 
     def fetch_url(self, url: str) -> str:
         sync_playwright = import_optional_dependency("playwright.sync_api").sync_playwright
 
-        with sync_playwright() as p, p.chromium.launch(headless=True) as browser:
+        launch_kwargs: dict[str, Any] = {"headless": True}
+        if self.executable_path is not None:
+            launch_kwargs["executable_path"] = self.executable_path
+
+        with sync_playwright() as p, getattr(p, self.browser_type).launch(**launch_kwargs) as browser:
             page = browser.new_page()
 
             def skip_loading_images(route: Any) -> Any:
