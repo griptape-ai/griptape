@@ -171,7 +171,15 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         # Aggregate all content deltas from the stream
         message_deltas = self.try_stream(prompt_stack)
         for message_delta in message_deltas:
-            usage += message_delta.usage
+            # Providers report usage as running totals over the stream -- e.g. Anthropic's
+            # cumulative output tokens on every `message_delta`, Gemini's per-chunk
+            # `usage_metadata` -- rather than as per-delta increments. Keep the latest
+            # reported value per field: summing would inflate those providers' totals,
+            # while being equivalent for providers that emit a single final usage delta.
+            if message_delta.usage.input_tokens is not None:
+                usage.input_tokens = message_delta.usage.input_tokens
+            if message_delta.usage.output_tokens is not None:
+                usage.output_tokens = message_delta.usage.output_tokens
             content = message_delta.content
 
             if content is not None:
