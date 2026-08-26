@@ -241,10 +241,23 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 ),
             )
         if "reasoningContent" in content:
-            return TextMessageContent(TextArtifact(content["reasoningContent"]["reasoningText"]["text"]))
+            reasoning_content = content["reasoningContent"]
+
+            # Also a tagged union: `reasoningText` carries the thinking text, while `redactedContent`
+            # is encrypted and has none to surface.
+            if "reasoningText" in reasoning_content:
+                return TextMessageContent(TextArtifact(reasoning_content["reasoningText"]["text"]))
+            if "redactedContent" in reasoning_content:
+                return TextMessageContent(TextArtifact(""))
         raise ValueError(f"Unsupported message content type: {content}")
 
-    def __to_prompt_stack_delta_message_content(self, event: dict) -> BaseDeltaMessageContent:
+    def __to_prompt_stack_delta_message_content(self, event: dict) -> BaseDeltaMessageContent | None:
+        """Convert a Bedrock stream event to delta content, or None when it carries none.
+
+        `reasoningContent` deltas are a tagged union — exactly one of `text`, `signature`, or
+        `redactedContent` is set — and only `text` holds content to surface. The others return None,
+        which `BasePromptDriver.__process_stream` already skips.
+        """
         if "contentBlockStart" in event:
             content_block = event["contentBlockStart"]["start"]
 
@@ -277,9 +290,17 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     partial_input=content_block_delta["delta"]["toolUse"]["input"],
                 )
             if "reasoningContent" in content_block_delta["delta"]:
-                return TextDeltaMessageContent(
-                    content_block_delta["delta"]["reasoningContent"]["text"],
-                    index=content_block_delta["contentBlockIndex"],
-                )
+                reasoning_content = content_block_delta["delta"]["reasoningContent"]
+
+                if "text" in reasoning_content:
+                    return TextDeltaMessageContent(
+                        reasoning_content["text"],
+                        index=content_block_delta["contentBlockIndex"],
+                    )
+                # `signature` closes a reasoning block and `redactedContent` is encrypted; neither
+                # carries text to surface, so they contribute no content to the message.
+                if "signature" in reasoning_content or "redactedContent" in reasoning_content:
+                    return None
+                raise ValueError(f"Unsupported message content type: {event}")
             raise ValueError(f"Unsupported message content type: {event}")
         raise ValueError(f"Unsupported message content type: {event}")
