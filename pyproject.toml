@@ -115,7 +115,6 @@ loaders-pdf = ["pypdf>=5.0.1"]
 loaders-image = ["pillow>=11.0.0"]
 loaders-email = ["mail-parser>=4.0.0"]
 loaders-sql = ["sqlalchemy>=2.0.31"]
-tools-mcp = ["mcp>=1.10.0,<2"]
 all = [
   "cohere>=5.11.2",
   "anthropic>=0.45.1",
@@ -156,7 +155,6 @@ all = [
   "pandas>=2.2",
   "pypdf>=5.0.1",
   "mail-parser>=4.0.0",
-  "mcp>=1.10.0,<2",
 ]
 
 [project.urls]
@@ -175,6 +173,9 @@ test = [
   "fuzzywuzzy>=0.18.0",
   "pytest-clarity>=1.0.1",
   "torch>=2.4.1",
+  # MCPTool installs this from griptape/tools/mcp/requirements.txt at runtime.
+  # Tests need it at collection time, so keep the constraint in sync with that file.
+  "mcp[ws]>=1.10.0,<2",
 ]
 dev = [
   "ruff>=0.9.1",

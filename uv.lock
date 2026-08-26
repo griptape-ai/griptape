@@ -1452,7 +1452,6 @@ all = [
     { name = "mail-parser" },
     { name = "markdownify" },
     { name = "marqo" },
-    { name = "mcp" },
     { name = "ollama" },
     { name = "opensearch-py" },
     { name = "opentelemetry-api" },
@@ -1656,9 +1655,6 @@ loaders-pdf = [
 loaders-sql = [
     { name = "sqlalchemy" },
 ]
-tools-mcp = [
-    { name = "mcp" },
-]
 
 [package.dev-dependencies]
 dev = [
@@ -1686,6 +1682,7 @@ docs = [
 ]
 test = [
     { name = "fuzzywuzzy" },
+    { name = "mcp", extra = ["ws"] },
     { name = "mongomock" },
     { name = "moto", extra = ["dynamodb"] },
     { name = "pytest" },
@@ -1749,8 +1746,6 @@ requires-dist = [
     { name = "marqo", marker = "extra == 'drivers-vector-marqo'", specifier = ">=3.9.2" },
     { name = "marshmallow", specifier = ">=3.21.3,<4" },
     { name = "marshmallow-enum", specifier = ">=1.5.1" },
-    { name = "mcp", marker = "extra == 'all'", specifier = ">=1.10.0,<2" },
-    { name = "mcp", marker = "extra == 'tools-mcp'", specifier = ">=1.10.0,<2" },
     { name = "numpy", specifier = ">=1.26.4,<3" },
     { name = "ollama", marker = "extra == 'all'", specifier = ">=0.4.1" },
     { name = "ollama", marker = "extra == 'drivers-embedding-ollama'", specifier = ">=0.4.1" },
@@ -1835,7 +1830,7 @@ requires-dist = [
     { name = "voyageai", marker = "extra == 'drivers-rerank-voyageai'", specifier = ">=0.2.1" },
     { name = "wrapt", specifier = ">=1.16.0" },
 ]
-provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-rerank-amazon-bedrock", "drivers-rerank-voyageai", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "tools-mcp", "all"]
+provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-rerank-amazon-bedrock", "drivers-rerank-voyageai", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "all"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -1863,6 +1858,7 @@ docs = [
 ]
 test = [
     { name = "fuzzywuzzy", specifier = ">=0.18.0" },
+    { name = "mcp", extras = ["ws"], specifier = ">=1.10.0,<2" },
     { name = "mongomock", specifier = ">=4.1.2" },
     { name = "moto", extras = ["dynamodb", "iotdata", "sqs"], specifier = ">=5.0.16" },
     { name = "pytest", specifier = ">=8.3.1" },
@@ -2627,6 +2623,11 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b5/48/0bb26fdfe7ac16875f534a101ce2405eae192bdef37e7451f2f4507c13ec/mcp-1.29.1.tar.gz", hash = "sha256:1967ba4c315f7a375146209949f45950d18b0efd2f913d7cf3400bc723ee5f04", size = 646823, upload-time = "2026-08-24T18:30:41.161Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/0b/04/d6b4fb82eefe9e81807aabca1ac98f460ae0883974b83a997aaa20c52545/mcp-1.29.1-py3-none-any.whl", hash = "sha256:b6310eeb59153300c4ab8b9aec4c52f4819a2d6a8e429eb43d908bed7c783648", size = 224653, upload-time = "2026-08-24T18:30:39.573Z" },
+]
+
+[package.optional-dependencies]
+ws = [
+    { name = "websockets" },
 ]
 
 [[package]]
