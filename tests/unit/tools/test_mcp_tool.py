@@ -2,11 +2,10 @@ import json
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+from mcp import types as mcp_types
 
-mcp_types = pytest.importorskip("mcp.types", reason="mcp package not installed")
-
-from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact  # noqa: E402
-from griptape.tools.mcp.tool import MCPTool  # noqa: E402
+from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
+from griptape.tools.mcp.tool import MCPTool
 
 
 @pytest.fixture()
