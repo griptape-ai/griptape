@@ -1681,6 +1681,7 @@ docs = [
     { name = "pymdown-extensions" },
 ]
 test = [
+    { name = "exceptiongroup" },
     { name = "fuzzywuzzy" },
     { name = "mcp", extra = ["ws"] },
     { name = "mongomock" },
@@ -1857,6 +1858,7 @@ docs = [
     { name = "pymdown-extensions", specifier = ">=10.17" },
 ]
 test = [
+    { name = "exceptiongroup", specifier = ">=1.2.2" },
     { name = "fuzzywuzzy", specifier = ">=0.18.0" },
     { name = "mcp", extras = ["ws"], specifier = ">=1.10.0,<2" },
     { name = "mongomock", specifier = ">=4.1.2" },

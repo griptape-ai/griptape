@@ -71,6 +71,25 @@ class TestMCPTool:
         assert isinstance(artifact, ErrorArtifact)
         assert artifact.value == "An unknown error occurred."
 
+    def test_error_result_with_non_text_content_does_not_raise(self, tool):
+        """A non-text first block on an error result must not raise AttributeError."""
+        result = call_tool_result(
+            content=[{"type": "image", "data": "aGk=", "mimeType": "image/png"}],
+            isError=True,
+        )
+        artifact = tool._convert_call_tool_result_to_artifact(result)
+
+        assert isinstance(artifact, ErrorArtifact)
+        assert artifact.value == "An unknown error occurred."
+
+    def test_error_result_falls_back_to_structured_content(self, tool):
+        payload = {"code": 42, "msg": "structured error"}
+        result = call_tool_result(isError=True, structuredContent=payload)
+        artifact = tool._convert_call_tool_result_to_artifact(result)
+
+        assert isinstance(artifact, ErrorArtifact)
+        assert json.loads(artifact.value) == payload
+
     def test_empty_result_returns_empty_list_artifact(self, tool):
         result = call_tool_result()
         artifact = tool._convert_call_tool_result_to_artifact(result)

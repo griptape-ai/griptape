@@ -220,14 +220,28 @@ class MCPTool(BaseTool):
         except Exception as e:
             return ErrorArtifact(value=str(e), exception=e)
 
+    def _convert_error_result_to_artifact(self, call_tool_result: types.CallToolResult) -> ErrorArtifact:
+        """Builds an ErrorArtifact from the first text block, falling back to structured content.
+
+        Error results may carry no content at all, or content blocks that hold no text.
+        """
+        from mcp import types  # pyright: ignore[reportAttributeAccessIssue]
+
+        error_text = next(
+            (content.text for content in call_tool_result.content if isinstance(content, types.TextContent)), None
+        )
+        if error_text is None and call_tool_result.structuredContent is not None:
+            error_text = json.dumps(call_tool_result.structuredContent)
+
+        return ErrorArtifact(error_text or "An unknown error occurred.")
+
     def _convert_call_tool_result_to_artifact(
         self, call_tool_result: types.CallToolResult
     ) -> ListArtifact | ErrorArtifact:
         from mcp import types  # pyright: ignore[reportAttributeAccessIssue]
 
         if call_tool_result.isError:
-            error_text = call_tool_result.content[0].text if call_tool_result.content else None
-            return ErrorArtifact(error_text or "An unknown error occurred.")
+            return self._convert_error_result_to_artifact(call_tool_result)
 
         response_artifacts: list[BaseArtifact] = []
         for content in call_tool_result.content:
