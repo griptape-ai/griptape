@@ -644,10 +644,39 @@ class TestAmazonBedrockPromptDriver:
 
         message = driver.try_run(prompt_stack)
 
-        assert len(message.value) == 2
-        # Redacted reasoning is encrypted, so it surfaces as empty text rather than raising.
-        assert message.value[0].value == ""
-        assert message.value[1].value == "model-output"
+        # Redacted reasoning is encrypted, so it contributes no content rather than raising.
+        assert len(message.content) == 1
+        assert message.content[0].artifact.value == "model-output"
+
+    def test_try_run_redacted_reasoning_content_round_trip(self, mocker):
+        """A redacted reasoning block must not put a blank text block in a follow-up request."""
+        mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
+        mock_converse.return_value = {
+            "output": {
+                "message": {
+                    "content": [
+                        {"text": "model-output"},
+                        {"reasoningContent": {"redactedContent": b"encrypted"}},
+                    ]
+                }
+            },
+            "usage": {"inputTokens": 5, "outputTokens": 10},
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2")
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        prompt_stack.messages.append(driver.try_run(prompt_stack))
+        prompt_stack.add_user_message("follow up")
+
+        content_blocks = [
+            block for message in driver._base_params(prompt_stack)["messages"] for block in message["content"]
+        ]
+
+        # Bedrock rejects blank text blocks with a ValidationException.
+        assert all(block["text"] for block in content_blocks)
+        assert [block["text"] for block in content_blocks] == ["test", "model-output", "follow up"]
 
     def test_try_stream_unsupported_reasoning_content_type(self, mocker):
         mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
