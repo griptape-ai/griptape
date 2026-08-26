@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import re
 import threading
 from types import MethodType
@@ -224,7 +225,7 @@ class MCPTool(BaseTool):
     ) -> ListArtifact | ErrorArtifact:
         from mcp import types  # pyright: ignore[reportAttributeAccessIssue]
 
-        if call_tool_result.is_error:
+        if call_tool_result.isError:
             error_text = call_tool_result.content[0].text if call_tool_result.content else None
             return ErrorArtifact(error_text or "An unknown error occurred.")
 
@@ -244,9 +245,7 @@ class MCPTool(BaseTool):
                 elif isinstance(content.resource, types.BlobResourceContents):
                     response_artifacts.append(BlobArtifact(value=content.resource.blob))
 
-        if not response_artifacts and call_tool_result.structured_content is not None:
-            import json
-
-            response_artifacts.append(TextArtifact(json.dumps(call_tool_result.structured_content)))
+        if not response_artifacts and call_tool_result.structuredContent is not None:
+            response_artifacts.append(TextArtifact(json.dumps(call_tool_result.structuredContent)))
 
         return ListArtifact(response_artifacts)
