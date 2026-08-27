@@ -184,7 +184,7 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         super().after_run()
 
         if self.output_memory:
-            output_memories = self.output_memory[activity.name] or []
+            output_memories = self.output_memory[activity.name] or []  # pyright: ignore[reportFunctionMemberAccess]
             for memory in output_memories:
                 value = memory.process_output(activity, subtask, value)
 
