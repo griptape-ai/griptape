@@ -128,4 +128,4 @@ class ToolTask(PromptTask, ActionsSubtaskOriginMixin):
             if self.tool.input_memory is None:
                 self.tool.input_memory = [self.task_memory]
             if self.tool.output_memory is None and self.tool.off_prompt:
-                self.tool.output_memory = {getattr(a, "name"): [self.task_memory] for a in self.tool.activities()}
+                self.tool.output_memory = {a.name: [self.task_memory] for a in self.tool.activities()}
