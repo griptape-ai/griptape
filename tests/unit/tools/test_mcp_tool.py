@@ -3,7 +3,7 @@ import json
 import pytest
 from mcp import types as mcp_types
 
-from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import AudioArtifact, ErrorArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.tools.mcp.tool import MCPTool
 
 
@@ -96,3 +96,38 @@ class TestMCPTool:
 
         assert isinstance(artifact, ListArtifact)
         assert artifact.value == []
+
+    @pytest.mark.parametrize(
+        ("mime_type", "expected_format"),
+        [
+            ("image/png", "png"),
+            ("image/gif", "gif"),
+            ("image/apng", "apng"),
+        ],
+    )
+    def test_image_content_format_strips_only_mime_prefix(self, tool, mime_type, expected_format):
+        """Format must be derived via literal prefix removal, not lstrip's character-set stripping."""
+        result = call_tool_result(content=[{"type": "image", "data": "aGk=", "mimeType": mime_type}])
+        artifact = tool._convert_call_tool_result_to_artifact(result)
+
+        assert isinstance(artifact, ListArtifact)
+        assert len(artifact.value) == 1
+        assert isinstance(artifact.value[0], ImageArtifact)
+        assert artifact.value[0].format == expected_format
+
+    @pytest.mark.parametrize(
+        ("mime_type", "expected_format"),
+        [
+            ("audio/wav", "wav"),
+            ("audio/aac", "aac"),
+        ],
+    )
+    def test_audio_content_format_strips_only_mime_prefix(self, tool, mime_type, expected_format):
+        """Format must be derived via literal prefix removal, not lstrip's character-set stripping."""
+        result = call_tool_result(content=[{"type": "audio", "data": "aGk=", "mimeType": mime_type}])
+        artifact = tool._convert_call_tool_result_to_artifact(result)
+
+        assert isinstance(artifact, ListArtifact)
+        assert len(artifact.value) == 1
+        assert isinstance(artifact.value[0], AudioArtifact)
+        assert artifact.value[0].format == expected_format
