@@ -269,7 +269,7 @@ class BaseSchema(Schema):
         from griptape.tasks import BaseTask
         from griptape.tokenizers import BaseTokenizer
         from griptape.tools import BaseTool
-        from griptape.utils import import_optional_dependency, is_dependency_installed
+        from griptape.utils import optional_type
 
         if types_override is None:
             types_override = {}
@@ -332,17 +332,13 @@ class BaseSchema(Schema):
                 "StructuredOutputStrategy": StructuredOutputStrategy,
                 "RagContext": RagContext,
                 # Third party modules
-                "Client": import_optional_dependency("cohere").Client if is_dependency_installed("cohere") else Any,
-                "ClientV2": import_optional_dependency("cohere").ClientV2 if is_dependency_installed("cohere") else Any,
-                "boto3": import_optional_dependency("boto3") if is_dependency_installed("boto3") else Any,
-                "Anthropic": import_optional_dependency("anthropic").Anthropic
-                if is_dependency_installed("anthropic")
-                else Any,
-                "BedrockRuntimeClient": import_optional_dependency("mypy_boto3_bedrock_runtime").BedrockRuntimeClient
-                if is_dependency_installed("mypy_boto3_bedrock_runtime")
-                else Any,
-                "voyageai": import_optional_dependency("voyageai") if is_dependency_installed("voyageai") else Any,
-                "openai": import_optional_dependency("openai") if is_dependency_installed("openai") else Any,
+                "Client": optional_type("cohere", "Client"),
+                "ClientV2": optional_type("cohere", "ClientV2"),
+                "boto3": optional_type("boto3"),
+                "Anthropic": optional_type("anthropic", "Anthropic"),
+                "BedrockRuntimeClient": optional_type("mypy_boto3_bedrock_runtime", "BedrockRuntimeClient"),
+                "voyageai": optional_type("voyageai"),
+                "openai": optional_type("openai"),
                 "Schema": Schema,
                 "BaseModel": BaseModel,
                 **types_override,

@@ -16,6 +16,7 @@ from .dict_utils import (
 from .hash import str_to_hash
 from .import_utils import import_optional_dependency
 from .import_utils import is_dependency_installed
+from .import_utils import optional_type
 from .stream import Stream
 from .load_artifact_from_memory import load_artifact_from_memory
 from .deprecation import deprecation_warn
@@ -54,6 +55,7 @@ __all__ = [
     "is_dependency_installed",
     "load_artifact_from_memory",
     "minify_json",
+    "optional_type",
     "references_from_artifacts",
     "remove_key_in_dict_recursively",
     "remove_null_values_in_dict_recursively",

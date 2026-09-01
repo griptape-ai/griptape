@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import sys
 from datetime import datetime
 from enum import Enum
+from types import ModuleType
 from typing import Literal, Union
 
 import pytest
@@ -14,6 +16,7 @@ from griptape.schemas.base_schema import BaseSchema
 from griptape.schemas.bytes_field import Bytes
 from griptape.schemas.pydantic_model_field import PydanticModel
 from griptape.schemas.union_field import Union as UnionField
+from griptape.utils import optional_type
 from tests.mocks.mock_serializable import MockSerializable
 
 
@@ -174,3 +177,24 @@ class TestBaseSchema:
 
     def test_types_override(self):
         assert MockSerializable().to_dict(types_overrides={"foo": int})
+
+    def test_to_dict_survives_a_broken_optional_dependency(self, monkeypatch: pytest.MonkeyPatch):
+        """`_resolve_types` resolves cohere on every call, so its broken imports reach every caller.
+
+        A package with a lazy `__getattr__` passes an is-it-installed check and raises only on
+        attribute access, which used to abort serialization of objects unrelated to it.
+        """
+        broken = ModuleType("cohere")
+
+        def lazy_getattr(name: str) -> object:
+            msg = f"cannot import name 'parse_schema' from 'fastavro' (unknown location), for {name}"
+            raise ImportError(msg)
+
+        broken.__getattr__ = lazy_getattr  # type: ignore[method-assign]
+        monkeypatch.setitem(sys.modules, "cohere", broken)
+        optional_type.cache_clear()
+
+        try:
+            assert MockSerializable().to_dict()
+        finally:
+            optional_type.cache_clear()
