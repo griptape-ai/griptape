@@ -32,7 +32,7 @@ connection: StreamableHttpConnection = {
 
 ### `MCPTool` connection timeouts are seconds, not `timedelta`.
 
-`StreamableHttpConnection`'s `timeout` and `sse_read_timeout` are now floats, matching `SSEConnection`. `timedelta` values are still accepted and converted.
+`StreamableHttpConnection`'s `timeout` and `sse_read_timeout` are seconds, matching `SSEConnection`. `timedelta` values are still accepted and converted.
 
 #### Before
 
@@ -52,6 +52,30 @@ connection: StreamableHttpConnection = {
     "url": "http://localhost:8000/mcp",
     "timeout": 30,
 }
+```
+
+### `MCPTool`'s `httpx_client_factory` must return an `httpx2` client.
+
+MCP 2.x replaced `httpx` with [`httpx2`](https://pypi.org/project/httpx2/). A factory supplied on an `SSEConnection` or `StreamableHttpConnection` must return an `httpx2.AsyncClient`; an `httpx.AsyncClient` fails once the connection is used.
+
+#### Before
+
+```python
+import httpx
+
+
+def factory(headers=None, timeout=None, auth=None) -> httpx.AsyncClient:
+    return httpx.AsyncClient(headers=headers, timeout=timeout, auth=auth)
+```
+
+#### After
+
+```python
+import httpx2
+
+
+def factory(headers=None, timeout=None, auth=None) -> httpx2.AsyncClient:
+    return httpx2.AsyncClient(headers=headers, timeout=timeout, auth=auth)
 ```
 
 ### `CommandRunner` now executes commands directly (`shell=False`).

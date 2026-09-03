@@ -176,6 +176,7 @@ test = [
   # MCPTool installs these from griptape/tools/mcp/requirements.txt at runtime.
   # Tests need them at collection time, so keep the constraints in sync with that file.
   "mcp>=2,<3",
+  "httpx2>=2.5.0",
   "exceptiongroup>=1.2.2",
 ]
 dev = [

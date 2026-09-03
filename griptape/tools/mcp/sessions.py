@@ -72,10 +72,10 @@ class SSEConnection(TypedDict):
     headers: dict[str, Any] | None
     """HTTP headers to send to the SSE endpoint."""
 
-    timeout: float
+    timeout: float | timedelta
     """HTTP timeout, in seconds."""
 
-    sse_read_timeout: float
+    sse_read_timeout: float | timedelta
     """SSE read timeout, in seconds."""
 
     session_kwargs: dict[str, Any] | None
@@ -94,10 +94,10 @@ class StreamableHttpConnection(TypedDict):
     headers: dict[str, Any] | None
     """HTTP headers to send to the endpoint."""
 
-    timeout: float
+    timeout: float | timedelta
     """HTTP timeout, in seconds."""
 
-    sse_read_timeout: float
+    sse_read_timeout: float | timedelta
     """How long (in seconds) the client will wait for a new event before disconnecting.
     All other HTTP operations are controlled by `timeout`."""
 

@@ -1651,6 +1651,7 @@ docs = [
 test = [
     { name = "exceptiongroup" },
     { name = "fuzzywuzzy" },
+    { name = "httpx2" },
     { name = "mcp" },
     { name = "mongomock" },
     { name = "moto", extra = ["dynamodb"] },
@@ -1828,6 +1829,7 @@ docs = [
 test = [
     { name = "exceptiongroup", specifier = ">=1.2.2" },
     { name = "fuzzywuzzy", specifier = ">=0.18.0" },
+    { name = "httpx2", specifier = ">=2.5.0" },
     { name = "mcp", specifier = ">=2,<3" },
     { name = "mongomock", specifier = ">=4.1.2" },
     { name = "moto", extras = ["dynamodb", "iotdata", "sqs"], specifier = ">=5.0.16" },

@@ -1,20 +1,25 @@
+import asyncio
 import json
 from contextlib import asynccontextmanager
+from datetime import timedelta
 from functools import partial
 from typing import TYPE_CHECKING
 
 import anyio
+import httpx2
 import pytest
 from mcp import ClientSession
 from mcp import types as mcp_types
 from mcp.server.lowlevel import Server
+from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 from mcp.shared.memory import create_client_server_memory_streams
 
 from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
+from griptape.tools.mcp.sessions import create_session
 from griptape.tools.mcp.tool import MCPTool
 
 if TYPE_CHECKING:
-    from griptape.tools.mcp.sessions import StdioConnection
+    from griptape.tools.mcp.sessions import StdioConnection, StreamableHttpConnection
 
 
 def call_tool_result(**payload) -> mcp_types.CallToolResult:
@@ -195,3 +200,69 @@ class TestMCPToolSession:
 
         assert isinstance(artifact, ErrorArtifact)
         assert artifact.value == "boom"
+
+
+async def call_over_streamable_http(*, terminate_on_close: bool = True) -> dict:
+    """Drives `create_session` against an in-process streamable HTTP server.
+
+    The server is mounted as the ASGI app of the httpx2 client the connection
+    builds, so the transport wiring runs without binding a port.
+    """
+    server = Server("test-server", on_list_tools=list_tools, on_call_tool=call_tool)
+    manager = StreamableHTTPSessionManager(app=server)
+    observed: dict = {"methods": []}
+
+    async def asgi_app(scope, receive, send) -> None:
+        await manager.handle_request(scope, receive, send)
+
+    async def record_request(request: httpx2.Request) -> None:
+        observed["methods"].append(request.method)
+
+    def httpx_client_factory(headers=None, timeout=None, auth=None) -> httpx2.AsyncClient:
+        observed["headers"] = headers
+        observed["timeout"] = timeout
+        return httpx2.AsyncClient(
+            transport=httpx2.ASGITransport(app=asgi_app),
+            headers=headers,
+            timeout=timeout,
+            auth=auth,
+            event_hooks={"request": [record_request]},
+        )
+
+    connection: StreamableHttpConnection = {  # pyright: ignore[reportAssignmentType]
+        "transport": "streamable_http",
+        "url": "http://testserver/mcp",
+        "headers": {"X-Test": "1"},
+        "timeout": 5,
+        "sse_read_timeout": timedelta(seconds=10),
+        "terminate_on_close": terminate_on_close,
+        "httpx_client_factory": httpx_client_factory,
+    }
+
+    async with manager.run(), create_session(connection) as session:
+        await session.initialize()
+        observed["tools"] = [tool.name for tool in (await session.list_tools()).tools]
+        content = (await session.call_tool("add-numbers", {"a": 17, "b": 25})).content[0]
+        assert isinstance(content, mcp_types.TextContent)
+        observed["result"] = content.text
+
+    return observed
+
+
+class TestStreamableHttpSession:
+    def test_session_calls_tools_over_streamable_http(self):
+        observed = asyncio.run(call_over_streamable_http())
+
+        assert observed["tools"] == ["add-numbers", "explode"]
+        assert observed["result"] == "42"
+
+    def test_connection_configures_the_http_client(self):
+        observed = asyncio.run(call_over_streamable_http())
+
+        assert observed["headers"] == {"X-Test": "1"}
+        # `sse_read_timeout` becomes the read timeout, whether given as seconds or a timedelta.
+        assert observed["timeout"] == httpx2.Timeout(5.0, read=10.0)
+
+    def test_terminate_on_close_deletes_the_session(self):
+        assert "DELETE" in asyncio.run(call_over_streamable_http())["methods"]
+        assert "DELETE" not in asyncio.run(call_over_streamable_http(terminate_on_close=False))["methods"]
