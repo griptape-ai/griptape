@@ -1,18 +1,28 @@
 import json
+from contextlib import asynccontextmanager
+from functools import partial
+from typing import TYPE_CHECKING
 
+import anyio
 import pytest
+from mcp import ClientSession
 from mcp import types as mcp_types
+from mcp.server.lowlevel import Server
+from mcp.shared.memory import create_client_server_memory_streams
 
 from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
 from griptape.tools.mcp.tool import MCPTool
+
+if TYPE_CHECKING:
+    from griptape.tools.mcp.sessions import StdioConnection
 
 
 def call_tool_result(**payload) -> mcp_types.CallToolResult:
     """Build a CallToolResult from a wire payload.
 
-    Deserializing the JSON an MCP server actually sends, rather than passing
-    Python kwargs, keeps the test honest: `CallToolResult` allows extra fields,
-    so a misspelled kwarg would be silently accepted as a new attribute.
+    Deserializing the camelCase JSON an MCP server actually sends, rather than
+    passing Python kwargs, keeps the test honest about the wire format, which is
+    unchanged even though the model attributes are snake_case.
     """
     return mcp_types.CallToolResult.model_validate({"content": [], **payload})
 
@@ -96,3 +106,92 @@ class TestMCPTool:
 
         assert isinstance(artifact, ListArtifact)
         assert artifact.value == []
+
+
+SERVER_TOOLS = [
+    mcp_types.Tool(
+        name="add-numbers",
+        description="Adds two numbers.",
+        input_schema={
+            "type": "object",
+            "properties": {"a": {"type": "integer"}, "b": {"type": "integer"}},
+            "required": ["a", "b"],
+        },
+    ),
+    mcp_types.Tool(
+        name="explode",
+        description="Always fails.",
+        input_schema={"type": "object", "properties": {}},
+    ),
+]
+
+
+async def list_tools(_ctx, _params) -> mcp_types.ListToolsResult:
+    return mcp_types.ListToolsResult(tools=SERVER_TOOLS)
+
+
+async def call_tool(_ctx, params: mcp_types.CallToolRequestParams) -> mcp_types.CallToolResult:
+    if params.name == "explode":
+        return mcp_types.CallToolResult(content=[mcp_types.TextContent(text="boom")], is_error=True)
+    arguments = params.arguments or {}
+    total = arguments["a"] + arguments["b"]
+    return mcp_types.CallToolResult(content=[mcp_types.TextContent(text=str(total))])
+
+
+@asynccontextmanager
+async def memory_session():
+    """Connects a ClientSession to an in-process MCP server over memory streams."""
+    server = Server("test-server", on_list_tools=list_tools, on_call_tool=call_tool)
+
+    async with (
+        create_client_server_memory_streams() as (
+            (client_read, client_write),
+            (server_read, server_write),
+        ),
+        anyio.create_task_group() as task_group,
+    ):
+        task_group.start_soon(partial(server.run, server_read, server_write, server.create_initialization_options()))
+        async with ClientSession(client_read, client_write) as session:
+            yield session
+        task_group.cancel_scope.cancel()
+
+
+class InMemoryMCPTool(MCPTool):
+    def _get_session(self):
+        return memory_session()
+
+
+class TestMCPToolSession:
+    @pytest.fixture()
+    def tool(self):
+        # `connection` is unused because `_get_session` is overridden.
+        connection: StdioConnection = {  # pyright: ignore[reportAssignmentType]
+            "transport": "stdio",
+            "command": "unused",
+            "args": [],
+        }
+        return InMemoryMCPTool(connection=connection)
+
+    def test_activities_mirror_server_tools(self, tool):
+        activities = {activity.config["name"]: activity.config["description"] for activity in tool.activities()}
+
+        assert activities == {"add_numbers": "Adds two numbers.", "explode": "Always fails."}
+
+    def test_activity_schema_from_tool_input_schema(self, tool):
+        schema = tool.to_activity_json_schema(tool.add_numbers, "Schema")
+
+        properties = schema["properties"]
+        assert properties["a"]["type"] == "integer"
+        assert properties["b"]["type"] == "integer"
+
+    def test_call_tool_returns_artifact(self, tool):
+        artifact = tool.add_numbers({"values": {"a": 17, "b": 25}})
+
+        assert isinstance(artifact, ListArtifact)
+        assert artifact.value[0].value == "42"
+
+    def test_error_result_returns_error_artifact(self, tool):
+        artifact = tool.explode({"values": {}})
+
+        assert isinstance(artifact, ErrorArtifact)
+        assert artifact.value == "boom"

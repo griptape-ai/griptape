@@ -175,7 +175,7 @@ test = [
   "torch>=2.4.1",
   # MCPTool installs these from griptape/tools/mcp/requirements.txt at runtime.
   # Tests need them at collection time, so keep the constraints in sync with that file.
-  "mcp[ws]>=1.10.0,<2",
+  "mcp>=2,<3",
   "exceptiongroup>=1.2.2",
 ]
 dev = [

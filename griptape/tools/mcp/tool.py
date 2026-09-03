@@ -187,7 +187,7 @@ class MCPTool(BaseTool):
             config={
                 "name": activity_name,
                 "description": tool.description or tool.title or tool.name,
-                "schema": create_model(tool.inputSchema, allow_undefined_array_items=True, allow_undefined_type=True),
+                "schema": create_model(tool.input_schema, allow_undefined_array_items=True, allow_undefined_type=True),
             }
         )
         def activity_handler(self: MCPTool, values: dict) -> Any:
@@ -230,8 +230,8 @@ class MCPTool(BaseTool):
         error_text = next(
             (content.text for content in call_tool_result.content if isinstance(content, types.TextContent)), None
         )
-        if error_text is None and call_tool_result.structuredContent is not None:
-            error_text = json.dumps(call_tool_result.structuredContent)
+        if error_text is None and call_tool_result.structured_content is not None:
+            error_text = json.dumps(call_tool_result.structured_content)
 
         return ErrorArtifact(error_text or "An unknown error occurred.")
 
@@ -240,7 +240,7 @@ class MCPTool(BaseTool):
     ) -> ListArtifact | ErrorArtifact:
         from mcp import types  # pyright: ignore[reportAttributeAccessIssue]
 
-        if call_tool_result.isError:
+        if call_tool_result.is_error:
             return self._convert_error_result_to_artifact(call_tool_result)
 
         response_artifacts: list[BaseArtifact] = []
@@ -249,17 +249,17 @@ class MCPTool(BaseTool):
                 response_artifacts.append(TextArtifact(content.text))
             elif isinstance(content, types.ImageContent):
                 response_artifacts.append(
-                    ImageArtifact(value=content.data, format=content.mimeType.lstrip("image/"), width=0, height=0)
+                    ImageArtifact(value=content.data, format=content.mime_type.lstrip("image/"), width=0, height=0)
                 )
             elif isinstance(content, types.AudioContent):
-                response_artifacts.append(AudioArtifact(value=content.data, format=content.mimeType.lstrip("audio/")))
+                response_artifacts.append(AudioArtifact(value=content.data, format=content.mime_type.lstrip("audio/")))
             elif isinstance(content, types.EmbeddedResource):
                 if isinstance(content.resource, types.TextResourceContents):
                     response_artifacts.append(TextArtifact(content.resource.text))
                 elif isinstance(content.resource, types.BlobResourceContents):
                     response_artifacts.append(BlobArtifact(value=content.resource.blob))
 
-        if not response_artifacts and call_tool_result.structuredContent is not None:
-            response_artifacts.append(TextArtifact(json.dumps(call_tool_result.structuredContent)))
+        if not response_artifacts and call_tool_result.structured_content is not None:
+            response_artifacts.append(TextArtifact(json.dumps(call_tool_result.structured_content)))
 
         return ListArtifact(response_artifacts)

@@ -4,6 +4,56 @@ This document provides instructions for migrating your codebase to accommodate b
 
 ## Next Version (Security Hardening)
 
+### `MCPTool` requires MCP Python SDK 2.x.
+
+`MCPTool` now uses [MCP Python SDK 2.x](https://github.com/modelcontextprotocol/python-sdk). Reinstall the tool's requirements (`griptape/tools/mcp/requirements.txt`) to pick up `mcp>=2,<3`.
+
+### Removed `websocket` transport from `MCPTool`.
+
+MCP 2.x dropped the WebSocket transport, so `WebsocketConnection` is gone. Use `streamable_http` instead.
+
+#### Before
+
+```python
+connection: WebsocketConnection = {
+    "transport": "websocket",
+    "url": "ws://localhost:8000/ws",
+}
+```
+
+#### After
+
+```python
+connection: StreamableHttpConnection = {
+    "transport": "streamable_http",
+    "url": "http://localhost:8000/mcp",
+}
+```
+
+### `MCPTool` connection timeouts are seconds, not `timedelta`.
+
+`StreamableHttpConnection`'s `timeout` and `sse_read_timeout` are now floats, matching `SSEConnection`. `timedelta` values are still accepted and converted.
+
+#### Before
+
+```python
+connection: StreamableHttpConnection = {
+    "transport": "streamable_http",
+    "url": "http://localhost:8000/mcp",
+    "timeout": timedelta(seconds=30),
+}
+```
+
+#### After
+
+```python
+connection: StreamableHttpConnection = {
+    "transport": "streamable_http",
+    "url": "http://localhost:8000/mcp",
+    "timeout": 30,
+}
+```
+
 ### `CommandRunner` now executes commands directly (`shell=False`).
 
 To prevent shell injection, `CommandRunner` no longer uses a system shell to execute commands. This means shell metacharacters such as pipes (`|`), redirects (`>`, `>>`), and logical operators (`&&`, `||`) are no longer supported.
