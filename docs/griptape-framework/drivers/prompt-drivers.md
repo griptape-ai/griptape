@@ -188,7 +188,7 @@ This driver uses [Cohere tool use](https://docs.cohere.com/docs/tools) when usin
 
 !!! info
 
-    This driver requires the `drivers-prompt-cohere` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-cohere` [extra](../index.md#installing-optional-dependencies).
 
 === "Code"
 
@@ -206,7 +206,7 @@ This driver uses [Cohere tool use](https://docs.cohere.com/docs/tools) when usin
 
 !!! info
 
-    This driver requires the `drivers-prompt-anthropic` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-anthropic` [extra](../index.md#installing-optional-dependencies).
 
 The [AnthropicPromptDriver](../../reference/griptape/drivers/prompt/anthropic_prompt_driver.md) connects to the Anthropic [Messages](https://docs.anthropic.com/claude/reference/messages_post) API.
 This driver uses [Anthropic tool use](https://docs.anthropic.com/en/docs/build-with-claude/tool-use) when using [Tools](../tools/index.md).
@@ -227,7 +227,7 @@ This driver uses [Anthropic tool use](https://docs.anthropic.com/en/docs/build-w
 
 !!! info
 
-    This driver requires the `drivers-prompt-google` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-google` [extra](../index.md#installing-optional-dependencies).
 
 The [GooglePromptDriver](../../reference/griptape/drivers/prompt/google_prompt_driver.md) connects to the [Google Generative AI](https://ai.google.dev/tutorials/python_quickstart#generate_text_from_text_inputs) API.
 This driver uses [Gemini function calling](https://ai.google.dev/gemini-api/docs/function-calling) when using [Tools](../tools/index.md).
@@ -248,7 +248,7 @@ This driver uses [Gemini function calling](https://ai.google.dev/gemini-api/docs
 
 !!! info
 
-    This driver requires the `drivers-prompt-amazon-bedrock` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-amazon-bedrock` [extra](../index.md#installing-optional-dependencies).
 
 The [AmazonBedrockPromptDriver](../../reference/griptape/drivers/prompt/amazon_bedrock_prompt_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/)'s [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
 This driver uses [Bedrock tool use](https://docs.aws.amazon.com/bedrock/latest/userguide/tool-use.html) when using [Tools](../tools/index.md).
@@ -271,7 +271,7 @@ All models supported by the Converse API are available for use with this driver.
 
 !!! info
 
-    This driver requires the `drivers-prompt-ollama` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-ollama` [extra](../index.md#installing-optional-dependencies).
 
 The [OllamaPromptDriver](../../reference/griptape/drivers/prompt/ollama_prompt_driver.md) connects to the [Ollama Chat Completion API](https://github.com/ollama/ollama/blob/main/docs/api.md#generate-a-chat-completion).
 This driver uses [Ollama tool calling](https://ollama.com/blog/tool-support) when using [Tools](../tools/index.md).
@@ -284,7 +284,7 @@ This driver uses [Ollama tool calling](https://ollama.com/blog/tool-support) whe
 
 !!! info
 
-    This driver requires the `drivers-prompt-huggingface` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-huggingface` [extra](../index.md#installing-optional-dependencies).
 
 The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/huggingface_hub_prompt_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api).
 
@@ -318,7 +318,7 @@ The [HuggingFaceHubPromptDriver](#hugging-face-hub) also supports [Text Generati
 
 !!! info
 
-    This driver requires the `drivers-prompt-huggingface-pipeline` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-huggingface-pipeline` [extra](../index.md#installing-optional-dependencies).
 
 The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/huggingface_pipeline_prompt_driver.md) uses [Hugging Face Pipelines](https://huggingface.co/docs/transformers/main_classes/pipelines) for inference locally.
 
@@ -342,7 +342,7 @@ The [HuggingFacePipelinePromptDriver](../../reference/griptape/drivers/prompt/hu
 
 !!! info
 
-    This driver requires the `drivers-prompt-amazon-sagemaker` [extra](../index.md#extras).
+    This driver requires the `drivers-prompt-amazon-sagemaker` [extra](../index.md#installing-optional-dependencies).
 
 The [AmazonSageMakerJumpstartPromptDriver](../../reference/griptape/drivers/prompt/amazon_sagemaker_jumpstart_prompt_driver.md) uses [Amazon SageMaker Jumpstart](https://docs.aws.amazon.com/sagemaker/latest/dg/studio-jumpstart.html) for inference on AWS.
 

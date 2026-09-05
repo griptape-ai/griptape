@@ -52,7 +52,7 @@ with updated defaults.
 
 !!! info
 
-    This driver requires the `drivers-embedding-amazon-bedrock` [extra](../index.md#extras).
+    This driver requires the `drivers-embedding-amazon-bedrock` [extra](../index.md#installing-optional-dependencies).
 
 The [AmazonBedrockTitanEmbeddingDriver](../../reference/griptape/drivers/embedding/amazon_bedrock_titan_embedding_driver.md) uses the [Amazon Bedrock Embeddings API](https://docs.aws.amazon.com/bedrock/latest/userguide/embeddings.html).
 
@@ -76,7 +76,7 @@ The [AmazonBedrockTitanEmbeddingDriver](../../reference/griptape/drivers/embeddi
 
 !!! info
 
-    This driver requires the `drivers-embedding-google` [extra](../index.md#extras).
+    This driver requires the `drivers-embedding-google` [extra](../index.md#installing-optional-dependencies).
 
 The [GoogleEmbeddingDriver](../../reference/griptape/drivers/embedding/google_embedding_driver.md) uses the [Google Embeddings API](https://ai.google.dev/tutorials/python_quickstart#use_embeddings).
 
@@ -100,7 +100,7 @@ The [GoogleEmbeddingDriver](../../reference/griptape/drivers/embedding/google_em
 
 !!! info
 
-    This driver requires the `drivers-embedding-huggingface` [extra](../index.md#extras).
+    This driver requires the `drivers-embedding-huggingface` [extra](../index.md#installing-optional-dependencies).
 
 The [HuggingFaceHubEmbeddingDriver](../../reference/griptape/drivers/embedding/huggingface_hub_embedding_driver.md) connects to the [Hugging Face Hub API](https://huggingface.co/docs/hub/api). It supports models with the following tasks:
 
@@ -122,7 +122,7 @@ The [HuggingFaceHubEmbeddingDriver](../../reference/griptape/drivers/embedding/h
 
 !!! info
 
-    This driver requires the `drivers-embedding-ollama` [extra](../index.md#extras).
+    This driver requires the `drivers-embedding-ollama` [extra](../index.md#installing-optional-dependencies).
 
 The [OllamaEmbeddingDriver](../../reference/griptape/drivers/embedding/ollama_embedding_driver.md) uses the [Ollama Embeddings API](https://ollama.com/blog/embedding-models).
 
@@ -136,7 +136,7 @@ The [AmazonSageMakerJumpstartEmbeddingDriver](../../reference/griptape/drivers/e
 
 !!! info
 
-    This driver requires the `drivers-embedding-amazon-sagemaker` [extra](../index.md#extras).
+    This driver requires the `drivers-embedding-amazon-sagemaker` [extra](../index.md#installing-optional-dependencies).
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/embedding_drivers_7.py"
@@ -148,7 +148,7 @@ The [VoyageAiEmbeddingDriver](../../reference/griptape/drivers/embedding/voyagea
 
 !!! info
 
-    This driver requires the `drivers-embedding-voyageai` [extra](../index.md#extras).
+    This driver requires the `drivers-embedding-voyageai` [extra](../index.md#installing-optional-dependencies).
 
 === "Code"
 
@@ -168,7 +168,7 @@ The [CohereEmbeddingDriver](../../reference/griptape/drivers/embedding/cohere_em
 
 !!! info
 
-    This driver requires the `drivers-embedding-cohere` [extra](../index.md#extras).
+    This driver requires the `drivers-embedding-cohere` [extra](../index.md#installing-optional-dependencies).
 
 === "Code"
 
