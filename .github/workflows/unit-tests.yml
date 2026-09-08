@@ -42,6 +42,21 @@ jobs:
         uses: ./.github/actions/init-bare-environment 
       - name: Run unit tests
         run: uv run pytest -n auto tests/unit/structures
+  test-milvus:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10"]
+    steps:
+      - name: Checkout actions
+        uses: actions/checkout@v7
+      - name: Init environment
+        uses: ./.github/actions/init-environment
+      - name: Run Milvus Lite integration tests
+        run: uv run pytest -n auto tests/integration/drivers/vector/test_milvus_vector_store_driver.py
+      - name: Run Milvus documentation example
+        run: uv run pytest tests/integration/test_code_blocks.py -k vector_store_drivers_13
   test-windows:
     runs-on: windows-latest
     strategy:

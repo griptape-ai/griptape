@@ -36,7 +36,7 @@ test/unit/coverage:
 
 .PHONY: test/integration
 test/integration:
-	@uv run pytest -n auto tests/integration/test_code_blocks.py
+	@uv run pytest -n auto tests/integration/test_code_blocks.py tests/integration/drivers/vector/test_milvus_vector_store_driver.py
 
 .PHONY: lint
 lint: ## Lint project.
