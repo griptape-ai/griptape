@@ -4,6 +4,60 @@ This document provides instructions for migrating your codebase to accommodate b
 
 ## Next Version (Security Hardening)
 
+### `MCPTool` requires MCP Python SDK 2.x.
+
+`MCPTool` now uses [MCP Python SDK 2.x](https://github.com/modelcontextprotocol/python-sdk). Reinstall the tool's requirements (`griptape/tools/mcp/requirements.txt`) to pick up `mcp>=2,<3`.
+
+### Removed `websocket` transport from `MCPTool`.
+
+MCP 2.x dropped the WebSocket transport, so `WebsocketConnection` is gone. Use `streamable_http` instead.
+
+#### Before
+
+```python
+connection: WebsocketConnection = {
+    "transport": "websocket",
+    "url": "ws://localhost:8000/ws",
+}
+```
+
+#### After
+
+```python
+connection: StreamableHttpConnection = {
+    "transport": "streamable_http",
+    "url": "http://localhost:8000/mcp",
+}
+```
+
+### `MCPTool` honors `sse_read_timeout` and `terminate_on_close`.
+
+`SSEConnection`'s `sse_read_timeout` was ignored in favor of `timeout`, so an SSE connection gave up on a quiet stream after `timeout` seconds (5 by default). It is now read, raising the default read timeout to 300 seconds. `StreamableHttpConnection`'s `terminate_on_close` was ignored too, always terminating the session on close; set it to `False` to keep the session alive.
+
+### `MCPTool`'s `httpx_client_factory` must return an `httpx2` client.
+
+MCP 2.x replaced `httpx` with [`httpx2`](https://pypi.org/project/httpx2/). A factory supplied on an `SSEConnection` or `StreamableHttpConnection` must return an `httpx2.AsyncClient`; an `httpx.AsyncClient` fails once the connection is used.
+
+#### Before
+
+```python
+import httpx
+
+
+def factory(headers=None, timeout=None, auth=None) -> httpx.AsyncClient:
+    return httpx.AsyncClient(headers=headers, timeout=timeout, auth=auth)
+```
+
+#### After
+
+```python
+import httpx2
+
+
+def factory(headers=None, timeout=None, auth=None) -> httpx2.AsyncClient:
+    return httpx2.AsyncClient(headers=headers, timeout=timeout, auth=auth)
+```
+
 ### `CommandRunner` now executes commands directly (`shell=False`).
 
 To prevent shell injection, `CommandRunner` no longer uses a system shell to execute commands. This means shell metacharacters such as pipes (`|`), redirects (`>`, `>>`), and logical operators (`&&`, `||`) are no longer supported.

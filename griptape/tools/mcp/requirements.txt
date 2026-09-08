@@ -1,2 +1,3 @@
-mcp[ws]>=1.10.0,<2
+mcp>=2,<3
+httpx2>=2.5.0
 exceptiongroup>=1.2.2
