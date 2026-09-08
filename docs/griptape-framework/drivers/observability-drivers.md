@@ -17,7 +17,7 @@ Observability Drivers are used by [Observability](../structures/observability.md
 
 !!! info
 
-    This driver requires the `drivers-observability-griptape-cloud` [extra](../index.md#extras).
+    This driver requires the `drivers-observability-griptape-cloud` [extra](../index.md#installing-optional-dependencies).
 
 The Griptape Cloud Observability Driver instruments `@observable` functions and methods with metrics and traces for use with the Griptape Cloud.
 
@@ -36,7 +36,7 @@ Here is an example of how to use the `GriptapeCloudObservabilityDriver` with the
 
 !!! info
 
-    This driver requires the `drivers-observability-opentelemetry` [extra](../index.md#extras).
+    This driver requires the `drivers-observability-opentelemetry` [extra](../index.md#installing-optional-dependencies).
 
 The [OpenTelemetry](https://opentelemetry.io/) Observability Driver instruments `@observable` functions and methods with metrics and traces for use with OpenTelemetry. You must configure a destination for the telemetry by providing a `SpanProcessor` to the Driver.
 

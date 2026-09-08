@@ -60,7 +60,7 @@ The [GriptapeCloudVectorStoreDriver](../../reference/griptape/drivers/vector/gri
 
 !!! info
 
-    This Driver requires the `drivers-vector-pinecone` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-pinecone` [extra](../index.md#installing-optional-dependencies).
 
 The [PineconeVectorStoreDriver](../../reference/griptape/drivers/vector/pinecone_vector_store_driver.md) supports the [Pinecone vector database](https://www.pinecone.io/).
 
@@ -82,7 +82,7 @@ Here is an example of how the Driver can be used to load and query information i
 
 !!! info
 
-    This Driver requires the `drivers-vector-marqo` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-marqo` [extra](../index.md#installing-optional-dependencies).
 
 The [MarqoVectorStoreDriver](../../reference/griptape/drivers/vector/marqo_vector_store_driver.md) supports the Marqo vector database.
 
@@ -104,7 +104,7 @@ Here is an example of how the Driver can be used to load and query information i
 
 !!! info
 
-    This Driver requires the `drivers-vector-mongodb` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-mongodb` [extra](../index.md#installing-optional-dependencies).
 
 The [MongodbAtlasVectorStoreDriver](../../reference/griptape/drivers/vector/mongodb_atlas_vector_store_driver.md) provides support for storing vector data in a MongoDB Atlas database.
 
@@ -147,7 +147,7 @@ Replace `path_to_vector` with the expected field name where the vector content w
 
 !!! info
 
-    This Driver requires the `drivers-vector-mongodb` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-mongodb` [extra](../index.md#installing-optional-dependencies).
 
 The [AzureMongoDbVectorStoreDriver](../../reference/griptape/drivers/vector/azure_mongodb_vector_store_driver.md) provides support for storing vector data in an Azure CosmosDb database account using the MongoDb vCore API
 
@@ -169,7 +169,7 @@ Here is an example of how the Driver can be used to load and query information i
 
 !!! info
 
-    This Driver requires the `drivers-vector-redis` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-redis` [extra](../index.md#installing-optional-dependencies).
 
 The [RedisVectorStoreDriver](../../reference/griptape/drivers/vector/redis_vector_store_driver.md) integrates with the Redis vector storage system.
 
@@ -197,7 +197,7 @@ FT.CREATE idx:griptape ON hash PREFIX 1 "griptape:" SCHEMA namespace TAG vector 
 
 !!! info
 
-    This Driver requires the `drivers-vector-opensearch` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-opensearch` [extra](../index.md#installing-optional-dependencies).
 
 The [OpenSearchVectorStoreDriver](../../reference/griptape/drivers/vector/opensearch_vector_store_driver.md) integrates with the OpenSearch platform, allowing for storage, retrieval, and querying of vector data.
 
@@ -233,7 +233,7 @@ The body mappings for creating a vector index should look similar to the followi
 
 !!! info
 
-    This Driver requires the `drivers-vector-pgvector` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-pgvector` [extra](../index.md#installing-optional-dependencies).
 
 The [PGVectorVectorStoreDriver](../../reference/griptape/drivers/vector/pgvector_vector_store_driver.md) integrates with PGVector, a vector storage and search extension for Postgres. While Griptape will handle enabling the extension, PGVector must be installed and ready for use in your Postgres instance before using this Vector Store Driver.
 
@@ -255,7 +255,7 @@ Here is an example of how the Driver can be used to load and query information i
 
 !!! info
 
-    This Driver requires the `drivers-vector-qdrant` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-qdrant` [extra](../index.md#installing-optional-dependencies).
 
 The QdrantVectorStoreDriver supports the [Qdrant vector database](https://qdrant.tech/).
 
@@ -277,7 +277,7 @@ Here is an example of how the Driver can be used to query information in a Qdran
 
 !!! info
 
-    This Driver requires the `drivers-vector-astra-db` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-astra-db` [extra](../index.md#installing-optional-dependencies).
 
 The AstraDbVectorStoreDriver supports [DataStax Astra DB](https://www.datastax.com/products/datastax-astra).
 
@@ -299,7 +299,7 @@ The following example shows how to store vector entries and query the informatio
 
 !!! info
 
-    This Driver requires the `drivers-vector-pgai` [extra](../index.md#extras).
+    This Driver requires the `drivers-vector-pgai` [extra](../index.md#installing-optional-dependencies).
 
 The PgAiKnowledgeBaseVectorStoreDriver integrates with PG.AI, a managed postgres platform from [EnterpriseDB](https://www.enterprisedb.com/).
 
