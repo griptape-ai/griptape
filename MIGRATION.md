@@ -4,6 +4,28 @@ This document provides instructions for migrating your codebase to accommodate b
 
 ## Next Version (Security Hardening)
 
+### Jinja templates are rendered in a sandbox.
+
+To prevent template injection, `J2` now renders with `jinja2.sandbox.SandboxedEnvironment` instead of `jinja2.Environment`. This affects everything rendered through a template, including Task input, Task context, and Tool activity descriptions.
+
+Ordinary templating is unaffected. Only access to private and dunder attributes changes: it resolves to undefined instead of the value, and raises `jinja2.exceptions.SecurityError` when chained.
+
+#### Before
+
+```python
+task = PromptTask("{{ foo._bar }}", context={"foo": Foo()})
+task.input.value  # "baz"
+```
+
+#### After
+
+Expose the value as a public attribute, or pass it through the Task context directly.
+
+```python
+task = PromptTask("{{ foo.bar }}", context={"foo": Foo()})
+task.input.value  # "baz"
+```
+
 ### `MCPTool` requires MCP Python SDK 2.x.
 
 `MCPTool` now uses [MCP Python SDK 2.x](https://github.com/modelcontextprotocol/python-sdk). Reinstall the tool's requirements (`griptape/tools/mcp/requirements.txt`) to pick up `mcp>=2,<3`.
