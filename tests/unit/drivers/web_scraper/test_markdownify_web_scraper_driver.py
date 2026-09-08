@@ -88,3 +88,22 @@ class TestMarkdownifyWebScraperDriver:
 
         with pytest.raises(Exception, match="can't access URL"):
             web_scraper.scrape_url("https://example.com/")
+
+    def test_default_launch_uses_chromium_headless(self, web_scraper, mock_playwright):
+        web_scraper.scrape_url("https://example.com/")
+        mock_playwright.__enter__.return_value.chromium.launch.assert_called_once_with(headless=True)
+
+    def test_executable_path_passthrough(self, mock_playwright, mock_content):
+        MarkdownifyWebScraperDriver(executable_path="/opt/ff/firefox").scrape_url("https://example.com/")
+        mock_playwright.__enter__.return_value.chromium.launch.assert_called_once_with(
+            headless=True, executable_path="/opt/ff/firefox"
+        )
+
+    def test_browser_type_selects_firefox(self, mock_playwright):
+        firefox_launch = mock_playwright.__enter__.return_value.firefox.launch
+        firefox_launch.return_value.__enter__.return_value.new_page.return_value.content.return_value = (
+            '<html><a href="foobar.com">foobar</a></html>'
+        )
+        artifact = MarkdownifyWebScraperDriver(browser_type="firefox").scrape_url("https://example.com/")
+        assert artifact.value == "[foobar](foobar.com)"
+        firefox_launch.assert_called_once_with(headless=True)
