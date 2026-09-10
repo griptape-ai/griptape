@@ -14,7 +14,7 @@ from mcp.server.lowlevel import Server
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 from mcp.shared.memory import create_client_server_memory_streams
 
-from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import AudioArtifact, ErrorArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.tools.mcp.sessions import create_session
 from griptape.tools.mcp.tool import MCPTool
 
@@ -111,6 +111,23 @@ class TestMCPTool:
 
         assert isinstance(artifact, ListArtifact)
         assert artifact.value == []
+
+    @pytest.mark.parametrize(
+        ("content", "artifact_type", "expected_format"),
+        [
+            ({"type": "image", "data": "aGk=", "mimeType": "image/gif"}, ImageArtifact, "gif"),
+            ({"type": "image", "data": "aGk=", "mimeType": "image/apng"}, ImageArtifact, "apng"),
+            ({"type": "image", "data": "aGk=", "mimeType": "image/png"}, ImageArtifact, "png"),
+            ({"type": "audio", "data": "aGk=", "mimeType": "audio/aac"}, AudioArtifact, "aac"),
+            ({"type": "audio", "data": "aGk=", "mimeType": "audio/wav"}, AudioArtifact, "wav"),
+        ],
+    )
+    def test_media_subtype_removes_only_the_media_prefix(self, tool, content, artifact_type, expected_format):
+        """Keep subtype characters that overlap a MIME prefix."""
+        artifact = tool._convert_call_tool_result_to_artifact(call_tool_result(content=[content]))
+
+        assert isinstance(artifact.value[0], artifact_type)
+        assert artifact.value[0].format == expected_format
 
 
 SERVER_TOOLS = [

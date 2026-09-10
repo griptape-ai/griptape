@@ -249,10 +249,14 @@ class MCPTool(BaseTool):
                 response_artifacts.append(TextArtifact(content.text))
             elif isinstance(content, types.ImageContent):
                 response_artifacts.append(
-                    ImageArtifact(value=content.data, format=content.mime_type.lstrip("image/"), width=0, height=0)
+                    ImageArtifact(
+                        value=content.data, format=content.mime_type.removeprefix("image/"), width=0, height=0
+                    )
                 )
             elif isinstance(content, types.AudioContent):
-                response_artifacts.append(AudioArtifact(value=content.data, format=content.mime_type.lstrip("audio/")))
+                response_artifacts.append(
+                    AudioArtifact(value=content.data, format=content.mime_type.removeprefix("audio/"))
+                )
             elif isinstance(content, types.EmbeddedResource):
                 if isinstance(content.resource, types.TextResourceContents):
                     response_artifacts.append(TextArtifact(content.resource.text))
