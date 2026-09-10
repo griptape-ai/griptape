@@ -105,6 +105,8 @@ class AnthropicPromptDriver(BasePromptDriver):
         response = self.client.messages.create(**params)
 
         logger.debug(response.model_dump())
+        if response.stop_reason == "max_tokens":
+            logger.warning("Anthropic response stopped because max_tokens was reached.")
 
         return Message(
             content=[self.__to_prompt_stack_message_content(content) for content in response.content],
@@ -125,6 +127,8 @@ class AnthropicPromptDriver(BasePromptDriver):
             elif event.type == "message_start":
                 yield DeltaMessage(usage=DeltaMessage.Usage(input_tokens=event.message.usage.input_tokens))
             elif event.type == "message_delta":
+                if event.delta.stop_reason == "max_tokens":
+                    logger.warning("Anthropic stream stopped because max_tokens was reached.")
                 yield DeltaMessage(usage=DeltaMessage.Usage(output_tokens=event.usage.output_tokens))
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
