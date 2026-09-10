@@ -26,6 +26,13 @@ class TestBaseVectorStoreDriver(ABC):
 
         assert len(driver.entries) == 2
 
+    def test_upsert_insert(self, driver):
+        id1 = driver.upsert(TextArtifact(value="foobar"), insert=True)
+        id2 = driver.upsert(TextArtifact(value="foobar"), insert=True)
+
+        assert id1 != id2
+        assert len(driver.entries) == 2
+
     def test_upsert_multiple(self, driver):
         driver.upsert_collection({"foo": [TextArtifact("foo")], "bar": [TextArtifact("bar")]})
 

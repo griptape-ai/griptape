@@ -74,7 +74,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         **kwargs,
     ) -> str:
         warnings.warn(
-            "`BaseVectorStoreDriver.upsert_text` is deprecated and will be removed in a future release. `BaseVectorStoreDriver.upsert` is a drop-in replacement.",
+            "`BaseVectorStoreDriver.upsert_text_artifacts` is deprecated and will be removed in a future release. `BaseVectorStoreDriver.upsert` is a drop-in replacement.",
             DeprecationWarning,
             stacklevel=2,
         )
@@ -138,6 +138,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         namespace: str | None = None,
         meta: dict | None = None,
         vector_id: str | None = None,
+        insert: bool = False,
         **kwargs,
     ) -> str:
         artifact = TextArtifact(value) if isinstance(value, str) else value
@@ -145,8 +146,15 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         meta = {} if meta is None else meta
 
         if vector_id is None:
-            value = artifact.to_text() if artifact.reference is None else artifact.to_text() + str(artifact.reference)
-            vector_id = self._get_default_vector_id(value)
+            if insert:
+                # Bypass the content-hash dedup below so re-adding the same text creates a new entry
+                # instead of overwriting the prior one.
+                vector_id = str(uuid.uuid4())
+            else:
+                value = (
+                    artifact.to_text() if artifact.reference is None else artifact.to_text() + str(artifact.reference)
+                )
+                vector_id = self._get_default_vector_id(value)
 
         meta = {**meta, "artifact": artifact.to_json()}
 
