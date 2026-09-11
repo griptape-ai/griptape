@@ -84,3 +84,5 @@ class ExpectedSpans:
                 )
 
         return True
+
+    __hash__ = None

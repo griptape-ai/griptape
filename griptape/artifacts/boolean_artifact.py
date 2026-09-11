@@ -34,5 +34,7 @@ class BooleanArtifact(BaseArtifact):
     def __eq__(self, value: object) -> bool:
         return self.value == value
 
+    __hash__ = None
+
     def to_text(self) -> str:
         return str(self.value).lower()
