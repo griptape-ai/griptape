@@ -457,6 +457,42 @@ class TestAnthropicPromptDriver:
         assert "top_k" not in call_kwargs.kwargs
         assert call_kwargs.kwargs["temperature"] == 0.1
 
+    @pytest.mark.parametrize("stop_reason", ["end_turn", "tool_use", None])
+    def test_try_run_does_not_warn_for_normal_stop_reasons(self, mock_client, prompt_stack, mocker, stop_reason):
+        """Avoid truncation warnings for normal Anthropic completion reasons."""
+        mock_client.return_value.messages.create.return_value.stop_reason = stop_reason
+        warning = mocker.patch("griptape.drivers.prompt.anthropic_prompt_driver.logger.warning")
+
+        AnthropicPromptDriver(model="claude-3-haiku", api_key="api-key").try_run(prompt_stack)
+
+        warning.assert_not_called()
+
+    def test_try_run_warns_when_max_tokens_stops_response(self, mock_client, prompt_stack, mocker):
+        """Warn when a non-streaming response reaches the configured token limit."""
+        mock_client.return_value.messages.create.return_value.stop_reason = "max_tokens"
+        warning = mocker.patch("griptape.drivers.prompt.anthropic_prompt_driver.logger.warning")
+
+        AnthropicPromptDriver(model="claude-3-haiku", api_key="api-key").try_run(prompt_stack)
+
+        warning.assert_called_once()
+
+    @pytest.mark.parametrize("stop_reason", ["max_tokens", "end_turn", "tool_use", None])
+    def test_try_stream_warns_only_when_max_tokens_stops_stream(
+        self, mock_stream_client, prompt_stack, mocker, stop_reason
+    ):
+        """Warn only for stream message deltas stopped by max_tokens."""
+        events = list(mock_stream_client.return_value.messages.create.return_value)
+        events[-1].delta.stop_reason = stop_reason
+        mock_stream_client.return_value.messages.create.return_value = iter(events)
+        warning = mocker.patch("griptape.drivers.prompt.anthropic_prompt_driver.logger.warning")
+
+        list(AnthropicPromptDriver(model="claude-3-haiku", api_key="api-key").try_stream(prompt_stack))
+
+        if stop_reason == "max_tokens":
+            warning.assert_called_once()
+        else:
+            warning.assert_not_called()
+
     def test_verify_structured_output_strategy(self):
         assert AnthropicPromptDriver(model="foo", structured_output_strategy="tool")
 
