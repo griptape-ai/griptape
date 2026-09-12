@@ -559,3 +559,63 @@ class TestAnthropicPromptDriver:
         call_kwargs = mock_client.return_value.messages.create.call_args
         assert call_kwargs.kwargs["temperature"] == driver.temperature
         assert call_kwargs.kwargs["top_k"] == 100
+
+    def test_try_run_warns_on_max_tokens(self, mocker, prompt_stack, caplog):
+        import logging
+
+        # Given
+        mock_client = mocker.patch("anthropic.Anthropic")
+        mock_client.return_value = Mock(
+            messages=Mock(
+                create=Mock(
+                    return_value=Mock(
+                        stop_reason="max_tokens",
+                        usage=Mock(input_tokens=5, output_tokens=10),
+                        content=[Mock(type="text", text="truncated-output")],
+                    )
+                )
+            )
+        )
+        driver = AnthropicPromptDriver(model="claude-3-haiku", api_key="api-key", max_tokens=10)
+
+        # When
+        with caplog.at_level(logging.WARNING, logger="griptape"):
+            driver.try_run(prompt_stack)
+
+        # Then
+        assert any("max_tokens" in r.message for r in caplog.records if r.levelno == logging.WARNING)
+
+    def test_try_stream_warns_on_max_tokens(self, mocker, prompt_stack, caplog):
+        import logging
+
+        # Given
+        mock_client = mocker.patch("anthropic.Anthropic")
+        mock_client.return_value = Mock(
+            messages=Mock(
+                create=Mock(
+                    return_value=iter(
+                        [
+                            Mock(type="message_start", message=Mock(usage=Mock(input_tokens=5))),
+                            Mock(
+                                type="content_block_start",
+                                index=0,
+                                content_block=Mock(type="text", text="truncated"),
+                            ),
+                            Mock(
+                                type="message_delta",
+                                usage=Mock(output_tokens=10),
+                                delta=Mock(stop_reason="max_tokens"),
+                            ),
+                        ]
+                    )
+                )
+            )
+        )
+        driver = AnthropicPromptDriver(model="claude-3-haiku", api_key="api-key", stream=True, max_tokens=10)
+
+        # When
+        with caplog.at_level(logging.WARNING, logger="griptape"):
+            list(driver.try_stream(prompt_stack))
+
+        # Then
+        assert any("max_tokens" in r.message for r in caplog.records if r.levelno == logging.WARNING)
