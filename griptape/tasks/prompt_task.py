@@ -265,10 +265,7 @@ class PromptTask(
                 if tool.input_memory is None:
                     tool.input_memory = [self.task_memory]
                 if tool.output_memory is None and tool.off_prompt:
-                    tool.output_memory = {
-                        a.name: [self.task_memory]  # pyright: ignore[reportFunctionMemberAccess]
-                        for a in tool.activities()
-                    }
+                    tool.output_memory = {getattr(a, "name"): [self.task_memory] for a in tool.activities()}  # noqa: B009
 
     def find_subtask(self, subtask_id: str) -> BaseSubtask:
         for subtask in self.subtasks:
