@@ -513,6 +513,27 @@ class TestAmazonBedrockPromptDriver:
         else:
             assert "temperature" not in params["inferenceConfig"]
 
+    @pytest.mark.parametrize(
+        ("model", "expected_tool_choice"),
+        [
+            ("ai21.j2", {"any": {}}),
+            ("us.anthropic.claude-opus-5", {"any": {}}),
+            ("global.anthropic.claude-sonnet-5", {"any": {}}),
+            # Opus 5.5 rejects a forced tool_choice, so the configured one (default auto) is sent.
+            ("us.anthropic.claude-opus-5-5", {"auto": {}}),
+            ("global.anthropic.claude-opus-5-5", {"auto": {}}),
+        ],
+    )
+    def test_base_params_structured_output_tool_choice(self, model, expected_tool_choice):
+        driver = AmazonBedrockPromptDriver(model=model)
+        prompt_stack = PromptStack(tools=[MockTool()], output_schema=Schema({"foo": str}))
+        prompt_stack.add_user_message("test")
+        driver._init_structured_output(prompt_stack)
+
+        params = driver._base_params(prompt_stack)
+
+        assert params["toolConfig"]["toolChoice"] == expected_tool_choice
+
     def test_try_run_with_reasoning_content(self, mocker):
         mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
         mock_converse.return_value = {

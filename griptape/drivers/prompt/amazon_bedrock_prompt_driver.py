@@ -149,7 +149,11 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 "toolChoice": self.tool_choice,
             }
 
-            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
+            if (
+                prompt_stack.output_schema is not None
+                and self.structured_output_strategy == "tool"
+                and anthropic_utils.supports_forced_tool_choice(self.model)
+            ):
                 params["toolConfig"]["toolChoice"] = {"any": {}}
 
             params["toolConfig"]["tools"] = self.__to_bedrock_tools(prompt_stack.tools)

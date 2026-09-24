@@ -154,7 +154,11 @@ class AnthropicPromptDriver(BasePromptDriver):
         if prompt_stack.tools and self.use_native_tools:
             params["tool_choice"] = self.tool_choice
 
-            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
+            if (
+                prompt_stack.output_schema is not None
+                and self.structured_output_strategy == "tool"
+                and anthropic_utils.supports_forced_tool_choice(self.model)
+            ):
                 params["tool_choice"] = {"type": "any"}
 
             params["tools"] = self.__to_anthropic_tools(prompt_stack.tools)

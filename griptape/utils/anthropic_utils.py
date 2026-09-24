@@ -11,6 +11,12 @@ SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
     "sonnet": (5, 0),
 }
 
+# Claude model families, and the minimum ``(major, minor)`` version within each family, that reject a
+# forced ``tool_choice`` (``any`` or a named ``tool``) and only accept ``auto`` or ``none``.
+FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
+    "opus": (5, 5),
+}
+
 # Captures the family, ``major``, and optional ``minor`` version from a Claude model identifier,
 # e.g. ``claude-opus-4-7`` within ``us.anthropic.claude-opus-4-7-20251101-v1:0``. Plain aliases,
 # provider prefixes, geographic inference-profile IDs, ARNs, and dated variants all embed this
@@ -29,12 +35,24 @@ def supports_sampling_params(model: str) -> bool:
     (for example every Opus release from 4.7 onward, including major-only ids like ``claude-opus-5``)
     is covered without a per-model change. A model whose minor version is absent is treated as ``.0``.
     """
+    return not _is_at_or_above(model, SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS)
+
+
+def supports_forced_tool_choice(model: str) -> bool:
+    """Whether a Claude model accepts a forced ``tool_choice`` (``any`` or a named tool).
+
+    Uses the same family and version matching as ``supports_sampling_params``.
+    """
+    return not _is_at_or_above(model, FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS)
+
+
+def _is_at_or_above(model: str, min_versions: dict[str, tuple[int, int]]) -> bool:
     match = _CLAUDE_VERSION_PATTERN.search(model)
     if match is None:
-        return True
+        return False
 
     family, major = match.group(1), int(match.group(2))
     minor = int(match.group(3)) if match.group(3) is not None else 0
-    min_deprecated_version = SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS.get(family)
+    min_version = min_versions.get(family)
 
-    return min_deprecated_version is None or (major, minor) < min_deprecated_version
+    return min_version is not None and (major, minor) >= min_version

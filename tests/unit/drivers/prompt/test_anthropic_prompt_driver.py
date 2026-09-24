@@ -559,3 +559,23 @@ class TestAnthropicPromptDriver:
         call_kwargs = mock_client.return_value.messages.create.call_args
         assert call_kwargs.kwargs["temperature"] == driver.temperature
         assert call_kwargs.kwargs["top_k"] == 100
+
+    @pytest.mark.parametrize(
+        ("model", "expected_tool_choice"),
+        [
+            ("claude-opus-5", {"type": "any"}),
+            ("claude-sonnet-5", {"type": "any"}),
+            # Opus 5.5 rejects a forced tool_choice, so the configured one (default auto) is sent.
+            ("claude-opus-5-5", {"type": "auto"}),
+        ],
+    )
+    def test_try_run_structured_output_tool_choice(self, model, expected_tool_choice, mock_client, prompt_stack):
+        # Given
+        driver = AnthropicPromptDriver(model=model, api_key="api-key", structured_output_strategy="tool")
+
+        # When
+        driver.try_run(prompt_stack)
+
+        # Then
+        call_kwargs = mock_client.return_value.messages.create.call_args
+        assert call_kwargs.kwargs["tool_choice"] == expected_tool_choice

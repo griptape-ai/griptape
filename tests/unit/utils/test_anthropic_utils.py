@@ -64,3 +64,25 @@ class TestAnthropicUtils:
     )
     def test_supports_sampling_params(self, model, expected):
         assert anthropic_utils.supports_sampling_params(model) == expected
+
+    @pytest.mark.parametrize(
+        ("model", "expected"),
+        [
+            # Opus 5.5 and later reject a forced tool_choice.
+            ("claude-opus-5-5", False),
+            ("us.anthropic.claude-opus-5-5", False),
+            ("global.anthropic.claude-opus-5-5", False),
+            ("claude-opus-5-6", False),
+            ("claude-opus-6", False),
+            # Earlier Opus releases and other families still accept it.
+            ("claude-opus-5", True),
+            ("us.anthropic.claude-opus-5", True),
+            ("claude-opus-4-8", True),
+            ("claude-sonnet-5", True),
+            ("us.anthropic.claude-haiku-4-5-20251001-v1:0", True),
+            ("ai21.j2", True),
+            ("foo", True),
+        ],
+    )
+    def test_supports_forced_tool_choice(self, model, expected):
+        assert anthropic_utils.supports_forced_tool_choice(model) == expected
