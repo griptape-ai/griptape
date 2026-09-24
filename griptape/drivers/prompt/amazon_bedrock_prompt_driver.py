@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import TYPE_CHECKING, Any
 
 from attrs import Attribute, Factory, define, field
@@ -74,7 +75,9 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     @property
     def supports_temperature(self) -> bool:
-        return anthropic_utils.supports_sampling_params(self.model)
+        # OpenAI's numbered GPT models (``openai.gpt-5.6-sol``, ``openai.gpt-6-luna``, ...) reject the
+        # temperature field on Converse at any value; ``openai.gpt-oss-*`` accepts it.
+        return anthropic_utils.supports_sampling_params(self.model) and not re.search(r"openai\.gpt-\d", self.model)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:

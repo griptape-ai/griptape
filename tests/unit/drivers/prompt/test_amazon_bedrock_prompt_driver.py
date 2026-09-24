@@ -480,6 +480,12 @@ class TestAmazonBedrockPromptDriver:
             ("global.anthropic.claude-opus-5-20260101-v1:0", False),
             ("us.anthropic.claude-sonnet-4-6", True),
             ("us.anthropic.claude-haiku-4-5-20251001-v1:0", True),
+            # OpenAI's numbered GPT models reject temperature on Converse; gpt-oss accepts it.
+            ("us.openai.gpt-6-sol", False),
+            ("global.openai.gpt-6-luna", False),
+            ("us.openai.gpt-5.6-sol", False),
+            ("arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.openai.gpt-6-sol", False),
+            ("openai.gpt-oss-120b-1:0", True),
         ],
     )
     def test_supports_temperature(self, model, expected):
@@ -499,6 +505,9 @@ class TestAmazonBedrockPromptDriver:
             ("us.anthropic.claude-sonnet-4-6", True),
             ("claude-sonnet-5", False),
             ("global.anthropic.claude-sonnet-5-20260101-v1:0", False),
+            ("us.openai.gpt-6-sol", False),
+            ("global.openai.gpt-6-luna", False),
+            ("openai.gpt-oss-120b-1:0", True),
         ],
     )
     def test_base_params_temperature(self, model, expected_has_temperature):
