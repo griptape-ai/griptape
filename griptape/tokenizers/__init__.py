@@ -9,6 +9,7 @@ from griptape.tokenizers.simple_tokenizer import SimpleTokenizer
 from griptape.tokenizers.dummy_tokenizer import DummyTokenizer
 from griptape.tokenizers.amazon_bedrock_tokenizer import AmazonBedrockTokenizer
 from griptape.tokenizers.grok_tokenizer import GrokTokenizer
+from griptape.tokenizers.minimax_tokenizer import MinimaxTokenizer
 
 
 __all__ = [
@@ -20,6 +21,7 @@ __all__ = [
     "GoogleTokenizer",
     "GrokTokenizer",
     "HuggingFaceTokenizer",
+    "MinimaxTokenizer",
     "OpenAiTokenizer",
     "SimpleTokenizer",
     "VoyageAiTokenizer",
