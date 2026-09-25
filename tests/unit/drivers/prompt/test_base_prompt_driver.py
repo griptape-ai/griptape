@@ -1,4 +1,6 @@
+import importlib
 import json
+import re
 import warnings
 
 import pytest
@@ -146,6 +148,45 @@ class TestBasePromptDriver:
             from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
 
             assert BasePromptDriver
+
+    def test_deprecated_import_names_accessed_symbol_and_provider_package(self):
+        with pytest.warns(DeprecationWarning, match="GriptapeCloudEventListenerDriver") as captured:
+            from griptape.drivers import GriptapeCloudEventListenerDriver
+
+        message = str(captured[0].message)
+        assert message == (
+            "Importing from `griptape.drivers` is deprecated and will be removed in a future release. "
+            "Please import from the provider-specific package instead. "
+            "Use `from griptape.drivers.event_listener.griptape_cloud import GriptapeCloudEventListenerDriver` "
+            "instead."
+        )
+        # The private implementation module, not the documented package, must not be suggested.
+        assert "griptape_cloud_event_listener_driver" not in message
+        assert "OpenAiChatPromptDriver" not in message
+        assert GriptapeCloudEventListenerDriver.__name__ == "GriptapeCloudEventListenerDriver"
+
+    def test_deprecated_import_suggests_package_that_actually_exports_the_symbol(self):
+        """Every deprecated name must be pointed at a real package that re-exports that exact object."""
+        deprecated_module = importlib.import_module("griptape.drivers")
+        names = sorted(set(deprecated_module.__all__))  # `__all__` repeats a handful of names
+
+        values = {}
+        suggestions = {}
+        for name in names:
+            with warnings.catch_warnings(record=True) as captured:
+                warnings.simplefilter("always")
+                values[name] = getattr(deprecated_module, name)
+            assert len(captured) == 1, f"expected exactly one warning for {name}"
+            match = re.search(r"Use `from (\S+) import (\S+)` instead\.", str(captured[0].message))
+            assert match is not None, f"no replacement suggested for {name}"
+            assert match.group(2) == name
+            suggestions[name] = match.group(1)
+
+        assert len(suggestions) == len(names)
+        for name, package in suggestions.items():
+            module = importlib.import_module(package)
+            assert hasattr(module, "__path__"), f"{package} suggested for {name} is not a package"
+            assert getattr(module, name) is values[name]
 
     def test_stream_usage_keeps_latest_running_total(self):
         # Providers like Anthropic (cumulative `message_delta` usage) and Gemini
