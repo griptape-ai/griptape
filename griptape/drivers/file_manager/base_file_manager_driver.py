@@ -11,9 +11,6 @@ from griptape.artifacts import BaseArtifact, BlobArtifact, InfoArtifact, TextArt
 class BaseFileManagerDriver(ABC):
     """BaseFileManagerDriver can be used to list, load, and save files.
 
-    Attributes:
-        default_loader: The default loader to use for loading file contents into artifacts.
-        loaders: Dictionary of file extension specific loaders to use for loading file contents into artifacts.
     """
 
     _workdir: str = field(kw_only=True, alias="workdir")

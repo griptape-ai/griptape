@@ -28,7 +28,6 @@ class HuggingFaceHubPromptDriver(BasePromptDriver):
 
     Attributes:
         api_token: Hugging Face Hub API token.
-        use_gpu: Use GPU during model run.
         model: Hugging Face Hub model name.
         client: Custom `InferenceApi`.
         tokenizer: Custom `HuggingFaceTokenizer`.
