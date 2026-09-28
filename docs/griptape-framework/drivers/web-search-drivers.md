@@ -73,7 +73,7 @@ The [GoogleWebSearchDriver](../../reference/griptape/drivers/web_search/google_w
 
 !!! info
 
-    This driver requires the `drivers-web-search-duckduckgo` [extra](../index.md#extras).
+    This driver requires the `drivers-web-search-duckduckgo` [extra](../index.md#installing-optional-dependencies).
 
 The [DuckDuckGoWebSearchDriver](../../reference/griptape/drivers/web_search/duck_duck_go_web_search_driver.md) uses the [ddgs](https://github.com/deedy5/ddgs) SDK for web searching.
 
@@ -85,7 +85,7 @@ The [DuckDuckGoWebSearchDriver](../../reference/griptape/drivers/web_search/duck
 
 !!! info
 
-    This driver requires the `drivers-web-search-tavily` [extra](../index.md#extras), and a Tavily [api key](https://app.tavily.com).
+    This driver requires the `drivers-web-search-tavily` [extra](../index.md#installing-optional-dependencies), and a Tavily [api key](https://app.tavily.com).
 
 ```python
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_4.py"
@@ -95,7 +95,7 @@ The [DuckDuckGoWebSearchDriver](../../reference/griptape/drivers/web_search/duck
 
 !!! info
 
-    This driver requires the `drivers-web-search-exa` [extra](../index.md#extras),
+    This driver requires the `drivers-web-search-exa` [extra](../index.md#installing-optional-dependencies),
     and an Exa [api key](https://dashboard.exa.ai/api-keys)
 
 ```python

@@ -17,7 +17,7 @@ The [Eleven Labs Text to Speech Driver](../../reference/griptape/drivers/text_to
 
 !!! info
 
-    This driver requires the `drivers-text-to-speech-elevenlabs` [extra](../index.md#extras).
+    This driver requires the `drivers-text-to-speech-elevenlabs` [extra](../index.md#installing-optional-dependencies).
 
 === "Code"
 
