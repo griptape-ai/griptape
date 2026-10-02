@@ -11,6 +11,7 @@ INSTALL_MAPPING = {
     "pinecone": "pinecone-client",
     "opensearchpy": "opensearch-py",
     "google.genai": "google-genai",
+    "firecrawl": "firecrawl-py",
 }
 
 
