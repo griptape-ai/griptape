@@ -1190,6 +1190,24 @@ wheels = [
 ]
 
 [[package]]
+name = "firecrawl-py"
+version = "4.46.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "httpx" },
+    { name = "nest-asyncio" },
+    { name = "pydantic" },
+    { name = "python-dotenv" },
+    { name = "requests" },
+    { name = "websockets" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2e/bb/0776d4431c3b8f206321b1e514417a6438513a0ac6552634d160ce4e301e/firecrawl_py-4.46.0.tar.gz", hash = "sha256:e0c84ec5d3470269108923d4edf3d363268b1e17e6876392ee0d9ac6e5ba7ea2", size = 256174, upload-time = "2026-10-01T17:46:23.894Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/be/d3/02c5fc9a4c2ec8a09e6ca4c87d9066242fb79dd8ddffc7155d1286eb1919/firecrawl_py-4.46.0-py3-none-any.whl", hash = "sha256:51d788e3d68731e21ca669ed2f3bbd2826221559bbef7639a5029ff3dbfe7c70", size = 313540, upload-time = "2026-10-01T17:46:22.561Z" },
+]
+
+[[package]]
 name = "frozenlist"
 version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1438,6 +1456,7 @@ all = [
     { name = "diffusers" },
     { name = "elevenlabs" },
     { name = "exa-py" },
+    { name = "firecrawl-py" },
     { name = "google-genai" },
     { name = "huggingface-hub" },
     { name = "mail-parser" },
@@ -1631,6 +1650,9 @@ drivers-web-search-duckduckgo = [
 drivers-web-search-exa = [
     { name = "exa-py" },
 ]
+drivers-web-search-firecrawl = [
+    { name = "firecrawl-py" },
+]
 drivers-web-search-tavily = [
     { name = "tavily-python" },
 ]
@@ -1723,6 +1745,8 @@ requires-dist = [
     { name = "exa-py", marker = "extra == 'all'", specifier = ">=1.1.4" },
     { name = "exa-py", marker = "extra == 'drivers-web-search-exa'", specifier = ">=1.1.4" },
     { name = "filetype", specifier = ">=1.2" },
+    { name = "firecrawl-py", marker = "extra == 'all'", specifier = ">=4.46.0" },
+    { name = "firecrawl-py", marker = "extra == 'drivers-web-search-firecrawl'", specifier = ">=4.46.0" },
     { name = "google-genai", marker = "extra == 'all'", specifier = ">=1.73.1" },
     { name = "google-genai", marker = "extra == 'drivers-embedding-google'", specifier = ">=1.73.1" },
     { name = "google-genai", marker = "extra == 'drivers-prompt-google'", specifier = ">=1.73.1" },
@@ -1823,7 +1847,7 @@ requires-dist = [
     { name = "voyageai", marker = "extra == 'drivers-rerank-voyageai'", specifier = ">=0.2.1" },
     { name = "wrapt", specifier = ">=1.16.0" },
 ]
-provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-rerank-amazon-bedrock", "drivers-rerank-voyageai", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "all"]
+provides-extras = ["drivers-prompt-cohere", "drivers-prompt-anthropic", "drivers-prompt-huggingface-hub", "drivers-prompt-huggingface-pipeline", "drivers-prompt-amazon-bedrock", "drivers-prompt-amazon-sagemaker", "drivers-prompt-google", "drivers-prompt-ollama", "drivers-sql", "drivers-sql-amazon-redshift", "drivers-sql-snowflake", "drivers-memory-conversation-amazon-dynamodb", "drivers-memory-conversation-redis", "drivers-vector-marqo", "drivers-vector-pinecone", "drivers-vector-mongodb", "drivers-vector-redis", "drivers-vector-opensearch", "drivers-vector-amazon-opensearch", "drivers-vector-pgvector", "drivers-vector-qdrant", "drivers-vector-astra-db", "drivers-vector-pgai", "drivers-embedding-amazon-bedrock", "drivers-embedding-amazon-sagemaker", "drivers-embedding-huggingface", "drivers-embedding-voyageai", "drivers-embedding-google", "drivers-embedding-cohere", "drivers-embedding-ollama", "drivers-web-scraper-trafilatura", "drivers-web-scraper-markdownify", "drivers-web-search-duckduckgo", "drivers-web-search-tavily", "drivers-web-search-exa", "drivers-web-search-firecrawl", "drivers-event-listener-amazon-sqs", "drivers-event-listener-amazon-iot", "drivers-event-listener-pusher", "drivers-text-to-speech-elevenlabs", "drivers-rerank-cohere", "drivers-rerank-amazon-bedrock", "drivers-rerank-voyageai", "drivers-observability-opentelemetry", "drivers-observability-griptape-cloud", "drivers-observability-datadog", "drivers-image-generation-huggingface", "drivers-file-manager-amazon-s3", "loaders-pdf", "loaders-image", "loaders-email", "loaders-sql", "all"]
 
 [package.metadata.requires-dev]
 dev = [
@@ -3180,6 +3204,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b9/f8/8f49278581cb848fb710a362bfc3028262a82044167684fb64ad068dbf92/ndg_httpsclient-0.5.1.tar.gz", hash = "sha256:d72faed0376ab039736c2ba12e30695e2788c4aa569c9c3e3d72131de2592210", size = 26665, upload-time = "2018-07-23T16:02:43.96Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/fb/67/c2f508c00ed2a6911541494504b7cac16fe0b0473912568df65fd1801132/ndg_httpsclient-0.5.1-py3-none-any.whl", hash = "sha256:dd174c11d971b6244a891f7be2b32ca9853d3797a72edb34fa5d7b07d8fff7d4", size = 34042, upload-time = "2018-07-23T16:04:46.553Z" },
+]
+
+[[package]]
+name = "nest-asyncio"
+version = "1.6.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/83/f8/51569ac65d696c8ecbee95938f89d4abf00f47d58d48f6fbabfe8f0baefe/nest_asyncio-1.6.0.tar.gz", hash = "sha256:6f172d5449aca15afd6c646851f4e31e02c598d553a667e38cafa997cfec55fe", size = 7418, upload-time = "2024-01-21T14:25:19.227Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a0/c4/c2971a3ba4c6103a3d10c4b0f24f461ddc027f0f09763220cf35ca1401b3/nest_asyncio-1.6.0-py3-none-any.whl", hash = "sha256:87af6efd6b5e897c81050477ef65c62e2b2f35d51703cae01aff2905b1852e1c", size = 5195, upload-time = "2024-01-21T14:25:17.223Z" },
 ]
 
 [[package]]
