@@ -565,8 +565,9 @@ class TestAnthropicPromptDriver:
         [
             ("claude-opus-5", {"type": "any"}),
             ("claude-sonnet-5", {"type": "any"}),
-            # Opus 5.5 rejects a forced tool_choice, so the configured one (default auto) is sent.
+            # Opus 5.5 and Sonnet 5.5 reject a forced tool_choice, so the configured one (default auto) is sent.
             ("claude-opus-5-5", {"type": "auto"}),
+            ("claude-sonnet-5-5", {"type": "auto"}),
         ],
     )
     def test_try_run_structured_output_tool_choice(self, model, expected_tool_choice, mock_client, prompt_stack):

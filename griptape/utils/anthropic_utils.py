@@ -15,6 +15,7 @@ SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
 # forced ``tool_choice`` (``any`` or a named ``tool``) and only accept ``auto`` or ``none``.
 FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
     "opus": (5, 5),
+    "sonnet": (5, 5),
 }
 
 # Captures the family, ``major``, and optional ``minor`` version from a Claude model identifier,
