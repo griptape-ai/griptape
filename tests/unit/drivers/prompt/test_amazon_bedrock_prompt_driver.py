@@ -12,6 +12,7 @@ from griptape.artifacts import (
 )
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers.prompt.amazon_bedrock import AmazonBedrockPromptDriver
+from griptape.tools.structured_output.tool import StructuredOutputTool
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -521,6 +522,41 @@ class TestAmazonBedrockPromptDriver:
             assert params["inferenceConfig"]["temperature"] == driver.temperature
         else:
             assert "temperature" not in params["inferenceConfig"]
+
+    @pytest.mark.parametrize(
+        ("model", "expected_tool_choice"),
+        [
+            ("ai21.j2", {"any": {}}),
+            ("us.anthropic.claude-opus-5", {"any": {}}),
+            ("global.anthropic.claude-sonnet-5", {"any": {}}),
+            ("us.anthropic.claude-opus-5-5", {"auto": {}}),
+            ("global.anthropic.claude-opus-5-5", {"auto": {}}),
+            ("us.anthropic.claude-sonnet-5-5", {"auto": {}}),
+        ],
+    )
+    def test_base_params_structured_output_tool_choice(self, model, expected_tool_choice):
+        driver = AmazonBedrockPromptDriver(model=model)
+        prompt_stack = PromptStack(tools=[MockTool()], output_schema=Schema({"foo": str}))
+        prompt_stack.add_user_message("test")
+        driver._init_structured_output(prompt_stack)
+
+        params = driver._base_params(prompt_stack)
+
+        assert params["toolConfig"]["toolChoice"] == expected_tool_choice
+
+    @pytest.mark.parametrize(
+        ("model", "expected"), [("us.anthropic.claude-opus-5", "tool"), ("us.anthropic.claude-opus-5-5", "rule")]
+    )
+    def test_structured_output_strategy_falls_back_to_rule(self, model, expected):
+        driver = AmazonBedrockPromptDriver(model=model)
+        prompt_stack = PromptStack(tools=[MockTool()], output_schema=Schema({"foo": str}))
+        prompt_stack.add_user_message("test")
+
+        driver.before_run(prompt_stack)
+
+        assert driver._resolve_structured_output_strategy() == expected
+        assert any(isinstance(tool, StructuredOutputTool) for tool in prompt_stack.tools) == (expected == "tool")
+        assert bool(prompt_stack.system_messages) == (expected == "rule")
 
     def test_try_run_with_reasoning_content(self, mocker):
         mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse

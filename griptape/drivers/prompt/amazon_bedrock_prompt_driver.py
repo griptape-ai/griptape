@@ -79,6 +79,9 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         # temperature field on Converse at any value; ``openai.gpt-oss-*`` accepts it.
         return anthropic_utils.supports_sampling_params(self.model) and not re.search(r"openai\.gpt-\d", self.model)
 
+    def _resolve_structured_output_strategy(self) -> StructuredOutputStrategy:
+        return anthropic_utils.resolve_structured_output_strategy(self.model, self.structured_output_strategy)
+
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
@@ -152,7 +155,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 "toolChoice": self.tool_choice,
             }
 
-            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
+            if prompt_stack.output_schema is not None and self._resolve_structured_output_strategy() == "tool":
                 params["toolConfig"]["toolChoice"] = {"any": {}}
 
             params["toolConfig"]["tools"] = self.__to_bedrock_tools(prompt_stack.tools)

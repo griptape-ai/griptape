@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
 
 # Claude model families, and the minimum ``(major, minor)`` version within each family, that no
 # longer accept the ``temperature``, ``top_p``, and ``top_k`` sampling parameters. A model in one of
@@ -9,6 +13,15 @@ import re
 SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
     "opus": (4, 7),
     "sonnet": (5, 0),
+    "fable": (5, 0),
+}
+
+# Models at or above these versions only accept ``auto`` or ``none`` for ``tool_choice``.
+FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
+    "opus": (5, 5),
+    "sonnet": (5, 5),
+    "fable": (5, 1),
+    "mythos": (5, 1),
 }
 
 # Captures the family, ``major``, and optional ``minor`` version from a Claude model identifier,
@@ -29,12 +42,26 @@ def supports_sampling_params(model: str) -> bool:
     (for example every Opus release from 4.7 onward, including major-only ids like ``claude-opus-5``)
     is covered without a per-model change. A model whose minor version is absent is treated as ``.0``.
     """
+    return not _is_at_or_above(model, SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS)
+
+
+def supports_forced_tool_choice(model: str) -> bool:
+    return not _is_at_or_above(model, FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS)
+
+
+def _is_at_or_above(model: str, min_versions: dict[str, tuple[int, int]]) -> bool:
     match = _CLAUDE_VERSION_PATTERN.search(model)
     if match is None:
-        return True
+        return False
 
     family, major = match.group(1), int(match.group(2))
     minor = int(match.group(3)) if match.group(3) is not None else 0
-    min_deprecated_version = SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS.get(family)
+    min_version = min_versions.get(family)
 
-    return min_deprecated_version is None or (major, minor) < min_deprecated_version
+    return min_version is not None and (major, minor) >= min_version
+
+
+def resolve_structured_output_strategy(model: str, strategy: StructuredOutputStrategy) -> StructuredOutputStrategy:
+    if strategy == "tool" and not supports_forced_tool_choice(model):
+        return "rule"
+    return strategy

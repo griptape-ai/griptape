@@ -98,6 +98,9 @@ class AnthropicPromptDriver(BasePromptDriver):
     def supports_top_k(self) -> bool:
         return anthropic_utils.supports_sampling_params(self.model)
 
+    def _resolve_structured_output_strategy(self) -> StructuredOutputStrategy:
+        return anthropic_utils.resolve_structured_output_strategy(self.model, self.structured_output_strategy)
+
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
@@ -154,7 +157,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         if prompt_stack.tools and self.use_native_tools:
             params["tool_choice"] = self.tool_choice
 
-            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
+            if prompt_stack.output_schema is not None and self._resolve_structured_output_strategy() == "tool":
                 params["tool_choice"] = {"type": "any"}
 
             params["tools"] = self.__to_anthropic_tools(prompt_stack.tools)
