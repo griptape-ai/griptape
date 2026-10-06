@@ -8,6 +8,7 @@ from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.artifacts.image_url_artifact import ImageUrlArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
+from griptape.tools.structured_output.tool import StructuredOutputTool
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -580,3 +581,15 @@ class TestAnthropicPromptDriver:
         # Then
         call_kwargs = mock_client.return_value.messages.create.call_args
         assert call_kwargs.kwargs["tool_choice"] == expected_tool_choice
+
+    @pytest.mark.parametrize(("model", "expected"), [("claude-opus-5", "tool"), ("claude-opus-5-5", "rule")])
+    def test_structured_output_strategy_falls_back_to_rule(self, model, expected):
+        driver = AnthropicPromptDriver(model=model, api_key="api-key", structured_output_strategy="tool")
+        prompt_stack = PromptStack(tools=[MockTool()], output_schema=Schema({"foo": str}))
+        prompt_stack.add_user_message("test")
+
+        driver.before_run(prompt_stack)
+
+        assert driver._resolve_structured_output_strategy() == expected
+        assert any(isinstance(tool, StructuredOutputTool) for tool in prompt_stack.tools) == (expected == "tool")
+        assert bool(prompt_stack.system_messages) == (expected == "rule")

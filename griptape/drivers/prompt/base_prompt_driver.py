@@ -137,11 +137,12 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         from griptape.tools import StructuredOutputTool
 
         if (output_schema := prompt_stack.output_schema) is not None:
-            if self.structured_output_strategy == "tool":
+            strategy = self._resolve_structured_output_strategy()
+            if strategy == "tool":
                 structured_output_tool = StructuredOutputTool(output_schema=output_schema)
                 if structured_output_tool not in prompt_stack.tools:
                     prompt_stack.tools.append(structured_output_tool)
-            elif self.structured_output_strategy == "rule":
+            elif strategy == "rule":
                 output_artifact = TextArtifact(JsonSchemaRule(prompt_stack.to_output_json_schema()).to_text())
                 system_messages = prompt_stack.system_messages
                 if system_messages:
@@ -160,6 +161,10 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                             role=Message.SYSTEM_ROLE,
                         ),
                     )
+
+    def _resolve_structured_output_strategy(self) -> StructuredOutputStrategy:
+        """Strategy actually used for this driver's model. Override to downgrade unsupported strategies."""
+        return self.structured_output_strategy
 
     def __process_run(self, prompt_stack: PromptStack) -> Message:
         return self.try_run(prompt_stack)

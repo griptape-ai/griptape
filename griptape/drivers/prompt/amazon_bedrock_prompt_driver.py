@@ -76,6 +76,12 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     def supports_temperature(self) -> bool:
         return anthropic_utils.supports_sampling_params(self.model)
 
+    def _resolve_structured_output_strategy(self) -> StructuredOutputStrategy:
+        # `tool` relies on forcing the tool call; without that, ask for JSON via `rule`.
+        if self.structured_output_strategy == "tool" and not anthropic_utils.supports_forced_tool_choice(self.model):
+            return "rule"
+        return self.structured_output_strategy
+
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
@@ -149,11 +155,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 "toolChoice": self.tool_choice,
             }
 
-            if (
-                prompt_stack.output_schema is not None
-                and self.structured_output_strategy == "tool"
-                and anthropic_utils.supports_forced_tool_choice(self.model)
-            ):
+            if prompt_stack.output_schema is not None and self._resolve_structured_output_strategy() == "tool":
                 params["toolConfig"]["toolChoice"] = {"any": {}}
 
             params["toolConfig"]["tools"] = self.__to_bedrock_tools(prompt_stack.tools)
