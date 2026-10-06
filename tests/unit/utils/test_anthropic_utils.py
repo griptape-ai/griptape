@@ -21,7 +21,7 @@ class TestAnthropicUtils:
             ("claude-opus-4-1-20250805", True),
             ("claude-sonnet-4-20250514", True),
             # Families with no deprecating version still accept the params at any version.
-            ("claude-fable-5", True),
+            ("claude-example-5", True),
             # Sonnet 5 and later have the params deprecated; earlier Sonnets do not.
             ("claude-sonnet-4-6", True),
             ("claude-sonnet-5", False),
@@ -54,6 +54,8 @@ class TestAnthropicUtils:
             ("global.anthropic.claude-opus-5-20260101-v1:0", False),
             ("us.anthropic.claude-sonnet-5-20260101-v1:0", False),
             ("us.anthropic.claude-sonnet-4-6", True),
+            ("us.anthropic.claude-fable-5", False),
+            ("us.anthropic.claude-fable-5-1", False),
             ("us.anthropic.claude-haiku-4-5-20251001-v1:0", True),
             # Identifiers without a parseable Claude version are treated as supporting the params.
             ("ai21.j2", True),

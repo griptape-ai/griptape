@@ -9,6 +9,7 @@ import re
 SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
     "opus": (4, 7),
     "sonnet": (5, 0),
+    "fable": (5, 0),
 }
 
 # Claude model families, and the minimum ``(major, minor)`` version within each family, that reject a
