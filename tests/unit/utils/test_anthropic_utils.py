@@ -68,8 +68,11 @@ class TestAnthropicUtils:
     @pytest.mark.parametrize(
         ("model", "expected"),
         [
-            # Opus 5.5, Sonnet 5.5, and later reject a forced tool_choice.
+            # These releases and later reject a forced tool_choice.
             ("claude-opus-5-5", False),
+            ("claude-sonnet-5-5", False),
+            ("claude-fable-5-1", False),
+            ("claude-mythos-5-1", False),
             ("us.anthropic.claude-opus-5-5", False),
             ("global.anthropic.claude-opus-5-5", False),
             ("claude-opus-5-6", False),
@@ -80,6 +83,8 @@ class TestAnthropicUtils:
             ("us.anthropic.claude-opus-5", True),
             ("claude-opus-4-8", True),
             ("claude-sonnet-5", True),
+            ("claude-fable-5", True),
+            ("claude-mythos-5", True),
             ("us.anthropic.claude-haiku-4-5-20251001-v1:0", True),
             ("ai21.j2", True),
             ("foo", True),

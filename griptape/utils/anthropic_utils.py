@@ -16,6 +16,8 @@ SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
 FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
     "opus": (5, 5),
     "sonnet": (5, 5),
+    "fable": (5, 1),
+    "mythos": (5, 1),
 }
 
 # Captures the family, ``major``, and optional ``minor`` version from a Claude model identifier,
