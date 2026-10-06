@@ -62,7 +62,6 @@ def _is_at_or_above(model: str, min_versions: dict[str, tuple[int, int]]) -> boo
 
 
 def resolve_structured_output_strategy(model: str, strategy: StructuredOutputStrategy) -> StructuredOutputStrategy:
-    # Tool-based structured output requires forced tool choice.
     if strategy == "tool" and not supports_forced_tool_choice(model):
         return "rule"
     return strategy
