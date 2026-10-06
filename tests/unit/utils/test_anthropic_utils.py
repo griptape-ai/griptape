@@ -70,7 +70,6 @@ class TestAnthropicUtils:
     @pytest.mark.parametrize(
         ("model", "expected"),
         [
-            # These releases and later reject a forced tool_choice.
             ("claude-opus-5-5", False),
             ("claude-sonnet-5-5", False),
             ("claude-fable-5-1", False),
@@ -80,7 +79,6 @@ class TestAnthropicUtils:
             ("claude-opus-5-6", False),
             ("claude-opus-6", False),
             ("us.anthropic.claude-sonnet-5-5", False),
-            # Earlier Opus releases and other families still accept it.
             ("claude-opus-5", True),
             ("us.anthropic.claude-opus-5", True),
             ("claude-opus-4-8", True),

@@ -145,6 +145,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
             elif strategy == "rule":
                 output_artifact = TextArtifact(JsonSchemaRule(prompt_stack.to_output_json_schema()).to_text())
                 system_messages = prompt_stack.system_messages
+                # Retries rerun this on the same stack.
+                if any(output_artifact.value in message.to_text() for message in system_messages):
+                    return
                 if system_messages:
                     last_system_message = prompt_stack.system_messages[-1]
                     last_system_message.content.extend(
@@ -163,7 +166,6 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                     )
 
     def _resolve_structured_output_strategy(self) -> StructuredOutputStrategy:
-        """Strategy actually used for this driver's model. Override to downgrade unsupported strategies."""
         return self.structured_output_strategy
 
     def __process_run(self, prompt_stack: PromptStack) -> Message:

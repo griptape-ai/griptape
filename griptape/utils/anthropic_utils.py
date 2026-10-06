@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
 
 # Claude model families, and the minimum ``(major, minor)`` version within each family, that no
 # longer accept the ``temperature``, ``top_p``, and ``top_k`` sampling parameters. A model in one of
@@ -12,8 +16,7 @@ SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
     "fable": (5, 0),
 }
 
-# Claude model families, and the minimum ``(major, minor)`` version within each family, that reject a
-# forced ``tool_choice`` (``any`` or a named ``tool``) and only accept ``auto`` or ``none``.
+# Models at or above these versions only accept ``auto`` or ``none`` for ``tool_choice``.
 FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
     "opus": (5, 5),
     "sonnet": (5, 5),
@@ -43,10 +46,6 @@ def supports_sampling_params(model: str) -> bool:
 
 
 def supports_forced_tool_choice(model: str) -> bool:
-    """Whether a Claude model accepts a forced ``tool_choice`` (``any`` or a named tool).
-
-    Uses the same family and version matching as ``supports_sampling_params``.
-    """
     return not _is_at_or_above(model, FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS)
 
 
@@ -60,3 +59,10 @@ def _is_at_or_above(model: str, min_versions: dict[str, tuple[int, int]]) -> boo
     min_version = min_versions.get(family)
 
     return min_version is not None and (major, minor) >= min_version
+
+
+def resolve_structured_output_strategy(model: str, strategy: StructuredOutputStrategy) -> StructuredOutputStrategy:
+    # Tool-based structured output requires forced tool choice.
+    if strategy == "tool" and not supports_forced_tool_choice(model):
+        return "rule"
+    return strategy

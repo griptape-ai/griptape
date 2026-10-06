@@ -135,6 +135,22 @@ class TestBasePromptDriver:
         assert isinstance(output, TextArtifact)
         assert output.value == json.dumps({"baz": "foo"})
 
+    @pytest.mark.parametrize("system_message", [None, "foo"])
+    def test_rule_structured_output_strategy_idempotent(self, system_message):
+        from schema import Schema
+
+        prompt_driver = MockPromptDriver(structured_output_strategy="rule")
+        prompt_stack = PromptStack(output_schema=Schema({"baz": str}))
+        if system_message is not None:
+            prompt_stack.add_system_message(system_message)
+
+        prompt_driver.before_run(prompt_stack)
+        content_after_first = prompt_stack.system_messages[0].to_text()
+        prompt_driver.before_run(prompt_stack)
+
+        assert len(prompt_stack.system_messages) == 1
+        assert prompt_stack.system_messages[0].to_text() == content_after_first
+
     def test_deprecated_import(self):
         with pytest.warns(DeprecationWarning, match=r"Importing from `griptape\.drivers` is deprecated"):
             from griptape.drivers import BasePromptDriver

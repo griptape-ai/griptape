@@ -99,10 +99,7 @@ class AnthropicPromptDriver(BasePromptDriver):
         return anthropic_utils.supports_sampling_params(self.model)
 
     def _resolve_structured_output_strategy(self) -> StructuredOutputStrategy:
-        # `tool` relies on forcing the tool call; without that, ask for JSON via `rule`.
-        if self.structured_output_strategy == "tool" and not anthropic_utils.supports_forced_tool_choice(self.model):
-            return "rule"
-        return self.structured_output_strategy
+        return anthropic_utils.resolve_structured_output_strategy(self.model, self.structured_output_strategy)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:

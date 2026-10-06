@@ -520,7 +520,6 @@ class TestAmazonBedrockPromptDriver:
             ("ai21.j2", {"any": {}}),
             ("us.anthropic.claude-opus-5", {"any": {}}),
             ("global.anthropic.claude-sonnet-5", {"any": {}}),
-            # Opus 5.5 and Sonnet 5.5 reject a forced tool_choice, so the configured one (default auto) is sent.
             ("us.anthropic.claude-opus-5-5", {"auto": {}}),
             ("global.anthropic.claude-opus-5-5", {"auto": {}}),
             ("us.anthropic.claude-sonnet-5-5", {"auto": {}}),
