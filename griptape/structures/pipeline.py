@@ -69,6 +69,6 @@ class Pipeline(Structure):
         return context
 
     def __run_from_task(self, task: BaseTask | None) -> None:
-        if task is None or isinstance(task.run(), ErrorArtifact) and self.fail_fast:
+        if task is None or (isinstance(task.run(), ErrorArtifact) and self.fail_fast):
             return
         self.__run_from_task(next(iter(task.children), None))
