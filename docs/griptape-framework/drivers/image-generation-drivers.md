@@ -131,7 +131,7 @@ This Driver supports image generation configurations like style presets, image q
 
 !!! info
 
-    This driver requires the `drivers-image-generation-huggingface` [extra](../index.md#extras).
+    This driver requires the `drivers-image-generation-huggingface` [extra](../index.md#installing-optional-dependencies).
 
 The [HuggingFace Pipelines Image Generation Driver](../../reference/griptape/drivers/image_generation/huggingface_pipeline_image_generation_driver.md) enables image generation through locally-hosted models using the HuggingFace [Diffusers](https://huggingface.co/docs/diffusers/en/index) library. This Driver requires a [Pipeline Driver](../../reference/griptape/drivers/image_generation_pipeline/index.md) to prepare the appropriate Pipeline.
 

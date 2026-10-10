@@ -49,7 +49,7 @@ The [CohereRerankDriver](../../reference/griptape/drivers/rerank/cohere_rerank_d
 
 !!! info
 
-    This driver requires the `drivers-rerank-amazon-bedrock` [extra](../index.md#extras).
+    This driver requires the `drivers-rerank-amazon-bedrock` [extra](../index.md#installing-optional-dependencies).
 
 The [AmazonBedrockRerankDriver](../../reference/griptape/drivers/rerank/amazon_bedrock_rerank_driver.md) uses [Amazon Bedrock](https://aws.amazon.com/bedrock/)'s Rerank API.
 
@@ -73,7 +73,7 @@ The [NvidiaNimRerankDriver](../../reference/griptape/drivers/rerank/nvidia_nim_r
 
 !!! info
 
-    This driver requires the `drivers-rerank-voyageai` [extra](../index.md#extras).
+    This driver requires the `drivers-rerank-voyageai` [extra](../index.md#installing-optional-dependencies).
 
 The [VoyageAiRerankDriver](../../reference/griptape/drivers/rerank/voyageai_rerank_driver.md) uses [Voyage AI's Rerank](https://docs.voyageai.com/docs/reranker) API.
 
