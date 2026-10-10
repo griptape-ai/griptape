@@ -320,7 +320,7 @@ The LLM response is not only formatted correctly, but automatically parsed into 
 
 !!! info
 
-    If your chosen model provider doesn’t natively support structured output, Griptape employs multiple [fallback strategies](./drivers/prompt-drivers.md#prompttask). The final fallback is the `JsonSchemaRule`, which you saw earlier.
+    If your chosen model provider doesn’t natively support structured output, Griptape employs multiple [fallback strategies](./drivers/prompt-drivers.md#prompt-task). The final fallback is the `JsonSchemaRule`, which you saw earlier.
 
 Now that we can generate structured responses, let’s make our Task more conversational using Griptape’s memory features.
 
