@@ -93,6 +93,13 @@ class SummaryConversationMemory(BaseConversationMemory):
             self.summary = self.summarize_runs(self.summary, runs_to_summarize)
             self.summary_index = 1 + self.runs.index(runs_to_summarize[-1])
 
+    def after_add_run(self) -> None:
+        # Copy the latest summary into meta before the driver stores it, so load_runs() can restore it.
+        if self.summary is not None:
+            self.meta["summary"] = self.summary
+            self.meta["summary_index"] = self.summary_index
+        super().after_add_run()
+
     def summarize_runs(self, previous_summary: str | None, runs: list[Run]) -> str | None:
         try:
             if len(runs) > 0:
