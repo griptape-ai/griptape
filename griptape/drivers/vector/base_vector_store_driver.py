@@ -297,7 +297,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
     ) -> str:
         pass
 
-    def upsert_vectors(self, entries: list[Entry], **kwargs) -> list[str]:
+    def upsert_vectors(self, entries: list[Entry], **kwargs: Any) -> list[str]:
         """Upsert multiple vectors into the vector store.
 
         Drivers for vector stores with a native batch upsert should override this method. By default, each entry
