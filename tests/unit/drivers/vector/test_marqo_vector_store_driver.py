@@ -117,6 +117,17 @@ class TestMarqoVectorStorageDriver:
         }
         assert result == expected_return_value["items"][0]["_id"]
 
+    @pytest.mark.parametrize("method", ["upsert_collection", "insert_collection"])
+    def test_collection_goes_through_upsert(self, driver, mock_marqo, mocker, method):
+        spy = mocker.spy(driver, "upsert")
+
+        ids = getattr(driver, method)({"foo": [TextArtifact("a"), TextArtifact("b")]})
+
+        assert ids == {"foo": ["5aed93eb-3878-4f12-bc92-0fda01c7d23d", "5aed93eb-3878-4f12-bc92-0fda01c7d23d"]}
+        assert spy.call_count == 2
+        assert {c.kwargs["namespace"] for c in spy.call_args_list} == {"foo"}
+        assert mock_marqo.index().add_documents.call_count == 2
+
     def test_query_vector(self, driver, mock_marqo):
         results = driver.query_vector([0.1, 0.2, 0.3])
         mock_marqo.index().search.assert_called()
