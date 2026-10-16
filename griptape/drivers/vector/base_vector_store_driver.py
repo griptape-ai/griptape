@@ -110,7 +110,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         meta: dict | None = None,
         **kwargs,
     ):
-        return self._execute_collection_operation(artifacts, self.upsert, meta=meta, **kwargs)
+        return self._upsert_collection_entries(artifacts, meta=meta, random_vector_ids=False, **kwargs)
 
     def upsert(
         self,
@@ -121,19 +121,15 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         vector_id: str | None = None,
         **kwargs,
     ) -> str:
-        artifact = TextArtifact(value) if isinstance(value, str) else value
+        entry = self._to_entry(value, namespace=namespace, meta=meta, vector_id=vector_id)
 
-        meta = {} if meta is None else meta
-
-        if vector_id is None:
-            value = artifact.to_text() if artifact.reference is None else artifact.to_text() + str(artifact.reference)
-            vector_id = self._get_default_vector_id(value)
-
-        meta = {**meta, "artifact": artifact.to_json()}
-
-        vector = self.embedding_driver.embed(artifact, vector_operation="upsert")
-
-        return self.upsert_vector(vector, vector_id=vector_id, namespace=namespace, meta=meta, **kwargs)
+        return self.upsert_vector(
+            entry.vector,  # pyright: ignore[reportArgumentType] `_to_entry` always sets the vector
+            vector_id=entry.id,
+            namespace=entry.namespace,
+            meta=entry.meta,
+            **kwargs,
+        )
 
     def insert(
         self,
@@ -194,7 +190,7 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         Returns:
             list[str] | dict[str, list[str]]: The generated vector IDs.
         """
-        return self._execute_collection_operation(artifacts, self.insert, meta=meta, **kwargs)
+        return self._upsert_collection_entries(artifacts, meta=meta, random_vector_ids=True, **kwargs)
 
     def _execute_collection_operation(
         self,
@@ -230,6 +226,49 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
             return utils.execute_futures_list_dict(futures_dict)
 
+    def _upsert_collection_entries(
+        self,
+        artifacts: list[TextArtifact]
+        | list[ImageArtifact]
+        | dict[str, list[TextArtifact]]
+        | dict[str, list[ImageArtifact]],
+        *,
+        meta: dict | None = None,
+        random_vector_ids: bool,
+        **kwargs,
+    ) -> list[str] | dict[str, list[str]]:
+        namespaced_artifacts = (
+            [(None, a) for a in artifacts]
+            if isinstance(artifacts, list)
+            else [(namespace, a) for namespace, artifact_list in artifacts.items() for a in artifact_list]
+        )
+
+        # Embed every artifact before writing anything so the whole collection can go out in one `upsert_vectors` call.
+        with self.create_futures_executor() as futures_executor:
+            entries = utils.execute_futures_list(
+                [
+                    futures_executor.submit(
+                        with_contextvars(self._to_entry),
+                        a,
+                        namespace=namespace,
+                        meta=meta,
+                        vector_id=str(uuid.uuid4()) if random_vector_ids else None,
+                    )
+                    for namespace, a in namespaced_artifacts
+                ]
+            )
+
+        vector_ids = self.upsert_vectors(entries, **kwargs)
+
+        if isinstance(artifacts, list):
+            return vector_ids
+
+        vector_ids_by_namespace: dict[str, list[str]] = {}
+        for (namespace, _), vector_id in zip(namespaced_artifacts, vector_ids, strict=True):
+            vector_ids_by_namespace.setdefault(namespace, []).append(vector_id)  # pyright: ignore[reportArgumentType]
+
+        return vector_ids_by_namespace
+
     def does_entry_exist(self, vector_id: str, *, namespace: str | None = None) -> bool:
         try:
             return self.load_entry(vector_id, namespace=namespace) is not None
@@ -257,6 +296,34 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
         **kwargs,
     ) -> str:
         pass
+
+    def upsert_vectors(self, entries: list[Entry], **kwargs) -> list[str]:
+        """Upsert multiple vectors into the vector store.
+
+        Drivers for vector stores with a native batch upsert should override this method. By default, each entry
+        is upserted with `upsert_vector` in a thread pool executor.
+
+        Args:
+            entries: The entries to upsert. Each entry's id, vector, namespace, and meta are passed to `upsert_vector`.
+            kwargs: Additional keyword arguments to pass to the vector store driver.
+
+        Returns:
+            list[str]: The vector IDs, in the same order as `entries`.
+        """
+        with self.create_futures_executor() as futures_executor:
+            return utils.execute_futures_list(
+                [
+                    futures_executor.submit(
+                        with_contextvars(self.upsert_vector),
+                        entry.vector,
+                        vector_id=entry.id,
+                        namespace=entry.namespace,
+                        meta=entry.meta,
+                        **kwargs,
+                    )
+                    for entry in entries
+                ]
+            )
 
     @abstractmethod
     def load_entry(self, vector_id: str, *, namespace: str | None = None) -> Entry | None:
@@ -300,3 +367,25 @@ class BaseVectorStoreDriver(SerializableMixin, FuturesExecutorMixin, ABC):
 
     def _get_default_vector_id(self, value: str) -> str:
         return str(uuid.uuid5(uuid.NAMESPACE_OID, value))
+
+    def _to_entry(
+        self,
+        value: str | TextArtifact | ImageArtifact,
+        *,
+        namespace: str | None = None,
+        meta: dict | None = None,
+        vector_id: str | None = None,
+    ) -> BaseVectorStoreDriver.Entry:
+        artifact = TextArtifact(value) if isinstance(value, str) else value
+
+        meta = {} if meta is None else meta
+
+        if vector_id is None:
+            value = artifact.to_text() if artifact.reference is None else artifact.to_text() + str(artifact.reference)
+            vector_id = self._get_default_vector_id(value)
+
+        meta = {**meta, "artifact": artifact.to_json()}
+
+        vector = self.embedding_driver.embed(artifact, vector_operation="upsert")
+
+        return BaseVectorStoreDriver.Entry(id=vector_id, vector=vector, meta=meta, namespace=namespace)

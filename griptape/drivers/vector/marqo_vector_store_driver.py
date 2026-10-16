@@ -80,6 +80,22 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             return response["items"][0]["_id"]
         raise ValueError(f"Failed to upsert text: {response}")
 
+    def _upsert_collection_entries(
+        self,
+        artifacts: list[TextArtifact]
+        | list[ImageArtifact]
+        | dict[str, list[TextArtifact]]
+        | dict[str, list[ImageArtifact]],
+        *,
+        meta: dict | None = None,
+        random_vector_ids: bool,
+        **kwargs,
+    ) -> list[str] | dict[str, list[str]]:
+        # Marqo embeds documents itself, so each artifact has to go through `upsert` instead of `upsert_vectors`.
+        operation = self.insert if random_vector_ids else self.upsert
+
+        return self._execute_collection_operation(artifacts, operation, meta=meta, **kwargs)
+
     def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         """Load a document entry from the Marqo index.
 
