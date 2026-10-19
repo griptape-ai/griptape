@@ -1,6 +1,6 @@
 [project]
 name = "griptape"
-version = "1.10.3"
+version = "1.13.0"
 description = "Modular Python framework for LLM workflows, tools, memory, and data."
 authors = [{ name = "Griptape", email = "hello@griptape.ai" }]
 requires-python = ">=3.10, <4"
@@ -87,6 +87,7 @@ drivers-event-listener-pusher = ["pusher>=3.3.2"]
 drivers-text-to-speech-elevenlabs = ["elevenlabs>=1.1.2"]
 drivers-rerank-cohere = ["cohere>=5.11.2"]
 drivers-rerank-amazon-bedrock = ["boto3>=1.34.119"]
+drivers-rerank-voyageai = ["voyageai>=0.2.1"]
 drivers-observability-opentelemetry = [
   "opentelemetry-sdk>=1.25.0",
   "opentelemetry-api>=1.25.0",
@@ -172,6 +173,11 @@ test = [
   "fuzzywuzzy>=0.18.0",
   "pytest-clarity>=1.0.1",
   "torch>=2.4.1",
+  # MCPTool installs these from griptape/tools/mcp/requirements.txt at runtime.
+  # Tests need them at collection time, so keep the constraints in sync with that file.
+  "mcp>=2,<3",
+  "httpx2>=2.5.0",
+  "exceptiongroup>=1.2.2",
 ]
 dev = [
   "ruff>=0.9.1",
@@ -218,7 +224,6 @@ select = ["ALL"]
 ignore = [
   "E501",   # line-too-long
   "B024",   # abstract-base-class-without-abstract-method
-  "B009",   # get-attr-with-constant
   "B010",   # set-attr-with-constant
   "D100",   # undocumented-public-module
   "D101",   # undocumented-public-class
@@ -250,7 +255,6 @@ ignore = [
   "SLF001", # private-member-access
   "EM102",  # f-string-in-exception
   "PLC0415", # import-outside-top-level
-  "PLW1641", # eq-without-hash
   "A003",   # builtin-attribute-shadowing
   "FBT001", # boolean-typed-positional-argument
 ]

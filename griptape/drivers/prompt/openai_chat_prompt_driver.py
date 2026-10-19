@@ -25,6 +25,7 @@ from griptape.common import (
     TextDeltaMessageContent,
     TextMessageContent,
     ToolAction,
+    VideoMessageContent,
     observable,
 )
 from griptape.configs.defaults_config import Defaults
@@ -324,7 +325,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
             for activity in tool.activities()
         ]
 
-    def __to_openai_message_content(self, content: BaseMessageContent) -> str | dict:
+    def __to_openai_message_content(self, content: BaseMessageContent) -> str | dict:  # noqa: C901
         if isinstance(content, TextMessageContent):
             return {"type": "text", "text": content.artifact.to_text()}
         if isinstance(content, ImageMessageContent):
@@ -361,6 +362,11 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                     "data": base64.b64encode(artifact.value).decode("utf-8"),
                     "format": artifact.format,
                 },
+            }
+        if isinstance(content, VideoMessageContent):
+            return {
+                "type": "video_url",
+                "video_url": {"url": content.artifact.value},
             }
         if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
@@ -434,8 +440,8 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 raise ValueError(f"Unsupported tool call delta: {tool_call}")
             raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
         # OpenAi doesn't have types for audio deltas so we need to use hasattr and getattr.
-        if hasattr(content_delta, "audio") and getattr(content_delta, "audio") is not None:
-            audio_chunk: dict = getattr(content_delta, "audio")
+        if hasattr(content_delta, "audio") and getattr(content_delta, "audio") is not None:  # noqa: B009
+            audio_chunk: dict = getattr(content_delta, "audio")  # noqa: B009
             return AudioDeltaMessageContent(
                 id=audio_chunk.get("id"),
                 data=audio_chunk.get("data"),

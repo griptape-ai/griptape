@@ -8,6 +8,7 @@ from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.artifacts.image_url_artifact import ImageUrlArtifact
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
+from griptape.tools.structured_output.tool import StructuredOutputTool
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -471,8 +472,15 @@ class TestAnthropicPromptDriver:
             ("claude-3-haiku", True),
             ("claude-3-opus", True),
             ("claude-sonnet-4-5", True),
+            ("claude-opus-4-6", True),
+            ("claude-opus-4-20250514", True),
             ("claude-opus-4-7", False),
             ("claude-opus-4-7-20251101", False),
+            ("claude-opus-4-8", False),
+            ("claude-opus-4-8-20260101", False),
+            ("claude-sonnet-4-6", True),
+            ("claude-sonnet-5", False),
+            ("claude-sonnet-5-20260101", False),
         ],
     )
     def test_supports_temperature(self, model, expected):
@@ -485,8 +493,15 @@ class TestAnthropicPromptDriver:
             ("claude-3-haiku", True),
             ("claude-3-opus", True),
             ("claude-sonnet-4-5", True),
+            ("claude-opus-4-6", True),
+            ("claude-opus-4-20250514", True),
             ("claude-opus-4-7", False),
             ("claude-opus-4-7-20251101", False),
+            ("claude-opus-4-8", False),
+            ("claude-opus-4-8-20260101", False),
+            ("claude-sonnet-4-6", True),
+            ("claude-sonnet-5", False),
+            ("claude-sonnet-5-20260101", False),
         ],
     )
     def test_supports_top_p(self, model, expected):
@@ -499,18 +514,26 @@ class TestAnthropicPromptDriver:
             ("claude-3-haiku", True),
             ("claude-3-opus", True),
             ("claude-sonnet-4-5", True),
+            ("claude-opus-4-6", True),
+            ("claude-opus-4-20250514", True),
             ("claude-opus-4-7", False),
             ("claude-opus-4-7-20251101", False),
+            ("claude-opus-4-8", False),
+            ("claude-opus-4-8-20260101", False),
+            ("claude-sonnet-4-6", True),
+            ("claude-sonnet-5", False),
+            ("claude-sonnet-5-20260101", False),
         ],
     )
     def test_supports_top_k(self, model, expected):
         driver = AnthropicPromptDriver(model=model, api_key="api-key")
         assert driver.supports_top_k == expected
 
-    def test_try_run_omits_sampling_params_for_opus_4_7(self, mock_client, prompt_stack, messages):
+    @pytest.mark.parametrize("model", ["claude-opus-4-7", "claude-opus-4-8", "claude-sonnet-5"])
+    def test_try_run_omits_deprecated_sampling_params(self, model, mock_client, prompt_stack, messages):
         # Given
         driver = AnthropicPromptDriver(
-            model="claude-opus-4-7",
+            model=model,
             api_key="api-key",
             top_p=0.9,
             top_k=100,
@@ -524,3 +547,48 @@ class TestAnthropicPromptDriver:
         assert "temperature" not in call_kwargs.kwargs
         assert "top_p" not in call_kwargs.kwargs
         assert "top_k" not in call_kwargs.kwargs
+
+    @pytest.mark.parametrize("model", ["claude-sonnet-4-6", "claude-haiku-4-5", "claude-opus-4-6"])
+    def test_try_run_sends_sampling_params_for_supported_models(self, model, mock_client, prompt_stack, messages):
+        # Given
+        driver = AnthropicPromptDriver(model=model, api_key="api-key", top_k=100)
+
+        # When
+        driver.try_run(prompt_stack)
+
+        # Then
+        call_kwargs = mock_client.return_value.messages.create.call_args
+        assert call_kwargs.kwargs["temperature"] == driver.temperature
+        assert call_kwargs.kwargs["top_k"] == 100
+
+    @pytest.mark.parametrize(
+        ("model", "expected_tool_choice"),
+        [
+            ("claude-opus-5", {"type": "any"}),
+            ("claude-sonnet-5", {"type": "any"}),
+            ("claude-opus-5-5", {"type": "auto"}),
+            ("claude-sonnet-5-5", {"type": "auto"}),
+        ],
+    )
+    def test_try_run_structured_output_tool_choice(self, model, expected_tool_choice, mock_client, prompt_stack):
+        # Given
+        driver = AnthropicPromptDriver(model=model, api_key="api-key", structured_output_strategy="tool")
+
+        # When
+        driver.try_run(prompt_stack)
+
+        # Then
+        call_kwargs = mock_client.return_value.messages.create.call_args
+        assert call_kwargs.kwargs["tool_choice"] == expected_tool_choice
+
+    @pytest.mark.parametrize(("model", "expected"), [("claude-opus-5", "tool"), ("claude-opus-5-5", "rule")])
+    def test_structured_output_strategy_falls_back_to_rule(self, model, expected):
+        driver = AnthropicPromptDriver(model=model, api_key="api-key", structured_output_strategy="tool")
+        prompt_stack = PromptStack(tools=[MockTool()], output_schema=Schema({"foo": str}))
+        prompt_stack.add_user_message("test")
+
+        driver.before_run(prompt_stack)
+
+        assert driver._resolve_structured_output_strategy() == expected
+        assert any(isinstance(tool, StructuredOutputTool) for tool in prompt_stack.tools) == (expected == "tool")
+        assert bool(prompt_stack.system_messages) == (expected == "rule")

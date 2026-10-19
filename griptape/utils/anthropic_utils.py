@@ -1,0 +1,67 @@
+from __future__ import annotations
+
+import re
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from griptape.drivers.prompt.base_prompt_driver import StructuredOutputStrategy
+
+# Claude model families, and the minimum ``(major, minor)`` version within each family, that no
+# longer accept the ``temperature``, ``top_p``, and ``top_k`` sampling parameters. A model in one of
+# these families at or above the listed version has those parameters deprecated and must not receive
+# them. New families or version thresholds are picked up everywhere by editing this mapping.
+SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
+    "opus": (4, 7),
+    "sonnet": (5, 0),
+    "fable": (5, 0),
+}
+
+# Models at or above these versions only accept ``auto`` or ``none`` for ``tool_choice``.
+FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
+    "opus": (5, 5),
+    "sonnet": (5, 5),
+    "fable": (5, 1),
+    "mythos": (5, 1),
+}
+
+# Captures the family, ``major``, and optional ``minor`` version from a Claude model identifier,
+# e.g. ``claude-opus-4-7`` within ``us.anthropic.claude-opus-4-7-20251101-v1:0``. Plain aliases,
+# provider prefixes, geographic inference-profile IDs, ARNs, and dated variants all embed this
+# substring, so it is matched anywhere in the identifier. The minor version is optional because
+# major-only releases omit it (``claude-opus-5``) and pre-4.6 snapshots replace it with a date
+# (``claude-opus-4-20250514``); restricting it to one or two digits that are not followed by another
+# digit keeps an eight-digit date from being read as the minor.
+_CLAUDE_VERSION_PATTERN = re.compile(r"claude-([a-z]+)-(\d+)(?:-(\d{1,2})(?!\d))?")
+
+
+def supports_sampling_params(model: str) -> bool:
+    """Whether a Claude model accepts the temperature, top_p, and top_k sampling parameters.
+
+    Support is derived from the Claude model family and version embedded in ``model`` rather than a
+    hardcoded model id, so every model in an affected family at or above the deprecating version
+    (for example every Opus release from 4.7 onward, including major-only ids like ``claude-opus-5``)
+    is covered without a per-model change. A model whose minor version is absent is treated as ``.0``.
+    """
+    return not _is_at_or_above(model, SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS)
+
+
+def supports_forced_tool_choice(model: str) -> bool:
+    return not _is_at_or_above(model, FORCED_TOOL_CHOICE_UNSUPPORTED_MIN_VERSIONS)
+
+
+def _is_at_or_above(model: str, min_versions: dict[str, tuple[int, int]]) -> bool:
+    match = _CLAUDE_VERSION_PATTERN.search(model)
+    if match is None:
+        return False
+
+    family, major = match.group(1), int(match.group(2))
+    minor = int(match.group(3)) if match.group(3) is not None else 0
+    min_version = min_versions.get(family)
+
+    return min_version is not None and (major, minor) >= min_version
+
+
+def resolve_structured_output_strategy(model: str, strategy: StructuredOutputStrategy) -> StructuredOutputStrategy:
+    if strategy == "tool" and not supports_forced_tool_choice(model):
+        return "rule"
+    return strategy

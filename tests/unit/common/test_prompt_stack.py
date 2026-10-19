@@ -4,7 +4,14 @@ import pytest
 from pydantic import create_model
 from schema import Schema
 
-from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, ListArtifact, TextArtifact
+from griptape.artifacts import (
+    ActionArtifact,
+    GenericArtifact,
+    ImageArtifact,
+    ListArtifact,
+    TextArtifact,
+    VideoUrlArtifact,
+)
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.common import (
     ActionCallMessageContent,
@@ -14,6 +21,7 @@ from griptape.common import (
     PromptStack,
     TextMessageContent,
     ToolAction,
+    VideoMessageContent,
 )
 
 
@@ -100,6 +108,12 @@ class TestPromptStack:
 
         assert prompt_stack.messages[0].role == "system"
         assert prompt_stack.messages[0].content[0].artifact.value == "foo"
+
+    def test_add_video_url_message(self, prompt_stack):
+        prompt_stack.add_user_message(VideoUrlArtifact("https://example.com/input.mp4"))
+
+        assert isinstance(prompt_stack.messages[0].content[0], VideoMessageContent)
+        assert prompt_stack.messages[0].content[0].artifact.value == "https://example.com/input.mp4"
 
     def test_add_user_message(self, prompt_stack):
         prompt_stack.add_user_message("foo")

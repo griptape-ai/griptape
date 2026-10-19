@@ -12,6 +12,7 @@ from griptape.artifacts import (
 )
 from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.drivers.prompt.amazon_bedrock import AmazonBedrockPromptDriver
+from griptape.tools.structured_output.tool import StructuredOutputTool
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -451,6 +452,112 @@ class TestAmazonBedrockPromptDriver:
         ):
             AmazonBedrockPromptDriver(model="foo", structured_output_strategy="native")
 
+    @pytest.mark.parametrize(
+        ("model", "expected"),
+        [
+            ("ai21.j2", True),
+            ("anthropic.claude-3-haiku-20240307-v1:0", True),
+            ("anthropic.claude-sonnet-4-5-20250929-v1:0", True),
+            ("anthropic.claude-opus-4-20250514-v1:0", True),
+            ("claude-opus-4-7", False),
+            ("anthropic.claude-opus-4-7-20251101-v1:0", False),
+            ("us.anthropic.claude-opus-4-7-20251101-v1:0", False),
+            ("global.anthropic.claude-opus-4-7-20251101-v1:0", False),
+            ("claude-opus-4-8", False),
+            ("us.anthropic.claude-opus-4-8-20260101-v1:0", False),
+            (
+                "arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.anthropic.claude-opus-4-7-20251101-v1:0",
+                False,
+            ),
+            (
+                "arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.anthropic.claude-opus-4-8-20260101-v1:0",
+                False,
+            ),
+            # Sonnet 5 deprecates the params; the 4.x Sonnets and Haiku alongside it do not. Claude 5
+            # is served from global inference profiles on Bedrock, so those ids must be recognised.
+            ("claude-sonnet-5", False),
+            ("global.anthropic.claude-sonnet-5-20260101-v1:0", False),
+            ("us.anthropic.claude-sonnet-5-20260101-v1:0", False),
+            ("global.anthropic.claude-opus-5-20260101-v1:0", False),
+            ("us.anthropic.claude-sonnet-4-6", True),
+            ("us.anthropic.claude-haiku-4-5-20251001-v1:0", True),
+            # OpenAI's numbered GPT models reject temperature on Converse; gpt-oss accepts it.
+            ("us.openai.gpt-6-sol", False),
+            ("global.openai.gpt-6-luna", False),
+            ("us.openai.gpt-5.6-sol", False),
+            ("arn:aws:bedrock:us-east-1:123456789012:inference-profile/us.openai.gpt-6-sol", False),
+            ("openai.gpt-oss-120b-1:0", True),
+        ],
+    )
+    def test_supports_temperature(self, model, expected):
+        driver = AmazonBedrockPromptDriver(model=model)
+        assert driver.supports_temperature == expected
+
+    @pytest.mark.parametrize(
+        ("model", "expected_has_temperature"),
+        [
+            ("ai21.j2", True),
+            ("anthropic.claude-sonnet-4-5-20250929-v1:0", True),
+            ("anthropic.claude-opus-4-20250514-v1:0", True),
+            ("claude-opus-4-7", False),
+            ("us.anthropic.claude-opus-4-7-20251101-v1:0", False),
+            ("claude-opus-4-8", False),
+            ("us.anthropic.claude-opus-4-8-20260101-v1:0", False),
+            ("us.anthropic.claude-sonnet-4-6", True),
+            ("claude-sonnet-5", False),
+            ("global.anthropic.claude-sonnet-5-20260101-v1:0", False),
+            ("us.openai.gpt-6-sol", False),
+            ("global.openai.gpt-6-luna", False),
+            ("openai.gpt-oss-120b-1:0", True),
+        ],
+    )
+    def test_base_params_temperature(self, model, expected_has_temperature):
+        driver = AmazonBedrockPromptDriver(model=model, temperature=0.7)
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        params = driver._base_params(prompt_stack)
+
+        if expected_has_temperature:
+            assert params["inferenceConfig"]["temperature"] == driver.temperature
+        else:
+            assert "temperature" not in params["inferenceConfig"]
+
+    @pytest.mark.parametrize(
+        ("model", "expected_tool_choice"),
+        [
+            ("ai21.j2", {"any": {}}),
+            ("us.anthropic.claude-opus-5", {"any": {}}),
+            ("global.anthropic.claude-sonnet-5", {"any": {}}),
+            ("us.anthropic.claude-opus-5-5", {"auto": {}}),
+            ("global.anthropic.claude-opus-5-5", {"auto": {}}),
+            ("us.anthropic.claude-sonnet-5-5", {"auto": {}}),
+        ],
+    )
+    def test_base_params_structured_output_tool_choice(self, model, expected_tool_choice):
+        driver = AmazonBedrockPromptDriver(model=model)
+        prompt_stack = PromptStack(tools=[MockTool()], output_schema=Schema({"foo": str}))
+        prompt_stack.add_user_message("test")
+        driver._init_structured_output(prompt_stack)
+
+        params = driver._base_params(prompt_stack)
+
+        assert params["toolConfig"]["toolChoice"] == expected_tool_choice
+
+    @pytest.mark.parametrize(
+        ("model", "expected"), [("us.anthropic.claude-opus-5", "tool"), ("us.anthropic.claude-opus-5-5", "rule")]
+    )
+    def test_structured_output_strategy_falls_back_to_rule(self, model, expected):
+        driver = AmazonBedrockPromptDriver(model=model)
+        prompt_stack = PromptStack(tools=[MockTool()], output_schema=Schema({"foo": str}))
+        prompt_stack.add_user_message("test")
+
+        driver.before_run(prompt_stack)
+
+        assert driver._resolve_structured_output_strategy() == expected
+        assert any(isinstance(tool, StructuredOutputTool) for tool in prompt_stack.tools) == (expected == "tool")
+        assert bool(prompt_stack.system_messages) == (expected == "rule")
+
     def test_try_run_with_reasoning_content(self, mocker):
         mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
         mock_converse.return_value = {
@@ -524,6 +631,147 @@ class TestAmazonBedrockPromptDriver:
         # Fifth event is metadata with usage
         assert events[4].usage.input_tokens == 5
         assert events[4].usage.output_tokens == 10
+
+    @pytest.mark.parametrize("reasoning_delta", [{"signature": "signature-value"}, {"redactedContent": b"encrypted"}])
+    def test_try_stream_with_non_text_reasoning_content(self, mocker, reasoning_delta):
+        """`reasoningContent` deltas are a tagged union; only `text` carries content to surface."""
+        # Given
+        mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
+        mock_converse_stream.return_value = {
+            "stream": [
+                {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"reasoningContent": {"text": "thinking"}}}},
+                {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"reasoningContent": reasoning_delta}}},
+                {"contentBlockDelta": {"contentBlockIndex": 1, "delta": {"text": "model-output"}}},
+                {"metadata": {"usage": {"inputTokens": 5, "outputTokens": 10}}},
+            ]
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2", stream=True)
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        # When
+        events = list(driver.try_stream(prompt_stack))
+
+        # Then
+        assert len(events) == 4
+
+        assert isinstance(events[0].content, TextDeltaMessageContent)
+        assert events[0].content.text == "thinking"
+
+        # The non-text reasoning member yields no content rather than raising.
+        assert events[1].content is None
+
+        assert isinstance(events[2].content, TextDeltaMessageContent)
+        assert events[2].content.text == "model-output"
+
+        assert events[3].usage.input_tokens == 5
+        assert events[3].usage.output_tokens == 10
+
+    def test_try_run_with_redacted_reasoning_content(self, mocker):
+        """`reasoningContent` blocks are also a tagged union: `reasoningText` | `redactedContent`."""
+        mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
+        mock_converse.return_value = {
+            "output": {
+                "message": {
+                    "content": [
+                        {"text": "model-output"},
+                        {"reasoningContent": {"redactedContent": b"encrypted"}},
+                    ]
+                }
+            },
+            "usage": {"inputTokens": 5, "outputTokens": 10},
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2")
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        message = driver.try_run(prompt_stack)
+
+        # Redacted reasoning is encrypted, so it contributes no content rather than raising.
+        assert len(message.content) == 1
+        assert message.content[0].artifact.value == "model-output"
+
+    def test_try_run_redacted_reasoning_content_round_trip(self, mocker):
+        """A redacted reasoning block must not put a blank text block in a follow-up request."""
+        mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
+        mock_converse.return_value = {
+            "output": {
+                "message": {
+                    "content": [
+                        {"text": "model-output"},
+                        {"reasoningContent": {"redactedContent": b"encrypted"}},
+                    ]
+                }
+            },
+            "usage": {"inputTokens": 5, "outputTokens": 10},
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2")
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        prompt_stack.messages.append(driver.try_run(prompt_stack))
+        prompt_stack.add_user_message("follow up")
+
+        content_blocks = [
+            block for message in driver._base_params(prompt_stack)["messages"] for block in message["content"]
+        ]
+
+        # Bedrock rejects blank text blocks with a ValidationException.
+        assert all(block["text"] for block in content_blocks)
+        assert [block["text"] for block in content_blocks] == ["test", "model-output", "follow up"]
+
+    def test_try_run_redacted_reasoning_only_round_trip(self, mocker):
+        """A reply holding only redacted reasoning must not put an empty message in a follow-up request."""
+        mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
+        mock_converse.return_value = {
+            "output": {"message": {"content": [{"reasoningContent": {"redactedContent": b"encrypted"}}]}},
+            "stopReason": "max_tokens",
+            "usage": {"inputTokens": 5, "outputTokens": 10},
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2")
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        prompt_stack.messages.append(driver.try_run(prompt_stack))
+        prompt_stack.add_user_message("follow up")
+
+        messages = driver._base_params(prompt_stack)["messages"]
+
+        # Bedrock rejects a message with empty content with a ValidationException.
+        assert [message["content"] for message in messages] == [[{"text": "test"}], [{"text": "follow up"}]]
+
+    def test_try_stream_unsupported_reasoning_content_type(self, mocker):
+        mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream
+        mock_converse_stream.return_value = {
+            "stream": [
+                {"contentBlockDelta": {"contentBlockIndex": 0, "delta": {"reasoningContent": {"newMember": "value"}}}},
+            ]
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2", stream=True)
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        with pytest.raises(ValueError, match="Unsupported message content type"):
+            list(driver.try_stream(prompt_stack))
+
+    def test_try_run_unsupported_reasoning_content_type(self, mocker):
+        mock_converse = mocker.patch("boto3.Session").return_value.client.return_value.converse
+        mock_converse.return_value = {
+            "output": {"message": {"content": [{"reasoningContent": {"newMember": "value"}}]}},
+            "usage": {"inputTokens": 5, "outputTokens": 10},
+        }
+
+        driver = AmazonBedrockPromptDriver(model="ai21.j2")
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("test")
+
+        with pytest.raises(ValueError, match="Unsupported message content type"):
+            driver.try_run(prompt_stack)
 
     def test_try_stream_unsupported_content_block_delta_type(self, mocker):
         mock_converse_stream = mocker.patch("boto3.Session").return_value.client.return_value.converse_stream

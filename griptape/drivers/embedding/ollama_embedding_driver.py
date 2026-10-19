@@ -24,11 +24,18 @@ class OllamaEmbeddingDriver(BaseEmbeddingDriver):
 
     model: str = field(kw_only=True, metadata={"serializable": True})
     host: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
+    headers: dict[str, str] | None = field(default=None, kw_only=True, metadata={"serializable": False})
     _client: Client | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
     @lazy_property()
     def client(self) -> Client:
-        return import_optional_dependency("ollama").Client(host=self.host)
+        client_kwargs: dict = {"host": self.host}
+        if self.headers is not None:
+            client_kwargs["headers"] = self.headers
+        if self.api_key is not None:
+            client_kwargs["api_key"] = self.api_key
+        return import_optional_dependency("ollama").Client(**client_kwargs)
 
     def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
         return list(self.client.embeddings(model=self.model, prompt=chunk)["embedding"])

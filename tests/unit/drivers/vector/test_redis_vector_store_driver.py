@@ -117,3 +117,42 @@ class TestRedisVectorStorageDriver:
         assert results[0].score == 0.456198036671
         assert results[0].meta == {"foo": "bar"}
         assert results[0].vector == [1.0, 2.0, 3.0]
+
+    @pytest.mark.parametrize(
+        "namespace",
+        ["some_namespace", "tenant-a", "a.b.c", "9f3c-4d1e-88ab", "user 12", "ns:sub"],
+    )
+    def test_query_vector_leaves_ordinary_namespaces_intact(self, driver, mock_search, namespace):
+        driver.query_vector([0.0, 0.5], namespace=namespace)
+
+        assert mock_search.call_args[0][0].query_string().startswith(f"(@namespace:{{{namespace}}})")
+
+    @pytest.mark.parametrize(
+        ("namespace", "expected"),
+        [
+            ("tenant-a|tenant-b", "(@namespace:{tenant-a\\|tenant-b})"),
+            ("x} | (@namespace:{y}", "(@namespace:{x\\} \\| (@namespace:\\{y\\}})"),
+            ("a\\|b", "(@namespace:{a\\\\\\|b})"),
+        ],
+    )
+    def test_query_vector_escapes_namespace_tag_metacharacters(self, driver, mock_search, namespace, expected):
+        driver.query_vector([0.0, 0.5], namespace=namespace)
+
+        assert mock_search.call_args[0][0].query_string().startswith(expected)
+
+    @pytest.mark.parametrize(
+        ("namespace", "expected"),
+        [
+            ("some_namespace", "some_namespace:*"),
+            ("tenant-a", "tenant-a:*"),
+            ("tenant*", "tenant\\*:*"),
+            ("tenant[ab]", "tenant\\[ab\\]:*"),
+            ("tenant?", "tenant\\?:*"),
+        ],
+    )
+    def test_load_entries_escapes_namespace_glob_metacharacters(
+        self, driver, mock_keys, mock_hgetall, namespace, expected
+    ):
+        driver.load_entries(namespace=namespace)
+
+        mock_keys.assert_called_once_with(expected)

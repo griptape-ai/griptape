@@ -97,10 +97,7 @@ class LocalVectorStoreDriver(BaseVectorStoreDriver):
         include_vectors: bool = False,
         **kwargs,
     ) -> list[BaseVectorStoreDriver.Entry]:
-        if namespace:
-            entries = {k: v for (k, v) in self.entries.items() if k.startswith(f"{namespace}-")}
-        else:
-            entries = self.entries
+        entries = {k: v for k, v in self.entries.items() if v.namespace == namespace} if namespace else self.entries
 
         entries_and_relatednesses = [
             (entry, self.calculate_relatedness(vector, entry.vector)) for entry in list(entries.values())

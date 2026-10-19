@@ -37,6 +37,11 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
     index: str = field(kw_only=True, metadata={"serializable": True})
     _client: Redis | None = field(default=None, kw_only=True, alias="client", metadata={"serializable": False})
 
+    # Characters that alter the structure of a RediSearch TAG query rather than the value matched.
+    TAG_QUERY_METACHARACTERS = frozenset("\\|{}")
+    # Characters that alter the structure of a Redis key glob pattern.
+    GLOB_METACHARACTERS = frozenset("\\*?[]")
+
     @lazy_property()
     def client(self) -> Redis:
         return import_optional_dependency("redis").Redis(
@@ -102,7 +107,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
         Returns:
             A list of `BaseVectorStoreDriver.Entry` objects.
         """
-        pattern = f"{namespace}:*" if namespace else "*"
+        pattern = f"{self._escape_glob_pattern(namespace)}:*" if namespace else "*"
         keys = self.client.keys(pattern)
 
         entries = []
@@ -133,7 +138,7 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
 
         search_query = import_optional_dependency("redis.commands.search.query")
 
-        filter_expression = f"(@namespace:{{{namespace}}})" if namespace else "*"
+        filter_expression = f"(@namespace:{{{self._escape_tag_value(namespace)}}})" if namespace else "*"
         query_expression = (
             search_query.Query(f"{filter_expression}=>[KNN {count or 10} @vector $vector as score]")
             .sort_by("score")
@@ -162,6 +167,18 @@ class RedisVectorStoreDriver(BaseVectorStoreDriver):
                 ),
             )
         return query_results
+
+    def _escape_tag_value(self, value: str) -> str:
+        """Escapes characters that would otherwise be parsed as RediSearch TAG query syntax.
+
+        Without this, a value such as `foo|bar` widens an exact tag filter into a union,
+        and a `}` closes the tag set so that arbitrary query clauses can be appended.
+        """
+        return "".join(f"\\{char}" if char in self.TAG_QUERY_METACHARACTERS else char for char in value)
+
+    def _escape_glob_pattern(self, value: str) -> str:
+        """Escapes characters that would otherwise be parsed as Redis key glob syntax."""
+        return "".join(f"\\{char}" if char in self.GLOB_METACHARACTERS else char for char in value)
 
     def _generate_key(self, vector_id: str, namespace: str | None = None) -> str:
         """Generates a Redis key using the provided vector ID and optionally a namespace."""

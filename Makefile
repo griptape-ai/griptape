@@ -106,11 +106,10 @@ version/commit: ## Commit version.
 	@git commit -m "chore: bump v$$(make version/get)"
 
 .PHONY: version/publish
-version/publish: ## Create and push git tags.
-	@git tag v$$(make version/get)
-	@git tag latest -f
-	@git push -f --tags
+version/publish: ## Create and push the release tag.
 	@git push
+	@git tag v$$(make version/get)
+	@git push origin v$$(make version/get)
 	
 
 .DEFAULT_GOAL := help

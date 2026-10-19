@@ -7,6 +7,7 @@ from .prompt_stack.contents.text_delta_message_content import TextDeltaMessageCo
 from .prompt_stack.contents.audio_delta_message_content import AudioDeltaMessageContent
 from .prompt_stack.contents.text_message_content import TextMessageContent
 from .prompt_stack.contents.image_message_content import ImageMessageContent
+from .prompt_stack.contents.video_message_content import VideoMessageContent
 from .prompt_stack.contents.audio_message_content import AudioMessageContent
 from .prompt_stack.contents.action_call_delta_message_content import ActionCallDeltaMessageContent
 from .prompt_stack.contents.action_call_message_content import ActionCallMessageContent
@@ -45,5 +46,6 @@ __all__ = [
     "TextDeltaMessageContent",
     "TextMessageContent",
     "ToolAction",
+    "VideoMessageContent",
     "observable",
 ]

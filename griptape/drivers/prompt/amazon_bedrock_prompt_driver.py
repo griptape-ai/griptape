@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from typing import TYPE_CHECKING, Any
 
 from attrs import Attribute, Factory, define, field
@@ -31,7 +32,7 @@ from griptape.common import (
 from griptape.configs import Defaults
 from griptape.drivers.prompt import BasePromptDriver
 from griptape.tokenizers import AmazonBedrockTokenizer, BaseTokenizer
-from griptape.utils import import_optional_dependency
+from griptape.utils import anthropic_utils, import_optional_dependency
 from griptape.utils.decorators import lazy_property
 
 if TYPE_CHECKING:
@@ -72,6 +73,15 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
     def client(self) -> Any:
         return self.session.client("bedrock-runtime")
 
+    @property
+    def supports_temperature(self) -> bool:
+        # OpenAI's numbered GPT models (``openai.gpt-5.6-sol``, ``openai.gpt-6-luna``, ...) reject the
+        # temperature field on Converse at any value; ``openai.gpt-oss-*`` accepts it.
+        return anthropic_utils.supports_sampling_params(self.model) and not re.search(r"openai\.gpt-\d", self.model)
+
+    def _resolve_structured_output_strategy(self) -> StructuredOutputStrategy:
+        return anthropic_utils.resolve_structured_output_strategy(self.model, self.structured_output_strategy)
+
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:
         params = self._base_params(prompt_stack)
@@ -92,8 +102,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         if reasoning_content_index is not None:
             message_content.insert(0, message_content.pop(reasoning_content_index))
 
+        message_contents = [self.__to_prompt_stack_message_content(content) for content in message_content]
+
         return Message(
-            content=[self.__to_prompt_stack_message_content(content) for content in message_content],
+            content=[content for content in message_contents if content is not None],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=usage["inputTokens"], output_tokens=usage["outputTokens"]),
         )
@@ -130,7 +142,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             "messages": messages,
             "system": system_messages,
             "inferenceConfig": {
-                "temperature": self.temperature,
+                **({"temperature": self.temperature} if self.supports_temperature else {}),
                 **({"maxTokens": self.max_tokens} if self.max_tokens is not None else {}),
             },
             "additionalModelRequestFields": self.additional_model_request_fields,
@@ -143,7 +155,7 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 "toolChoice": self.tool_choice,
             }
 
-            if prompt_stack.output_schema is not None and self.structured_output_strategy == "tool":
+            if prompt_stack.output_schema is not None and self._resolve_structured_output_strategy() == "tool":
                 params["toolConfig"]["toolChoice"] = {"any": {}}
 
             params["toolConfig"]["tools"] = self.__to_bedrock_tools(prompt_stack.tools)
@@ -151,12 +163,15 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
         return params
 
     def __to_bedrock_messages(self, messages: list[Message]) -> list[dict]:
+        # A reply that held only redacted reasoning (e.g. one cut off by `maxTokens`) has no content, and
+        # Bedrock rejects a message with empty content, so skip it rather than fail every later request.
         return [
             {
                 "role": self.__to_bedrock_role(message),
                 "content": [self.__to_bedrock_message_content(content) for content in message.content],
             }
             for message in messages
+            if message.content
         ]
 
     def __to_bedrock_role(self, message: Message) -> str:
@@ -221,7 +236,12 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
             return {"image": {"format": artifact.format, "source": {"bytes": artifact.value}}}
         return {"text": artifact.to_text()}
 
-    def __to_prompt_stack_message_content(self, content: dict) -> BaseMessageContent:
+    def __to_prompt_stack_message_content(self, content: dict) -> BaseMessageContent | None:
+        """Convert a Bedrock content block to message content, or None when it carries none.
+
+        `reasoningContent` is a tagged union -- `reasoningText` | `redactedContent` -- and only
+        `reasoningText` holds text to surface.
+        """
         if "text" in content:
             return TextMessageContent(TextArtifact(content["text"]))
         if "toolUse" in content:
@@ -237,10 +257,23 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                 ),
             )
         if "reasoningContent" in content:
-            return TextMessageContent(TextArtifact(content["reasoningContent"]["reasoningText"]["text"]))
+            reasoning_content = content["reasoningContent"]
+
+            if "reasoningText" in reasoning_content:
+                return TextMessageContent(TextArtifact(reasoning_content["reasoningText"]["text"]))
+            # `redactedContent` is encrypted, so it contributes no content. Surfacing empty text
+            # instead would round-trip to Bedrock as a blank text block, which it rejects.
+            if "redactedContent" in reasoning_content:
+                return None
         raise ValueError(f"Unsupported message content type: {content}")
 
-    def __to_prompt_stack_delta_message_content(self, event: dict) -> BaseDeltaMessageContent:
+    def __to_prompt_stack_delta_message_content(self, event: dict) -> BaseDeltaMessageContent | None:
+        """Convert a Bedrock stream event to delta content, or None when it carries none.
+
+        `reasoningContent` deltas are a tagged union — exactly one of `text`, `signature`, or
+        `redactedContent` is set — and only `text` holds content to surface. The others return None,
+        which `BasePromptDriver.__process_stream` already skips.
+        """
         if "contentBlockStart" in event:
             content_block = event["contentBlockStart"]["start"]
 
@@ -273,9 +306,17 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
                     partial_input=content_block_delta["delta"]["toolUse"]["input"],
                 )
             if "reasoningContent" in content_block_delta["delta"]:
-                return TextDeltaMessageContent(
-                    content_block_delta["delta"]["reasoningContent"]["text"],
-                    index=content_block_delta["contentBlockIndex"],
-                )
+                reasoning_content = content_block_delta["delta"]["reasoningContent"]
+
+                if "text" in reasoning_content:
+                    return TextDeltaMessageContent(
+                        reasoning_content["text"],
+                        index=content_block_delta["contentBlockIndex"],
+                    )
+                # `signature` closes a reasoning block and `redactedContent` is encrypted; neither
+                # carries text to surface, so they contribute no content to the message.
+                if "signature" in reasoning_content or "redactedContent" in reasoning_content:
+                    return None
+                raise ValueError(f"Unsupported message content type: {event}")
             raise ValueError(f"Unsupported message content type: {event}")
         raise ValueError(f"Unsupported message content type: {event}")

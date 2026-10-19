@@ -4,7 +4,7 @@ import warnings
 import pytest
 
 from griptape.artifacts import ActionArtifact, ErrorArtifact, TextArtifact
-from griptape.common import AudioMessageContent, Message, PromptStack, TextMessageContent
+from griptape.common import AudioMessageContent, DeltaMessage, Message, PromptStack, TextMessageContent
 from griptape.events import FinishPromptEvent, StartPromptEvent
 from griptape.events.event_bus import _EventBus
 from griptape.structures import Pipeline
@@ -12,6 +12,7 @@ from griptape.tasks import PromptTask
 from griptape.tools.structured_output.tool import StructuredOutputTool
 from tests.mocks.mock_failing_prompt_driver import MockFailingPromptDriver
 from tests.mocks.mock_prompt_driver import MockPromptDriver
+from tests.mocks.mock_stream_usage_prompt_driver import MockStreamUsagePromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
 
@@ -134,6 +135,22 @@ class TestBasePromptDriver:
         assert isinstance(output, TextArtifact)
         assert output.value == json.dumps({"baz": "foo"})
 
+    @pytest.mark.parametrize("system_message", [None, "foo"])
+    def test_rule_structured_output_strategy_idempotent(self, system_message):
+        from schema import Schema
+
+        prompt_driver = MockPromptDriver(structured_output_strategy="rule")
+        prompt_stack = PromptStack(output_schema=Schema({"baz": str}))
+        if system_message is not None:
+            prompt_stack.add_system_message(system_message)
+
+        prompt_driver.before_run(prompt_stack)
+        content_after_first = prompt_stack.system_messages[0].to_text()
+        prompt_driver.before_run(prompt_stack)
+
+        assert len(prompt_stack.system_messages) == 1
+        assert prompt_stack.system_messages[0].to_text() == content_after_first
+
     def test_deprecated_import(self):
         with pytest.warns(DeprecationWarning, match=r"Importing from `griptape\.drivers` is deprecated"):
             from griptape.drivers import BasePromptDriver
@@ -145,3 +162,32 @@ class TestBasePromptDriver:
             from griptape.drivers.prompt.base_prompt_driver import BasePromptDriver
 
             assert BasePromptDriver
+
+    def test_stream_usage_keeps_latest_running_total(self):
+        # Providers like Anthropic (cumulative `message_delta` usage) and Gemini
+        # (per-chunk `usage_metadata`) report running totals, not increments.
+        driver = MockStreamUsagePromptDriver(
+            stream=True,
+            stream_usage_deltas=[
+                DeltaMessage.Usage(input_tokens=100),
+                DeltaMessage.Usage(output_tokens=1),
+                DeltaMessage.Usage(output_tokens=2),
+            ],
+        )
+
+        message = driver.run(PromptStack())
+
+        assert message.usage.input_tokens == 100
+        assert message.usage.output_tokens == 2
+
+    def test_stream_usage_single_final_report(self):
+        # Providers like OpenAI and Bedrock report a single final usage delta.
+        driver = MockStreamUsagePromptDriver(
+            stream=True,
+            stream_usage_deltas=[DeltaMessage.Usage(input_tokens=7, output_tokens=9)],
+        )
+
+        message = driver.run(PromptStack())
+
+        assert message.usage.input_tokens == 7
+        assert message.usage.output_tokens == 9

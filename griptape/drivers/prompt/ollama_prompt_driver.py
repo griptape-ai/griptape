@@ -46,10 +46,15 @@ class OllamaPromptDriver(BasePromptDriver):
 
     Attributes:
         model: Model name.
+        host: Optional Ollama host URL.
+        api_key: Optional API key forwarded to ``ollama.Client`` (Authorization header).
+        headers: Optional extra HTTP headers for auth reverse proxies.
     """
 
     model: str = field(kw_only=True, metadata={"serializable": True})
     host: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    api_key: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
+    headers: dict[str, str] | None = field(default=None, kw_only=True, metadata={"serializable": False})
     tokenizer: BaseTokenizer = field(
         default=Factory(
             lambda self: SimpleTokenizer(
@@ -77,7 +82,12 @@ class OllamaPromptDriver(BasePromptDriver):
 
     @lazy_property()
     def client(self) -> Client:
-        return import_optional_dependency("ollama").Client(host=self.host)
+        client_kwargs: dict[str, Any] = {"host": self.host}
+        if self.headers is not None:
+            client_kwargs["headers"] = self.headers
+        if self.api_key is not None:
+            client_kwargs["api_key"] = self.api_key
+        return import_optional_dependency("ollama").Client(**client_kwargs)
 
     @observable
     def try_run(self, prompt_stack: PromptStack) -> Message:

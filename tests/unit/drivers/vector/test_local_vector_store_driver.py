@@ -48,6 +48,14 @@ class TestLocalVectorStoreDriver(TestBaseVectorStoreDriver):
         assert result[0].score is not None
         assert result[0].namespace == "foo"
 
+    def test_query_vector_namespace_hyphen_prefix(self, driver):
+        driver.upsert(TextArtifact("hello foo"), namespace="foo")
+        driver.upsert(TextArtifact("hello foo-bar"), namespace="foo-bar")
+
+        result = driver.query_vector([0, 1], namespace="foo")
+
+        assert {r.namespace for r in result} == {"foo"}
+
     @pytest.mark.parametrize("execution_number", range(1000))
     def test_upsert_collection_meta(self, driver, mocker, execution_number):
         spy = mocker.spy(driver, "upsert_vector")

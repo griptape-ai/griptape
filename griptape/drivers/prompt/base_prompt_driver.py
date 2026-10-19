@@ -137,13 +137,17 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         from griptape.tools import StructuredOutputTool
 
         if (output_schema := prompt_stack.output_schema) is not None:
-            if self.structured_output_strategy == "tool":
+            strategy = self._resolve_structured_output_strategy()
+            if strategy == "tool":
                 structured_output_tool = StructuredOutputTool(output_schema=output_schema)
                 if structured_output_tool not in prompt_stack.tools:
                     prompt_stack.tools.append(structured_output_tool)
-            elif self.structured_output_strategy == "rule":
+            elif strategy == "rule":
                 output_artifact = TextArtifact(JsonSchemaRule(prompt_stack.to_output_json_schema()).to_text())
                 system_messages = prompt_stack.system_messages
+                # Retries rerun this on the same stack.
+                if any(output_artifact.value in message.to_text() for message in system_messages):
+                    return
                 if system_messages:
                     last_system_message = prompt_stack.system_messages[-1]
                     last_system_message.content.extend(
@@ -161,6 +165,9 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
                         ),
                     )
 
+    def _resolve_structured_output_strategy(self) -> StructuredOutputStrategy:
+        return self.structured_output_strategy
+
     def __process_run(self, prompt_stack: PromptStack) -> Message:
         return self.try_run(prompt_stack)
 
@@ -171,7 +178,15 @@ class BasePromptDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
         # Aggregate all content deltas from the stream
         message_deltas = self.try_stream(prompt_stack)
         for message_delta in message_deltas:
-            usage += message_delta.usage
+            # Providers report usage as running totals over the stream -- e.g. Anthropic's
+            # cumulative output tokens on every `message_delta`, Gemini's per-chunk
+            # `usage_metadata` -- rather than as per-delta increments. Keep the latest
+            # reported value per field: summing would inflate those providers' totals,
+            # while being equivalent for providers that emit a single final usage delta.
+            if message_delta.usage.input_tokens is not None:
+                usage.input_tokens = message_delta.usage.input_tokens
+            if message_delta.usage.output_tokens is not None:
+                usage.output_tokens = message_delta.usage.output_tokens
             content = message_delta.content
 
             if content is not None:

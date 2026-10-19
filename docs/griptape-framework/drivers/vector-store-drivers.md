@@ -7,12 +7,28 @@ search:
 
 Griptape provides a way to build drivers for vector DBs where embeddings can be stored and queried. Every Vector Store Driver implements the following methods:
 
-- `upsert()` for updating or inserting new text, [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s or [ImageArtifact](../../reference/griptape/artifacts/text_artifact.md)s into vector DBs. The method will automatically generate embeddings for a given value.
+- `upsert()` for inserting or updating text, [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s or [ImageArtifact](../../reference/griptape/artifacts/image_artifact.md)s in vector DBs by ID. If `vector_id` is omitted, the method derives a deterministic ID from content. The method will automatically generate embeddings for a given value.
 - `upsert_collection()` for performing an `upsert()` in parallel.
+- `insert()` for inserting new text, [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s or [ImageArtifact](../../reference/griptape/artifacts/image_artifact.md)s into vector DBs with an automatically generated ID. The method will automatically generate embeddings for a given value.
+- `insert_collection()` for performing an `insert()` in parallel.
 - `upsert_vector()` for updating new vectors directly.
 - `query()` for querying vector DBs.
 
 Each Vector Store Driver takes a [BaseEmbeddingDriver](../../reference/griptape/drivers/embedding/base_embedding_driver.md) used to dynamically generate embeddings for strings.
+
+Here is an example showing how `upsert_collection()` de-duplicates identical content by using a deterministic ID, while `insert_collection()` always creates a new entry:
+
+=== "Code"
+
+    ```python
+    --8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_13.py"
+    ```
+
+=== "Logs"
+
+    ```text
+    --8<-- "docs/griptape-framework/drivers/logs/vector_store_drivers_13.txt"
+    ```
 
 !!! info
 
