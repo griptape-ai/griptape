@@ -15,8 +15,8 @@ class TestMinimaxTokenizer:
     @pytest.mark.parametrize(
         ("model", "context_window", "max_output_tokens"),
         [
+            ("MiniMax-M3.1-Flash", 1_000_000, 524_288),
             ("MiniMax-M3", 1_000_000, 524_288),
-            ("MiniMax-M2.7", 204_800, 204_800),
         ],
     )
     def test_token_limits(self, model, context_window, max_output_tokens):
