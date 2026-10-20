@@ -71,7 +71,10 @@ class AmazonBedrockPromptDriver(BasePromptDriver):
 
     @lazy_property()
     def client(self) -> Any:
-        return self.session.client("bedrock-runtime")
+        # Bedrock allows Claude inference calls to run up to 60 minutes, and AWS recommends
+        # a read timeout of at least 3600s.
+        config = import_optional_dependency("botocore.config").Config(read_timeout=3600, retries={"mode": "standard"})
+        return self.session.client("bedrock-runtime", config=config)
 
     @property
     def supports_temperature(self) -> bool:

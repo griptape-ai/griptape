@@ -452,6 +452,17 @@ class TestAmazonBedrockPromptDriver:
         ):
             AmazonBedrockPromptDriver(model="foo", structured_output_strategy="native")
 
+    def test_client_config(self, mocker):
+        mock_session = mocker.patch("boto3.Session").return_value
+        driver = AmazonBedrockPromptDriver(model="foo")
+
+        assert driver.client is mock_session.client.return_value
+        mock_session.client.assert_called_once()
+        args, kwargs = mock_session.client.call_args
+        assert args == ("bedrock-runtime",)
+        assert kwargs["config"].read_timeout == 3600
+        assert kwargs["config"].retries == {"mode": "standard"}
+
     @pytest.mark.parametrize(
         ("model", "expected"),
         [
