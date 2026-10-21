@@ -345,3 +345,88 @@ class TestGooglePromptDriver:
         assert events[0].content is None
         assert isinstance(events[1].content, TextDeltaMessageContent)
         assert events[1].content.text == "model-output"
+
+    @pytest.mark.parametrize("chunked", [True, False])
+    def test_try_stream_numbers_parallel_function_calls(self, mocker, chunked):
+        """Parallel function calls get their own index, whether they arrive in one chunk or in separate chunks."""
+        # Given
+        mock_client = mocker.patch("google.genai.Client")
+
+        def make_part(name, args):
+            function_call = MagicMock(args=args)
+            function_call.name = name
+            return MagicMock(text=None, function_call=function_call, thought=None, thought_signature=None)
+
+        def make_chunk(*parts):
+            return MagicMock(
+                candidates=[MagicMock(content=MagicMock(parts=list(parts)))],
+                usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
+            )
+
+        first = make_part("MockTool_test", {"values": {"test": "a"}})
+        second = make_part("MockTool_test", {"values": {"test": "b"}})
+        chunks = [make_chunk(first, second)] if chunked else [make_chunk(first), make_chunk(second)]
+        mock_client.return_value.models.generate_content_stream.return_value = iter(chunks)
+        driver = GooglePromptDriver(model="gemini-2.5-flash", api_key="api-key", stream=True)
+
+        # When
+        events = list(driver.try_stream(PromptStack()))
+
+        # Then
+        assert [event.content.index for event in events] == [0, 1]
+        assert [event.content.partial_input for event in events] == [
+            '{"values": {"test": "a"}}',
+            '{"values": {"test": "b"}}',
+        ]
+
+    def test_run_stream_keeps_parallel_function_calls(self, mocker):
+        # Given
+        mock_client = mocker.patch("google.genai.Client")
+
+        def make_part(args):
+            function_call = MagicMock(args=args)
+            function_call.name = "MockTool_test"
+            return MagicMock(text=None, function_call=function_call, thought=None, thought_signature=None)
+
+        chunk = MagicMock(
+            candidates=[
+                MagicMock(
+                    content=MagicMock(
+                        parts=[make_part({"values": {"test": "a"}}), make_part({"values": {"test": "b"}})]
+                    )
+                )
+            ],
+            usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
+        )
+        mock_client.return_value.models.generate_content_stream.return_value = iter([chunk])
+        driver = GooglePromptDriver(model="gemini-2.5-flash", api_key="api-key", stream=True)
+
+        # When
+        message = driver.run(PromptStack())
+
+        # Then
+        actions = [content.artifact.value for content in message.content]
+        assert [action.input for action in actions] == [{"values": {"test": "a"}}, {"values": {"test": "b"}}]
+        assert message.usage.input_tokens == 5
+        assert message.usage.output_tokens == 5
+
+    def test_try_stream_keeps_text_and_function_call_in_one_chunk(self, mocker):
+        # Given
+        mock_client = mocker.patch("google.genai.Client")
+        function_call = MagicMock(args={"values": {"test": "a"}})
+        function_call.name = "MockTool_test"
+        text_part = MagicMock(text="Let me check.", function_call=None, thought=None, thought_signature=None)
+        call_part = MagicMock(text=None, function_call=function_call, thought=None, thought_signature=None)
+        chunk = MagicMock(
+            candidates=[MagicMock(content=MagicMock(parts=[text_part, call_part]))],
+            usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
+        )
+        mock_client.return_value.models.generate_content_stream.return_value = iter([chunk])
+        driver = GooglePromptDriver(model="gemini-2.5-flash", api_key="api-key", stream=True)
+
+        # When
+        events = list(driver.try_stream(PromptStack()))
+
+        # Then
+        assert isinstance(events[0].content, TextDeltaMessageContent)
+        assert isinstance(events[1].content, ActionCallDeltaMessageContent)
