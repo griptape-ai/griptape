@@ -10,7 +10,7 @@ from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.artifacts.generic_artifact import GenericArtifact
 from griptape.artifacts.image_url_artifact import ImageUrlArtifact
 from griptape.artifacts.video_url_artifact import VideoUrlArtifact
-from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.common import ActionCallDeltaMessageContent, Message, PromptStack, TextDeltaMessageContent, ToolAction
 from griptape.common.prompt_stack.contents.audio_delta_message_content import AudioDeltaMessageContent
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.tokenizers import OpenAiTokenizer
@@ -959,3 +959,24 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             max_tokens=1,
         )
         assert event.value[0].value == "model-output"
+
+
+class TestOpenAiChatPromptDriverEmptyToolArguments:
+    def test_try_run_empty_tool_arguments(self, mocker):
+        mock_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
+        mock_function = Mock(arguments="", id="mock-id")
+        mock_function.name = "MockTool_test"
+        mock_create.return_value = Mock(
+            headers={},
+            choices=[
+                Mock(message=Mock(content=None, audio=None, tool_calls=[Mock(id="mock-id", function=mock_function)]))
+            ],
+            usage=Mock(prompt_tokens=5, completion_tokens=10),
+        )
+        driver = OpenAiChatPromptDriver(model="gpt-4.1", use_native_tools=True)
+
+        message = driver.try_run(PromptStack(messages=[Message("hi", role=Message.USER_ROLE)]))
+
+        action = message.content[0].artifact.value
+        assert action.name == "MockTool"
+        assert action.input == {}
