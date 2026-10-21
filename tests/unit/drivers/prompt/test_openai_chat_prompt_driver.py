@@ -959,3 +959,35 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
             max_tokens=1,
         )
         assert event.value[0].value == "model-output"
+
+    def test_to_delta_message_stream_keeps_every_tool_call_in_a_delta(self):
+        # Given
+        driver = OpenAiChatPromptDriver(model="gpt-4.1", stream=True)
+        first = Mock(index=0, id="call-a", function=Mock(arguments='{"foo": "bar"}'))
+        first.function.name = "MockTool_test"
+        second = Mock(index=1, id="call-b", function=Mock(arguments='{"foo": "baz"}'))
+        second.function.name = "MockTool_test"
+        chunks = [
+            Mock(
+                choices=[Mock(delta=Mock(content=None, tool_calls=[first, second], audio=None))],
+                usage=None,
+            )
+        ]
+
+        # When
+        events = list(driver._to_delta_message_stream(iter(chunks)))
+
+        # Then
+        assert [event.content.index for event in events] == [0, 1]
+        assert [event.content.tag for event in events] == ["call-a", "call-b"]
+        assert [event.content.partial_input for event in events] == ['{"foo": "bar"}', '{"foo": "baz"}']
+        assert all(isinstance(event.content, ActionCallDeltaMessageContent) for event in events)
+        assert all(event.content.name == "MockTool" and event.content.path == "test" for event in events)
+
+    def test_to_delta_message_stream_skips_a_delta_without_content(self):
+        # Given
+        driver = OpenAiChatPromptDriver(model="gpt-4.1", stream=True)
+        chunks = [Mock(choices=[Mock(delta=Mock(content=None, tool_calls=None, audio=None))], usage=None)]
+
+        # When / Then
+        assert list(driver._to_delta_message_stream(iter(chunks))) == []

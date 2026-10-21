@@ -191,9 +191,7 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 choice = message.choices[0]
                 delta = choice.delta
 
-                content = self.__to_prompt_stack_delta_message_content(delta)
-
-                if content is not None:
+                for content in self.__to_prompt_stack_delta_message_contents(delta):
                     yield DeltaMessage(content=content)
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
@@ -418,34 +416,35 @@ class OpenAiChatPromptDriver(BasePromptDriver):
 
         return content
 
-    def __to_prompt_stack_delta_message_content(self, content_delta: ChoiceDelta) -> BaseDeltaMessageContent | None:
+    def __to_prompt_stack_delta_message_contents(self, content_delta: ChoiceDelta) -> list[BaseDeltaMessageContent]:
         if content_delta.content is not None:
-            return TextDeltaMessageContent(content_delta.content)
+            return [TextDeltaMessageContent(content_delta.content)]
         if content_delta.tool_calls is not None:
-            tool_calls = content_delta.tool_calls
-
-            if len(tool_calls) == 1:
-                tool_call = tool_calls[0]
-                index = tool_call.index
-
-                if tool_call.function is not None:
-                    function_name = tool_call.function.name
-                    return ActionCallDeltaMessageContent(
-                        index=index,
+            # A single delta can carry several tool calls
+            contents: list[BaseDeltaMessageContent] = []
+            for tool_call in content_delta.tool_calls:
+                if tool_call.function is None:
+                    raise ValueError(f"Unsupported tool call delta: {tool_call}")
+                function_name = tool_call.function.name
+                contents.append(
+                    ActionCallDeltaMessageContent(
+                        index=tool_call.index,
                         tag=tool_call.id,
                         name=ToolAction.from_native_tool_name(function_name)[0] if function_name else None,
                         path=ToolAction.from_native_tool_name(function_name)[1] if function_name else None,
                         partial_input=tool_call.function.arguments,
                     )
-                raise ValueError(f"Unsupported tool call delta: {tool_call}")
-            raise ValueError(f"Unsupported tool call delta length: {len(tool_calls)}")
+                )
+            return contents
         # OpenAi doesn't have types for audio deltas so we need to use hasattr and getattr.
         if hasattr(content_delta, "audio") and getattr(content_delta, "audio") is not None:  # noqa: B009
             audio_chunk: dict = getattr(content_delta, "audio")  # noqa: B009
-            return AudioDeltaMessageContent(
-                id=audio_chunk.get("id"),
-                data=audio_chunk.get("data"),
-                expires_at=audio_chunk.get("expires_at"),
-                transcript=audio_chunk.get("transcript"),
-            )
-        return None
+            return [
+                AudioDeltaMessageContent(
+                    id=audio_chunk.get("id"),
+                    data=audio_chunk.get("data"),
+                    expires_at=audio_chunk.get("expires_at"),
+                    transcript=audio_chunk.get("transcript"),
+                )
+            ]
+        return []
