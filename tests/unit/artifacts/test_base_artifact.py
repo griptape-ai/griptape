@@ -66,3 +66,15 @@ class TestBaseArtifact:
         dict_value = {"type": "foo", "value": "foobar"}
         with pytest.raises(ValueError):
             BaseArtifact.from_dict(dict_value)
+
+    def test_equality_ignores_generated_id_and_name(self):
+        assert TextArtifact("foo") == TextArtifact("foo")
+        assert TextArtifact("foo", id="a", name="a") == TextArtifact("foo", id="b", name="b")
+        assert ImageArtifact(b"data", format="png", width=1, height=1) == ImageArtifact(
+            b"data", format="png", width=1, height=1
+        )
+
+    def test_equality_compares_content(self):
+        assert TextArtifact("foo") != TextArtifact("bar")
+        assert TextArtifact("foo", meta={"a": 1}) != TextArtifact("foo", meta={"a": 2})
+        assert TextArtifact("foo") != InfoArtifact("foo")
