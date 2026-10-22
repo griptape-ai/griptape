@@ -196,7 +196,7 @@ class TestCoherePromptDriver:
                 Mock(type="tool-plan-delta", delta=Mock(message={"tool_plan": "tool-plan"})),
                 Mock(type="tool-call-start", delta=mock_tool_call_delta_header),
                 Mock(type="tool-call-delta", delta=mock_tool_call_delta_body),
-                Mock(type="stream-end", response=Mock(meta=Mock(tokens=Mock(input_tokens=5, output_tokens=10)))),
+                Mock(type="message-end", delta=Mock(usage=Mock(tokens=Mock(input_tokens=5, output_tokens=10)))),
             ]
         )
 
@@ -390,6 +390,65 @@ class TestCoherePromptDriver:
         event = next(stream)
         assert event.usage.input_tokens == 5
         assert event.usage.output_tokens == 10
+
+    def test_try_stream_reports_token_usage_from_message_end(self, mocker, prompt_stack):
+        mock_client = mocker.patch("cohere.ClientV2").return_value
+        mock_client.chat_stream.return_value = iter(
+            [
+                Mock(type="content-delta", delta=Mock(message=Mock(content=Mock(text="model-output")))),
+                Mock(
+                    type="message-end",
+                    delta=Mock(usage=Mock(tokens=Mock(input_tokens=12, output_tokens=34))),
+                ),
+            ]
+        )
+
+        stream = CoherePromptDriver(model="command", api_key="api-key", stream=True).try_stream(prompt_stack)
+
+        event = next(stream)
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == "model-output"
+
+        event = next(stream)
+        assert event.content is None
+        assert event.usage.input_tokens == 12
+        assert event.usage.output_tokens == 34
+
+    def test_try_stream_defaults_missing_message_end_usage_to_zero(self, mocker, prompt_stack):
+        mock_client = mocker.patch("cohere.ClientV2").return_value
+        mock_client.chat_stream.return_value = iter(
+            [
+                Mock(type="content-delta", delta=Mock(message=Mock(content=Mock(text="model-output")))),
+                Mock(type="message-end", delta=Mock(usage=None)),
+            ]
+        )
+
+        stream = CoherePromptDriver(model="command", api_key="api-key", stream=True).try_stream(prompt_stack)
+
+        event = next(stream)
+        assert isinstance(event.content, TextDeltaMessageContent)
+
+        event = next(stream)
+        assert event.usage.input_tokens == 0
+        assert event.usage.output_tokens == 0
+
+    def test_try_stream_ignores_legacy_stream_end_usage_event(self, mocker, prompt_stack):
+        """ClientV2 never emits stream-end; a stray one must not be treated as usage."""
+        mock_client = mocker.patch("cohere.ClientV2").return_value
+        mock_client.chat_stream.return_value = iter(
+            [
+                Mock(type="content-delta", delta=Mock(message=Mock(content=Mock(text="model-output")))),
+                Mock(type="stream-end", response=Mock(meta=Mock(tokens=Mock(input_tokens=99, output_tokens=99)))),
+            ]
+        )
+
+        stream = CoherePromptDriver(model="command", api_key="api-key", stream=True).try_stream(prompt_stack)
+
+        event = next(stream)
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == "model-output"
+        # stream-end is ignored — no usage DeltaMessage
+        assert list(stream) == []
 
     def test_to_dict(self):
         # Given
