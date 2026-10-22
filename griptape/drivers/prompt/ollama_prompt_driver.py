@@ -99,6 +99,10 @@ class OllamaPromptDriver(BasePromptDriver):
         return Message(
             content=self.__to_prompt_stack_message_content(response),
             role=Message.ASSISTANT_ROLE,
+            usage=Message.Usage(
+                input_tokens=response.prompt_eval_count or 0,
+                output_tokens=response.eval_count or 0,
+            ),
         )
 
     @observable
@@ -117,6 +121,17 @@ class OllamaPromptDriver(BasePromptDriver):
                 message_content.index = tool_index
                 tool_index += 1
             yield DeltaMessage(content=message_content)
+
+            # Final stream chunk carries prompt_eval_count / eval_count (same as non-stream ChatResponse).
+            prompt_eval_count = chunk.get("prompt_eval_count") if isinstance(chunk, dict) else chunk.prompt_eval_count
+            eval_count = chunk.get("eval_count") if isinstance(chunk, dict) else chunk.eval_count
+            if prompt_eval_count is not None or eval_count is not None:
+                yield DeltaMessage(
+                    usage=DeltaMessage.Usage(
+                        input_tokens=prompt_eval_count or 0,
+                        output_tokens=eval_count or 0,
+                    ),
+                )
 
     def _base_params(self, prompt_stack: PromptStack) -> dict:
         messages = self._prompt_stack_to_messages(prompt_stack)
