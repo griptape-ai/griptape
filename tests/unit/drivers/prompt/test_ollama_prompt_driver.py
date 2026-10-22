@@ -141,6 +141,8 @@ class TestOllamaPromptDriver:
 
         mock_response.__getitem__.side_effect = lambda key: data[key]
         mock_response.model_dump.return_value = data
+        mock_response.prompt_eval_count = 5
+        mock_response.eval_count = 10
         mock_client.return_value.chat.return_value = mock_response
 
         return mock_client
@@ -181,7 +183,7 @@ class TestOllamaPromptDriver:
                         ],
                     }
                 },
-                {"message": {}},
+                {"message": {}, "prompt_eval_count": 5, "eval_count": 10, "done": True},
             ]
         )
 
@@ -319,6 +321,8 @@ class TestOllamaPromptDriver:
         assert message.value[1].value.name == "MockTool"
         assert message.value[1].value.path == "test"
         assert message.value[1].value.input == {"foo": "bar"}
+        assert message.usage.input_tokens == 5
+        assert message.usage.output_tokens == 10
 
     @pytest.mark.parametrize("use_native_tools", [True, False])
     @pytest.mark.parametrize("structured_output_strategy", ["native", "tool", "rule", "foo"])
@@ -379,3 +383,62 @@ class TestOllamaPromptDriver:
         event = next(stream)
         assert isinstance(event.content, TextDeltaMessageContent)
         assert event.content.text == ""
+
+        event = next(stream)
+        assert event.content is None
+        assert event.usage.input_tokens == 5
+        assert event.usage.output_tokens == 10
+
+    def test_try_run_reports_token_usage(self, mocker, prompt_stack):
+        mock_client = mocker.patch("ollama.Client")
+        mock_response = mocker.MagicMock()
+        data = {"message": {"content": "model-output"}}
+        mock_response.__getitem__.side_effect = lambda key: data[key]
+        mock_response.model_dump.return_value = data
+        mock_response.prompt_eval_count = 12
+        mock_response.eval_count = 34
+        mock_client.return_value.chat.return_value = mock_response
+
+        message = OllamaPromptDriver(model="llama").try_run(prompt_stack)
+
+        assert message.usage.input_tokens == 12
+        assert message.usage.output_tokens == 34
+
+    def test_try_run_defaults_missing_token_usage_to_zero(self, mocker, prompt_stack):
+        mock_client = mocker.patch("ollama.Client")
+        mock_response = mocker.MagicMock()
+        data = {"message": {"content": "model-output"}}
+        mock_response.__getitem__.side_effect = lambda key: data[key]
+        mock_response.model_dump.return_value = data
+        mock_response.prompt_eval_count = None
+        mock_response.eval_count = None
+        mock_client.return_value.chat.return_value = mock_response
+
+        message = OllamaPromptDriver(model="llama").try_run(prompt_stack)
+
+        assert message.usage.input_tokens == 0
+        assert message.usage.output_tokens == 0
+
+    def test_try_stream_reports_token_usage_on_final_chunk(self, mocker, prompt_stack):
+        mock_stream_client = mocker.patch("ollama.Client")
+        mock_stream_client.return_value.chat.return_value = iter(
+            [
+                {"message": {"content": "model-output"}},
+                {"message": {}, "prompt_eval_count": 12, "eval_count": 34, "done": True},
+            ]
+        )
+
+        stream = OllamaPromptDriver(model="llama", stream=True).try_stream(prompt_stack)
+
+        event = next(stream)
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == "model-output"
+
+        event = next(stream)
+        assert isinstance(event.content, TextDeltaMessageContent)
+        assert event.content.text == ""
+
+        event = next(stream)
+        assert event.content is None
+        assert event.usage.input_tokens == 12
+        assert event.usage.output_tokens == 34
