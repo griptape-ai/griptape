@@ -89,11 +89,7 @@ class CoherePromptDriver(BasePromptDriver):
             # ClientV2 streams end with "message-end" (delta.usage.tokens). The v1
             # "stream-end" / response.meta.tokens shape is not part of StreamedChatResponseV2.
             if event.type == "message-end":
-                tokens = (
-                    event.delta.usage.tokens
-                    if event.delta is not None and event.delta.usage is not None
-                    else None
-                )
+                tokens = event.delta.usage.tokens if event.delta is not None and event.delta.usage is not None else None
                 yield DeltaMessage(
                     usage=DeltaMessage.Usage(
                         input_tokens=tokens.input_tokens if tokens and tokens.input_tokens is not None else 0,
