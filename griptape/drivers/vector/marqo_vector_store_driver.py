@@ -236,13 +236,21 @@ class MarqoVectorStoreDriver(BaseVectorStoreDriver):
             meta: An optional dictionary of metadata for the vector.
             kwargs: Additional keyword arguments to pass to the Marqo client.
 
-        Raises:
-            Exception: This function is not yet implemented.
-
         Returns:
             The ID of the vector that was added.
         """
-        raise NotImplementedError(f"{self.__class__.__name__} does not support upserting a vector.")
+        doc: dict[str, Any] = {"_id": vector_id, "vector": {"vector": vector}}
+        if namespace:
+            doc["namespace"] = namespace
+        if meta:
+            doc["meta"] = str(meta)
+
+        response = self.client.index(self.index).add_documents(
+            [doc], mappings={"vector": {"type": "custom_vector"}}, tensor_fields=["vector"]
+        )
+        if isinstance(response, dict) and "items" in response and response["items"]:
+            return response["items"][0]["_id"]
+        raise ValueError(f"Failed to upsert vector: {response}")
 
     def delete_vector(self, vector_id: str) -> NoReturn:
         raise NotImplementedError(f"{self.__class__.__name__} does not support deletion.")
