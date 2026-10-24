@@ -18,6 +18,9 @@ class BaseArtifact(SerializableMixin, ABC):
 
     Artifacts are used to encapsulate data and enhance it with metadata.
 
+    Equality compares content. `id` and `name` default to generated values, so they are left out:
+    two artifacts built from the same content are equal.
+
     Attributes:
         id: The unique identifier of the Artifact. Defaults to a random UUID.
         reference: The optional Reference to the Artifact.
@@ -28,12 +31,13 @@ class BaseArtifact(SerializableMixin, ABC):
         encoding_error_handler: The error on_event to use when encoding/decoding the value.
     """
 
-    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, metadata={"serializable": True})
+    id: str = field(default=Factory(lambda: uuid.uuid4().hex), kw_only=True, eq=False, metadata={"serializable": True})
     reference: Reference | None = field(default=None, kw_only=True, metadata={"serializable": True})
     meta: dict[str, Any] = field(factory=dict, kw_only=True, metadata={"serializable": True})
     name: str = field(
         default=Factory(lambda self: self.id, takes_self=True),
         kw_only=True,
+        eq=False,
         metadata={"serializable": True},
     )
     value: Any = field()
