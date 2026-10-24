@@ -75,7 +75,10 @@ class FileManagerTool(BaseTool):
             # Fetch the file to try and determine the appropriate loader
             abs_path = os.path.join(self.file_manager_driver.workdir, path)
             mime_type = get_mime_type(abs_path)
-            loader = next((loader for key, loader in self.loaders.items() if mime_type.startswith(key)))
+            loader = next((loader for key, loader in self.loaders.items() if mime_type.startswith(key)), None)
+
+            if loader is None:
+                return ErrorArtifact(f"Failed to load file '{path}': no loader available for MIME type '{mime_type}'")
 
             artifact = loader.load(path)
             if isinstance(artifact, ListArtifact):
