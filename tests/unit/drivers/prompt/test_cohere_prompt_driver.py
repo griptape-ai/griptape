@@ -7,7 +7,14 @@ from schema import Schema
 from griptape.artifacts.action_artifact import ActionArtifact
 from griptape.artifacts.list_artifact import ListArtifact
 from griptape.artifacts.text_artifact import TextArtifact
-from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.common import (
+    ActionCallDeltaMessageContent,
+    ActionCallMessageContent,
+    Message,
+    PromptStack,
+    TextDeltaMessageContent,
+    ToolAction,
+)
 from griptape.drivers.prompt.cohere import CoherePromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -491,3 +498,21 @@ class TestCoherePromptDriver:
 
         # Then
         assert result.to_dict() == driver.to_dict()
+
+
+class TestCoherePromptDriverEmptyToolArguments:
+    def test_try_run_empty_tool_arguments(self, mocker):
+        mock_client = mocker.patch("cohere.ClientV2").return_value
+        mock_tool_call = Mock(id="mock-id", function=Mock(arguments=""))
+        mock_tool_call.function.name = "MockTool_test"
+        mock_client.chat.return_value = Mock(
+            message=Mock(tool_plan=None, content=[], tool_calls=[mock_tool_call]),
+            usage=Mock(tokens=Mock(input_tokens=5, output_tokens=10)),
+        )
+        driver = CoherePromptDriver(model="command", api_key="api-key", use_native_tools=True)
+
+        message = driver.try_run(PromptStack(messages=[Message("hi", role=Message.USER_ROLE)]))
+
+        action = [c for c in message.content if isinstance(c, ActionCallMessageContent)][0].artifact.value
+        assert action.name == "MockTool"
+        assert action.input == {}
