@@ -194,6 +194,7 @@ nav:
               - Multi Agent Workflows: "recipes/multi-agent-workflow.md"
               - Shared Memory Between Agents: "recipes/multiple-agent-shared-memory.md"
               - Chat Sessions with Amazon DynamoDB: "recipes/amazon-dynamodb-sessions.md"
+              - Talk to Your Files with MCP: "recipes/talk-to-your-files-with-mcp.md"
           - Data:
               - Load and Query Pinecone: "recipes/load-and-query-pinecone.md"
               - Load and Query Marqo: "recipes/load-query-and-chat-marqo.md"
