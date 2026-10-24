@@ -991,3 +991,35 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
 
         # When / Then
         assert list(driver._to_delta_message_stream(iter(chunks))) == []
+
+    def test_to_delta_message_stream_tool_call_without_function_name(self):
+        # Given
+        driver = OpenAiChatPromptDriver(model="gpt-4.1", stream=True)
+        tool_call = Mock(index=0, id="call-a", function=Mock(arguments='{"foo"'))
+        tool_call.function.name = None
+        chunks = [Mock(choices=[Mock(delta=Mock(content=None, tool_calls=[tool_call], audio=None))], usage=None)]
+
+        # When
+        events = list(driver._to_delta_message_stream(iter(chunks)))
+
+        # Then
+        assert len(events) == 1
+        assert events[0].content.name is None
+        assert events[0].content.path is None
+        assert events[0].content.partial_input == '{"foo"'
+
+    def test_to_delta_message_stream_tool_call_without_function(self):
+        # Given
+        driver = OpenAiChatPromptDriver(model="gpt-4.1", stream=True)
+        chunks = [
+            Mock(
+                choices=[
+                    Mock(delta=Mock(content=None, tool_calls=[Mock(index=0, id="call-a", function=None)], audio=None))
+                ],
+                usage=None,
+            )
+        ]
+
+        # When / Then
+        with pytest.raises(ValueError, match="Unsupported tool call delta"):
+            list(driver._to_delta_message_stream(iter(chunks)))
