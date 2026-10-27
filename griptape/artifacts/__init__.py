@@ -22,7 +22,6 @@ __all__ = [
     "AudioUrlArtifact",
     "BaseArtifact",
     "BlobArtifact",
-    "UrlArtifact",
     "BooleanArtifact",
     "ErrorArtifact",
     "GenericArtifact",
@@ -33,5 +32,6 @@ __all__ = [
     "ListArtifact",
     "ModelArtifact",
     "TextArtifact",
+    "UrlArtifact",
     "VideoUrlArtifact",
 ]
