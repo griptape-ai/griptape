@@ -263,7 +263,10 @@ class GooglePromptDriver(BasePromptDriver):
         if isinstance(content, ActionCallMessageContent):
             action = content.artifact.value
 
-            return types.Part.from_function_call(name=action.tag, args=action.input)
+            part = types.Part.from_function_call(name=action.tag, args=action.input)
+            if action.thought_signature:
+                part.thought_signature = action.thought_signature
+            return part
         if isinstance(content, ActionResultMessageContent):
             artifact = content.artifact
 
@@ -294,7 +297,11 @@ class GooglePromptDriver(BasePromptDriver):
 
             args = function_call.args or {}
             return ActionCallMessageContent(
-                artifact=ActionArtifact(value=ToolAction(tag=tag, name=name, path=path, input=args)),
+                artifact=ActionArtifact(
+                    value=ToolAction(
+                        tag=tag, name=name, path=path, input=args, thought_signature=content.thought_signature
+                    ),
+                ),
             )
         raise ValueError(f"Unsupported message content type {content}")
 
@@ -313,5 +320,6 @@ class GooglePromptDriver(BasePromptDriver):
                 name=name,
                 path=path,
                 partial_input=json.dumps(args),
+                thought_signature=content.thought_signature,
             )
         raise ValueError(f"Unsupported message content type {content}")

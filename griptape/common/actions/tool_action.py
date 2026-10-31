@@ -23,6 +23,8 @@ class ToolAction(BaseAction):
         input: The input (Tool params) of the action.
         tool: The matched Tool of the action.
         output: The output (Tool result) of the action.
+        thought_signature: Opaque signature a provider attaches to the call (e.g. Gemini 3) that must be
+            sent back unchanged on the next request. Not serialized: it only needs to survive the current turn.
     """
 
     tag: str = field(metadata={"serializable": True})
@@ -31,6 +33,7 @@ class ToolAction(BaseAction):
     input: dict = field(factory=dict, metadata={"serializable": True})
     tool: BaseTool | None = field(default=None)
     output: BaseArtifact | None = field(default=None)
+    thought_signature: bytes | None = field(default=None)
 
     def __str__(self) -> str:
         return json.dumps(self.to_dict())
