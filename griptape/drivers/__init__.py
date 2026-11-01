@@ -272,6 +272,5 @@ __all__ = [
 sys.modules[__name__] = DeprecationModuleWrapper(
     sys.modules[__name__],
     deprecation_message="Importing from `griptape.drivers` is deprecated and will be removed in a future release. "
-    "Please import from the provider-specific package instead.\n"
-    "e.g., `from griptape.drivers import OpenAiChatPromptDriver` -> `from griptape.drivers.prompt.openai import OpenAiChatPromptDriver`",
+    "Please import from the provider-specific package instead.",
 )
