@@ -306,6 +306,16 @@ The [HuggingFaceHubPromptDriver](../../reference/griptape/drivers/prompt/hugging
     --8<-- "docs/griptape-framework/drivers/logs/prompt_drivers_11.txt"
     ```
 
+#### Image Inputs
+
+Models that accept images, such as [Qwen3.5](https://huggingface.co/Qwen/Qwen3.5-9B), can be passed [ImageArtifact](../../reference/griptape/artifacts/image_artifact.md)s and [ImageUrlArtifact](../../reference/griptape/artifacts/image_url_artifact.md)s alongside text.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/prompt_drivers_huggingface_hub_images.py"
+```
+
+Thinking models like Qwen3.5 spend part of `max_tokens` on reasoning, so they need a higher limit than the default or the response may come back empty.
+
 #### Text Generation Interface
 
 The [HuggingFaceHubPromptDriver](#hugging-face-hub) also supports [Text Generation Interface](https://huggingface.co/docs/text-generation-inference/basic_tutorials/consuming_tgi#inference-client) for running models locally. To use Text Generation Interface, just set `model` to a TGI endpoint.
