@@ -45,3 +45,29 @@ Here is an example of how to use the `OpenTelemetryObservabilityDriver` with the
 ```python
 --8<-- "docs/griptape-framework/drivers/src/observability_drivers_2.py"
 ```
+
+#### Prompt Driver metrics
+
+To export metrics as well as traces, provide an OpenTelemetry SDK `MeterProvider` with configured metric readers. If `meter_provider` is omitted, the Driver uses OpenTelemetry's global meter provider. Without a configured meter provider, no metrics are exported and existing trace-only configurations continue to work.
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/observability_drivers_3.py"
+```
+
+Each completed `PromptDriver.run()` records the following [GenAI metrics](https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-metrics.md), including streaming calls:
+
+| Metric                                            | Instrument | Unit      |
+| ------------------------------------------------- | ---------- | --------- |
+| `gen_ai.client.operation.duration`                | Histogram  | `s`       |
+| `gen_ai.client.inference.usage.input_tokens`      | Counter    | `{token}` |
+| `gen_ai.client.inference.usage.output_tokens`     | Counter    | `{token}` |
+| `gen_ai.client.inference.operation.input_tokens`  | Histogram  | `{token}` |
+| `gen_ai.client.inference.operation.output_tokens` | Histogram  | `{token}` |
+
+Duration covers the complete Driver run, including any retries. A failed run records duration with `error.type` set to the exception's fully qualified class name. Token metrics use only the final successful response's reported usage, including the final cumulative usage of a stream. Usage from failed retry attempts is unavailable and is not counted. Missing or negative token counts are omitted; explicitly reported zero counts are preserved.
+
+All metrics include `gen_ai.operation.name`, `gen_ai.provider.name`, and `gen_ai.request.model`. Built-in providers use the corresponding OpenTelemetry provider name when one is defined, and custom subclasses inherit their built-in provider's classification. Other custom Drivers use their class name as the provider and `chat` as the operation. Google uses `generate_content`; Hugging Face and SageMaker use `text_completion`. Token counters additionally include `gen_ai.token.modality="unknown"`, because Griptape's usage totals do not distinguish token modalities. Per-operation histograms do not include modality. Prompt and response content are not added to metric attributes.
+
+The supplied `MeterProvider` is flushed when the Observability context exits, but is not shut down, allowing it to be reused. The caller owns its resource attributes, readers, exporters, and shutdown. The global meter provider's lifecycle remains managed by the application. Configure OpenTelemetry [Views](https://opentelemetry.io/docs/languages/python/instrumentation/#views) on the provider to customize histogram buckets; the GenAI conventions recommend duration buckets of `[0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28, 2.56, 5.12, 10.24, 20.48, 40.96, 81.92]`.
+
+These metrics do not measure streaming time to first chunk or per-chunk latency. The [token metric conventions](https://github.com/open-telemetry/semantic-conventions-genai/blob/main/docs/gen-ai/gen-ai-token-metrics.md) are currently in development.
