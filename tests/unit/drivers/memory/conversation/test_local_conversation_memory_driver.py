@@ -34,6 +34,17 @@ class TestLocalConversationMemoryDriver:
 
         assert os.path.exists(self.MEMORY_FILE_PATH)
 
+    def test_store_creates_parent_directory(self, tmp_path):
+        persist_file = tmp_path / "memory" / self.MEMORY_FILE_PATH
+        memory_driver = LocalConversationMemoryDriver(persist_file=str(persist_file))
+        memory = ConversationMemory(conversation_memory_driver=memory_driver, autoload=False)
+        pipeline = Pipeline(conversation_memory=memory)
+
+        pipeline.add_task(PromptTask("test"))
+        pipeline.run()
+
+        assert persist_file.exists()
+
     def test_load(self):
         memory_driver = LocalConversationMemoryDriver(persist_file=self.MEMORY_FILE_PATH)
         memory = ConversationMemory(
