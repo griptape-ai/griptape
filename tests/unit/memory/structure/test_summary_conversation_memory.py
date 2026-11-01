@@ -1,6 +1,7 @@
 import json
 
 from griptape.artifacts import TextArtifact
+from griptape.drivers.memory.conversation.local import LocalConversationMemoryDriver
 from griptape.memory.structure import Run, SummaryConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
@@ -114,3 +115,41 @@ class TestSummaryConversationMemory:
         assert restored_memory.summary_index == 2
         assert restored_memory.meta["summary"] == "test summary"
         assert restored_memory.meta["summary_index"] == 2
+
+    def test_summary_persists_through_driver(self, tmp_path):
+        persist_file = str(tmp_path / "memory.json")
+
+        memory = SummaryConversationMemory(
+            offset=1, conversation_memory_driver=LocalConversationMemoryDriver(persist_file=persist_file)
+        )
+        for i in range(4):
+            memory.add_run(Run(input=TextArtifact(f"foo {i}"), output=TextArtifact(f"bar {i}")))
+        assert memory.summary is not None
+        assert memory.summary_index == 3
+
+        restored_memory = SummaryConversationMemory(
+            offset=1, conversation_memory_driver=LocalConversationMemoryDriver(persist_file=persist_file)
+        )
+
+        assert restored_memory.summary == memory.summary
+        assert restored_memory.summary_index == 3
+        assert len(restored_memory.to_prompt_stack().messages) == 3
+
+    def test_summary_update_persists_through_driver(self, tmp_path):
+        persist_file = str(tmp_path / "memory.json")
+
+        memory = SummaryConversationMemory(
+            offset=1,
+            summary="initial summary",
+            conversation_memory_driver=LocalConversationMemoryDriver(persist_file=persist_file),
+        )
+        memory.add_run(Run(input=TextArtifact("foo"), output=TextArtifact("bar")))
+        memory.add_run(Run(input=TextArtifact("baz"), output=TextArtifact("qux")))
+        assert memory.summary != "initial summary"
+
+        restored_memory = SummaryConversationMemory(
+            offset=1, conversation_memory_driver=LocalConversationMemoryDriver(persist_file=persist_file)
+        )
+
+        assert restored_memory.summary == memory.summary
+        assert restored_memory.summary_index == memory.summary_index
