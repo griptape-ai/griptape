@@ -14,6 +14,7 @@ SAMPLING_PARAMS_DEPRECATED_MIN_VERSIONS: dict[str, tuple[int, int]] = {
     "opus": (4, 7),
     "sonnet": (5, 0),
     "fable": (5, 0),
+    "haiku": (5, 5),
 }
 
 # Models at or above these versions only accept ``auto`` or ``none`` for ``tool_choice``.
