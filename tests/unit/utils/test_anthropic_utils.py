@@ -37,6 +37,10 @@ class TestAnthropicUtils:
             ("claude-opus-5-0", False),
             # A future major-only Opus id (no minor) is still covered without a code change.
             ("claude-opus-5", False),
+            # Haiku 5.5 and later have the params deprecated; Haiku 4.5 does not.
+            ("claude-haiku-5-5", False),
+            ("us.anthropic.claude-haiku-5-5", False),
+            ("claude-haiku-6", False),
             # Bedrock aliases, provider prefixes, inference-profile IDs, and ARNs embed the version.
             ("anthropic.claude-sonnet-4-5-20250929-v1:0", True),
             ("anthropic.claude-opus-4-20250514-v1:0", True),

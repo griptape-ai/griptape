@@ -517,6 +517,7 @@ class TestAmazonBedrockPromptDriver:
             ("us.anthropic.claude-sonnet-4-6", True),
             ("claude-sonnet-5", False),
             ("global.anthropic.claude-sonnet-5-20260101-v1:0", False),
+            ("us.anthropic.claude-haiku-5-5", False),
             ("us.openai.gpt-6-sol", False),
             ("global.openai.gpt-6-luna", False),
             ("openai.gpt-oss-120b-1:0", True),

@@ -529,7 +529,7 @@ class TestAnthropicPromptDriver:
         driver = AnthropicPromptDriver(model=model, api_key="api-key")
         assert driver.supports_top_k == expected
 
-    @pytest.mark.parametrize("model", ["claude-opus-4-7", "claude-opus-4-8", "claude-sonnet-5"])
+    @pytest.mark.parametrize("model", ["claude-opus-4-7", "claude-opus-4-8", "claude-sonnet-5", "claude-haiku-5-5"])
     def test_try_run_omits_deprecated_sampling_params(self, model, mock_client, prompt_stack, messages):
         # Given
         driver = AnthropicPromptDriver(
