@@ -14,6 +14,7 @@ from .prompt.google import GooglePromptDriver
 from .prompt.dummy import DummyPromptDriver
 from .prompt.ollama import OllamaPromptDriver
 from .prompt.grok import GrokPromptDriver
+from .prompt.minimax import MinimaxPromptDriver
 from .prompt.griptape_cloud import GriptapeCloudPromptDriver
 from .prompt.perplexity import PerplexityPromptDriver
 
@@ -216,6 +217,7 @@ __all__ = [
     "LocalVectorStoreDriver",
     "MarkdownifyWebScraperDriver",
     "MarqoVectorStoreDriver",
+    "MinimaxPromptDriver",
     "MongoDbAtlasVectorStoreDriver",
     "NoOpObservabilityDriver",
     "OllamaEmbeddingDriver",
