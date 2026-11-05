@@ -179,6 +179,10 @@ class OpenAiChatPromptDriver(BasePromptDriver):
         raise Exception("Completion with more than one choice is not supported yet.")
 
     def _to_delta_message_stream(self, result: Stream[ChatCompletionChunk]) -> Iterator[DeltaMessage]:
+        # Index and id of the latest tool call, used to place deltas that arrive without `tool_calls[].index`.
+        tool_call_index = -1
+        tool_call_tag = None
+
         for message in result:
             if message.usage is not None:
                 yield DeltaMessage(
@@ -192,6 +196,20 @@ class OpenAiChatPromptDriver(BasePromptDriver):
                 delta = choice.delta
 
                 content = self.__to_prompt_stack_delta_message_content(delta)
+
+                if isinstance(content, ActionCallDeltaMessageContent):
+                    if content.index is None:
+                        # Some OpenAI-compatible endpoints (e.g. Gemini's) omit `tool_calls[].index` and send each
+                        # parallel call in its own chunk. A delta with a new id starts a new call; a delta that
+                        # repeats the latest id, or has none, continues the latest call.
+                        starts_new_call = content.tag is not None and content.tag != tool_call_tag
+                        if starts_new_call or tool_call_index < 0:
+                            tool_call_index += 1
+                        content.index = tool_call_index
+                    else:
+                        tool_call_index = max(tool_call_index, content.index)
+                    if content.tag is not None:
+                        tool_call_tag = content.tag
 
                 if content is not None:
                     yield DeltaMessage(content=content)
