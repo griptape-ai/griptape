@@ -592,3 +592,76 @@ class TestAnthropicPromptDriver:
         assert driver._resolve_structured_output_strategy() == expected
         assert any(isinstance(tool, StructuredOutputTool) for tool in prompt_stack.tools) == (expected == "tool")
         assert bool(prompt_stack.system_messages) == (expected == "rule")
+
+    @pytest.mark.parametrize("block_type", ["thinking", "redacted_thinking"])
+    def test_try_run_skips_thinking_blocks(self, mocker, block_type):
+        mock_tool_use = Mock(type="tool_use", id="mock-id", input={"foo": "bar"})
+        mock_tool_use.name = "MockTool_test"
+        mocker.patch("anthropic.Anthropic").return_value = Mock(
+            messages=Mock(
+                create=Mock(
+                    return_value=Mock(
+                        usage=Mock(input_tokens=5, output_tokens=10),
+                        content=[
+                            Mock(type=block_type, thinking="", signature="sig", data="redacted"),
+                            Mock(type="text", text="model-output"),
+                            mock_tool_use,
+                        ],
+                    )
+                )
+            )
+        )
+        driver = AnthropicPromptDriver(model="claude-sonnet-5", api_key="api-key")
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("user-input")
+
+        message = driver.try_run(prompt_stack)
+
+        assert len(message.content) == 2
+        assert message.value[0].value == "model-output"
+        assert message.value[1].value.tag == "mock-id"
+        assert message.value[1].value.input == {"foo": "bar"}
+
+    @pytest.mark.parametrize("block_type", ["thinking", "redacted_thinking"])
+    def test_try_stream_skips_thinking_blocks(self, mocker, block_type):
+        mock_tool_call_delta_header = Mock(type="tool_use", id="mock-id")
+        mock_tool_call_delta_header.name = "MockTool_test"
+        mocker.patch("anthropic.Anthropic").return_value = Mock(
+            messages=Mock(
+                create=Mock(
+                    return_value=iter(
+                        [
+                            Mock(type="message_start", message=Mock(usage=Mock(input_tokens=5))),
+                            Mock(type="content_block_start", index=0, content_block=Mock(type=block_type)),
+                            Mock(type="content_block_delta", index=0, delta=Mock(type="thinking_delta", thinking="")),
+                            Mock(
+                                type="content_block_delta", index=0, delta=Mock(type="signature_delta", signature="s")
+                            ),
+                            Mock(type="content_block_start", index=1, content_block=Mock(type="text", text="")),
+                            Mock(type="content_block_delta", index=1, delta=Mock(type="text_delta", text="answer")),
+                            Mock(type="content_block_start", index=2, content_block=mock_tool_call_delta_header),
+                            Mock(
+                                type="content_block_delta",
+                                index=2,
+                                delta=Mock(type="input_json_delta", partial_json='{"foo": "bar"}'),
+                            ),
+                            Mock(type="message_delta", usage=Mock(output_tokens=10)),
+                        ]
+                    )
+                )
+            )
+        )
+        driver = AnthropicPromptDriver(model="claude-sonnet-5", api_key="api-key", stream=True)
+        prompt_stack = PromptStack()
+        prompt_stack.add_user_message("user-input")
+
+        contents = [event.content for event in driver.try_stream(prompt_stack) if event.content is not None]
+
+        assert [type(content) for content in contents] == [
+            TextDeltaMessageContent,
+            TextDeltaMessageContent,
+            ActionCallDeltaMessageContent,
+            ActionCallDeltaMessageContent,
+        ]
+        assert contents[1].text == "answer"
+        assert contents[2].tag == "mock-id"
