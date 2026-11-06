@@ -8,10 +8,11 @@ search:
 Griptape provides a way to build drivers for vector DBs where embeddings can be stored and queried. Every Vector Store Driver implements the following methods:
 
 - `upsert()` for inserting or updating text, [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s or [ImageArtifact](../../reference/griptape/artifacts/image_artifact.md)s in vector DBs by ID. If `vector_id` is omitted, the method derives a deterministic ID from content. The method will automatically generate embeddings for a given value.
-- `upsert_collection()` for performing an `upsert()` in parallel.
+- `upsert_collection()` for upserting many artifacts at once. Embeddings are generated in parallel, then all vectors are written with a single `upsert_vectors()` call.
 - `insert()` for inserting new text, [TextArtifact](../../reference/griptape/artifacts/text_artifact.md)s or [ImageArtifact](../../reference/griptape/artifacts/image_artifact.md)s into vector DBs with an automatically generated ID. The method will automatically generate embeddings for a given value.
-- `insert_collection()` for performing an `insert()` in parallel.
+- `insert_collection()` for inserting many artifacts at once, the same way as `upsert_collection()`.
 - `upsert_vector()` for updating new vectors directly.
+- `upsert_vectors()` for updating many vectors directly. Drivers for vector DBs with a native batch upsert, such as Pinecone, send them in batches. Other Drivers upsert them one at a time in parallel.
 - `query()` for querying vector DBs.
 
 Each Vector Store Driver takes a [BaseEmbeddingDriver](../../reference/griptape/drivers/embedding/base_embedding_driver.md) used to dynamically generate embeddings for strings.
@@ -79,6 +80,8 @@ The [GriptapeCloudVectorStoreDriver](../../reference/griptape/drivers/vector/gri
     This Driver requires the `drivers-vector-pinecone` [extra](../index.md#extras).
 
 The [PineconeVectorStoreDriver](../../reference/griptape/drivers/vector/pinecone_vector_store_driver.md) supports the [Pinecone vector database](https://www.pinecone.io/).
+
+Collections are upserted in batches, one request per namespace per batch. Use `batch_size` (defaults to `100`) to control how many vectors are sent in each request.
 
 Here is an example of how the Driver can be used to load and query information in a Pinecone cluster:
 

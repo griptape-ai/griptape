@@ -18,6 +18,7 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
     index_name: str = field(kw_only=True, metadata={"serializable": True})
     environment: str = field(kw_only=True, metadata={"serializable": True})
     project_name: str | None = field(default=None, kw_only=True, metadata={"serializable": True})
+    batch_size: int = field(default=100, kw_only=True, metadata={"serializable": True})
     _client: pinecone.Pinecone | None = field(
         default=None, kw_only=True, alias="client", metadata={"serializable": False}
     )
@@ -50,6 +51,24 @@ class PineconeVectorStoreDriver(BaseVectorStoreDriver):
         self.index.upsert(vectors=[(vector_id, vector, meta)], **params)  # pyright: ignore[reportArgumentType]
 
         return vector_id
+
+    def upsert_vectors(self, entries: list[BaseVectorStoreDriver.Entry], **kwargs) -> list[str]:
+        # Pinecone upserts into one namespace per request. Keying by id means a repeated id keeps its last
+        # entry, the same result as upserting the entries one at a time.
+        vectors_by_namespace: dict[str | None, dict[str, tuple]] = {}
+        for entry in entries:
+            vectors_by_namespace.setdefault(entry.namespace, {})[entry.id] = (entry.id, entry.vector, entry.meta)
+
+        for namespace, vectors in vectors_by_namespace.items():
+            params: dict[str, Any] = {
+                "namespace": namespace,
+                "batch_size": self.batch_size,
+                "show_progress": False,
+            } | kwargs
+
+            self.index.upsert(vectors=list(vectors.values()), **params)
+
+        return [entry.id for entry in entries]
 
     def load_entry(self, vector_id: str, *, namespace: str | None = None) -> BaseVectorStoreDriver.Entry | None:
         result = self.index.fetch(ids=[vector_id], namespace=namespace).to_dict()  # pyright: ignore[reportAttributeAccessIssue]
