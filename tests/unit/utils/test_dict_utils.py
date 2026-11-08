@@ -95,3 +95,14 @@ class TestDictUtils:
 
         with pytest.raises(KeyError):
             assert dict_merge(a, b, add_keys=False)["b"]["b3"] == 6
+
+
+class TestRemoveNullValuesInsideLists:
+    def test_nulls_in_objects_inside_an_array_are_removed(self):
+        assert remove_null_values_in_dict_recursively({"items": [{"name": None, "qty": 1}]}) == {"items": [{"qty": 1}]}
+
+    def test_nested_arrays_are_walked(self):
+        assert remove_null_values_in_dict_recursively({"rows": [[{"a": None, "b": 2}]]}) == {"rows": [[{"b": 2}]]}
+
+    def test_none_elements_are_kept(self):
+        assert remove_null_values_in_dict_recursively({"ids": [1, None, 3]}) == {"ids": [1, None, 3]}
