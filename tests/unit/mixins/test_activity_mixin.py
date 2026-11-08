@@ -2,6 +2,9 @@ import pytest
 from pydantic import BaseModel
 from schema import Literal, Optional
 
+from griptape.artifacts import TextArtifact
+from griptape.tools import BaseTool
+from griptape.utils.decorators import activity
 from tests.mocks.mock_tool.tool import MockTool
 from tests.mocks.mock_tool_pydantic.tool import MockToolPydantic
 
@@ -170,3 +173,25 @@ class TestActivityMixin:
     def test_to_activity_json_schema(self, tool, activity_name, expected_output):
         json_schema = tool.to_activity_json_schema(getattr(tool, activity_name), "InputSchema")
         assert json_schema == expected_output
+
+
+class ToolWithDeclaredName(BaseTool):
+    @activity(config={"description": "Declared under a different name.", "name": "public_greeting"})
+    def say_hello(self) -> TextArtifact:
+        return TextArtifact("hello")
+
+
+class TestActivityListsMatchTheDeclaredName:
+    def test_allowlist_accepts_the_declared_name(self):
+        tool = ToolWithDeclaredName(allowlist=["public_greeting"])
+
+        assert [entry.name for entry in tool.activities()] == ["public_greeting"]
+
+    def test_denylist_accepts_the_declared_name(self):
+        assert ToolWithDeclaredName(denylist=["public_greeting"]).activities() == []
+
+    def test_the_method_name_still_works(self):
+        assert [entry.name for entry in ToolWithDeclaredName(allowlist=["say_hello"]).activities()] == [
+            "public_greeting"
+        ]
+        assert ToolWithDeclaredName(denylist=["say_hello"]).activities() == []
