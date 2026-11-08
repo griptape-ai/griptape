@@ -26,7 +26,7 @@ class TestDateTimeTool:
         assert abs(time_delta.total_seconds()) <= 1000
 
     def test_get_invalid_relative_datetime(self):
-        # "3 days from now" used to be unparseable for dateparser and is understood by 1.5.0, which
+        # "3 days from now" used to be unparsable for dateparser and is understood by 1.5.0, which
         # the tool installs unpinned from griptape/tools/date_time/requirements.txt. What this test
         # covers is the tool's error path, so the input is one no dateparser release reads as a date.
         result = DateTimeTool().get_relative_datetime({"values": {"relative_date_string": "not a date"}})
