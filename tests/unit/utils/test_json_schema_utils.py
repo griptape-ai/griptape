@@ -124,3 +124,48 @@ class TestJsonSchemaUtils:
         with expected_exception:
             strict_json_schema = resolve_refs(output_json_schema)
             assert strict_json_schema == expected_json_schema
+
+
+class TestRecursiveSchema:
+    def test_self_referential_definition_is_reported(self):
+        schema = {
+            "$defs": {
+                "Node": {
+                    "type": "object",
+                    "properties": {"children": {"type": "array", "items": {"$ref": "#/$defs/Node"}}},
+                }
+            },
+            "type": "object",
+            "properties": {"root": {"$ref": "#/$defs/Node"}},
+        }
+
+        with pytest.raises(ValueError, match="Recursive JSON schema"):
+            resolve_refs(schema)
+
+    def test_mutually_recursive_definitions_are_reported(self):
+        schema = {
+            "$defs": {
+                "A": {"type": "object", "properties": {"b": {"$ref": "#/$defs/B"}}},
+                "B": {"type": "object", "properties": {"a": {"$ref": "#/$defs/A"}}},
+            },
+            "type": "object",
+            "properties": {"a": {"$ref": "#/$defs/A"}},
+        }
+
+        with pytest.raises(ValueError, match="Recursive JSON schema"):
+            resolve_refs(schema)
+
+    def test_a_definition_used_twice_is_not_recursive(self):
+        schema = {
+            "$defs": {"Leaf": {"type": "object", "properties": {"value": {"type": "string"}}}},
+            "type": "object",
+            "properties": {
+                "left": {"$ref": "#/$defs/Leaf"},
+                "right": {"$ref": "#/$defs/Leaf"},
+            },
+        }
+
+        resolved = resolve_refs(schema)
+
+        assert resolved["properties"]["left"] == {"type": "object", "properties": {"value": {"type": "string"}}}
+        assert resolved["properties"]["right"] == resolved["properties"]["left"]
