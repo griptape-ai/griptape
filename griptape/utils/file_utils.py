@@ -11,6 +11,10 @@ import filetype
 # so add it explicitly to keep `mimetypes.guess_type` consistent across platforms.
 mimetypes.add_type("image/webp", ".webp")
 
+# The same applies to `.csv`, which a Windows install maps to `application/vnd.ms-excel`
+# from the registry, while the byte branch below reports `text/csv` for the same content.
+mimetypes.add_type("text/csv", ".csv")
+
 
 def get_mime_type(file_path_or_bytes: str | bytes) -> str:
     """Attempt to determine the MIME type of a file or bytes.

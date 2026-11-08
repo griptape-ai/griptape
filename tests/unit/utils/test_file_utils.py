@@ -81,3 +81,9 @@ class TestFileUtils:
         mime_type = get_mime_type(data.read())
 
         assert mime_type == expected
+
+
+def test_get_mime_type_of_a_csv_path_is_text_csv():
+    # A Windows install maps .csv to application/vnd.ms-excel from the registry, which would
+    # make the path branch disagree with the byte branch for the same file.
+    assert get_mime_type("test.csv") == "text/csv"
