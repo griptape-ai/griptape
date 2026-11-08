@@ -323,3 +323,29 @@ class TestBaseTool:
         result = tool.run(tool.no_result, ActionsSubtask("foo"), ToolAction(input={"values": {}}, name="", tag=""))
         assert isinstance(result, InfoArtifact)
         assert result.value == "Tool returned an empty value"
+
+
+class ToolWithPartialOutputMemory(BaseTool):
+    @activity(config={"description": "First."})
+    def first(self) -> InfoArtifact:
+        return InfoArtifact("first ran")
+
+    @activity(config={"description": "Second."})
+    def second(self) -> InfoArtifact:
+        return InfoArtifact("second ran")
+
+
+class TestPartialOutputMemory:
+    def test_activity_without_an_entry_still_runs(self):
+        # The validator never asks for an entry per activity, so a map that covers only `first`
+        # must leave `second` runnable.
+        tool = ToolWithPartialOutputMemory(
+            output_memory={"first": [defaults.text_task_memory("first memory")]},
+            install_dependencies_on_init=False,
+        )
+        action = ToolAction(tag="tool", name="ToolWithPartialOutputMemory", path="second", input={})
+
+        result = tool.run(tool.second, ActionsSubtask(), action)
+
+        assert isinstance(result, InfoArtifact)
+        assert result.value == "second ran"

@@ -184,7 +184,9 @@ class BaseTool(ActivityMixin, SerializableMixin, RunnableMixin["BaseTool"], ABC)
         super().after_run()
 
         if self.output_memory:
-            output_memories = self.output_memory[getattr(activity, "name")] or []  # noqa: B009
+            # A map that covers only some activities leaves the others without output memory, which is
+            # not an error: the validator never asks for an entry per activity.
+            output_memories = self.output_memory.get(getattr(activity, "name")) or []  # noqa: B009
             for memory in output_memories:
                 value = memory.process_output(activity, subtask, value)
 
