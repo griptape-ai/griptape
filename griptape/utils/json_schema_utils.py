@@ -3,7 +3,6 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any
 
-
 RECURSIVE_SCHEMA_ERROR_PREFIX = (
     "Recursive JSON schema: definition refers to itself, directly or through another definition, so its "
     "$ref cannot be resolved:"
