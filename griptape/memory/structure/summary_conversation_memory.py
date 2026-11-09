@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from attrs import Factory, define, field
 
@@ -105,6 +105,12 @@ class SummaryConversationMemory(BaseConversationMemory):
             logging.exception("Error summarizing memory: %s(%s)", type(e).__name__, e)
 
             return previous_summary
+
+    def store_metadata(self) -> dict[str, Any]:
+        # `summary` and `summary_index` are fields, but the driver only persists `meta`, and
+        # `load_runs()` reads both back from it, so they have to be written on every store rather
+        # than once at construction.
+        return self.meta | {"summary": self.summary, "summary_index": self.summary_index}
 
     def load_runs(self) -> list[Run]:
         runs = super().load_runs()

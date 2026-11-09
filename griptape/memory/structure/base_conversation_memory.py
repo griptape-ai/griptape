@@ -45,7 +45,11 @@ class BaseConversationMemory(SerializableMixin, ABC):
         if self.max_runs:
             while len(self.runs) > self.max_runs:
                 self.runs.pop(0)
-        self.conversation_memory_driver.store(self.runs, self.meta)
+        self.conversation_memory_driver.store(self.runs, self.store_metadata())
+
+    def store_metadata(self) -> dict[str, Any]:
+        """Metadata persisted alongside `runs`. Subclasses add what belongs to them."""
+        return self.meta
 
     @abstractmethod
     def try_add_run(self, run: Run) -> None:
