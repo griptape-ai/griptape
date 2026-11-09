@@ -6,9 +6,11 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
 
-def remove_null_values_in_dict_recursively(d: dict) -> dict:
+def remove_null_values_in_dict_recursively(d: Any) -> Any:
     if isinstance(d, dict):
         return {k: remove_null_values_in_dict_recursively(v) for k, v in d.items() if v is not None}
+    if isinstance(d, list):
+        return [remove_null_values_in_dict_recursively(v) for v in d]
     return d
 
 
