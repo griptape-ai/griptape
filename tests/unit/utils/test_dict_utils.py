@@ -95,3 +95,17 @@ class TestDictUtils:
 
         with pytest.raises(KeyError):
             assert dict_merge(a, b, add_keys=False)["b"]["b3"] == 6
+
+
+class TestDictMergeReplacesANonDictValue:
+    def test_string_replaces_a_nested_dict(self):
+        assert dict_merge({"a": {"b": 1}}, {"a": "text"}) == {"a": "text"}
+
+    def test_list_replaces_a_nested_dict(self):
+        assert dict_merge({"a": {"b": 1}}, {"a": [1, 2]}) == {"a": [1, 2]}
+
+    def test_number_replaces_a_nested_dict(self):
+        assert dict_merge({"a": {"b": 1}}, {"a": 5}) == {"a": 5}
+
+    def test_nested_dicts_still_merge(self):
+        assert dict_merge({"a": {"b": 1}}, {"a": {"c": 2}}) == {"a": {"b": 1, "c": 2}}

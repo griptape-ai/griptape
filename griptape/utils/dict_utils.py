@@ -87,7 +87,7 @@ def dict_merge(dct: dict | None, merge_dct: dict | None, *, add_keys: bool = Tru
         merge_dct = {k: merge_dct[k] for k in set(dct).intersection(set(merge_dct))}
 
     for key in merge_dct:
-        if key in dct and isinstance(dct[key], dict):
+        if key in dct and isinstance(dct[key], dict) and isinstance(merge_dct[key], dict):
             dct[key] = dict_merge(dct[key], merge_dct[key], add_keys=add_keys)
         else:
             dct[key] = merge_dct[key]
