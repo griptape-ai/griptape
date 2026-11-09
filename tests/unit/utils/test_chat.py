@@ -129,3 +129,12 @@ class TestConversation:
                     call("Exiting...", stream=False),
                 ]
             )
+
+    @patch("builtins.input", side_effect=["QUIT"])
+    def test_exit_keyword_matches_regardless_of_case(self, mock_input):
+        agent = Agent(conversation_memory=ConversationMemory())
+
+        chat = Chat(agent, exit_keywords=["Quit"], handle_output=logging.info)
+        chat.start()
+
+        mock_input.assert_called_once()

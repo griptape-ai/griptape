@@ -75,7 +75,7 @@ class Chat:
         while True:
             question = self.handle_input(self.prompt_prefix)
 
-            if question.lower() in self.exit_keywords:
+            if question.lower() in {keyword.lower() for keyword in self.exit_keywords}:
                 self._call_handle_output(self.exiting_text)
                 break
 
