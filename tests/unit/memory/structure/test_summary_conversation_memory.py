@@ -7,6 +7,10 @@ from griptape.tasks import PromptTask
 from tests.mocks.mock_prompt_driver import MockPromptDriver
 
 
+def _run(index: int):
+    return Run(input=TextArtifact(f"q{index}"), output=TextArtifact(f"a{index}"))
+
+
 class TestSummaryConversationMemory:
     def test_unsummarized_subtasks(self):
         memory = SummaryConversationMemory(offset=1)
@@ -120,21 +124,21 @@ class TestSummaryConversationMemory:
         memory = SummaryConversationMemory(offset=1, max_runs=3, prompt_driver=MockPromptDriver())
 
         for index in range(1, 6):
-            memory.add_run(Run(input=f"q{index}", output=f"a{index}"))
+            memory.add_run(_run(index))
 
-        assert [run.input for run in memory.runs] == ["q3", "q4", "q5"]
+        assert [run.input.value for run in memory.runs] == ["q3", "q4", "q5"]
         assert memory.summary_index == 2
-        assert [run.input for run in memory.unsummarized_runs()] == ["q5"]
+        assert [run.input.value for run in memory.unsummarized_runs()] == ["q5"]
 
     def test_max_runs_lowered_between_runs_prunes_by_the_whole_batch(self):
         memory = SummaryConversationMemory(offset=1, max_runs=5, prompt_driver=MockPromptDriver())
 
         for index in range(1, 5):
-            memory.add_run(Run(input=f"q{index}", output=f"a{index}"))
+            memory.add_run(_run(index))
 
         memory.max_runs = 1
-        memory.add_run(Run(input="q5", output="a5"))
+        memory.add_run(_run(5))
 
-        assert [run.input for run in memory.runs] == ["q5"]
+        assert [run.input.value for run in memory.runs] == ["q5"]
         assert memory.summary_index == 0
-        assert [run.input for run in memory.unsummarized_runs()] == ["q5"]
+        assert [run.input.value for run in memory.unsummarized_runs()] == ["q5"]
