@@ -177,3 +177,35 @@ class TestConversationMemory:
         assert prompt_stack.messages[2].content[0].artifact.value == "bar2"
         assert prompt_stack.messages[-2].content[0].artifact.value == "foo"
         assert prompt_stack.messages[-1].content[0].artifact.value == "bar"
+
+    def test_load_runs_does_not_duplicate_runs_it_already_has(self, tmp_path):
+        from griptape.artifacts import TextArtifact
+        from griptape.drivers.memory.conversation.local import LocalConversationMemoryDriver
+
+        driver = LocalConversationMemoryDriver(persist_file=str(tmp_path / "memory.json"))
+        writer = ConversationMemory(conversation_memory_driver=driver)
+        for index in (1, 2):
+            writer.add_run(Run(input=TextArtifact(f"q{index}"), output=TextArtifact(f"a{index}")))
+
+        # Building with runs while the driver already holds them must not double them.
+        memory = ConversationMemory(
+            conversation_memory_driver=driver,
+            runs=[Run(input=TextArtifact("q1"), output=TextArtifact("a1"))],
+        )
+        assert [run.input.value for run in memory.runs] == ["q1", "q2"]
+
+        # Loading again is idempotent rather than additive.
+        memory.load_runs()
+        assert [run.input.value for run in memory.runs] == ["q1", "q2"]
+
+    def test_load_runs_keeps_given_runs_when_the_driver_is_empty(self, tmp_path):
+        from griptape.artifacts import TextArtifact
+        from griptape.drivers.memory.conversation.local import LocalConversationMemoryDriver
+
+        driver = LocalConversationMemoryDriver(persist_file=str(tmp_path / "empty.json"))
+        memory = ConversationMemory(
+            conversation_memory_driver=driver,
+            runs=[Run(input=TextArtifact("q1"), output=TextArtifact("a1"))],
+        )
+
+        assert [run.input.value for run in memory.runs] == ["q1"]

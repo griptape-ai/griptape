@@ -57,7 +57,11 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
     def load_runs(self) -> list[Run]:
         runs, meta = self.conversation_memory_driver.load()
-        self.runs.extend(runs)
+        # An instance can already hold runs: they were passed in, or an earlier load (or autoload)
+        # put them there. Loading replaces them rather than appending a second copy, and a driver
+        # with nothing stored leaves the runs the instance was built with alone.
+        if runs:
+            self.runs = list(runs)
         self.meta = dict_merge(self.meta, meta)
 
         return self.runs
