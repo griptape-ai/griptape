@@ -114,3 +114,27 @@ class TestSummaryConversationMemory:
         assert restored_memory.summary_index == 2
         assert restored_memory.meta["summary"] == "test summary"
         assert restored_memory.meta["summary_index"] == 2
+
+    def test_max_runs_keeps_the_summary_index_in_step(self):
+        """Pruning the oldest runs must not hide the runs that follow the summary."""
+        memory = SummaryConversationMemory(offset=1, max_runs=3, prompt_driver=MockPromptDriver())
+
+        for index in range(1, 6):
+            memory.add_run(Run(input=f"q{index}", output=f"a{index}"))
+
+        assert [run.input for run in memory.runs] == ["q3", "q4", "q5"]
+        assert memory.summary_index == 2
+        assert [run.input for run in memory.unsummarized_runs()] == ["q5"]
+
+    def test_max_runs_lowered_between_runs_prunes_by_the_whole_batch(self):
+        memory = SummaryConversationMemory(offset=1, max_runs=5, prompt_driver=MockPromptDriver())
+
+        for index in range(1, 5):
+            memory.add_run(Run(input=f"q{index}", output=f"a{index}"))
+
+        memory.max_runs = 1
+        memory.add_run(Run(input="q5", output="a5"))
+
+        assert [run.input for run in memory.runs] == ["q5"]
+        assert memory.summary_index == 0
+        assert [run.input for run in memory.unsummarized_runs()] == ["q5"]
