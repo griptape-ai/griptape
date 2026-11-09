@@ -43,9 +43,20 @@ class BaseConversationMemory(SerializableMixin, ABC):
 
     def after_add_run(self) -> None:
         if self.max_runs:
+            dropped = 0
             while len(self.runs) > self.max_runs:
                 self.runs.pop(0)
+                dropped += 1
+            if dropped:
+                self.on_runs_pruned(dropped)
         self.conversation_memory_driver.store(self.runs, self.meta)
+
+    def on_runs_pruned(self, dropped: int) -> None:
+        """Adjust anything that tracks a position within ``runs``.
+
+        Args:
+            dropped: Number of runs removed from the start of ``runs``.
+        """
 
     @abstractmethod
     def try_add_run(self, run: Run) -> None:

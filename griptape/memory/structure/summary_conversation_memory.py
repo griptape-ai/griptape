@@ -84,6 +84,13 @@ class SummaryConversationMemory(BaseConversationMemory):
             return summary_index_runs
         return summary_index_runs
 
+    def on_runs_pruned(self, dropped: int) -> None:
+        # `summary_index` counts runs from the start of `runs`, so pruning the oldest runs moves it
+        # back with them; without this the index can point past the end and the unsummarized runs
+        # that follow the summary become unreachable. The clamp only matters when `max_runs` keeps
+        # fewer runs than the summary covers, where `max_runs` is what discards them.
+        self.summary_index = max(0, self.summary_index - dropped)
+
     def try_add_run(self, run: Run) -> None:
         self.runs.append(run)
         unsummarized_runs = self.unsummarized_runs()
