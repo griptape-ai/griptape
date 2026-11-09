@@ -56,10 +56,16 @@ class ActivityMixin:
         methods = []
 
         for name, method in inspect.getmembers(self, predicate=inspect.ismethod):
-            allowlist_condition = self.allowlist is None or name in self.allowlist
-            denylist_condition = self.denylist is None or name not in self.denylist
+            if not getattr(method, "is_activity", False):
+                continue
 
-            if getattr(method, "is_activity", False) and allowlist_condition and denylist_condition:
+            # An activity's `name` config is what the tool schema advertises, and it defaults to the
+            # method name, so a list entry may name either.
+            activity_names = {name, getattr(method, "name", name)}
+            allowlist_condition = self.allowlist is None or not activity_names.isdisjoint(self.allowlist)
+            denylist_condition = self.denylist is None or activity_names.isdisjoint(self.denylist)
+
+            if allowlist_condition and denylist_condition:
                 methods.append(method)
 
         return methods
@@ -127,5 +133,13 @@ class ActivityMixin:
 
         activity = getattr(tool, activity_name, None)
 
-        if not activity or not getattr(activity, "is_activity", False):
-            raise ValueError(f"activity {activity_name} is not a valid activity for {tool}")
+        if activity and getattr(activity, "is_activity", False):
+            return
+
+        declared_names = {
+            getattr(method, "name", None) for method in vars(tool).values() if getattr(method, "is_activity", False)
+        }
+        if activity_name in declared_names:
+            return
+
+        raise ValueError(f"activity {activity_name} is not a valid activity for {tool}")
