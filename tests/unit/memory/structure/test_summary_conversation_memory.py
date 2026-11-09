@@ -1,6 +1,7 @@
 import json
 
 from griptape.artifacts import TextArtifact
+from griptape.drivers.memory.conversation.local import LocalConversationMemoryDriver
 from griptape.memory.structure import Run, SummaryConversationMemory
 from griptape.structures import Pipeline
 from griptape.tasks import PromptTask
@@ -114,3 +115,20 @@ class TestSummaryConversationMemory:
         assert restored_memory.summary_index == 2
         assert restored_memory.meta["summary"] == "test summary"
         assert restored_memory.meta["summary_index"] == 2
+
+    def test_summary_and_index_survive_a_driver_round_trip(self, tmp_path):
+        from griptape.artifacts import TextArtifact
+
+        driver = LocalConversationMemoryDriver(persist_file=str(tmp_path / "memory.json"))
+        memory = SummaryConversationMemory(
+            offset=1, prompt_driver=MockPromptDriver(), conversation_memory_driver=driver
+        )
+        for index in range(1, 4):
+            memory.add_run(Run(input=TextArtifact(f"q{index}"), output=TextArtifact(f"a{index}")))
+
+        assert memory.summary is not None
+        reloaded = SummaryConversationMemory(prompt_driver=MockPromptDriver(), conversation_memory_driver=driver)
+
+        assert reloaded.summary == memory.summary
+        assert reloaded.summary_index == memory.summary_index
+        assert [run.input.value for run in reloaded.unsummarized_runs()] == ["q3"]
