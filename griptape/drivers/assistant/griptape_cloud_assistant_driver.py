@@ -13,6 +13,7 @@ from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.assistant import BaseAssistantDriver
 from griptape.events import BaseEvent, EventBus
+from griptape.utils.deprecation import deprecation_warn
 from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
@@ -47,6 +48,9 @@ class GriptapeCloudAssistantDriver(BaseAssistantDriver):
     poll_interval: int = field(default=1, kw_only=True)
     max_attempts: int = field(default=20, kw_only=True)
     auto_create_thread: bool = field(default=True, kw_only=True)
+
+    def __attrs_post_init__(self) -> None:
+        deprecation_warn("`GriptapeCloudAssistantDriver` is deprecated and will be removed in a future release.")
 
     def try_run(self, *args: BaseArtifact) -> TextArtifact:
         if self.thread_id is None and self.auto_create_thread:

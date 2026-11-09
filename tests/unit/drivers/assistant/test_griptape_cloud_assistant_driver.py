@@ -122,11 +122,16 @@ class TestGriptapeCloudAssistantDriver:
 
     @pytest.fixture()
     def driver(self):
-        return GriptapeCloudAssistantDriver(
-            base_url="https://cloud-foo.griptape.ai",
-            api_key="foo bar",
-            assistant_id="1",
-        )
+        with pytest.deprecated_call():
+            return GriptapeCloudAssistantDriver(
+                base_url="https://cloud-foo.griptape.ai",
+                api_key="foo bar",
+                assistant_id="1",
+            )
+
+    def test_init_warns_deprecated(self):
+        with pytest.warns(DeprecationWarning, match=r"`GriptapeCloudAssistantDriver` is deprecated"):
+            GriptapeCloudAssistantDriver(api_key="foo bar", assistant_id="1")
 
     @pytest.mark.parametrize("thread_id", ["1", None])
     @pytest.mark.parametrize("autocreate_thread", [True, False])
