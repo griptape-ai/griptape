@@ -1,3 +1,4 @@
+import json
 from unittest import mock
 
 import pytest
@@ -70,3 +71,19 @@ class TestAmazonSageMakerJumpstartEmbeddingDriver:
                 ).embed(ImageArtifact(b"foo", format="jpg", width=200, height=200))
                 == []
             )
+
+    def test_embed_extra_params(self, mock_client):
+        mock_client.get().read.return_value = b'{"embedding": [0, 1, 0]}'
+        driver = AmazonSageMakerJumpstartEmbeddingDriver(
+            endpoint="test-endpoint",
+            model="test-model",
+            tokenizer=OpenAiTokenizer(model=OpenAiTokenizer.DEFAULT_OPENAI_GPT_3_CHAT_MODEL),
+            extra_params={"normalize": True},
+        )
+        driver.embed("foobar")
+
+        assert json.loads(driver.client.invoke_endpoint.call_args.kwargs["Body"]) == {
+            "text_inputs": "foobar",
+            "mode": "embedding",
+            "normalize": True,
+        }

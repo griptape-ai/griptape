@@ -39,3 +39,11 @@ class TestGoogleEmbeddingDriver:
     def test_embed(self, value, expected_output, expected_error):
         with expected_error:
             assert GoogleEmbeddingDriver().embed(value) == expected_output
+
+    def test_try_embed_chunk_extra_params(self, mock_client):
+        driver = GoogleEmbeddingDriver(extra_params={"output_dimensionality": 256})
+        driver.try_embed_chunk("foobar")
+
+        config = mock_client.return_value.models.embed_content.call_args.kwargs["config"]
+        assert config.output_dimensionality == 256
+        assert config.task_type == "retrieval_document"

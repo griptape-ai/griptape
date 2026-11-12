@@ -56,4 +56,4 @@ class OpenAiEmbeddingDriver(BaseEmbeddingDriver):
         return self.client.embeddings.create(**self._params(chunk)).data[0].embedding
 
     def _params(self, chunk: str) -> dict:
-        return {"input": chunk, "model": self.model}
+        return {"input": chunk, "model": self.model, **self.extra_params}

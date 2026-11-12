@@ -42,3 +42,10 @@ class TestHuggingFaceHubEmbeddingDriver:
                 HuggingFaceHubEmbeddingDriver(model="embed-english-v3.0", api_token="foo").embed(value)
                 == expected_output
             )
+
+    def test_try_embed_chunk_extra_params(self, mock_client):
+        HuggingFaceHubEmbeddingDriver(
+            model="foo", api_token="foobar", extra_params={"normalize": True}
+        ).try_embed_chunk("foobar")
+
+        mock_client.feature_extraction.assert_called_once_with("foobar", normalize=True)

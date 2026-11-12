@@ -24,10 +24,12 @@ class BaseEmbeddingDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
     Attributes:
         model: The name of the model to use.
         tokenizer: An instance of `BaseTokenizer` to use when calculating tokens.
+        extra_params: Extra parameters to pass to the model's embedding request.
     """
 
     model: str = field(kw_only=True, metadata={"serializable": True})
     tokenizer: BaseTokenizer | None = field(default=None, kw_only=True)
+    extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
     chunker: BaseChunker | None = field(init=False)
 
     def __attrs_post_init__(self) -> None:

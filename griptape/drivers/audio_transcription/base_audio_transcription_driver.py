@@ -15,7 +15,15 @@ if TYPE_CHECKING:
 
 @define
 class BaseAudioTranscriptionDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
+    """Base Audio Transcription Driver.
+
+    Attributes:
+        model: The name of the model to use.
+        extra_params: Extra parameters to pass to the model's transcription request.
+    """
+
     model: str = field(kw_only=True, metadata={"serializable": True})
+    extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def before_run(self) -> None:
         EventBus.publish_event(StartAudioTranscriptionEvent())

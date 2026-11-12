@@ -41,10 +41,11 @@ class GoogleEmbeddingDriver(BaseEmbeddingDriver):
     def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
         types = import_optional_dependency("google.genai.types")
 
+        config_params = {"task_type": self.task_type, "title": self.title, **self.extra_params}
         response = self.client.models.embed_content(
             model=self.model,
             contents=chunk,
-            config=types.EmbedContentConfig(task_type=self.task_type, title=self.title),
+            config=types.EmbedContentConfig(**config_params),
         )
 
         return cast("list[float]", response.embeddings[0].values)  # pyright: ignore[reportOptionalSubscript]
