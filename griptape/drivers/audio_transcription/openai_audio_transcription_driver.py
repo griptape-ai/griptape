@@ -31,19 +31,20 @@ class OpenAiAudioTranscriptionDriver(BaseAudioTranscriptionDriver):
         return openai.OpenAI(api_key=self.api_key, base_url=self.base_url, organization=self.organization)
 
     def try_run(self, audio: AudioArtifact, prompts: list[str] | None = None) -> TextArtifact:
-        additional_params = {}
-
-        if prompts is not None:
-            additional_params["prompt"] = ", ".join(prompts)
-
-        transcription = self.client.audio.transcriptions.create(
+        params: dict = {
+            "model": self.model,
             # Even though we're not actually providing a file to the client, the API still requires that we send a file
             # name. We set the file name to use the same format as the audio file so that the API can reject
             # it if the format is unsupported.
-            model=self.model,
-            file=(f"a.{audio.format}", io.BytesIO(audio.value)),
-            response_format="json",
-            **additional_params,
-        )
+            "file": (f"a.{audio.format}", io.BytesIO(audio.value)),
+            "response_format": "json",
+        }
+
+        if prompts is not None:
+            params["prompt"] = ", ".join(prompts)
+
+        params.update(self.extra_params)
+
+        transcription = self.client.audio.transcriptions.create(**params)
 
         return TextArtifact(value=transcription.text)

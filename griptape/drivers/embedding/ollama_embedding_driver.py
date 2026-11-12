@@ -38,4 +38,6 @@ class OllamaEmbeddingDriver(BaseEmbeddingDriver):
         return import_optional_dependency("ollama").Client(**client_kwargs)
 
     def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
-        return list(self.client.embeddings(model=self.model, prompt=chunk)["embedding"])
+        params = {"model": self.model, "prompt": chunk, **self.extra_params}
+
+        return list(self.client.embeddings(**params)["embedding"])

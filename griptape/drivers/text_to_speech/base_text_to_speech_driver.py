@@ -17,7 +17,15 @@ if TYPE_CHECKING:
 
 @define
 class BaseTextToSpeechDriver(SerializableMixin, ExponentialBackoffMixin, ABC):
+    """Base Text to Speech Driver.
+
+    Attributes:
+        model: The name of the model to use.
+        extra_params: Extra parameters to pass to the model's text to speech request.
+    """
+
     model: str = field(kw_only=True, metadata={"serializable": True})
+    extra_params: dict = field(factory=dict, kw_only=True, metadata={"serializable": True})
 
     def before_run(self, prompts: list[str]) -> None:
         EventBus.publish_event(StartTextToSpeechEvent(prompts=prompts))

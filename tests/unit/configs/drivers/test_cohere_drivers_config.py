@@ -16,8 +16,8 @@ class TestCohereDriversConfig:
                 "type": "LocalConversationMemoryDriver",
                 "persist_file": None,
             },
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver", "extra_params": {}},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver", "extra_params": {}},
             "prompt_driver": {
                 "type": "CoherePromptDriver",
                 "temperature": 0.1,
@@ -30,6 +30,7 @@ class TestCohereDriversConfig:
                 "extra_params": {},
             },
             "embedding_driver": {
+                "extra_params": {},
                 "type": "CohereEmbeddingDriver",
                 "model": "embed-english-v3.0",
                 "input_type": "search_document",
@@ -37,6 +38,7 @@ class TestCohereDriversConfig:
             "vector_store_driver": {
                 "type": "LocalVectorStoreDriver",
                 "embedding_driver": {
+                    "extra_params": {},
                     "type": "CohereEmbeddingDriver",
                     "model": "embed-english-v3.0",
                     "input_type": "search_document",

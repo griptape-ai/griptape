@@ -47,6 +47,7 @@ class TestAzureOpenAiDriversConfig:
                 "persist_file": None,
             },
             "embedding_driver": {
+                "extra_params": {},
                 "base_url": None,
                 "model": "text-embedding-3-small",
                 "api_version": "2024-10-21",
@@ -74,6 +75,7 @@ class TestAzureOpenAiDriversConfig:
             },
             "vector_store_driver": {
                 "embedding_driver": {
+                    "extra_params": {},
                     "base_url": None,
                     "model": "text-embedding-3-small",
                     "api_version": "2024-10-21",
@@ -85,6 +87,7 @@ class TestAzureOpenAiDriversConfig:
                 "type": "LocalVectorStoreDriver",
             },
             "text_to_speech_driver": {
+                "extra_params": {},
                 "base_url": None,
                 "format": "mp3",
                 "model": "tts",
@@ -95,7 +98,7 @@ class TestAzureOpenAiDriversConfig:
                 "type": "AzureOpenAiTextToSpeechDriver",
                 "voice": "alloy",
             },
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver", "extra_params": {}},
             "ruleset_driver": {
                 "type": "LocalRulesetDriver",
                 "raise_not_found": True,

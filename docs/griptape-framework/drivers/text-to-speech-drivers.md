@@ -62,3 +62,14 @@ The [Azure OpenAI Text to Speech Driver](../../reference/griptape/drivers/text_t
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/text_to_speech_drivers_3.txt"
     ```
+
+## Extra Parameters
+
+Every Text to Speech Driver accepts an `extra_params` dictionary that is merged into the request sent to the model provider.
+Use it to set provider-specific options that the Driver does not expose as fields, such as the speech speed:
+
+```python
+OpenAiTextToSpeechDriver(model="tts-1", extra_params={"speed": 1.25})
+```
+
+Values in `extra_params` take precedence over the parameters set by the Driver.

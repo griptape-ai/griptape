@@ -44,3 +44,13 @@ class TestVoyageAiEmbeddingDriver:
     def test_embed(self, value, expected_output, expected_error):
         with expected_error:
             assert VoyageAiEmbeddingDriver().embed(value) == expected_output
+
+    def test_embed_extra_params(self, mock_client):
+        driver = VoyageAiEmbeddingDriver(api_key="bar", extra_params={"truncation": False})
+        driver.embed("foobar")
+        driver.embed(ImageArtifact(b"foobar", format="jpeg", width=1, height=1))
+
+        mock_client.return_value.embed.assert_called_once_with(
+            texts=["foobar"], model=driver.model, input_type="document", truncation=False
+        )
+        assert mock_client.return_value.multimodal_embed.call_args.kwargs["truncation"] is False

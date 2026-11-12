@@ -24,3 +24,14 @@ The [OpenAI Audio Transcription Driver](../../reference/griptape/drivers/audio_t
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/audio_transcription_drivers_1.txt"
     ```
+
+## Extra Parameters
+
+Every Audio Transcription Driver accepts an `extra_params` dictionary that is merged into the request sent to the model provider.
+Use it to set provider-specific options that the Driver does not expose as fields, such as the input language:
+
+```python
+OpenAiAudioTranscriptionDriver(model="whisper-1", extra_params={"language": "en"})
+```
+
+Values in `extra_params` take precedence over the parameters set by the Driver.

@@ -60,7 +60,7 @@ class AmazonBedrockTitanEmbeddingDriver(BaseEmbeddingDriver):
 
     def _invoke_model(self, payload: dict) -> dict[str, Any]:
         response = self.client.invoke_model(
-            body=json.dumps(payload),
+            body=json.dumps({**payload, **self.extra_params}),
             modelId=self.model,
             accept="application/json",
             contentType="application/json",

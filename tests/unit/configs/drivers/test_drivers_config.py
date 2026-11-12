@@ -25,14 +25,14 @@ class TestDriversConfig:
                 "type": "LocalConversationMemoryDriver",
                 "persist_file": None,
             },
-            "embedding_driver": {"type": "DummyEmbeddingDriver"},
+            "embedding_driver": {"type": "DummyEmbeddingDriver", "extra_params": {}},
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "vector_store_driver": {
-                "embedding_driver": {"type": "DummyEmbeddingDriver"},
+                "embedding_driver": {"type": "DummyEmbeddingDriver", "extra_params": {}},
                 "type": "DummyVectorStoreDriver",
             },
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver", "extra_params": {}},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver", "extra_params": {}},
             "ruleset_driver": {
                 "type": "LocalRulesetDriver",
                 "raise_not_found": True,

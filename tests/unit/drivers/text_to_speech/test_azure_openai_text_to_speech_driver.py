@@ -31,3 +31,15 @@ class TestAzureOpenAiTextToSpeechDriver:
             voice=driver.voice,
         )
         assert output.value == b"speech"
+
+    def test_run_text_to_audio_extra_params(self, mock_speech_create):
+        driver = AzureOpenAiTextToSpeechDriver(azure_endpoint="foobar", extra_params={"speed": 1.5})
+        driver.run_text_to_audio(["foo", "bar"])
+
+        mock_speech_create.assert_called_once_with(
+            input="foo. bar",
+            model=driver.model,
+            response_format=driver.format,
+            voice=driver.voice,
+            speed=1.5,
+        )
