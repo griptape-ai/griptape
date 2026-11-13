@@ -39,7 +39,12 @@ class TestGriptapeCloudVectorStoreDriver:
         mock_response.json.return_value = test_entries
         mocker.patch("requests.post", return_value=mock_response)
 
-        return GriptapeCloudVectorStoreDriver(api_key="foo bar", knowledge_base_id="1")
+        with pytest.deprecated_call():
+            return GriptapeCloudVectorStoreDriver(api_key="foo bar", knowledge_base_id="1")
+
+    def test_init_warns_deprecated(self):
+        with pytest.warns(DeprecationWarning, match=r"`GriptapeCloudVectorStoreDriver` is deprecated"):
+            GriptapeCloudVectorStoreDriver(api_key="foo bar", knowledge_base_id="1")
 
     def test_query_vector(self, driver):
         with pytest.raises(NotImplementedError):
