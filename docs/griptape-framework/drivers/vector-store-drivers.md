@@ -56,22 +56,6 @@ The [LocalVectorStoreDriver](../../reference/griptape/drivers/vector/local_vecto
     --8<-- "docs/griptape-framework/drivers/logs/vector_store_drivers_1.txt"
     ```
 
-### Griptape Cloud Knowledge Base
-
-The [GriptapeCloudVectorStoreDriver](../../reference/griptape/drivers/vector/griptape_cloud_vector_store_driver.md) can be used to query data from a Griptape Cloud Knowledge Base. Loading into Knowledge Bases is not supported at this time, only querying. Here is a complete example of how the Driver can be used to query an existing Knowledge Base:
-
-=== "Code"
-
-    ```python
-    --8<-- "docs/griptape-framework/drivers/src/vector_store_drivers_2.py"
-    ```
-
-=== "Logs"
-
-    ```text
-    --8<-- "docs/griptape-framework/drivers/logs/vector_store_drivers_2.txt"
-    ```
-
 ### Pinecone
 
 !!! info

@@ -27,7 +27,3 @@ export GT_CLOUD_API_KEY=<your API key here>
 export KNOWLEDGE_BASE_ID=<your knowledge base id here>
 curl -H "Authorization: Bearer ${GT_CLOUD_API_KEY}" --json '{"query": "test question"}' "https://cloud.griptape.ai/api/knowledge-bases/${KNOWLEDGE_BASE_ID}/query"
 ```
-
-## Using the Griptape Framework
-
-You can use the [GriptapeCloudVectorStoreDriver](../../griptape-framework/drivers/vector-store-drivers.md/#griptape-cloud-knowledge-base) to query your Knowledge Base with Griptape.

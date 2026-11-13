@@ -9,6 +9,7 @@ from attrs import Factory, define, field
 from griptape.artifacts.image_artifact import ImageArtifact
 from griptape.drivers.embedding.dummy import DummyEmbeddingDriver
 from griptape.drivers.vector import BaseVectorStoreDriver
+from griptape.utils.deprecation import deprecation_warn
 from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
@@ -42,6 +43,9 @@ class GriptapeCloudVectorStoreDriver(BaseVectorStoreDriver):
         kw_only=True,
         init=False,
     )
+
+    def __attrs_post_init__(self) -> None:
+        deprecation_warn("`GriptapeCloudVectorStoreDriver` is deprecated and will be removed in a future release.")
 
     def upsert_vector(
         self,
