@@ -24,8 +24,8 @@ class RedisConversationMemoryDriver(BaseConversationMemoryDriver):
     Proper setup of the Redis instance and RediSearch is necessary for the driver to function correctly.
 
     Attributes:
-        host: The host of the Redis instance.
-        port: The port of the Redis instance.
+        host: The host of the Redis instance. Required unless client is provided.
+        port: The port of the Redis instance. Required unless client is provided.
         db: The database of the Redis instance.
         username: The username of the Redis instance.
         password: The password of the Redis instance.
@@ -33,9 +33,9 @@ class RedisConversationMemoryDriver(BaseConversationMemoryDriver):
         conversation_id: The id of the conversation.
     """
 
-    host: str = field(kw_only=True, metadata={"serializable": True})
+    host: str | None = field(kw_only=True, default=None, metadata={"serializable": True})
     username: str = field(kw_only=True, default="default", metadata={"serializable": False})
-    port: int = field(kw_only=True, metadata={"serializable": True})
+    port: int | None = field(kw_only=True, default=None, metadata={"serializable": True})
     db: int = field(kw_only=True, default=0, metadata={"serializable": True})
     password: str | None = field(default=None, kw_only=True, metadata={"serializable": False})
     index: str = field(kw_only=True, metadata={"serializable": True})
@@ -43,17 +43,23 @@ class RedisConversationMemoryDriver(BaseConversationMemoryDriver):
 
     client: Redis = field(
         default=Factory(
-            lambda self: import_optional_dependency("redis").Redis(
-                host=self.host,
-                port=self.port,
-                db=self.db,
-                username=self.username,
-                password=self.password,
-                decode_responses=False,
-            ),
+            lambda self: self._create_client(),
             takes_self=True,
         ),
     )
+
+    def _create_client(self) -> Redis:
+        if self.host is None or self.port is None:
+            raise ValueError("host and port are required when client is not provided")
+
+        return import_optional_dependency("redis").Redis(
+            host=self.host,
+            port=self.port,
+            db=self.db,
+            username=self.username,
+            password=self.password,
+            decode_responses=False,
+        )
 
     def store(self, runs: list[Run], metadata: dict[str, Any]) -> None:
         self.client.hset(self.index, self.conversation_id, json.dumps(self._to_params_dict(runs, metadata)))
