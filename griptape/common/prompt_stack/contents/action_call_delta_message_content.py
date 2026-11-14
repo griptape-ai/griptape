@@ -11,6 +11,7 @@ class ActionCallDeltaMessageContent(BaseDeltaMessageContent):
     name: str | None = field(default=None, metadata={"serializable": True})
     path: str | None = field(default=None, metadata={"serializable": True})
     partial_input: str | None = field(default=None, metadata={"serializable": True})
+    thought_signature: bytes | None = field(default=None)
 
     def __str__(self) -> str:
         parts = []

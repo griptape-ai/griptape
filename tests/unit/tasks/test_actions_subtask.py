@@ -7,7 +7,7 @@ from pydantic import create_model
 from griptape.artifacts import ActionArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.error_artifact import ErrorArtifact
 from griptape.artifacts.json_artifact import JsonArtifact
-from griptape.common import ToolAction
+from griptape.common import PromptStack, ToolAction
 from griptape.structures import Agent
 from griptape.tasks import ActionsSubtask, PromptTask, ToolkitTask
 from tests.mocks.mock_tool.tool import MockTool
@@ -53,6 +53,27 @@ class TestActionsSubtask:
         assert json_dict[0]["input"] == {"test": "value"}
         assert subtask.thought == "need to test"
         assert subtask.output is None
+
+    def test_thought_signature_is_kept_in_prompt_stack(self):
+        valid_input = ListArtifact(
+            [
+                ActionArtifact(
+                    ToolAction(
+                        tag="foo", name="MockTool", path="test", input={"test": "value"}, thought_signature=b"sig"
+                    )
+                ),
+            ],
+        )
+        task = PromptTask(tools=[MockTool()])
+        task.prompt_driver.use_native_tools = True
+        Agent().add_task(task)
+        subtask = task.add_subtask(ActionsSubtask(valid_input))
+        stack = PromptStack()
+
+        subtask.add_to_prompt_stack(stack)
+
+        assert subtask.actions[0].thought_signature == b"sig"
+        assert stack.messages[0].content[0].artifact.value.thought_signature == b"sig"
 
     def test_artifact_action_and_thought_input(self):
         valid_input = ListArtifact(

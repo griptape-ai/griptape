@@ -24,6 +24,7 @@ class ActionCallMessageContent(BaseMessageContent):
         name = None
         path = None
         json_input = ""
+        thought_signature = None
 
         for delta in action_call_deltas:
             if delta.tag is not None:
@@ -34,13 +35,21 @@ class ActionCallMessageContent(BaseMessageContent):
                 path = delta.path
             if delta.partial_input is not None:
                 json_input += delta.partial_input
+            if delta.thought_signature is not None:
+                thought_signature = delta.thought_signature
 
         if tag is not None and name is not None and path is not None:
             try:
                 parsed_input = json.loads(json_input or "{}")
             except json.JSONDecodeError as exc:
                 raise ValueError("Invalid JSON input for ToolAction") from exc
-            action = ToolAction(tag=tag, name=name, path=path, input=parsed_input)
+            action = ToolAction(
+                tag=tag,
+                name=name,
+                path=path,
+                input=parsed_input,
+                thought_signature=thought_signature,
+            )
         else:
             raise ValueError("Missing required fields for ToolAction")
 
