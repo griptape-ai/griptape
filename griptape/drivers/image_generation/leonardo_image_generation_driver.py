@@ -9,11 +9,14 @@ from attrs import Factory, define, field
 
 from griptape.artifacts import ImageArtifact
 from griptape.drivers.image_generation import BaseImageGenerationDriver
+from griptape.utils import get_mime_type
 
 
 @define
 class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
     """Driver for the Leonardo image generation API.
+
+    Preserves downloaded image bytes and detects their native format without transcoding.
 
     Details on Leonardo image generation parameters can be found here:
     https://docs.leonardo.ai/reference/creategeneration
@@ -55,16 +58,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         image_url = self._get_image_url(generation_id=generation_id)
         image_data = self._download_image(url=image_url)
 
-        return ImageArtifact(
-            value=image_data,
-            format="png",
-            width=self.image_width,
-            height=self.image_height,
-            meta={
-                "model": self.model,
-                "prompt": ", ".join(prompts),
-            },
-        )
+        return self._create_image_artifact(image_data, prompts)
 
     def try_image_variation(
         self,
@@ -84,16 +78,7 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
         image_url = self._get_image_url(generation_id=generation_id)
         image_data = self._download_image(url=image_url)
 
-        return ImageArtifact(
-            value=image_data,
-            format="png",
-            width=self.image_width,
-            height=self.image_height,
-            meta={
-                "model": self.model,
-                "prompt": ", ".join(prompts),
-            },
-        )
+        return self._create_image_artifact(image_data, prompts)
 
     def try_image_outpainting(
         self,
@@ -196,5 +181,22 @@ class LeonardoImageGenerationDriver(BaseImageGenerationDriver):
 
     def _download_image(self, url: str) -> bytes:
         response = self.requests_session.get(url=url, headers={"Authorization": f"Bearer {self.api_key}"})
+        response.raise_for_status()
 
         return response.content
+
+    def _create_image_artifact(self, image_data: bytes, prompts: list[str]) -> ImageArtifact:
+        mime_type = get_mime_type(image_data)
+        if not mime_type.startswith("image/"):
+            raise ValueError("Leonardo image download did not contain a recognized image")
+
+        return ImageArtifact(
+            value=image_data,
+            format=mime_type.split("/", 1)[1],
+            width=self.image_width,
+            height=self.image_height,
+            meta={
+                "model": self.model,
+                "prompt": ", ".join(prompts),
+            },
+        )
