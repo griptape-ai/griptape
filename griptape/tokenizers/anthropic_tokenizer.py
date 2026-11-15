@@ -15,6 +15,10 @@ if TYPE_CHECKING:
 @define()
 class AnthropicTokenizer(BaseTokenizer):
     MODEL_PREFIXES_TO_MAX_INPUT_TOKENS = {
+        "claude-opus-5": 200000,
+        "claude-sonnet-5": 200000,
+        "claude-haiku-5": 200000,
+        "claude-fable-5": 200000,
         "claude-opus-4": 200000,
         "claude-sonnet-4": 200000,
         "claude-haiku-4": 200000,
@@ -23,6 +27,10 @@ class AnthropicTokenizer(BaseTokenizer):
         "claude": 100000,
     }
     MODEL_PREFIXES_TO_MAX_OUTPUT_TOKENS = {
+        "claude-opus-5": 16384,
+        "claude-sonnet-5": 16384,
+        "claude-haiku-5": 16384,
+        "claude-fable-5": 16384,
         "claude-opus-4": 16384,
         "claude-sonnet-4": 16384,
         "claude-haiku-4": 16384,

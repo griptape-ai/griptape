@@ -38,6 +38,10 @@ class TestAmazonBedrockTokenizer:
             ("anthropic.claude-opus-4-1-20250805-v1:0", 199996),
             ("us.anthropic.claude-sonnet-4-5-20250929-v1:0", 199996),
             ("eu.anthropic.claude-opus-4-5-20251101-v1:0", 199996),
+            ("anthropic.claude-opus-5-5", 199996),
+            ("us.anthropic.claude-sonnet-5", 199996),
+            ("global.anthropic.claude-haiku-5-5", 199996),
+            ("us.anthropic.claude-fable-5-2", 199996),
         ],
         indirect=["tokenizer"],
     )
@@ -56,6 +60,10 @@ class TestAmazonBedrockTokenizer:
             ("anthropic.claude-opus-4-1-20250805-v1:0", 16380),
             ("us.anthropic.claude-sonnet-4-5-20250929-v1:0", 16380),
             ("eu.anthropic.claude-opus-4-5-20251101-v1:0", 16380),
+            ("anthropic.claude-opus-5-5", 16380),
+            ("us.anthropic.claude-sonnet-5", 16380),
+            ("global.anthropic.claude-haiku-5-5", 16380),
+            ("us.anthropic.claude-fable-5-2", 16380),
         ],
         indirect=["tokenizer"],
     )
