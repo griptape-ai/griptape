@@ -330,8 +330,13 @@ class TestGriptapeCloudToolTool:
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = TextArtifact("foo").to_dict()
 
+    def test_init_warns_deprecated(self):
+        with pytest.warns(DeprecationWarning, match=r"`GriptapeCloudToolTool` is deprecated"):
+            GriptapeCloudToolTool(tool_id="tool_id")
+
     def test_init(self):
-        tool = GriptapeCloudToolTool(tool_id="tool_id")
+        with pytest.deprecated_call():
+            tool = GriptapeCloudToolTool(tool_id="tool_id")
 
         # Define expected activity details for each method
         expected_activities = {
@@ -415,26 +420,31 @@ class TestGriptapeCloudToolTool:
             assert activity.is_activity is True
 
     def test_multiple_init(self, mock_schema):
-        tool_1 = GriptapeCloudToolTool(tool_id="tool_id_1")
+        with pytest.deprecated_call():
+            tool_1 = GriptapeCloudToolTool(tool_id="tool_id_1")
         mock_schema["paths"]["/activities/processString"]["post"]["description"] = "new description"
-        tool_2 = GriptapeCloudToolTool(tool_id="tool_id_2")
+        with pytest.deprecated_call():
+            tool_2 = GriptapeCloudToolTool(tool_id="tool_id_2")
 
         assert tool_1.processString != tool_2.processString
         assert tool_1.processString.config["description"] == "Processes a string input"
         assert tool_2.processString.config["description"] == "new description"
 
     def test_run_activity(self):
-        tool = GriptapeCloudToolTool(tool_id="tool_id")
+        with pytest.deprecated_call():
+            tool = GriptapeCloudToolTool(tool_id="tool_id")
         response = tool.processString({"text": "foo"})  # pyright: ignore[reportAttributeAccessIssue]
 
         assert response.value == "foo"
 
     def test_name(self):
-        tool = GriptapeCloudToolTool(tool_id="tool_id")
+        with pytest.deprecated_call():
+            tool = GriptapeCloudToolTool(tool_id="tool_id")
 
         assert tool.name == "DataProcessor"
 
-        tool = GriptapeCloudToolTool(tool_id="tool_id", name="CustomName")
+        with pytest.deprecated_call():
+            tool = GriptapeCloudToolTool(tool_id="tool_id", name="CustomName")
 
         assert tool.name == "CustomName"
 
@@ -443,7 +453,7 @@ class TestGriptapeCloudToolTool:
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = BAD_SCHEMA
 
-        with pytest.raises(RuntimeError):
+        with pytest.deprecated_call(), pytest.raises(RuntimeError):
             GriptapeCloudToolTool(tool_id="tool_id")
 
     def test_error_schema(self, mocker):
@@ -451,7 +461,7 @@ class TestGriptapeCloudToolTool:
         mock_get.return_value.status_code = 200
         mock_get.return_value.json.return_value = ERROR_SCHEMA
 
-        with pytest.raises(RuntimeError):
+        with pytest.deprecated_call(), pytest.raises(RuntimeError):
             GriptapeCloudToolTool(tool_id="tool_id")
 
     def test_bad_artifact(self, mocker):
@@ -460,7 +470,8 @@ class TestGriptapeCloudToolTool:
         return_value = {"type": "FooBarArtifact", "value": "foo"}
         mock_get.return_value.json.return_value = return_value
         mock_get.return_value.text = json.dumps(return_value)
-        tool = GriptapeCloudToolTool(tool_id="tool_id")
+        with pytest.deprecated_call():
+            tool = GriptapeCloudToolTool(tool_id="tool_id")
 
         result = tool.processString({"text": 1})
         assert isinstance(result, TextArtifact)

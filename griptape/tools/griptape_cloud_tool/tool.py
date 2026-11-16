@@ -12,6 +12,7 @@ from schema import Optional as SchemaOptional
 from griptape.artifacts import BaseArtifact, TextArtifact
 from griptape.tools.base_griptape_cloud_tool import BaseGriptapeCloudTool
 from griptape.utils.decorators import activity
+from griptape.utils.deprecation import deprecation_warn
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -28,6 +29,7 @@ class GriptapeCloudToolTool(BaseGriptapeCloudTool):
     tool_id: str = field(kw_only=True)
 
     def __attrs_post_init__(self) -> None:
+        deprecation_warn("`GriptapeCloudToolTool` is deprecated and will be removed in a future release.")
         self._init_activities()
 
     def _init_activities(self) -> None:
