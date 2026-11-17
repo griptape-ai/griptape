@@ -119,8 +119,6 @@ nav:
           - Structure Config YAML: "griptape-cloud/structures/structure-config.md"
           - Running Your Structure: "griptape-cloud/structures/run-structure.md"
           - Structure Run Events: "griptape-cloud/structures/structure-run-events.md"
-      - Rules:
-          - Create a Ruleset: "griptape-cloud/rules/rulesets.md"
       - Cloud API:
           - API Reference: "griptape-cloud/api/api-reference.md"
   - Framework:

@@ -16,11 +16,3 @@ The [LocalRulesetDriver](../../reference/griptape/drivers/ruleset/local_ruleset_
 ```python
 --8<-- "docs/griptape-framework/drivers/src/local_ruleset_driver.py"
 ```
-
-### Griptape Cloud
-
-The [GriptapeCloudRulesetDriver](../../reference/griptape/drivers/ruleset/griptape_cloud_ruleset_driver.md) allows you to load a Griptape Cloud Ruleset resource. `Ruleset.name` is used to try and find a Griptape Cloud Ruleset with that alias.
-
-```python
---8<-- "docs/griptape-framework/drivers/src/griptape_cloud_ruleset_driver.py"
-```

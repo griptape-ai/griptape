@@ -61,7 +61,12 @@ class TestGriptapeCloudRulesetDriver:
 
     @pytest.fixture()
     def ruleset_driver(self):
-        return GriptapeCloudRulesetDriver(api_key="test", raise_not_found=False)
+        with pytest.deprecated_call():
+            return GriptapeCloudRulesetDriver(api_key="test", raise_not_found=False)
+
+    def test_init_warns_deprecated(self):
+        with pytest.warns(DeprecationWarning, match=r"`GriptapeCloudRulesetDriver` is deprecated"):
+            GriptapeCloudRulesetDriver(api_key="test")
 
     def test_no_api_key_raises(self):
         with pytest.raises(ValueError):
