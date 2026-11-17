@@ -12,7 +12,7 @@ Have Griptape code? Have existing code with another LLM framework? You can host 
 
 ## Store Configuration for LLM Agents
 
-[Rules and Rulesets](rules/rulesets.md) enable rapid and collabortive iteration for managing LLM behavior. [Threads and Messages](threads/threads.md) allow for persisted and editable conversation memory across any LLM invocation.
+[Rules and Rulesets](rules/rulesets.md) enable rapid and collabortive iteration for managing LLM behavior.
 
 ## APIs
 

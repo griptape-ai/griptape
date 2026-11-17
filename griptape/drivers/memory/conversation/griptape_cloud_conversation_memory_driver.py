@@ -10,6 +10,7 @@ from attrs import Attribute, Factory, define, field
 from griptape.artifacts import BaseArtifact
 from griptape.drivers.memory.conversation import BaseConversationMemoryDriver
 from griptape.utils import dict_merge
+from griptape.utils.deprecation import deprecation_warn
 from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
@@ -50,6 +51,11 @@ class GriptapeCloudConversationMemoryDriver(BaseConversationMemoryDriver):
         init=False,
     )
     _thread: dict | None = field(default=None, init=False)
+
+    def __attrs_post_init__(self) -> None:
+        deprecation_warn(
+            "`GriptapeCloudConversationMemoryDriver` is deprecated and will be removed in a future release."
+        )
 
     @api_key.validator  # pyright: ignore[reportAttributeAccessIssue]
     def validate_api_key(self, _: Attribute, value: str | None) -> str:
