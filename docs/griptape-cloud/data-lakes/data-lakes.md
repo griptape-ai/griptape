@@ -1,10 +1,10 @@
 # Data Lakes
 
-Data Lakes provide a cloud storage solution integrated into Griptape Cloud. Comprised of Bucket and Asset resources, Data Lakes can be accessed using Griptape with the [GriptapeCloudFileManagerDriver](https://github.com/griptape-ai/griptape/blob/main/griptape/drivers/file_manager/griptape_cloud_file_manager_driver.py). In Griptape Cloud, Data Lakes can be used as a [Data Source type](../data-sources/create-data-source.md#griptape-cloud-data-lake).
+Data Lakes provide a cloud storage solution integrated into Griptape Cloud. Comprised of Bucket and Asset resources, Data Lakes can be accessed using Griptape with the [GriptapeCloudFileManagerDriver](https://github.com/griptape-ai/griptape/blob/main/griptape/drivers/file_manager/griptape_cloud_file_manager_driver.py).
 
 ## Buckets
 
-You can [create a Bucket in the Griptape Cloud console](https://cloud.griptape.ai/data-sources/create) by specifying the required configuration for your chosen Data Source in the cloud console.
+You can [create a Bucket in the Griptape Cloud console](https://cloud.griptape.ai/buckets/create).
 
 ## Assets
 
