@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.10, <4"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -1406,6 +1406,7 @@ wheels = [
 name = "griptape"
 version = "1.13.0"
 source = { editable = "." }
+default-groups = ["dev", "docs", "test"]
 dependencies = [
     { name = "attrs" },
     { name = "filetype" },
@@ -2128,15 +2129,6 @@ wheels = [
 ]
 
 [[package]]
-name = "ipaddress"
-version = "1.0.23"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/b9/9a/3e9da40ea28b8210dd6504d3fe9fe7e013b62bf45902b458d1cdc3c34ed9/ipaddress-1.0.23.tar.gz", hash = "sha256:b7f8e0369580bb4a24d5ba1d7cc29660a4a6987763faf1d8a8046830e020e7e2", size = 32958, upload-time = "2019-10-18T01:30:24.58Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c2/f8/49697181b1651d8347d24c095ce46c7346c37335ddc7d255833e7cde674d/ipaddress-1.0.23-py2.py3-none-any.whl", hash = "sha256:6e0f4a39e66cb5bb9a137b00276a2eff74f93b71dcbdad6f10ff7df9d3557fcc", size = 18159, upload-time = "2019-10-18T01:30:27.002Z" },
-]
-
-[[package]]
 name = "jaraco-classes"
 version = "3.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -2468,15 +2460,11 @@ wheels = [
 
 [[package]]
 name = "mail-parser"
-version = "4.1.2"
+version = "4.6.3"
 source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "ipaddress" },
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/cb/d7/f1a78ace3f44d61d763c94b32d8a101f0d2b76a2e274c7e1f55bd91a1657/mail_parser-4.1.2.tar.gz", hash = "sha256:35e3568b84361a3caba0f86b3a27a5756cebbd07e458fd91ab793c45f8a09160", size = 26948, upload-time = "2024-11-11T21:40:51.459Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/da/37/4fe3355cfee767234fc57cd62a48ef15829d8cd8e14c7c3412e4f1f16908/mail_parser-4.6.3.tar.gz", hash = "sha256:9b89d91d741ba4688fd4ac0f5071f2b0e238683cf9e94dec407fe3eba0c42698", size = 2898823, upload-time = "2026-08-19T22:09:14.671Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e8/b1/7dffb0bb284339f542f9890b45c3accedc634aec898a84915f8eea7c776d/mail_parser-4.1.2-py3-none-any.whl", hash = "sha256:a6267daa42b9a2dd18a667aacb4891d662a50503c78749089d5f09ebf2a31d2b", size = 27002, upload-time = "2024-11-11T21:40:50.363Z" },
+    { url = "https://files.pythonhosted.org/packages/05/b2/db246a5f5e430e05ab358501cd34cfe2b422951a2738daf6054f4c2af885/mail_parser-4.6.3-py3-none-any.whl", hash = "sha256:abfcba25955332c72d81c06aaf32107744fd70e610a6e50899efada542712afa", size = 50027, upload-time = "2026-08-19T22:09:13.196Z" },
 ]
 
 [[package]]
