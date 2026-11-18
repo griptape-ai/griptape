@@ -10,10 +10,6 @@ Connect to your data with [Data Sources](data-sources/what-are-data-sources.md),
 
 Have Griptape code? Have existing code with another LLM framework? You can host your Python code using [Structures](structures/create-structure.md) whether it uses the Griptape Framework or not.
 
-## Store Configuration for LLM Agents
-
-[Rules and Rulesets](rules/rulesets.md) enable rapid and collabortive iteration for managing LLM behavior.
-
 ## APIs
 
 All of our features can be called via API with a [Griptape Cloud API Key](https://cloud.griptape.ai/configuration/api-keys). See the [API Reference](api/api-reference.md) for detailed information.

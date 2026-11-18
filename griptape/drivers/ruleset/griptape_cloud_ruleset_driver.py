@@ -8,6 +8,7 @@ from attrs import Attribute, Factory, define, field
 
 from griptape.drivers.ruleset import BaseRulesetDriver
 from griptape.utils import dict_merge
+from griptape.utils.deprecation import deprecation_warn
 from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
@@ -43,6 +44,9 @@ class GriptapeCloudRulesetDriver(BaseRulesetDriver):
         default=Factory(lambda self: {"Authorization": f"Bearer {self.api_key}"}, takes_self=True),
         init=False,
     )
+
+    def __attrs_post_init__(self) -> None:
+        deprecation_warn("`GriptapeCloudRulesetDriver` is deprecated and will be removed in a future release.")
 
     @api_key.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_api_key(self, _: Attribute, value: str | None) -> str:
