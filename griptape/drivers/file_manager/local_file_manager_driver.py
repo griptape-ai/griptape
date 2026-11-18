@@ -49,11 +49,19 @@ class LocalFileManagerDriver(BaseFileManagerDriver):
         return full_path
 
     def _full_path(self, path: str) -> str:
-        full_path = path if os.path.isabs(path) else os.path.join(self.workdir, path.lstrip("/"))
-        # Need to keep the trailing slash if it was there,
-        # because it means the path is a directory.
+        # Always join with workdir; stripping a leading '/' prevents os.path.join
+        # from discarding the workdir when the caller supplies an absolute path.
+        full_path = os.path.join(self.workdir, path.lstrip("/"))
+        # Preserve trailing separator — it signals a directory vs. a file.
         ended_with_sep = path.endswith("/")
         full_path = os.path.normpath(full_path)
+        # Enforce workdir boundary: reject absolute-path bypasses and '../' escapes.
+        workdir_real = os.path.realpath(self.workdir)
+        full_path_real = os.path.realpath(full_path)
+        if not (full_path_real == workdir_real or full_path_real.startswith(workdir_real + os.sep)):
+            raise ValueError(
+                f"Path {path!r} resolves outside the working directory {self.workdir!r}"
+            )
         if ended_with_sep:
             full_path = full_path.rstrip("/") + "/"
         return full_path
