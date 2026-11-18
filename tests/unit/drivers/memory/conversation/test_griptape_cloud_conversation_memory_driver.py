@@ -82,26 +82,34 @@ class TestGriptapeCloudConversationMemoryDriver:
 
     @pytest.fixture()
     def driver(self):
-        return GriptapeCloudConversationMemoryDriver(api_key="test", thread_id="test")
+        with pytest.deprecated_call():
+            return GriptapeCloudConversationMemoryDriver(api_key="test", thread_id="test")
+
+    def test_init_warns_deprecated(self):
+        with pytest.warns(DeprecationWarning, match=r"`GriptapeCloudConversationMemoryDriver` is deprecated"):
+            GriptapeCloudConversationMemoryDriver(api_key="test", thread_id="test")
 
     def test_no_api_key(self):
         with pytest.raises(ValueError):
             GriptapeCloudConversationMemoryDriver(api_key=None, thread_id="test")
 
     def test_thread_id(self):
-        driver = GriptapeCloudConversationMemoryDriver(api_key="test")
+        with pytest.deprecated_call():
+            driver = GriptapeCloudConversationMemoryDriver(api_key="test")
         assert driver.thread_id is None
         assert driver.thread.get("thread_id") == "test"
         assert driver.thread_id == "test"
         os.environ["GT_CLOUD_THREAD_ID"] = "test_env"
-        driver = GriptapeCloudConversationMemoryDriver(api_key="test")
+        with pytest.deprecated_call():
+            driver = GriptapeCloudConversationMemoryDriver(api_key="test")
         assert driver.thread_id is None
         assert driver.thread.get("thread_id") == "test_env"
         assert driver.thread_id == "test_env"
         os.environ.pop("GT_CLOUD_THREAD_ID")
 
     def test_thread_alias(self):
-        driver = GriptapeCloudConversationMemoryDriver(api_key="test", alias="test")
+        with pytest.deprecated_call():
+            driver = GriptapeCloudConversationMemoryDriver(api_key="test", alias="test")
         assert driver.thread_id is None
         assert driver.thread.get("thread_id") == "test"
         assert driver.thread_id == "test"
