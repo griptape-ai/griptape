@@ -1,3 +1,5 @@
+import json
+
 import pytest
 import redis
 
@@ -37,6 +39,50 @@ class TestRedisConversationMemoryDriver:
     def test_store(self, driver):
         memory = BaseConversationMemory.from_json(TEST_MEMORY)
         assert driver.store(memory.runs, memory.meta) is None
+
+    @pytest.mark.parametrize("connection_params", [{}, {"host": HOST}, {"port": PORT}, {"host": HOST, "port": PORT}])
+    def test_injected_client(self, mocker, connection_params):
+        client = mocker.MagicMock(spec=redis.Redis)
+        client.hget.return_value = TEST_DATA
+        constructor = mocker.patch.object(redis, "Redis")
+        driver = RedisConversationMemoryDriver(
+            client=client, index=INDEX, conversation_id=CONVERSATION_ID, **connection_params
+        )
+
+        assert driver.client is client
+        constructor.assert_not_called()
+        runs, metadata = driver.load()
+        client.hget.assert_called_once_with(INDEX, CONVERSATION_ID)
+        assert len(runs) == 1
+        assert metadata == {"foo": "bar"}
+        driver.store(runs, metadata)
+        client.hset.assert_called_once()
+        index, conversation_id, stored_json = client.hset.call_args.args
+        assert (index, conversation_id) == (INDEX, CONVERSATION_ID)
+        stored = json.loads(stored_json)
+        assert stored["metadata"] == metadata
+        assert stored["runs"][0]["input"]["value"] == "Hi There, Hello"
+        assert stored["runs"][0]["output"]["value"] == "Hello! How can I assist you today?"
+
+    def test_create_client(self, mocker):
+        constructor = mocker.patch.object(redis, "Redis")
+        driver = RedisConversationMemoryDriver(
+            host=HOST, port=PORT, username=USERNAME, password=PASSWORD, db=1, index=INDEX
+        )
+
+        assert driver.client is constructor.return_value
+        constructor.assert_called_once_with(
+            host=HOST, port=PORT, username=USERNAME, password=PASSWORD, db=1, decode_responses=False
+        )
+
+    @pytest.mark.parametrize("connection_params", [{}, {"host": HOST}, {"port": PORT}])
+    def test_missing_connection_parameters(self, mocker, connection_params):
+        constructor = mocker.patch.object(redis, "Redis")
+
+        with pytest.raises(ValueError, match="host and port are required when client is not provided"):
+            RedisConversationMemoryDriver(index=INDEX, **connection_params)
+
+        constructor.assert_not_called()
 
     def test_load(self, driver):
         runs, metadata = driver.load()
