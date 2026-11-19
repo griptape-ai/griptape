@@ -109,8 +109,10 @@ class AnthropicPromptDriver(BasePromptDriver):
 
         logger.debug(response.model_dump())
 
+        message_contents = [self.__to_prompt_stack_message_content(content) for content in response.content]
+
         return Message(
-            content=[self.__to_prompt_stack_message_content(content) for content in response.content],
+            content=[content for content in message_contents if content is not None],
             role=Message.ASSISTANT_ROLE,
             usage=Message.Usage(input_tokens=response.usage.input_tokens, output_tokens=response.usage.output_tokens),
         )
@@ -249,7 +251,14 @@ class AnthropicPromptDriver(BasePromptDriver):
             return {"type": "text", "text": artifact.to_text()}
         raise ValueError(f"Unsupported tool result artifact type: {type(artifact)}")
 
-    def __to_prompt_stack_message_content(self, content: ContentBlock) -> BaseMessageContent:
+    def __to_prompt_stack_message_content(self, content: ContentBlock) -> BaseMessageContent | None:
+        """Convert an Anthropic content block to message content, or None when it carries none.
+
+        `thinking` and `redacted_thinking` blocks hold the model's reasoning, which newer Claude models
+        can return even when no `thinking` parameter is sent. They are skipped.
+        """
+        if content.type in ("thinking", "redacted_thinking"):
+            return None
         if content.type == "text":
             return TextMessageContent(TextArtifact(content.text))
         if content.type == "tool_use":
@@ -265,9 +274,17 @@ class AnthropicPromptDriver(BasePromptDriver):
     def __to_prompt_stack_delta_message_content(
         self,
         event: ContentBlockDeltaEvent | ContentBlockStartEvent,
-    ) -> BaseDeltaMessageContent:
+    ) -> BaseDeltaMessageContent | None:
+        """Convert an Anthropic stream event to delta content, or None when it carries none.
+
+        Reasoning blocks (`thinking`, `redacted_thinking`) and their deltas (`thinking_delta`,
+        `signature_delta`) return None, which `BasePromptDriver` skips.
+        """
         if event.type == "content_block_start":
             content_block = event.content_block
+
+            if content_block.type in ("thinking", "redacted_thinking"):
+                return None
 
             if content_block.type == "tool_use":
                 name, path = ToolAction.from_native_tool_name(content_block.name)
@@ -279,6 +296,8 @@ class AnthropicPromptDriver(BasePromptDriver):
         if event.type == "content_block_delta":
             content_block_delta = event.delta
 
+            if content_block_delta.type in ("thinking_delta", "signature_delta"):
+                return None
             if content_block_delta.type == "text_delta":
                 return TextDeltaMessageContent(content_block_delta.text, index=event.index)
             if content_block_delta.type == "input_json_delta":
