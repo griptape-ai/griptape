@@ -49,7 +49,6 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     meta_memory: MetaMemory = field(default=Factory(MetaMemory), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _execution_args: tuple = ()
-    _event_queue: Queue[BaseEvent] = field(default=Factory(Queue), init=False)
 
     def __attrs_post_init__(self) -> None:
         tasks = self._tasks.copy()
@@ -214,17 +213,30 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         elif FinishStructureRunEvent not in event_types:
             event_types = [*event_types, FinishStructureRunEvent]
 
-        with EventListener(self._event_queue.put, event_types=event_types):
-            t = Thread(target=with_contextvars(self.run), args=args)
+        event_queue: Queue[BaseEvent | None] = Queue()
+        worker_error: BaseException | None = None
+
+        def run() -> None:
+            nonlocal worker_error
+            try:
+                self.run(*args)
+            except BaseException as error:
+                worker_error = error
+            finally:
+                event_queue.put(None)
+
+        with EventListener(event_queue.put, event_types=event_types):
+            t = Thread(target=with_contextvars(run))
             t.start()
 
             while True:
-                event = self._event_queue.get()
-                if isinstance(event, FinishStructureRunEvent) and event.structure_id == self.id:
+                event = event_queue.get()
+                if event is None or (isinstance(event, FinishStructureRunEvent) and event.structure_id == self.id):
                     break
-                else:
-                    yield event
+                yield event
             t.join()
+            if worker_error is not None:
+                raise worker_error
 
     @abstractmethod
     def try_run(self, *args) -> Structure:
