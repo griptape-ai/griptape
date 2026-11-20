@@ -41,11 +41,13 @@ class OpenAiTextToSpeechDriver(BaseTextToSpeechDriver):
         )
 
     def try_text_to_audio(self, prompts: list[str]) -> AudioArtifact:
-        response = self.client.audio.speech.create(
-            input=". ".join(prompts),
-            voice=self.voice,
-            model=self.model,
-            response_format=self.format,
-        )
+        params = {
+            "input": ". ".join(prompts),
+            "voice": self.voice,
+            "model": self.model,
+            "response_format": self.format,
+            **self.extra_params,
+        }
+        response = self.client.audio.speech.create(**params)
 
         return AudioArtifact(value=response.content, format=self.format)

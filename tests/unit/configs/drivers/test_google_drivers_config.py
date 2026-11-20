@@ -30,6 +30,7 @@ class TestGoogleDriversConfig:
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "embedding_driver": {
+                "extra_params": {},
                 "type": "GoogleEmbeddingDriver",
                 "model": "models/embedding-004",
                 "task_type": "retrieval_document",
@@ -38,6 +39,7 @@ class TestGoogleDriversConfig:
             "vector_store_driver": {
                 "type": "LocalVectorStoreDriver",
                 "embedding_driver": {
+                    "extra_params": {},
                     "type": "GoogleEmbeddingDriver",
                     "model": "models/embedding-004",
                     "task_type": "retrieval_document",
@@ -48,8 +50,8 @@ class TestGoogleDriversConfig:
                 "type": "LocalConversationMemoryDriver",
                 "persist_file": None,
             },
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver", "extra_params": {}},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver", "extra_params": {}},
             "ruleset_driver": {
                 "type": "LocalRulesetDriver",
                 "raise_not_found": True,

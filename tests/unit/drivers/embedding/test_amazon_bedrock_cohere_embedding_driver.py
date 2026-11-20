@@ -1,3 +1,4 @@
+import json
 from contextlib import nullcontext
 from unittest import mock
 
@@ -48,3 +49,13 @@ class TestAmazonBedrockCohereEmbeddingDriver:
     def test_embed(self, value, expected_output, expected_error):
         with expected_error:
             assert AmazonBedrockCohereEmbeddingDriver().embed(value) == expected_output
+
+    def test_try_embed_chunk_extra_params(self):
+        driver = AmazonBedrockCohereEmbeddingDriver(extra_params={"truncate": "END"})
+        driver.try_embed_chunk("foobar")
+
+        assert json.loads(driver.client.invoke_model.call_args.kwargs["body"]) == {
+            "input_type": "search_query",
+            "texts": ["foobar"],
+            "truncate": "END",
+        }

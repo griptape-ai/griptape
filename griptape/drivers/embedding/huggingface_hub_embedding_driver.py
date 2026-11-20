@@ -35,6 +35,6 @@ class HuggingFaceHubEmbeddingDriver(BaseEmbeddingDriver):
         )
 
     def try_embed_chunk(self, chunk: str, **kwargs) -> list[float]:
-        response = self.client.feature_extraction(chunk)
+        response = self.client.feature_extraction(chunk, **self.extra_params)
 
         return [float(val) for val in response.flatten().tolist()]

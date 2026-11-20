@@ -16,8 +16,10 @@ class NvidiaNimEmbeddingDriver(OpenAiEmbeddingDriver):
         if vector_operation not in get_args(VectorOperation):
             raise ValueError(f"invalid value for vector_operation, must be one of {get_args(VectorOperation)}")
 
-        extra_body = {
+        params = self._params(chunk)
+        params["extra_body"] = {
             "input_type": "query" if vector_operation == "query" else "passage",
+            **params.get("extra_body", {}),
         }
 
-        return self.client.embeddings.create(**self._params(chunk), extra_body=extra_body).data[0].embedding
+        return self.client.embeddings.create(**params).data[0].embedding

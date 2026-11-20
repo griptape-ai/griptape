@@ -205,3 +205,14 @@ Here is how you can override the Embedding Driver that is used by default in Str
     ```text
     --8<-- "docs/griptape-framework/drivers/logs/embedding_drivers_10.txt"
     ```
+
+## Extra Parameters
+
+Every Embedding Driver accepts an `extra_params` dictionary that is merged into the request sent to the model provider.
+Use it to set provider-specific options that the Driver does not expose as fields, such as the output dimensions:
+
+```python
+OpenAiEmbeddingDriver(model="text-embedding-3-small", extra_params={"dimensions": 256})
+```
+
+Values in `extra_params` take precedence over the parameters set by the Driver.

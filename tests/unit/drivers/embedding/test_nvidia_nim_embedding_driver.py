@@ -61,3 +61,11 @@ class TestNvidiaNimEmbeddingDriver:
         driver.embed("foobar", vector_operation="upsert")
         assert mock_openai.call_args.kwargs["input"] == "foobar"
         assert mock_openai.call_args.kwargs["extra_body"]["input_type"] == "passage"
+
+    def test_embed_extra_params(self, mock_openai):
+        driver = NvidiaNimEmbeddingDriver(extra_params={"encoding_format": "float", "extra_body": {"truncate": "END"}})
+        driver.embed("foobar", vector_operation="query")
+
+        assert mock_openai.call_args.kwargs["encoding_format"] == "float"
+        assert mock_openai.call_args.kwargs["extra_body"] == {"input_type": "query", "truncate": "END"}
+        assert driver.extra_params == {"encoding_format": "float", "extra_body": {"truncate": "END"}}

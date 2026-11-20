@@ -39,6 +39,7 @@ class TestOpenAiDriversConfig:
                 "persist_file": None,
             },
             "embedding_driver": {
+                "extra_params": {},
                 "base_url": None,
                 "model": "text-embedding-3-small",
                 "organization": None,
@@ -61,6 +62,7 @@ class TestOpenAiDriversConfig:
             },
             "vector_store_driver": {
                 "embedding_driver": {
+                    "extra_params": {},
                     "base_url": None,
                     "model": "text-embedding-3-small",
                     "organization": None,
@@ -69,6 +71,7 @@ class TestOpenAiDriversConfig:
                 "type": "LocalVectorStoreDriver",
             },
             "text_to_speech_driver": {
+                "extra_params": {},
                 "type": "OpenAiTextToSpeechDriver",
                 "api_version": None,
                 "base_url": None,
@@ -78,6 +81,7 @@ class TestOpenAiDriversConfig:
                 "voice": "alloy",
             },
             "audio_transcription_driver": {
+                "extra_params": {},
                 "type": "OpenAiAudioTranscriptionDriver",
                 "api_version": None,
                 "base_url": None,

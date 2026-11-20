@@ -48,3 +48,9 @@ class TestAzureOpenAiEmbeddingDriver:
     def test_embed(self, value, expected_output, expected_error):
         with expected_error:
             assert AzureOpenAiEmbeddingDriver(azure_endpoint="foo").embed(value) == expected_output
+
+    def test_try_embed_chunk_extra_params(self, mock_openai):
+        driver = AzureOpenAiEmbeddingDriver(azure_endpoint="foobar", extra_params={"dimensions": 256})
+        driver.try_embed_chunk("foobar")
+
+        assert mock_openai.call_args.kwargs["dimensions"] == 256

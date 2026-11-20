@@ -20,3 +20,23 @@ class TestElevenLabsTextToSpeechDriver:
 
         assert audio_artifact.value == b"audio data"
         assert audio_artifact.format == "mp3"
+
+    def test_try_text_to_audio_extra_params(self):
+        driver = ElevenLabsTextToSpeechDriver(
+            model="model",
+            client=Mock(),
+            voice="voice",
+            api_key="key",
+            extra_params={"optimize_streaming_latency": 3},
+        )
+        driver.client.generate.return_value = [b"audio data"]
+
+        driver.try_text_to_audio(prompts=["foo", "bar"])
+
+        driver.client.generate.assert_called_once_with(
+            text="foo. bar",
+            voice="voice",
+            model="model",
+            output_format="mp3_44100_128",
+            optimize_streaming_latency=3,
+        )
