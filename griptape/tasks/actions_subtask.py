@@ -202,7 +202,13 @@ class ActionsSubtask(BaseSubtask[ListArtifact | ErrorArtifact]):
 
         if isinstance(self.origin_task, PromptTask) and self.origin_task.prompt_driver.use_native_tools:
             action_calls = [
-                ToolAction(name=action.name, path=action.path, tag=action.tag, input=action.input)
+                ToolAction(
+                    name=action.name,
+                    path=action.path,
+                    tag=action.tag,
+                    input=action.input,
+                    thought_signature=action.thought_signature,
+                )
                 for action in self.actions
             ]
             action_results = [
@@ -300,7 +306,7 @@ class ActionsSubtask(BaseSubtask[ListArtifact | ErrorArtifact]):
             return
 
         self.actions = [
-            self.__process_action_object(artifact.value.to_dict())
+            self.__process_action_object(artifact.value.to_dict(), artifact.value.thought_signature)
             for artifact in artifact.value
             if isinstance(artifact, ActionArtifact)
         ]
@@ -328,7 +334,7 @@ class ActionsSubtask(BaseSubtask[ListArtifact | ErrorArtifact]):
 
             return []
 
-    def __process_action_object(self, action_object: dict) -> ToolAction:
+    def __process_action_object(self, action_object: dict, thought_signature: bytes | None = None) -> ToolAction:
         # Load action tag; throw exception if the key is not present
         action_tag = action_object["tag"]
 
@@ -354,7 +360,14 @@ class ActionsSubtask(BaseSubtask[ListArtifact | ErrorArtifact]):
         else:
             raise Exception("ActionSubtask must be attached to a Task that implements ActionSubtaskOriginMixin.")
 
-        action = ToolAction(tag=action_tag, name=action_name, path=action_path, input=action_input, tool=tool)
+        action = ToolAction(
+            tag=action_tag,
+            name=action_name,
+            path=action_path,
+            input=action_input,
+            tool=tool,
+            thought_signature=thought_signature,
+        )
 
         self.__validate_action(action)
 

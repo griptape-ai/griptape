@@ -14,7 +14,13 @@ from schema import Schema
 
 from griptape.artifacts import ActionArtifact, GenericArtifact, ImageArtifact, TextArtifact
 from griptape.artifacts.list_artifact import ListArtifact
-from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.common import (
+    ActionCallDeltaMessageContent,
+    ActionCallMessageContent,
+    PromptStack,
+    TextDeltaMessageContent,
+    ToolAction,
+)
 from griptape.drivers.prompt.google import GooglePromptDriver
 from tests.mocks.mock_tool.tool import MockTool
 
@@ -345,3 +351,59 @@ class TestGooglePromptDriver:
         assert events[0].content is None
         assert isinstance(events[1].content, TextDeltaMessageContent)
         assert events[1].content.text == "model-output"
+
+    def test_try_run_function_call_thought_signature_round_trip(self, mocker):
+        """Gemini 3 requires the `thought_signature` of a function call to be sent back unchanged."""
+        # Given
+        mock_client = mocker.patch("google.genai.Client")
+        part = Part(
+            function_call=FunctionCall(name="MockTool_test", args={"foo": "bar"}),
+            thought_signature=b"sig-bytes",
+        )
+        mock_client.return_value.models.generate_content.return_value = Mock(
+            candidates=[MagicMock(content=MagicMock(parts=[part]))],
+            usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=10),
+        )
+        driver = GooglePromptDriver(model="gemini-3.6-flash", api_key="api-key")
+
+        # When
+        message = driver.try_run(PromptStack())
+        stack = PromptStack()
+        stack.add_assistant_message(ListArtifact([message.content[0].artifact]))
+        driver.try_run(stack)
+        sent = mock_client.return_value.models.generate_content.call_args.kwargs["contents"]
+
+        # Then
+        assert message.content[0].artifact.value.thought_signature == b"sig-bytes"
+        assert sent[0].parts[0].function_call.name == "MockTool_test"
+        assert sent[0].parts[0].thought_signature == b"sig-bytes"
+
+    def test_try_stream_function_call_thought_signature(self, mocker):
+        # Given
+        mock_client = mocker.patch("google.genai.Client")
+        part = Part(
+            function_call=FunctionCall(name="MockTool_test", args={"foo": "bar"}),
+            thought_signature=b"sig-bytes",
+        )
+        mock_client.return_value.models.generate_content_stream.return_value = iter(
+            [
+                MagicMock(
+                    candidates=[MagicMock(content=MagicMock(parts=[part]))],
+                    usage_metadata=MagicMock(prompt_token_count=5, candidates_token_count=5),
+                )
+            ]
+        )
+        driver = GooglePromptDriver(model="gemini-3.6-flash", api_key="api-key", stream=True)
+
+        # When
+        events = list(driver.try_stream(PromptStack()))
+        deltas = [event.content for event in events if isinstance(event.content, ActionCallDeltaMessageContent)]
+        action = ActionCallMessageContent.from_deltas(deltas).artifact.value
+
+        # Then
+        assert action.thought_signature == b"sig-bytes"
+
+    def test_thought_signature_not_serialized(self):
+        action = ToolAction(tag="MockTool_test", name="MockTool", path="test", thought_signature=b"sig-bytes")
+
+        assert "thought_signature" not in action.to_dict()
