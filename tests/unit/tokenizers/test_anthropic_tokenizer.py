@@ -48,6 +48,10 @@ class TestAnthropicTokenizer:
             ("claude-opus-4-6", 199995),
             ("claude-sonnet-4-6", 199995),
             ("claude-haiku-4-5", 199995),
+            ("claude-opus-5-5", 199995),
+            ("claude-sonnet-5", 199995),
+            ("claude-haiku-5-5", 199995),
+            ("claude-fable-5-2", 199995),
         ],
         indirect=["tokenizer"],
     )
@@ -65,6 +69,10 @@ class TestAnthropicTokenizer:
             ("claude-opus-4-6", 16379),
             ("claude-sonnet-4-6", 16379),
             ("claude-haiku-4-5", 16379),
+            ("claude-opus-5-5", 16379),
+            ("claude-sonnet-5", 16379),
+            ("claude-haiku-5-5", 16379),
+            ("claude-fable-5-2", 16379),
         ],
         indirect=["tokenizer"],
     )
