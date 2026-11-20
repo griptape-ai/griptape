@@ -12,9 +12,10 @@ from tests.utils.expected_spans import ExpectedSpan, ExpectedSpans
 class TestGriptapeCloudObservabilityDriver:
     @pytest.fixture()
     def driver(self):
-        return GriptapeCloudObservabilityDriver(
-            base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
-        )
+        with pytest.deprecated_call():
+            return GriptapeCloudObservabilityDriver(
+                base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
+            )
 
     @pytest.fixture(autouse=True)
     def mock_span_exporter_class(self, mocker):
@@ -26,10 +27,17 @@ class TestGriptapeCloudObservabilityDriver:
     def mock_span_exporter(self, mock_span_exporter_class):
         return mock_span_exporter_class.return_value
 
+    def test_init_warns_deprecated(self):
+        with pytest.warns(DeprecationWarning, match=r"`GriptapeCloudObservabilityDriver` is deprecated"):
+            GriptapeCloudObservabilityDriver(
+                base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
+            )
+
     def test_init(self, mock_span_exporter_class, mock_span_exporter):
-        GriptapeCloudObservabilityDriver(
-            base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
-        )
+        with pytest.deprecated_call():
+            GriptapeCloudObservabilityDriver(
+                base_url="http://base-url:1234", api_key="api-key", structure_run_id="structure-run-id"
+            )
 
         assert mock_span_exporter_class.call_count == 1
         mock_span_exporter_class.assert_called_once_with(

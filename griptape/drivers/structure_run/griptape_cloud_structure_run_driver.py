@@ -11,6 +11,7 @@ from griptape.artifacts import BaseArtifact, ErrorArtifact, InfoArtifact
 from griptape.configs.defaults_config import Defaults
 from griptape.drivers.structure_run import BaseStructureRunDriver
 from griptape.events import BaseEvent, EventBus
+from griptape.utils.deprecation import deprecation_warn
 from griptape.utils.griptape_cloud import griptape_cloud_url
 
 if TYPE_CHECKING:
@@ -31,6 +32,9 @@ class GriptapeCloudStructureRunDriver(BaseStructureRunDriver):
     structure_run_wait_time_interval: int = field(default=2, kw_only=True)
     structure_run_max_wait_time_attempts: int = field(default=20, kw_only=True)
     async_run: bool = field(default=False, kw_only=True)
+
+    def __attrs_post_init__(self) -> None:
+        deprecation_warn("`GriptapeCloudStructureRunDriver` is deprecated and will be removed in a future release.")
 
     def try_run(self, *args: BaseArtifact) -> BaseArtifact | InfoArtifact:
         structure_run_id = self._create_run(*args)

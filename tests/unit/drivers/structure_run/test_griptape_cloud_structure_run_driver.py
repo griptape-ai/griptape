@@ -90,13 +90,18 @@ class TestGriptapeCloudStructureRunDriver:
 
     @pytest.fixture()
     def driver(self):
-        return GriptapeCloudStructureRunDriver(
-            base_url="https://cloud-foo.griptape.ai",
-            api_key="foo bar",
-            structure_id="1",
-            env={"key": "value"},
-            structure_run_wait_time_interval=0,
-        )
+        with pytest.deprecated_call():
+            return GriptapeCloudStructureRunDriver(
+                base_url="https://cloud-foo.griptape.ai",
+                api_key="foo bar",
+                structure_id="1",
+                env={"key": "value"},
+                structure_run_wait_time_interval=0,
+            )
+
+    def test_init_warns_deprecated(self):
+        with pytest.warns(DeprecationWarning, match=r"`GriptapeCloudStructureRunDriver` is deprecated"):
+            GriptapeCloudStructureRunDriver(api_key="foo bar", structure_id="1")
 
     def test_run(self, driver):
         mock_on_event = Mock()

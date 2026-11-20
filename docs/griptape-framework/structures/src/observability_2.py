@@ -1,7 +1,9 @@
 import time
 
+from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
+
 from griptape.common import observable
-from griptape.drivers.observability.griptape_cloud import GriptapeCloudObservabilityDriver
+from griptape.drivers.observability.open_telemetry import OpenTelemetryObservabilityDriver
 from griptape.observability import Observability
 
 
@@ -20,7 +22,9 @@ class MyClass:
         time.sleep(2)
 
 
-observability_driver = GriptapeCloudObservabilityDriver()
+observability_driver = OpenTelemetryObservabilityDriver(
+    service_name="my-app", span_processor=BatchSpanProcessor(ConsoleSpanExporter())
+)
 
 # When invoking the instrumented code from within the Observability context manager, the
 # telemetry for the custom code will be sent to the destination specified by the driver.

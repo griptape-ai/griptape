@@ -1,10 +1,12 @@
+import os
+
 from griptape.artifacts import TextArtifact
-from griptape.drivers.event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
+from griptape.drivers.event_listener.webhook import WebhookEventListenerDriver
 from griptape.events import FinishStructureRunEvent
 
-# By default, GriptapeCloudEventListenerDriver uses the api key provided
-# in the GT_CLOUD_API_KEY environment variable.
-event_driver = GriptapeCloudEventListenerDriver()
+event_driver = WebhookEventListenerDriver(
+    webhook_url=os.environ["WEBHOOK_URL"],
+)
 
 done_event = FinishStructureRunEvent(
     output_task_input=TextArtifact("Just started!"),

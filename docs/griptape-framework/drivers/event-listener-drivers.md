@@ -71,26 +71,6 @@ The [AwsIotCoreEventListenerDriver](../../reference/griptape/drivers/event_liste
     --8<-- "docs/griptape-framework/drivers/logs/event_listener_drivers_4.txt"
     ```
 
-### Griptape Cloud
-
-The [GriptapeCloudEventListenerDriver](../../reference/griptape/drivers/event_listener/griptape_cloud_event_listener_driver.md) sends Events to [Griptape Cloud](https://www.griptape.ai/cloud).
-
-!!! note
-
-    This Driver is required when using the Griptape Cloud Managed Structures feature. For local development, you can use the [Skatepark Emulator](https://github.com/griptape-ai/griptape-cli?tab=readme-ov-file#skatepark-emulator).
-
-=== "Code"
-
-    ```python
-    --8<-- "docs/griptape-framework/drivers/src/event_listener_drivers_5.py"
-    ```
-
-=== "Logs"
-
-    ```text
-    --8<-- "docs/griptape-framework/drivers/logs/event_listener_drivers_5.txt"
-    ```
-
 ### Webhook Event Listener Driver
 
 The [WebhookEventListenerDriver](../../reference/griptape/drivers/event_listener/webhook_event_listener_driver.md) sends Events to any [Webhook](https://en.wikipedia.org/wiki/Webhook) URL.

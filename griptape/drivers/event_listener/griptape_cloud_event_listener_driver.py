@@ -8,6 +8,7 @@ from attrs import Attribute, Factory, define, field
 
 from griptape.drivers.event_listener.base_event_listener_driver import BaseEventListenerDriver
 from griptape.events.base_event import BaseEvent
+from griptape.utils.deprecation import deprecation_warn
 from griptape.utils.griptape_cloud import griptape_cloud_url
 
 
@@ -32,6 +33,9 @@ class GriptapeCloudEventListenerDriver(BaseEventListenerDriver):
         kw_only=True,
     )
     structure_run_id: str | None = field(default=Factory(lambda: os.getenv("GT_CLOUD_STRUCTURE_RUN_ID")), kw_only=True)
+
+    def __attrs_post_init__(self) -> None:
+        deprecation_warn("`GriptapeCloudEventListenerDriver` is deprecated and will be removed in a future release.")
 
     @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_run_id(self, _: Attribute, structure_run_id: str | None) -> None:

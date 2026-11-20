@@ -18,6 +18,7 @@ from griptape.artifacts import (
 )
 from griptape.events import EventBus, EventListener, FinishStructureRunEvent
 from griptape.utils.decorators import lazy_property
+from griptape.utils.deprecation import deprecation_warn
 
 P = ParamSpec("P")
 T = TypeVar("T")
@@ -48,6 +49,9 @@ class GriptapeCloudStructure:
     _observability: Observability | None = field(default=None, kw_only=True, alias="observability")
     observe: bool = field(default=False, kw_only=True)
     _output: BaseArtifact | None = field(default=None, init=False)
+
+    def __attrs_post_init__(self) -> None:
+        deprecation_warn("`GriptapeCloudStructure` is deprecated and will be removed in a future release.")
 
     @lazy_property()
     def event_listener(self) -> EventListener:
