@@ -13,25 +13,6 @@ Observability Drivers are used by [Observability](../structures/observability.md
 
 ## Observability Drivers
 
-### Griptape Cloud
-
-!!! info
-
-    This driver requires the `drivers-observability-griptape-cloud` [extra](../index.md#extras).
-
-The Griptape Cloud Observability Driver instruments `@observable` functions and methods with metrics and traces for use with the Griptape Cloud.
-
-!!! note
-
-    For the Griptape Cloud Observability Driver to function as intended, it must be run from within either a Managed Structure on Griptape Cloud
-    or locally via the [Skatepark Emulator](https://github.com/griptape-ai/griptape-cli?tab=readme-ov-file#skatepark-emulator).
-
-Here is an example of how to use the `GriptapeCloudObservabilityDriver` with the `Observability` context manager to send the telemetry to Griptape Cloud:
-
-```python
---8<-- "docs/griptape-framework/drivers/src/observability_drivers_1.py"
-```
-
 ### OpenTelemetry
 
 !!! info

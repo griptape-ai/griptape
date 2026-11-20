@@ -31,13 +31,20 @@ class TestGriptapeCloudEventListenerDriver:
             original_environ[key] = os.environ.get(key)
             os.environ[key] = value
 
-        yield GriptapeCloudEventListenerDriver()
+        with pytest.deprecated_call():
+            driver = GriptapeCloudEventListenerDriver()
+
+        yield driver
 
         for key, value in original_environ.items():
             if value is None:
                 del os.environ[key]
             else:
                 os.environ[key] = value
+
+    def test_init_warns_deprecated(self):
+        with pytest.warns(DeprecationWarning, match=r"`GriptapeCloudEventListenerDriver` is deprecated"):
+            GriptapeCloudEventListenerDriver(api_key="foo bar", structure_run_id="bar baz")
 
     def test_init(self, driver):
         assert driver

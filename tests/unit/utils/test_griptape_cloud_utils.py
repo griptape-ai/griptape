@@ -26,7 +26,7 @@ class TestGriptapeCloudUtils:
 
     @pytest.mark.parametrize("observe", [True, False])
     def test_context_manager(self, observe):
-        with GriptapeCloudStructure(observe=observe) as context:
+        with pytest.deprecated_call(), GriptapeCloudStructure(observe=observe) as context:
             assert context.in_managed_environment
 
             assert len(EventBus.event_listeners) == 1
@@ -40,20 +40,29 @@ class TestGriptapeCloudUtils:
         assert len(EventBus.event_listeners) == 0
         assert Observability.get_global_driver() is None
 
+    def test_init_warns_deprecated(self):
+        with pytest.warns(DeprecationWarning, match=r"`GriptapeCloudStructure` is deprecated"):
+            GriptapeCloudStructure()
+
     def test_in_managed_environment(self):
-        context = GriptapeCloudStructure()
+        with pytest.deprecated_call():
+            context = GriptapeCloudStructure()
 
         assert context.in_managed_environment
 
     def test_structure_run_id(self):
-        context = GriptapeCloudStructure()
+        with pytest.deprecated_call():
+            context = GriptapeCloudStructure()
 
         assert context.structure_run_id == "bar"
 
     def test_output(self):
-        with GriptapeCloudStructure(
-            event_listener=EventListener(event_listener_driver=MockEventListenerDriver())
-        ) as context:
+        with (
+            pytest.deprecated_call(),
+            GriptapeCloudStructure(
+                event_listener=EventListener(event_listener_driver=MockEventListenerDriver())
+            ) as context,
+        ):
             context.output = "foo"
             assert isinstance(context.output, TextArtifact)
             assert context.output.value == "foo"

@@ -8,6 +8,7 @@ import requests
 from attrs import Attribute, Factory, define, field
 
 from griptape.drivers.observability.open_telemetry_observability_driver import OpenTelemetryObservabilityDriver
+from griptape.utils.deprecation import deprecation_warn
 from griptape.utils.griptape_cloud import griptape_cloud_url
 from griptape.utils.import_utils import import_optional_dependency
 
@@ -42,6 +43,10 @@ class GriptapeCloudObservabilityDriver(OpenTelemetryObservabilityDriver):
         ),
         kw_only=True,
     )
+
+    def __attrs_post_init__(self) -> None:
+        deprecation_warn("`GriptapeCloudObservabilityDriver` is deprecated and will be removed in a future release.")
+        super().__attrs_post_init__()
 
     @structure_run_id.validator  # pyright: ignore[reportAttributeAccessIssue, reportOptionalMemberAccess]
     def validate_run_id(self, _: Attribute, structure_run_id: str | None) -> None:

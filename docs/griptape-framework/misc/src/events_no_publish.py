@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import os
+
 from griptape.artifacts import ErrorArtifact, InfoArtifact
-from griptape.drivers.event_listener.griptape_cloud import GriptapeCloudEventListenerDriver
+from griptape.drivers.event_listener.webhook import WebhookEventListenerDriver
 from griptape.events import BaseEvent, EventBus, EventListener, FinishStructureRunEvent
 from griptape.structures import Agent
 
@@ -32,9 +34,9 @@ EventBus.add_event_listeners(
         EventListener(
             handler_maybe_drop_events,
             event_types=[FinishStructureRunEvent],
-            # By default, GriptapeCloudEventListenerDriver uses the api key provided
-            # in the GT_CLOUD_API_KEY environment variable.
-            event_listener_driver=GriptapeCloudEventListenerDriver(),
+            event_listener_driver=WebhookEventListenerDriver(
+                webhook_url=os.environ["WEBHOOK_URL"],
+            ),
         ),
     ]
 )

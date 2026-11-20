@@ -1,24 +1,28 @@
-import os
-
-from griptape.drivers.structure_run.griptape_cloud import GriptapeCloudStructureRunDriver
+from griptape.drivers.structure_run.local import LocalStructureRunDriver
+from griptape.rules import Rule
 from griptape.structures import Agent
 from griptape.tools import StructureRunTool
 
-base_url = os.environ["GT_CLOUD_BASE_URL"]
-api_key = os.environ["GT_CLOUD_API_KEY"]
-structure_id = os.environ["GT_CLOUD_STRUCTURE_ID"]
+
+def build_rag_expert() -> Agent:
+    return Agent(
+        rules=[
+            Rule(
+                value="You are an expert on Retrieval Augmented Generation (RAG).",
+            )
+        ],
+    )
+
 
 structure_run_tool = StructureRunTool(
     description="RAG Expert Agent - Structure to invoke with natural language queries about the topic of Retrieval Augmented Generation",
-    structure_run_driver=GriptapeCloudStructureRunDriver(
-        base_url=base_url,
-        api_key=api_key,
-        structure_id=structure_id,
+    structure_run_driver=LocalStructureRunDriver(
+        create_structure=build_rag_expert,
     ),
 )
 
 # Set up an agent using the StructureRunTool tool
 agent = Agent(tools=[structure_run_tool])
 
-# Task: Ask the Griptape Cloud Hosted Structure about modular RAG
+# Task: Ask the RAG Expert Structure about modular RAG
 agent.run("what is modular RAG?")
