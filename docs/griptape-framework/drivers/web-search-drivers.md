@@ -102,6 +102,19 @@ The [DuckDuckGoWebSearchDriver](../../reference/griptape/drivers/web_search/duck
 --8<-- "docs/griptape-framework/drivers/src/web_search_drivers_6.py"
 ```
 
+### Firecrawl
+
+The [FirecrawlWebSearchDriver](../../reference/griptape/drivers/web_search/firecrawl_web_search_driver.md) uses the Firecrawl Search API for web searching.
+
+!!! info
+
+    This driver requires the `drivers-web-search-firecrawl` [extra](../index.md#extras),
+    and a Firecrawl [api key](https://www.firecrawl.dev/search?utm_source=griptape&utm_medium=integration).
+
+```python
+--8<-- "docs/griptape-framework/drivers/src/web_search_drivers_firecrawl.py"
+```
+
 ### Perplexity
 
 The [PerplexityWebSearchDriver](../../reference/griptape/drivers/web_search/perplexity_web_search_driver.md) uses the [Perplexity Prompt Driver](../drivers/prompt-drivers.md#perplexity) internally.

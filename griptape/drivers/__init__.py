@@ -85,6 +85,7 @@ from .web_search import BaseWebSearchDriver
 from .web_search.google import GoogleWebSearchDriver
 from .web_search.duck_duck_go import DuckDuckGoWebSearchDriver
 from .web_search.exa import ExaWebSearchDriver
+from .web_search.firecrawl import FirecrawlWebSearchDriver
 from .web_search.tavily import TavilyWebSearchDriver
 from .web_search.perplexity import PerplexityWebSearchDriver
 
@@ -190,6 +191,7 @@ __all__ = [
     "DummyVectorStoreDriver",
     "ElevenLabsTextToSpeechDriver",
     "ExaWebSearchDriver",
+    "FirecrawlWebSearchDriver",
     "GoogleEmbeddingDriver",
     "GooglePromptDriver",
     "GoogleWebSearchDriver",
@@ -261,6 +263,7 @@ __all__ = [
     "GoogleWebSearchDriver",
     "DuckDuckGoWebSearchDriver",
     "ExaWebSearchDriver",
+    "FirecrawlWebSearchDriver",
     "TavilyWebSearchDriver",
     "TrafilaturaWebScraperDriver",
     "VoyageAiEmbeddingDriver",
