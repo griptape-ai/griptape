@@ -370,6 +370,66 @@ The [GrokPromptDriver](../../reference/griptape/drivers/prompt/grok_prompt_drive
     --8<-- "docs/griptape-framework/drivers/logs/prompt_drivers_grok.txt"
     ```
 
+### MiniMax
+
+The [MinimaxPromptDriver](../../reference/griptape/drivers/prompt/minimax_prompt_driver.md) connects to the [MiniMax OpenAI-compatible API](https://platform.minimax.io/docs/api-reference/text-chat-openai). It supports `MiniMax-M3.1-Flash` and `MiniMax-M3`, defaults to `MiniMax-M3.1-Flash`, and uses the global endpoint by default. Both models have a 1,000,000-token context window and a maximum output of 524,288 tokens:
+
+```python
+import os
+
+from griptape.drivers.prompt.minimax import MinimaxPromptDriver
+
+driver = MinimaxPromptDriver(api_key=os.environ["MINIMAX_API_KEY"])
+```
+
+`MiniMax-M3.1-Flash` always uses adaptive thinking. Its `reasoning_effort` accepts `low`, `medium`, `high`, `xhigh`, or `max`, with an API default of `max`. Pass effort through `extra_params` and thinking through the OpenAI SDK's `extra_body` parameter:
+
+```python
+driver = MinimaxPromptDriver(
+    api_key=os.environ["MINIMAX_API_KEY"],
+    extra_params={
+        "reasoning_effort": "max",
+        "extra_body": {"thinking": {"type": "adaptive"}},
+    },
+)
+```
+
+The inherited driver-level `reasoning_effort` attribute is not sent for MiniMax models; use `extra_params` as shown above. Do not request disabled thinking for `MiniMax-M3.1-Flash`.
+
+`MiniMax-M3` enables thinking by default on this API and supports either `adaptive` or `disabled`. It ignores effort fields. To disable thinking:
+
+```python
+driver = MinimaxPromptDriver(
+    api_key=os.environ["MINIMAX_API_KEY"],
+    model="MiniMax-M3",
+    extra_params={"extra_body": {"thinking": {"type": "disabled"}}},
+)
+```
+
+This driver supports text, image, and video prompt content for both models. Use `VideoUrlArtifact` for a video URL; the driver converts it to `video_url` request content.
+
+For the China endpoint, set `base_url="https://api.minimaxi.com/v1"`.
+
+MiniMax also provides an [Anthropic-compatible API](https://platform.minimax.io/docs/api-reference/text-anthropic-api). Configure an `AnthropicPromptDriver` with an Anthropic client and the MiniMax tokenizer:
+
+```python
+import os
+
+from anthropic import Anthropic
+
+from griptape.drivers.prompt.anthropic import AnthropicPromptDriver
+from griptape.tokenizers import MinimaxTokenizer
+
+model = "MiniMax-M3.1-Flash"
+driver = AnthropicPromptDriver(
+    client=Anthropic(api_key=os.environ["MINIMAX_API_KEY"], base_url="https://api.minimax.io/anthropic"),
+    model=model,
+    tokenizer=MinimaxTokenizer(model=model),
+)
+```
+
+This configuration requires the `drivers-prompt-anthropic` extra. For the China endpoint, set the Anthropic client's `base_url` to `https://api.minimaxi.com/anthropic`.
+
 ### Perplexity
 
 The [PerplexityPromptDriver](../../reference/griptape/drivers/prompt/perplexity_prompt_driver.md) uses [Perplexity Sonar's chat completion](https://docs.perplexity.ai/api-reference/chat-completions) endpoint.
