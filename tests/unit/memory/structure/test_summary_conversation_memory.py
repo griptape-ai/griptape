@@ -114,3 +114,14 @@ class TestSummaryConversationMemory:
         assert restored_memory.summary_index == 2
         assert restored_memory.meta["summary"] == "test summary"
         assert restored_memory.meta["summary_index"] == 2
+
+    def test_max_runs_keeps_recent_runs_unsummarized(self):
+        memory = SummaryConversationMemory(offset=1, max_runs=3, prompt_driver=MockPromptDriver())
+
+        for index in range(1, 6):
+            memory.add_run(Run(input=TextArtifact(f"q{index}"), output=TextArtifact(f"a{index}")))
+
+        assert [run.input.value for run in memory.runs] == ["q3", "q4", "q5"]
+        assert memory.summary_index == 2
+        assert [run.input.value for run in memory.unsummarized_runs()] == ["q5"]
+        assert memory.to_prompt_stack().messages[-2].to_text() == "q5"
