@@ -4,13 +4,22 @@ from unittest.mock import ANY, MagicMock, Mock
 
 import pytest
 import schema
+from openai._models import construct_type
+from openai.types.chat import ChatCompletionChunk
 
 from griptape.artifacts import ActionArtifact, ImageArtifact, ListArtifact, TextArtifact
 from griptape.artifacts.audio_artifact import AudioArtifact
 from griptape.artifacts.generic_artifact import GenericArtifact
 from griptape.artifacts.image_url_artifact import ImageUrlArtifact
 from griptape.artifacts.video_url_artifact import VideoUrlArtifact
-from griptape.common import ActionCallDeltaMessageContent, PromptStack, TextDeltaMessageContent, ToolAction
+from griptape.common import (
+    ActionCallDeltaMessageContent,
+    ActionCallMessageContent,
+    Message,
+    PromptStack,
+    TextDeltaMessageContent,
+    ToolAction,
+)
 from griptape.common.prompt_stack.contents.audio_delta_message_content import AudioDeltaMessageContent
 from griptape.drivers.prompt.openai import OpenAiChatPromptDriver
 from griptape.tokenizers import OpenAiTokenizer
@@ -864,6 +873,84 @@ class TestOpenAiChatPromptDriver(TestOpenAiChatPromptDriverFixtureMixin):
         assert isinstance(event.content, AudioDeltaMessageContent)
         assert event.content.expires_at == ANY
         assert event.content.transcript == "assistant-audio-transcription"
+
+    @staticmethod
+    def _tool_call_chunk(*, index=None, call_id=None, name=None, arguments=None) -> ChatCompletionChunk:
+        """A streamed chunk with one tool call delta; without `index` it matches what Gemini's endpoint sends.
+
+        Built with the SDK's own stream decoder (`construct_type`), which leaves a missing index as `None`.
+        """
+        function = {key: value for key, value in (("name", name), ("arguments", arguments)) if value is not None}
+        tool_call = {
+            "function": function,
+            "type": "function",
+            **({"index": index} if index is not None else {}),
+            **({"id": call_id} if call_id is not None else {}),
+        }
+        return construct_type(
+            type_=ChatCompletionChunk,
+            value={
+                "id": "chunk-id",
+                "object": "chat.completion.chunk",
+                "created": 0,
+                "model": "gemini-3.5-flash",
+                "choices": [{"index": 0, "delta": {"role": "assistant", "tool_calls": [tool_call]}}],
+            },
+        )
+
+    @pytest.mark.parametrize(
+        ("chunks", "expected_calls"),
+        [
+            pytest.param(
+                [
+                    {"call_id": "call_paris", "name": "MockTool_test", "arguments": '{"city": "Paris"}'},
+                    {"call_id": "call_tokyo", "name": "MockTool_test", "arguments": '{"city": "Tokyo"}'},
+                ],
+                [("call_paris", {"city": "Paris"}), ("call_tokyo", {"city": "Tokyo"})],
+                id="parallel calls sent whole, distinct ids",
+            ),
+            pytest.param(
+                [
+                    {"call_id": "call_paris", "name": "MockTool_test", "arguments": '{"city": '},
+                    {"call_id": "call_paris", "arguments": '"Paris"}'},
+                    {"call_id": "call_tokyo", "name": "MockTool_test", "arguments": '{"city": '},
+                    {"call_id": "call_tokyo", "arguments": '"Tokyo"}'},
+                ],
+                [("call_paris", {"city": "Paris"}), ("call_tokyo", {"city": "Tokyo"})],
+                id="id repeated on every fragment",
+            ),
+            pytest.param(
+                [
+                    {"call_id": "call_paris", "name": "MockTool_test", "arguments": '{"city": '},
+                    {"arguments": '"Paris"}'},
+                ],
+                [("call_paris", {"city": "Paris"})],
+                id="argument-only continuation fragment",
+            ),
+            pytest.param(
+                [
+                    {"index": 0, "call_id": "call_paris", "name": "MockTool_test", "arguments": ""},
+                    {"index": 0, "arguments": '{"city": "Paris"}'},
+                    {"index": 1, "call_id": "call_tokyo", "name": "MockTool_test", "arguments": ""},
+                    {"index": 1, "arguments": '{"city": "Tokyo"}'},
+                ],
+                [("call_paris", {"city": "Paris"}), ("call_tokyo", {"city": "Tokyo"})],
+                id="explicit indexes are kept",
+            ),
+        ],
+    )
+    def test_run_stream_parallel_tool_calls(self, mocker, chunks, expected_calls):
+        mock_create = mocker.patch("openai.OpenAI").return_value.chat.completions.create
+        mock_create.return_value = iter([self._tool_call_chunk(**chunk) for chunk in chunks])
+        driver = OpenAiChatPromptDriver(model="gemini-3.5-flash", stream=True, max_attempts=1)
+
+        message = driver.run(PromptStack(messages=[Message("weather in Paris and Tokyo?", role=Message.USER_ROLE)]))
+
+        actions = [content.artifact.value for content in message.content]
+        assert all(isinstance(content, ActionCallMessageContent) for content in message.content)
+        assert [(action.name, action.path) for action in actions] == [("MockTool", "test")] * len(expected_calls)
+        assert [action.input for action in actions] == [expected_input for _, expected_input in expected_calls]
+        assert [action.tag for action in actions] == [expected_tag for expected_tag, _ in expected_calls]
 
     def test_try_run_with_max_tokens(self, mock_chat_completion_create, prompt_stack, messages):
         # Given
