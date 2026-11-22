@@ -1,3 +1,5 @@
+from queue import Queue
+
 import pytest
 
 from griptape.events import FinishStructureRunEvent, FinishTaskEvent, StartTaskEvent
@@ -169,4 +171,26 @@ class TestStructure:
 
         for idx, event in enumerate(events):
             assert isinstance(event, expected_event_types[idx])
+        assert len(EventBus.event_listeners) == 0
+
+    @pytest.mark.parametrize("hook", ["before_run", "after_run"])
+    def test_run_stream_propagates_worker_error(self, monkeypatch, hook):
+        from griptape.events import EventBus
+
+        # Bound the wait so a regression fails instead of blocking the test suite.
+        get = Queue.get
+        monkeypatch.setattr(Queue, "get", lambda queue: get(queue, timeout=5))
+
+        original_hook = getattr(Agent, hook)
+
+        def fail(*args):
+            if hook == "after_run":
+                original_hook(*args)
+            raise RuntimeError("agent run failed")
+
+        monkeypatch.setattr(Agent, hook, fail)
+
+        with pytest.raises(RuntimeError, match="agent run failed"):
+            list(Agent().run_stream(event_types=[]))
+
         assert len(EventBus.event_listeners) == 0
