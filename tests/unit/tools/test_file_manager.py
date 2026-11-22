@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from griptape.artifacts import ListArtifact, TextArtifact
+from griptape.artifacts import ErrorArtifact, ListArtifact, TextArtifact
 from griptape.drivers.file_manager.local_file_manager_driver import LocalFileManagerDriver
 from griptape.tools import FileManagerTool
 from tests.utils import defaults
@@ -43,6 +43,16 @@ class TestFileManager:
         assert isinstance(result, ListArtifact)
         assert len(result.value) == 1
         assert isinstance(result.value[0], TextArtifact)
+
+    def test_load_files_from_disk_with_unsupported_file_type(self, temp_dir):
+        with open(os.path.join(temp_dir, "config.json"), "w") as f:
+            f.write('{"a": 1}')
+
+        file_manager = FileManagerTool(file_manager_driver=LocalFileManagerDriver(workdir=temp_dir))
+        result = file_manager.load_files_from_disk({"values": {"paths": ["config.json"]}})
+
+        assert isinstance(result, ErrorArtifact)
+        assert "no loader available" in result.value
 
     def test_save_memory_artifacts_to_disk_for_one_artifact(self, temp_dir):
         memory = defaults.text_task_memory("Memory1")
