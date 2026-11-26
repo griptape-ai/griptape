@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import uuid
 from abc import ABC, abstractmethod
-from queue import Queue
+from queue import Empty, Queue
 from threading import Thread
 from typing import TYPE_CHECKING, Any, Literal
 
@@ -21,7 +21,7 @@ from griptape.mixins.serializable_mixin import SerializableMixin
 from griptape.utils.contextvars_utils import with_contextvars
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Callable, Iterator
 
     from griptape.artifacts import BaseArtifact
     from griptape.memory.structure import BaseConversationMemory
@@ -49,7 +49,7 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
     meta_memory: MetaMemory = field(default=Factory(MetaMemory), kw_only=True)
     fail_fast: bool = field(default=True, kw_only=True, metadata={"serializable": True})
     _execution_args: tuple = ()
-    _event_queue: Queue[BaseEvent] = field(default=Factory(Queue), init=False)
+    _event_queue: Queue[BaseEvent | None] = field(default=Factory(Queue), init=False)
 
     def __attrs_post_init__(self) -> None:
         tasks = self._tasks.copy()
@@ -214,17 +214,46 @@ class Structure(RuleMixin, SerializableMixin, RunnableMixin["Structure"], ABC):
         elif FinishStructureRunEvent not in event_types:
             event_types = [*event_types, FinishStructureRunEvent]
 
+        error: BaseException | None = None
+
+        def run_in_thread(run: Callable, *run_args: Any) -> None:
+            nonlocal error
+            try:
+                run(*run_args)
+            except BaseException as e:
+                # Wake up the consumer below: without a FinishStructureRunEvent it would wait forever.
+                error = e
+                self._event_queue.put(None)
+
         with EventListener(self._event_queue.put, event_types=event_types):
-            t = Thread(target=with_contextvars(self.run), args=args)
+            t = Thread(target=run_in_thread, args=(with_contextvars(self.run), *args))
             t.start()
 
             while True:
                 event = self._event_queue.get()
+                if event is None:
+                    break
                 if isinstance(event, FinishStructureRunEvent) and event.structure_id == self.id:
                     break
                 else:
                     yield event
             t.join()
+
+        if error is not None:
+            self._discard_stale_error_marker()
+            raise error
+
+    def _discard_stale_error_marker(self) -> None:
+        # The run can fail after its FinishStructureRunEvent was consumed, leaving the marker queued.
+        remaining = []
+        while True:
+            try:
+                remaining.append(self._event_queue.get_nowait())
+            except Empty:
+                break
+        for event in remaining:
+            if event is not None:
+                self._event_queue.put(event)
 
     @abstractmethod
     def try_run(self, *args) -> Structure:

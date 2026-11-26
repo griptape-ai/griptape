@@ -159,6 +159,49 @@ class TestStructure:
             assert isinstance(event, event_types[idx])
         assert len(EventBus.event_listeners) == 0
 
+    def test_run_stream_raises_error_from_run(self):
+        import threading
+
+        from jinja2 import TemplateSyntaxError
+
+        from griptape.events import EventBus
+
+        # Invalid Jinja in the input fails in `before_run`, before any FinishStructureRunEvent is published.
+        agent = Agent(input="{{ const e = 1 }}")
+        result: dict = {}
+
+        def consume() -> None:
+            try:
+                result["events"] = list(agent.run_stream())
+            except Exception as e:
+                result["error"] = e
+
+        # Daemon thread, so a regression (blocking forever) fails the test instead of hanging the suite.
+        t = threading.Thread(target=consume, daemon=True)
+        t.start()
+        t.join(timeout=10)
+
+        assert not t.is_alive(), "run_stream() blocked instead of raising"
+        assert isinstance(result.get("error"), TemplateSyntaxError)
+        assert len(EventBus.event_listeners) == 0
+
+    def test_run_stream_after_failed_run(self):
+        from jinja2 import TemplateSyntaxError
+
+        from griptape.events import StartStructureRunEvent
+
+        agent = Agent(input="{% if x %}")
+        with pytest.raises(TemplateSyntaxError):
+            list(agent.run_stream())
+
+        # A later successful run isn't confused by the failed one.
+        agent.input_task.input = "hello"
+        events = list(agent.run_stream())
+
+        assert isinstance(events[0], StartStructureRunEvent)
+        assert isinstance(events[-1], FinishTaskEvent)
+        assert agent._event_queue.empty()
+
     def test_run_stream_custom_event_types(self):
         from griptape.events import EventBus, FinishPromptEvent, StartPromptEvent, StartStructureRunEvent
 
