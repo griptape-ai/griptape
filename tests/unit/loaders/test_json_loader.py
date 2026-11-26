@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from griptape.loaders import JsonLoader
@@ -22,6 +24,15 @@ class TestJsonLoader:
 
         assert artifact.value["name"] == "John Doe"
         assert artifact.encoding == loader.encoding
+
+    @pytest.mark.parametrize("value", ["true", "hello", ""])
+    def test_load_top_level_string(self, loader, tmp_path, value):
+        path = tmp_path / "sample.json"
+        path.write_bytes(json.dumps(value).encode())
+
+        artifact = loader.load(str(path))
+
+        assert artifact.value == value
 
     def test_load_collection(self, loader, create_source):
         resource_paths = ["test.json"]
