@@ -91,6 +91,21 @@ class TestOutputSchemaValidationSubtask:
             assert subtask.output is not None
             assert subtask.output.value == json.dumps(input_value)
 
+    def test_attach_to_invalid_json_sets_validation_errors(self):
+        origin_task = PromptTask(
+            prompt_driver=MockPromptDriver(structured_output_strategy="rule"),
+        )
+        subtask = OutputSchemaValidationSubtask(
+            input=TextArtifact("not json"),
+            output_schema=schema.Schema({"key": str}),
+            structured_output_strategy="rule",
+        )
+
+        subtask.attach_to(origin_task)
+
+        assert subtask.output is None
+        assert subtask.validation_errors is not None
+
     def test_before_run(self):
         subtask = OutputSchemaValidationSubtask(
             input=TextArtifact("input"),
