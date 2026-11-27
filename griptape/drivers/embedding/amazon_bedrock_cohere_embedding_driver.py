@@ -59,4 +59,7 @@ class AmazonBedrockCohereEmbeddingDriver(BaseEmbeddingDriver):
         )
         response_body = json.loads(response.get("body").read())
 
-        return response_body.get("embeddings")[0]
+        embeddings = response_body["embeddings"]
+        if isinstance(embeddings, dict):
+            embeddings = embeddings["float"]
+        return embeddings[0]

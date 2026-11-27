@@ -59,3 +59,11 @@ class TestAmazonBedrockCohereEmbeddingDriver:
             "texts": ["foobar"],
             "truncate": "END",
         }
+
+    @pytest.mark.parametrize("model", ["cohere.embed-english-v3", "cohere.embed-v4:0", "us.cohere.embed-v4:0"])
+    def test_embed_embeddings_by_type(self, model):
+        driver = AmazonBedrockCohereEmbeddingDriver(model=model)
+        driver.client.invoke_model.return_value.get().read.return_value = json.dumps(
+            {"embeddings": {"float": [[0.1, 0.2, 0.3]]}, "response_type": "embeddings_by_type"}
+        )
+        assert driver.embed("foobar") == [0.1, 0.2, 0.3]

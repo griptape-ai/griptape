@@ -215,4 +215,8 @@ Use it to set provider-specific options that the Driver does not expose as field
 OpenAiEmbeddingDriver(model="text-embedding-3-small", extra_params={"dimensions": 256})
 ```
 
+On Amazon Bedrock, Cohere v4 supports `output_dimension`; Cohere v3 does not.
+Both v4 and v3 requests with `embedding_types=["float"]` return embeddings grouped by type,
+which the Cohere Bedrock Driver reads as floating-point vectors.
+
 Values in `extra_params` take precedence over the parameters set by the Driver.
