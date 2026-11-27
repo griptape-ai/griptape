@@ -70,7 +70,7 @@ class OutputSchemaValidationSubtask(BaseSubtask):
                     self.output = ModelArtifact(model)
             else:
                 self.output = self.input
-        except SchemaError as e:
+        except (SchemaError, json.JSONDecodeError) as e:
             self._validation_errors = str(e)
         except ValidationError as e:
             self._validation_errors = str(e.errors())
