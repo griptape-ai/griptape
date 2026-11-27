@@ -24,3 +24,19 @@ class TestOpenAiAudioTranscriptionDriver:
         text_artifact = driver.try_run(audio_artifact)
 
         assert text_artifact.value == "text data"
+
+    def test_try_run_extra_params(self, audio_artifact):
+        driver = OpenAiAudioTranscriptionDriver(
+            model="model", client=Mock(), api_key="key", extra_params={"language": "en", "temperature": 0.2}
+        )
+        driver.client.audio.transcriptions.create.return_value = Mock(text="text data")
+
+        driver.try_run(audio_artifact, prompts=["foo", "bar"])
+
+        kwargs = driver.client.audio.transcriptions.create.call_args.kwargs
+        assert kwargs["model"] == "model"
+        assert kwargs["file"][0] == "a.mp3"
+        assert kwargs["response_format"] == "json"
+        assert kwargs["prompt"] == "foo, bar"
+        assert kwargs["language"] == "en"
+        assert kwargs["temperature"] == 0.2

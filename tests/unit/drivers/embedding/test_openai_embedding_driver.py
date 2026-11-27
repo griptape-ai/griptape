@@ -49,3 +49,10 @@ class TestOpenAiEmbeddingDriver:
     def test_try_embed_chunk_replaces_newlines_in_older_ada_models(self, model, mock_openai):
         OpenAiEmbeddingDriver(model=model).try_embed_chunk("foo\nbar")
         assert mock_openai.call_args.kwargs["input"] == "foo bar" if model.endswith("001") else "foo\nbar"
+
+    def test_try_embed_chunk_extra_params(self, mock_openai):
+        OpenAiEmbeddingDriver(extra_params={"dimensions": 256, "user": "foo"}).try_embed_chunk("foobar")
+
+        mock_openai.assert_called_once_with(
+            input="foobar", model=OpenAiEmbeddingDriver.DEFAULT_MODEL, dimensions=256, user="foo"
+        )

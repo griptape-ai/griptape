@@ -41,3 +41,16 @@ class TestCohereEmbeddingDriver:
                 CohereEmbeddingDriver(model="foo", api_key="bar", input_type="search_document").embed(value)
                 == expected_output
             )
+
+    def test_try_embed_chunk_extra_params(self, mock_client):
+        driver = CohereEmbeddingDriver(
+            model="embed-english-v3.0",
+            api_key="bar",
+            input_type="search_document",
+            extra_params={"truncate": "END"},
+        )
+        driver.try_embed_chunk("foobar")
+
+        mock_client.embed.assert_called_once_with(
+            texts=["foobar"], model="embed-english-v3.0", input_type="search_document", truncate="END"
+        )

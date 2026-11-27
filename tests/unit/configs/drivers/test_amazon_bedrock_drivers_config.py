@@ -29,7 +29,11 @@ class TestAmazonBedrockDriversConfig:
                 "type": "LocalConversationMemoryDriver",
                 "persist_file": None,
             },
-            "embedding_driver": {"model": "amazon.titan-embed-text-v2:0", "type": "AmazonBedrockTitanEmbeddingDriver"},
+            "embedding_driver": {
+                "model": "amazon.titan-embed-text-v2:0",
+                "type": "AmazonBedrockTitanEmbeddingDriver",
+                "extra_params": {},
+            },
             "image_generation_driver": {
                 "image_generation_model_driver": {
                     "cfg_scale": 7,
@@ -56,6 +60,7 @@ class TestAmazonBedrockDriversConfig:
             },
             "vector_store_driver": {
                 "embedding_driver": {
+                    "extra_params": {},
                     "model": "amazon.titan-embed-text-v2:0",
                     "type": "AmazonBedrockTitanEmbeddingDriver",
                 },
@@ -67,8 +72,8 @@ class TestAmazonBedrockDriversConfig:
                 "persist_dir": None,
             },
             "type": "AmazonBedrockDriversConfig",
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver", "extra_params": {}},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver", "extra_params": {}},
         }
 
     def test_from_dict(self, config):
@@ -85,7 +90,11 @@ class TestAmazonBedrockDriversConfig:
                 "type": "LocalConversationMemoryDriver",
                 "persist_file": None,
             },
-            "embedding_driver": {"model": "amazon.titan-embed-text-v2:0", "type": "AmazonBedrockTitanEmbeddingDriver"},
+            "embedding_driver": {
+                "model": "amazon.titan-embed-text-v2:0",
+                "type": "AmazonBedrockTitanEmbeddingDriver",
+                "extra_params": {},
+            },
             "image_generation_driver": {
                 "image_generation_model_driver": {
                     "cfg_scale": 7,
@@ -112,6 +121,7 @@ class TestAmazonBedrockDriversConfig:
             },
             "vector_store_driver": {
                 "embedding_driver": {
+                    "extra_params": {},
                     "model": "amazon.titan-embed-text-v2:0",
                     "type": "AmazonBedrockTitanEmbeddingDriver",
                 },
@@ -123,7 +133,7 @@ class TestAmazonBedrockDriversConfig:
                 "persist_dir": None,
             },
             "type": "AmazonBedrockDriversConfig",
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver", "extra_params": {}},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver", "extra_params": {}},
         }
         assert config_with_values.session.region_name == "region-value"

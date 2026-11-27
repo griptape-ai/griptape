@@ -1,3 +1,4 @@
+import json
 from contextlib import nullcontext
 from unittest import mock
 
@@ -45,3 +46,19 @@ class TestAmazonBedrockTitanEmbeddingDriver:
     def test_embed(self, value, expected_output, expected_error):
         with expected_error:
             assert AmazonBedrockTitanEmbeddingDriver().embed(value) == expected_output
+
+    @pytest.mark.parametrize(
+        ("value", "expected_payload"),
+        [
+            ("foobar", {"inputText": "foobar", "dimensions": 256}),
+            (
+                ImageArtifact(b"foobar", format="jpeg", width=1, height=1),
+                {"inputImage": "Zm9vYmFy", "dimensions": 256},
+            ),
+        ],
+    )
+    def test_embed_extra_params(self, value, expected_payload):
+        driver = AmazonBedrockTitanEmbeddingDriver(extra_params={"dimensions": 256})
+        driver.embed(value)
+
+        assert json.loads(driver.client.invoke_model.call_args.kwargs["body"]) == expected_payload

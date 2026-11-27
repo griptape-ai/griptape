@@ -38,3 +38,8 @@ class TestOllamaEmbeddingDriver:
     def test_embed(self, value, expected_output, expected_error):
         with expected_error:
             assert OllamaEmbeddingDriver(model="foo").embed(value) == expected_output
+
+    def test_try_embed_chunk_extra_params(self, mock_client):
+        OllamaEmbeddingDriver(model="foo", extra_params={"keep_alive": "5m"}).try_embed_chunk("foobar")
+
+        mock_client.return_value.embeddings.assert_called_once_with(model="foo", prompt="foobar", keep_alive="5m")

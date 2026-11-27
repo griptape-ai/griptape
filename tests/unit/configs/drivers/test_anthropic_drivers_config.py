@@ -30,11 +30,13 @@ class TestAnthropicDriversConfig:
             },
             "image_generation_driver": {"type": "DummyImageGenerationDriver"},
             "embedding_driver": {
+                "extra_params": {},
                 "type": "DummyEmbeddingDriver",
             },
             "vector_store_driver": {
                 "type": "DummyVectorStoreDriver",
                 "embedding_driver": {
+                    "extra_params": {},
                     "type": "DummyEmbeddingDriver",
                 },
             },
@@ -47,8 +49,8 @@ class TestAnthropicDriversConfig:
                 "raise_not_found": True,
                 "persist_dir": None,
             },
-            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver"},
-            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver"},
+            "text_to_speech_driver": {"type": "DummyTextToSpeechDriver", "extra_params": {}},
+            "audio_transcription_driver": {"type": "DummyAudioTranscriptionDriver", "extra_params": {}},
         }
 
     def test_from_dict(self, config):
